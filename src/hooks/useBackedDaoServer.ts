@@ -142,14 +142,19 @@ export function useHomeDaoList() {
   }
 }
 
-export function useMemberJoinDao(defaultJoined: boolean) {
+export function useMemberJoinDao(defaultJoined: boolean, defaultMembers: number) {
   const [isJoined, setIsJoined] = useState(defaultJoined)
+  const [curMembers, setCurMembers] = useState(defaultMembers)
   const [loading, setLoading] = useState(false)
   const { account } = useActiveWeb3React()
 
   useEffect(() => {
     setIsJoined(defaultJoined)
   }, [defaultJoined])
+
+  useEffect(() => {
+    setCurMembers(defaultMembers)
+  }, [defaultMembers])
 
   const switchJoin = useCallback(
     async (join: boolean, chainId: ChainId, daoAddress: string, signature: string) => {
@@ -160,17 +165,19 @@ export function useMemberJoinDao(defaultJoined: boolean) {
       try {
         await switchJoinDao(account, chainId, daoAddress, join, signature)
         setIsJoined(join)
+        setCurMembers(join ? curMembers + 1 : curMembers - 1)
         setLoading(false)
       } catch (error) {
         setLoading(false)
       }
     },
-    [account]
+    [account, curMembers]
   )
 
   return {
     loading,
     isJoined,
+    curMembers,
     switchJoin
   }
 }

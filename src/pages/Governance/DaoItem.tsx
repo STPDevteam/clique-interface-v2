@@ -70,7 +70,7 @@ export default function DaoItem({
   const history = useHistory()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   const token = useToken(daoBaseInfo?.daoTokenAddress || '', chainId)
-  const { isJoined, switchJoin } = useMemberJoinDao(joinSwitch)
+  const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
   const user = useUserInfo()
   const loginSignature = useLoginSignature()
 
@@ -112,7 +112,7 @@ export default function DaoItem({
             Members
           </Typography>
           <Typography fontSize={16} fontWeight={600}>
-            {members}
+            {curMembers}
           </Typography>
         </div>
         <div className="item">
