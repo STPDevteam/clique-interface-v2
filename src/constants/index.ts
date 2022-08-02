@@ -110,4 +110,5 @@ export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
 }
 
 export const serverBaseUrl = 'http://192.168.2.102:8091/'
+export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'

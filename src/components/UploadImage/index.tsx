@@ -1,6 +1,7 @@
 import { styled, Box, Theme } from '@mui/material'
 import { SxProps } from '@mui/system'
 import axios from 'axios'
+import { serverUploadImage } from '../../constants'
 import Image from '../Image'
 
 const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }) => ({
@@ -27,7 +28,12 @@ const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }
   }
 }))
 
-async function save(file: File) {
+async function save(
+  file: File
+): Promise<{
+  data: string
+  result: boolean
+}> {
   if (file.size > 1024 * 1024 * 2) {
     return {
       data: 'Image must smaller than 2M!',
@@ -37,12 +43,12 @@ async function save(file: File) {
   const params = new FormData()
   params.append('file', file)
   try {
-    const res = await axios.post('/', params, {
+    const res = await axios.post(serverUploadImage, params, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
-    const data = res.data.data as string
+    const data = res.data.data.path as string
     return {
       data: data,
       result: true
