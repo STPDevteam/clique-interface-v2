@@ -1,0 +1,13 @@
+import { createAction } from '@reduxjs/toolkit'
+
+export interface UserInfo {
+  account: string
+  // name: string
+  // avatarUrl: string
+  // twitter: string
+  // discord: string
+  signature: string
+}
+
+export const removeUserInfo = createAction<{ address: string }>('userInfo/removeUserInfo')
+export const saveUserInfo = createAction<{ userInfo: UserInfo }>('userInfo/saveUserInfo')
