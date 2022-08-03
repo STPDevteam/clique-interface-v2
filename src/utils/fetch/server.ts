@@ -54,3 +54,11 @@ export function switchJoinDao(
     }
   })
 }
+
+export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
+  return Axios.get('stpdao/v2/dao/info', {
+    account: account || '',
+    daoAddress,
+    chainId
+  })
+}
