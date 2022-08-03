@@ -5,6 +5,8 @@ import Pagination from 'components/Pagination'
 import { useHomeDaoList } from 'hooks/useBackedDaoServer'
 import HomeTabs from './HomeTabs'
 import DelayLoading from 'components/DelayLoading'
+import Loading from 'components/Loading'
+import EmptyData from 'components/EmptyData'
 
 export default function Home() {
   const {
@@ -19,18 +21,21 @@ export default function Home() {
       <SearchPanel searchValue={keyword} onSearchValue={val => setKeyword(val)} />
       <Box mt={12}>
         <HomeTabs value={category} changeTab={val => setCategory(val)} />
-        <DelayLoading loading={loading} delay={300}>
-          <Box textAlign={'center'}>Loading</Box>
-        </DelayLoading>
-        {!loading && !homeDaoList.length && <Box textAlign={'center'}>No data</Box>}
-        <Grid spacing={18} container mt={7} minHeight={316}>
-          {!loading &&
-            homeDaoList.map(item => (
-              <Grid key={item.daoAddress + item.chainId} item lg={3} md={4} sm={6} xs={12}>
-                <DaoItem {...item} />
-              </Grid>
-            ))}
-        </Grid>
+        <Box minHeight={316}>
+          {!loading && !homeDaoList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+          <DelayLoading loading={loading}>
+            <Loading sx={{ marginTop: 30 }} />
+          </DelayLoading>
+          <Grid spacing={18} container mt={7}>
+            {!loading &&
+              homeDaoList.map(item => (
+                <Grid key={item.daoAddress + item.chainId} item lg={3} md={4} sm={6} xs={12}>
+                  <DaoItem {...item} />
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
+
         <Box mt={20} display={'flex'} justifyContent="center">
           <Pagination
             count={page.totalPage}

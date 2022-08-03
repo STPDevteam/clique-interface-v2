@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 
-export default function DelayLoading({ children, delay, loading }: { children: any; delay: number; loading: boolean }) {
+export default function DelayLoading({
+  children,
+  delay = 200,
+  loading
+}: {
+  children: any
+  delay?: number
+  loading: boolean
+}) {
   const [childrenShow, setChildrenShow] = useState(false)
   const [int, setInt] = useState<any>()
 
