@@ -10,6 +10,7 @@ const StyledWrapper = styled('ul')(({ theme }) => ({
   padding: 0,
   listStyle: 'none',
   fontSize: 14,
+  margin: 0,
   fontWeight: 600,
   color: theme.palette.text.secondary,
   '& li': {

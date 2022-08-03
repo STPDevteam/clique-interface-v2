@@ -1,4 +1,4 @@
-import { Box, styled, Typography, useTheme } from '@mui/material'
+import { Box, Skeleton, styled, Typography, useTheme } from '@mui/material'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { DaoAvatars } from 'components/Avatars'
 import { BlackButton } from 'components/Button/Button'
@@ -97,15 +97,29 @@ export default function DaoItem({
             </Typography>
             <AuthIcon />
           </Box>
-          <Box display={'flex'} alignItems="center">
-            <CurrencyLogo currency={token || undefined} style={{ width: 16, height: 16, marginRight: '5px' }} />
-            <Typography fontSize={16} variant="body2" noWrap maxWidth={'calc(100% - 90px)'}>
-              {token ? `${token.name} (${token.symbol})` : '--'}
-            </Typography>
-          </Box>
+          {token ? (
+            <Box display={'flex'} alignItems="center">
+              <CurrencyLogo currency={token || undefined} style={{ width: 16, height: 16, marginRight: '5px' }} />
+              <Typography fontSize={16} variant="body2" noWrap maxWidth={'calc(100% - 90px)'}>
+                {token ? `${token.name} (${token.symbol})` : '--'}
+              </Typography>
+            </Box>
+          ) : (
+            <Skeleton animation="wave" width={'30%'}></Skeleton>
+          )}
         </Box>
       </Box>
-      <StyledDesc variant="body1">{daoBaseInfo?.description || '--'}</StyledDesc>
+      <StyledDesc variant="body1">
+        {daoBaseInfo?.description ? (
+          daoBaseInfo.description
+        ) : (
+          <>
+            <Skeleton animation="wave" />
+            <Skeleton animation="wave" />
+            <Skeleton animation="wave" />
+          </>
+        )}
+      </StyledDesc>
       <StyledTextNumber>
         <div className="item">
           <Typography fontSize={13} color={theme.textColor.text1} fontWeight={600}>
