@@ -14,13 +14,9 @@ export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
   return allUserInfo[account]
 }
 
-export function clearLoginStoreSync(account?: string) {
-  if (!account) return
-  const userInfo = getCurrentUserInfoSync(account)
-  if (!userInfo) return
+export function clearAllSignStoreSync() {
   store.dispatch({
-    type: 'userInfo/removeUserInfo',
-    payload: { address: userInfo.account }
+    type: 'userInfo/removeUserInfo'
   })
 }
 

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse, AxiosPromise } from 'axios'
+import { clearAllSignStoreSync } from 'state/userInfo/hooks'
 import { serverBaseUrl } from '../constants'
 
 const axiosInstance = axios.create({
@@ -6,6 +7,19 @@ const axiosInstance = axios.create({
   timeout: 10000,
   headers: { 'content-type': 'application/json', accept: 'application/json' }
 })
+
+axiosInstance.interceptors.response.use(
+  function(response) {
+    return response
+  },
+  function(error) {
+    if (JSON.parse(JSON.stringify(error)).status === 401) {
+      alert('signature error')
+      clearAllSignStoreSync()
+    }
+    return Promise.reject(error)
+  }
+)
 
 export const Axios = {
   get<T = any>(url: string, params: { [key: string]: any } = {}): AxiosPromise<ResponseType<T>> {

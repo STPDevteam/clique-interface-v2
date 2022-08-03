@@ -9,5 +9,5 @@ export interface UserInfo {
   signature: string
 }
 
-export const removeUserInfo = createAction<{ address: string }>('userInfo/removeUserInfo')
+export const removeUserInfo = createAction('userInfo/removeUserInfo')
 export const saveUserInfo = createAction<{ userInfo: UserInfo }>('userInfo/saveUserInfo')
