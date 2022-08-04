@@ -4,12 +4,12 @@ import { ChainId, SUPPORTED_NETWORKS } from '../constants/chain'
 
 const MainNetwork = new NetworkConnector({
   urls: {
-    [ChainId.MAINNET]: 'https://mainnet.infura.io/v3/cf75b84907824c98bf013c5de408ff25'
+    [ChainId.MAINNET]: 'https://mainnet.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
   }
 })
 const RinkebyNetwork = new NetworkConnector({
   urls: {
-    [ChainId.RINKEBY]: 'https://rinkeby.infura.io/v3/cf75b84907824c98bf013c5de408ff25'
+    [ChainId.RINKEBY]: 'https://rinkeby.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
   }
 })
 
