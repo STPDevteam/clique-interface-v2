@@ -1,9 +1,9 @@
 import { Chip, Stack, styled, useTheme } from '@mui/material'
 import { useMemo } from 'react'
 
-const StyledChip = styled(Chip)(({ theme, bgColor }: { theme?: any; bgColor: string }) => ({
+export const StyledChip = styled(Chip)(({ theme, bgColor }: { theme?: any; bgColor?: string }) => ({
   fontWeight: 600,
-  backgroundColor: bgColor,
+  backgroundColor: bgColor || theme.palette.primary.dark,
   color: theme.palette.common.white,
   height: 24,
   fontSize: 12,

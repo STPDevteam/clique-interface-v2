@@ -1,10 +1,10 @@
-import { Avatar, Box, Link, styled, Typography, useTheme } from '@mui/material'
+import { Avatar, Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
-import { useCallback, useState } from 'react'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
+import { useCallback, useMemo, useState } from 'react'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { useToken } from 'state/wallet/hooks'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
@@ -16,6 +16,8 @@ import { toFormatGroup } from 'utils/dao'
 import { BlackButton } from 'components/Button/Button'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import CategoryChips from './CategoryChips'
+import { useActiveWeb3React } from 'hooks'
+import ShowAdminTag from './ShowAdminTag'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -51,7 +53,6 @@ const StyledTabs = styled('ul')(({ theme }) => ({
 }))
 
 const StyledJoin = styled(Box)(({ theme }) => ({
-  marginLeft: 12,
   '& button': {
     borderRadius: '8px'
   },
@@ -69,14 +70,15 @@ enum Tabs {
   ABOUT = 'About',
   SETTINGS = 'Settings'
 }
-const tabLinks = Object.values(Tabs)
 
 export default function DaoInfo() {
   const theme = useTheme()
+  const { account } = useActiveWeb3React()
   const [currentTab, setCurrentTab] = useState(Tabs.PROPOSAL)
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
+  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const daoBaseInfo = useDaoBaseInfo(daoAddress, curDaoChainId)
   const token = useToken(daoBaseInfo?.daoTokenAddress || '', curDaoChainId)
@@ -99,6 +101,14 @@ export default function DaoInfo() {
     [curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature]
   )
 
+  const currentTabLinks = useMemo(
+    () =>
+      daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN
+        ? Object.values(Tabs)
+        : Object.values(Tabs).filter(i => i !== Tabs.SETTINGS),
+    [daoAdminLevel]
+  )
+
   return (
     <Box padding="0 20px">
       <ContainerWrapper maxWidth={1248}>
@@ -106,10 +116,11 @@ export default function DaoInfo() {
           <div className="top1">
             <Avatar sx={{ width: 100, height: 100 }} src={daoBaseInfo?.daoLogo || ''}></Avatar>
             <Box ml={'24px'}>
-              <Box display={'flex'} justifyContent="space-between" alignItems={'center'}>
-                <Box display="flex" alignItems={'center'} gap="5px" marginBottom={5}>
+              <Box display={'flex'} justifyContent="space-between" alignItems={'center'} marginBottom={6}>
+                <Stack direction="row" spacing={8} alignItems="center">
                   <Typography variant="h5">{daoBaseInfo?.name || '--'}</Typography>
                   {/* <VerifiedTag address={daoInfo?.daoAddress} /> */}
+                  <ShowAdminTag level={daoAdminLevel} />
                   <StyledJoin>
                     <BlackButton
                       width="79px"
@@ -122,7 +133,7 @@ export default function DaoInfo() {
                       {isJoined ? 'Joined' : 'Join'}
                     </BlackButton>
                   </StyledJoin>
-                </Box>
+                </Stack>
                 <Box display={'flex'} alignItems="center">
                   <Typography mr={5} variant="caption" color={theme.palette.text.secondary}>
                     Members
@@ -169,7 +180,7 @@ export default function DaoInfo() {
           </div>
 
           <StyledTabs>
-            {tabLinks.map(item => (
+            {currentTabLinks.map(item => (
               <li
                 key={item}
                 onClick={() => setCurrentTab(item)}

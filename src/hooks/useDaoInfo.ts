@@ -81,3 +81,27 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
     }
   }, [daoBaseInfo, daoGovernanceRes.result])
 }
+
+export enum DaoAdminLevelProp {
+  SUPER_ADMIN,
+  ADMIN,
+  NORMAL
+}
+
+export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account?: string) {
+  const daoContract = useGovernanceDaoContract(daoAddress, chainId)
+
+  const adminsRes = useSingleCallResult(account ? daoContract : null, 'admins', [account], undefined, chainId)
+    .result?.[0]
+  const ownerRes = useSingleCallResult(daoContract, 'owner', [], undefined, chainId).result?.[0]
+
+  return useMemo(() => {
+    if (account && ownerRes === account) {
+      return DaoAdminLevelProp.SUPER_ADMIN
+    }
+    if (adminsRes) {
+      return DaoAdminLevelProp.ADMIN
+    }
+    return DaoAdminLevelProp.NORMAL
+  }, [ownerRes, adminsRes, account])
+}
