@@ -3,12 +3,12 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { useToken } from 'state/wallet/hooks'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
@@ -18,6 +18,7 @@ import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
 import ShowAdminTag from './ShowAdminTag'
+import { routes } from 'constants/routes'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -64,17 +65,29 @@ const StyledJoin = styled(Box)(({ theme }) => ({
   }
 }))
 
-enum Tabs {
-  PROPOSAL = 'Proposal',
-  ACTIVITY = 'Activity',
-  ABOUT = 'About',
-  SETTINGS = 'Settings'
-}
+const tabs = [
+  {
+    name: 'Proposal',
+    routeSuffix: ''
+  },
+  {
+    name: 'Activity',
+    routeSuffix: 'active_info'
+  },
+  {
+    name: 'About',
+    routeSuffix: 'about'
+  },
+  {
+    name: 'Settings',
+    routeSuffix: 'settings'
+  }
+]
 
-export default function DaoInfo() {
+export default function DaoInfo({ children }: { children: any }) {
   const theme = useTheme()
+  const history = useHistory()
   const { account } = useActiveWeb3React()
-  const [currentTab, setCurrentTab] = useState(Tabs.PROPOSAL)
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
@@ -101,13 +114,14 @@ export default function DaoInfo() {
     [curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature]
   )
 
-  const currentTabLinks = useMemo(
-    () =>
-      daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN
-        ? Object.values(Tabs)
-        : Object.values(Tabs).filter(i => i !== Tabs.SETTINGS),
-    [daoAdminLevel]
-  )
+  const currentTabLinks = useMemo(() => {
+    const list = daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN ? tabs : tabs.filter(i => i.name !== 'Settings')
+
+    return list.map(({ name, routeSuffix }) => ({
+      name,
+      link: routes._DaoInfo + `/${daoChainId}/${daoAddress}${routeSuffix ? '/' + routeSuffix : ''}`
+    }))
+  }, [daoAddress, daoAdminLevel, daoChainId])
 
   return (
     <Box padding="0 20px">
@@ -182,15 +196,16 @@ export default function DaoInfo() {
           <StyledTabs>
             {currentTabLinks.map(item => (
               <li
-                key={item}
-                onClick={() => setCurrentTab(item)}
-                className={`border-tab-item ${currentTab === item ? 'active' : ''}`}
+                key={item.name}
+                onClick={() => history.replace(item.link)}
+                className={`border-tab-item ${history.location.pathname === item.link ? 'active' : ''}`}
               >
-                {item}
+                {item.name}
               </li>
             ))}
           </StyledTabs>
         </StyledHeader>
+        <Box>{children}</Box>
       </ContainerWrapper>
     </Box>
   )

@@ -13,7 +13,11 @@ import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
 import Governance from 'pages/Governance/GovernanceContainer'
 import GovernanceHome from 'pages/Governance'
-import DaoInfo from 'pages/DaoInfo'
+import DaoInfoBase from 'pages/DaoInfo'
+import ProposalList from 'pages/DaoInfo/Children/Proposal'
+import DaoInfoActivity from 'pages/DaoInfo/Children/Activity'
+import DaoInfoSettings from 'pages/DaoInfo/Children/Settings'
+import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import TokenList from 'pages/TokenList'
@@ -78,7 +82,20 @@ export default function App() {
                       <Governance>
                         <Switch>
                           <Route path={routes.Governance} exact strict component={GovernanceHome} />
-                          <Route path={routes.DaoInfo} exact strict component={DaoInfo} />
+                          <Route
+                            strict
+                            path={routes.DaoInfo}
+                            render={() => (
+                              <DaoInfoBase>
+                                <Switch>
+                                  <Route path={routes.DaoInfo} exact strict component={ProposalList} />
+                                  <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
+                                  <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
+                                  <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
+                                </Switch>
+                              </DaoInfoBase>
+                            )}
+                          />
                         </Switch>
                       </Governance>
                     )}
