@@ -7,6 +7,8 @@ import { useDaoFactoryContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
 import { commitErrorMsg } from 'utils/fetch/server'
+import { useToken } from 'state/wallet/hooks'
+import { TokenAmount } from 'constants/token'
 
 export function useCreateDaoCallback() {
   const addTransaction = useTransactionAdder()
@@ -14,10 +16,12 @@ export function useCreateDaoCallback() {
   const { account } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
   const { buildingDaoData: data, removeBuildingDaoData } = useBuildingDaoDataCallback()
+  const token = useToken(data.tokenAddress, data.baseChainId)
 
   return useCallback(async () => {
     if (!account) throw new Error('none account')
     if (!contract) throw new Error('none contract')
+    if (!token) throw new Error('none token')
 
     const args = [
       [
@@ -31,7 +35,12 @@ export function useCreateDaoCallback() {
         data.daoImage.trim()
       ],
       [data.baseChainId, data.tokenAddress],
-      [data.createProposalMinimum, data.executeMinimum, data.defaultVotingPeriod, data.votingTypes]
+      [
+        new TokenAmount(token, data.createProposalMinimum).raw.toString(),
+        new TokenAmount(token, data.executeMinimum).raw.toString(),
+        data.defaultVotingPeriod,
+        data.votingTypes
+      ]
     ]
 
     const method = 'createDAO'
@@ -65,5 +74,5 @@ export function useCreateDaoCallback() {
         }
         throw err
       })
-  }, [account, addTransaction, gasPriceInfoCallback, contract, data, removeBuildingDaoData])
+  }, [account, contract, token, data, gasPriceInfoCallback, addTransaction, removeBuildingDaoData])
 }
