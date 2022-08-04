@@ -2,7 +2,7 @@ import { ChainId } from 'constants/chain'
 import { useCallback, useEffect, useState } from 'react'
 import { useHomeListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from '.'
-import { getDaoInfo, getHomeDaoList, getMyJoinedDao, switchJoinDao } from '../utils/fetch/server'
+import { getDaoAdmins, getDaoInfo, getHomeDaoList, getMyJoinedDao, switchJoinDao } from '../utils/fetch/server'
 
 export function useMyJoinedDao() {
   const { account } = useActiveWeb3React()
@@ -251,6 +251,33 @@ export function useBackedDaoInfo(daoAddress: string, chainId: ChainId) {
       }
     })()
   }, [account, chainId, daoAddress])
+
+  return {
+    loading,
+    result
+  }
+}
+
+export function useBackedDaoAdmins(daoAddress: string, chainId: ChainId) {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [result, setResult] = useState<string[]>()
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getDaoAdmins(daoAddress, chainId)
+        setLoading(false)
+        const data = res.data.data
+
+        setResult(data.map((item: any) => item.account))
+      } catch (error) {
+        setResult(undefined)
+        setLoading(false)
+        console.error('useBackedDaoAdmins', error)
+      }
+    })()
+  }, [chainId, daoAddress])
 
   return {
     loading,

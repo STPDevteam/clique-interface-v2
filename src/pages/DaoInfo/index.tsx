@@ -17,7 +17,7 @@ import { BlackButton } from 'components/Button/Button'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
-import ShowAdminTag from './ShowAdminTag'
+import AdminTag from './ShowAdminTag'
 import { routes } from 'constants/routes'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
@@ -134,7 +134,7 @@ export default function DaoInfo({ children }: { children: any }) {
                 <Stack direction="row" spacing={8} alignItems="center">
                   <Typography variant="h5">{daoBaseInfo?.name || '--'}</Typography>
                   {/* <VerifiedTag address={daoInfo?.daoAddress} /> */}
-                  <ShowAdminTag level={daoAdminLevel} />
+                  <AdminTag level={daoAdminLevel} />
                   <StyledJoin>
                     <BlackButton
                       width="79px"
@@ -162,7 +162,7 @@ export default function DaoInfo({ children }: { children: any }) {
                   href={getEtherscanLink(curDaoChainId, daoBaseInfo?.daoTokenAddress || '', 'address')}
                 >
                   <Box display={'flex'} alignItems="center">
-                    <CurrencyLogo currency={token || undefined} style={{ width: 16, height: 16, marginRight: '5px' }} />
+                    <CurrencyLogo currency={token || undefined} style={{ marginRight: '5px' }} />
                     <Typography fontSize={16} variant="body2" noWrap maxWidth={'200px'}>
                       {token ? `${token.name} (${token.symbol})` : '--'}
                     </Typography>
@@ -205,7 +205,7 @@ export default function DaoInfo({ children }: { children: any }) {
             ))}
           </StyledTabs>
         </StyledHeader>
-        <Box>{children}</Box>
+        <Box padding="30px 45px">{children}</Box>
       </ContainerWrapper>
     </Box>
   )

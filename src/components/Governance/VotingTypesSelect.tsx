@@ -1,11 +1,11 @@
 import Select from 'components/Select/Select'
 import { MenuItem } from '@mui/material'
-import { VotingTypes } from 'state/buildingGovDao/actions'
+import { VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
 
 const itemList = [
-  { value: VotingTypes.ANY, label: 'Any' },
-  { value: VotingTypes.SINGLE, label: 'Single-voting' },
-  { value: VotingTypes.MULTI, label: 'Multi-voting' }
+  { value: VotingTypes.ANY, label: VotingTypesName[VotingTypes.ANY] },
+  { value: VotingTypes.SINGLE, label: VotingTypesName[VotingTypes.SINGLE] },
+  { value: VotingTypes.MULTI, label: VotingTypesName[VotingTypes.MULTI] }
 ]
 
 export default function VotingTypesSelect({

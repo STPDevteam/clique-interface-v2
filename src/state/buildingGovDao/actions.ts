@@ -5,6 +5,11 @@ export enum VotingTypes {
   SINGLE,
   MULTI
 }
+export const VotingTypesName = {
+  [VotingTypes.ANY]: 'Any',
+  [VotingTypes.SINGLE]: 'Single-voting',
+  [VotingTypes.MULTI]: 'Multi-voting'
+}
 
 export enum CategoriesTypeProp {
   Social = 'Social',

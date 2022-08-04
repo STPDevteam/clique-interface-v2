@@ -28,6 +28,7 @@ interface BgColor {
   bg3: string
   bg4: string
   bg5: string
+  bg6: string
 }
 
 interface BorderRadius {
@@ -130,7 +131,8 @@ export const theme = {
     bg2: '#E4E4E4',
     bg3: '#6C5DD3',
     bg4: '#FBFCFC',
-    bg5: '#F0F3F6'
+    bg5: '#F0F3F6',
+    bg6: '#A0D7E7'
   },
   borderRadius: {
     default: '24px'

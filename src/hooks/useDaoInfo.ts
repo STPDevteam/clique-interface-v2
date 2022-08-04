@@ -1,5 +1,7 @@
+import { Token, TokenAmount } from 'constants/token'
 import { useMemo } from 'react'
 import { VotingTypes } from 'state/buildingGovDao/actions'
+import { useToken } from 'state/wallet/hooks'
 import { ChainId } from '../constants/chain'
 import {
   useSingleCallResult
@@ -33,8 +35,9 @@ export interface DaoInfoProp {
   daoLogo: string
   daoTokenAddress: string
   daoTokenChainId: ChainId
-  proposalThreshold: string
-  votingQuorum: string
+  token: Token | undefined
+  proposalThreshold: TokenAmount | undefined
+  votingThreshold: TokenAmount | undefined
   votingPeriod: number
   votingType: VotingTypes
 }
@@ -67,6 +70,7 @@ export function useDaoBaseInfo(daoAddress?: string, chainId?: ChainId): DaoBaseI
 export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp | undefined {
   const daoContract = useGovernanceDaoContract(daoAddress, chainId)
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
+  const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
   const daoGovernanceRes = useSingleCallResult(daoContract, 'daoGovernance', [], undefined, chainId)
 
   return useMemo(() => {
@@ -74,12 +78,13 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
     if (!daoBaseInfo || !governanceRes) return undefined
     return {
       ...daoBaseInfo,
-      proposalThreshold: governanceRes.proposalThreshold,
-      votingQuorum: governanceRes.votingQuorum,
+      token: token || undefined,
+      proposalThreshold: token ? new TokenAmount(token, governanceRes.proposalThreshold) : undefined,
+      votingThreshold: token ? new TokenAmount(token, governanceRes.votingQuorum) : undefined,
       votingPeriod: governanceRes.votingPeriod,
       votingType: governanceRes.votingType
     }
-  }, [daoBaseInfo, daoGovernanceRes.result])
+  }, [daoBaseInfo, daoGovernanceRes.result, token])
 }
 
 export enum DaoAdminLevelProp {
@@ -96,7 +101,7 @@ export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account
   const ownerRes = useSingleCallResult(daoContract, 'owner', [], undefined, chainId).result?.[0]
 
   return useMemo(() => {
-    if (account && ownerRes === account) {
+    if (account && ownerRes && ownerRes.toLowerCase() === account.toLowerCase()) {
       return DaoAdminLevelProp.SUPER_ADMIN
     }
     if (adminsRes) {

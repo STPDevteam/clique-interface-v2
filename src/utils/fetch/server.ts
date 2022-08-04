@@ -62,3 +62,10 @@ export function getDaoInfo(account: string | undefined, daoAddress: string, chai
     chainId
   })
 }
+
+export function getDaoAdmins(daoAddress: string, chainId: number) {
+  return Axios.get('stpdao/v2/dao/admins', {
+    daoAddress,
+    chainId
+  })
+}
