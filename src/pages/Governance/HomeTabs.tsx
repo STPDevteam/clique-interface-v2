@@ -1,7 +1,7 @@
 import { Box, styled } from '@mui/material'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
 
-const itemList = Object.values(CategoriesTypeProp).map(v => v)
+const itemList = Object.values(CategoriesTypeProp)
 
 const StyledWrapper = styled('ul')(({ theme }) => ({
   borderBottom: `1px solid ${theme.bgColor.bg2}`,
