@@ -101,6 +101,7 @@ export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account
   const ownerRes = useSingleCallResult(daoContract, 'owner', [], undefined, chainId).result?.[0]
 
   return useMemo(() => {
+    if (!account || ownerRes === undefined || adminsRes === undefined) return undefined
     if (account && ownerRes && ownerRes.toLowerCase() === account.toLowerCase()) {
       return DaoAdminLevelProp.SUPER_ADMIN
     }

@@ -6,7 +6,7 @@ import Loading from 'components/Loading'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
 import { useDaoInfo } from 'hooks/useDaoInfo'
-import { ShowAdminTag } from 'pages/DaoInfo/ShowAdminTag'
+import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
@@ -120,7 +120,7 @@ export default function About() {
                   {address}
                 </StyledText>
                 <div>
-                  <ShowAdminTag chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
+                  <AdminTagBlock chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
                 </div>
               </>
             ))}

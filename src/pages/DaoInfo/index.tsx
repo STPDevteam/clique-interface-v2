@@ -115,7 +115,10 @@ export default function DaoInfo({ children }: { children: any }) {
   )
 
   const currentTabLinks = useMemo(() => {
-    const list = daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN ? tabs : tabs.filter(i => i.name !== 'Settings')
+    const list =
+      daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN
+        ? tabs
+        : tabs.filter(i => i.name !== 'Settings')
 
     return list.map(({ name, routeSuffix }) => ({
       name,

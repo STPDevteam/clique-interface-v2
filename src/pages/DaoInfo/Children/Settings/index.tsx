@@ -1,6 +1,11 @@
 import { Box, MenuItem, MenuList, styled, useTheme } from '@mui/material'
+import { ChainId } from 'constants/chain'
+import { routes } from 'constants/routes'
+import { useActiveWeb3React } from 'hooks'
+import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
 import ComingSoon from 'pages/ComingSoon'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useHistory, useParams } from 'react-router-dom'
 import Admin from './Admin'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
@@ -26,24 +31,45 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   }
 }))
 
-const tabs = [
-  {
-    name: 'General',
-    component: <ComingSoon />
-  },
-  {
-    name: 'Governance setting',
-    component: <ComingSoon />
-  },
-  {
-    name: 'Admin',
-    component: <Admin />
-  }
-]
-
 export default function Settings() {
   const theme = useTheme()
   const [activeTab, setActiveTab] = useState(0)
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const curDaoChainId = Number(daoChainId) as ChainId
+
+  const { account } = useActiveWeb3React()
+  const history = useHistory()
+  const accountLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
+
+  useEffect(() => {
+    if (!account || (accountLevel !== undefined && accountLevel === DaoAdminLevelProp.NORMAL)) {
+      history.replace(routes._DaoInfo + `/${daoChainId}/${daoAddress}`)
+    }
+    if (accountLevel !== undefined && accountLevel !== DaoAdminLevelProp.SUPER_ADMIN) {
+      setActiveTab(0)
+    }
+  }, [account, accountLevel, daoAddress, daoChainId, history])
+
+  const tabs = useMemo(() => {
+    const _tabs = [
+      {
+        name: 'General',
+        component: <ComingSoon />
+      },
+      {
+        name: 'Governance setting',
+        component: <ComingSoon />
+      }
+    ]
+    if (accountLevel === DaoAdminLevelProp.SUPER_ADMIN) {
+      _tabs.push({
+        name: 'Admin',
+        component: <Admin />
+      })
+    }
+    return _tabs
+  }, [accountLevel])
+
   return (
     <Box display={'grid'} gridTemplateColumns="162px 1fr" gap={25}>
       <div>
@@ -66,7 +92,7 @@ export default function Settings() {
         </MenuList>
       </div>
 
-      {tabs[activeTab].component}
+      {tabs[activeTab]?.component}
     </Box>
   )
 }

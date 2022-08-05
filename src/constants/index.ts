@@ -106,9 +106,11 @@ export const BLOCKED_ADDRESSES: string[] = [
 ]
 
 export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: '0xfeC03ba54EC9d15ec6A8Cb2138b9FD4Ee711ebD0'
+  [ChainId.RINKEBY]: '0xB12AFBB2ACDB8DD65b3dF2A4468cD541fE4DA252',
+  [ChainId.POLYGON_MUMBAI]: '0x4E8156249733937c228B50A2A315F569BDfDc912'
 }
 
-export const serverBaseUrl = 'http://192.168.2.102:8091/'
+// export const serverBaseUrl = 'http://192.168.2.102:8091/'
+export const serverBaseUrl = 'https://devapiv2.myclique.io/'
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'

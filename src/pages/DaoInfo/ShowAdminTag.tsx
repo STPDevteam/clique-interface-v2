@@ -3,7 +3,7 @@ import { ChainId } from 'constants/chain'
 import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
 import { StyledChip } from './CategoryChips'
 
-export function ShowAdminTag({
+export function AdminTagBlock({
   daoAddress,
   chainId,
   account
@@ -13,11 +13,10 @@ export function ShowAdminTag({
   account: string
 }) {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, chainId, account)
-  console.log('🚀 ~ file: ShowAdminTag.tsx ~ line 16 ~ daoAdminLevel', daoAdminLevel)
-  return <AdminTag level={daoAdminLevel} />
+  return <ShowAdminTag level={daoAdminLevel} />
 }
 
-export default function AdminTag({ level }: { level: DaoAdminLevelProp }) {
+export default function ShowAdminTag({ level }: { level?: DaoAdminLevelProp }) {
   const theme = useTheme()
   return level === DaoAdminLevelProp.SUPER_ADMIN ? (
     <StyledChip label="Super admin" />
