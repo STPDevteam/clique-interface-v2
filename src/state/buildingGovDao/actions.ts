@@ -12,6 +12,7 @@ export const VotingTypesName = {
 }
 
 export enum CategoriesTypeProp {
+  ALL = '',
   Social = 'Social',
   Protocol = 'Protocol',
   NFT = 'NFT',
