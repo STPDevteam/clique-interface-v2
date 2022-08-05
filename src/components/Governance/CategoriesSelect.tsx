@@ -1,6 +1,7 @@
 import Select from 'components/Select/Select'
-import { MenuItem } from '@mui/material'
+import { MenuItem, Theme } from '@mui/material'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
+import { SxProps } from '@mui/system'
 import { useMemo } from 'react'
 
 const itemList = Object.values(CategoriesTypeProp).map(item => ({
@@ -8,11 +9,20 @@ const itemList = Object.values(CategoriesTypeProp).map(item => ({
   label: item
 }))
 
-export default function CategoriesSelect({ value, onChange }: { value?: string; onChange?: (val: string) => void }) {
+export default function CategoriesSelect({
+  value,
+  onChange,
+  style
+}: {
+  value?: string
+  onChange?: (val: string) => void
+  style?: React.CSSProperties | SxProps<Theme>
+}) {
   const currentValues = useMemo(() => value?.split(',') || [], [value])
   return (
     <Select
       multiple
+      style={style}
       placeholder="Categories"
       label="*Categories (Multi-select)"
       value={currentValues}

@@ -17,7 +17,7 @@ export default function NetworkSelect() {
       <Select
         defaultValue={chainId}
         value={chainId}
-        width={isDownSm ? 'max-content' : '180px'}
+        width={isDownSm ? 'max-content' : 'max-content'}
         height={isDownSm ? '36px' : '50px'}
         style={{
           '& .Mui-disabled.MuiSelect-select.MuiInputBase-input': {

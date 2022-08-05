@@ -3,6 +3,8 @@ import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
 import EthUrl from 'assets/svg/eth_logo.svg'
 import BSCUrl from 'assets/svg/binance.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
+import MaticSvg from 'assets/svg/matic.svg'
+import { ReactComponent as MaticLogo } from 'assets/svg/matic.svg'
 
 export enum ChainId {
   MAINNET = 1,
@@ -11,7 +13,8 @@ export enum ChainId {
   GÖRLI = 5,
   KOVAN = 42,
   BSC = 56,
-  BSCTEST = 97
+  BSCTEST = 97,
+  POLYGON_MUMBAI = 80001
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -64,6 +67,14 @@ export const AllChainList = [
     name: 'Binance Testnet',
     id: ChainId.BSCTEST,
     hex: '0x61'
+  },
+  {
+    icon: <MaticLogo />,
+    logo: MaticSvg,
+    symbol: 'Polygon mumbai',
+    name: 'Polygon mumbai',
+    id: ChainId.POLYGON_MUMBAI,
+    hex: '0x13881'
   }
 ]
 
@@ -154,5 +165,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
     blockExplorerUrls: ['https://testnet.bscscan.com/']
+  },
+  [ChainId.POLYGON_MUMBAI]: {
+    chainId: '0x13881',
+    chainName: 'Polygon Testnet',
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ['https://rpc.ankr.com/polygon_mumbai'],
+    blockExplorerUrls: ['https://mumbai.polygonscan.com/']
   }
 }

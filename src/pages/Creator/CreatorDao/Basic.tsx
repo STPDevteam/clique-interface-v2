@@ -1,4 +1,4 @@
-import { styled, Box, Alert } from '@mui/material'
+import { styled, Box, Alert, Stack } from '@mui/material'
 import { ContainerWrapper, CreatorBox } from '../StyledCreate'
 import UploadImage from 'components/UploadImage'
 import Input from 'components/Input'
@@ -6,6 +6,7 @@ import { BlackButton } from 'components/Button/Button'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeEmoji } from 'utils'
 import { useMemo } from 'react'
+import CategoriesSelect from 'components/Governance/CategoriesSelect'
 
 const Wrapper = styled(CreatorBox)({
   display: 'grid',
@@ -41,20 +42,33 @@ export default function Basic({ next }: { next: () => void }) {
         error: 'Description required'
       }
     }
+    if (!buildingDaoData.category.trim()) {
+      return {
+        disabled: true,
+        error: 'Categories required'
+      }
+    }
     return {
       disabled: false,
       handler: next
     }
-  }, [buildingDaoData.daoHandle, buildingDaoData.daoImage, buildingDaoData.daoName, buildingDaoData.description, next])
+  }, [
+    buildingDaoData.category,
+    buildingDaoData.daoHandle,
+    buildingDaoData.daoImage,
+    buildingDaoData.daoName,
+    buildingDaoData.description,
+    next
+  ])
 
   return (
     <ContainerWrapper>
       <Wrapper>
-        <Box>
+        <Stack spacing={20}>
           <UploadImage
             onChange={val => updateBuildingDaoKeyData('daoImage', val)}
             value={buildingDaoData.daoImage}
-            sx={{ margin: '0 auto 30px', flexBasis: '124px' }}
+            sx={{ margin: '0 auto', flexBasis: '124px' }}
             size={124}
           />
           <Input
@@ -62,11 +76,16 @@ export default function Basic({ next }: { next: () => void }) {
             onChange={e => updateBuildingDaoKeyData('description', e.target.value || '')}
             type="textarea"
             label="*Description"
-            rows="16"
+            rows="10"
             multiline
             placeholder="Describe your DAO to new and existing members"
           />
-        </Box>
+          <CategoriesSelect
+            style={{ maxWidth: '296px' }}
+            value={buildingDaoData.category}
+            onChange={val => updateBuildingDaoKeyData('category', val)}
+          />
+        </Stack>
         <Box display={'grid'}>
           <Input
             label="*DAO Name"
@@ -85,7 +104,7 @@ export default function Basic({ next }: { next: () => void }) {
           />
           <Input
             label="Twitter handle"
-            placeholder="@"
+            placeholder="https://twitter.com/"
             type="url"
             errSet={() => updateBuildingDaoKeyData('twitterLink', '')}
             value={buildingDaoData.twitterLink}
@@ -93,7 +112,7 @@ export default function Basic({ next }: { next: () => void }) {
           />
           <Input
             label="Github"
-            placeholder="e.c. bitcoin"
+            placeholder="https://github.com/"
             type="url"
             errSet={() => updateBuildingDaoKeyData('githubLink', '')}
             value={buildingDaoData.githubLink}

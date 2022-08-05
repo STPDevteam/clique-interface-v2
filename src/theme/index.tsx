@@ -138,7 +138,7 @@ export const theme = {
     default: '24px'
   },
   boxShadow: {
-    bs1: '',
+    bs1: 'inset 0px -1px 0px #E4E4E4',
     bs2: 'rgb(174 174 174 / 20%) 0px 0px 5px'
   },
   gradient: {

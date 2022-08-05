@@ -1,5 +1,6 @@
 import { Stack, styled, Typography } from '@mui/material'
 import { Box } from '@mui/system'
+import EmptyData from 'components/EmptyData'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import Loading from 'components/Loading'
 import { ChainId, ChainListMap } from 'constants/chain'
@@ -11,10 +12,11 @@ import { useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 
-const StyledItem = styled(Stack)(({ theme }) => ({
+export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
   padding: '30px 38px',
   borderRadius: theme.borderRadius.default,
+  boxShadow: theme.boxShadow.bs1,
   marginBottom: 30
 }))
 
@@ -124,6 +126,7 @@ export default function About() {
             ))}
           </Box>
         )}
+        {!daoAdminLoading && !daoAdminList?.length && <EmptyData />}
       </StyledItem>
     </div>
   )

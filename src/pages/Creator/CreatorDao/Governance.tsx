@@ -22,7 +22,6 @@ import TransacitonPendingModal from 'components/Modal/TransactionModals/Transact
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
-import CategoriesSelect from 'components/Governance/CategoriesSelect'
 
 const TopWrapper = styled(Box)({
   display: 'grid',
@@ -193,10 +192,6 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           <DateTimeSet
             value={buildingDaoData.defaultVotingPeriod}
             onUpdate={num => updateBuildingDaoKeyData('defaultVotingPeriod', num)}
-          />
-          <CategoriesSelect
-            value={buildingDaoData.category}
-            onChange={val => updateBuildingDaoKeyData('category', val)}
           />
           <VotingTypesSelect
             width={296}
