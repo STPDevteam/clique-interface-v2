@@ -106,6 +106,7 @@ export default function Input({
   error,
   smallPlaceholder,
   subStr,
+  maxLength,
   errSet,
   ...rest
 }: InputProps &
@@ -134,6 +135,9 @@ export default function Input({
   const handleChange = useCallback(
     event => {
       // replace commas with periods
+      if (event.target.value && maxLength && event.target.value.length > maxLength) {
+        return
+      }
       const formatted = enforcer(event.target.value)
       if (formatted === null) {
         return
@@ -141,7 +145,7 @@ export default function Input({
       event.target.value = formatted
       onChange && onChange(event)
     },
-    [enforcer, onChange]
+    [enforcer, onChange, maxLength]
   )
 
   return (
@@ -221,7 +225,11 @@ export default function Input({
               </Box>
             )
           }
-          endAdornment={endAdornment && <span style={{ paddingRight: 20 }}>{endAdornment}</span>}
+          endAdornment={
+            endAdornment && (
+              <span style={{ paddingRight: 20, alignSelf: multiline ? 'flex-end' : 'center' }}>{endAdornment}</span>
+            )
+          }
           {...rest}
         />
       </Box>

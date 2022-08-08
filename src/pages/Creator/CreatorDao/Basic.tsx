@@ -1,4 +1,4 @@
-import { styled, Box, Alert, Stack } from '@mui/material'
+import { styled, Box, Alert, Stack, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper, CreatorBox } from '../StyledCreate'
 import UploadImage from 'components/UploadImage'
 import Input from 'components/Input'
@@ -15,6 +15,7 @@ const Wrapper = styled(CreatorBox)({
 })
 
 export default function Basic({ next }: { next: () => void }) {
+  const theme = useTheme()
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
 
   const nextHandler = useMemo(() => {
@@ -77,6 +78,12 @@ export default function Basic({ next }: { next: () => void }) {
             type="textarea"
             label="*Description"
             rows="10"
+            maxLength={200}
+            endAdornment={
+              <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
+                {buildingDaoData.description.length}/200
+              </Typography>
+            }
             multiline
             placeholder="Describe your DAO to new and existing members"
           />
@@ -90,6 +97,11 @@ export default function Basic({ next }: { next: () => void }) {
           <Input
             label="*DAO Name"
             maxLength={30}
+            endAdornment={
+              <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
+                {buildingDaoData.daoName.length}/30
+              </Typography>
+            }
             placeholder="No duplicates in Clique"
             value={buildingDaoData.daoName}
             onChange={e => updateBuildingDaoKeyData('daoName', removeEmoji(e.target.value || ''))}
@@ -99,6 +111,11 @@ export default function Basic({ next }: { next: () => void }) {
             maxLength={30}
             userPattern={'^[0-9a-z_]*$'}
             placeholder="Lowercase characters, numbers, underscores"
+            endAdornment={
+              <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
+                {buildingDaoData.daoHandle.length}/30
+              </Typography>
+            }
             value={buildingDaoData.daoHandle}
             onChange={e => updateBuildingDaoKeyData('daoHandle', e.target.value || '')}
           />
