@@ -6,7 +6,7 @@ import { updateCreateDaoData, removeCreateDaoData, CreateDaoDataProp } from './a
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
 
 export function useBuildingDaoDataCallback() {
-  const buildingDaoData = useSelector((state: AppState) => state.buildingGovDao.createDaoData)
+  const buildingDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
 
   const dispatch = useDispatch<AppDispatch>()
   const updateBuildingDaoData = useCallback(
