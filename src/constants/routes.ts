@@ -8,5 +8,6 @@ export const routes = {
   Activity: '/activity',
   Tokens: '/tokens',
   Creator: '/creator',
-  CreatorDao: '/creator/dao'
+  CreatorDao: '/creator/dao',
+  CreatorToken: '/creator/token'
 }

@@ -4,6 +4,7 @@ import Input, { InputProps } from './index'
 import { escapeRegExp } from 'utils'
 import SecondaryButton from 'components/Button/SecondaryButton'
 import InputLabel from './InputLabel'
+import BigNumber from 'bignumber.js'
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
@@ -19,6 +20,7 @@ export default function NumericalInput({
   subStr,
   showFormatWrapper,
   noDecimals,
+  max,
   ...props
 }: InputProps &
   InputHTMLAttributes<HTMLInputElement> & {
@@ -28,12 +30,14 @@ export default function NumericalInput({
     endAdornment?: JSX.Element
     onDeposit?: () => void
     subStr?: string
+    max?: string | number
     noDecimals?: boolean
     showFormatWrapper?: (() => string) | undefined
   }) {
   const enforcer = useCallback(
     (nextUserInput: string) => {
       const fixed = noDecimals ? nextUserInput.replace(/\./g, '') : nextUserInput.replace(/,/g, '.')
+      console.log('🚀 ~ file: InputNumerical.tsx ~ line 40 ~ fixed', fixed)
       if (fixed === '' || inputRegex.test(escapeRegExp(fixed))) {
         return fixed
       }
@@ -44,14 +48,17 @@ export default function NumericalInput({
   const handleChange = useCallback(
     event => {
       // replace commas with periods
-      const formatted = enforcer(event.target.value)
+      let formatted = enforcer(event.target.value)
       if (formatted === null) {
         return
+      }
+      if (max) {
+        formatted = new BigNumber(formatted).gt(max) ? max.toString() : formatted
       }
       event.target.value = formatted
       onChange && onChange(event)
     },
-    [enforcer, onChange]
+    [enforcer, onChange, max]
   )
 
   return (
@@ -79,13 +86,14 @@ export default function NumericalInput({
         showFormatWrapper={showFormatWrapper}
         // text-specific options
         type="text"
+        inputPaddingRight="0"
         pattern={noDecimals ? '^[0-9]*$' : '^[0-9]*[.,]?[0-9]*$'}
         placeholder={placeholder || '0.0'}
         minLength={1}
         maxLength={79}
         spellCheck="false"
         endAdornment={
-          onMax && (
+          onMax ? (
             <Box gap="20px" display="flex" alignItems="center" paddingLeft="10px" paddingBottom="2px">
               {endAdornment ? endAdornment : unit && <span>{unit ?? 'USDT'}</span>}
               <SecondaryButton
@@ -100,6 +108,8 @@ export default function NumericalInput({
                 MAX
               </SecondaryButton>
             </Box>
+          ) : (
+            endAdornment
           )
         }
         subStr={subStr}
