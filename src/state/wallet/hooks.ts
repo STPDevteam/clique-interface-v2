@@ -199,6 +199,50 @@ export function useToken(tokenAddress: string, chainId?: ChainId): Token | undef
   ])
 }
 
+export function useTokens(tokenAddress: (string | undefined)[], chainId?: ChainId): undefined | (Token | undefined)[] {
+  const { chainId: linkChainId } = useActiveWeb3React()
+  const curChainId = chainId || linkChainId
+
+  const tokenNames = useMultipleContractSingleData(
+    tokenAddress,
+    ERC20_INTERFACE,
+    'name',
+    undefined,
+    NEVER_RELOAD,
+    curChainId
+  )
+  const symbols = useMultipleContractSingleData(
+    tokenAddress,
+    ERC20_INTERFACE,
+    'symbol',
+    undefined,
+    NEVER_RELOAD,
+    curChainId
+  )
+  const decimalss = useMultipleContractSingleData(
+    tokenAddress,
+    ERC20_INTERFACE,
+    'decimals',
+    undefined,
+    NEVER_RELOAD,
+    curChainId
+  )
+
+  return useMemo(() => {
+    if (!tokenAddress.length || !curChainId) return undefined
+    if (!tokenNames.length || !symbols.length || !decimalss.length) return undefined
+    if (tokenNames[0].loading || symbols[0].loading || decimalss[0].loading) return undefined
+    return tokenAddress.map((address, index) => {
+      const symbol = symbols[index].result
+      const tokenName = tokenNames[index].result
+      const decimal = decimalss[index].result
+      if (!symbol || !tokenName || !decimal || !address) return undefined
+
+      return new Token(curChainId, address, decimal[0], symbol[0], tokenName[0])
+    })
+  }, [curChainId, decimalss, symbols, tokenAddress, tokenNames])
+}
+
 export function useTokenByChain(
   tokenAddress: string | undefined,
   curChainId: ChainId | undefined

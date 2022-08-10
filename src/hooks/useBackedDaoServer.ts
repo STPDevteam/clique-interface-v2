@@ -2,7 +2,14 @@ import { ChainId } from 'constants/chain'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHomeListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from '.'
-import { getDaoAdmins, getDaoInfo, getHomeDaoList, getMyJoinedDao, switchJoinDao } from '../utils/fetch/server'
+import {
+  getDaoAdmins,
+  getDaoInfo,
+  getHomeDaoList,
+  getMyJoinedDao,
+  getTokenList,
+  switchJoinDao
+} from '../utils/fetch/server'
 
 export function useMyJoinedDao() {
   const { account } = useActiveWeb3React()
@@ -292,4 +299,65 @@ export function useBackedDaoAdmins(daoAddress: string, chainId: ChainId, appendA
       result: list
     }
   }, [appendAccounts, loading, result])
+}
+
+export function useTokenList(account: string, chainId: number | string) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 10
+  const [result, setResult] = useState<
+    {
+      chainId: ChainId
+      tokenAddress: string
+    }[]
+  >([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, chainId])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getTokenList(chainId || '', account || '', (currentPage - 1) * pageSize, pageSize)
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          return
+        }
+        setTotal(data.total)
+        const list: {
+          chainId: ChainId
+          tokenAddress: string
+        }[] = data.list.map((item: any) => ({
+          chainId: item.chainId,
+          tokenAddress: item.tokenAddress
+        }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setLoading(false)
+        console.error('useTokenList', error)
+      }
+    })()
+  }, [account, chainId, currentPage])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }
