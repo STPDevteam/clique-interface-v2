@@ -25,7 +25,7 @@ export default function MyWallet() {
         <OutlineButton
           onClick={() => {
             toggleModal()
-            history.push(routes.Profile)
+            history.push(routes._Profile)
           }}
           fontSize={12}
           style={{ borderWidth: 1 }}

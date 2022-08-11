@@ -1,15 +1,16 @@
 import toFormat from 'toformat'
 import _Big from 'big.js'
 import BigNumber from 'bignumber.js'
+import moment from 'moment'
 
-// export function timeStampToFormat(timeStamp: number | Date | undefined, format = 'Y-MM-DD HH:mm:ss') {
-//   if (!timeStamp) return '--'
-//   if (timeStamp instanceof Date) {
-//     return moment(timeStamp).format(format)
-//   }
-//   timeStamp = timeStamp.toString().length <= 10 ? timeStamp * 1000 : timeStamp
-//   return moment(timeStamp).format(format)
-// }
+export function timeStampToFormat(timeStamp: number | Date | undefined, format = 'Y-MM-DD HH:mm:ss') {
+  if (!timeStamp) return '--'
+  if (timeStamp instanceof Date) {
+    return moment(timeStamp).format(format)
+  }
+  timeStamp = timeStamp.toString().length <= 10 ? timeStamp * 1000 : timeStamp
+  return moment(timeStamp).format(format)
+}
 
 export function toFormatGroup(n: number | string, fixed = 0): string {
   try {

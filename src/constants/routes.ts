@@ -10,5 +10,6 @@ export const routes = {
   Creator: '/creator',
   CreatorDao: '/creator/dao',
   CreatorToken: '/creator/token',
-  Profile: '/profile'
+  Profile: '/profile/:address',
+  _Profile: '/profile'
 }

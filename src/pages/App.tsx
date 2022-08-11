@@ -108,6 +108,7 @@ export default function App() {
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
                   <Route exact strict path={routes.Profile} component={Profile} />
+                  <Route exact strict path={routes._Profile} component={Profile} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>
