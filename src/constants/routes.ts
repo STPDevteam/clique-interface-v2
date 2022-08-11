@@ -9,5 +9,6 @@ export const routes = {
   Tokens: '/tokens',
   Creator: '/creator',
   CreatorDao: '/creator/dao',
-  CreatorToken: '/creator/token'
+  CreatorToken: '/creator/token',
+  Profile: '/profile'
 }

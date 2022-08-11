@@ -22,6 +22,7 @@ import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
 import TokenList from 'pages/TokenList'
+import Profile from 'pages/Profile'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -106,6 +107,7 @@ export default function App() {
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
+                  <Route exact strict path={routes.Profile} component={Profile} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>
