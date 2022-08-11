@@ -7,6 +7,7 @@ import { useDaoFactoryContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
 import { commitErrorMsg } from 'utils/fetch/server'
+import { amountAddDecimals } from 'utils/dao'
 
 export function useCreateTokenCallback() {
   const addTransaction = useTransactionAdder()
@@ -27,8 +28,12 @@ export function useCreateTokenCallback() {
       basic.tokenSymbol.trim(),
       basic.tokenPhoto.trim(),
       basic.tokenDecimals,
-      basic.tokenSupply,
-      distribution.map(({ address, tokenNumber, lockDate }) => [address, tokenNumber, lockDate])
+      amountAddDecimals(basic.tokenSupply, basic.tokenDecimals),
+      distribution.map(({ address, tokenNumber, lockDate }) => [
+        address,
+        amountAddDecimals(tokenNumber, basic.tokenDecimals),
+        lockDate
+      ])
     ]
 
     const method = 'createERC20'
