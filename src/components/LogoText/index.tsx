@@ -8,6 +8,7 @@ export default function LogoText({
   text,
   fontWeight,
   fontSize,
+  center,
   gapSize,
   size
 }: {
@@ -17,22 +18,24 @@ export default function LogoText({
   fontSize?: number
   gapSize?: 'small' | 'large'
   size?: string
+  center?: boolean
 }) {
   return (
     <Wrapper
       sx={{
         display: 'flex',
         alignItems: 'center',
+        justifyContent: center ? 'center' : 'flex-start',
         fontWeight: fontWeight ?? 400,
         fontSize: fontSize ?? 16,
         '& > img, > svg': {
-          marginRight: gapSize === 'small' ? '4px' : '12px',
+          marginRight: gapSize === 'small' ? '7px' : '12px',
           height: size ? size : '20px',
           width: size ? size : '20px'
         }
       }}
     >
-      {typeof logo === 'string' ? <Image src={logo as string} alt={`${text} logo`} /> : logo}
+      {typeof logo === 'string' ? <Image src={logo as string} /> : logo}
       <span>{text}</span>
     </Wrapper>
   )

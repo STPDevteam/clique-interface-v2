@@ -2,7 +2,7 @@ import { MenuItem } from '@mui/material'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
 import InputLabel from 'components/Input/InputLabel'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Chain } from 'models/chain'
 
 export default function ChainSelect({
@@ -13,6 +13,7 @@ export default function ChainSelect({
   selectedChain,
   width,
   active,
+  empty,
   placeholder
 }: {
   label?: string
@@ -22,15 +23,28 @@ export default function ChainSelect({
   onChange?: (chain: Chain | null) => void
   width?: string
   active?: boolean
+  empty?: boolean
   placeholder?: string
 }) {
   const handleChange = useCallback(
     e => {
-      const chain = chainList.find(chain => chain.symbol === e.target.value) ?? null
+      const chain = chainList.find(chain => chain.symbol === e.target.value && chain.id) ?? null
       onChange && onChange(chain)
     },
     [chainList, onChange]
   )
+  const currentList = useMemo(() => {
+    if (!empty) return chainList
+    return [
+      {
+        logo: '',
+        symbol: 'All chains',
+        id: null,
+        name: 'All chains'
+      },
+      ...chainList
+    ]
+  }, [chainList, empty])
 
   return (
     <div style={{ width }}>
@@ -45,7 +59,7 @@ export default function ChainSelect({
         // width={'100%'}
         primary={active}
       >
-        {chainList.map(option => (
+        {currentList.map(option => (
           <MenuItem
             sx={{
               justifyContent: 'space-between'

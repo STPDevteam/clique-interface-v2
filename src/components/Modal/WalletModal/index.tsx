@@ -11,7 +11,8 @@ import { SUPPORTED_WALLETS } from 'constants/index'
 import usePrevious from 'hooks/usePrevious'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useWalletModalToggle } from 'state/application/hooks'
-import AccountDetails from 'components/Modal/WalletModal/AccountDetails'
+// import AccountDetails from 'components/Modal/WalletModal/AccountDetails'
+import MyWallet from 'components/Modal/WalletModal/AccountDetails/MyWallet'
 
 import Modal from '../index'
 import Option from './Option'
@@ -28,14 +29,13 @@ const WALLET_VIEWS = {
   PENDING: 'pending'
 }
 
-export default function WalletModal({
-  pendingTransactions,
-  confirmedTransactions,
-  ENSName
-}: {
-  pendingTransactions: string[] // hashes of pending
-  confirmedTransactions: string[] // hashes of confirmed
-  ENSName?: string
+export default function WalletModal({}: // pendingTransactions,
+// confirmedTransactions,
+// ENSName
+{
+  // pendingTransactions: string[] // hashes of pending
+  // confirmedTransactions: string[] // hashes of confirmed
+  // ENSName?: string
 }) {
   const isUpToMD = useBreakpoint('md')
   // important that these are destructed from the account-specific web3-react context
@@ -227,15 +227,16 @@ export default function WalletModal({
       )
     }
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
-      return (
-        <AccountDetails
-          toggleWalletModal={toggleWalletModal}
-          pendingTransactions={pendingTransactions}
-          confirmedTransactions={confirmedTransactions}
-          ENSName={ENSName}
-          openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
-        />
-      )
+      return <MyWallet />
+      // return (
+      // <AccountDetails
+      //   toggleWalletModal={toggleWalletModal}
+      //   pendingTransactions={pendingTransactions}
+      //   confirmedTransactions={confirmedTransactions}
+      //   ENSName={ENSName}
+      //   openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
+      // />
+      // )
     }
     return (
       <>
@@ -269,7 +270,7 @@ export default function WalletModal({
   }
 
   return (
-    <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="560px" closeIcon={true}>
+    <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="500px" closeIcon={true}>
       <Box width={'100%'} padding="32px" display="flex" flexDirection="column" alignItems="center" gap={20}>
         {getModalContent()}
       </Box>
