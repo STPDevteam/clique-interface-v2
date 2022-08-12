@@ -3,6 +3,7 @@ import { Box, styled } from '@mui/material'
 export const ContainerWrapper = styled('main')(
   ({ maxWidth, margin }: { maxWidth?: string | number; margin?: string }) => ({
     maxWidth: maxWidth || 964,
+    width: '100%',
     margin: margin || 'auto'
   })
 )

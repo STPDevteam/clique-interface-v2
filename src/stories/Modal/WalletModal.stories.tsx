@@ -16,7 +16,8 @@ export const Default = () => {
       <Button onClick={toggleWalletModal} variant="contained">
         Click to Open Wallet Modal ( components/Modal/WalletModal/index)
       </Button>
-      <WalletModal pendingTransactions={[]} confirmedTransactions={[]} />
+      {/* <WalletModal pendingTransactions={[]} confirmedTransactions={[]} /> */}
+      <WalletModal />
     </>
   )
 }
