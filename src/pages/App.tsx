@@ -21,7 +21,7 @@ import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
-import TokenList from 'pages/TokenList'
+// import TokenList from 'pages/TokenList'
 import Profile from 'pages/Profile'
 
 const AppWrapper = styled('div')(({ theme }) => ({
@@ -103,7 +103,7 @@ export default function App() {
                     )}
                   />
                   <Route exact strict path={routes.Activity} component={ComingSoon} />
-                  <Route exact strict path={routes.Tokens} component={TokenList} />
+                  <Route exact strict path={routes.Tokens} component={ComingSoon} />
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />

@@ -61,7 +61,7 @@ export default function Index() {
                 toggleWalletModal()
                 return
               }
-              history.push(routes.CreatorToken)
+              // history.push(routes.CreatorToken)
             }}
           >
             <Image src={createTokenIcon} width={182}></Image>
