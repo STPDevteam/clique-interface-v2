@@ -1,15 +1,21 @@
 export const routes = {
   Governance: '/governance',
+
   _DaoInfo: '/governance/daoInfo',
   DaoInfo: '/governance/daoInfo/:chainId/:address',
+  Proposal: '/governance/daoInfo/:chainId/:address/proposal',
+  CreateProposal: '/governance/daoInfo/:chainId/:address/proposal/create',
   DaoInfoActivity: '/governance/daoInfo/:chainId/:address/active_info',
   DaoInfoAbout: '/governance/daoInfo/:chainId/:address/about',
   DaoInfoSettings: '/governance/daoInfo/:chainId/:address/settings',
+
   Activity: '/activity',
   Tokens: '/tokens',
+
   Creator: '/creator',
   CreatorDao: '/creator/dao',
   CreatorToken: '/creator/token',
+
   Profile: '/profile/:address',
   _Profile: '/profile'
 }

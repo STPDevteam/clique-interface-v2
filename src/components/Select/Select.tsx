@@ -77,7 +77,7 @@ export default function Select(props: Props) {
           width: width || '100%',
           height: height || '56px',
           padding: '0 20px',
-          fontWeight: 500,
+          fontWeight: 600,
           '& span': {
             fontWeight: '600!important'
           },

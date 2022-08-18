@@ -40,6 +40,7 @@ export interface DaoInfoProp {
   votingThreshold: TokenAmount | undefined
   votingPeriod: number
   votingType: VotingTypes
+  isCustomVotes: boolean
 }
 
 export function useDaoBaseInfo(daoAddress?: string, chainId?: ChainId): DaoBaseInfoProp | undefined {
@@ -82,7 +83,8 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
       proposalThreshold: token ? new TokenAmount(token, governanceRes.proposalThreshold) : undefined,
       votingThreshold: token ? new TokenAmount(token, governanceRes.votingQuorum) : undefined,
       votingPeriod: governanceRes.votingPeriod,
-      votingType: governanceRes.votingType
+      votingType: governanceRes.votingType,
+      isCustomVotes: governanceRes.votingPeriod === 0
     }
   }, [daoBaseInfo, daoGovernanceRes.result, token])
 }
