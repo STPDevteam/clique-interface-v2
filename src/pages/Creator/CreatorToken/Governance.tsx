@@ -32,7 +32,7 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   lineHeight: '16px'
 }))
 
-const StyledDelButton = styled('button')(({ theme }) => ({
+export const StyledDelButton = styled('button')(({ theme }) => ({
   border: `2px solid ${theme.palette.text.primary}`,
   borderRadius: '8px',
   width: 54,
@@ -103,7 +103,11 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
       })
   }, [createTokenCallback, hideModal, next, showModal])
 
-  const nextHandler = useMemo(() => {
+  const nextHandler: {
+    disabled: boolean
+    handler?: () => void
+    error?: undefined | string | JSX.Element
+  } = useMemo(() => {
     if (
       !createTokenBaseData.tokenSymbol.trim() ||
       !createTokenBaseData.tokenName.trim() ||

@@ -1,14 +1,15 @@
 import { Box, Typography } from '@mui/material'
+import { SxProps } from '@mui/system'
 import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import { useHistory } from 'react-router-dom'
 
-export default function Back({ text, event }: { text?: string; event?: () => void }) {
+export default function Back({ text, event, sx }: { text?: string; event?: () => void; sx?: SxProps }) {
   const history = useHistory()
   return (
-    <Box mt={40} ml={40}>
+    <Box sx={{ marginLeft: 40, marginTop: 40, ...sx }}>
       <Typography
         sx={{ cursor: 'pointer' }}
-        fontWeight={500}
+        fontWeight={600}
         display={'inline-flex'}
         onClick={event ?? (() => history.goBack())}
         alignItems="center"

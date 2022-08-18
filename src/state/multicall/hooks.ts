@@ -53,7 +53,7 @@ export const NEVER_RELOAD: ListenerOptions = {
 // the lowest level call for subscribing to contract data
 function useCallsData(calls: (Call | undefined)[], options?: ListenerOptions, queryChainId?: ChainId): CallResult[] {
   const { chainId: linkChainId } = useActiveWeb3React()
-  const chainId = useMemo(() => queryChainId || linkChainId, [linkChainId, queryChainId])
+  const chainId = useMemo(() => Number(queryChainId) || linkChainId, [linkChainId, queryChainId])
   const callResults = useSelector<AppState, AppState['multicall']['callResults']>(state => state.multicall.callResults)
   const dispatch = useDispatch<AppDispatch>()
 

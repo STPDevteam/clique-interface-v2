@@ -303,12 +303,12 @@ export const override: any = {
         fontWeight: 600
       },
       h5: {
-        fontSize: 24,
-        lineHeight: '32px',
+        fontSize: 20,
+        lineHeight: '30px',
         fontWeight: 600
       },
       h6: {
-        fontSize: 18,
+        fontSize: 16,
         lineHeight: '24px',
         fontWeight: 600
       },

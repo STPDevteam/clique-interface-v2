@@ -31,6 +31,8 @@ export default function DateTimePicker({
                   display: 'none'
                 },
                 '& input': {
+                  height: 56,
+                  boxSizing: 'border-box',
                   backgroundColor: theme => theme.bgColor.bg4,
                   borderRadius: '14px',
                   fontSize: 12,

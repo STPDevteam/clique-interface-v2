@@ -8,7 +8,7 @@ import { DaoAdminLevelProp, useDaoAdminLevel, useDaoBaseInfo } from 'hooks/useDa
 import { useToken } from 'state/wallet/hooks'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
-import { useHistory, useParams } from 'react-router-dom'
+import { NavLink, useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
@@ -32,16 +32,17 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledTabs = styled('ul')(({ theme }) => ({
+const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
   fontWeight: 600,
   fontSize: 14,
   listStyle: 'none',
   padding: 0,
   marginTop: 20,
-  li: {
+  '&>*': {
     padding: '15px 0',
     marginRight: 60,
+    textDecoration: 'none',
     color: theme.palette.text.secondary,
     cursor: 'pointer',
     '&:hover': {
@@ -68,7 +69,7 @@ const StyledJoin = styled(Box)(({ theme }) => ({
 const tabs = [
   {
     name: 'Proposal',
-    routeSuffix: ''
+    routeSuffix: 'proposal'
   },
   {
     name: 'Activity',
@@ -87,6 +88,7 @@ const tabs = [
 export default function DaoInfo({ children }: { children: any }) {
   const theme = useTheme()
   const history = useHistory()
+  const params = useParams<{ chainId: string; address: string }>()
   const { account } = useActiveWeb3React()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
@@ -125,6 +127,13 @@ export default function DaoInfo({ children }: { children: any }) {
       link: routes._DaoInfo + `/${daoChainId}/${daoAddress}${routeSuffix ? '/' + routeSuffix : ''}`
     }))
   }, [daoAddress, daoAdminLevel, daoChainId])
+
+  const isDefaultTabIndex = useMemo(() => {
+    if (history.location.pathname === routes._DaoInfo + `/${params.chainId}/${params.address}`) {
+      return true
+    }
+    return false
+  }, [history.location.pathname, params.address, params.chainId])
 
   return (
     <Box padding="0 20px">
@@ -202,14 +211,15 @@ export default function DaoInfo({ children }: { children: any }) {
           </div>
 
           <StyledTabs>
-            {currentTabLinks.map(item => (
-              <li
+            {currentTabLinks.map((item, index) => (
+              <NavLink
                 key={item.name}
-                onClick={() => history.replace(item.link)}
-                className={`border-tab-item ${history.location.pathname === item.link ? 'active' : ''}`}
+                to={item.link}
+                // onClick={() => history.replace(item.link)}
+                className={`border-tab-item ${isDefaultTabIndex && index === 0 ? 'active' : ''}`}
               >
                 {item.name}
-              </li>
+              </NavLink>
             ))}
           </StyledTabs>
         </StyledHeader>
