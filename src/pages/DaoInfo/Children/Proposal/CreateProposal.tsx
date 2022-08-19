@@ -16,6 +16,14 @@ import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import { useCreateProposalCallback } from 'hooks/useCreateProposalCallback'
+import { useCreateProposalSign } from 'hooks/useProposalInfo'
+import { TokenAmount } from 'constants/token'
+import JSBI from 'jsbi'
+import useModal from 'hooks/useModal'
+import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -49,6 +57,7 @@ export default function CreateProposal() {
 
 function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
   const history = useHistory()
+  const { showModal, hideModal } = useModal()
   const { chainId, account, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const [title, setTitle] = useState('')
@@ -60,6 +69,68 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     daoInfo.votingType === VotingTypes.ANY ? VotingTypes.SINGLE : VotingTypes.MULTI
   )
   const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
+  const createProposalCallback = useCreateProposalCallback(daoInfo.daoAddress)
+  const createProposalSign = useCreateProposalSign(daoInfo.daoAddress)
+
+  const myBalance = useMemo(() => {
+    if (!daoInfo.token || !createProposalSign) {
+      return undefined
+    }
+    return new TokenAmount(daoInfo.token, JSBI.BigInt(createProposalSign?.balance || '0'))
+  }, [createProposalSign, daoInfo.token])
+
+  const onCreateProposal = useCallback(() => {
+    if (
+      !createProposalSign ||
+      account?.toLowerCase() !== createProposalSign.account?.toLowerCase() ||
+      !startTime ||
+      !endTime
+    )
+      return
+    showModal(<TransacitonPendingModal />)
+    createProposalCallback(
+      title,
+      content,
+      startTime,
+      endTime,
+      voteType,
+      voteOption.filter(i => i),
+      {
+        chainId: createProposalSign.tokenChainId,
+        balance: createProposalSign.balance,
+        tokenAddress: createProposalSign.tokenAddress,
+        signType: 0
+      },
+      createProposalSign.signature
+    )
+      .then(hash => {
+        hideModal()
+        showModal(<TransactionSubmittedModal hash={hash} />)
+        history.goBack()
+      })
+      .catch((err: any) => {
+        hideModal()
+        showModal(
+          <MessageBox type="error">
+            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          </MessageBox>
+        )
+        console.error(err)
+      })
+  }, [
+    account,
+    content,
+    createProposalCallback,
+    createProposalSign,
+    endTime,
+    history,
+    hideModal,
+    showModal,
+    startTime,
+    title,
+    voteOption,
+    voteType
+  ])
 
   const paramsCheck: {
     disabled: boolean
@@ -133,10 +204,29 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         )
       }
     }
+    if (!myBalance || !daoInfo.proposalThreshold || myBalance.lessThan(daoInfo.proposalThreshold)) {
+      return {
+        disabled: true,
+        error: 'Insufficient balance'
+      }
+    }
     return {
       disabled: false
     }
-  }, [account, chainId, daoChainId, endTime, library, startTime, title, toggleWalletModal, voteOption, voteType])
+  }, [
+    account,
+    chainId,
+    daoChainId,
+    daoInfo.proposalThreshold,
+    endTime,
+    library,
+    myBalance,
+    startTime,
+    title,
+    toggleWalletModal,
+    voteOption,
+    voteType
+  ])
 
   return (
     <Box>
@@ -170,10 +260,16 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
               <LabelText>Start time</LabelText>
               <DateTimePicker
                 value={startTime ? new Date(startTime * 1000) : null}
-                onValue={timestamp => setStartTime(timestamp)}
+                onValue={timestamp => {
+                  setStartTime(timestamp)
+                  if (!daoInfo.isCustomVotes) {
+                    setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
+                  }
+                }}
               ></DateTimePicker>
               <LabelText>End time</LabelText>
               <DateTimePicker
+                disabled={!daoInfo.isCustomVotes}
                 value={endTime ? new Date(endTime * 1000) : null}
                 onValue={timestamp => setEndTime(timestamp)}
               ></DateTimePicker>
@@ -203,6 +299,21 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
             </Box>
 
             <VotingOptions option={voteOption} setOption={setVoteOption} />
+
+            <Box>
+              <RowCenter>
+                <LabelText>Minimum tokens needed to create proposal</LabelText>
+                <LabelText>
+                  {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
+                </LabelText>
+              </RowCenter>
+              <RowCenter>
+                <LabelText>Balance</LabelText>
+                <LabelText>
+                  {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
+                </LabelText>
+              </RowCenter>
+            </Box>
           </Stack>
 
           {paramsCheck.error ? (
@@ -217,7 +328,9 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
 
           <Stack spacing={60} direction="row" mt={50}>
             <OutlineButton onClick={history.goBack}>Cancel</OutlineButton>
-            <BlackButton>Create</BlackButton>
+            <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
+              Create
+            </BlackButton>
           </Stack>
         </Box>
       </Box>

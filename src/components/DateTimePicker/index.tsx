@@ -6,10 +6,12 @@ import moment from 'moment'
 
 export default function DateTimePicker({
   value,
-  onValue
+  onValue,
+  disabled
 }: {
   value: Date | null
   onValue: (timestamp: number | undefined) => void
+  disabled?: boolean
 }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -18,6 +20,7 @@ export default function DateTimePicker({
         inputFormat={value ? moment(value).format('YYYY-MM-DD HH:mm') : ''}
         disablePast
         value={value}
+        disabled={disabled}
         ampm={false}
         label=""
         onChange={date => {
