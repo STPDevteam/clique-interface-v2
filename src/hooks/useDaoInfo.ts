@@ -24,6 +24,7 @@ export interface DaoBaseInfoProp {
 }
 
 export interface DaoInfoProp {
+  daoAddress: string
   name: string
   handle: string
   category: string
@@ -76,17 +77,18 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
 
   return useMemo(() => {
     const governanceRes = daoGovernanceRes.result
-    if (!daoBaseInfo || !governanceRes) return undefined
+    if (!daoBaseInfo || !governanceRes || !daoAddress) return undefined
     return {
       ...daoBaseInfo,
+      daoAddress: daoAddress,
       token: token || undefined,
       proposalThreshold: token ? new TokenAmount(token, governanceRes.proposalThreshold) : undefined,
       votingThreshold: token ? new TokenAmount(token, governanceRes.votingQuorum) : undefined,
-      votingPeriod: governanceRes.votingPeriod,
-      votingType: governanceRes.votingType,
-      isCustomVotes: governanceRes.votingPeriod === 0
+      votingPeriod: Number(governanceRes.votingPeriod),
+      votingType: Number(governanceRes.votingType),
+      isCustomVotes: Number(governanceRes.votingPeriod) === 0
     }
-  }, [daoBaseInfo, daoGovernanceRes.result, token])
+  }, [daoAddress, daoBaseInfo, daoGovernanceRes.result, token])
 }
 
 export enum DaoAdminLevelProp {
