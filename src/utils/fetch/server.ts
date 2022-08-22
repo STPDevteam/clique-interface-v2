@@ -89,3 +89,25 @@ export function sign(account: string, daoAddress: string, signType: number) {
     signType: signType.toString()
   })
 }
+
+export function saveProposalContent(content: string) {
+  return Axios.post('stpdao/v2/proposal/save', {
+    content
+  })
+}
+
+export function getProposalList(
+  chainId: number | string,
+  daoAddress: string,
+  status: number | undefined,
+  offset: number,
+  count: number
+) {
+  return Axios.get('stpdao/v2/proposal/list', {
+    chainId,
+    daoAddress,
+    status: status || '',
+    offset,
+    count
+  })
+}

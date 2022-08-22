@@ -83,7 +83,7 @@ export function useHomeDaoList() {
   const pageSize = 8
   const [result, setResult] = useState<HomeListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
-  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 10000)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
 
   useEffect(() => {
     if (firstLoadData) {
@@ -111,6 +111,7 @@ export function useHomeDaoList() {
         const data = res.data.data as any
         if (!data) {
           setResult([])
+          setTotal(0)
           return
         }
         setTotal(data.total)

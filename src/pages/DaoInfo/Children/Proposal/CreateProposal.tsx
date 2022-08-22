@@ -24,6 +24,8 @@ import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import Editor from './Editor'
+import { routes } from 'constants/routes'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -105,8 +107,12 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     )
       .then(hash => {
         hideModal()
-        showModal(<TransactionSubmittedModal hash={hash} />)
-        history.goBack()
+        showModal(
+          <TransactionSubmittedModal
+            hideFunc={() => history.push(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)}
+            hash={hash}
+          />
+        )
       })
       .catch((err: any) => {
         hideModal()
@@ -118,18 +124,20 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         console.error(err)
       })
   }, [
-    account,
-    content,
-    createProposalCallback,
     createProposalSign,
-    endTime,
-    history,
-    hideModal,
-    showModal,
+    account,
     startTime,
+    endTime,
+    showModal,
+    createProposalCallback,
     title,
+    content,
+    voteType,
     voteOption,
-    voteType
+    hideModal,
+    history,
+    daoChainId,
+    daoInfo.daoAddress
   ])
 
   const paramsCheck: {
@@ -245,13 +253,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
           />
           <div>
             <LabelText>Description</LabelText>
-            <Input
-              value={content}
-              onChange={e => setContent(e.target.value.trim())}
-              multiline
-              rows={10}
-              placeholder="Description"
-            />
+            <Editor content={content} setContent={setContent} />
           </div>
         </Stack>
         <Box>

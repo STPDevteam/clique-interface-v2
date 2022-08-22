@@ -5,12 +5,20 @@ import { ExternalLink } from 'theme/components'
 import { getEtherscanLink } from 'utils'
 import MessageBox from './MessageBox'
 
-export default function TransactionSubmittedModal({ children, hash }: { hash?: string; children?: React.ReactNode }) {
+export default function TransactionSubmittedModal({
+  children,
+  hash,
+  hideFunc
+}: {
+  hash?: string
+  children?: React.ReactNode
+  hideFunc?: () => void
+}) {
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
 
   return (
-    <MessageBox type={'success'} header={'Transaction Submitted'}>
+    <MessageBox type={'success'} hideFunc={hideFunc} header={'Transaction Submitted'}>
       <Box display="grid" gap="20px" justifyContent="center">
         {children}
         {chainId && hash && (

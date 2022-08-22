@@ -171,3 +171,28 @@ export function removeEmoji(text: string) {
   const regex = emojiRegex()
   return text.replace(regex, '')
 }
+
+export function currentTimeStamp() {
+  return Number((new Date().getTime() / 1000).toFixed())
+}
+
+export function getTargetTimeString(fromTime: number, toTime: number) {
+  const _sec = toTime - fromTime
+  const direction = _sec >= 0 ? true : false
+
+  const sec = Math.abs(_sec)
+  const days = Math.floor(sec / 86400)
+  const hours = Math.floor(sec / 3600)
+  const mins = Math.ceil(sec / 60)
+  return direction
+    ? days
+      ? `${days} days left`
+      : hours
+      ? `${hours} hours left`
+      : `${mins} mins left`
+    : days
+    ? `${days} days ago`
+    : hours
+    ? `${hours} hours ago`
+    : `${mins} mins ago`
+}
