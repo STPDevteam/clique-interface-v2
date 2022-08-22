@@ -9,7 +9,7 @@ export interface SysPagination {
 export const initialState: SysPagination = {
   homeListPagination: {
     keyword: '',
-    category: CategoriesTypeProp.Social,
+    category: CategoriesTypeProp.ALL,
     currentPage: 1
   }
 }

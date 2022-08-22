@@ -7,7 +7,7 @@ import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
 import Web3ReactManager from '../components/essential/Web3ReactManager'
-import WarningModal from '../components/Modal/WarningModal'
+// import WarningModal from '../components/Modal/WarningModal'
 import ComingSoon from './ComingSoon'
 import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
@@ -72,7 +72,7 @@ export default function App() {
             <BodyWrapper id="body">
               <Popups />
               <Polling />
-              <WarningModal />
+              {/* <WarningModal /> */}
               <Web3ReactManager>
                 <Switch>
                   <Route

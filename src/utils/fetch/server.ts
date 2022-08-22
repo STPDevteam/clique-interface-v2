@@ -1,6 +1,7 @@
 import { signMessage } from '../../constants'
 import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
+import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
 
 export function commitErrorMsg(title: string, content: string, func: string, params: string) {
   return Axios.post('error', {
@@ -25,7 +26,9 @@ export function getHomeDaoList(
   const req: any = {}
   if (account && isAddress(account)) req.account = account
   if (keyword.trim()) req.keyword = keyword
-  if (category.trim()) req.category = category
+  if (category.trim()) {
+    req.category = category === CategoriesTypeProp.ALL ? '' : category
+  }
   return Axios.get('stpdao/v2/dao/list', {
     ...req,
     offset,

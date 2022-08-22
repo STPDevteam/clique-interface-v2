@@ -211,18 +211,35 @@ export function CreateGovernanceModal() {
                   label="*DAO Name"
                   maxLength={30}
                   placeholder="No duplicates in Clique"
+                  endAdornment={
+                    <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
+                      {buildingDaoData.daoName.length}/30
+                    </Typography>
+                  }
                   value={buildingDaoData.daoName}
                   onChange={e => updateBuildingDaoKeyData('daoName', removeEmoji(e.target.value || ''))}
                 />
                 <Input
                   label="*DAO Handle on Clique"
                   placeholder="Lowercase characters, numbers, underscores"
+                  maxLength={30}
+                  endAdornment={
+                    <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
+                      {buildingDaoData.daoHandle.length}/30
+                    </Typography>
+                  }
                   value={buildingDaoData.daoHandle}
                   onChange={e => updateBuildingDaoKeyData('daoHandle', e.target.value || '')}
                 />
                 <Input
                   type="textarea"
                   label="*Description"
+                  maxLength={200}
+                  endAdornment={
+                    <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
+                      {buildingDaoData.description.length}/200
+                    </Typography>
+                  }
                   rows="4"
                   multiline
                   placeholder="Describe your DAO to new and existing members"

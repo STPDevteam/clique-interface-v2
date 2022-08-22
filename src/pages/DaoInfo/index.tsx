@@ -12,7 +12,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
-import { toFormatGroup } from 'utils/dao'
+import { isSocialUrl, toFormatGroup } from 'utils/dao'
 import { BlackButton } from 'components/Button/Button'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import CategoryChips from './CategoryChips'
@@ -172,17 +172,22 @@ export default function DaoInfo({ children }: { children: any }) {
                   </Box>
                 </Link>
                 <Box display={'flex'} alignItems="center">
-                  {daoBaseInfo?.twitter && (
+                  {daoBaseInfo?.twitter && isSocialUrl('twitter', daoBaseInfo.twitter) && (
                     <Link target={'_blank'} href={daoBaseInfo.twitter} underline="none" ml={10}>
                       <Twitter />
                     </Link>
                   )}
-                  {daoBaseInfo?.discord && (
+                  {daoBaseInfo?.discord && isSocialUrl('discord', daoBaseInfo.discord) && (
                     <Link target={'_blank'} href={daoBaseInfo.discord} underline="none" ml={10}>
                       <Discord />
                     </Link>
                   )}
-                  {daoBaseInfo?.website && (
+                  {daoBaseInfo?.github && isSocialUrl('github', daoBaseInfo.github) && (
+                    <Link fontSize={12} target={'_blank'} href={daoBaseInfo.github} underline="none" ml={10}>
+                      github
+                    </Link>
+                  )}
+                  {daoBaseInfo?.website && isSocialUrl('', daoBaseInfo.website) && (
                     <Link fontSize={12} target={'_blank'} href={daoBaseInfo.website} underline="none" ml={10}>
                       {daoBaseInfo.website}
                     </Link>

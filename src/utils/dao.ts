@@ -57,3 +57,16 @@ export function getVotingNumberByTimestamp(timestamp: number) {
   const minute = Math.floor((timestamp % 3600) / 60)
   return { day, hour, minute }
 }
+
+export function isSocialUrl(name: 'discord' | 'twitter' | string, url: string) {
+  switch (name) {
+    case 'discord':
+      return new RegExp(/^https:\/\/discord.com/).test(url)
+    case 'twitter':
+      return new RegExp(/^https:\/\/twitter.com/).test(url)
+    case 'github':
+      return new RegExp(/^https:\/\/github.com/).test(url)
+    default:
+      return isURL(url)
+  }
+}
