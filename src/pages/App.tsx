@@ -20,7 +20,10 @@ import DaoInfoSettings from 'pages/DaoInfo/Children/Settings'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
-// import TokenList from 'pages/TokenList'
+import CreatorToken from 'pages/Creator/CreatorToken'
+import TokenList from 'pages/TokenList'
+import Profile from 'pages/Profile'
+import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -89,6 +92,8 @@ export default function App() {
                               <DaoInfoBase>
                                 <Switch>
                                   <Route path={routes.DaoInfo} exact strict component={ProposalList} />
+                                  <Route path={routes.Proposal} exact strict component={ProposalList} />
+                                  <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
                                   <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
                                   <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
                                   <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
@@ -101,9 +106,12 @@ export default function App() {
                     )}
                   />
                   <Route exact strict path={routes.Activity} component={ComingSoon} />
-                  <Route exact strict path={routes.Tokens} component={ComingSoon} />
+                  <Route exact strict path={routes.Tokens} component={TokenList} />
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
+                  <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
+                  <Route exact strict path={routes.Profile} component={Profile} />
+                  <Route exact strict path={routes._Profile} component={Profile} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>

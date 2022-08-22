@@ -106,7 +106,7 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
     background: variant === 'outlined' ? 'transparent' : theme.palette.background.default
   },
   '& .MuiTableCell-root': {
-    fontSize: (fontSize ?? '16px') + '!important',
+    fontSize: fontSize ?? '16px',
     justifyContent: 'flex-start',
     paddingLeft: 0,
     borderBottom: '1px solid',
@@ -114,9 +114,6 @@ const StyledTableRow = styled(TableRow, { shouldForwardProp: () => true })<{
     borderRight: 'none',
     borderLeft: 'none',
     textAlign: 'center',
-    '& .MuiTypography-root': {
-      fontSize: (fontSize ?? '16px') + '!important'
-    },
     '&:first-of-type': {
       borderColor: variant === 'outlined' ? theme.bgColor.bg2 : 'transparent',
       paddingLeft: '20px'

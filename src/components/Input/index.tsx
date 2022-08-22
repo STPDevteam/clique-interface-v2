@@ -27,6 +27,8 @@ export interface InputProps {
   rightLabel?: React.ReactNode
   errSet?: () => void
   userPattern?: string
+  inputPaddingRight?: string
+  onUserBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>) => void
 }
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -107,6 +109,8 @@ export default function Input({
   smallPlaceholder,
   subStr,
   maxLength,
+  inputPaddingRight,
+  onUserBlur,
   errSet,
   ...rest
 }: InputProps &
@@ -172,7 +176,7 @@ export default function Input({
           sx={{
             minHeight: height || 56,
             '& input': {
-              paddingRight: '15px',
+              paddingRight: inputPaddingRight || '15px',
               fontWeight: 600
             },
             [`&.${inputBaseClasses.root}`]: {
@@ -211,6 +215,7 @@ export default function Input({
                 errSet()
               }
             }
+            onUserBlur && onUserBlur(e)
           }}
           value={value}
           multiline={multiline}
@@ -227,7 +232,7 @@ export default function Input({
           }
           endAdornment={
             endAdornment && (
-              <span style={{ paddingRight: 20, alignSelf: multiline ? 'flex-end' : 'center' }}>{endAdornment}</span>
+              <span style={{ paddingRight: 15, alignSelf: multiline ? 'flex-end' : 'center' }}>{endAdornment}</span>
             )
           }
           {...rest}

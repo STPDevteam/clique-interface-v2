@@ -162,7 +162,7 @@ export default function Header() {
       <Filler />
       <StyledAppBar>
         <Box display="flex" alignItems="center">
-          <MainLogo to={'/'}>
+          <MainLogo to={routes.Governance}>
             <Image src={logo} alt={'logo'} />
           </MainLogo>
           <HideOnMobile breakpoint="md">

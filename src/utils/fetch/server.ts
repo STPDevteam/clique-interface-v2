@@ -72,3 +72,20 @@ export function getDaoAdmins(daoAddress: string, chainId: number) {
     chainId
   })
 }
+
+export function getTokenList(chainId: number | string, creator: string, offset: number, count: number) {
+  return Axios.get('stpdao/v2/token/list', {
+    chainId,
+    creator,
+    offset,
+    count
+  })
+}
+
+export function sign(account: string, daoAddress: string, signType: number) {
+  return Axios.post('stpdao/v2/sign/create', {
+    account,
+    daoAddress,
+    signType: signType.toString()
+  })
+}

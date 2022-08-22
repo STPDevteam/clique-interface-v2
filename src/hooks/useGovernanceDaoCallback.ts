@@ -8,7 +8,7 @@ import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
 import { commitErrorMsg } from 'utils/fetch/server'
 import { useToken } from 'state/wallet/hooks'
-import { TokenAmount } from 'constants/token'
+import { amountAddDecimals } from 'utils/dao'
 
 export function useCreateDaoCallback() {
   const addTransaction = useTransactionAdder()
@@ -36,8 +36,8 @@ export function useCreateDaoCallback() {
       ],
       [data.baseChainId, data.tokenAddress],
       [
-        new TokenAmount(token, data.createProposalMinimum).raw.toString(),
-        new TokenAmount(token, data.executeMinimum).raw.toString(),
+        amountAddDecimals(data.createProposalMinimum),
+        amountAddDecimals(data.executeMinimum),
         data.defaultVotingPeriod,
         data.votingTypes
       ]
