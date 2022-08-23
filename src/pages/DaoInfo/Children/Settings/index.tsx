@@ -2,11 +2,12 @@ import { Box, MenuItem, MenuList, styled, useTheme } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useActiveWeb3React } from 'hooks'
-import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import ComingSoon from 'pages/ComingSoon'
 import { useEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import Admin from './Admin'
+import GovernanceSetting from './GovernanceSetting'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   margin: '16px 0',
@@ -36,6 +37,7 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState(0)
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
+  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
 
   const { account } = useActiveWeb3React()
   const history = useHistory()
@@ -58,7 +60,7 @@ export default function Settings() {
       },
       {
         name: 'Governance setting',
-        component: <ComingSoon />
+        component: <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
       }
     ]
     if (accountLevel === DaoAdminLevelProp.SUPER_ADMIN) {
@@ -68,7 +70,7 @@ export default function Settings() {
       })
     }
     return _tabs
-  }, [accountLevel])
+  }, [accountLevel, daoInfo, curDaoChainId])
 
   return (
     <Box display={'grid'} gridTemplateColumns="162px 1fr" gap={25}>
