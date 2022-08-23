@@ -29,6 +29,8 @@ export interface ProposalBaseProp {
   status: ProposalStatus
   creator: string
   title: string
+  cancel: boolean
+  introduction: string
   uuid: string
   startTime: number
   endTime: number
@@ -44,6 +46,8 @@ export interface ProposalDetailProp {
   status: ProposalStatus
   creator: string
   title: string
+  cancel: boolean
+  introduction: string
   uuid: string
   startTime: number
   endTime: number
@@ -111,15 +115,17 @@ export function useProposalBaseInfo(
     } else if (_status === ProposalStatus.OPEN) {
       targetTimeString = getTargetTimeString(now, endTime)
     } else if (proposalInfoRes.cancel) {
-      targetTimeString = ''
+      targetTimeString = 'User closed'
     } else {
       targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
     }
 
     return {
+      cancel: proposalInfoRes.cancel,
       status: _status,
       creator: proposalInfoRes.creator as string,
       title: proposalInfoRes.title as string,
+      introduction: proposalInfoRes.introduction as string,
       uuid: proposalInfoRes.content as string,
       startTime,
       endTime,

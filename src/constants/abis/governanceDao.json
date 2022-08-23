@@ -96,11 +96,19 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "title_", "type": "string" },
-      { "internalType": "string", "name": "content_", "type": "string" },
-      { "internalType": "uint256", "name": "startTime_", "type": "uint256" },
-      { "internalType": "uint256", "name": "endTime_", "type": "uint256" },
-      { "internalType": "enum IDAOBase.VotingType", "name": "votingType_", "type": "uint8" },
+      {
+        "components": [
+          { "internalType": "string", "name": "title", "type": "string" },
+          { "internalType": "string", "name": "introduction", "type": "string" },
+          { "internalType": "string", "name": "content", "type": "string" },
+          { "internalType": "uint256", "name": "startTime", "type": "uint256" },
+          { "internalType": "uint256", "name": "endTime", "type": "uint256" },
+          { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
+        ],
+        "internalType": "struct DAOBase.ProposalInput",
+        "name": "input_",
+        "type": "tuple"
+      },
       { "internalType": "string[]", "name": "options_", "type": "string[]" },
       {
         "components": [
@@ -246,6 +254,7 @@
       { "internalType": "bool", "name": "cancel", "type": "bool" },
       { "internalType": "address", "name": "creator", "type": "address" },
       { "internalType": "string", "name": "title", "type": "string" },
+      { "internalType": "string", "name": "introduction", "type": "string" },
       { "internalType": "string", "name": "content", "type": "string" },
       { "internalType": "uint256", "name": "startTime", "type": "uint256" },
       { "internalType": "uint256", "name": "endTime", "type": "uint256" },
@@ -303,23 +312,6 @@
       }
     ],
     "name": "setInfo",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
-          { "internalType": "address", "name": "tokenAddress", "type": "address" }
-        ],
-        "internalType": "struct IDAOBase.Token",
-        "name": "token_",
-        "type": "tuple"
-      }
-    ],
-    "name": "setToken",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

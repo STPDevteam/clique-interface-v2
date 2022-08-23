@@ -96,6 +96,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     showModal(<TransacitonPendingModal />)
     createProposalCallback(
       title,
+      introduction,
       content,
       startTime,
       endTime,
@@ -125,6 +126,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   }, [
     createProposalSign,
     account,
+    introduction,
     startTime,
     endTime,
     showModal,

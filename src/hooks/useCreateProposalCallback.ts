@@ -21,6 +21,7 @@ export function useCreateProposalCallback(daoAddress: string) {
   return useCallback(
     async (
       title: string,
+      introduction: string,
       content: string,
       startTime: number,
       endTime: number,
@@ -49,6 +50,7 @@ export function useCreateProposalCallback(daoAddress: string) {
 
       const args = [
         title,
+        introduction,
         contentTag,
         startTime,
         endTime,

@@ -25,12 +25,14 @@ export function useCreateTokenReserved() {
         if (!token) return undefined
         return {
           tokenAmount: new TokenAmount(token, reserved[index].amount.toString()),
-          lockDate: Number(reserved[index].lockDate.toString())
+          lockDate: Number(reserved[index].lockDate.toString()),
+          index
         }
       })
       .filter(i => i) as {
       tokenAmount: TokenAmount
       lockDate: number
+      index: number
     }[]
   }, [reserved, tokens])
 }

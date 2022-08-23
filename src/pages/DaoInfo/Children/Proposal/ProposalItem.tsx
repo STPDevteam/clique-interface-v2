@@ -65,8 +65,7 @@ export default function ProposalItem({ daoChainId, daoAddress, proposalId }: Pro
       </Box>
       {proposalBaseInfo ? (
         <Typography className="content" variant="body1">
-          Build decentralized automated organization, Build decentralized automated organization...Build decentralized
-          automated organization, Build decentralized automated organization...
+          {proposalBaseInfo.introduction}
         </Typography>
       ) : (
         <>

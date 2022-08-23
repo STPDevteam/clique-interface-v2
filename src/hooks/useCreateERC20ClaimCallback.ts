@@ -14,11 +14,11 @@ export function useCreateERC20ClaimCallback() {
   const gasPriceInfoCallback = useGasPriceInfo()
 
   return useCallback(
-    async (address: string) => {
+    async (address: string, index: number) => {
       if (!daoFactoryContract) {
         throw new Error('Unexpected error. Contract error')
       }
-      const args = [address]
+      const args = [index]
       const method = 'claimReserve'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(daoFactoryContract, method, args)
 
