@@ -1,5 +1,9 @@
 import { Box, Link, styled, Typography, useTheme } from '@mui/material'
+import { ChainId } from 'constants/chain'
+import { ProposalDetailProp } from 'hooks/useProposalInfo'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
+import { getEtherscanLink, shortenAddress } from 'utils'
+import { timeStampToFormat } from 'utils/dao'
 import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 
@@ -7,7 +11,15 @@ const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
-export default function Info() {
+export default function Info({
+  proposalInfo,
+  daoAddress,
+  daoChainId
+}: {
+  proposalInfo: ProposalDetailProp
+  daoChainId: ChainId
+  daoAddress: string
+}) {
   const theme = useTheme()
   return (
     <VoteWrapper>
@@ -17,19 +29,19 @@ export default function Info() {
       <Box display={'grid'} gridTemplateColumns="86px 1fr" rowGap={15} alignItems={'center'}>
         <LeftText>Proposer</LeftText>
         <RowCenter>
-          <Link underline="none">
+          <Link underline="none" target={'_blank'} href={getEtherscanLink(daoChainId, proposalInfo.creator, 'address')}>
             <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
-              0x12...3312
+              {shortenAddress(proposalInfo.creator)}
             </Typography>
           </Link>
-          <AdminTagBlock daoAddress={''} chainId={4} account={''} />
+          <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
         </RowCenter>
 
         <LeftText>Start Time</LeftText>
-        <Typography>2021-10-29 11:41:04</Typography>
+        <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>
 
         <LeftText>End Time</LeftText>
-        <Typography>2021-10-29 11:41:04</Typography>
+        <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
 
         <LeftText>Snapshot</LeftText>
         <Link underline="none" sx={{ display: 'flex' }}>
