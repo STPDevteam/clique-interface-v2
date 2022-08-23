@@ -5,7 +5,7 @@ import { useActiveWeb3React } from '.'
 import { useGovernanceDaoContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
-import { commitErrorMsg } from 'utils/fetch/server'
+import { commitErrorMsg, saveProposalContent } from 'utils/fetch/server'
 
 export enum SignType {
   CREATE_PROPOSAL,
@@ -37,9 +37,19 @@ export function useCreateProposalCallback(daoAddress: string) {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
 
+      let contentTag = ''
+      if (content.trim()) {
+        try {
+          const contentRes = await saveProposalContent(content.trim())
+          contentTag = contentRes.data.data.uuid
+        } catch (error) {
+          throw new Error('Upload failed, please try again.')
+        }
+      }
+
       const args = [
         title,
-        content,
+        contentTag,
         startTime,
         endTime,
         votingType,

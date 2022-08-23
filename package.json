@@ -110,8 +110,12 @@
     "emoji-regex": "^10.1.0",
     "jsbi": "^4.0.0",
     "moment": "^2.29.4",
+    "quill-image-uploader": "^1.2.3",
     "react-ga4": "^1.4.1",
+    "react-html-parser": "^2.0.2",
+    "react-quill": "^2.0.0",
     "toformat": "^2.0.0",
-    "web3": "^1.7.4"
+    "web3": "^1.7.4",
+    "xss": "^1.0.14"
   }
 }
