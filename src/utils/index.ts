@@ -85,8 +85,8 @@ const chains: ChainObject = {
     link: 'https://kovan.etherscan.io',
     builder: explorers.etherscan
   },
-  [ChainId.GÖRLI]: {
-    link: 'https://gorli.etherscan.io',
+  [ChainId.GOERLI]: {
+    link: 'https://goerli.etherscan.io',
     builder: explorers.etherscan
   },
   [ChainId.BSCTEST]: {
