@@ -100,12 +100,12 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         error: 'Minimum votes needed for proposal to execute required'
       }
     }
-    if (!buildingDaoData.defaultVotingPeriod) {
-      return {
-        disabled: true,
-        error: 'Default voting period required'
-      }
-    }
+    // if (!buildingDaoData.defaultVotingPeriod) {
+    //   return {
+    //     disabled: true,
+    //     error: 'Default voting period required'
+    //   }
+    // }
     if (!buildingDaoData.category.trim()) {
       return {
         disabled: true,
