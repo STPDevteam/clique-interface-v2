@@ -1,10 +1,12 @@
 import { ChainId } from 'constants/chain'
+import { Token, TokenAmount } from 'constants/token'
 import { useActiveWeb3React } from 'hooks'
+import JSBI from 'jsbi'
 import { useEffect, useMemo, useState } from 'react'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
-import { sign } from 'utils/fetch/server'
+import { getProposalContent, sign } from 'utils/fetch/server'
 import { retry } from 'utils/retry'
 import { useGovernanceDaoContract } from './useContract'
 import { SignType } from './useCreateProposalCallback'
@@ -32,6 +34,23 @@ export interface ProposalBaseProp {
   endTime: number
   votingType: VotingTypes
   targetTimeString: string
+}
+export interface ProposalOptionProp {
+  name: string
+  amount: TokenAmount
+  per: number
+}
+export interface ProposalDetailProp {
+  status: ProposalStatus
+  creator: string
+  title: string
+  uuid: string
+  startTime: number
+  endTime: number
+  votingType: VotingTypes
+  targetTimeString: string
+  content: string | undefined
+  proposalOptions: ProposalOptionProp[]
 }
 
 export function useCreateProposalSign(daoAddress: string) {
@@ -108,4 +127,81 @@ export function useProposalBaseInfo(
       targetTimeString
     }
   }, [proposalInfoRes])
+}
+
+export function useProposalDetailInfo(
+  daoAddress: string,
+  daoChainId: ChainId,
+  proposalId: number,
+  token?: Token
+): undefined | ProposalDetailProp {
+  const [content, setContent] = useState<string>()
+  const daoContract = useGovernanceDaoContract(daoAddress, daoChainId)
+  const proposalOptionRes = useSingleCallResult(
+    daoContract,
+    'getProposalOptionById',
+    [proposalId],
+    undefined,
+    daoChainId
+  ).result?.[0]
+  const proposalBaseInfo = useProposalBaseInfo(daoAddress, daoChainId, proposalId)
+
+  const totalVoteAmount: TokenAmount | undefined = useMemo(() => {
+    if (!proposalOptionRes || !token) {
+      return undefined
+    }
+    const _total = proposalOptionRes
+      .map((item: any) => item.amount.toString() as string)
+      .reduce((a: string, b: string) => JSBI.ADD(JSBI.BigInt(a), JSBI.BigInt(b)))
+    return new TokenAmount(token, _total.toString())
+  }, [proposalOptionRes, token])
+
+  const proposalOptions: {
+    name: string
+    amount: TokenAmount
+    per: number
+  }[] = useMemo(() => {
+    if (!proposalOptionRes || !token || !totalVoteAmount) {
+      return undefined
+    }
+    return proposalOptionRes.map((item: any) => {
+      const _amount = new TokenAmount(token, item.amount.toString())
+      return {
+        name: item.name as string,
+        amount: _amount,
+        per: Number(_amount.divide(totalVoteAmount).toSignificant(6))
+      }
+    })
+  }, [proposalOptionRes, token, totalVoteAmount])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!proposalBaseInfo?.uuid) {
+        setContent(undefined)
+        return
+      }
+      const { promise } = retry(() => getProposalContent(proposalBaseInfo.uuid), {
+        n: 100,
+        minWait: 1000,
+        maxWait: 2500
+      })
+      try {
+        const returnData = await promise
+        setContent(returnData.data.data.content)
+      } catch (error) {
+        setContent(undefined)
+      }
+    })()
+  }, [proposalBaseInfo?.uuid])
+
+  return useMemo(() => {
+    if (!proposalBaseInfo) {
+      return undefined
+    }
+    return {
+      content,
+      proposalOptions,
+      ...proposalBaseInfo
+    }
+  }, [content, proposalBaseInfo, proposalOptions])
 }

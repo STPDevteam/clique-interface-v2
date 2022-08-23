@@ -81,6 +81,10 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     return new TokenAmount(daoInfo.token, JSBI.BigInt(createProposalSign?.balance || '0'))
   }, [createProposalSign, daoInfo.token])
 
+  const toList = useCallback(() => {
+    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)
+  }, [daoChainId, daoInfo.daoAddress, history])
+
   const onCreateProposal = useCallback(() => {
     if (
       !createProposalSign ||
@@ -107,12 +111,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     )
       .then(hash => {
         hideModal()
-        showModal(
-          <TransactionSubmittedModal
-            hideFunc={() => history.push(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)}
-            hash={hash}
-          />
-        )
+        showModal(<TransactionSubmittedModal hideFunc={toList} hash={hash} />)
       })
       .catch((err: any) => {
         hideModal()
@@ -135,9 +134,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     voteType,
     voteOption,
     hideModal,
-    history,
-    daoChainId,
-    daoInfo.daoAddress
+    toList
   ])
 
   const paramsCheck: {
@@ -238,16 +235,16 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
 
   return (
     <Box>
-      <Back sx={{ margin: 0 }} text="All Proposals" />
+      <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
       <Typography variant="h6" mt={28}>
         Create Proposal
       </Typography>
       <Box display="grid" mt={20} gridTemplateColumns={{ md: '1fr 1fr', xs: 'unset' }} gap="66px">
         <Stack spacing={20}>
-          <Input value={title} placeholder="title" onChange={e => setTitle(e.target.value.trim())} label="Title" />
+          <Input value={title} placeholder="title" onChange={e => setTitle(e.target.value)} label="Title" />
           <Input
             value={introduction}
-            onChange={e => setIntroduction(e.target.value.trim())}
+            onChange={e => setIntroduction(e.target.value)}
             label="Introduction"
             placeholder="Introduction"
           />
@@ -344,7 +341,7 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
   const updateVoteOption = useCallback(
     (index: number, value: string) => {
       const options = [...option]
-      options[index] = value.trim()
+      options[index] = value
       setOption(options)
     },
     [option, setOption]

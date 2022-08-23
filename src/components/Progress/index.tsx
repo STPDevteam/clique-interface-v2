@@ -32,22 +32,10 @@ export default function Progress({ val, total, unit }: { val: number; total: num
   )
 }
 
-export function SimpleProgress({
-  val,
-  total,
-  hideValue,
-  width
-}: {
-  val: number
-  total: number
-  hideValue?: boolean
-  width?: string
-}) {
-  const value = (val / total) * 100
+export function SimpleProgress({ per, width }: { per: number; width?: string }) {
   return (
     <Box display="flex" sx={{ width: width ?? 'max-content' }} alignItems="center">
-      {!hideValue && <Typography mr={8}>{value | 0}%</Typography>}
-      <StyledLinearProgress variant="determinate" value={value} sx={{ width: width ?? '100px' }} />
+      <StyledLinearProgress variant="determinate" value={per} sx={{ width: width ?? '100px' }} />
     </Box>
   )
 }

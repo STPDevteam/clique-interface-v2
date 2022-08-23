@@ -5,6 +5,8 @@ import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
 import { useProposalBaseInfo } from 'hooks/useProposalInfo'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import ShowProposalStatusTag from './ShowProposalStatusTag'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '24px',
@@ -40,9 +42,13 @@ export const RowCenter = styled(Box)({
 
 export default function ProposalItem({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
   const theme = useTheme()
+  const history = useHistory()
   const proposalBaseInfo = useProposalBaseInfo(daoAddress, daoChainId, proposalId)
+
   return (
-    <StyledCard>
+    <StyledCard
+      onClick={() => history.push(routes._DaoInfo + `/${daoChainId}/${daoAddress}/proposal/detail/${proposalId}`)}
+    >
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
         {proposalBaseInfo ? (
           <>

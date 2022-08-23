@@ -96,6 +96,12 @@ export function saveProposalContent(content: string) {
   })
 }
 
+export function getProposalContent(uuid: string) {
+  return Axios.get('stpdao/v2/proposal/query', {
+    uuid
+  })
+}
+
 export function getProposalList(
   chainId: number | string,
   daoAddress: string,
