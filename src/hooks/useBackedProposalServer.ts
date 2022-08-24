@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
-import { getProposalList } from '../utils/fetch/server'
+import { getProposalList, getProposalSnapshot } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 
 export interface ProposalListBaseProp {
@@ -109,4 +110,25 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
     },
     result
   }
+}
+
+export function useProposalSnapshot(chainId: ChainId, daoAddress: string, proposalId: number) {
+  const [snapshot, setSnapshot] = useState<number | string>()
+  useEffect(() => {
+    ;(async () => {
+      const { promise } = retry(() => getProposalSnapshot(chainId, daoAddress, proposalId), {
+        n: 100,
+        minWait: 1000,
+        maxWait: 2500
+      })
+      try {
+        const returnData = await promise
+        setSnapshot(returnData.data.data.snapshot)
+      } catch (error) {
+        setSnapshot(undefined)
+      }
+    })()
+  }, [chainId, daoAddress, proposalId])
+
+  return snapshot
 }

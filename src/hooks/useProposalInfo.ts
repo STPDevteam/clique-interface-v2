@@ -9,7 +9,7 @@ import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { getProposalContent, sign } from 'utils/fetch/server'
 import { retry } from 'utils/retry'
 import { useGovernanceDaoContract } from './useContract'
-import { SignType } from './useCreateProposalCallback'
+import { SignType } from './useProposalCallback'
 
 export enum ProposalStatus {
   SOON = 1,
@@ -36,6 +36,7 @@ export interface ProposalBaseProp {
   endTime: number
   votingType: VotingTypes
   targetTimeString: string
+  proposalId: number
 }
 export interface ProposalOptionProp {
   name: string
@@ -55,6 +56,7 @@ export interface ProposalDetailProp {
   targetTimeString: string
   content: string | undefined
   proposalOptions: ProposalOptionProp[]
+  proposalId: number
 }
 
 export function useCreateProposalSign(daoAddress: string) {
@@ -129,10 +131,11 @@ export function useProposalBaseInfo(
       uuid: proposalInfoRes.content as string,
       startTime,
       endTime,
+      proposalId,
       votingType: proposalInfoRes.votingType as VotingTypes,
       targetTimeString
     }
-  }, [proposalInfoRes])
+  }, [proposalInfoRes, proposalId])
 }
 
 export function useProposalDetailInfo(

@@ -117,3 +117,11 @@ export function getProposalList(
     count
   })
 }
+
+export function getProposalSnapshot(chainId: number, daoAddress: string, proposalId: number) {
+  return Axios.get('stpdao/v2/proposal/snapshot', {
+    chainId,
+    daoAddress,
+    proposalId
+  })
+}

@@ -40,7 +40,6 @@ function DetailBox({
   const history = useHistory()
 
   const proposalDetailInfo = useProposalDetailInfo(daoInfo.daoAddress, daoChainId, proposalId, daoInfo.token)
-  console.log('🚀 ~ file: ProposalDetail.tsx ~ line 43 ~ proposalDetailInfo', proposalDetailInfo)
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)
