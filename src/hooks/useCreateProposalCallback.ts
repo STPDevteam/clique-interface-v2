@@ -49,12 +49,7 @@ export function useCreateProposalCallback(daoAddress: string) {
       }
 
       const args = [
-        title,
-        introduction,
-        contentTag,
-        startTime,
-        endTime,
-        votingType,
+        [title, introduction, contentTag, startTime, endTime, votingType],
         options,
         [extra.chainId, extra.tokenAddress, extra.balance, extra.signType],
         signature

@@ -2,7 +2,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import { ChainId, SUPPORTED_NETWORKS } from '../constants/chain'
 
 export function triggerSwitchChain(library: Web3Provider | undefined, chainId: ChainId, account: string) {
-  if ([1, 3, 4, 42].includes(chainId)) {
+  if ([1, 3, 4, 5, 42].includes(chainId)) {
     library?.send('wallet_switchEthereumChain', [{ chainId: SUPPORTED_NETWORKS[chainId as ChainId]?.chainId }, account])
   } else {
     const params = SUPPORTED_NETWORKS[chainId as ChainId]
