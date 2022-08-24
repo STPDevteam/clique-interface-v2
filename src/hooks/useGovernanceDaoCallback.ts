@@ -223,3 +223,72 @@ export function useAdminSetGovernanceCallback(daoAddress?: string) {
     [account, contract, gasPriceInfoCallback, addTransaction]
   )
 }
+
+export function useAdminSetInfoCallback(daoAddress?: string) {
+  const addTransaction = useTransactionAdder()
+  const contract = useGovernanceDaoContract(daoAddress)
+  const { account } = useActiveWeb3React()
+  const gasPriceInfoCallback = useGasPriceInfo()
+
+  return useCallback(
+    async (
+      daoName: string,
+      daoHandle: string,
+      category: string,
+      description: string,
+      twitterLink: string,
+      githubLink: string,
+      discordLink: string,
+      daoImage: string
+    ) => {
+      if (!account) throw new Error('none account')
+      if (!contract) throw new Error('none contract')
+
+      const args = [
+        [
+          daoName.trim(),
+          daoHandle.trim(),
+          category.trim(),
+          description.trim(),
+          twitterLink.trim(),
+          githubLink.trim(),
+          discordLink.trim(),
+          daoImage.trim()
+        ]
+      ]
+
+      const method = 'setInfo'
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        from: account
+      })
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: 'Update general setting',
+            claim: { recipient: `${contract.address}_UpdateGeneralSetting` }
+          })
+          return response.hash
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001) {
+            commitErrorMsg(
+              'useAdminSetInfoCallback',
+              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error?.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [account, contract, gasPriceInfoCallback, addTransaction]
+  )
+}

@@ -3,11 +3,11 @@ import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
-import ComingSoon from 'pages/ComingSoon'
 import { useEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import Admin from './Admin'
 import GovernanceSetting from './GovernanceSetting'
+import General from './General'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   margin: '16px 0',
@@ -56,7 +56,7 @@ export default function Settings() {
     const _tabs = [
       {
         name: 'General',
-        component: <ComingSoon />
+        component: daoInfo ? <General daoInfo={daoInfo} daoChainId={curDaoChainId} /> : null
       },
       {
         name: 'Governance setting',

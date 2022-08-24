@@ -66,7 +66,7 @@ function Update({
   const adminSetGovernanceCallback = useAdminSetGovernanceCallback(daoAddress)
 
   const { showModal, hideModal } = useModal()
-  const addDaoAdminCallback = useCallback(() => {
+  const onAdminSetGovernanceCallback = useCallback(() => {
     showModal(<TransacitonPendingModal />)
     adminSetGovernanceCallback(
       amountAddDecimals(createProposalMinimum, decimals),
@@ -150,11 +150,11 @@ function Update({
     }
     return {
       disabled: false,
-      handler: addDaoAdminCallback
+      handler: onAdminSetGovernanceCallback
     }
   }, [
     account,
-    addDaoAdminCallback,
+    onAdminSetGovernanceCallback,
     chainId,
     createProposalMinimum,
     daoChainId,
