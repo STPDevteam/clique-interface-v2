@@ -235,12 +235,7 @@ export default function VoteModal({
               </Text>
             </RowCenter>
             <div>
-              <RowCenter>
-                <Text>Voting for</Text>
-                <Text color={theme.palette.text.primary}>
-                  {myVotes?.toSignificant(6, { groupSeparator: ',' }) || '--'}
-                </Text>
-              </RowCenter>
+              <Text>Voting for</Text>
               <Box
                 sx={{
                   backgroundColor: theme.bgColor.bg4,
