@@ -75,7 +75,7 @@ export default function Vote({
               />
             ))}
           </Stack>
-          {proposalInfo.status === ProposalStatus.OPEN && (
+          {proposalInfo.status === ProposalStatus.OPEN && proposalInfo.myVoteInfo?.length === 0 && (
             <>
               <BlackButton
                 height="44px"

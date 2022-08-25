@@ -97,14 +97,27 @@ export default function VoteModal({
     }
   }, [proposalInfo.votingType, voteFor, account])
 
+  const validChooseOptions = useMemo(() => {
+    const ret = Object.assign({}, chooseOption)
+    for (const key in chooseOption) {
+      if (Object.prototype.hasOwnProperty.call(chooseOption, key)) {
+        const val = chooseOption[key]
+        if (!val || !val.greaterThan(JSBI.BigInt(0))) {
+          delete ret[key]
+        }
+      }
+    }
+    return ret
+  }, [chooseOption])
+
   const { showModal, hideModal } = useModal()
   const onProposalVoteCallback = useCallback(() => {
     if (!voteProposalSign) return
     showModal(<TransacitonPendingModal />)
     proposalVoteCallback(
       proposalInfo.proposalId,
-      Object.keys(chooseOption).map(item => Number(item)),
-      Object.values(chooseOption).map(item => item?.raw.toString() || '0'),
+      Object.keys(validChooseOptions).map(item => Number(item)),
+      Object.values(validChooseOptions).map(item => item?.raw.toString() || '0'),
       {
         chainId: voteProposalSign.tokenChainId,
         tokenAddress: voteProposalSign.tokenAddress,
@@ -126,7 +139,7 @@ export default function VoteModal({
         )
         console.error(err)
       })
-  }, [chooseOption, hideModal, proposalInfo.proposalId, proposalVoteCallback, showModal, voteProposalSign])
+  }, [hideModal, proposalInfo.proposalId, proposalVoteCallback, showModal, validChooseOptions, voteProposalSign])
 
   const voteBtn: {
     disabled: boolean
@@ -183,7 +196,7 @@ export default function VoteModal({
       }
     }
 
-    if (!voteFor.length) {
+    if (!Object.keys(validChooseOptions).length) {
       return {
         disabled: true,
         error: 'You must choose a option'
@@ -204,7 +217,7 @@ export default function VoteModal({
     proposalInfo.myVoteInfo?.length,
     proposalInfo.status,
     toggleWalletModal,
-    voteFor.length
+    validChooseOptions
   ])
 
   return (
@@ -302,7 +315,7 @@ function MultiVote({
   const perArrCallback = useCallback(
     (index: number, value: number) => {
       const _val = Object.assign({}, perArr)
-      _val[index] = value
+      _val[index] = Number(value)
       setPerArr(_val)
     },
     [perArr]
