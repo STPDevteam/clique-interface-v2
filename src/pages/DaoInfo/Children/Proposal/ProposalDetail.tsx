@@ -69,7 +69,12 @@ function DetailBox({
       <Box mt={40}>
         <Grid container spacing={40}>
           <Grid item md={8} xs={12}>
-            <VoteProgress />
+            <VoteProgress
+              proposalOptions={proposalDetailInfo.proposalOptions}
+              daoAddress={daoInfo.daoAddress}
+              daoChainId={daoChainId}
+              proposalId={proposalId}
+            />
           </Grid>
           <Grid item md={4} xs={12}>
             <VoteInfo proposalInfo={proposalDetailInfo} daoAddress={daoInfo.daoAddress} daoChainId={daoChainId} />

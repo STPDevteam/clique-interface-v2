@@ -126,3 +126,19 @@ export function getProposalSnapshot(chainId: number, daoAddress: string, proposa
     proposalId
   })
 }
+
+export function getProposalVotesList(
+  chainId: number | string,
+  daoAddress: string,
+  proposalId: number,
+  offset: number,
+  count: number
+) {
+  return Axios.get('stpdao/v2/votes/list', {
+    chainId,
+    daoAddress,
+    proposalId,
+    offset,
+    count
+  })
+}
