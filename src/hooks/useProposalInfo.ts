@@ -4,7 +4,7 @@ import { useActiveWeb3React } from 'hooks'
 import JSBI from 'jsbi'
 import { useEffect, useMemo, useState } from 'react'
 import { VotingTypes } from 'state/buildingGovDao/actions'
-import { useSingleCallResult } from 'state/multicall/hooks'
+import { NEVER_RELOAD, useSingleCallResult } from 'state/multicall/hooks'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { getProposalContent, sign } from 'utils/fetch/server'
 import { retry } from 'utils/retry'
@@ -17,7 +17,7 @@ export enum ProposalStatus {
   CLOSED = 3
 }
 
-export interface CreateProposalSignProp {
+export interface ProposalSignProp {
   account: string
   balance: string
   signature: string
@@ -56,12 +56,18 @@ export interface ProposalDetailProp {
   targetTimeString: string
   content: string | undefined
   proposalOptions: ProposalOptionProp[]
+  myVoteInfo:
+    | {
+        name: string
+        amount: TokenAmount
+      }[]
+    | undefined
   proposalId: number
 }
 
-export function useCreateProposalSign(daoAddress: string) {
+export function useProposalSign(daoAddress: string, chainId: ChainId, signType = SignType.CREATE_PROPOSAL) {
   const { account } = useActiveWeb3React()
-  const [ret, setRet] = useState<CreateProposalSignProp>()
+  const [ret, setRet] = useState<ProposalSignProp>()
 
   useEffect(() => {
     ;(async () => {
@@ -69,19 +75,19 @@ export function useCreateProposalSign(daoAddress: string) {
         setRet(undefined)
         return
       }
-      const { promise } = retry(() => sign(account, daoAddress, SignType.CREATE_PROPOSAL), {
+      const { promise } = retry(() => sign(chainId, account, daoAddress, signType), {
         n: 100,
         minWait: 1000,
         maxWait: 2500
       })
       try {
         const returnData = await promise
-        setRet(returnData.data.data as CreateProposalSignProp)
+        setRet(returnData.data.data as ProposalSignProp)
       } catch (error) {
         setRet(undefined)
       }
     })()
-  }, [account, daoAddress])
+  }, [account, chainId, daoAddress, signType])
 
   return ret
 }
@@ -142,7 +148,8 @@ export function useProposalDetailInfo(
   daoAddress: string,
   daoChainId: ChainId,
   proposalId: number,
-  token?: Token
+  token?: Token,
+  account?: string
 ): undefined | ProposalDetailProp {
   const [content, setContent] = useState<string>()
   const daoContract = useGovernanceDaoContract(daoAddress, daoChainId)
@@ -150,7 +157,7 @@ export function useProposalDetailInfo(
     daoContract,
     'getProposalOptionById',
     [proposalId],
-    undefined,
+    NEVER_RELOAD,
     daoChainId
   ).result?.[0]
   const proposalBaseInfo = useProposalBaseInfo(daoAddress, daoChainId, proposalId)
@@ -165,11 +172,13 @@ export function useProposalDetailInfo(
     return new TokenAmount(token, _total.toString())
   }, [proposalOptionRes, token])
 
-  const proposalOptions: {
-    name: string
-    amount: TokenAmount
-    per: number
-  }[] = useMemo(() => {
+  const proposalOptions:
+    | {
+        name: string
+        amount: TokenAmount
+        per: number
+      }[]
+    | undefined = useMemo(() => {
     if (!proposalOptionRes || !token || !totalVoteAmount) {
       return undefined
     }
@@ -203,14 +212,38 @@ export function useProposalDetailInfo(
     })()
   }, [proposalBaseInfo?.uuid])
 
+  const accountVoteInfoRes = useSingleCallResult(
+    account ? daoContract : undefined,
+    'getVoteInfoByAccountAndProposalId',
+    [account, proposalId],
+    undefined,
+    daoChainId
+  ).result?.[0]
+
+  const myVoteInfo:
+    | {
+        name: string
+        amount: TokenAmount
+      }[]
+    | undefined = useMemo(() => {
+    if (!token || !accountVoteInfoRes || !proposalOptions?.length) {
+      return undefined
+    }
+    return accountVoteInfoRes.map((item: any) => ({
+      name: proposalOptions[item.index].name,
+      amount: new TokenAmount(token, item.amount)
+    }))
+  }, [accountVoteInfoRes, proposalOptions, token])
+
   return useMemo(() => {
-    if (!proposalBaseInfo) {
+    if (!proposalBaseInfo || !proposalOptions) {
       return undefined
     }
     return {
       content,
+      myVoteInfo,
       proposalOptions,
       ...proposalBaseInfo
     }
-  }, [content, proposalBaseInfo, proposalOptions])
+  }, [content, proposalBaseInfo, proposalOptions, myVoteInfo])
 }

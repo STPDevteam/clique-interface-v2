@@ -3,7 +3,7 @@ import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
 import { useProposalSnapshot } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
-import { ProposalDetailProp } from 'hooks/useProposalInfo'
+import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
@@ -16,6 +16,8 @@ import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/Tr
 import { useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { Dots } from 'theme/components'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
@@ -35,6 +37,7 @@ export default function Info({
   const proposalSnapshot = useProposalSnapshot(daoChainId, daoAddress, proposalInfo.proposalId)
   const cancelProposalCallback = useCancelProposalCallback(daoAddress)
 
+  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`${daoAddress}_cancelProposal`)
   const { showModal, hideModal } = useModal()
   const onCancelProposalCallback = useCallback(() => {
     showModal(<TransacitonPendingModal />)
@@ -103,14 +106,22 @@ export default function Info({
             </svg>
           </Link>
         </Box>
-        {account === proposalInfo.creator && (
+        {account === proposalInfo.creator && proposalInfo.status !== ProposalStatus.CLOSED && (
           <Box mt={15}>
             <BlackButton
               height="44px"
-              onClick={chainId !== daoChainId ? switchNetwork : onCancelProposalCallback}
               width="160px"
+              disabled={isCancel}
+              onClick={chainId !== daoChainId ? switchNetwork : onCancelProposalCallback}
             >
-              Cancel proposal
+              {isCancel ? (
+                <>
+                  Cancel
+                  <Dots />
+                </>
+              ) : (
+                'Cancel proposal'
+              )}
             </BlackButton>
           </Box>
         )}
