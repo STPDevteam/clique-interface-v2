@@ -107,7 +107,7 @@ export const theme = {
     text: {
       primary: '#1B1D21',
       secondary: '#808191',
-      disabled: '#E4E4E4'
+      disabled: '#b4b2b2'
     },
     action: {
       disabledOpacity: 0.8

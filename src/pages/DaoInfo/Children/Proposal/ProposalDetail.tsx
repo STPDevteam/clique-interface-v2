@@ -11,6 +11,7 @@ import DetailVote from './detail/Vote'
 import VoteProgress from './detail/VoteProgress'
 import VoteInfo from './detail/Info'
 import { useProposalDetailInfo } from 'hooks/useProposalInfo'
+import { useActiveWeb3React } from 'hooks'
 
 export default function ProposalDetail() {
   const { chainId: daoChainId, address: daoAddress, proposalId } = useParams<{
@@ -38,9 +39,15 @@ function DetailBox({
   proposalId: number
 }) {
   const history = useHistory()
+  const { account } = useActiveWeb3React()
 
-  const proposalDetailInfo = useProposalDetailInfo(daoInfo.daoAddress, daoChainId, proposalId, daoInfo.token)
-  console.log('🚀 ~ file: ProposalDetail.tsx ~ line 43 ~ proposalDetailInfo', proposalDetailInfo)
+  const proposalDetailInfo = useProposalDetailInfo(
+    daoInfo.daoAddress,
+    daoChainId,
+    proposalId,
+    daoInfo.token,
+    account || undefined
+  )
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)
@@ -55,14 +62,19 @@ function DetailBox({
             <DetailContent proposalInfo={proposalDetailInfo} />
           </Grid>
           <Grid item md={4} xs={12}>
-            <DetailVote proposalInfo={proposalDetailInfo} />
+            <DetailVote proposalInfo={proposalDetailInfo} daoAddress={daoInfo.daoAddress} daoChainId={daoChainId} />
           </Grid>
         </Grid>
       </Box>
       <Box mt={40}>
         <Grid container spacing={40}>
           <Grid item md={8} xs={12}>
-            <VoteProgress />
+            <VoteProgress
+              proposalOptions={proposalDetailInfo.proposalOptions}
+              daoAddress={daoInfo.daoAddress}
+              daoChainId={daoChainId}
+              proposalId={proposalId}
+            />
           </Grid>
           <Grid item md={4} xs={12}>
             <VoteInfo proposalInfo={proposalDetailInfo} daoAddress={daoInfo.daoAddress} daoChainId={daoChainId} />

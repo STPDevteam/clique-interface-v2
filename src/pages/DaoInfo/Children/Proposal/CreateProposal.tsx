@@ -16,8 +16,8 @@ import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
-import { useCreateProposalCallback } from 'hooks/useCreateProposalCallback'
-import { useCreateProposalSign } from 'hooks/useProposalInfo'
+import { useCreateProposalCallback } from 'hooks/useProposalCallback'
+import { useProposalSign } from 'hooks/useProposalInfo'
 import { TokenAmount } from 'constants/token'
 import JSBI from 'jsbi'
 import useModal from 'hooks/useModal'
@@ -72,7 +72,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   )
   const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
   const createProposalCallback = useCreateProposalCallback(daoInfo.daoAddress)
-  const createProposalSign = useCreateProposalSign(daoInfo.daoAddress)
+  const createProposalSign = useProposalSign(daoInfo.daoAddress, daoChainId)
 
   const myBalance = useMemo(() => {
     if (!daoInfo.token || !createProposalSign) {

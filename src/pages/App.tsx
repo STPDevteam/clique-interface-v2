@@ -24,7 +24,7 @@ import CreatorToken from 'pages/Creator/CreatorToken'
 import TokenList from 'pages/TokenList'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
-// import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
+import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -95,7 +95,7 @@ export default function App() {
                                   <Route path={routes.DaoInfo} exact strict component={ProposalList} />
                                   <Route path={routes.Proposal} exact strict component={ProposalList} />
                                   <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
-                                  <Route path={routes.ProposalDetail} exact strict component={ComingSoon} />
+                                  <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
                                   <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
                                   <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
                                   <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />

@@ -7,6 +7,7 @@ interface Props {
   width?: string
   height?: string
   backgroundColor?: string
+  borderRadius?: string
   disabled?: boolean
   color?: string
   children?: React.ReactNode
@@ -18,7 +19,19 @@ interface Props {
 }
 
 export default function Button(props: Props) {
-  const { onClick, disabled, style, width, height, fontSize, backgroundColor, color, disableRipple, className } = props
+  const {
+    onClick,
+    disabled,
+    style,
+    width,
+    height,
+    fontSize,
+    backgroundColor,
+    color,
+    disableRipple,
+    className,
+    borderRadius
+  } = props
   const theme = useTheme()
   return (
     <ButtonBase
@@ -32,7 +45,7 @@ export default function Button(props: Props) {
         fontSize: fontSize || 14,
         fontWeight: 700,
         transition: '.3s',
-        borderRadius: `${theme.shape.borderRadius}px`,
+        borderRadius: borderRadius || `${theme.shape.borderRadius}px`,
         backgroundColor: backgroundColor || theme.palette.primary.main,
         color: color || theme.palette.primary.contrastText,
         '&:hover': {

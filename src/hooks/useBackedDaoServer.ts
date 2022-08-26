@@ -127,6 +127,7 @@ export function useHomeDaoList() {
         setResult(list)
       } catch (error) {
         setResult([])
+        setTotal(0)
         setLoading(false)
         console.error('useHomeDao', error)
       }
@@ -328,6 +329,7 @@ export function useTokenList(account: string, chainId: number | string) {
         const data = res.data.data as any
         if (!data) {
           setResult([])
+          setTotal(0)
           return
         }
         setTotal(data.total)
@@ -341,6 +343,7 @@ export function useTokenList(account: string, chainId: number | string) {
         setResult(list)
       } catch (error) {
         setResult([])
+        setTotal(0)
         setLoading(false)
         console.error('useTokenList', error)
       }

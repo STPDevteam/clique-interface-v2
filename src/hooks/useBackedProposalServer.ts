@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
-import { getProposalList } from '../utils/fetch/server'
+import { getProposalList, getProposalSnapshot, getProposalVotesList } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 
 export interface ProposalListBaseProp {
@@ -34,6 +35,7 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
     ;(async () => {
       if (!daoChainId || !daoAddress) {
         setResult([])
+        setTotal(0)
         return
       }
       setLoading(true)
@@ -55,6 +57,7 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
         setResult(list)
       } catch (error) {
         setResult([])
+        setTotal(0)
         setLoading(false)
         console.error('getProposalList', error)
       }
@@ -106,6 +109,87 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
     search: {
       status,
       setStatus
+    },
+    result
+  }
+}
+
+export function useProposalSnapshot(chainId: ChainId, daoAddress: string, proposalId: number) {
+  const [snapshot, setSnapshot] = useState<number | string>()
+  useEffect(() => {
+    ;(async () => {
+      const { promise } = retry(() => getProposalSnapshot(chainId, daoAddress, proposalId), {
+        n: 100,
+        minWait: 1000,
+        maxWait: 2500
+      })
+      try {
+        const returnData = await promise
+        setSnapshot(returnData.data.data.snapshot)
+      } catch (error) {
+        setSnapshot(undefined)
+      }
+    })()
+  }, [chainId, daoAddress, proposalId])
+
+  return snapshot
+}
+
+export function useProposalVoteList(daoChainId: ChainId, daoAddress: string, proposalId: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 10
+  const [result, setResult] = useState<{ optionIndex: number; voter: string; amount: string }[]>([])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!daoChainId || !daoAddress) {
+        setResult([])
+        setTotal(0)
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await getProposalVotesList(
+          daoChainId,
+          daoAddress,
+          proposalId,
+          (currentPage - 1) * pageSize,
+          pageSize
+        )
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list = data.list.map((item: any) => ({
+          optionIndex: item.optionIndex,
+          voter: item.voter,
+          amount: item.amount
+        }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useProposalVoteList', error)
+      }
+    })()
+  }, [currentPage, daoAddress, daoChainId, proposalId])
+
+  return {
+    loading: loading,
+    page: {
+      setCurrentPage,
+      currentPage,
+      total,
+      totalPage: Math.ceil(total / pageSize),
+      pageSize
     },
     result
   }

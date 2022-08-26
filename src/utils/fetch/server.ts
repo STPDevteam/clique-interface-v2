@@ -82,8 +82,9 @@ export function getTokenList(chainId: number | string, creator: string, offset: 
   })
 }
 
-export function sign(account: string, daoAddress: string, signType: number) {
+export function sign(chainId: number, account: string, daoAddress: string, signType: number) {
   return Axios.post('stpdao/v2/sign/create', {
+    chainId,
     account,
     daoAddress,
     signType: signType.toString()
@@ -113,6 +114,30 @@ export function getProposalList(
     chainId,
     daoAddress,
     status: status || '',
+    offset,
+    count
+  })
+}
+
+export function getProposalSnapshot(chainId: number, daoAddress: string, proposalId: number) {
+  return Axios.get('stpdao/v2/proposal/snapshot', {
+    chainId,
+    daoAddress,
+    proposalId
+  })
+}
+
+export function getProposalVotesList(
+  chainId: number | string,
+  daoAddress: string,
+  proposalId: number,
+  offset: number,
+  count: number
+) {
+  return Axios.get('stpdao/v2/votes/list', {
+    chainId,
+    daoAddress,
+    proposalId,
     offset,
     count
   })
