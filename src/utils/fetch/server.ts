@@ -82,12 +82,13 @@ export function getTokenList(chainId: number | string, creator: string, offset: 
   })
 }
 
-export function sign(chainId: number, account: string, daoAddress: string, signType: number) {
+export function sign(chainId: number, account: string, daoAddress: string, signType: number, proposalId?: number) {
   return Axios.post('stpdao/v2/sign/create', {
     chainId,
     account,
     daoAddress,
-    signType: signType.toString()
+    signType: signType.toString(),
+    proposalId: proposalId !== undefined ? proposalId : ''
   })
 }
 

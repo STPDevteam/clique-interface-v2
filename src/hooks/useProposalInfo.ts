@@ -65,7 +65,12 @@ export interface ProposalDetailProp {
   proposalId: number
 }
 
-export function useProposalSign(daoAddress: string, chainId: ChainId, signType = SignType.CREATE_PROPOSAL) {
+export function useProposalSign(
+  daoAddress: string,
+  chainId: ChainId,
+  signType = SignType.CREATE_PROPOSAL,
+  proposalId?: number
+) {
   const { account } = useActiveWeb3React()
   const [ret, setRet] = useState<ProposalSignProp>()
 
@@ -75,7 +80,7 @@ export function useProposalSign(daoAddress: string, chainId: ChainId, signType =
         setRet(undefined)
         return
       }
-      const { promise } = retry(() => sign(chainId, account, daoAddress, signType), {
+      const { promise } = retry(() => sign(chainId, account, daoAddress, signType, proposalId), {
         n: 100,
         minWait: 1000,
         maxWait: 2500
@@ -87,7 +92,7 @@ export function useProposalSign(daoAddress: string, chainId: ChainId, signType =
         setRet(undefined)
       }
     })()
-  }, [account, chainId, daoAddress, signType])
+  }, [account, chainId, daoAddress, proposalId, signType])
 
   return ret
 }

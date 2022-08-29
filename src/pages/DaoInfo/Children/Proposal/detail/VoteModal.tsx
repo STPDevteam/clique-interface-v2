@@ -51,7 +51,7 @@ export default function VoteModal({
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
   const daoInfo = useDaoInfo(daoAddress, daoChainId)
-  const voteProposalSign = useProposalSign(daoAddress, daoChainId, SignType.VOTE)
+  const voteProposalSign = useProposalSign(daoAddress, daoChainId, SignType.VOTE, proposalInfo.proposalId)
   const proposalVoteCallback = useProposalVoteCallback(daoAddress)
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${daoAddress}_proposalVote_${proposalInfo.proposalId}`)
 
