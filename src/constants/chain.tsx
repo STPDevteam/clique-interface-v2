@@ -10,7 +10,7 @@ export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,
   RINKEBY = 4,
-  GÖRLI = 5,
+  GOERLI = 5,
   KOVAN = 42,
   BSC = 56,
   BSCTEST = 97,
@@ -42,6 +42,14 @@ export const AllChainList = [
     symbol: 'Rinkeby',
     name: 'Rinkeby Testnet',
     id: ChainId.RINKEBY,
+    hex: '0x4'
+  },
+  {
+    icon: <ETH />,
+    logo: EthUrl,
+    symbol: 'Goerli',
+    name: 'Goerli Testnet',
+    id: ChainId.GOERLI,
     hex: '0x4'
   },
   {
@@ -132,6 +140,17 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://rinkeby.infura.io/v3/'],
     blockExplorerUrls: ['https://rinkeby.etherscan.io/']
+  },
+  [ChainId.GOERLI]: {
+    chainId: '0x5',
+    chainName: 'Goerli',
+    nativeCurrency: {
+      name: 'Goerli ETH',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://goerli.infura.io/v3/'],
+    blockExplorerUrls: ['https://goerli.etherscan.io/']
   },
   [ChainId.KOVAN]: {
     chainId: '0x2a',

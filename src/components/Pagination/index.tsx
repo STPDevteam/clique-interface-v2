@@ -66,7 +66,7 @@ export default function PaginationView({
             alignItems: 'center',
             gap: { xs: 5, sm: 8 },
             flexDirection: { xs: 'column', sm: 'row' },
-            marginBottom: 15
+            marginBottom: 10
           }}
         >
           {perPage && (

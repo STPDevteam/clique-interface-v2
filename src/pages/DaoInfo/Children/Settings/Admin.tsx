@@ -13,15 +13,18 @@ import { useSetDaoAdminCallback, useSuperAdminTransferOwnershipCallback } from '
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { isAddress } from 'utils'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 export default function Admin() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const [addAddress, setAddAddress] = useState('')
   const [appendAccounts, setAppendAccounts] = useState<string[]>([])
+  const { chainId, account, library } = useActiveWeb3React()
 
   const { result: daoAdminList, loading: daoAdminLoading } = useBackedDaoAdmins(
     daoAddress,
@@ -94,6 +97,10 @@ export default function Admin() {
     [hideModal, showModal, superAdminTransferOwnershipCallback]
   )
 
+  const switchNetwork = useCallback(() => {
+    triggerSwitchChain(library, curDaoChainId, account || '')
+  }, [account, curDaoChainId, library])
+
   return (
     <StyledItem>
       {daoAdminLoading ? (
@@ -104,8 +111,9 @@ export default function Admin() {
             <AdminBlock
               removeDaoAdminCallback={removeDaoAdminCallback}
               onSuperAdminTransferCallback={onSuperAdminTransferCallback}
+              switchNetwork={switchNetwork}
               key={address}
-              chainId={curDaoChainId}
+              daoChainId={curDaoChainId}
               daoAddress={daoAddress}
               account={address}
               isTransferring={isTransferring}
@@ -124,7 +132,12 @@ export default function Admin() {
                 <ShowAdminTag level={DaoAdminLevelProp.ADMIN} />
               </div>
               <Stack spacing={12} direction="row">
-                <BlackButton width="92px" height="24px" onClick={addDaoAdminCallback} disabled={!isAddress(addAddress)}>
+                <BlackButton
+                  width="92px"
+                  height="24px"
+                  onClick={curDaoChainId === chainId ? addDaoAdminCallback : switchNetwork}
+                  disabled={!isAddress(addAddress)}
+                >
                   Add
                 </BlackButton>
               </Stack>
@@ -137,22 +150,26 @@ export default function Admin() {
 }
 
 function AdminBlock({
-  chainId,
+  daoChainId,
   daoAddress,
   account,
   removeDaoAdminCallback,
   onSuperAdminTransferCallback,
+  switchNetwork,
   isTransferring
 }: {
   removeDaoAdminCallback: (account: string) => void
   onSuperAdminTransferCallback: (account: string) => void
-  chainId: ChainId
+  switchNetwork: () => void
+  daoChainId: ChainId
   daoAddress: string
   account: string
   isTransferring: boolean
 }) {
-  const level = useDaoAdminLevel(daoAddress, chainId, account)
+  const level = useDaoAdminLevel(daoAddress, daoChainId, account)
   const { claimSubmitted: isRemoving } = useUserHasSubmittedClaim(`${daoAddress}_setAdmin_${account}`)
+  const { chainId } = useActiveWeb3React()
+  const isNeedSwitch = useMemo(() => chainId !== daoChainId, [chainId, daoChainId])
 
   return (
     <>
@@ -169,7 +186,7 @@ function AdminBlock({
               width="92px"
               height="24px"
               disabled={isTransferring}
-              onClick={() => onSuperAdminTransferCallback(account)}
+              onClick={() => (isNeedSwitch ? switchNetwork() : onSuperAdminTransferCallback(account))}
             >
               {isTransferring ? 'Transferring' : 'Transfer'}
             </BlackButton>
@@ -177,7 +194,7 @@ function AdminBlock({
               disabled={isRemoving}
               width="92px"
               height="24px"
-              onClick={() => removeDaoAdminCallback(account)}
+              onClick={() => (isNeedSwitch ? switchNetwork() : removeDaoAdminCallback(account))}
             >
               {isRemoving ? 'Removing' : 'Remove'}
             </OutlineButton>

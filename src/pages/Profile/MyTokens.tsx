@@ -34,7 +34,7 @@ const StyledClaimItem = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default
 }))
 
-function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; lockDate: number } }) {
+function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; lockDate: number; index: number } }) {
   const { showModal, hideModal } = useModal()
   const { account } = useActiveWeb3React()
   const createERC20Claim = useCreateERC20ClaimCallback()
@@ -47,7 +47,7 @@ function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; 
 
   const onReservedClaim = useCallback(() => {
     showModal(<TransactionPendingModal />)
-    createERC20Claim(item.tokenAmount.token.address)
+    createERC20Claim(item.tokenAmount.token.address, item.index)
       .then(() => {
         hideModal()
         showModal(<TransactionSubmittedModal />)
@@ -61,7 +61,7 @@ function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; 
         )
         console.error(err, JSON.stringify(err))
       })
-  }, [createERC20Claim, hideModal, item.tokenAmount.token.address, showModal])
+  }, [createERC20Claim, hideModal, item.index, item.tokenAmount.token.address, showModal])
 
   const getReservedActions = useMemo(() => {
     if (!account) {

@@ -5,6 +5,7 @@ export const routes = {
   DaoInfo: '/governance/daoInfo/:chainId/:address',
   Proposal: '/governance/daoInfo/:chainId/:address/proposal',
   CreateProposal: '/governance/daoInfo/:chainId/:address/proposal/create',
+  ProposalDetail: '/governance/daoInfo/:chainId/:address/proposal/detail/:proposalId',
   DaoInfoActivity: '/governance/daoInfo/:chainId/:address/active_info',
   DaoInfoAbout: '/governance/daoInfo/:chainId/:address/about',
   DaoInfoSettings: '/governance/daoInfo/:chainId/:address/settings',

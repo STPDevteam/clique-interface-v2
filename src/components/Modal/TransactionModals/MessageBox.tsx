@@ -16,9 +16,10 @@ interface Props {
   header?: string
   action?: () => void
   actionText?: string
+  hideFunc?: () => void
 }
 
-export default function MessageBox({ type, children, width = '480px', header, action, actionText }: Props) {
+export default function MessageBox({ type, children, width = '480px', header, action, actionText, hideFunc }: Props) {
   const { hideModal } = useModal()
 
   const icon =
@@ -44,7 +45,14 @@ export default function MessageBox({ type, children, width = '480px', header, ac
         </Box>
 
         <Box display="flex" justifyContent="space-around" width="100%" marginTop="10px">
-          <Button onClick={hideModal}>Close</Button>
+          <Button
+            onClick={() => {
+              hideModal()
+              hideFunc && hideFunc()
+            }}
+          >
+            Close
+          </Button>
           {type === 'failure' && actionText && <Button onClick={action}>{actionText}</Button>}
         </Box>
       </Box>

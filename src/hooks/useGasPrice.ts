@@ -21,7 +21,6 @@ export function useGasPriceInfo() {
         throw new Error('Get gas error, please try again.')
       }
       try {
-        console.log('contract', contract, method)
         estimatedGas = await contract.estimateGas[method](...args)
       } catch (error) {
         console.log(error)

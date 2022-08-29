@@ -46,7 +46,7 @@
     "type": "event"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "token_", "type": "address" }],
+    "inputs": [{ "internalType": "uint256", "name": "index_", "type": "uint256" }],
     "name": "claimReserve",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -158,7 +158,10 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "address", "name": "daoImpl_", "type": "address" }],
+    "inputs": [
+      { "internalType": "address", "name": "daoImpl_", "type": "address" },
+      { "internalType": "address", "name": "tokenImpl_", "type": "address" }
+    ],
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -188,6 +191,13 @@
   {
     "inputs": [],
     "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "proxyAdminAddress",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -251,6 +261,13 @@
   {
     "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
     "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address payable", "name": "daoAddress_", "type": "address" }],
+    "name": "upgradeProxy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

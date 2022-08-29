@@ -40,6 +40,10 @@ export function useSettingsModalToggle(): () => void {
   return useToggleModal(ApplicationModal.SETTINGS)
 }
 
+export function useVoteModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.VOTE)
+}
+
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
   const dispatch = useDispatch()

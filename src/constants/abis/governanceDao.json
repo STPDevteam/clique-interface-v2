@@ -96,11 +96,19 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "title_", "type": "string" },
-      { "internalType": "string", "name": "content_", "type": "string" },
-      { "internalType": "uint256", "name": "startTime_", "type": "uint256" },
-      { "internalType": "uint256", "name": "endTime_", "type": "uint256" },
-      { "internalType": "enum IDAOBase.VotingType", "name": "votingType_", "type": "uint8" },
+      {
+        "components": [
+          { "internalType": "string", "name": "title", "type": "string" },
+          { "internalType": "string", "name": "introduction", "type": "string" },
+          { "internalType": "string", "name": "content", "type": "string" },
+          { "internalType": "uint256", "name": "startTime", "type": "uint256" },
+          { "internalType": "uint256", "name": "endTime", "type": "uint256" },
+          { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
+        ],
+        "internalType": "struct DAOBase.ProposalInput",
+        "name": "input_",
+        "type": "tuple"
+      },
       { "internalType": "string[]", "name": "options_", "type": "string[]" },
       {
         "components": [
@@ -184,6 +192,26 @@
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "account_", "type": "address" },
+      { "internalType": "uint256", "name": "proposalId_", "type": "uint256" }
+    ],
+    "name": "getVoteInfoByAccountAndProposalId",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint256", "name": "index", "type": "uint256" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "internalType": "struct DAOBase.VoteInfo[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
         "components": [
           { "internalType": "string", "name": "name", "type": "string" },
@@ -246,6 +274,7 @@
       { "internalType": "bool", "name": "cancel", "type": "bool" },
       { "internalType": "address", "name": "creator", "type": "address" },
       { "internalType": "string", "name": "title", "type": "string" },
+      { "internalType": "string", "name": "introduction", "type": "string" },
       { "internalType": "string", "name": "content", "type": "string" },
       { "internalType": "uint256", "name": "startTime", "type": "uint256" },
       { "internalType": "uint256", "name": "endTime", "type": "uint256" },
@@ -308,23 +337,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "uint256", "name": "chainId", "type": "uint256" },
-          { "internalType": "address", "name": "tokenAddress", "type": "address" }
-        ],
-        "internalType": "struct IDAOBase.Token",
-        "name": "token_",
-        "type": "tuple"
-      }
-    ],
-    "name": "setToken",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
     "name": "transferOwnership",
     "outputs": [],
@@ -335,7 +347,7 @@
     "inputs": [
       { "internalType": "uint256", "name": "proposalId_", "type": "uint256" },
       { "internalType": "uint256[]", "name": "optionIndexes_", "type": "uint256[]" },
-      { "internalType": "uint256[]", "name": "amount_", "type": "uint256[]" },
+      { "internalType": "uint256[]", "name": "amounts_", "type": "uint256[]" },
       {
         "components": [
           { "internalType": "uint256", "name": "chainId", "type": "uint256" },
@@ -352,6 +364,20 @@
     "name": "vote",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "voteInfos",
+    "outputs": [
+      { "internalType": "uint256", "name": "index", "type": "uint256" },
+      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

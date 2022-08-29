@@ -82,10 +82,64 @@ export function getTokenList(chainId: number | string, creator: string, offset: 
   })
 }
 
-export function sign(account: string, daoAddress: string, signType: number) {
+export function sign(chainId: number, account: string, daoAddress: string, signType: number, proposalId?: number) {
   return Axios.post('stpdao/v2/sign/create', {
+    chainId,
     account,
     daoAddress,
-    signType: signType.toString()
+    signType: signType.toString(),
+    proposalId: proposalId !== undefined ? proposalId : ''
+  })
+}
+
+export function saveProposalContent(content: string) {
+  return Axios.post('stpdao/v2/proposal/save', {
+    content
+  })
+}
+
+export function getProposalContent(uuid: string) {
+  return Axios.get('stpdao/v2/proposal/query', {
+    uuid
+  })
+}
+
+export function getProposalList(
+  chainId: number | string,
+  daoAddress: string,
+  status: number | undefined,
+  offset: number,
+  count: number
+) {
+  return Axios.get('stpdao/v2/proposal/list', {
+    chainId,
+    daoAddress,
+    status: status || '',
+    offset,
+    count
+  })
+}
+
+export function getProposalSnapshot(chainId: number, daoAddress: string, proposalId: number) {
+  return Axios.get('stpdao/v2/proposal/snapshot', {
+    chainId,
+    daoAddress,
+    proposalId
+  })
+}
+
+export function getProposalVotesList(
+  chainId: number | string,
+  daoAddress: string,
+  proposalId: number,
+  offset: number,
+  count: number
+) {
+  return Axios.get('stpdao/v2/votes/list', {
+    chainId,
+    daoAddress,
+    proposalId,
+    offset,
+    count
   })
 }

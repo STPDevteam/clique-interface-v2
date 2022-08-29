@@ -150,12 +150,12 @@ export function CreateGovernanceModal() {
         error: 'Minimum votes needed for proposal to execute required'
       }
     }
-    if (!buildingDaoData.defaultVotingPeriod) {
-      return {
-        disabled: true,
-        error: 'Default voting period required'
-      }
-    }
+    // if (!buildingDaoData.defaultVotingPeriod) {
+    //   return {
+    //     disabled: true,
+    //     error: 'Default voting period required'
+    //   }
+    // }
     if (buildingDaoData.votingTypes === undefined) {
       return {
         disabled: true,
