@@ -64,6 +64,8 @@ export interface HomeListProp {
   daoAddress: string
   chainId: ChainId
   proposals: number
+  activeProposals: number
+  soonProposals: number
   members: number
   joinSwitch: boolean
 }
@@ -120,7 +122,9 @@ export function useHomeDaoList() {
           daoLogo: item.daoLogo,
           daoAddress: item.daoAddress,
           chainId: item.chainId,
-          proposals: item.proposals,
+          proposals: item.totalProposals,
+          activeProposals: item.activeProposals,
+          soonProposals: item.soonProposals,
           members: item.members,
           joinSwitch: item.joinSwitch
         }))
@@ -160,7 +164,9 @@ export function useHomeDaoList() {
           daoLogo: item.daoLogo,
           daoAddress: item.daoAddress,
           chainId: item.chainId,
-          proposals: item.proposals,
+          proposals: item.totalProposals,
+          activeProposals: item.activeProposals,
+          soonProposals: item.soonProposals,
           members: item.members,
           joinSwitch: item.joinSwitch
         }))
