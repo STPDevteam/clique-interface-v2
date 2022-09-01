@@ -102,9 +102,10 @@ function VoteModalFunc({
       [x: number]: TokenAmount | undefined
     } = {}
     for (const index of voteFor) {
-      _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : undefined
+      _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : chooseOption[index]
     }
     setChooseOption(_val)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myVotes, proposalInfo.votingType, voteFor])
 
   const chooseOptionCallback = useCallback(
