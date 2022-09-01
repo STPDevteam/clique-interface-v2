@@ -76,15 +76,25 @@ export function useProposalSign(
 
   useEffect(() => {
     ;(async () => {
-      if (!account || !daoAddress) {
+      if (!account || !daoAddress || (signType === SignType.VOTE && proposalId === undefined)) {
         setRet(undefined)
         return
       }
-      const { promise } = retry(() => sign(chainId, account, daoAddress, signType, proposalId), {
-        n: 100,
-        minWait: 1000,
-        maxWait: 2500
-      })
+      const { promise } = retry(
+        () =>
+          sign(
+            chainId,
+            account,
+            daoAddress,
+            signType,
+            signType === SignType.CREATE_PROPOSAL ? 0 : (proposalId as number)
+          ),
+        {
+          n: 100,
+          minWait: 1000,
+          maxWait: 2500
+        }
+      )
       try {
         const returnData = await promise
         setRet(returnData.data.data as ProposalSignProp)
