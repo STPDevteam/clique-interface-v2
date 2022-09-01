@@ -6,7 +6,13 @@ import { ChainId, ChainListMap } from 'constants/chain'
 import { TokenAmount } from 'constants/token'
 import { useDaoInfo } from 'hooks/useDaoInfo'
 import { SignType, useProposalVoteCallback } from 'hooks/useProposalCallback'
-import { ProposalDetailProp, ProposalOptionProp, ProposalStatus, useProposalSign } from 'hooks/useProposalInfo'
+import {
+  ProposalDetailProp,
+  ProposalOptionProp,
+  ProposalSignProp,
+  ProposalStatus,
+  useProposalSign
+} from 'hooks/useProposalInfo'
 import JSBI from 'jsbi'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
@@ -45,15 +51,8 @@ export default function VoteModal({
   daoAddress: string
   voteFor: number[]
 }) {
-  const theme = useTheme()
-  const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
-  const { account, library, chainId } = useActiveWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
-  const voteModalToggle = useVoteModalToggle()
   const daoInfo = useDaoInfo(daoAddress, daoChainId)
   const voteProposalSign = useProposalSign(daoAddress, daoChainId, SignType.VOTE, proposalInfo.proposalId)
-  const proposalVoteCallback = useProposalVoteCallback(daoAddress)
-  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${daoAddress}_proposalVote_${proposalInfo.proposalId}`)
 
   const myVotes = useMemo(() => {
     if (!daoInfo?.token || !voteProposalSign) {
@@ -62,7 +61,52 @@ export default function VoteModal({
     return new TokenAmount(daoInfo.token, JSBI.BigInt(voteProposalSign?.balance || '0'))
   }, [voteProposalSign, daoInfo?.token])
 
-  const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>({})
+  return !voteProposalSign || myVotes === undefined ? null : (
+    <VoteModalFunc
+      myVotes={myVotes}
+      voteProposalSign={voteProposalSign}
+      proposalInfo={proposalInfo}
+      daoChainId={daoChainId}
+      daoAddress={daoAddress}
+      voteFor={voteFor}
+    />
+  )
+}
+
+function VoteModalFunc({
+  proposalInfo,
+  daoChainId,
+  daoAddress,
+  voteFor,
+  myVotes,
+  voteProposalSign
+}: {
+  proposalInfo: ProposalDetailProp
+  daoChainId: ChainId
+  daoAddress: string
+  voteFor: number[]
+  voteProposalSign: ProposalSignProp
+  myVotes: TokenAmount
+}) {
+  const theme = useTheme()
+  const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
+  const { account, library, chainId } = useActiveWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
+  const voteModalToggle = useVoteModalToggle()
+  const proposalVoteCallback = useProposalVoteCallback(daoAddress)
+  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${daoAddress}_proposalVote_${proposalInfo.proposalId}`)
+
+  const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>(
+    (() => {
+      const _val: {
+        [x: number]: TokenAmount | undefined
+      } = {}
+      for (const index of voteFor) {
+        _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : undefined
+      }
+      return _val
+    })()
+  )
 
   const chooseOptionCallback = useCallback(
     (index: number, amount: TokenAmount) => {
@@ -72,30 +116,6 @@ export default function VoteModal({
     },
     [chooseOption]
   )
-
-  useEffect(() => {
-    if (proposalInfo.votingType === VotingTypes.SINGLE) {
-      const _val: {
-        [x: number]: TokenAmount | undefined
-      } = {}
-      for (const index of voteFor) {
-        _val[index] = myVotes
-      }
-      setChooseOption(_val)
-    }
-  }, [myVotes, proposalInfo.votingType, voteFor])
-
-  useEffect(() => {
-    if (proposalInfo.votingType === VotingTypes.MULTI) {
-      const _val: {
-        [x: number]: TokenAmount | undefined
-      } = {}
-      for (const index of voteFor) {
-        _val[index] = undefined
-      }
-      setChooseOption(_val)
-    }
-  }, [proposalInfo.votingType, voteFor, account])
 
   const validChooseOptions = useMemo(() => {
     const ret = Object.assign({}, chooseOption)
