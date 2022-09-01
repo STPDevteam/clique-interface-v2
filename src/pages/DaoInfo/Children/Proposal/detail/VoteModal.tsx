@@ -96,17 +96,16 @@ function VoteModalFunc({
   const proposalVoteCallback = useProposalVoteCallback(daoAddress)
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${daoAddress}_proposalVote_${proposalInfo.proposalId}`)
 
-  const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>(
-    (() => {
-      const _val: {
-        [x: number]: TokenAmount | undefined
-      } = {}
-      for (const index of voteFor) {
-        _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : undefined
-      }
-      return _val
-    })()
-  )
+  const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>({})
+  useEffect(() => {
+    const _val: {
+      [x: number]: TokenAmount | undefined
+    } = {}
+    for (const index of voteFor) {
+      _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : undefined
+    }
+    setChooseOption(_val)
+  }, [myVotes, proposalInfo.votingType, voteFor])
 
   const chooseOptionCallback = useCallback(
     (index: number, amount: TokenAmount) => {
