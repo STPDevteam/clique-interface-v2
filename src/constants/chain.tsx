@@ -50,7 +50,7 @@ export const AllChainList = [
     symbol: 'Goerli',
     name: 'Goerli Testnet',
     id: ChainId.GOERLI,
-    hex: '0x4'
+    hex: '0x5'
   },
   {
     icon: <ETH />,
