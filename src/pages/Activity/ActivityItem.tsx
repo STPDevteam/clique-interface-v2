@@ -1,6 +1,8 @@
 import { Box, Stack, styled, Typography } from '@mui/material'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { ChainListMap } from 'constants/chain'
+import { routes } from 'constants/routes'
+import { useHistory } from 'react-router'
 import CircularStatic from './CircularStatic'
 
 const StyledItem = styled('div')(({ theme }) => ({
@@ -69,8 +71,11 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
 }))
 
 export function AirdropItem() {
+  const history = useHistory()
   return (
-    <StyledItem>
+    <StyledItem
+      onClick={() => history.push(routes._ActivityAirdropDetail + '/5/0x9f1a024df72e6ea512b3bb726e9d4532463c307e/1')}
+    >
       <StyledStatusBox direction={'row'} spacing={24}>
         <StyledStatusText color={'active'}>Active</StyledStatusText>
         <StyledText fontSize={12}>2 days left</StyledText>

@@ -13,6 +13,8 @@ export const routes = {
   DaoInfoSettings: '/governance/daoInfo/:chainId/:address/settings',
 
   Activity: '/activity',
+  _ActivityAirdropDetail: '/activity/airdrop',
+  ActivityAirdropDetail: '/activity/airdrop/:chainId/:address/:id',
   Tokens: '/tokens',
 
   Creator: '/creator',
