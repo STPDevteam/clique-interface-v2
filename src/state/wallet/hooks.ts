@@ -100,9 +100,18 @@ export function useTokenBalances(
 
 // get the balance for a single token/account combo
 export function useTokenBalance(account?: string, token?: Token): TokenAmount | undefined {
-  const tokenBalances = useTokenBalances(account, [token])
-  if (!token) return undefined
-  return tokenBalances[token.address]
+  const tokenContract = useTokenContract(token?.address, false, token?.chainId)
+  const res = useSingleCallResult(
+    account ? tokenContract : null,
+    'balanceOf',
+    [account || ''],
+    undefined,
+    token?.chainId
+  )?.result
+  return useMemo(() => {
+    if (!res?.[0] || !token) return undefined
+    return new TokenAmount(token, res[0].toString())
+  }, [res, token])
 }
 
 export function useCurrencyBalances(

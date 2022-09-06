@@ -54,8 +54,12 @@ export function useV2MigratorContract(): Contract | null {
   return useContract(MIGRATOR_ADDRESS, MIGRATOR_ABI, true)
 }
 
-export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
+export function useTokenContract(
+  tokenAddress?: string,
+  withSignerIfPossible?: boolean,
+  chainId?: ChainId
+): Contract | null {
+  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible, chainId)
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contract | null {

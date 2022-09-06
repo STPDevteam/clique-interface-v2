@@ -2,6 +2,8 @@ import { ButtonGroup, styled, Button as MuiButton } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
+import { useActiveWeb3React } from 'hooks'
+import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
 import { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
@@ -33,6 +35,8 @@ enum ActivityType {
 export default function Activity() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
+  const { account } = useActiveWeb3React()
+  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   // const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
 
@@ -55,20 +59,22 @@ export default function Activity() {
             {ActivityType.AIRDROP}
           </MuiButton>
         </StyledButtonGroup>
-        <BlackButton
-          width="252px"
-          height="48px"
-          onClick={() =>
-            history.push(
-              routes._DaoInfo +
-                `/${curDaoChainId}/${daoAddress}/active_info/${
-                  activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_airdrop'
-                }`
-            )
-          }
-        >
-          Create {activityType}
-        </BlackButton>
+        {(daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN) && (
+          <BlackButton
+            width="252px"
+            height="48px"
+            onClick={() =>
+              history.push(
+                routes._DaoInfo +
+                  `/${curDaoChainId}/${daoAddress}/active_info/${
+                    activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_airdrop'
+                  }`
+              )
+            }
+          >
+            Create {activityType}
+          </BlackButton>
+        )}
       </RowCenter>
     </div>
   )

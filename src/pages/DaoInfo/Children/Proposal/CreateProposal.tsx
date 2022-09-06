@@ -162,7 +162,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         error: 'End time required'
       }
     }
-    if (endTime < startTime) {
+    if (endTime <= startTime) {
       return {
         disabled: true,
         error: 'The start time must be earlier than the end time'

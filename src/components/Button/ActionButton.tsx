@@ -2,6 +2,7 @@ import Button from './Button'
 import OutlineButton from './OutlineButton'
 import Spinner from 'components/Spinner'
 import { Typography } from '@mui/material'
+import { BlackButton } from './Button'
 
 export default function ActionButton({
   error,
@@ -13,7 +14,8 @@ export default function ActionButton({
   height,
   width,
   disableAction,
-  successText
+  successText,
+  black
 }: {
   error?: string | undefined
   pending?: boolean
@@ -25,6 +27,7 @@ export default function ActionButton({
   height?: string
   width?: string
   disableAction?: boolean
+  black?: boolean
 }) {
   return (
     <>
@@ -40,9 +43,19 @@ export default function ActionButton({
           )}
         </OutlineButton>
       ) : success ? (
-        <Button disabled height={height} width={width}>
-          <Typography variant="inherit">{successText ?? actionText}</Typography>
-        </Button>
+        black ? (
+          <BlackButton disabled height={height} width={width}>
+            <Typography variant="inherit">{successText ?? actionText}</Typography>
+          </BlackButton>
+        ) : (
+          <Button disabled height={height} width={width}>
+            <Typography variant="inherit">{successText ?? actionText}</Typography>
+          </Button>
+        )
+      ) : black ? (
+        <BlackButton height={height} width={width} onClick={onAction} disabled={disableAction}>
+          {actionText}
+        </BlackButton>
       ) : (
         <Button height={height} width={width} onClick={onAction} disabled={disableAction}>
           {actionText}

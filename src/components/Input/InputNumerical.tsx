@@ -37,7 +37,6 @@ export default function NumericalInput({
   const enforcer = useCallback(
     (nextUserInput: string) => {
       const fixed = noDecimals ? nextUserInput.replace(/\./g, '') : nextUserInput.replace(/,/g, '.')
-      console.log('🚀 ~ file: InputNumerical.tsx ~ line 40 ~ fixed', fixed)
       if (fixed === '' || inputRegex.test(escapeRegExp(fixed))) {
         return fixed
       }
@@ -69,7 +68,7 @@ export default function NumericalInput({
           <Box display="flex" alignItems="baseline">
             {!!balance && (
               <InputLabel style={{ fontSize: '12px' }}>
-                Available: {balance} {unit ?? 'USDT'}
+                Available balance: {balance} {unit ?? ''}
               </InputLabel>
             )}
           </Box>
