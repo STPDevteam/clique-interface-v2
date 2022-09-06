@@ -53,6 +53,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   const { account, chainId, library } = useActiveWeb3React()
 
   const [airdropAddress, setAirdropAddress] = useState('')
+  const [title, setTitle] = useState('')
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
 
@@ -86,6 +87,12 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
       return {
         disabled: true,
         error: 'Airdrop token required'
+      }
+    }
+    if (!title) {
+      return {
+        disabled: true,
+        error: 'Title required'
       }
     }
     if (!startTime) {
@@ -140,7 +147,18 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     return {
       disabled: false
     }
-  }, [account, airdropToken, airdropTokenBalance, airdropTotalAmount, chainId, daoChainId, endTime, library, startTime])
+  }, [
+    account,
+    airdropToken,
+    airdropTokenBalance,
+    airdropTotalAmount,
+    chainId,
+    daoChainId,
+    endTime,
+    library,
+    startTime,
+    title
+  ])
 
   return (
     <Box>
@@ -151,6 +169,9 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
           <Box display={'grid'} mt={20} gridTemplateColumns="128px 1fr" gap={'16px 20px'} alignItems="center">
             <StyledText>Network</StyledText>
             <ChainSelect disabled chainList={ChainList} selectedChain={ChainListMap[daoChainId]}></ChainSelect>
+
+            <StyledText>Title</StyledText>
+            <Input value={title} onChange={e => setTitle(e.target.value || '')} placeholder="title" />
 
             <StyledText pt={15}>Input token address</StyledText>
             <Input

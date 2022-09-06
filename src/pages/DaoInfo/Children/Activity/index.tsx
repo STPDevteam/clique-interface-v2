@@ -7,6 +7,7 @@ import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
 import { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
+import { AirdropList, PublicSaleList } from './List'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -27,7 +28,7 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   }
 }))
 
-enum ActivityType {
+export enum ActivityType {
   PUBLIC_SALE = 'Public Sale',
   AIRDROP = 'Airdrop'
 }
@@ -44,7 +45,7 @@ export default function Activity() {
   const [activityType, setActivityType] = useState<ActivityType>(ActivityType.PUBLIC_SALE)
   return (
     <div>
-      <RowCenter>
+      <RowCenter mb={25}>
         <StyledButtonGroup variant="outlined">
           <MuiButton
             className={activityType === ActivityType.PUBLIC_SALE ? 'active' : ''}
@@ -76,6 +77,8 @@ export default function Activity() {
           </BlackButton>
         )}
       </RowCenter>
+      {activityType === ActivityType.AIRDROP && <AirdropList />}
+      {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList />}
     </div>
   )
 }

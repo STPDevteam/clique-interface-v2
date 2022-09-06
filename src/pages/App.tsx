@@ -22,6 +22,7 @@ import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
 import TokenList from 'pages/TokenList'
+import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
@@ -110,7 +111,7 @@ export default function App() {
                       </Governance>
                     )}
                   />
-                  <Route exact strict path={routes.Activity} component={ComingSoon} />
+                  <Route exact strict path={routes.Activity} component={Activity} />
                   <Route exact strict path={routes.Tokens} component={TokenList} />
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
