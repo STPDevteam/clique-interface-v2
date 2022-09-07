@@ -21,12 +21,20 @@ import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import AirdropTable from './AirdropTable'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import BigNumber from 'bignumber.js'
+import { getMerkleTreeRootHash } from 'utils/merkletreejs'
+import { CurrencyAmount } from 'constants/token'
 
 const StyledText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontSize: 12,
   fontWeight: 500
 }))
+
+const makeMerkleTreeList = (arr: { address: string; amountRaw: string }[]) => {
+  return arr.map(({ address, amountRaw }, index) => {
+    return '0x' + index.toString().padStart(64, '0') + address.replace('0x', '') + amountRaw.padStart(64, '0')
+  })
+}
 
 export default function CreateAirdrop() {
   const { chainId: daoChainId, address: daoAddress } = useParams<{ chainId: string; address: string }>()
@@ -160,6 +168,20 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     title
   ])
 
+  const create = useCallback(() => {
+    if (!airdropList.length || !airdropToken) return
+    const listRaw = airdropList.map(({ address, amount }) => {
+      const ca = tryParseAmount(amount, airdropToken) as CurrencyAmount
+      return {
+        address,
+        amountRaw: ca.raw.toString()
+      }
+    })
+    const list = makeMerkleTreeList(listRaw)
+
+    getMerkleTreeRootHash(list)
+  }, [airdropList, airdropToken])
+
   return (
     <Box>
       <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
@@ -235,7 +257,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               disableAction={paramsCheck.disabled}
               black
               actionText={approveState === ApprovalState.NOT_APPROVED ? 'Approve' : 'Create'}
-              onAction={approveState === ApprovalState.NOT_APPROVED ? approveCallback : () => {}}
+              onAction={approveState === ApprovalState.NOT_APPROVED ? approveCallback : create}
               pending={approveState === ApprovalState.PENDING}
               pendingText={approveState === ApprovalState.PENDING ? 'Approving' : 'Loading'}
             ></ActionButton>
