@@ -143,3 +143,10 @@ export function getProposalVotesList(
     count
   })
 }
+
+export function saveAirdropAddress(address: string[], amount: string[]) {
+  return Axios.post('stpdao/v2/airdrop/address', {
+    address,
+    amount
+  })
+}
