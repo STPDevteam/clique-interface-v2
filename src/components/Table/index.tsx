@@ -70,7 +70,6 @@ const StyledTableHead = styled(TableHead)(({ theme }) => ({
     fontWeight: 600,
     fontSize: '14px!important',
     whiteSpace: 'pre',
-    textAlign: 'center',
     lineHeight: '12px',
     background: theme.bgColor.bg1,
     padding: '18px 20px 18px 0',
@@ -181,6 +180,7 @@ export default function Table({
   sortHeaders,
   order,
   orderBy,
+  firstAlign,
   createSortfunction
 }: {
   sortHeaders?: string[]
@@ -192,6 +192,7 @@ export default function Table({
   fontSize?: string
   order?: 'asc' | 'desc'
   orderBy?: string
+  firstAlign?: 'left' | 'right' | 'inherit' | 'center' | 'justify' | undefined
   createSortfunction?: (label: string) => () => void
 }) {
   const matches = useBreakpoint('md')
@@ -234,7 +235,7 @@ export default function Table({
             <StyledTableHead>
               <TableRow>
                 {header.map((string, idx) => (
-                  <TableCell key={idx}>
+                  <TableCell key={idx} align={idx === 0 && firstAlign ? firstAlign : 'center'}>
                     {sortHeaders && sortHeaders.includes(string) && order && orderBy && createSortfunction ? (
                       <TableSortLabel
                         active={orderBy === string}

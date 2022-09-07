@@ -22,10 +22,12 @@ import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
 import TokenList from 'pages/TokenList'
+import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
 import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
+import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -110,7 +112,8 @@ export default function App() {
                       </Governance>
                     )}
                   />
-                  <Route exact strict path={routes.Activity} component={ComingSoon} />
+                  <Route exact strict path={routes.Activity} component={Activity} />
+                  <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
                   <Route exact strict path={routes.Tokens} component={TokenList} />
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />

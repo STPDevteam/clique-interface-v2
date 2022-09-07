@@ -24,7 +24,7 @@ export default function TokenList() {
             onChange={chain => setSelectChain(chain)}
           ></ChainSelect>
         </Box>
-        <Box mt={50}>
+        <Box mt={40}>
           <TokenListTable chainId={selectChain?.id || null} />
         </Box>
       </ContainerWrapper>

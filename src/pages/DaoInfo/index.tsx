@@ -88,7 +88,6 @@ const tabs = [
 export default function DaoInfo({ children }: { children: any }) {
   const theme = useTheme()
   const history = useHistory()
-  const params = useParams<{ chainId: string; address: string }>()
   const { account } = useActiveWeb3React()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
@@ -129,11 +128,11 @@ export default function DaoInfo({ children }: { children: any }) {
   }, [daoAddress, daoAdminLevel, daoChainId])
 
   const isDefaultTabIndex = useMemo(() => {
-    if (history.location.pathname === routes._DaoInfo + `/${params.chainId}/${params.address}`) {
+    if (history.location.pathname === routes._DaoInfo + `/${daoChainId}/${daoAddress}`) {
       return true
     }
     return false
-  }, [history.location.pathname, params.address, params.chainId])
+  }, [history.location.pathname, daoAddress, daoChainId])
 
   return (
     <Box padding="0 20px">

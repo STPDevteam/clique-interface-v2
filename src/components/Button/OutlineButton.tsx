@@ -51,7 +51,8 @@ export default function OutlineButton(props: Props) {
           borderColor: theme.palette.primary.main
         },
         '&:disabled': {
-          opacity: theme.palette.action.disabledOpacity
+          opacity: theme.palette.action.disabledOpacity,
+          backgroundColor: theme.bgColor.bg1
         },
         ...style
       }}
