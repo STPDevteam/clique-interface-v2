@@ -49,7 +49,7 @@ export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, acti
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
-  const pageSize = 1
+  const pageSize = 8
   const [result, setResult] = useState<ActivityListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
@@ -158,7 +158,7 @@ export function useActivityList() {
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
-  const pageSize = 1
+  const pageSize = 8
   const [result, setResult] = useState<ActivityListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
