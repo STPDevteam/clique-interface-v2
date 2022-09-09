@@ -144,9 +144,37 @@ export function getProposalVotesList(
   })
 }
 
-export function saveAirdropAddress(address: string[], amount: string[]) {
+export function saveAirdropAddress(address: string[], amount: string[], title: string) {
   return Axios.post('stpdao/v2/airdrop/address', {
+    array: {
+      address,
+      amount
+    },
+    title
+  })
+}
+
+export function getActivityList(
+  chainId: number,
+  daoAddress: string,
+  status: number | undefined,
+  types: 'Airdrop' | 'PublicSale' | '',
+  offset: number,
+  count: number
+) {
+  return Axios.get('stpdao/v2/activity/list', {
+    chainId,
+    daoAddress,
+    status: status || '',
+    types,
+    offset,
+    count
+  })
+}
+
+export function getAirdropProof(address: string, activityId: number) {
+  return Axios.get('stpdao/v2/airdrop/proof', {
     address,
-    amount
+    id: activityId
   })
 }

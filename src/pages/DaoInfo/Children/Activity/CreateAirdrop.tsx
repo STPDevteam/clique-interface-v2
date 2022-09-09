@@ -186,7 +186,15 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     const rootHash = getMerkleTreeRootHash(list)
     showModal(<TransacitonPendingModal />)
 
-    createAirdropCallback(trueAirdropAddress, airdropTotalAmount.raw.toString(), rootHash, startTime, endTime, listRaw)
+    createAirdropCallback(
+      title,
+      trueAirdropAddress,
+      airdropTotalAmount.raw.toString(),
+      rootHash,
+      startTime,
+      endTime,
+      listRaw
+    )
       .then(hash => {
         hideModal()
         showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.goBack()} />)
@@ -210,6 +218,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     history,
     showModal,
     startTime,
+    title,
     trueAirdropAddress
   ])
 

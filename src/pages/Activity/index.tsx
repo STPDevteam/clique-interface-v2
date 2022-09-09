@@ -1,9 +1,10 @@
 import { Box, ButtonGroup, MenuItem, Typography, styled, Button as MuiButton } from '@mui/material'
 import Select from 'components/Select/Select'
+import { ActivityStatus } from 'hooks/useActivityInfo'
+import { useActivityList } from 'hooks/useBackedActivityServer'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
-import { useState } from 'react'
 import List from './List'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
@@ -31,12 +32,6 @@ const typeItemList = [
   { value: ActivityType.AIRDROP, label: ActivityType.AIRDROP }
 ]
 
-export enum ActivityStatus {
-  SOON = 1,
-  OPEN = 2,
-  CLOSED = 3
-}
-
 const statusItemList = [
   { value: undefined, label: 'All' },
   { value: ActivityStatus.SOON, label: 'Soon' },
@@ -45,8 +40,8 @@ const statusItemList = [
 ]
 
 export default function Activity() {
-  const [currentActivityType, setCurrentActivityType] = useState<ActivityType>()
-  const [currentStatus, setCurrentStatus] = useState<ActivityStatus>()
+  const { search, loading, result, page } = useActivityList()
+
   return (
     <Box padding="50px 20px">
       <ContainerWrapper maxWidth={1150}>
@@ -59,15 +54,15 @@ export default function Activity() {
               placeholder=""
               width={235}
               height={48}
-              value={currentActivityType}
-              onChange={e => setCurrentActivityType(e.target.value)}
+              value={search.types}
+              onChange={e => search.setTypes(e.target.value)}
             >
-              {typeItemList.map(item => (
+              {typeItemList.map((item, index) => (
                 <MenuItem
-                  key={item.value}
+                  key={index}
                   sx={{ fontWeight: 500 }}
                   value={item.value}
-                  selected={currentActivityType && currentActivityType === item.value}
+                  selected={search.types && search.types === item.value}
                 >
                   {item.label}
                 </MenuItem>
@@ -78,15 +73,15 @@ export default function Activity() {
             {statusItemList.map(item => (
               <MuiButton
                 key={item.label}
-                className={currentStatus === item.value ? 'active' : ''}
-                onClick={() => setCurrentStatus(item.value)}
+                className={search.status === item.value ? 'active' : ''}
+                onClick={() => search.setStatus(item.value)}
               >
                 {item.label}
               </MuiButton>
             ))}
           </StyledButtonGroup>
         </RowCenter>
-        <List />
+        <List loading={loading} page={page} result={result} />
       </ContainerWrapper>
     </Box>
   )
