@@ -21,12 +21,25 @@ import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import AirdropTable from './AirdropTable'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import BigNumber from 'bignumber.js'
+import { getMerkleTreeRootHash } from 'utils/merkletreejs'
+import { CurrencyAmount } from 'constants/token'
+import { useCreateAirdropCallback } from 'hooks/useAirdropCallback'
+import useModal from 'hooks/useModal'
+import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 
 const StyledText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontSize: 12,
   fontWeight: 500
 }))
+
+const makeMerkleTreeList = (arr: { address: string; amountHexRaw: string }[]) => {
+  return arr.map(({ address, amountHexRaw }, index) => {
+    return '0x' + index.toString(16).padStart(64, '0') + address.replace('0x', '') + amountHexRaw.padStart(64, '0')
+  })
+}
 
 export default function CreateAirdrop() {
   const { chainId: daoChainId, address: daoAddress } = useParams<{ chainId: string; address: string }>()
@@ -47,6 +60,7 @@ export default function CreateAirdrop() {
 
 function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
   const history = useHistory()
+  const { hideModal, showModal } = useModal()
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/active_info`)
   }, [daoChainId, daoInfo.daoAddress, history])
@@ -73,10 +87,8 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   }, [airdropList])
   const airdropTotalAmount = tryParseAmount(_totalInputAmount, airdropToken || undefined)
 
-  const [approveState, approveCallback] = useApproveCallback(
-    airdropTotalAmount,
-    '0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267'
-  )
+  const [approveState, approveCallback] = useApproveCallback(airdropTotalAmount, daoInfo.daoAddress)
+  const createAirdropCallback = useCreateAirdropCallback(daoInfo.daoAddress)
 
   const paramsCheck: {
     disabled: boolean
@@ -160,6 +172,56 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     title
   ])
 
+  const create = useCallback(() => {
+    if (!airdropList.length || !airdropToken || !startTime || !endTime || !airdropTotalAmount) return
+    const listRaw = airdropList.map(({ address, amount }) => {
+      const ca = tryParseAmount(amount, airdropToken) as CurrencyAmount
+      return {
+        address,
+        amountRaw: ca.raw.toString(),
+        amountHexRaw: ca.raw.toString(16)
+      }
+    })
+    const list = makeMerkleTreeList(listRaw)
+    const rootHash = getMerkleTreeRootHash(list)
+    showModal(<TransacitonPendingModal />)
+
+    createAirdropCallback(
+      title,
+      trueAirdropAddress,
+      airdropTotalAmount.raw.toString(),
+      rootHash,
+      startTime,
+      endTime,
+      listRaw
+    )
+      .then(hash => {
+        hideModal()
+        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.goBack()} />)
+      })
+      .catch((err: any) => {
+        hideModal()
+        showModal(
+          <MessageBox type="error">
+            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          </MessageBox>
+        )
+        console.error(err)
+      })
+  }, [
+    airdropList,
+    airdropToken,
+    airdropTotalAmount,
+    createAirdropCallback,
+    endTime,
+    hideModal,
+    history,
+    showModal,
+    startTime,
+    title,
+    trueAirdropAddress
+  ])
+
   return (
     <Box>
       <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
@@ -235,7 +297,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               disableAction={paramsCheck.disabled}
               black
               actionText={approveState === ApprovalState.NOT_APPROVED ? 'Approve' : 'Create'}
-              onAction={approveState === ApprovalState.NOT_APPROVED ? approveCallback : () => {}}
+              onAction={approveState === ApprovalState.NOT_APPROVED ? approveCallback : create}
               pending={approveState === ApprovalState.PENDING}
               pendingText={approveState === ApprovalState.PENDING ? 'Approving' : 'Loading'}
             ></ActionButton>

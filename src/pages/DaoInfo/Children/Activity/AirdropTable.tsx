@@ -175,7 +175,7 @@ export default function AirdropTable({
           Add new wallet
         </OutlineButton>
         <Typography>
-          Total addresses: {airdropList.length}, Total amount: {toFormatGroup(totalInputAmount)}
+          Total addresses: {airdropList.length}, Total amount: {totalInputAmount}
         </Typography>
       </RowCenter>
       <Snackbar

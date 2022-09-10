@@ -109,6 +109,7 @@
     "decimal.js-light": "^2.5.1",
     "emoji-regex": "^10.1.0",
     "jsbi": "^4.0.0",
+    "merkletreejs": "^0.2.32",
     "moment": "^2.29.4",
     "quill-image-uploader": "^1.2.3",
     "react-ga4": "^1.4.1",

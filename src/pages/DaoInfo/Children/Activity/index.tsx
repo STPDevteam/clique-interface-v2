@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
 import { AirdropList, PublicSaleList } from './List'
+import { useDaoActivityList } from 'hooks/useBackedActivityServer'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -39,10 +40,11 @@ export default function Activity() {
   const { account } = useActiveWeb3React()
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
-  // const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-
   const history = useHistory()
   const [activityType, setActivityType] = useState<ActivityType>(ActivityType.PUBLIC_SALE)
+
+  const airdropData = useDaoActivityList(curDaoChainId, daoAddress, ActivityType.AIRDROP)
+
   return (
     <div>
       <RowCenter mb={25}>
@@ -77,7 +79,7 @@ export default function Activity() {
           </BlackButton>
         )}
       </RowCenter>
-      {activityType === ActivityType.AIRDROP && <AirdropList />}
+      {activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}
       {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList />}
     </div>
   )
