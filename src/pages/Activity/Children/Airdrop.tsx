@@ -216,7 +216,7 @@ export default function Airdrop() {
                   <RowCenter>
                     <StyledText1>Airdrop token:</StyledText1>
                     <Stack direction={'row'} alignItems="center">
-                      <CurrencyLogo currency={undefined} size="22px" style={{ marginRight: '5px' }} />
+                      <CurrencyLogo currency={airdropInfo?.airdropToken} size="22px" style={{ marginRight: '5px' }} />
                       <StyledText2 noWrap>
                         {airdropInfo?.airdropToken
                           ? `${airdropInfo.airdropToken.name}(${airdropInfo.airdropToken?.symbol})`
@@ -251,8 +251,8 @@ export default function Airdrop() {
                   </RowCenter>
 
                   <Typography variant="h5">Description</Typography>
-                  <StyledText2>{airdropProof?.title}</StyledText2>
-                  <StyledText2>{daoInfo?.description}</StyledText2>
+                  <StyledText1>{airdropProof?.title}</StyledText1>
+                  <StyledText1>{daoInfo?.description}</StyledText1>
                 </Stack>
               </Grid>
               <Grid item md={5} lg={4} xs={12}>

@@ -28,6 +28,7 @@ import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
 import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
+import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -114,6 +115,7 @@ export default function App() {
                   />
                   <Route exact strict path={routes.Activity} component={Activity} />
                   <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
+                  <Route exact strict path={routes.ActivitySaleDetail} component={ActivitySaleDetail} />
                   <Route exact strict path={routes.Tokens} component={TokenList} />
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
