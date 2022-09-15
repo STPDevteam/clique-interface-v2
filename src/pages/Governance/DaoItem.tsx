@@ -69,7 +69,7 @@ export default function DaoItem({
   const theme = useTheme()
   const history = useHistory()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
-  const token = useToken(daoBaseInfo?.daoTokenAddress || '', chainId)
+  const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
   const user = useUserInfo()
   const loginSignature = useLoginSignature()

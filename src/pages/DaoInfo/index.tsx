@@ -4,8 +4,7 @@ import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { useCallback, useMemo } from 'react'
-import { DaoAdminLevelProp, useDaoAdminLevel, useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { useToken } from 'state/wallet/hooks'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { NavLink, useHistory, useParams } from 'react-router-dom'
@@ -94,8 +93,8 @@ export default function DaoInfo({ children }: { children: any }) {
   const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, curDaoChainId)
-  const token = useToken(daoBaseInfo?.daoTokenAddress || '', curDaoChainId)
+  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+  const token = daoInfo?.token
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(
     backedDaoInfo?.joinSwitch || false,
     backedDaoInfo?.members || 0
@@ -139,11 +138,11 @@ export default function DaoInfo({ children }: { children: any }) {
       <ContainerWrapper maxWidth={1248}>
         <StyledHeader>
           <div className="top1">
-            <Avatar sx={{ width: 100, height: 100 }} src={daoBaseInfo?.daoLogo || ''}></Avatar>
+            <Avatar sx={{ width: 100, height: 100 }} src={daoInfo?.daoLogo || ''}></Avatar>
             <Box ml={'24px'}>
               <Box display={'flex'} justifyContent="space-between" alignItems={'center'} marginBottom={6}>
                 <Stack direction="row" spacing={8} alignItems="center">
-                  <Typography variant="h5">{daoBaseInfo?.name || '--'}</Typography>
+                  <Typography variant="h5">{daoInfo?.name || '--'}</Typography>
                   {/* <VerifiedTag address={daoInfo?.daoAddress} /> */}
                   <AdminTag level={daoAdminLevel} />
                   <StyledJoin>
@@ -170,7 +169,7 @@ export default function DaoInfo({ children }: { children: any }) {
                 <Link
                   target={'_blank'}
                   underline="none"
-                  href={getEtherscanLink(curDaoChainId, daoBaseInfo?.daoTokenAddress || '', 'address')}
+                  href={getEtherscanLink(curDaoChainId, daoInfo?.daoTokenAddress || '', 'address')}
                 >
                   <Box display={'flex'} alignItems="center">
                     <CurrencyLogo currency={token || undefined} style={{ marginRight: '5px' }} />
@@ -180,32 +179,32 @@ export default function DaoInfo({ children }: { children: any }) {
                   </Box>
                 </Link>
                 <Box display={'flex'} alignItems="center">
-                  {daoBaseInfo?.twitter && isSocialUrl('twitter', daoBaseInfo.twitter) && (
-                    <Link target={'_blank'} href={daoBaseInfo.twitter} underline="none" ml={10}>
+                  {daoInfo?.twitter && isSocialUrl('twitter', daoInfo.twitter) && (
+                    <Link target={'_blank'} href={daoInfo.twitter} underline="none" ml={10}>
                       <Twitter />
                     </Link>
                   )}
-                  {daoBaseInfo?.discord && isSocialUrl('discord', daoBaseInfo.discord) && (
-                    <Link target={'_blank'} href={daoBaseInfo.discord} underline="none" ml={10}>
+                  {daoInfo?.discord && isSocialUrl('discord', daoInfo.discord) && (
+                    <Link target={'_blank'} href={daoInfo.discord} underline="none" ml={10}>
                       <Discord />
                     </Link>
                   )}
-                  {daoBaseInfo?.github && isSocialUrl('github', daoBaseInfo.github) && (
-                    <Link fontSize={12} target={'_blank'} href={daoBaseInfo.github} underline="none" ml={10}>
+                  {daoInfo?.github && isSocialUrl('github', daoInfo.github) && (
+                    <Link fontSize={12} target={'_blank'} href={daoInfo.github} underline="none" ml={10}>
                       github
                     </Link>
                   )}
-                  {daoBaseInfo?.website && isSocialUrl('', daoBaseInfo.website) && (
-                    <Link fontSize={12} target={'_blank'} href={daoBaseInfo.website} underline="none" ml={10}>
-                      {daoBaseInfo.website}
+                  {daoInfo?.website && isSocialUrl('', daoInfo.website) && (
+                    <Link fontSize={12} target={'_blank'} href={daoInfo.website} underline="none" ml={10}>
+                      {daoInfo.website}
                     </Link>
                   )}
                 </Box>
               </Box>
               <Typography mb={8} color={theme.palette.text.secondary} sx={{ wordBreak: 'break-all' }}>
-                {daoBaseInfo?.description}
+                {daoInfo?.description}
               </Typography>
-              <CategoryChips categoryStr={daoBaseInfo?.category} />
+              <CategoryChips categoryStr={daoInfo?.category} />
             </Box>
           </div>
 

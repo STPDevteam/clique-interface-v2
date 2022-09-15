@@ -4,6 +4,7 @@ import { VotingTypes } from 'state/buildingGovDao/actions'
 import { useToken } from 'state/wallet/hooks'
 import { ChainId } from '../constants/chain'
 import {
+  NEVER_RELOAD,
   useSingleCallResult
   // useSingleContractMultipleData
 } from '../state/multicall/hooks'
@@ -47,7 +48,7 @@ export interface DaoInfoProp {
 export function useDaoBaseInfo(daoAddress?: string, chainId?: ChainId): DaoBaseInfoProp | undefined {
   const daoContract = useGovernanceDaoContract(daoAddress, chainId)
   const daoInfoRes = useSingleCallResult(daoContract, 'daoInfo', [], undefined, chainId)
-  const daoTokenRes = useSingleCallResult(daoContract, 'daoToken', [], undefined, chainId)
+  const daoTokenRes = useSingleCallResult(daoContract, 'daoToken', [], NEVER_RELOAD, chainId)
 
   return useMemo(() => {
     const infoRes = daoInfoRes.result
@@ -64,7 +65,7 @@ export function useDaoBaseInfo(daoAddress?: string, chainId?: ChainId): DaoBaseI
       website: infoRes.website,
       daoLogo: infoRes.daoLogo,
       daoTokenAddress: tokenRes.tokenAddress,
-      daoTokenChainId: tokenRes.chainId
+      daoTokenChainId: Number(tokenRes.chainId)
     }
   }, [daoInfoRes.result, daoTokenRes.result])
 }
