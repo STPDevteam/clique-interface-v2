@@ -22,6 +22,7 @@ import TransacitonPendingModal from 'components/Modal/TransactionModals/Transact
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { routes } from 'constants/routes'
 
 const TopWrapper = styled(Box)({
   display: 'grid',
@@ -145,6 +146,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           <Box>
             <ChainSelect
               chainList={ChainList}
+              height={56}
               selectedChain={currentBaseChain}
               onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
               label="*Network"
@@ -163,7 +165,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
               placeholder="0x"
               type="address"
               label="*Token Contract Address"
-              rightLabel={<Link underline="none">{`Create a new token>`}</Link>}
+              rightLabel={<Link underline="none" href={routes.CreatorDao}>{`Create a new token>`}</Link>}
             />
             <TokenRow totalSupply={govToken?.totalSupply} />
           </Box>

@@ -41,7 +41,7 @@ export default function Activity() {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const history = useHistory()
-  const [activityType, setActivityType] = useState<ActivityType>(ActivityType.PUBLIC_SALE)
+  const [activityType, setActivityType] = useState<ActivityType>(ActivityType.AIRDROP)
 
   const airdropData = useDaoActivityList(curDaoChainId, daoAddress, ActivityType.AIRDROP)
 
@@ -49,12 +49,12 @@ export default function Activity() {
     <div>
       <RowCenter mb={25}>
         <StyledButtonGroup variant="outlined">
-          <MuiButton
+          {/* <MuiButton
             className={activityType === ActivityType.PUBLIC_SALE ? 'active' : ''}
             onClick={() => setActivityType(ActivityType.PUBLIC_SALE)}
           >
             {ActivityType.PUBLIC_SALE}
-          </MuiButton>
+          </MuiButton> */}
           <MuiButton
             className={activityType === ActivityType.AIRDROP ? 'active' : ''}
             onClick={() => setActivityType(ActivityType.AIRDROP)}

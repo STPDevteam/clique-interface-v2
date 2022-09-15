@@ -28,7 +28,7 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 
 const typeItemList = [
   { value: undefined, label: 'All types' },
-  { value: ActivityType.PUBLIC_SALE, label: ActivityType.PUBLIC_SALE },
+  // { value: ActivityType.PUBLIC_SALE, label: ActivityType.PUBLIC_SALE },
   { value: ActivityType.AIRDROP, label: ActivityType.AIRDROP }
 ]
 

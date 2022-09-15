@@ -12,6 +12,7 @@ export default function ChainSelect({
   onChange,
   selectedChain,
   width,
+  height,
   active,
   empty,
   placeholder
@@ -22,6 +23,7 @@ export default function ChainSelect({
   selectedChain: Chain | null
   onChange?: (chain: Chain | null) => void
   width?: string
+  height?: number
   active?: boolean
   empty?: boolean
   placeholder?: string
@@ -53,7 +55,7 @@ export default function ChainSelect({
         defaultValue={selectedChain?.symbol}
         value={selectedChain?.symbol ?? ''}
         disabled={disabled}
-        height={48}
+        height={height || 48}
         onChange={handleChange}
         placeholder={placeholder ?? 'Select Chain'}
         // width={'100%'}
