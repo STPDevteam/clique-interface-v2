@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
+import { AppBar, Badge, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
@@ -134,7 +134,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
   }
 }))
 
-const NoticeMsg = muiStyled('div')(({ theme }) => ({
+const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
   cursor: 'pointer',
   borderRadius: '50%',
   width: '48px',
@@ -144,6 +144,12 @@ const NoticeMsg = muiStyled('div')(({ theme }) => ({
   justifyContent: 'center',
   '&:hover': {
     backgroundColor: theme.bgColor.bg1
+  },
+  '&.active': {
+    backgroundColor: theme.palette.primary.main,
+    '& svg path': {
+      stroke: theme.palette.common.white
+    }
   }
 }))
 
@@ -252,11 +258,13 @@ export default function Header() {
           </HideOnMobile>
         </Box>
 
-        <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '10px' }}>
+        <Box display="flex" alignItems="center" gap={{ xs: '10px', sm: '24px' }}>
           <NetworkSelect />
           {account && (
-            <NoticeMsg>
-              <NotificationIcon />
+            <NoticeMsg to={routes.Message}>
+              <Badge badgeContent={4} color="success">
+                <NotificationIcon />
+              </Badge>
             </NoticeMsg>
           )}
           <Web3Status />
