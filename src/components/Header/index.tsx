@@ -261,7 +261,7 @@ export default function Header() {
         <Box display="flex" alignItems="center" gap={{ xs: '10px', sm: '24px' }}>
           <NetworkSelect />
           {account && (
-            <NoticeMsg to={routes.Message}>
+            <NoticeMsg to={routes.Notification}>
               <Badge badgeContent={4} color="success">
                 <NotificationIcon />
               </Badge>

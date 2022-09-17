@@ -178,3 +178,10 @@ export function getAirdropProof(address: string, activityId: number) {
     id: activityId
   })
 }
+
+export function getTokenLogo(tokenAddress: string, tokenChainId: number) {
+  return Axios.get('stpdao/v2/token/img', {
+    tokenAddress,
+    tokenChainId
+  })
+}

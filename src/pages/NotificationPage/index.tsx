@@ -63,7 +63,7 @@ function MsgItem() {
   )
 }
 
-export default function MessagePage() {
+export default function NotificationPage() {
   return (
     <Box padding="40px 20px">
       <ContainerWrapper maxWidth={1150}>

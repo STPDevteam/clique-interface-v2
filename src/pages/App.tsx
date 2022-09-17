@@ -30,7 +30,7 @@ import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
 // import CreatePublicSale from 'pages/DaoInfo/Children/Activity/CreatePublicSale'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
-import MessagePage from 'pages/MessagePage'
+import Notification from 'pages/NotificationPage'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -122,7 +122,7 @@ export default function App() {
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
-                  <Route exact strict path={routes.Message} component={MessagePage} />
+                  <Route exact strict path={routes.Notification} component={Notification} />
                   <Route exact strict path={routes.Profile} component={Profile} />
                   <Route exact strict path={routes._Profile} component={Profile} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
