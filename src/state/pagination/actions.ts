@@ -14,6 +14,11 @@ export interface ActivityListPaginationProp {
   currentPage: number
 }
 
+export interface NotificationListPaginationProp {
+  unReadCount: number
+  currentPage: number
+}
+
 export const updateHomeListPagination = createAction<{ homeListPagination: HomeListPaginationProp }>(
   'pagination/updateHomeListPagination'
 )
@@ -21,3 +26,7 @@ export const updateHomeListPagination = createAction<{ homeListPagination: HomeL
 export const updateActivityListPagination = createAction<{ activityListPagination: ActivityListPaginationProp }>(
   'pagination/updateActivityListPagination'
 )
+
+export const updateNotificationListPagination = createAction<{
+  notificationListPagination: NotificationListPaginationProp
+}>('pagination/updateNotificationListPagination')

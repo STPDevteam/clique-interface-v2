@@ -185,3 +185,25 @@ export function getTokenLogo(tokenAddress: string, tokenChainId: number) {
     tokenChainId
   })
 }
+
+export function getNotificationListInfo(account: string, offset: number, count: number) {
+  return Axios.get('stpdao/v2/notification/list', {
+    account,
+    offset,
+    count
+  })
+}
+
+export function getNotificationUnreadTotal(account: string) {
+  return Axios.get('stpdao/v2/notification/unread/total', {
+    account
+  })
+}
+
+export function notificationToRead(account: string, notificationId: number, readAll: boolean) {
+  return Axios.post('stpdao/v2/notification/read', {
+    account,
+    notificationId,
+    readAll
+  })
+}

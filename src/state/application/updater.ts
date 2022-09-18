@@ -6,8 +6,12 @@ import { updateBlockNumber } from './actions'
 import { useDispatch } from 'react-redux'
 import { SUPPORT_NETWORK_CHAIN_IDS } from 'constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
+import { useUpdateNotificationUnReadCount } from 'hooks/useBackedNotificationServer'
 
 export default function Updater(): null {
+  // add NotificationUnRead
+  useUpdateNotificationUnReadCount()
+
   const { library, chainId } = useActiveWeb3React()
   const dispatch = useDispatch()
 

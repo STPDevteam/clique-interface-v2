@@ -4,12 +4,15 @@ import {
   updateHomeListPagination,
   HomeListPaginationProp,
   ActivityListPaginationProp,
-  updateActivityListPagination
+  updateActivityListPagination,
+  updateNotificationListPagination,
+  NotificationListPaginationProp
 } from './actions'
 
 export interface SysPagination {
   homeListPagination: HomeListPaginationProp
   activityListPagination: ActivityListPaginationProp
+  notificationListPagination: NotificationListPaginationProp
 }
 
 export const initialState: SysPagination = {
@@ -22,6 +25,10 @@ export const initialState: SysPagination = {
     types: undefined,
     status: undefined,
     currentPage: 1
+  },
+  notificationListPagination: {
+    unReadCount: 0,
+    currentPage: 1
   }
 }
 
@@ -32,5 +39,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateActivityListPagination, (state, action) => {
       state.activityListPagination = action.payload.activityListPagination
+    })
+    .addCase(updateNotificationListPagination, (state, action) => {
+      state.notificationListPagination = action.payload.notificationListPagination
     })
 )

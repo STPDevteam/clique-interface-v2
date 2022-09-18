@@ -12,6 +12,7 @@ import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import { useActiveWeb3React } from 'hooks'
+import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 
 interface TabContent {
   title: string
@@ -157,6 +158,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
+  const {
+    data: { unReadCount: notReadCount }
+  } = useNotificationListPaginationCallback()
 
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
@@ -262,7 +266,7 @@ export default function Header() {
           <NetworkSelect />
           {account && (
             <NoticeMsg to={routes.Notification}>
-              <Badge badgeContent={4} color="success">
+              <Badge badgeContent={notReadCount} color="success">
                 <NotificationIcon />
               </Badge>
             </NoticeMsg>
