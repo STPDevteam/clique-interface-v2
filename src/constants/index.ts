@@ -110,7 +110,6 @@ export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.POLYGON_MUMBAI]: '0x61f623d4bd01233651bb13f0055a8c09641a9121'
 }
 
-// export const serverBaseUrl = 'http://192.168.2.102:8091/'
-export const serverBaseUrl = 'https://devapiv2.myclique.io/'
+export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'
