@@ -14,10 +14,6 @@
 
   publish = "build/"
 
-  # Default build command.
-  command = "yarn build"
-
-
 # Deploy Preview context: all deploys generated from
 # a pull/merge request will inherit these settings.
 [context.deploy-preview]
