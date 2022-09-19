@@ -7,7 +7,9 @@ import {
   updateHomeListPagination,
   HomeListPaginationProp,
   ActivityListPaginationProp,
-  updateActivityListPagination
+  updateActivityListPagination,
+  NotificationListPaginationProp,
+  updateNotificationListPagination
 } from './actions'
 
 export function useHomeListPaginationCallback() {
@@ -82,6 +84,45 @@ export function useActivityListPaginationCallback() {
     setCurrentPage,
     setTypes,
     setStatus,
+    data
+  }
+}
+
+export function useNotificationListPaginationCallback() {
+  const data = useSelector((state: AppState) => state.pagination.notificationListPagination)
+
+  const dispatch = useDispatch<AppDispatch>()
+  const updateNotificationListPaginationCallback = useCallback(
+    (notificationListPagination: NotificationListPaginationProp) => {
+      dispatch(updateNotificationListPagination({ notificationListPagination }))
+    },
+    [dispatch]
+  )
+  const setCurrentPage = useCallback(
+    (currentPage: number) => {
+      updateNotificationListPaginationCallback({ ...data, currentPage })
+    },
+    [data, updateNotificationListPaginationCallback]
+  )
+  const setUnReadCount = useCallback(
+    (unReadCount: number) => {
+      updateNotificationListPaginationCallback({ ...data, unReadCount })
+    },
+    [data, updateNotificationListPaginationCallback]
+  )
+  const setReadAll = useCallback(() => {
+    updateNotificationListPaginationCallback({ ...data, unReadCount: 0 })
+  }, [data, updateNotificationListPaginationCallback])
+  const setReadOnce = useCallback(() => {
+    updateNotificationListPaginationCallback({ ...data, unReadCount: data.unReadCount >= 1 ? data.unReadCount - 1 : 0 })
+  }, [data, updateNotificationListPaginationCallback])
+
+  return {
+    updateNotificationListPaginationCallback,
+    setCurrentPage,
+    setUnReadCount,
+    setReadAll,
+    setReadOnce,
     data
   }
 }

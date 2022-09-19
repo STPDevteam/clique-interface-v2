@@ -178,3 +178,32 @@ export function getAirdropProof(address: string, activityId: number) {
     id: activityId
   })
 }
+
+export function getTokenLogo(tokenAddress: string, tokenChainId: number) {
+  return Axios.get('stpdao/v2/token/img', {
+    tokenAddress,
+    tokenChainId
+  })
+}
+
+export function getNotificationListInfo(account: string, offset: number, count: number) {
+  return Axios.get('stpdao/v2/notification/list', {
+    account,
+    offset,
+    count
+  })
+}
+
+export function getNotificationUnreadTotal(account: string) {
+  return Axios.get('stpdao/v2/notification/unread/total', {
+    account
+  })
+}
+
+export function notificationToRead(account: string, notificationId: number, readAll: boolean) {
+  return Axios.post('stpdao/v2/notification/read', {
+    account,
+    notificationId,
+    readAll
+  })
+}
