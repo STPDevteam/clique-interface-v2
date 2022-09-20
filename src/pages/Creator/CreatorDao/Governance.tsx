@@ -23,6 +23,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { routes } from 'constants/routes'
+import { useHistory } from 'react-router-dom'
 
 const TopWrapper = styled(Box)({
   display: 'grid',
@@ -36,6 +37,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   const { showModal, hideModal } = useModal()
   const { chainId, account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const history = useHistory()
 
   const onCreateDao = useCallback(() => {
     showModal(<TransacitonPendingModal />)
@@ -165,7 +167,13 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
               placeholder="0x"
               type="address"
               label="*Token Contract Address"
-              rightLabel={<Link underline="none" href={routes.CreatorDao}>{`Create a new token>`}</Link>}
+              rightLabel={
+                <Link
+                  underline="none"
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => history.push(routes.CreatorToken)}
+                >{`Create a new token>`}</Link>
+              }
             />
             <TokenRow totalSupply={govToken?.totalSupply} />
           </Box>

@@ -24,6 +24,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { routes } from 'constants/routes'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -277,7 +278,7 @@ export function CreateGovernanceModal() {
                 onChange={e => updateBuildingDaoKeyData('tokenAddress', e.target.value || '')}
                 placeholder="0x"
                 label="*Token Contract Address"
-                rightLabel={<Link underline="none">{`Create a new token>`}</Link>}
+                rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create a new token>`}</Link>}
               />
               <TokenRow totalSupply={govToken?.totalSupply} />
               <InputNumerical

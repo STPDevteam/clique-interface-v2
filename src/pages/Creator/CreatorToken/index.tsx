@@ -27,7 +27,7 @@ enum Tabs {
 
 const tabs = [
   { name: '1. Basic', value: Tabs.BASIC },
-  { name: '2. Governance', value: Tabs.GOVERNANCE },
+  { name: '2. Distribution', value: Tabs.GOVERNANCE },
   { name: '3. Review', value: Tabs.REVIEW }
 ]
 
