@@ -25,7 +25,7 @@ export function getHomeDaoList(
 ) {
   const req: any = {}
   if (account && isAddress(account)) req.account = account
-  if (keyword.trim()) req.keyword = keyword
+  if (keyword.trim()) req.keyword = keyword.trim()
   if (category.trim()) {
     req.category = category === CategoriesTypeProp.ALL ? '' : category
   }

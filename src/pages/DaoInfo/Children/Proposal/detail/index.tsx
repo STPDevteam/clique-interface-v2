@@ -39,7 +39,7 @@ export default function Index({ proposalInfo }: { proposalInfo: ProposalDetailPr
 
         <ShowProposalStatusTag status={proposalInfo.status} />
       </Box>
-      <Box mt={15}>
+      <Box mt={15} sx={{ '& img': { maxWidth: '50%' } }}>
         <Typography mb={10} color={theme.palette.text.secondary} fontSize={14}>
           {proposalInfo.introduction}
         </Typography>

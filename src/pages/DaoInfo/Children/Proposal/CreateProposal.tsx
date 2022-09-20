@@ -68,7 +68,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
   const [voteType, setVoteType] = useState<VotingTypes>(
-    daoInfo.votingType === VotingTypes.ANY ? VotingTypes.SINGLE : VotingTypes.MULTI
+    daoInfo.votingType !== VotingTypes.MULTI ? VotingTypes.SINGLE : VotingTypes.MULTI
   )
   const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
   const createProposalCallback = useCreateProposalCallback(daoInfo.daoAddress)
