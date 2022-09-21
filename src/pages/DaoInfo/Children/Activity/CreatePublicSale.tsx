@@ -107,7 +107,7 @@ function CreatePublicSaleForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; d
                   placeholder="0x"
                   type="address"
                   label="*Token Contract Address"
-                  rightLabel={<Link underline="none" href={routes.CreatorDao}>{`Create a new token>`}</Link>}
+                  rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create a new token>`}</Link>}
                 />
                 <TokenRow totalSupply={saleTokenInfo?.totalSupply} />
               </Box>

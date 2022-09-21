@@ -209,7 +209,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   return (
     <ContainerWrapper>
       <CreatorBox>
-        <Box display={'grid'} mb={10} gridTemplateColumns="400fr 142fr 80fr 160fr 56fr" gap="8px 10px">
+        <Box display={'grid'} mb={10} gridTemplateColumns="380fr 142fr 92fr 160fr 56fr" gap="8px 10px">
           <StyledTitle>Wallet address</StyledTitle>
           <StyledTitle>Number of Tokens</StyledTitle>
           <StyledTitle>% of Total</StyledTitle>
@@ -314,7 +314,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           Back
         </OutlineButton>
         <BlackButton width="252px" disabled={nextHandler.disabled} onClick={nextHandler.handler}>
-          Add DAO
+          Create Token
         </BlackButton>
       </Box>
     </ContainerWrapper>
