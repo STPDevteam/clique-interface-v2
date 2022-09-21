@@ -106,8 +106,8 @@ export const BLOCKED_ADDRESSES: string[] = [
 ]
 
 export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.GOERLI]: '0x2389324477762d2307b454579b10e9118f0c568f',
-  [ChainId.POLYGON_MUMBAI]: '0x61f623d4bd01233651bb13f0055a8c09641a9121'
+  [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_DAO_FACTORY_ADDRESS || '',
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_DAO_FACTORY_ADDRESS || ''
 }
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
