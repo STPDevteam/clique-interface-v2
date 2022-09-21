@@ -16,7 +16,9 @@ export default function DateTimePicker({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <MobileDateTimePicker
-        DialogProps={{ sx: { '& .MuiPaper-root': { padding: '30px 0 0' } } }}
+        DialogProps={{
+          sx: { '& .MuiPaper-root': { padding: '30px 0 0' }, '& .MuiPickersToolbar-penIconButton': { display: 'none' } }
+        }}
         inputFormat={value ? moment(value).format('YYYY-MM-DD HH:mm') : ''}
         disablePast
         value={value}
