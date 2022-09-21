@@ -12,7 +12,7 @@ import {
   toFormatGroup
 } from 'utils/dao'
 import OutlineButton from 'components/Button/OutlineButton'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useCreateTokenCallback } from 'hooks/useCreateTokenCallback'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
@@ -24,6 +24,7 @@ import Input from 'components/Input'
 import { useCreateTokenDataCallback, useRemainderTokenAmount } from 'state/createToken/hooks'
 import DateTimePicker from 'components/DateTimePicker'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import Checkbox from 'components/Checkbox'
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
@@ -84,6 +85,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   const { showModal, hideModal } = useModal()
   const { chainId, account, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const [agreeDisclaimer, setAgreeDisclaimer] = useState(false)
 
   const onCreateToken = useCallback(() => {
     showModal(<TransacitonPendingModal />)
@@ -191,6 +193,12 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         )
       }
     }
+    if (!agreeDisclaimer) {
+      return {
+        disabled: true,
+        error: 'You must agree to the disclaimer'
+      }
+    }
     return {
       disabled: false,
       handler: onCreateToken
@@ -198,12 +206,13 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   }, [
     createTokenBaseData,
     remainderTokenAmount,
-    chainId,
     account,
-    library,
+    chainId,
+    agreeDisclaimer,
     onCreateToken,
     createTokenDistributionData,
-    toggleWalletModal
+    toggleWalletModal,
+    library
   ])
 
   return (
@@ -302,6 +311,17 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           + Add
         </OutlineButton>
       </CreatorBox>
+
+      <Box display={'flex'} justifyContent="center" mb={16}>
+        <Checkbox checked={agreeDisclaimer} onChange={e => setAgreeDisclaimer(e.target.checked)}></Checkbox>
+        <Typography variant="body1">
+          I have read and agree to the{' '}
+          <Link target="_blank" href="https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique">
+            Disclaimer
+          </Link>{' '}
+          for creating a token
+        </Typography>
+      </Box>
 
       {nextHandler.error ? (
         <Alert severity="error">{nextHandler.error}</Alert>

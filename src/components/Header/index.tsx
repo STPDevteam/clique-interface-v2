@@ -35,7 +35,7 @@ export const Tabs: Tab[] = [
   // },
 
   { title: 'Governance', route: routes.Governance },
-  { title: 'Activity', route: routes.Activity },
+  // { title: 'Activity', route: routes.Activity },
   { title: 'Tokens', route: routes.Tokens },
   { title: 'Creator', route: routes.Creator }
   // { title: 'DAO', link: 'https://google.com/' },

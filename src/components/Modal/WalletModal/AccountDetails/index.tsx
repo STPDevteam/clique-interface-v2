@@ -152,3 +152,41 @@ export default function AccountDetails({
     </>
   )
 }
+
+export function TxShow({
+  pendingTransactions,
+  confirmedTransactions
+}: {
+  pendingTransactions: string[]
+  confirmedTransactions: string[]
+}) {
+  const { chainId } = useActiveWeb3React()
+  const dispatch = useDispatch<AppDispatch>()
+
+  const clearAllTransactionsCallback = useCallback(() => {
+    if (chainId) dispatch(clearAllTransactions({ chainId }))
+  }, [dispatch, chainId])
+
+  return (
+    <OutlinedCard width="100%" padding="20px">
+      {!!pendingTransactions.length || !!confirmedTransactions.length ? (
+        <Box display="grid" gap="16px" width="100%">
+          <Box display="flex" justifyContent="space-between" width="100%" fontWeight={500}>
+            <Typography variant="inherit">Recent Transactions</Typography>
+            <TextButton primary onClick={clearAllTransactionsCallback}>
+              (clear all)
+            </TextButton>
+          </Box>
+          <Box display="grid">
+            {renderTransactions(pendingTransactions)}
+            {renderTransactions(confirmedTransactions)}
+          </Box>
+        </Box>
+      ) : (
+        <Box display="flex" width="100%" justifyContent="center" marginTop={1}>
+          <Typography> Your transactions will appear here...</Typography>
+        </Box>
+      )}
+    </OutlinedCard>
+  )
+}
