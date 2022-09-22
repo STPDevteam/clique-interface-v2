@@ -29,7 +29,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
   const [description, setDescription] = useState(daoInfo.description)
   const [category, setCategory] = useState(daoInfo.category)
   const [daoName, setDaoName] = useState(daoInfo.name)
-  const [daoHandle, setDaoHandle] = useState(daoInfo.handle)
+  // const [daoHandle, setDaoHandle] = useState(daoInfo.handle)
   const [twitterLink, setTwitterLink] = useState(daoInfo.twitter)
   const [githubLink, setGithubLink] = useState(daoInfo.github)
   const [discordLink, setDiscordLink] = useState(daoInfo.discord)
@@ -42,17 +42,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
   const { showModal, hideModal } = useModal()
   const onSetInfoCallback = useCallback(() => {
     showModal(<TransacitonPendingModal />)
-    adminSetInfoCallback(
-      daoName,
-      daoHandle,
-      category,
-      description,
-      twitterLink,
-      githubLink,
-      discordLink,
-      daoImage,
-      websiteLink
-    )
+    adminSetInfoCallback(daoName, category, description, twitterLink, githubLink, discordLink, daoImage, websiteLink)
       .then(hash => {
         hideModal()
         showModal(<TransactiontionSubmittedModal hash={hash} />)
@@ -70,7 +60,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
     showModal,
     adminSetInfoCallback,
     daoName,
-    daoHandle,
     category,
     description,
     twitterLink,
@@ -91,7 +80,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
       description === daoInfo.description &&
       category === daoInfo.category &&
       daoName === daoInfo.name &&
-      daoHandle === daoInfo.handle &&
       twitterLink === daoInfo.twitter &&
       githubLink === daoInfo.github &&
       discordLink === daoInfo.discord &&
@@ -111,12 +99,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
       return {
         disabled: true,
         error: 'Dao logo required'
-      }
-    }
-    if (!daoHandle.trim()) {
-      return {
-        disabled: true,
-        error: 'DAO Handle on Clique required'
       }
     }
     if (!description.trim()) {
@@ -158,7 +140,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
     chainId,
     daoChainId,
     onSetInfoCallback,
-    daoHandle,
     daoImage,
     daoInfo,
     daoName,
@@ -215,13 +196,13 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             maxLength={30}
             userPattern={'^[0-9a-z_]*$'}
             placeholder="Lowercase characters, numbers, underscores"
+            readOnly
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
-                {daoHandle.length}/30
+                {daoInfo.handle.length}/30
               </Typography>
             }
-            value={daoHandle}
-            onChange={e => setDaoHandle(e.target.value || '')}
+            value={daoInfo.handle}
           />
           <Input
             label="Twitter handle"

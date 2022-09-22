@@ -246,7 +246,9 @@ export function CreateGovernanceModal() {
                     </Typography>
                   }
                   value={buildingDaoData.daoHandle}
-                  onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || ''))}
+                  onChange={e =>
+                    updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || '').replace(' ', ''))
+                  }
                 />
                 <Input
                   type="textarea"

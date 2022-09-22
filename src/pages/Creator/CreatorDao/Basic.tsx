@@ -135,7 +135,7 @@ export default function Basic({ next }: { next: () => void }) {
               </Typography>
             }
             value={buildingDaoData.daoHandle}
-            onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || ''))}
+            onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || '').replace(' ', ''))}
           />
           <Input
             label="Twitter handle"

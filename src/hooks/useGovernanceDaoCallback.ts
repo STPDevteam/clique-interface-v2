@@ -248,7 +248,6 @@ export function useAdminSetInfoCallback(daoAddress?: string) {
   return useCallback(
     async (
       daoName: string,
-      daoHandle: string,
       category: string,
       description: string,
       twitterLink: string,
@@ -263,7 +262,6 @@ export function useAdminSetInfoCallback(daoAddress?: string) {
       const args = [
         [
           daoName.trim(),
-          daoHandle.trim(),
           category.trim(),
           description.trim(),
           twitterLink.trim(),
