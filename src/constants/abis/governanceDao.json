@@ -320,7 +320,6 @@
       {
         "components": [
           { "internalType": "string", "name": "name", "type": "string" },
-          { "internalType": "string", "name": "handle", "type": "string" },
           { "internalType": "string", "name": "category", "type": "string" },
           { "internalType": "string", "name": "description", "type": "string" },
           { "internalType": "string", "name": "twitter", "type": "string" },
