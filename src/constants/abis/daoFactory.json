@@ -13,6 +13,7 @@
   {
     "anonymous": false,
     "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "handler", "type": "uint256" },
       { "indexed": true, "internalType": "address", "name": "creator", "type": "address" },
       { "indexed": true, "internalType": "address", "name": "daoAddress", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "chainId", "type": "uint256" },
@@ -63,7 +64,8 @@
           { "internalType": "string", "name": "twitter", "type": "string" },
           { "internalType": "string", "name": "github", "type": "string" },
           { "internalType": "string", "name": "discord", "type": "string" },
-          { "internalType": "string", "name": "daoLogo", "type": "string" }
+          { "internalType": "string", "name": "daoLogo", "type": "string" },
+          { "internalType": "string", "name": "website", "type": "string" }
         ],
         "internalType": "struct IDAOBase.General",
         "name": "general_",
@@ -88,7 +90,9 @@
         "internalType": "struct IDAOBase.Governance",
         "name": "governance_",
         "type": "tuple"
-      }
+      },
+      { "internalType": "uint256", "name": "deadline_", "type": "uint256" },
+      { "internalType": "bytes", "name": "signature_", "type": "bytes" }
     ],
     "name": "createDAO",
     "outputs": [],

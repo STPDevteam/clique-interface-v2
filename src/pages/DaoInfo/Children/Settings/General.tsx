@@ -42,7 +42,17 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
   const { showModal, hideModal } = useModal()
   const onSetInfoCallback = useCallback(() => {
     showModal(<TransacitonPendingModal />)
-    adminSetInfoCallback(daoName, daoHandle, category, description, twitterLink, githubLink, discordLink, daoImage)
+    adminSetInfoCallback(
+      daoName,
+      daoHandle,
+      category,
+      description,
+      twitterLink,
+      githubLink,
+      discordLink,
+      daoImage,
+      websiteLink
+    )
       .then(hash => {
         hideModal()
         showModal(<TransactiontionSubmittedModal hash={hash} />)
@@ -67,6 +77,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
     githubLink,
     discordLink,
     daoImage,
+    websiteLink,
     hideModal
   ])
 

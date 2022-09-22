@@ -3,7 +3,7 @@ import Modal from 'components/Modal'
 import { Typography, Box, styled, Link, useTheme, Alert } from '@mui/material'
 import Input from 'components/Input'
 import { BlackButton } from 'components/Button/Button'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList, ChainListMap } from 'constants/chain'
 import InputNumerical from 'components/Input/InputNumerical'
@@ -25,6 +25,7 @@ import TransactionSubmittedModal from 'components/Modal/TransactionModals/Transa
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { routes } from 'constants/routes'
+import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -42,6 +43,12 @@ export function CreateGovernanceModal() {
   const [step, setStep] = useState<CreateGovernanceStep>(CreateGovernanceStep.BASE_INFO)
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.daoHandle)
+
+  useEffect(() => {
+    queryHandleCallback(account || undefined, chainId || undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const createDaoCallback = useCreateDaoCallback()
   const { showModal } = useModal()
@@ -93,6 +100,12 @@ export function CreateGovernanceModal() {
         error: 'Categories required'
       }
     }
+    if (daoHandleAvailable !== true) {
+      return {
+        disabled: true,
+        error: 'DAO Handle on Clique unavailable'
+      }
+    }
     return {
       disabled: false,
       handler: () => setStep(CreateGovernanceStep.CONFIG)
@@ -102,7 +115,8 @@ export function CreateGovernanceModal() {
     buildingDaoData.daoHandle,
     buildingDaoData.daoImage,
     buildingDaoData.daoName,
-    buildingDaoData.description
+    buildingDaoData.description,
+    daoHandleAvailable
   ])
 
   const govToken = useTokenByChain(
@@ -224,13 +238,15 @@ export function CreateGovernanceModal() {
                   label="*DAO Handle on Clique"
                   placeholder="Lowercase characters, numbers, underscores"
                   maxLength={30}
+                  error={daoHandleAvailable === false}
+                  onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
                   endAdornment={
                     <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
                       {buildingDaoData.daoHandle.length}/30
                     </Typography>
                   }
                   value={buildingDaoData.daoHandle}
-                  onChange={e => updateBuildingDaoKeyData('daoHandle', e.target.value || '')}
+                  onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || ''))}
                 />
                 <Input
                   type="textarea"

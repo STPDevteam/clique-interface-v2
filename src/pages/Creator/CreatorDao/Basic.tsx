@@ -5,8 +5,10 @@ import Input from 'components/Input'
 import { BlackButton } from 'components/Button/Button'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeEmoji } from 'utils'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
+import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
+import { useActiveWeb3React } from 'hooks'
 
 const Wrapper = styled(CreatorBox)({
   display: 'grid',
@@ -16,7 +18,14 @@ const Wrapper = styled(CreatorBox)({
 
 export default function Basic({ next }: { next: () => void }) {
   const theme = useTheme()
+  const { chainId, account } = useActiveWeb3React()
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
+  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.daoHandle)
+
+  useEffect(() => {
+    queryHandleCallback(account || undefined, chainId || undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, chainId])
 
   const nextHandler = useMemo(() => {
     if (!buildingDaoData.daoName.trim()) {
@@ -49,6 +58,12 @@ export default function Basic({ next }: { next: () => void }) {
         error: 'Categories required'
       }
     }
+    if (daoHandleAvailable !== true) {
+      return {
+        disabled: true,
+        error: 'DAO Handle on Clique unavailable'
+      }
+    }
     return {
       disabled: false,
       handler: next
@@ -59,6 +74,7 @@ export default function Basic({ next }: { next: () => void }) {
     buildingDaoData.daoImage,
     buildingDaoData.daoName,
     buildingDaoData.description,
+    daoHandleAvailable,
     next
   ])
 
@@ -111,13 +127,15 @@ export default function Basic({ next }: { next: () => void }) {
             maxLength={30}
             userPattern={'^[0-9a-z_]*$'}
             placeholder="Lowercase characters, numbers, underscores"
+            error={daoHandleAvailable === false}
+            onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
                 {buildingDaoData.daoHandle.length}/30
               </Typography>
             }
             value={buildingDaoData.daoHandle}
-            onChange={e => updateBuildingDaoKeyData('daoHandle', e.target.value || '')}
+            onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || ''))}
           />
           <Input
             label="Twitter handle"

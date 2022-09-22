@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHomeListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from '.'
 import {
+  daoHandleQuery,
   getDaoAdmins,
   getDaoInfo,
   getHomeDaoList,
@@ -370,4 +371,29 @@ export function useTokenList(account: string, chainId: number | string) {
     }),
     [currentPage, loading, total, result]
   )
+}
+
+export function useDaoHandleQuery(handle: string) {
+  const [available, setAvailable] = useState<boolean>()
+
+  const queryHandleCallback = useCallback(
+    async (account: string | undefined, chainId: number | undefined) => {
+      if (!handle.trim() || !account || !chainId) {
+        setAvailable(undefined)
+        return
+      }
+      try {
+        const res = await daoHandleQuery(handle.trim(), account, chainId)
+        const data = res.data.data
+
+        setAvailable(data.success || false)
+      } catch (error) {
+        setAvailable(undefined)
+        console.error('useDaoHandleQuery', error)
+      }
+    },
+    [handle]
+  )
+
+  return { available, queryHandleCallback }
 }

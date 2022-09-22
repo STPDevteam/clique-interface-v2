@@ -17,31 +17,6 @@
   {
     "anonymous": false,
     "inputs": [
-      { "indexed": true, "internalType": "uint256", "name": "airdropId", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "index", "type": "uint256" },
-      { "indexed": false, "internalType": "address", "name": "account", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
-    ],
-    "name": "Claimed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      { "indexed": true, "internalType": "address", "name": "creator", "type": "address" },
-      { "indexed": true, "internalType": "uint256", "name": "airdropId", "type": "uint256" },
-      { "indexed": false, "internalType": "address", "name": "token", "type": "address" },
-      { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
-      { "indexed": false, "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" },
-      { "indexed": false, "internalType": "uint256", "name": "startTime", "type": "uint256" },
-      { "indexed": false, "internalType": "uint256", "name": "endTime", "type": "uint256" }
-    ],
-    "name": "CreateAirdrop",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
       { "indexed": true, "internalType": "uint256", "name": "proposalId", "type": "uint256" },
       { "indexed": true, "internalType": "address", "name": "proposer", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "nonce", "type": "uint256" },
@@ -113,49 +88,8 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "name": "airdrops",
-    "outputs": [
-      { "internalType": "address", "name": "token", "type": "address" },
-      { "internalType": "uint256", "name": "tokenReserve", "type": "uint256" },
-      { "internalType": "bytes32", "name": "merkleRoot", "type": "bytes32" },
-      { "internalType": "uint256", "name": "startTime", "type": "uint256" },
-      { "internalType": "uint256", "name": "endTime", "type": "uint256" },
-      { "internalType": "address", "name": "creator", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "proposalId_", "type": "uint256" }],
     "name": "cancelProposal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "airdropId_", "type": "uint256" },
-      { "internalType": "uint256", "name": "index_", "type": "uint256" },
-      { "internalType": "address", "name": "account_", "type": "address" },
-      { "internalType": "uint256", "name": "amount_", "type": "uint256" },
-      { "internalType": "bytes32[]", "name": "merkleProof_", "type": "bytes32[]" }
-    ],
-    "name": "claimAirdrop",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "airdropId_", "type": "uint256" },
-      { "internalType": "address", "name": "token_", "type": "address" },
-      { "internalType": "uint256", "name": "amount_", "type": "uint256" },
-      { "internalType": "bytes32", "name": "merkleRoot_", "type": "bytes32" },
-      { "internalType": "uint256", "name": "startTime_", "type": "uint256" },
-      { "internalType": "uint256", "name": "endTime_", "type": "uint256" }
-    ],
-    "name": "createAirdrop",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -217,7 +151,8 @@
       { "internalType": "string", "name": "twitter", "type": "string" },
       { "internalType": "string", "name": "github", "type": "string" },
       { "internalType": "string", "name": "discord", "type": "string" },
-      { "internalType": "string", "name": "daoLogo", "type": "string" }
+      { "internalType": "string", "name": "daoLogo", "type": "string" },
+      { "internalType": "string", "name": "website", "type": "string" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -287,7 +222,8 @@
           { "internalType": "string", "name": "twitter", "type": "string" },
           { "internalType": "string", "name": "github", "type": "string" },
           { "internalType": "string", "name": "discord", "type": "string" },
-          { "internalType": "string", "name": "daoLogo", "type": "string" }
+          { "internalType": "string", "name": "daoLogo", "type": "string" },
+          { "internalType": "string", "name": "website", "type": "string" }
         ],
         "internalType": "struct IDAOBase.General",
         "name": "general_",
@@ -320,16 +256,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "airdropId_", "type": "uint256" },
-      { "internalType": "address", "name": "account_", "type": "address" }
-    ],
-    "name": "isClaimed",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "owner",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
@@ -357,13 +283,6 @@
       { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "airdropId_", "type": "uint256" }],
-    "name": "recycleAirdrop",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
@@ -407,7 +326,8 @@
           { "internalType": "string", "name": "twitter", "type": "string" },
           { "internalType": "string", "name": "github", "type": "string" },
           { "internalType": "string", "name": "discord", "type": "string" },
-          { "internalType": "string", "name": "daoLogo", "type": "string" }
+          { "internalType": "string", "name": "daoLogo", "type": "string" },
+          { "internalType": "string", "name": "website", "type": "string" }
         ],
         "internalType": "struct IDAOBase.General",
         "name": "general_",
