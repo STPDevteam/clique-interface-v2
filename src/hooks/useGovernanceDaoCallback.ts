@@ -260,16 +260,14 @@ export function useAdminSetInfoCallback(daoAddress?: string) {
       if (!contract) throw new Error('none contract')
 
       const args = [
-        [
-          daoName.trim(),
-          category.trim(),
-          description.trim(),
-          twitterLink.trim(),
-          githubLink.trim(),
-          discordLink.trim(),
-          daoImage.trim(),
-          website.trim()
-        ]
+        daoName.trim(),
+        category.trim(),
+        description.trim(),
+        twitterLink.trim(),
+        githubLink.trim(),
+        discordLink.trim(),
+        daoImage.trim(),
+        website.trim()
       ]
 
       const method = 'setInfo'

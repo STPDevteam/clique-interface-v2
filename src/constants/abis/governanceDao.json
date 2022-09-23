@@ -316,23 +316,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "string", "name": "name", "type": "string" },
-          { "internalType": "string", "name": "category", "type": "string" },
-          { "internalType": "string", "name": "description", "type": "string" },
-          { "internalType": "string", "name": "twitter", "type": "string" },
-          { "internalType": "string", "name": "github", "type": "string" },
-          { "internalType": "string", "name": "discord", "type": "string" },
-          { "internalType": "string", "name": "daoLogo", "type": "string" },
-          { "internalType": "string", "name": "website", "type": "string" }
-        ],
-        "internalType": "struct IDAOBase.General",
-        "name": "general_",
-        "type": "tuple"
-      }
-    ],
+    "inputs": [{ "internalType": "string[]", "name": "args", "type": "string[]" }],
     "name": "setInfo",
     "outputs": [],
     "stateMutability": "nonpayable",
