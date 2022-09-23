@@ -6,7 +6,7 @@ import Loading from 'components/Loading'
 import { ChainId } from 'constants/chain'
 import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
 import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
-import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
+import ShowAdminTag, { AdminTagListBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { useParams } from 'react-router-dom'
 import { StyledItem } from '../About'
 import { useSetDaoAdminCallback, useSuperAdminTransferOwnershipCallback } from 'hooks/useGovernanceDaoCallback'
@@ -127,7 +127,7 @@ export default function Admin() {
               type="address"
               placeholder="Address"
             />
-            <Box display={'grid'} gridTemplateColumns="100px 1fr" gap={'20px'}>
+            <Box display={'grid'} gridTemplateColumns="150px 1fr" gap={'20px'}>
               <div>
                 <ShowAdminTag level={DaoAdminLevelProp.ADMIN} />
               </div>
@@ -176,9 +176,9 @@ function AdminBlock({
       <Typography fontWeight={600} key={account}>
         {account}
       </Typography>
-      <Box display={'grid'} gridTemplateColumns="100px 1fr" gap={'20px'}>
+      <Box display={'grid'} gridTemplateColumns="150px 1fr" gap={'20px'}>
         <div>
-          <ShowAdminTag level={level} />
+          <AdminTagListBlock daoAddress={daoAddress} chainId={daoChainId} account={account} />
         </div>
         {level === DaoAdminLevelProp.ADMIN && (
           <Stack spacing={12} direction="row">
