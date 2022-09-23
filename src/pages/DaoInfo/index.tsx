@@ -1,4 +1,4 @@
-import { Avatar, Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
@@ -18,6 +18,7 @@ import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
 import AdminTag from './ShowAdminTag'
 import { routes } from 'constants/routes'
+import { DaoAvatars } from 'components/Avatars'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -138,7 +139,7 @@ export default function DaoInfo({ children }: { children: any }) {
       <ContainerWrapper maxWidth={1248}>
         <StyledHeader>
           <div className="top1">
-            <Avatar sx={{ width: 100, height: 100 }} src={daoInfo?.daoLogo || ''}></Avatar>
+            <DaoAvatars size={100} src={daoInfo?.daoLogo} />
             <Box ml={'24px'}>
               <Box display={'flex'} justifyContent="space-between" alignItems={'center'} marginBottom={6}>
                 <Stack direction="row" spacing={8} alignItems="center">

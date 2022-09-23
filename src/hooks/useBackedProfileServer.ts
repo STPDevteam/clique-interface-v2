@@ -1,9 +1,11 @@
+import { ChainId } from 'constants/chain'
 import { useEffect, useState } from 'react'
 import { userProfile } from '../utils/fetch/server'
+import { DaoAdminLevelProp } from './useDaoInfo'
 
 export interface UserProfileDaoProp {
-  accountLevel: string
-  chainId: number
+  accountLevel: DaoAdminLevelProp
+  chainId: ChainId
   daoAddress: string
   daoLogo: string
   daoName: string
@@ -34,6 +36,12 @@ export function useUserProfileInfo(account: string | undefined) {
         const res = await userProfile(account)
         setLoading(false)
         const data = res.data.data
+
+        data.memberDao = data.memberDao.map((item: any) => ({ ...item, accountLevel: DaoAdminLevelProp.NORMAL }))
+        data.adminDao = data.adminDao.map((item: any) => ({
+          ...item,
+          accountLevel: item.accountLevel === 'superAdmin' ? DaoAdminLevelProp.SUPER_ADMIN : DaoAdminLevelProp.ADMIN
+        }))
 
         setResult(data)
       } catch (error) {
