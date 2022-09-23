@@ -10,6 +10,7 @@ import MyTokens from './MyTokens'
 import { useParams } from 'react-router-dom'
 import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { isSocialUrl } from 'utils/dao'
+import MyDaos from './MyDaos'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -28,7 +29,7 @@ export default function Profile() {
   const { result: profileInfo } = useUserProfileInfo(currentAccount || undefined)
 
   return (
-    <Box>
+    <Box paddingBottom={40}>
       <ContainerWrapper maxWidth={1248} margin={'24px auto 40px'}>
         <StyledHeader>
           <Box display={'flex'}>
@@ -71,6 +72,8 @@ export default function Profile() {
 
       <Box display={'grid'} gap="48px">
         {isSelf && <MyTokens account={currentAccount || ''} />}
+
+        <MyDaos adminDao={profileInfo?.adminDao} memberDao={profileInfo?.memberDao} />
       </Box>
     </Box>
   )
