@@ -183,7 +183,7 @@ export function useToken(tokenAddress: string, chainId?: ChainId): Token | undef
 
   return useMemo(() => {
     if (!curChainId || !address) return undefined
-    if (decimals.loading || symbol.loading || tokenName.loading) return null
+    if (decimals.loading) return null
     if (decimals.result) {
       return new Token(
         curChainId,
@@ -199,10 +199,8 @@ export function useToken(tokenAddress: string, chainId?: ChainId): Token | undef
     curChainId,
     decimals.loading,
     decimals.result,
-    symbol.loading,
     symbol.result,
     symbolBytes32.result,
-    tokenName.loading,
     tokenName.result,
     tokenNameBytes32.result
   ])
