@@ -271,6 +271,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
               <LabelText>End time</LabelText>
               <DateTimePicker
                 disabled={!daoInfo.isCustomVotes}
+                minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                 value={endTime ? new Date(endTime * 1000) : null}
                 onValue={timestamp => setEndTime(timestamp)}
               ></DateTimePicker>
