@@ -237,6 +237,7 @@ export function CreateGovernanceModal() {
                 <Input
                   label="*DAO Handle on Clique"
                   placeholder="Lowercase characters, numbers, underscores"
+                  userPattern={'^[0-9a-z_]*$'}
                   maxLength={30}
                   error={daoHandleAvailable === false}
                   onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
