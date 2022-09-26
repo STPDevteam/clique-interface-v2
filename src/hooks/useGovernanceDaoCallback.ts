@@ -49,8 +49,8 @@ export function useCreateDaoCallback() {
       ],
       [data.baseChainId, data.tokenAddress],
       [
-        amountAddDecimals(data.createProposalMinimum),
-        amountAddDecimals(data.executeMinimum),
+        amountAddDecimals(data.createProposalMinimum, token.decimals),
+        amountAddDecimals(data.executeMinimum, token.decimals),
         data.defaultVotingPeriod,
         data.votingTypes
       ],
