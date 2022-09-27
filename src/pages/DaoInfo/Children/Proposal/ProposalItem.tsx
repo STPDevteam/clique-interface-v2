@@ -2,7 +2,7 @@ import { Box, Link, Skeleton, styled, Typography, useTheme } from '@mui/material
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
-import { useProposalBaseInfo } from 'hooks/useProposalInfo'
+import { useProposalDetailInfo } from 'hooks/useProposalInfo'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import ShowProposalStatusTag from './ShowProposalStatusTag'
 import { useHistory } from 'react-router-dom'
@@ -43,17 +43,17 @@ export const RowCenter = styled(Box)({
 export default function ProposalItem({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
   const theme = useTheme()
   const history = useHistory()
-  const proposalBaseInfo = useProposalBaseInfo(daoAddress, daoChainId, proposalId)
+  const proposalInfo = useProposalDetailInfo(daoAddress, daoChainId, proposalId)
 
   return (
     <StyledCard
       onClick={() => history.push(routes._DaoInfo + `/${daoChainId}/${daoAddress}/proposal/detail/${proposalId}`)}
     >
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
-        {proposalBaseInfo ? (
+        {proposalInfo ? (
           <>
             <Typography variant="h5" noWrap>
-              {proposalBaseInfo.title}
+              {proposalInfo.title}
             </Typography>
             <KeyboardArrowRightIcon />
           </>
@@ -63,9 +63,9 @@ export default function ProposalItem({ daoChainId, daoAddress, proposalId }: Pro
           </>
         )}
       </Box>
-      {proposalBaseInfo ? (
+      {proposalInfo ? (
         <Typography className="content" variant="body1">
-          {proposalBaseInfo.introduction}
+          {proposalInfo.introduction}
         </Typography>
       ) : (
         <>
@@ -75,30 +75,30 @@ export default function ProposalItem({ daoChainId, daoAddress, proposalId }: Pro
       )}
       <RowCenter mt={16}>
         <RowCenter>
-          {proposalBaseInfo ? (
+          {proposalInfo ? (
             <>
               <Link
                 underline="hover"
-                href={getEtherscanLink(daoChainId, proposalBaseInfo?.creator || '', 'address')}
+                href={getEtherscanLink(daoChainId, proposalInfo?.creator || '', 'address')}
                 target="_blank"
               >
                 <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
-                  {proposalBaseInfo?.creator && shortenAddress(proposalBaseInfo.creator)}
+                  {proposalInfo?.creator && shortenAddress(proposalInfo.creator)}
                 </Typography>
               </Link>
-              <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalBaseInfo.creator} />
+              <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
             </>
           ) : (
             <Skeleton animation="wave" width={100} />
           )}
         </RowCenter>
         <RowCenter>
-          {proposalBaseInfo ? (
+          {proposalInfo ? (
             <>
               <Typography color={theme.textColor.text1} fontSize={14}>
-                {proposalBaseInfo.targetTimeString}
+                {proposalInfo.targetTimeString}
               </Typography>
-              <ShowProposalStatusTag status={proposalBaseInfo.status} />
+              <ShowProposalStatusTag status={proposalInfo.status} />
             </>
           ) : (
             <Skeleton animation="wave" width={100} />

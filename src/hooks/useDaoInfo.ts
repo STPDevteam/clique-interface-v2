@@ -83,7 +83,7 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
       daoAddress: daoAddress,
       token: token || undefined,
       proposalThreshold: token ? new TokenAmount(token, governanceRes.proposalThreshold) : undefined,
-      votingThreshold: token ? new TokenAmount(token, governanceRes.votingQuorum) : undefined,
+      votingThreshold: token ? new TokenAmount(token, governanceRes.votingThreshold) : undefined,
       votingPeriod: Number(governanceRes.votingPeriod),
       votingType: Number(governanceRes.votingType),
       isCustomVotes: Number(governanceRes.votingPeriod) === 0

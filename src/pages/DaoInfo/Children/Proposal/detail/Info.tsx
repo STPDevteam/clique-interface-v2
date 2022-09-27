@@ -3,7 +3,7 @@ import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
 import { useProposalSnapshot } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
-import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
+import { ProposalDetailProp } from 'hooks/useProposalInfo'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
@@ -106,7 +106,7 @@ export default function Info({
             </svg>
           </Link>
         </Box>
-        {account === proposalInfo.creator && proposalInfo.status !== ProposalStatus.CLOSED && (
+        {account === proposalInfo.creator && proposalInfo.status < 3 && (
           <Box mt={15}>
             <BlackButton
               height="44px"

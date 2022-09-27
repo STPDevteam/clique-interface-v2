@@ -197,11 +197,11 @@ export function useAdminSetGovernanceCallback(daoAddress?: string) {
   const gasPriceInfoCallback = useGasPriceInfo()
 
   return useCallback(
-    async (proposalThreshold: string, votingQuorum: string, votingPeriod: number, votingType: number) => {
+    async (proposalThreshold: string, votingThreshold: string, votingPeriod: number, votingType: number) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
 
-      const args = [[proposalThreshold, votingQuorum, votingPeriod, votingType]]
+      const args = [[proposalThreshold, votingThreshold, votingPeriod, votingType]]
 
       const method = 'setGovernance'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)

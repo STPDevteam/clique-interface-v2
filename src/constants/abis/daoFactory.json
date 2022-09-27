@@ -83,7 +83,7 @@
       {
         "components": [
           { "internalType": "uint256", "name": "proposalThreshold", "type": "uint256" },
-          { "internalType": "uint256", "name": "votingQuorum", "type": "uint256" },
+          { "internalType": "uint256", "name": "votingThreshold", "type": "uint256" },
           { "internalType": "uint256", "name": "votingPeriod", "type": "uint256" },
           { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
         ],

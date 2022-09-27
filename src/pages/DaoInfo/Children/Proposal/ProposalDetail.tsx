@@ -41,13 +41,7 @@ function DetailBox({
   const history = useHistory()
   const { account } = useActiveWeb3React()
 
-  const proposalDetailInfo = useProposalDetailInfo(
-    daoInfo.daoAddress,
-    daoChainId,
-    proposalId,
-    daoInfo.token,
-    account || undefined
-  )
+  const proposalDetailInfo = useProposalDetailInfo(daoInfo.daoAddress, daoChainId, proposalId, account || undefined)
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)

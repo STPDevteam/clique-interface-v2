@@ -63,7 +63,7 @@ export default function Vote({
               {proposalInfo.votingType === VotingTypes.SINGLE ? 'Single Vote' : 'Multi Vote'}
             </Typography>
           </RowCenter>
-          <Stack spacing={20} mt={24} mb={24}>
+          <Stack spacing={20} mt={24} mb={16}>
             {proposalInfo.proposalOptions.map(({ name }, index) => (
               <CheckBox
                 key={index}
@@ -97,6 +97,16 @@ export default function Vote({
       ) : (
         <VoteResult type={proposalInfo.votingType} myVoteInfo={proposalInfo.myVoteInfo} />
       )}
+      <div>
+        <Typography fontSize={12} color={theme.palette.text.secondary}>
+          Minimum votes needed for success
+        </Typography>
+        <Typography fontSize={12}>
+          {proposalInfo.votingThreshold?.toSignificant(6, {
+            groupSeparator: ','
+          }) || '-'}
+        </Typography>
+      </div>
     </VoteWrapper>
   )
 }
