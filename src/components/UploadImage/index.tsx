@@ -77,6 +77,7 @@ export default function Index({
   onChange?: (val: string) => void
 }) {
   const [openSnackbar, setOpenSnackbar] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('Upload failed')
   return (
     <StyledUpload sx={sx} size={size}>
       <input
@@ -90,6 +91,7 @@ export default function Index({
             if (ret.result) {
               onChange && onChange(ret.data)
             } else {
+              setErrorMsg(ret.data)
               setOpenSnackbar(true)
             }
           }
@@ -114,7 +116,7 @@ export default function Index({
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
       >
-        <Alert severity="warning">Upload failed</Alert>
+        <Alert severity="error">{errorMsg}</Alert>
       </Snackbar>
     </StyledUpload>
   )

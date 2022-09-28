@@ -2,8 +2,9 @@ import { Box, Typography, useTheme } from '@mui/material'
 import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
 import ShowProposalStatusTag from '../ShowProposalStatusTag'
 import ReactHtmlParser from 'react-html-parser'
-import xss from 'xss'
+import 'react-quill/dist/quill.snow.css'
 import { timeStampToFormat } from 'utils/dao'
+import { escapeAttrValue, filterXSS } from 'xss'
 
 export default function Index({ proposalInfo }: { proposalInfo: ProposalDetailProp }) {
   const theme = useTheme()
@@ -43,7 +44,18 @@ export default function Index({ proposalInfo }: { proposalInfo: ProposalDetailPr
         <Typography mb={10} color={theme.palette.text.secondary} fontSize={14}>
           {proposalInfo.introduction}
         </Typography>
-        <div>{ReactHtmlParser(xss(proposalInfo.content || ''))}</div>
+        <div className="ql-editor">
+          {ReactHtmlParser(
+            filterXSS(proposalInfo.content || '', {
+              onIgnoreTagAttr: function(_, name, value) {
+                if (name === 'class') {
+                  return name + '="' + escapeAttrValue(value) + '"'
+                }
+                return undefined
+              }
+            })
+          )}
+        </div>
       </Box>
     </Box>
   )

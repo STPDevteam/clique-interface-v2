@@ -1,4 +1,5 @@
 import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
@@ -153,6 +154,7 @@ function VoteListModal({
               </>
             ))}
           </Box>
+          {!showList.length && <EmptyData />}
           <Box display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}
