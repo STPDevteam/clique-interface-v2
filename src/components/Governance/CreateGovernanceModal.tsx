@@ -203,6 +203,16 @@ export function CreateGovernanceModal() {
         <Typography variant="h5" textAlign={'center'}>
           Add your on chain DAO
         </Typography>
+        <Typography pb={8} variant="body1" textAlign={'center'} fontWeight={400} color={theme.palette.text.secondary}>
+          If your DAO is not on chain yet, please{' '}
+          <Link
+            target={'_blank'}
+            underline="none"
+            href="https://stp-dao.gitbook.io/verse-network/clique/how-to-create-a-dao"
+          >
+            click here
+          </Link>
+        </Typography>
 
         <Box
           sx={{
