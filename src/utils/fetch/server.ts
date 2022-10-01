@@ -144,20 +144,31 @@ export function getProposalVotesList(
   })
 }
 
-export function saveAirdropAddress(address: string[], amount: string[], title: string) {
+export function saveAirdropAddress(
+  address: string[],
+  amount: string[],
+  sign: {
+    account: string
+    chainId: number
+    daoAddress: string
+    airdropId: number
+    message: string
+    signature: string
+  }
+) {
   return Axios.post('stpdao/v2/airdrop/address', {
     array: {
       address,
       amount
     },
-    title
+    ...sign
   })
 }
 
 export function getActivityList(
   chainId: number,
   daoAddress: string,
-  status: number | undefined,
+  status: string | undefined,
   types: 'Airdrop' | 'PublicSale' | '',
   offset: number,
   count: number
@@ -227,5 +238,62 @@ export function daoHandleMakeSign(handle: string, account: string, chainId: numb
     handle,
     account,
     chainId
+  })
+}
+
+export function createAirdropOne(
+  title: string,
+  description: string,
+  tokenChainId: number,
+  tokenAddress: string,
+  maxAirdropAmount: string,
+  startTime: number,
+  endTime: number,
+  airdropStartTime: number,
+  airdropEndTime: number,
+  sign: {
+    account: string
+    chainId: number
+    daoAddress: string
+    message: string
+    signature: string
+  },
+  collectInformation: { name: string; required: boolean }[]
+) {
+  return Axios.post('stpdao/v2/airdrop/create', {
+    title,
+    description,
+    tokenChainId,
+    tokenAddress,
+    maxAirdropAmount,
+    startTime,
+    endTime,
+    airdropStartTime,
+    airdropEndTime,
+    sign,
+    collectInformation
+  })
+}
+
+export function getAirdropDescData(activityId: number) {
+  return Axios.get('stpdao/v2/airdrop/collect', {
+    id: activityId
+  })
+}
+
+export function airdropSaveUserCollect(account: string, airdropId: number, userSubmit: string) {
+  return Axios.post('stpdao/v2/airdrop/save/user', {
+    account,
+    airdropId,
+    userSubmit
+  })
+}
+
+export function airdropDownloadUserCollect(account: string, airdropId: number, message: string, signature: string) {
+  return Axios.post('stpdao/v2/airdrop/user/download', {
+    account,
+    airdropId,
+    message,
+    signature
   })
 }

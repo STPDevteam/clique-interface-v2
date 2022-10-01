@@ -110,6 +110,11 @@ export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_DAO_FACTORY_ADDRESS || ''
 }
 
+export const AIRDROP_ADDRESS: { [chainId in ChainId]?: string } = {
+  [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_AIRDROP_ADDRESS || '',
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_AIRDROP_ADDRESS || ''
+}
+
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'

@@ -3,78 +3,84 @@ import { Token, TokenAmount } from 'constants/token'
 import { useActiveWeb3React } from 'hooks'
 import { useMemo } from 'react'
 import { useSingleCallResult } from 'state/multicall/hooks'
-import { useToken } from 'state/wallet/hooks'
-import { currentTimeStamp } from 'utils'
-import { useGovernanceDaoContract } from './useContract'
+import { useNativeAndToken } from 'state/wallet/hooks'
+import isZero from 'utils/isZero'
+import { useAirdropContract } from './useContract'
 
 export enum ActivityStatus {
-  SOON = 1,
-  OPEN = 2,
-  CLOSED = 3
+  SOON = 'Soon',
+  OPEN = 'Open',
+  ENDED = 'Ended',
+  AIRDROP = 'Airdrop',
+  CLOSED = 'Closed'
 }
 
-export interface AirdropBaseInfoProp {
+export interface AirdropInfoProp {
+  isEth: boolean
   tokenAddress: string
-  remainderAmount: TokenAmount
+  tokenStaked: TokenAmount
+  tokenClaimed: TokenAmount
   airdropToken: Token
-  startTime: number
-  endTime: number
+  airdropStartTime: number
+  airdropEndTime: number
+  airdropId: number
   creator: string
-  chainId: ChainId
-  status: ActivityStatus
+  merkleRoot: string
+  airdropChainId: ChainId
 }
 
-export function useAirdropBaseInfo(
-  daoAddress: string,
-  daoChainId: ChainId,
-  airdropId: number
-): AirdropBaseInfoProp | undefined {
-  const daoContract = useGovernanceDaoContract(daoAddress, daoChainId)
-  const airdropsRes = useSingleCallResult(daoContract, 'airdrops', [airdropId], undefined, daoChainId).result
+export function useAirdropInfos(airdropId: number, airdropChainId: ChainId | undefined): AirdropInfoProp | undefined {
+  const contract = useAirdropContract(airdropChainId)
+  const airdropsRes = useSingleCallResult(
+    airdropChainId ? contract : null,
+    'airdrops',
+    [airdropId],
+    undefined,
+    airdropChainId
+  ).result
 
   const airdropsData = useMemo(() => {
     if (!airdropsRes) return undefined
     return {
       tokenAddress: airdropsRes.token,
-      remainderAmount: airdropsRes.tokenReserve.toString(),
+      tokenStaked: airdropsRes.tokenStaked.toString(),
+      tokenClaimed: airdropsRes.tokenClaimed.toString(),
+      merkleRoot: airdropsRes.merkleRoot.toString(),
       startTime: Number(airdropsRes.startTime.toString()),
       endTime: Number(airdropsRes.endTime.toString()),
       creator: airdropsRes.creator
     }
   }, [airdropsRes])
 
-  const airdropToken = useToken(airdropsData?.tokenAddress, daoChainId)
+  const airdropToken = useNativeAndToken(airdropsData?.tokenAddress, airdropChainId)
 
   return useMemo(() => {
-    if (!airdropToken || !airdropsData) return undefined
-    const curTime = currentTimeStamp()
+    if (!airdropToken || !airdropsData || !airdropChainId) return undefined
     return {
+      isEth: isZero(airdropsData?.tokenAddress || ''),
       tokenAddress: airdropsData.tokenAddress,
-      remainderAmount: new TokenAmount(airdropToken, airdropsData.remainderAmount),
+      tokenStaked: new TokenAmount(airdropToken, airdropsData.tokenStaked),
+      tokenClaimed: new TokenAmount(airdropToken, airdropsData.tokenClaimed),
       airdropToken,
-      startTime: airdropsData.startTime,
-      endTime: airdropsData.endTime,
+      airdropId,
+      merkleRoot: airdropsData.merkleRoot,
+      airdropStartTime: airdropsData.startTime,
+      airdropEndTime: airdropsData.endTime,
       creator: airdropsData.creator,
-      chainId: daoChainId,
-      status:
-        airdropsData.startTime <= curTime && airdropsData.endTime > curTime
-          ? ActivityStatus.OPEN
-          : airdropsData.startTime > curTime
-          ? ActivityStatus.SOON
-          : ActivityStatus.CLOSED
+      airdropChainId: airdropChainId
     }
-  }, [airdropToken, airdropsData, daoChainId])
+  }, [airdropToken, airdropsData, airdropChainId, airdropId])
 }
 
-export function useAirdropClaimed(daoAddress: string, daoChainId: ChainId, airdropId: number): boolean | undefined {
+export function useAirdropClaimed(airdropId: number, chainId: ChainId | undefined): boolean | undefined {
   const { account } = useActiveWeb3React()
-  const daoContract = useGovernanceDaoContract(daoAddress, daoChainId)
+  const contract = useAirdropContract(chainId)
   const claimedRes = useSingleCallResult(
-    account ? daoContract : null,
+    chainId && account ? contract : null,
     'isClaimed',
     [airdropId, account || ''],
     undefined,
-    daoChainId
+    chainId
   ).result
 
   return claimedRes?.[0]

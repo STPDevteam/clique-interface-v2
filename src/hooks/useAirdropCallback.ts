@@ -2,53 +2,126 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '.'
-import { useGovernanceDaoContract } from './useContract'
+import { useAirdropContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
-import { commitErrorMsg, saveAirdropAddress } from 'utils/fetch/server'
+import { airdropDownloadUserCollect, commitErrorMsg, createAirdropOne, saveAirdropAddress } from 'utils/fetch/server'
+import { ZERO_ADDRESS } from '../constants'
+import { useWeb3Instance } from './useWeb3Instance'
+import { currentTimeStamp } from 'utils'
+import { CurrencyAmount, Token } from 'constants/token'
+import { tryParseAmount } from 'utils/parseAmount'
+import { getMerkleTreeRootHash } from 'utils/merkletreejs'
+import JSBI from 'jsbi'
 
-export function useCreateAirdropCallback(daoAddress: string) {
+const makeMerkleTreeList = (arr: { address: string; amountHexRaw: string }[]) => {
+  return arr.map(({ address, amountHexRaw }, index) => {
+    return '0x' + index.toString(16).padStart(64, '0') + address.replace('0x', '') + amountHexRaw.padStart(64, '0')
+  })
+}
+
+export function useAirdropSignature() {
+  const web3 = useWeb3Instance()
+  const { account } = useActiveWeb3React()
+
+  const sign = useCallback(
+    (makeMessage: string) => {
+      if (!account || !web3) return
+      return web3.eth.personal.sign(makeMessage, account, '')
+    },
+    [account, web3]
+  )
+  const makeMessage = useCallback((type: 'airdrop1' | 'airdrop2' | 'airdropDownload', root = '') => {
+    const timeStamp = currentTimeStamp() + 300
+    return JSON.stringify({ expired: timeStamp, root, type })
+  }, [])
+
+  return { sign, makeMessage }
+}
+
+export function useCreateAirdropONECallback() {
   const addTransaction = useTransactionAdder()
-  const contract = useGovernanceDaoContract(daoAddress)
+  const contract = useAirdropContract()
   const { account } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
+  const airdropSignature = useAirdropSignature()
 
   return useCallback(
     async (
+      isEth: boolean,
       title: string,
+      description: string,
+      tokenChainId: number,
       tokenAddress: string,
       amount: string,
-      merkleRoot: string,
       startTime: number,
       endTime: number,
-      addressAndAmount: {
-        address: string
-        amountRaw: string
-      }[]
+      airdropStartTime: number,
+      airdropEndTime: number,
+      sign: {
+        daoChainId: number
+        daoAddress: string
+      },
+      collectInformation: { name: string; required: boolean }[]
     ) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
 
-      let airdropId = 0
+      if (isEth) tokenAddress = ZERO_ADDRESS
+
+      const airdropSignatureStr: {
+        message: string
+        sign: string
+      } = {
+        message: '',
+        sign: ''
+      }
       try {
-        const res = await saveAirdropAddress(
-          addressAndAmount.map(item => item.address),
-          addressAndAmount.map(item => item.amountRaw),
-          title
-        )
-        airdropId = res.data.data.airdropIdId
+        airdropSignatureStr.message = airdropSignature.makeMessage('airdrop1')
+        const _airdropSignatureRes = await airdropSignature.sign(airdropSignatureStr.message)
+        airdropSignatureStr.sign = _airdropSignatureRes || ''
       } catch (error) {
-        throw new Error('Save failed, please try again.')
+        throw new Error('User cancel signature')
       }
 
-      const args = [airdropId, tokenAddress, amount, merkleRoot, startTime, endTime]
+      let result: any = {}
+      try {
+        const res = await createAirdropOne(
+          title,
+          description,
+          tokenChainId,
+          tokenAddress,
+          amount,
+          startTime,
+          endTime,
+          airdropStartTime,
+          airdropEndTime,
+          {
+            chainId: sign.daoChainId,
+            daoAddress: sign.daoAddress,
+            account,
+            message: airdropSignatureStr.message,
+            signature: airdropSignatureStr.sign
+          },
+          collectInformation
+        )
+        if (!res.data.data) {
+          throw new Error(res.data.msg)
+        }
+        result = res.data.data
+      } catch (error) {
+        const err: any = error
+        throw new Error(err)
+      }
+
+      const args = [result.airdropId, tokenAddress, amount, airdropStartTime, airdropEndTime, result.signature]
 
       const method = 'createAirdrop'
-      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
-
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args, isEth ? amount : undefined)
       return contract[method](...args, {
         gasPrice,
         gasLimit,
+        value: isEth ? amount : undefined,
         from: account
       })
         .then((response: TransactionResponse) => {
@@ -74,13 +147,13 @@ export function useCreateAirdropCallback(daoAddress: string) {
           throw err
         })
     },
-    [account, contract, gasPriceInfoCallback, addTransaction]
+    [account, contract, gasPriceInfoCallback, airdropSignature, addTransaction]
   )
 }
 
-export function useClaimAirdropCallback(daoAddress: string) {
+export function useClaimAirdropCallback() {
   const addTransaction = useTransactionAdder()
-  const contract = useGovernanceDaoContract(daoAddress)
+  const contract = useAirdropContract()
   const { account } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
 
@@ -127,9 +200,9 @@ export function useClaimAirdropCallback(daoAddress: string) {
   )
 }
 
-export function useRecycleAirdropCallback(daoAddress: string) {
+export function useRecycleAirdropCallback() {
   const addTransaction = useTransactionAdder()
-  const contract = useGovernanceDaoContract(daoAddress)
+  const contract = useAirdropContract()
   const { account } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
 
@@ -173,5 +246,160 @@ export function useRecycleAirdropCallback(daoAddress: string) {
         })
     },
     [account, contract, gasPriceInfoCallback, addTransaction]
+  )
+}
+
+export function usePublishAirdropCallback() {
+  const addTransaction = useTransactionAdder()
+  const contract = useAirdropContract()
+  const { account } = useActiveWeb3React()
+  const gasPriceInfoCallback = useGasPriceInfo()
+  const airdropSignature = useAirdropSignature()
+
+  return useCallback(
+    async (
+      isEth: boolean,
+      airdropId: number,
+      amount: string,
+      airdropToken: Token,
+      needStake: CurrencyAmount,
+      airdropList: { address: string; amount: string }[],
+      chainId: number,
+      daoAddress: string
+    ) => {
+      if (!account) throw new Error('none account')
+      if (!contract) throw new Error('none contract')
+
+      const listRaw = airdropList.map(({ address, amount: _amount }) => {
+        const ca = tryParseAmount(_amount, airdropToken) as CurrencyAmount
+        return {
+          address,
+          amountRaw: ca.raw.toString(),
+          amountHexRaw: ca.raw.toString(16)
+        }
+      })
+      const list = makeMerkleTreeList(listRaw)
+      const rootHash = getMerkleTreeRootHash(list)
+
+      const airdropSignatureStr: {
+        message: string
+        sign: string
+      } = {
+        message: '',
+        sign: ''
+      }
+      try {
+        airdropSignatureStr.message = airdropSignature.makeMessage('airdrop2', rootHash)
+        const _airdropSignatureRes = await airdropSignature.sign(airdropSignatureStr.message)
+        airdropSignatureStr.sign = _airdropSignatureRes || ''
+      } catch (error) {
+        throw new Error('User cancel signature')
+      }
+
+      try {
+        const res = await saveAirdropAddress(
+          airdropList.map(item => item.address),
+          airdropList.map(item => item.amount),
+          {
+            account,
+            chainId,
+            daoAddress,
+            airdropId,
+            message: airdropSignatureStr.message,
+            signature: airdropSignatureStr.sign
+          }
+        )
+        const result = res.data.data
+        if (result.code !== 0) throw new Error(result?.msg || 'Save failed')
+      } catch (error) {
+        const err: any = error
+        throw new Error(err)
+      }
+
+      const args = [airdropId, amount, rootHash]
+
+      const method = 'settleAirdrop'
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(
+        contract,
+        method,
+        args,
+        isEth && needStake.greaterThan(JSBI.BigInt(0)) ? needStake.raw.toString() : undefined
+      )
+
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        value: isEth && needStake.greaterThan(JSBI.BigInt(0)) ? needStake.raw.toString() : undefined,
+        from: account
+      })
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: `Publish a airdrop`,
+            claim: { recipient: `publish_airdrop_${airdropId}` }
+          })
+          return response.hash
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001) {
+            commitErrorMsg(
+              'usePublishAirdropCallback',
+              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error?.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [account, contract, gasPriceInfoCallback, airdropSignature, addTransaction]
+  )
+}
+
+export function useAirdropDownloadCallback() {
+  const contract = useAirdropContract()
+  const { account } = useActiveWeb3React()
+  const airdropSignature = useAirdropSignature()
+
+  return useCallback(
+    async (airdropId: number) => {
+      if (!account) throw new Error('none account')
+      if (!contract) throw new Error('none contract')
+
+      const airdropSignatureStr: {
+        message: string
+        sign: string
+      } = {
+        message: '',
+        sign: ''
+      }
+      try {
+        airdropSignatureStr.message = airdropSignature.makeMessage('airdropDownload')
+        const _airdropSignatureRes = await airdropSignature.sign(airdropSignatureStr.message)
+        airdropSignatureStr.sign = _airdropSignatureRes || ''
+      } catch (error) {
+        return
+      }
+
+      try {
+        const res = await airdropDownloadUserCollect(
+          account,
+          airdropId,
+          airdropSignatureStr.message,
+          airdropSignatureStr.sign
+        )
+        const result = res.data
+        const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent((result as unknown) as string)
+        window.open(uri)
+      } catch (error) {
+        const err: any = error
+        throw new Error(err)
+      }
+    },
+    [account, contract, airdropSignature]
   )
 }

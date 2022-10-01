@@ -71,10 +71,10 @@ const tabs = [
     name: 'Proposal',
     routeSuffix: 'proposal'
   },
-  // {
-  //   name: 'Activity',
-  //   routeSuffix: 'active_info'
-  // },
+  {
+    name: 'Activity',
+    routeSuffix: 'active_info'
+  },
   {
     name: 'About',
     routeSuffix: 'about'

@@ -3,48 +3,75 @@ import { useActiveWeb3React } from 'hooks'
 import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { useEffect, useMemo, useState } from 'react'
 import { useActivityListPaginationCallback } from 'state/pagination/hooks'
+import { currentTimeStamp } from 'utils'
 import { ChainId } from '../constants/chain'
-import { getActivityList, getAirdropProof } from '../utils/fetch/server'
+import { getActivityList, getAirdropDescData, getAirdropProof } from '../utils/fetch/server'
+import { ActivityStatus } from './useActivityInfo'
 
 export interface ActivityListProp {
   activityId: number
   amount: string
   chainId: ChainId
+  tokenChainId: ChainId
   creator: string
   daoAddress: string
-  endTime: number
+  eventStartTime: number
+  eventEndTime: number
+  airdropStartTime: number
+  airdropEndTime: number
   price: string
-  startTime: number
   title: string
   tokenAddress: string
   airdropNumber: number
   claimedPercentage: number
   publishTime: number
   types: ActivityType
+  status: ActivityStatus
 }
 
 function daoActivityListHandler(data: any) {
-  return data.list.map((item: any) => ({
-    activityId: item.activityId,
-    amount: item.amount,
-    chainId: item.chainId,
-    creator: item.creator,
-    daoAddress: item.daoAddress,
-    endTime: item.endTime,
-    price: item.price,
-    startTime: item.startTime,
-    title: item.title,
-    tokenAddress: item.tokenAddress,
-    airdropNumber: item.airdropNumber,
-    claimedPercentage: item.claimedPercentage,
-    publishTime: item.publishTime,
-    types: item.types === ActivityType.AIRDROP ? ActivityType.AIRDROP : ActivityType.PUBLIC_SALE
-  }))
+  return data.list.map((item: any) => {
+    const eventStartTime = item.startTime
+    const eventEndTime = item.endTime
+    const airdropStartTime = item.airdropStartTime
+    const airdropEndTime = item.airdropEndTime
+    const curTime = currentTimeStamp()
+    const status =
+      eventStartTime > curTime
+        ? ActivityStatus.SOON
+        : eventStartTime <= curTime && curTime <= eventEndTime
+        ? ActivityStatus.OPEN
+        : airdropStartTime > curTime
+        ? ActivityStatus.ENDED
+        : airdropStartTime <= curTime && curTime <= airdropEndTime
+        ? ActivityStatus.AIRDROP
+        : ActivityStatus.CLOSED
+    return {
+      activityId: item.activityId,
+      amount: item.stakingAmount,
+      chainId: item.chainId,
+      tokenChainId: item.tokenChainId,
+      creator: item.creator,
+      daoAddress: item.daoAddress,
+      eventStartTime,
+      eventEndTime,
+      airdropStartTime,
+      airdropEndTime,
+      price: item.price,
+      title: item.title,
+      tokenAddress: item.tokenAddress,
+      airdropNumber: item.airdropNumber,
+      claimedPercentage: item.claimedPercentage,
+      publishTime: item.publishTime,
+      status,
+      types: item.types === ActivityType.AIRDROP ? ActivityType.AIRDROP : ActivityType.PUBLIC_SALE
+    }
+  })
 }
 
 export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, activityType?: ActivityType) {
   const [currentPage, setCurrentPage] = useState(1)
-  const status = 0
+  const status = ''
 
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -253,21 +280,18 @@ export function useActivityList() {
   }
 }
 
-export function useGetAirdropProof(activityId: number, token: Token | undefined) {
+export function useGetAirdropProof(activityId: number | undefined, token: Token | undefined) {
   const { account } = useActiveWeb3React()
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<{
     index: number
     proof: string[]
     amount: string
-    airdropTotalAmount: string
-    airdropNumber: number
-    title: string
   }>()
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!account || !activityId) {
         setResult(undefined)
         return
       }
@@ -280,10 +304,7 @@ export function useGetAirdropProof(activityId: number, token: Token | undefined)
         setResult({
           index: data.index,
           proof: data.proof,
-          amount: data.amount,
-          airdropTotalAmount: data.airdropTotalAmount,
-          airdropNumber: data.airdropNumber,
-          title: data.title
+          amount: data.amount
         })
       } catch (error) {
         setResult(undefined)
@@ -298,15 +319,84 @@ export function useGetAirdropProof(activityId: number, token: Token | undefined)
     return {
       index: result.index,
       proof: result.proof,
-      amount: new TokenAmount(token, result.amount || '0'),
-      airdropTotalAmount: new TokenAmount(token, result.airdropTotalAmount || '0'),
-      airdropNumber: result.airdropNumber,
-      title: result.title
+      amount: new TokenAmount(token, result.amount || '0')
     }
   }, [result, token])
 
   return {
     loading,
     result: ret
+  }
+}
+
+export interface AirdropDescDataProp {
+  addressNum: number
+  airdropEndTime: number
+  airdropStartTime: number
+  tokenChainId: number
+  tokenAddress: string
+  creator: string
+  title: string
+  description: string
+  eventEndTime: number
+  eventStartTime: number
+  collect: { name: string; required: boolean }[]
+  status: ActivityStatus
+}
+
+export function useGetAirdropDescData(activityId: number) {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [result, setResult] = useState<AirdropDescDataProp>()
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getAirdropDescData(activityId)
+        setLoading(false)
+        const data = res.data.data
+        if (!data) return
+
+        const eventStartTime = data.startTime
+        const eventEndTime = data.endTime
+        const airdropStartTime = data.airdropStartTime
+        const airdropEndTime = data.airdropEndTime
+        const curTime = currentTimeStamp()
+        const status =
+          eventStartTime > curTime
+            ? ActivityStatus.SOON
+            : eventStartTime <= curTime && curTime <= eventEndTime
+            ? ActivityStatus.OPEN
+            : airdropStartTime > curTime
+            ? ActivityStatus.ENDED
+            : airdropStartTime <= curTime && curTime <= airdropEndTime
+            ? ActivityStatus.AIRDROP
+            : ActivityStatus.CLOSED
+
+        setResult({
+          addressNum: data.addressNum,
+          airdropEndTime,
+          airdropStartTime,
+          tokenChainId: data.tokenChainId,
+          tokenAddress: data.tokenAddress,
+          creator: data.creator,
+          title: data.title,
+          description: data.description,
+          eventEndTime,
+          eventStartTime,
+          collect: data.collect,
+          status
+        })
+      } catch (error) {
+        setResult(undefined)
+        setLoading(false)
+        console.error('useGetAirdropDescData', error)
+      }
+    })()
+  }, [activityId])
+
+  return {
+    loading,
+    result
   }
 }
