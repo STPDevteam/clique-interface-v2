@@ -118,7 +118,7 @@ export default function AirdropTable({
     <Stack spacing={10} mt={20}>
       <RowCenter>
         <RowCenter>
-          <StyledText mr={10}>Airdrop recipients</StyledText>
+          <StyledText mr={10}>Airdrop addresses</StyledText>
           <div>
             <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
             <UploadLabel htmlFor="upload_CSV">Upload CSV file</UploadLabel>
@@ -135,8 +135,8 @@ export default function AirdropTable({
         <table aria-label="custom pagination table">
           <thead>
             <tr>
-              <th>Wallet address</th>
-              <th>Airdrop amount (in tokens)</th>
+              <th>Address</th>
+              <th>Amount</th>
             </tr>
           </thead>
           <tbody>

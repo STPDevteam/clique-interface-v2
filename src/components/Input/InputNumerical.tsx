@@ -2,9 +2,9 @@ import { InputHTMLAttributes, useCallback } from 'react'
 import { Box } from '@mui/material'
 import Input, { InputProps } from './index'
 import { escapeRegExp } from 'utils'
-import SecondaryButton from 'components/Button/SecondaryButton'
 import InputLabel from './InputLabel'
 import BigNumber from 'bignumber.js'
+import OutlineButton from 'components/Button/OutlineButton'
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
@@ -95,17 +95,15 @@ export default function NumericalInput({
           onMax ? (
             <Box gap="20px" display="flex" alignItems="center" paddingLeft="10px" paddingBottom="2px">
               {endAdornment ? endAdornment : unit && <span>{unit ?? 'USDT'}</span>}
-              <SecondaryButton
+              <OutlineButton
+                noBold
                 disabled={props.disabled === true ? true : false}
-                primary
+                width={75}
+                height={24}
                 onClick={onMax}
-                style={{
-                  width: '60px',
-                  height: '32px'
-                }}
               >
                 MAX
-              </SecondaryButton>
+              </OutlineButton>
             </Box>
           ) : (
             endAdornment

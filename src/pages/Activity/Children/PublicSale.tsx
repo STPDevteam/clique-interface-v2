@@ -8,8 +8,7 @@ import { useParams } from 'react-router'
 import { useDaoInfo } from 'hooks/useDaoInfo'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import Copy from 'components/essential/Copy'
-import { ActivityStatus, useAirdropBaseInfo } from 'hooks/useActivityInfo'
-import { timeStampToFormat } from 'utils/dao'
+import { ActivityStatus } from 'hooks/useActivityInfo'
 import { getEtherscanLink } from 'utils'
 import InputNumerical from 'components/Input/InputNumerical'
 import { BlackButton } from 'components/Button/Button'
@@ -50,15 +49,23 @@ const ActivityStatusShowLabel: {
 } = {
   [ActivityStatus.SOON]: {
     color: 'warning',
-    label: 'Soon'
+    label: ActivityStatus.SOON
   },
   [ActivityStatus.OPEN]: {
     color: 'primary',
-    label: 'Open'
+    label: ActivityStatus.OPEN
+  },
+  [ActivityStatus.ENDED]: {
+    color: 'warning',
+    label: ActivityStatus.ENDED
+  },
+  [ActivityStatus.AIRDROP]: {
+    color: 'primary',
+    label: ActivityStatus.AIRDROP
   },
   [ActivityStatus.CLOSED]: {
     color: 'default',
-    label: 'Closed'
+    label: ActivityStatus.CLOSED
   }
 }
 
@@ -67,9 +74,9 @@ export default function PublicSale() {
   const { address: daoAddress, chainId: daoChainId, id } = useParams<{ address: string; chainId: string; id: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const publicSaleId = Number(id)
+  console.log('🚀 ~ file: PublicSale.tsx ~ line 70 ~ PublicSale ~ publicSaleId', publicSaleId)
 
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-  const airdropInfo = useAirdropBaseInfo(daoAddress, curDaoChainId, publicSaleId)
 
   return (
     <Box padding="30px 20px">
@@ -98,7 +105,7 @@ export default function PublicSale() {
                           textAlign={'right'}
                         >
                           Close at <br />
-                          {airdropInfo?.endTime ? timeStampToFormat(airdropInfo.endTime) : '--'}
+                          {'--'}
                         </Typography>
                       </RowCenter>
                     </Box>

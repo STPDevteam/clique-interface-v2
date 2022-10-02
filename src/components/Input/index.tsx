@@ -192,6 +192,7 @@ export default function Input({
             [`& .${inputBaseClasses.input}`]: {
               '&::placeholder': {
                 fontSize: smallPlaceholder ? 12 : 14,
+                color: theme => (error ? theme.palette.error.main : ''),
                 fontWeight: 600
                 // textOverflow: 'ellipsis',
                 // whiteSpace: 'nowrap',
