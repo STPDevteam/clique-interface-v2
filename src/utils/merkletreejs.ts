@@ -3,7 +3,7 @@ import { MerkleTree } from 'merkletreejs'
 
 export function getMerkleTreeRootHash(whitelistAddresses: BytesLike[]): string {
   const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
-  const merkleTree = new MerkleTree(leafNodes, keccak256)
+  const merkleTree = new MerkleTree(leafNodes, keccak256, { sortLeaves: true })
   return merkleTree.getHexRoot()
 }
 

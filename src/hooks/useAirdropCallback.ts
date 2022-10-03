@@ -314,8 +314,8 @@ export function usePublishAirdropCallback() {
             signature: airdropSignatureStr.sign
           }
         )
-        const result = res.data.data
-        if (result.code !== 0) throw new Error(result?.msg || 'Save failed')
+        const result = res.data
+        if (result.code !== 200) throw new Error(result?.msg || 'Save failed')
       } catch (error) {
         const err: any = error
         throw new Error(err)

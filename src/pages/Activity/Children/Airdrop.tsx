@@ -526,10 +526,10 @@ function Manage({
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    if (airdropList.length === 0) {
+    if (airdropList.length < 2) {
       return {
         disabled: true,
-        error: 'Airdrop addresses required'
+        error: 'At least two addresses'
       }
     }
     if (!airdropTotalAmount || airdropTotalAmount.equalTo(JSBI.BigInt(0))) {
