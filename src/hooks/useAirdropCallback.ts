@@ -16,7 +16,12 @@ import JSBI from 'jsbi'
 
 const makeMerkleTreeList = (arr: { address: string; amountHexRaw: string }[]) => {
   return arr.map(({ address, amountHexRaw }, index) => {
-    return '0x' + index.toString(16).padStart(64, '0') + address.replace('0x', '') + amountHexRaw.padStart(64, '0')
+    return (
+      '0x' +
+      index.toString(16).padStart(64, '0') +
+      address.replace('0x', '').toLowerCase() +
+      amountHexRaw.padStart(64, '0')
+    )
   })
 }
 
@@ -298,8 +303,8 @@ export function usePublishAirdropCallback() {
 
       try {
         const res = await saveAirdropAddress(
-          airdropList.map(item => item.address),
-          airdropList.map(item => item.amount),
+          listRaw.map(item => item.address),
+          listRaw.map(item => item.amountRaw),
           {
             account,
             chainId,

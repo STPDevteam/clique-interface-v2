@@ -3,14 +3,13 @@ import { MerkleTree } from 'merkletreejs'
 
 export function getMerkleTreeRootHash(whitelistAddresses: BytesLike[]): string {
   const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
-  const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true })
-  const rootHash = merkleTree.getRoot()
-  return '0x' + rootHash.toString('hex')
+  const merkleTree = new MerkleTree(leafNodes, keccak256)
+  return merkleTree.getHexRoot()
 }
 
 export function getMerkleTreeHexProof(whitelistAddresses: BytesLike[], addresses: BytesLike): string[] {
   const leafNodes = whitelistAddresses.map(addr => keccak256(addr))
-  const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true })
+  const merkleTree = new MerkleTree(leafNodes, keccak256)
   const claimingAddress = keccak256(addresses)
   const hexProof = merkleTree.getHexProof(claimingAddress)
   return hexProof
