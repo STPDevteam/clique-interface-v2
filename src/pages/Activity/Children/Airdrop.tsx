@@ -355,11 +355,7 @@ export default function Airdrop() {
                                 account &&
                                 airdropDescData.collect &&
                                 showModal(
-                                  <AirdropCollectModal
-                                    account={account}
-                                    airdropId={airdropId}
-                                    collect={airdropDescData.collect}
-                                  />
+                                  <AirdropCollectModal airdropId={airdropId} collect={airdropDescData.collect} />
                                 )
                               }
                             >

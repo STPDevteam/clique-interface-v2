@@ -7,6 +7,7 @@ import { airdropSaveUserCollect } from 'utils/fetch/server'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -21,17 +22,16 @@ interface CollectInputsProps {
 }
 
 export default function AirdropCollectModal({
-  account,
   airdropId,
   collect
 }: {
-  account: string
   airdropId: number
   collect: {
     name: string
     required: boolean
   }[]
 }) {
+  const { account } = useActiveWeb3React()
   const theme = useTheme()
   const { showModal } = useModal()
   const [inputs, setInputs] = useState(
@@ -74,7 +74,7 @@ export default function AirdropCollectModal({
           Please complete the form
         </Typography>
         <Stack spacing={16} mt={20}>
-          <Input value={account} readOnly label="Your address" />
+          <Input value={account || ''} readOnly label="Your address" />
 
           <InputBox collectInputs={inputs} updateCollectInputs={updateCollectInputs} />
 
