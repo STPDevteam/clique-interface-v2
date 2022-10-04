@@ -677,7 +677,12 @@ function Manage({
               Airdropped
             </BlackButton>
           ) : (
-            <BlackButton disabled={paramsCheck.disabled} onClick={toPublishAirdrop} width="160px" height="48px">
+            <BlackButton
+              disabled={paramsCheck.disabled || isPublishing}
+              onClick={toPublishAirdrop}
+              width="160px"
+              height="48px"
+            >
               {isPublishing ? (
                 <>
                   Airdrop now

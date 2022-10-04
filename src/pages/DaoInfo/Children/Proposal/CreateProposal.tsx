@@ -26,6 +26,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import Editor from './Editor'
 import { routes } from 'constants/routes'
+import { currentTimeStamp } from 'utils'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -144,6 +145,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
+    const currentTime = currentTimeStamp()
     if (!title) {
       return {
         disabled: true,
@@ -154,6 +156,12 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
       return {
         disabled: true,
         error: 'Start time required'
+      }
+    }
+    if (startTime < currentTime) {
+      return {
+        disabled: true,
+        error: 'The start time must be later than the current time'
       }
     }
     if (!endTime) {

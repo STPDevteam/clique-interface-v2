@@ -47,11 +47,13 @@ export default function AirdropCollectModal({
   )
 
   const commit = useCallback(() => {
+    if (!account) return
     const params: { [key in string]: string } = {}
     for (const item of inputs) {
       if (item.required && !item.value.trim()) throw new Error('params error')
       params[item.name] = item.value
     }
+    params[account] = account
     airdropSaveUserCollect(account, airdropId, JSON.stringify(params))
       .then(() => {
         showModal(<TransactiontionSubmittedModal />)
