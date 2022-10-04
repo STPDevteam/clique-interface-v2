@@ -53,7 +53,7 @@ export default function AirdropCollectModal({
       if (item.required && !item.value.trim()) throw new Error('params error')
       params[item.name] = item.value
     }
-    params[account] = account
+    params.account = account
     airdropSaveUserCollect(account, airdropId, JSON.stringify(params))
       .then(() => {
         showModal(<TransactiontionSubmittedModal />)
