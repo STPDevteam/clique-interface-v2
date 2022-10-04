@@ -11,19 +11,19 @@ import { useWeb3Instance } from './useWeb3Instance'
 import { currentTimeStamp } from 'utils'
 import { CurrencyAmount, Token } from 'constants/token'
 import { tryParseAmount } from 'utils/parseAmount'
-import { getMerkleTreeRootHash } from 'utils/merkletreejs'
+// import { getMerkleTreeRootHash } from 'utils/merkletreejs'
 import JSBI from 'jsbi'
 
-const makeMerkleTreeList = (arr: { address: string; amountHexRaw: string }[]) => {
-  return arr.map(({ address, amountHexRaw }, index) => {
-    return (
-      '0x' +
-      index.toString(16).padStart(64, '0') +
-      address.replace('0x', '').toLowerCase() +
-      amountHexRaw.padStart(64, '0')
-    )
-  })
-}
+// const makeMerkleTreeList = (arr: { address: string; amountHexRaw: string }[]) => {
+//   return arr.map(({ address, amountHexRaw }, index) => {
+//     return (
+//       '0x' +
+//       index.toString(16).padStart(64, '0') +
+//       address.replace('0x', '').toLowerCase() +
+//       amountHexRaw.padStart(64, '0')
+//     )
+//   })
+// }
 
 export function useAirdropSignature() {
   const web3 = useWeb3Instance()
@@ -36,9 +36,9 @@ export function useAirdropSignature() {
     },
     [account, web3]
   )
-  const makeMessage = useCallback((type: 'airdrop1' | 'airdrop2' | 'airdropDownload', root = '') => {
+  const makeMessage = useCallback((type: 'airdrop1' | 'airdrop2' | 'airdropDownload') => {
     const timeStamp = currentTimeStamp() + 300
-    return JSON.stringify({ expired: timeStamp, root, type })
+    return JSON.stringify({ expired: timeStamp, type })
   }, [])
 
   return { sign, makeMessage }
@@ -283,9 +283,10 @@ export function usePublishAirdropCallback() {
           amountHexRaw: ca.raw.toString(16)
         }
       })
-      const list = makeMerkleTreeList(listRaw)
-      const rootHash = getMerkleTreeRootHash(list)
+      // const list = makeMerkleTreeList(listRaw)
+      // const rootHash = getMerkleTreeRootHash(list)
 
+      let rootHash = ''
       const airdropSignatureStr: {
         message: string
         sign: string
@@ -294,7 +295,7 @@ export function usePublishAirdropCallback() {
         sign: ''
       }
       try {
-        airdropSignatureStr.message = airdropSignature.makeMessage('airdrop2', rootHash)
+        airdropSignatureStr.message = airdropSignature.makeMessage('airdrop2')
         const _airdropSignatureRes = await airdropSignature.sign(airdropSignatureStr.message)
         airdropSignatureStr.sign = _airdropSignatureRes || ''
       } catch (error) {
@@ -315,7 +316,8 @@ export function usePublishAirdropCallback() {
           }
         )
         const result = res.data
-        if (result.code !== 200) throw new Error(result?.msg || 'Save failed')
+        if (!result.data.root) throw new Error(result?.msg || 'Save failed')
+        rootHash = result.data.root
       } catch (error) {
         const err: any = error
         throw new Error(err)

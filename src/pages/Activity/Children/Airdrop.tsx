@@ -526,10 +526,10 @@ function Manage({
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    if (airdropList.length < 2) {
+    if (airdropList.length === 0) {
       return {
         disabled: true,
-        error: 'At least two addresses'
+        error: 'Airdrop addresses required'
       }
     }
     if (!airdropTotalAmount || airdropTotalAmount.equalTo(JSBI.BigInt(0))) {
@@ -677,12 +677,7 @@ function Manage({
               Airdropped
             </BlackButton>
           ) : (
-            <BlackButton
-              disabled={paramsCheck.disabled || isPublishing}
-              onClick={toPublishAirdrop}
-              width="160px"
-              height="48px"
-            >
+            <BlackButton disabled={paramsCheck.disabled} onClick={toPublishAirdrop} width="160px" height="48px">
               {isPublishing ? (
                 <>
                   Airdrop now
