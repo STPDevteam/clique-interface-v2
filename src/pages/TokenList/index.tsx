@@ -18,6 +18,7 @@ export default function TokenList() {
           </Typography>
           <ChainSelect
             empty
+            placeholder="All chains"
             width="235px"
             chainList={ChainList}
             selectedChain={selectChain}

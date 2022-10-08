@@ -154,7 +154,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
           </Stack>
           <Stack spacing={16}>
             <StyledText>Network</StyledText>
-            <StyledBoldText noWrap>{ChainListMap[item.chainId]?.name || '--'}</StyledBoldText>
+            <StyledBoldText noWrap>{ChainListMap[item.tokenChainId]?.name || '--'}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Amount</StyledText>
