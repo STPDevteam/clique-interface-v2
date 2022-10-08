@@ -64,10 +64,12 @@ const insertLine = (list: ItemProp[], newItem: ItemProp) => {
 export default function AirdropTable({
   airdropList,
   setAirdropList,
+  readonly,
   totalInputAmount
 }: {
   airdropList: ItemProp[]
   setAirdropList: (val: ItemProp[]) => void
+  readonly?: boolean
   totalInputAmount: string
 }) {
   const [address, setAddress] = useState('')
@@ -119,10 +121,12 @@ export default function AirdropTable({
       <RowCenter>
         <RowCenter>
           <StyledText mr={10}>Airdrop addresses</StyledText>
-          <div>
-            <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
-            <UploadLabel htmlFor="upload_CSV">Upload CSV file</UploadLabel>
-          </div>
+          {readonly ? null : (
+            <div>
+              <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
+              <UploadLabel htmlFor="upload_CSV">Upload CSV file</UploadLabel>
+            </div>
+          )}
         </RowCenter>
         <Link underline="none" href="/template/airdrop-list.csv">
           <Typography display={'flex'} alignItems="center" fontSize={12} color={theme.palette.text.primary}>
@@ -151,29 +155,35 @@ export default function AirdropTable({
           </tbody>
         </table>
       </Root>
-      <Stack spacing={'20px'} direction="row">
-        <Input
-          value={address}
-          onChange={e => setAddress(e.target.value)}
-          errSet={() => setAddress('')}
-          height={40}
-          type="address"
-          placeholder="0x"
-          label="Wallet address"
-        />
-        <InputNumerical height={40} value={amount} onChange={e => setAmount(e.target.value)} label="Airdrop amount" />
-      </Stack>
+      {!readonly && (
+        <Stack spacing={'20px'} direction="row">
+          <Input
+            value={address}
+            onChange={e => setAddress(e.target.value)}
+            errSet={() => setAddress('')}
+            height={40}
+            type="address"
+            placeholder="0x"
+            label="Wallet address"
+          />
+          <InputNumerical height={40} value={amount} onChange={e => setAmount(e.target.value)} label="Airdrop amount" />
+        </Stack>
+      )}
       <RowCenter>
-        <OutlineButton
-          onClick={addLine}
-          width="155px"
-          height="20px"
-          fontWeight={500}
-          fontSize={12}
-          style={{ borderWidth: 1 }}
-        >
-          Add new wallet
-        </OutlineButton>
+        {readonly ? (
+          <div />
+        ) : (
+          <OutlineButton
+            onClick={addLine}
+            width="155px"
+            height="20px"
+            fontWeight={500}
+            fontSize={12}
+            style={{ borderWidth: 1 }}
+          >
+            Add new wallet
+          </OutlineButton>
+        )}
         <Typography>
           Total addresses: {airdropList.length}, Total amount: {totalInputAmount}
         </Typography>

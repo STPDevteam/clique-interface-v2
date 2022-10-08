@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useActivityListPaginationCallback } from 'state/pagination/hooks'
 import { currentTimeStamp } from 'utils'
 import { ChainId } from '../constants/chain'
-import { getActivityList, getAirdropDescData, getAirdropProof } from '../utils/fetch/server'
+import { getActivityList, getAirdropDescData, getAirdropProof, getAirdropAccountList } from '../utils/fetch/server'
 import { ActivityStatus } from './useActivityInfo'
 
 export interface ActivityListProp {
@@ -340,6 +340,7 @@ export interface AirdropDescDataProp {
   description: string
   eventEndTime: number
   eventStartTime: number
+  collectCount: number
   collect: { name: string; required: boolean }[]
   status: ActivityStatus
 }
@@ -384,6 +385,7 @@ export function useGetAirdropDescData(activityId: number) {
           description: data.description,
           eventEndTime,
           eventStartTime,
+          collectCount: data.collectCount,
           collect: data.collect,
           status
         })
@@ -394,6 +396,42 @@ export function useGetAirdropDescData(activityId: number) {
       }
     })()
   }, [activityId])
+
+  return {
+    loading,
+    result
+  }
+}
+
+export function useAirdropAccountListById(activityId: number, token: Token) {
+  const [loading, setLoading] = useState<boolean>(false)
+  const [result, setResult] = useState<{ address: string; amount: TokenAmount }[]>()
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getAirdropAccountList(activityId)
+        setLoading(false)
+        const data = res.data.data
+        if (!data) {
+          setResult([])
+          return
+        }
+
+        setResult(
+          data.map((item: any) => ({
+            address: item.address,
+            amount: new TokenAmount(token, item.amount)
+          }))
+        )
+      } catch (error) {
+        setResult(undefined)
+        setLoading(false)
+        console.error('useAirdropAccountListById', error)
+      }
+    })()
+  }, [activityId, token])
 
   return {
     loading,

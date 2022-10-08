@@ -4,7 +4,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { useParams } from 'react-router'
-import { useGetAirdropDescData, useGetAirdropProof } from 'hooks/useBackedActivityServer'
+import { useAirdropAccountListById, useGetAirdropDescData, useGetAirdropProof } from 'hooks/useBackedActivityServer'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
@@ -63,6 +63,10 @@ const StyledText2 = styled(StyledText1)(({ theme }) => ({
   fontSize: 14,
   fontWeight: 600,
   color: theme.palette.text.primary
+}))
+
+const StyledText3 = styled(StyledText2)(() => ({
+  fontWeight: 500
 }))
 
 export default function Airdrop() {
@@ -423,11 +427,12 @@ export default function Airdrop() {
             <Box>
               <Back sx={{ margin: 0 }} event={() => setShowManage(false)} />
               {airdropInfos && airdropDescData && (
-                <Manage
+                <ManageLoading
                   airdropInfo={airdropInfos}
                   airdropChainId={airdropDescData.tokenChainId}
                   daoChainId={curDaoChainId}
                   daoAddress={daoAddress}
+                  collectCount={airdropDescData.collectCount}
                 />
               )}
             </Box>
@@ -438,18 +443,60 @@ export default function Airdrop() {
   )
 }
 
-function Manage({
+function ManageLoading({
   airdropInfo,
   airdropChainId,
   daoChainId,
-  daoAddress
+  daoAddress,
+  collectCount
 }: {
   airdropInfo: AirdropInfoProp
   daoAddress: string
   daoChainId: ChainId
   airdropChainId: ChainId
+  collectCount: number
 }) {
-  const [airdropList, setAirdropList] = useState<{ address: string; amount: string }[]>([])
+  const { result } = useAirdropAccountListById(airdropInfo.airdropId, airdropInfo.airdropToken)
+  const list = useMemo(() => {
+    if (!result) return undefined
+    return result.map(item => ({
+      address: item.address,
+      amount: item.amount.toSignificant(18, { groupSeparator: ',' })
+    }))
+  }, [result])
+
+  return !list ? (
+    <DelayLoading loading={!list}>
+      <Loading sx={{ marginTop: 30 }} />
+    </DelayLoading>
+  ) : (
+    <Manage
+      defaultList={list}
+      airdropInfo={airdropInfo}
+      airdropChainId={airdropChainId}
+      daoChainId={daoChainId}
+      daoAddress={daoAddress}
+      collectCount={collectCount}
+    />
+  )
+}
+
+function Manage({
+  airdropInfo,
+  airdropChainId,
+  daoChainId,
+  daoAddress,
+  collectCount,
+  defaultList
+}: {
+  airdropInfo: AirdropInfoProp
+  daoAddress: string
+  daoChainId: ChainId
+  airdropChainId: ChainId
+  collectCount: number
+  defaultList: { address: string; amount: string }[]
+}) {
+  const [airdropList, setAirdropList] = useState<{ address: string; amount: string }[]>(defaultList)
   const airdropDownloadCallback = useAirdropDownloadCallback()
   const publishAirdropCallback = usePublishAirdropCallback()
   const { library, chainId, account } = useActiveWeb3React()
@@ -623,39 +670,43 @@ function Manage({
       <Stack mt={20} spacing={20}>
         <RowCenter>
           <StyledText1>User data (original)</StyledText1>
-          <OutlineButton
-            onClick={() => airdropDownloadCallback(airdropInfo.airdropId)}
-            width="140px"
-            height="20px"
-            fontWeight={500}
-            fontSize={12}
-            style={{ borderWidth: 1 }}
-          >
-            Download <DownloadIcon sx={{ height: 16 }} />
-          </OutlineButton>
+          <RowCenter>
+            <StyledText3 mr={15}>Total addresses: {collectCount}</StyledText3>
+            <OutlineButton
+              onClick={() => airdropDownloadCallback(airdropInfo.airdropId)}
+              width="140px"
+              height="20px"
+              fontWeight={500}
+              fontSize={12}
+              style={{ borderWidth: 1 }}
+            >
+              Download <DownloadIcon sx={{ height: 16 }} />
+            </OutlineButton>
+          </RowCenter>
         </RowCenter>
 
         <AirdropTable
+          readonly={!!Number(airdropInfo.merkleRoot) || isPublishing}
           airdropList={airdropList}
           setAirdropList={(val: { address: string; amount: string }[]) => setAirdropList(val)}
           totalInputAmount={_totalInputAmount}
         />
 
         <RowCenter>
-          <StyledText2>
+          <StyledText3>
             Contract balance: {airdropInfo.tokenStaked.toSignificant(6, { groupSeparator: ',' })}{' '}
             {airdropInfo.airdropToken.symbol}
-          </StyledText2>
-          <StyledText2>
+          </StyledText3>
+          <StyledText3>
             You balance: {airdropTokenBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '}
             {airdropInfo.airdropToken.symbol}
-          </StyledText2>
+          </StyledText3>
         </RowCenter>
 
-        <StyledText2>
+        <StyledText3>
           You need transfer: {needStake?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '}
           {airdropInfo.airdropToken.symbol}
-        </StyledText2>
+        </StyledText3>
 
         {paramsCheck.error ? (
           <Alert severity="error" sx={{ marginTop: 20 }}>

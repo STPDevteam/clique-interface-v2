@@ -297,3 +297,9 @@ export function airdropDownloadUserCollect(account: string, airdropId: number, m
     signature
   })
 }
+
+export function getAirdropAccountList(airdropId: number) {
+  return Axios.get('stpdao/v2/airdrop/address/list', {
+    airdropId
+  })
+}
