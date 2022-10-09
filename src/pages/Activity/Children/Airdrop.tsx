@@ -522,6 +522,7 @@ function Manage({
 
   const [approveState, approveCallback] = useApproveCallback(needStake, AIRDROP_ADDRESS[airdropChainId], isEth)
   const airdropTokenBalance = useCurrencyBalance(account || undefined, airdropInfo.airdropToken)
+  const isAirdropped = useMemo(() => !!Number(airdropInfo.merkleRoot), [airdropInfo.merkleRoot])
 
   const toPublishAirdrop = useCallback(() => {
     if (!airdropTotalAmount || !needStake) return
@@ -686,7 +687,7 @@ function Manage({
         </RowCenter>
 
         <AirdropTable
-          readonly={!!Number(airdropInfo.merkleRoot) || isPublishing}
+          readonly={isAirdropped || isPublishing}
           airdropList={airdropList}
           setAirdropList={(val: { address: string; amount: string }[]) => setAirdropList(val)}
           totalInputAmount={_totalInputAmount}
@@ -712,14 +713,14 @@ function Manage({
           <Alert severity="error" sx={{ marginTop: 20 }}>
             {paramsCheck.error}
           </Alert>
-        ) : (
+        ) : isAirdropped ? null : (
           <Alert severity="success" sx={{ marginTop: 20 }}>
             You can now publish airdrop
           </Alert>
         )}
 
         <Box display={'flex'} justifyContent="center">
-          {!!Number(airdropInfo.merkleRoot) ? (
+          {isAirdropped ? (
             <BlackButton disabled width="160px" height="48px">
               Airdropped
             </BlackButton>
