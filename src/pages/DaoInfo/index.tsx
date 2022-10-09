@@ -19,6 +19,7 @@ import { useActiveWeb3React } from 'hooks'
 import AdminTag from './ShowAdminTag'
 import { routes } from 'constants/routes'
 import { DaoAvatars } from 'components/Avatars'
+import GitHubIcon from '@mui/icons-material/GitHub'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -192,7 +193,7 @@ export default function DaoInfo({ children }: { children: any }) {
                   )}
                   {daoInfo?.github && isSocialUrl('github', daoInfo.github) && (
                     <Link fontSize={12} target={'_blank'} href={daoInfo.github} underline="none" ml={10}>
-                      github
+                      <GitHubIcon sx={{ width: 16, color: theme.palette.text.secondary }} />
                     </Link>
                   )}
                   {daoInfo?.website && isSocialUrl('', daoInfo.website) && (

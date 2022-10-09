@@ -8,9 +8,11 @@ import MessageBox from './MessageBox'
 export default function TransactionSubmittedModal({
   children,
   hash,
+  header,
   hideFunc
 }: {
   hash?: string
+  header?: string
   children?: React.ReactNode
   hideFunc?: () => void
 }) {
@@ -18,7 +20,7 @@ export default function TransactionSubmittedModal({
   const theme = useTheme()
 
   return (
-    <MessageBox type={'success'} hideFunc={hideFunc} header={'Transaction Submitted'}>
+    <MessageBox type={'success'} hideFunc={hideFunc} header={header || 'Transaction Submitted'}>
       <Box display="grid" gap="20px" justifyContent="center">
         {children}
         {chainId && hash && (
