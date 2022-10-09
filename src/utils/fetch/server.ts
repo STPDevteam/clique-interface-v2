@@ -225,6 +225,31 @@ export function userProfile(account: string) {
   })
 }
 
+export function userProfileUpdate(
+  accountLogo: string,
+  nickname: string,
+  introduction: string,
+  discord: string,
+  twitter: string,
+  account: string,
+  signature: string
+) {
+  return Axios.post('stpdao/v2/account/update', {
+    param: {
+      accountLogo,
+      discord,
+      github: '',
+      introduction,
+      nickname,
+      twitter
+    },
+    sign: {
+      signature,
+      account
+    }
+  })
+}
+
 export function daoHandleQuery(handle: string, account: string, chainId: number) {
   return Axios.get('stpdao/v2/sign/query/handle', {
     handle,

@@ -1,0 +1,138 @@
+import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
+import { BlackButton } from 'components/Button/Button'
+import Input from 'components/Input'
+import Modal from 'components/Modal'
+import UploadImage from 'components/UploadImage'
+import { useActiveWeb3React } from 'hooks'
+import { UserProfileProp } from 'hooks/useBackedProfileServer'
+import { useCallback, useMemo, useState } from 'react'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import { userProfileUpdate } from 'utils/fetch/server'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import useModal from 'hooks/useModal'
+
+const StyledBody = styled(Box)({
+  minHeight: 200,
+  padding: '32px'
+})
+
+export default function UpdateProfileModal({
+  userProfile,
+  refreshProfile
+}: {
+  userProfile: UserProfileProp
+  refreshProfile: () => void
+}) {
+  const { showModal } = useModal()
+  const theme = useTheme()
+  const { account } = useActiveWeb3React()
+  const [avatar, setAvatar] = useState(userProfile.accountLogo)
+  const [name, setName] = useState(userProfile.nickname)
+  const [twitter, setTwitter] = useState(userProfile.twitter)
+  const [discord, setDiscord] = useState(userProfile.discord)
+  const [bio, setBio] = useState(userProfile.introduction)
+
+  const userSignature = useUserInfo()
+  const loginSignature = useLoginSignature()
+
+  const updateAccount = useCallback(async () => {
+    if (!account) return
+    let signatureStr = userSignature?.signature
+    if (!signatureStr) {
+      signatureStr = await loginSignature()
+    }
+    if (!signatureStr) return
+    try {
+      await userProfileUpdate(avatar, name, bio, discord, twitter, account, signatureStr)
+      showModal(<TransactiontionSubmittedModal header="Update success!" hideFunc={refreshProfile} />)
+    } catch (error) {
+      const err: any = error
+      showModal(
+        <MessageBox type="error">
+          {err?.data?.message || err?.error?.message || err?.message || 'Update error'}
+        </MessageBox>
+      )
+    }
+  }, [
+    account,
+    avatar,
+    bio,
+    discord,
+    loginSignature,
+    name,
+    refreshProfile,
+    showModal,
+    twitter,
+    userSignature?.signature
+  ])
+
+  const disabledSave = useMemo(() => {
+    return (
+      userProfile.accountLogo === avatar &&
+      name === userProfile.nickname &&
+      twitter === userProfile.twitter &&
+      discord === userProfile.discord &&
+      bio === userProfile.introduction
+    )
+  }, [
+    avatar,
+    bio,
+    discord,
+    name,
+    twitter,
+    userProfile.accountLogo,
+    userProfile.discord,
+    userProfile.introduction,
+    userProfile.nickname,
+    userProfile.twitter
+  ])
+
+  return (
+    <Modal maxWidth="628px" closeIcon width="100%">
+      <StyledBody>
+        <Typography textAlign={'center'} fontWeight={600} variant="h6">
+          Edit profile
+        </Typography>
+        <Stack spacing={16}>
+          <Box padding="12px">
+            <UploadImage value={avatar || ''} size={124} onChange={val => setAvatar(val)} />
+            <Typography fontSize={12} textAlign={'center'} color={theme.textColor.text1}>
+              {'Supports JPG, PNG, SVG, and size <2MB.'}
+            </Typography>
+          </Box>
+          <Input value={name} label="Username" placeholder="nickname" onChange={e => setName(e.target.value)} />
+          <Input
+            value={bio}
+            multiline
+            placeholder="Tell us about yourself!"
+            rows={6}
+            label="Bio"
+            onChange={e => setBio(e.target.value)}
+          />
+          <Input
+            value={twitter}
+            label="Twitter"
+            placeholder="https://"
+            onChange={e => setTwitter(e.target.value)}
+            type="url"
+            errSet={() => setTwitter('')}
+          />
+          <Input
+            value={discord}
+            label="Discord"
+            placeholder="https://"
+            onChange={e => setDiscord(e.target.value)}
+            type="url"
+            errSet={() => setDiscord('')}
+          />
+          <Box display={'flex'} justifyContent="center">
+            <BlackButton width="166px" disabled={disabledSave} onClick={updateAccount}>
+              Save
+            </BlackButton>
+          </Box>
+        </Stack>
+      </StyledBody>
+    </Modal>
+  )
+}

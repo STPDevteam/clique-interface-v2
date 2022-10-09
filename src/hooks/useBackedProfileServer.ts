@@ -17,12 +17,13 @@ export interface UserProfileProp {
   introduction: string
   nickname: string
   github: string
+  discord: string
   twitter: string
   adminDao: UserProfileDaoProp[]
   memberDao: UserProfileDaoProp[]
 }
 
-export function useUserProfileInfo(account: string | undefined) {
+export function useUserProfileInfo(account: string | undefined, refresh?: number) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<UserProfileProp>()
 
@@ -50,7 +51,7 @@ export function useUserProfileInfo(account: string | undefined) {
         console.error('useUserProfileInfo', error)
       }
     })()
-  }, [account])
+  }, [account, refresh])
 
   return {
     loading,
