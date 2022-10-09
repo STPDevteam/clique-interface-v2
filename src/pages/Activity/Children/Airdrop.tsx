@@ -461,7 +461,7 @@ function ManageLoading({
     if (!result) return undefined
     return result.map(item => ({
       address: item.address,
-      amount: item.amount.toSignificant(18, { groupSeparator: ',' })
+      amount: item.amount.toSignificant(18)
     }))
   }, [result])
 
