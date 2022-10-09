@@ -180,7 +180,7 @@ export function useClaimAirdropCallback() {
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             summary: `Claim a airdrop`,
-            claim: { recipient: `claim_airdrop_${airdropId}` }
+            claim: { recipient: `${account}_claim_airdrop_${airdropId}` }
           })
           return response.hash
         })
@@ -229,7 +229,7 @@ export function useRecycleAirdropCallback() {
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             summary: `Recycle a airdrop`,
-            claim: { recipient: `recycle_airdrop_${airdropId}` }
+            claim: { recipient: `${account}_recycle_airdrop_${airdropId}` }
           })
           return response.hash
         })

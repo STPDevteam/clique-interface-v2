@@ -98,8 +98,8 @@ export default function Airdrop() {
     if (!airdropInfos) return undefined
     return airdropInfos.tokenStaked.subtract(airdropInfos.tokenClaimed)
   }, [airdropInfos])
-  const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`claim_airdrop_${airdropId}`)
-  const { claimSubmitted: isRecycling } = useUserHasSubmittedClaim(`recycle_airdrop_${airdropId}`)
+  const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_claim_airdrop_${airdropId}`)
+  const { claimSubmitted: isRecycling } = useUserHasSubmittedClaim(`${account}_recycle_airdrop_${airdropId}`)
 
   const claimAirdrop = useCallback(() => {
     if (!airdropProof) return
