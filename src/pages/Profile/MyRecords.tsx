@@ -28,7 +28,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 export default function MyRecords({ account }: { account: string }) {
   const theme = useTheme()
-  const { result: list, page, loading } = useAccountSendRecordList('0xCcF5a3e7a9aE61A45Be3C4f22787266b678Faf33')
+  const { result: list, page, loading } = useAccountSendRecordList(account)
   return (
     <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
       <Box display={'flex'} justifyContent="space-between">
