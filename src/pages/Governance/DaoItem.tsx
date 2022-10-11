@@ -65,6 +65,7 @@ export default function DaoItem({
   daoName,
   daoLogo,
   members,
+  verified,
   proposals,
   joinSwitch
 }: HomeListProp) {
@@ -103,7 +104,7 @@ export default function DaoItem({
             <Typography variant="h6" noWrap fontSize={20} marginRight="8px" maxWidth={'calc(100% - 80px)'}>
               {daoBaseInfo?.name || daoName || '--'}
             </Typography>
-            <AuthIcon />
+            {verified && <AuthIcon />}
           </Box>
           {token ? (
             <Box display={'flex'} alignItems="center">

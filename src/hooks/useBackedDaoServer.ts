@@ -68,6 +68,7 @@ export interface HomeListProp {
   activeProposals: number
   soonProposals: number
   members: number
+  verified: boolean
   joinSwitch: boolean
 }
 
@@ -127,6 +128,7 @@ export function useHomeDaoList() {
           activeProposals: item.activeProposals,
           soonProposals: item.soonProposals,
           members: item.members,
+          verified: item.approve,
           joinSwitch: item.joinSwitch
         }))
         setResult(list)
@@ -169,6 +171,7 @@ export function useHomeDaoList() {
           activeProposals: item.activeProposals,
           soonProposals: item.soonProposals,
           members: item.members,
+          verified: item.approve,
           joinSwitch: item.joinSwitch
         }))
         setResult(list)

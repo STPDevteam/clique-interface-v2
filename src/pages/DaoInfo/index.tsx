@@ -1,6 +1,5 @@
 import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
-import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as SDK } from 'assets/svg/sdk.svg'
@@ -10,7 +9,6 @@ import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { NavLink, useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
-import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { isSocialUrl, toFormatGroup } from 'utils/dao'
 import { BlackButton } from 'components/Button/Button'
@@ -22,6 +20,7 @@ import { routes } from 'constants/routes'
 import { DaoAvatars } from 'components/Avatars'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -105,7 +104,6 @@ export default function DaoInfo({ children }: { children: any }) {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-  const token = daoInfo?.token
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(
     backedDaoInfo?.joinSwitch || false,
     backedDaoInfo?.members || 0
@@ -159,7 +157,7 @@ export default function DaoInfo({ children }: { children: any }) {
               <Box display={'flex'} justifyContent="space-between" alignItems={'center'} marginBottom={6}>
                 <Stack direction="row" spacing={8} alignItems="center">
                   <Typography variant="h5">{daoInfo?.name || '--'}</Typography>
-                  {/* <VerifiedTag address={daoInfo?.daoAddress} /> */}
+                  {backedDaoInfo?.verified && <AuthIcon />}
                   <AdminTag level={daoAdminLevel} />
                   <StyledJoin>
                     <BlackButton
@@ -182,18 +180,9 @@ export default function DaoInfo({ children }: { children: any }) {
                 </Box>
               </Box>
               <Box display={'flex'} justifyContent="space-between" mb={6}>
-                <Link
-                  target={'_blank'}
-                  underline="none"
-                  href={getEtherscanLink(curDaoChainId, daoInfo?.daoTokenAddress || '', 'address')}
-                >
-                  <Box display={'flex'} alignItems="center">
-                    <CurrencyLogo currency={token || undefined} style={{ marginRight: '5px' }} />
-                    <Typography fontSize={16} variant="body2" noWrap maxWidth={'200px'}>
-                      {token ? `${token.name} (${token.symbol})` : '--'}
-                    </Typography>
-                  </Box>
-                </Link>
+                <Typography fontSize={16} variant="body2" noWrap fontWeight={400} maxWidth={'200px'}>
+                  @{daoInfo?.handle}
+                </Typography>
                 <Box display={'flex'} alignItems="center">
                   {daoInfo?.twitter && isSocialUrl('twitter', daoInfo.twitter) && (
                     <Link target={'_blank'} href={daoInfo.twitter} underline="none" ml={10}>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 // import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
-import { ReactComponent as DefaultSvg } from 'assets/svg/default_img.svg'
+// import { ReactComponent as DefaultSvg } from 'assets/svg/default_img.svg'
+import createTokenIcon from 'assets/images/create-token-ball.png'
 
 const BAD_SRCS: { [tokenAddress: string]: true } = {}
 
@@ -32,5 +33,6 @@ export default function Logo({ srcs, alt, style }: LogoProps) {
     )
   }
 
-  return <DefaultSvg style={{ ...style }} />
+  // return <DefaultSvg style={{ ...style }} />
+  return <img style={{ ...style }} src={createTokenIcon} />
 }

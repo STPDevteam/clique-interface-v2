@@ -24,6 +24,10 @@ const StyledItem = styled('div')(({ theme }) => ({
   position: 'relative'
 }))
 
+const AirdropStyledItem = styled(StyledItem)({
+  gridTemplateColumns: '1fr'
+})
+
 const StyledTitle = styled(Typography)(({}) => ({
   overflow: 'hidden',
   height: 54,
@@ -132,7 +136,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
   }, [item.amount, token])
 
   return (
-    <StyledItem
+    <AirdropStyledItem
       onClick={() =>
         history.push(routes._ActivityAirdropDetail + `/${item.chainId}/${item.daoAddress}/${item.activityId}`)
       }
@@ -170,8 +174,8 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
           </Stack>
         </Box>
       </Stack>
-      <CircularStatic value={item.claimedPercentage * 100} />
-    </StyledItem>
+      {/* <CircularStatic value={item.claimedPercentage * 100} /> */}
+    </AirdropStyledItem>
   )
 }
 
