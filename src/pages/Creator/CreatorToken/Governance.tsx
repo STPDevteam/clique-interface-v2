@@ -25,6 +25,7 @@ import { useCreateTokenDataCallback, useRemainderTokenAmount } from 'state/creat
 import DateTimePicker from 'components/DateTimePicker'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import Checkbox from 'components/Checkbox'
+import { BigNumber } from 'bignumber.js'
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
@@ -105,6 +106,16 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
       })
   }, [createTokenCallback, hideModal, next, showModal])
 
+  const currentUsedTokenAmount = useMemo(
+    () =>
+      createTokenDistributionData.length
+        ? createTokenDistributionData
+            .map(item => item.tokenNumber)
+            .reduce((pre, cur) => new BigNumber(pre || '0').plus(cur || '0').toString()) || '0'
+        : '0',
+    [createTokenDistributionData]
+  )
+
   const nextHandler: {
     disabled: boolean
     handler?: () => void
@@ -160,6 +171,13 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         error: 'There are remaining tokens that are not used'
       }
 
+    if (new BigNumber(createTokenBaseData.tokenSupply).isLessThan(currentUsedTokenAmount)) {
+      return {
+        disabled: true,
+        error: 'Distributed total amount exceed totalSupply'
+      }
+    }
+
     if (!account) {
       return {
         disabled: true,
@@ -206,6 +224,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   }, [
     createTokenBaseData,
     remainderTokenAmount,
+    currentUsedTokenAmount,
     account,
     chainId,
     agreeDisclaimer,
