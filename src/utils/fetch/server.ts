@@ -250,6 +250,14 @@ export function userProfileUpdate(
   })
 }
 
+export function getAccountSendRecordList(account: string, offset: number, count: number) {
+  return Axios.get('stpdao/v2/account/record', {
+    account,
+    offset,
+    count
+  })
+}
+
 export function daoHandleQuery(handle: string, account: string, chainId: number) {
   return Axios.get('stpdao/v2/sign/query/handle', {
     handle,
