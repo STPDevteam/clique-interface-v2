@@ -3,6 +3,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
+import { ReactComponent as SDK } from 'assets/svg/sdk.svg'
 import { useCallback, useMemo } from 'react'
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
@@ -28,9 +29,16 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   background: theme.palette.common.white,
   boxShadow: theme.boxShadow.bs2,
   padding: '30px 45px 0',
+  position: 'relative',
   '& .top1': {
     display: 'grid',
     gridTemplateColumns: '100px 1fr'
+  },
+  '& .sdk': {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    fontSize: 0
   }
 }))
 
@@ -228,6 +236,15 @@ export default function DaoInfo({ children }: { children: any }) {
               </NavLink>
             ))}
           </StyledTabs>
+
+          <Link
+            className="sdk"
+            href="https://www.npmjs.com/package/@myclique/governance-sdk"
+            target={'_blank'}
+            underline="none"
+          >
+            <SDK />
+          </Link>
         </StyledHeader>
         <Box padding="30px 45px">{children}</Box>
       </ContainerWrapper>
