@@ -7,7 +7,8 @@ import { getEtherscanLink, isAddress, shortenAddress } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import MyTokens from './MyTokens'
-import { useParams } from 'react-router-dom'
+import MyRecords from './MyRecords'
+import { useHistory, useParams } from 'react-router-dom'
 import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { isSocialUrl } from 'utils/dao'
 import MyDaos from './MyDaos'
@@ -30,6 +31,7 @@ export default function Profile() {
   const currentAccount = useMemo(() => (isAddress(address) ? address : account), [account, address])
   const isSelf = useMemo(() => currentAccount && account && account === currentAccount, [account, currentAccount])
   const [rand, setRand] = useState(Math.random())
+  const history = useHistory()
 
   const { result: profileInfo } = useUserProfileInfo(currentAccount || undefined, rand)
   const refreshProfile = useCallback(() => {
@@ -38,8 +40,9 @@ export default function Profile() {
   }, [hideModal])
 
   useEffect(() => {
+    if (!account) history.replace('/')
     hideModal()
-  }, [account, hideModal])
+  }, [account, hideModal, history])
 
   return (
     <Box paddingBottom={40}>
@@ -75,7 +78,7 @@ export default function Profile() {
                   underline="none"
                   mr={6}
                 >
-                  {shortenAddress(currentAccount || '')}
+                  {currentAccount ? shortenAddress(currentAccount) : ''}
                 </Link>
                 <Copy toCopy={currentAccount || ''} />
               </Box>
@@ -104,6 +107,8 @@ export default function Profile() {
         {isSelf && <MyTokens account={currentAccount || ''} />}
 
         <MyDaos adminDao={profileInfo?.adminDao} memberDao={profileInfo?.memberDao} />
+
+        {isSelf && <MyRecords account={currentAccount || ''} />}
       </Box>
     </Box>
   )
