@@ -151,7 +151,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
             <StyledText>Token</StyledText>
             <StyledText>
               <Stack direction={'row'} alignItems="center">
-                <CurrencyLogo currency={undefined} size="22px" style={{ marginRight: '5px' }} />
+                <CurrencyLogo currency={token || undefined} size="22px" style={{ marginRight: '5px' }} />
                 <StyledBoldText noWrap>{token ? `${token.name}(${token.symbol})` : '--'}</StyledBoldText>
               </Stack>
             </StyledText>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import Logo from './LogoBase'
 import { Currency } from '../../../constants/token/currency'
-import { Token } from '../../../constants/token/token'
 import { getTokenLogo } from 'utils/fetch/server'
+import isZero from 'utils/isZero'
+import { ChainListMap } from 'constants/chain'
 
 // export const getTokenLogoURL = (address: string) =>
 //   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
@@ -28,7 +29,7 @@ export default function CurrencyLogo({
   // }, [currency])
 
   useEffect(() => {
-    if (currency instanceof Token) {
+    if (currency) {
       if (args?.address !== currency.address && args?.chainId !== currency.chainId) {
         setArgs({
           address: currency.address,
@@ -47,6 +48,10 @@ export default function CurrencyLogo({
         try {
           if (logos[key]) {
             setSrcs(logos[key])
+            return
+          }
+          if (isZero(args.address)) {
+            setSrcs([ChainListMap[args.chainId].logo])
             return
           }
           const res = await getTokenLogo(args.address, args.chainId)

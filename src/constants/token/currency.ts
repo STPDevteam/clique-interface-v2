@@ -9,6 +9,8 @@ import { validateSolidityTypeInstance } from './utils'
  * The only instance of the base class `Currency` is Ether.
  */
 export class Currency {
+  public readonly chainId: ChainId
+  public readonly address: string
   public readonly decimals: number
   public readonly symbol?: string
   public readonly name?: string
@@ -16,12 +18,24 @@ export class Currency {
   /**
    * The only instance of the base class `Currency`.
    */
-  public static readonly ETHER: Currency = new Currency(18, 'HT', 'Ether')
+  public static readonly ETHER: Currency = new Currency(
+    1,
+    '0x0000000000000000000000000000000000000000',
+    18,
+    'ETH',
+    'Ether'
+  )
 
   public static get_ETH_TOKEN(chainId: ChainId) {
     const chain = SUPPORTED_NETWORKS[chainId]
     if (!chain) return undefined
-    return new Currency(chain.nativeCurrency.decimals, chain.nativeCurrency.symbol, chain.nativeCurrency.name)
+    return new Currency(
+      chainId,
+      '0x0000000000000000000000000000000000000000',
+      chain.nativeCurrency.decimals,
+      chain.nativeCurrency.symbol,
+      chain.nativeCurrency.name
+    )
   }
 
   /**
@@ -30,9 +44,11 @@ export class Currency {
    * @param symbol symbol of the currency
    * @param name of the currency
    */
-  protected constructor(decimals: number, symbol?: string, name?: string) {
+  protected constructor(chainId: number, address: string, decimals: number, symbol?: string, name?: string) {
     validateSolidityTypeInstance(JSBI.BigInt(decimals), SolidityType.uint8)
 
+    this.chainId = chainId
+    this.address = address
     this.decimals = decimals
     this.symbol = symbol
     this.name = name
