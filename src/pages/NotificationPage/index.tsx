@@ -125,7 +125,7 @@ function MsgItem({
       </RowCenter>
       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
         <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} />
+          <DaoAvatars size={64} src={item.info.daoLogo} />
           <Box ml={16}>
             <Text>{item.info.daoName}</Text>
             <Text display={'inline-block'}>
@@ -195,7 +195,7 @@ export default function NotificationPage() {
             <DelayLoading loading={loading}>
               <Loading sx={{ marginTop: 30 }} />
             </DelayLoading>
-            <Box>
+            <Stack spacing={16}>
               {!loading &&
                 notificationList.map(item => (
                   <MsgItem
@@ -206,7 +206,7 @@ export default function NotificationPage() {
                     item={item}
                   />
                 ))}
-            </Box>
+            </Stack>
           </Box>
           <Box display={'flex'} justifyContent="center">
             <Pagination

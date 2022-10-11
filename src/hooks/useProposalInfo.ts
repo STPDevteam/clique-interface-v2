@@ -4,7 +4,7 @@ import { useActiveWeb3React } from 'hooks'
 import JSBI from 'jsbi'
 import { useEffect, useMemo, useState } from 'react'
 import { VotingTypes } from 'state/buildingGovDao/actions'
-import { NEVER_RELOAD, useSingleCallResult } from 'state/multicall/hooks'
+import { useSingleCallResult } from 'state/multicall/hooks'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { getProposalContent, sign } from 'utils/fetch/server'
 import { retry } from 'utils/retry'
@@ -178,7 +178,7 @@ export function useProposalDetailInfo(
     daoContract,
     'getProposalOptionById',
     [proposalId],
-    NEVER_RELOAD,
+    undefined,
     daoChainId
   ).result?.[0]
   const proposalBaseInfo = useProposalBaseInfo(daoAddress, daoChainId, proposalId)

@@ -143,8 +143,10 @@ const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  transition: 'all 0.5s',
+  backgroundColor: theme.bgColor.bg1,
   '&:hover': {
-    backgroundColor: theme.bgColor.bg1
+    backgroundColor: theme.bgColor.bg2
   },
   '&.active': {
     backgroundColor: theme.palette.primary.main,
