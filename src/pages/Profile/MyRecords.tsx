@@ -1,4 +1,4 @@
-import { Box, Typography, useTheme, styled, Stack } from '@mui/material'
+import { Box, Link as MuiLink, Typography, useTheme, styled, Stack } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
@@ -16,6 +16,7 @@ import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useMemo } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { useToken } from 'state/wallet/hooks'
+import { getEtherscanLink } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -27,7 +28,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 export default function MyRecords({ account }: { account: string }) {
   const theme = useTheme()
-  const { result: list, page, loading } = useAccountSendRecordList(account)
+  const { result: list, page, loading } = useAccountSendRecordList('0xCcF5a3e7a9aE61A45Be3C4f22787266b678Faf33')
   return (
     <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
       <Box display={'flex'} justifyContent="space-between">
@@ -81,7 +82,13 @@ const accountBackedSendRecordTypesText = {
 
 function RecordItem({ item }: { item: AccountSendRecordProp }) {
   const history = useHistory()
-  const isAboutToken = useMemo(() => item.types === AccountBackedSendRecordTypesProp.EvCreateERC20, [item.types])
+  const isAboutToken = useMemo(
+    () =>
+      [AccountBackedSendRecordTypesProp.EvCreateERC20, AccountBackedSendRecordTypesProp.EvClaimReserve].includes(
+        item.types
+      ),
+    [item.types]
+  )
 
   const link = useMemo(() => {
     if (
@@ -133,7 +140,7 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
               <ShowTokenName chainId={item.chainId} address={item.address} />
             ) : (
               <span style={{ cursor: link ? 'pointer' : 'auto' }} onClick={() => link && history.push(link)}>
-                {item.titles}
+                {item.titles || item.daoName}
               </span>
             )}
           </Typography>
@@ -149,6 +156,16 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
 }
 
 function ShowTokenName({ chainId, address }: { chainId: ChainId; address: string }) {
+  const theme = useTheme()
   const token = useToken(address, chainId)
-  return <>{token ? `${token.name}(${token.symbol})` : '--'}</>
+  return (
+    <MuiLink
+      underline="none"
+      color={theme.palette.text.secondary}
+      href={getEtherscanLink(chainId, address, 'token')}
+      target="_blank"
+    >
+      {token ? `${token.name}(${token.symbol})` : '--'}
+    </MuiLink>
+  )
 }
