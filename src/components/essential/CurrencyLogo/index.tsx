@@ -7,6 +7,8 @@ import { getTokenLogo } from 'utils/fetch/server'
 // export const getTokenLogoURL = (address: string) =>
 //   `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
+const logos: { [key in string]: string[] } = {}
+
 export default function CurrencyLogo({
   currency,
   size = '24px',
@@ -41,9 +43,15 @@ export default function CurrencyLogo({
   useEffect(() => {
     ;(async () => {
       if (args) {
+        const key = `${args.chainId}_${args.address}`
         try {
+          if (logos[key]) {
+            setSrcs(logos[key])
+            return
+          }
           const res = await getTokenLogo(args.address, args.chainId)
           setSrcs([res.data.data.thumb || res.data.data.ownImg || ''])
+          logos[key] = [res.data.data.thumb || res.data.data.ownImg || '']
         } catch (error) {
           setSrcs([])
         }
