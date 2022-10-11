@@ -10,6 +10,8 @@ import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useToken } from 'state/wallet/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   height: 298,
@@ -72,10 +74,16 @@ export default function DaoItem({
   const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
   const user = useUserInfo()
+  const { account } = useActiveWeb3React()
+  const walletModalToggle = useWalletModalToggle()
   const loginSignature = useLoginSignature()
 
   const toSwitchJoin = useCallback(
     async (join: boolean) => {
+      if (!account) {
+        walletModalToggle()
+        return
+      }
       let signatureStr = user?.signature
       if (!signatureStr) {
         signatureStr = await loginSignature()
@@ -83,7 +91,7 @@ export default function DaoItem({
       if (!signatureStr) return
       switchJoin(join, chainId, daoAddress, signatureStr)
     },
-    [chainId, daoAddress, loginSignature, switchJoin, user?.signature]
+    [account, chainId, daoAddress, loginSignature, switchJoin, user?.signature, walletModalToggle]
   )
 
   return (

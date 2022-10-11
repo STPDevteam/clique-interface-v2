@@ -245,6 +245,7 @@ export function useBackedDaoInfo(daoAddress: string, chainId: ChainId) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<{
     joinSwitch: boolean
+    verified: boolean
     members: number
   }>()
 
@@ -258,6 +259,7 @@ export function useBackedDaoInfo(daoAddress: string, chainId: ChainId) {
 
         setResult({
           joinSwitch: data.joinSwitch,
+          verified: data.approve,
           members: data.members
         })
       } catch (error) {

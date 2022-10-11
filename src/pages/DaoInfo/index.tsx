@@ -20,6 +20,7 @@ import AdminTag from './ShowAdminTag'
 import { routes } from 'constants/routes'
 import { DaoAvatars } from 'components/Avatars'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -103,9 +104,14 @@ export default function DaoInfo({ children }: { children: any }) {
   )
   const user = useUserInfo()
   const loginSignature = useLoginSignature()
+  const walletModalToggle = useWalletModalToggle()
 
   const toSwitchJoin = useCallback(
     async (join: boolean) => {
+      if (!account) {
+        walletModalToggle()
+        return
+      }
       let signatureStr = user?.signature
       if (!signatureStr) {
         signatureStr = await loginSignature()
@@ -113,7 +119,7 @@ export default function DaoInfo({ children }: { children: any }) {
       if (!signatureStr) return
       switchJoin(join, curDaoChainId, daoAddress, signatureStr)
     },
-    [curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature]
+    [account, curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature, walletModalToggle]
   )
 
   const currentTabLinks = useMemo(() => {

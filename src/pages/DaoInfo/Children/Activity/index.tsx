@@ -1,4 +1,4 @@
-import { ButtonGroup, styled, Button as MuiButton } from '@mui/material'
+import { ButtonGroup, styled, Button as MuiButton, Tooltip, Box, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
@@ -9,6 +9,8 @@ import { useHistory, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
 import { AirdropList, PublicSaleList } from './List'
 import { useDaoActivityList } from 'hooks/useBackedActivityServer'
+import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
+import { ErrorOutline } from '@mui/icons-material'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -35,6 +37,7 @@ export enum ActivityType {
 }
 
 export default function Activity() {
+  const theme = useTheme()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const { account } = useActiveWeb3React()
@@ -42,6 +45,7 @@ export default function Activity() {
 
   const history = useHistory()
   const [activityType, setActivityType] = useState<ActivityType>(ActivityType.AIRDROP)
+  const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
 
   const airdropData = useDaoActivityList(curDaoChainId, daoAddress, ActivityType.AIRDROP)
 
@@ -63,20 +67,44 @@ export default function Activity() {
           </MuiButton>
         </StyledButtonGroup>
         {(daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN) && (
-          <BlackButton
-            width="252px"
-            height="48px"
-            onClick={() =>
-              history.push(
-                routes._DaoInfo +
-                  `/${curDaoChainId}/${daoAddress}/active_info/${
-                    activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_airdrop'
-                  }`
-              )
-            }
-          >
-            Create {activityType}
-          </BlackButton>
+          <>
+            {backedDaoInfo?.verified ? (
+              <BlackButton
+                width="252px"
+                height="48px"
+                onClick={() =>
+                  history.push(
+                    routes._DaoInfo +
+                      `/${curDaoChainId}/${daoAddress}/active_info/${
+                        activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_airdrop'
+                      }`
+                  )
+                }
+              >
+                Create {activityType}
+              </BlackButton>
+            ) : (
+              <Box
+                width="252px"
+                height="48px"
+                display={'flex'}
+                alignItems="center"
+                justifyContent={'center'}
+                sx={{
+                  backgroundColor: theme.bgColor.bg2,
+                  borderRadius: '16px',
+                  color: theme.palette.text.secondary,
+                  fontSize: 14,
+                  fontWeight: 700
+                }}
+              >
+                Create {activityType}
+                <Tooltip title="Can be created after verification">
+                  <ErrorOutline sx={{ marginLeft: 4 }} />
+                </Tooltip>
+              </Box>
+            )}
+          </>
         )}
       </RowCenter>
       {activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}

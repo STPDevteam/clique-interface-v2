@@ -234,7 +234,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (eventEndTime <= eventStartTime) {
       return {
         disabled: true,
-        error: 'The event end time must be greater than the event start time'
+        error: 'The event end time must be later than the event start time'
       }
     }
     if (!airdropStartTime) {
@@ -246,7 +246,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (airdropStartTime <= eventEndTime) {
       return {
         disabled: true,
-        error: 'The airdrop start time must be greater than the event end time'
+        error: 'The airdrop start time must be later than the event end time'
       }
     }
     if (!airdropEndTime) {
@@ -258,7 +258,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (airdropEndTime <= airdropStartTime) {
       return {
         disabled: true,
-        error: 'The airdrop end time must be greater than the airdrop start time'
+        error: 'The airdrop end time must be later than the airdrop start time'
       }
     }
 
@@ -391,7 +391,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 label="Please enter the contract address"
                 rightLabel={
                   <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress(ZERO_ADDRESS)}>
-                    use native Token
+                    use native token
                   </Link>
                 }
                 type="address"
