@@ -1,6 +1,5 @@
 import { Alert, Link, Snackbar, Stack, styled, Typography } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
-import theme from 'theme'
 import { RowCenter } from '../Proposal/ProposalItem'
 import DownloadIcon from '@mui/icons-material/Download'
 import Input from 'components/Input'
@@ -128,8 +127,8 @@ export default function AirdropTable({
             </div>
           )}
         </RowCenter>
-        <Link underline="none" href="/template/airdrop-list.csv">
-          <Typography display={'flex'} alignItems="center" fontSize={12} color={theme.palette.text.primary}>
+        <Link href="/template/airdrop-list.csv">
+          <Typography display={'flex'} alignItems="center" fontSize={12}>
             Download Templates
             <DownloadIcon sx={{ height: 16 }} />
           </Typography>
@@ -194,7 +193,7 @@ export default function AirdropTable({
         autoHideDuration={6000}
         onClose={() => setOpenSnackbar(false)}
       >
-        <Alert severity="warning">Address format error</Alert>
+        <Alert severity="error">Address format error, please download the template.</Alert>
       </Snackbar>
     </Stack>
   )
