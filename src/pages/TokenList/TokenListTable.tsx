@@ -16,12 +16,12 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
   const tableList = useMemo(() => {
     if (loading) return []
     return tokenList.map(({ tokenAddress, chainId }) => [
-      <Box key={0} display={'flex'}>
+      <Box key={tokenAddress} display={'flex'}>
         <ShowTokenInfo address={tokenAddress} chainId={chainId} />
       </Box>,
-      <ChainText key={1} chainId={chainId} />,
+      <ChainText key={tokenAddress} chainId={chainId} />,
       <ShowCopyTokenAddress key={2} address={tokenAddress} chainId={chainId} />,
-      <Typography key={3} fontWeight={600} fontSize={13}>
+      <Typography key={tokenAddress} fontWeight={600} fontSize={13}>
         <ShowTokenSupply address={tokenAddress} chainId={chainId} />
       </Typography>
     ])
