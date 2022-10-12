@@ -119,7 +119,7 @@ export default function AirdropTable({
     <Stack spacing={10} mt={20}>
       <RowCenter>
         <RowCenter>
-          <StyledText mr={10}>Airdrop addresses</StyledText>
+          <StyledText mr={10}>DAOdrop addresses</StyledText>
           {readonly ? null : (
             <div>
               <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />

@@ -204,13 +204,13 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (!airdropCurrency) {
       return {
         disabled: true,
-        error: 'Airdrop token required'
+        error: 'DAOdrop token required'
       }
     }
     if (!airdropCurrencyBalance || airdropCurrencyBalance.equalTo(JSBI.BigInt(0))) {
       return {
         disabled: true,
-        error: 'Airdrop amount required'
+        error: 'DAOdrop amount required'
       }
     }
     if (!eventStartTime) {
@@ -240,25 +240,25 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (!airdropStartTime) {
       return {
         disabled: true,
-        error: 'Airdrop start time required'
+        error: 'DAOdrop start time required'
       }
     }
     if (airdropStartTime <= eventEndTime) {
       return {
         disabled: true,
-        error: 'The airdrop start time must be later than the event end time'
+        error: 'The DAOdrop start time must be later than the event end time'
       }
     }
     if (!airdropEndTime) {
       return {
         disabled: true,
-        error: 'Airdrop end time required'
+        error: 'DAOdrop end time required'
       }
     }
     if (airdropEndTime <= airdropStartTime) {
       return {
         disabled: true,
-        error: 'The airdrop end time must be later than the airdrop start time'
+        error: 'The DAOdrop end time must be later than the DAOdrop start time'
       }
     }
 
@@ -342,7 +342,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
       <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
       <Box mt={20}>
         <ContainerWrapper maxWidth={709}>
-          <Typography variant="h6">Create a airdrop event</Typography>
+          <Typography variant="h6">Create a DAOdrop event</Typography>
           <Stack spacing={20} mt={20}>
             <div>
               <StyledText mb={10}>Event title</StyledText>
@@ -373,7 +373,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
 
             {isZero(airdropAddress) ? (
               <Input
-                label="Airdrop token"
+                label="DAOdrop token"
                 value={network ? Currency.get_ETH_TOKEN(network.id as ChainId)?.symbol || '' : ''}
                 readOnly
                 rightLabel={
@@ -418,7 +418,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             <InputNumerical
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              label="Total amount for airdrop"
+              label="Total amount for DAOdrop"
               balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
               onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
             />
@@ -443,7 +443,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>Airdrop start time</StyledText>
+                <StyledText>DAOdrop start time</StyledText>
                 <DateTimePicker
                   disabled={!eventEndTime}
                   minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
@@ -452,7 +452,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>Airdrop end time</StyledText>
+                <StyledText>DAOdrop end time</StyledText>
                 <DateTimePicker
                   disabled={!airdropStartTime}
                   minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}
@@ -469,7 +469,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             </Alert>
           ) : (
             <Alert severity="success" sx={{ marginTop: 20 }}>
-              You can now create a airdrop
+              You can now create a DAOdrop
             </Alert>
           )}
 

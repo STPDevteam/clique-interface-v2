@@ -36,6 +36,11 @@ export enum ActivityType {
   AIRDROP = 'Airdrop'
 }
 
+export const activityTypeText = {
+  [ActivityType.PUBLIC_SALE]: 'Public Sale',
+  [ActivityType.AIRDROP]: 'DAOdrop'
+}
+
 export default function Activity() {
   const theme = useTheme()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
@@ -63,7 +68,7 @@ export default function Activity() {
             className={activityType === ActivityType.AIRDROP ? 'active' : ''}
             onClick={() => setActivityType(ActivityType.AIRDROP)}
           >
-            {ActivityType.AIRDROP}
+            {activityTypeText[ActivityType.AIRDROP]}
           </MuiButton>
         </StyledButtonGroup>
         {(daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN) && (
@@ -76,12 +81,12 @@ export default function Activity() {
                   history.push(
                     routes._DaoInfo +
                       `/${curDaoChainId}/${daoAddress}/active_info/${
-                        activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_airdrop'
+                        activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_dao_drop'
                       }`
                   )
                 }
               >
-                Create {activityType}
+                Create {activityTypeText[activityType]}
               </BlackButton>
             ) : (
               <Box
@@ -98,7 +103,7 @@ export default function Activity() {
                   fontWeight: 700
                 }}
               >
-                Create {activityType}
+                Create {activityTypeText[activityType]}
                 <Tooltip title="Can be created after verification">
                   <ErrorOutline sx={{ marginLeft: 4 }} />
                 </Tooltip>

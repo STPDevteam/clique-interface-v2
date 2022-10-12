@@ -95,6 +95,14 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
   }
 }))
 
+export const activityStatusText = {
+  [ActivityStatus.SOON]: 'Soon',
+  [ActivityStatus.OPEN]: 'Open',
+  [ActivityStatus.ENDED]: 'Ended',
+  [ActivityStatus.AIRDROP]: 'DAOdrop',
+  [ActivityStatus.CLOSED]: 'Closed'
+}
+
 function ShowStatus({ item }: { item: ActivityListProp }) {
   const now = currentTimeStamp()
   let targetTimeString = ''
@@ -119,7 +127,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
             : ''
         }
       >
-        {item.status}
+        {activityStatusText[item.status]}
       </StyledStatusText>
       <StyledText fontSize={12}>{targetTimeString}</StyledText>
     </>

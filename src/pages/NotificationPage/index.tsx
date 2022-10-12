@@ -85,7 +85,7 @@ function MsgItem({
     return {
       text:
         item.types === 'Airdrop'
-          ? 'You have a new airdrop can be claimed'
+          ? 'You have a new DAOdrop can be claimed'
           : item.types === 'NewProposal'
           ? item.info.proposalName || ''
           : item.types === 'ReserveToken'

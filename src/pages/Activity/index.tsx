@@ -37,7 +37,7 @@ const statusItemList = [
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
   { value: ActivityStatus.OPEN, label: ActivityStatus.OPEN },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
-  { value: ActivityStatus.AIRDROP, label: ActivityStatus.AIRDROP },
+  { value: ActivityStatus.AIRDROP, label: 'DAOdrop' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
 ]
 

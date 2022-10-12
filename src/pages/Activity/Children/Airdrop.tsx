@@ -45,6 +45,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { TokenAmount } from 'constants/token'
+import { activityStatusText } from '../ActivityItem'
 
 const PanelWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
@@ -238,7 +239,7 @@ export default function Airdrop() {
                     <PanelWrapper>
                       <Stack spacing={10}>
                         <RowCenter>
-                          <StyledText1>Airdrop Token</StyledText1>
+                          <StyledText1>DAOdrop Token</StyledText1>
                           <MuiLink
                             target={'_blank'}
                             underline="none"
@@ -309,7 +310,7 @@ export default function Airdrop() {
                         <RowCenter>
                           <StyledText1>Status</StyledText1>
                           <StyledText2 style={{ color: theme.palette.primary.main }}>
-                            {airdropDescData?.status}
+                            {airdropDescData ? activityStatusText[airdropDescData.status] : '-'}
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
@@ -323,7 +324,7 @@ export default function Airdrop() {
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
-                          <StyledText1>Airdrop time</StyledText1>
+                          <StyledText1>DAOdrop time</StyledText1>
                           <StyledText2 style={{ fontSize: 12 }}>
                             {airdropInfos
                               ? timeStampToFormat(airdropInfos.airdropStartTime, 'Y-MM-DD HH:mm') +
@@ -334,7 +335,7 @@ export default function Airdrop() {
                         </RowCenter>
 
                         <RowCenter>
-                          <StyledText1>Total airdrop</StyledText1>
+                          <StyledText1>Total DAOdrop</StyledText1>
                           <StyledText2>
                             {airdropInfos
                               ? airdropInfos.tokenStaked.toSignificant(6, { groupSeparator: ',' }) +
@@ -573,25 +574,25 @@ function Manage({
     if (airdropList.length === 0) {
       return {
         disabled: true,
-        error: 'Airdrop addresses required'
+        error: 'DAOdrop addresses required'
       }
     }
     if (!airdropTotalAmount || airdropTotalAmount.equalTo(JSBI.BigInt(0))) {
       return {
         disabled: true,
-        error: 'Airdrop amount required'
+        error: 'DAOdrop amount required'
       }
     }
     if (!needStake || !airdropTokenBalance) {
       return {
         disabled: true,
-        error: 'Airdrop token balance loading'
+        error: 'DAOdrop token balance loading'
       }
     }
     if (needStake.greaterThan(JSBI.BigInt(0)) && airdropTokenBalance.lessThan(airdropTotalAmount)) {
       return {
         disabled: true,
-        error: 'Airdrop insufficient balance'
+        error: 'DAOdrop insufficient balance'
       }
     }
 
@@ -715,14 +716,14 @@ function Manage({
           </Alert>
         ) : isAirdropped ? null : (
           <Alert severity="success" sx={{ marginTop: 20 }}>
-            You can now publish airdrop
+            You can now publish DAOdrop
           </Alert>
         )}
 
         <Box display={'flex'} justifyContent="center">
           {isAirdropped ? (
             <BlackButton disabled width="160px" height="48px">
-              Airdropped
+              Published
             </BlackButton>
           ) : (
             <BlackButton
@@ -733,11 +734,11 @@ function Manage({
             >
               {isPublishing ? (
                 <>
-                  Airdrop now
+                  Publish now
                   <Dots />
                 </>
               ) : (
-                'Airdrop now'
+                'Publish now'
               )}
             </BlackButton>
           )}

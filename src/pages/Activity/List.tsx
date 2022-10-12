@@ -9,7 +9,7 @@ import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { ActivityType } from 'pages/DaoInfo/Children/Activity'
+import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
 import { timeStampToFormat } from 'utils/dao'
 import { PublicSaleItem, AirdropItem } from './ActivityItem'
 
@@ -49,7 +49,7 @@ function ItemWrapper({
           height={40}
           width="154px"
         >
-          {type}
+          {activityTypeText[type]}
         </OutlineButton>
       </Stack>
       {children}
