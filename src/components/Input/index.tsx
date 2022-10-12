@@ -64,6 +64,7 @@ const StyledInputWrapper = styled(Box)(({ theme }) => ({
   top: 0,
   right: 0,
   bottom: 0,
+  overflowX: 'auto',
   left: 0,
   fontSize: 16,
   color: theme.palette.text.primary,
@@ -76,6 +77,9 @@ const StyledInputWrapper = styled(Box)(({ theme }) => ({
   cursor: 'text',
   display: 'flex',
   alignItems: 'center',
+  '&::-webkit-scrollbar': {
+    display: 'none'
+  },
   [`&.placeholder`]: {
     fontSize: 14,
     color: theme.palette.text.secondary,
@@ -192,6 +196,7 @@ export default function Input({
             [`& .${inputBaseClasses.input}`]: {
               '&::placeholder': {
                 fontSize: smallPlaceholder ? 12 : 14,
+                color: theme => (error ? theme.palette.error.main : ''),
                 fontWeight: 600
                 // textOverflow: 'ellipsis',
                 // whiteSpace: 'nowrap',

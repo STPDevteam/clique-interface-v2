@@ -13,6 +13,7 @@ interface Props {
   fontWeight?: number
   borderRadius?: string
   style?: React.CSSProperties
+  noBold?: boolean
 }
 
 export default function OutlineButton(props: Props) {
@@ -27,6 +28,7 @@ export default function OutlineButton(props: Props) {
     primary,
     height,
     borderRadius,
+    noBold,
     children
   } = props
   const theme = useTheme()
@@ -38,9 +40,11 @@ export default function OutlineButton(props: Props) {
       sx={{
         width: width || '100%',
         border: theme =>
-          `2px solid ${color ? color : primary ? theme.palette.primary.main : theme.palette.common.black}`,
+          `${noBold ? 1 : 2}px solid ${
+            color ? color : primary ? theme.palette.primary.main : theme.palette.common.black
+          }`,
         fontSize: fontSize || 14,
-        fontWeight: fontWeight || 700,
+        fontWeight: fontWeight || (noBold ? 500 : 700),
         height: height || 56,
         color: primary ? theme.palette.primary.main : theme.palette.common.black,
         borderRadius: borderRadius ?? 1,
@@ -51,7 +55,8 @@ export default function OutlineButton(props: Props) {
           borderColor: theme.palette.primary.main
         },
         '&:disabled': {
-          opacity: theme.palette.action.disabledOpacity
+          opacity: theme.palette.action.disabledOpacity,
+          backgroundColor: theme.bgColor.bg1
         },
         ...style
       }}

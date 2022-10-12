@@ -101,7 +101,7 @@ function CreateTokenReservedList() {
       {createTokenReserved?.map((item, index) => (
         <StyledClaimItem key={index}>
           <Stack direction={'row'} spacing={6} alignItems="center">
-            <CurrencyLogo size="24" currency={item.tokenAmount.token} />
+            <CurrencyLogo size="24px" currency={item.tokenAmount.token} />
             <Link
               target={'_blank'}
               underline="none"

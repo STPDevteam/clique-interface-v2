@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHomeListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from '.'
 import {
+  daoHandleQuery,
   getDaoAdmins,
   getDaoInfo,
   getHomeDaoList,
@@ -64,7 +65,10 @@ export interface HomeListProp {
   daoAddress: string
   chainId: ChainId
   proposals: number
+  activeProposals: number
+  soonProposals: number
   members: number
+  verified: boolean
   joinSwitch: boolean
 }
 
@@ -120,8 +124,11 @@ export function useHomeDaoList() {
           daoLogo: item.daoLogo,
           daoAddress: item.daoAddress,
           chainId: item.chainId,
-          proposals: item.proposals,
+          proposals: item.totalProposals,
+          activeProposals: item.activeProposals,
+          soonProposals: item.soonProposals,
           members: item.members,
+          verified: item.approve,
           joinSwitch: item.joinSwitch
         }))
         setResult(list)
@@ -160,8 +167,11 @@ export function useHomeDaoList() {
           daoLogo: item.daoLogo,
           daoAddress: item.daoAddress,
           chainId: item.chainId,
-          proposals: item.proposals,
+          proposals: item.totalProposals,
+          activeProposals: item.activeProposals,
+          soonProposals: item.soonProposals,
           members: item.members,
+          verified: item.approve,
           joinSwitch: item.joinSwitch
         }))
         setResult(list)
@@ -238,6 +248,7 @@ export function useBackedDaoInfo(daoAddress: string, chainId: ChainId) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<{
     joinSwitch: boolean
+    verified: boolean
     members: number
   }>()
 
@@ -251,6 +262,7 @@ export function useBackedDaoInfo(daoAddress: string, chainId: ChainId) {
 
         setResult({
           joinSwitch: data.joinSwitch,
+          verified: data.approve,
           members: data.members
         })
       } catch (error) {
@@ -364,4 +376,29 @@ export function useTokenList(account: string, chainId: number | string) {
     }),
     [currentPage, loading, total, result]
   )
+}
+
+export function useDaoHandleQuery(handle: string) {
+  const [available, setAvailable] = useState<boolean>()
+
+  const queryHandleCallback = useCallback(
+    async (account: string | undefined, chainId: number | undefined) => {
+      if (!handle.trim() || !account || !chainId) {
+        setAvailable(undefined)
+        return
+      }
+      try {
+        const res = await daoHandleQuery(handle.trim(), account, chainId)
+        const data = res.data.data
+
+        setAvailable(data.success || false)
+      } catch (error) {
+        setAvailable(undefined)
+        console.error('useDaoHandleQuery', error)
+      }
+    },
+    [handle]
+  )
+
+  return { available, queryHandleCallback }
 }

@@ -1,16 +1,14 @@
-import { Avatar, Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
-import { getEtherscanLink } from 'utils'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
+import { ReactComponent as SDK } from 'assets/svg/sdk.svg'
 import { useCallback, useMemo } from 'react'
-import { DaoAdminLevelProp, useDaoAdminLevel, useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { useToken } from 'state/wallet/hooks'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { NavLink, useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
-import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { isSocialUrl, toFormatGroup } from 'utils/dao'
 import { BlackButton } from 'components/Button/Button'
@@ -19,6 +17,10 @@ import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
 import AdminTag from './ShowAdminTag'
 import { routes } from 'constants/routes'
+import { DaoAvatars } from 'components/Avatars'
+import GitHubIcon from '@mui/icons-material/GitHub'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -26,9 +28,16 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   background: theme.palette.common.white,
   boxShadow: theme.boxShadow.bs2,
   padding: '30px 45px 0',
+  position: 'relative',
   '& .top1': {
     display: 'grid',
     gridTemplateColumns: '100px 1fr'
+  },
+  '& .sdk': {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    fontSize: 0
   }
 }))
 
@@ -88,24 +97,27 @@ const tabs = [
 export default function DaoInfo({ children }: { children: any }) {
   const theme = useTheme()
   const history = useHistory()
-  const params = useParams<{ chainId: string; address: string }>()
   const { account } = useActiveWeb3React()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, curDaoChainId)
-  const token = useToken(daoBaseInfo?.daoTokenAddress || '', curDaoChainId)
+  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(
     backedDaoInfo?.joinSwitch || false,
     backedDaoInfo?.members || 0
   )
   const user = useUserInfo()
   const loginSignature = useLoginSignature()
+  const walletModalToggle = useWalletModalToggle()
 
   const toSwitchJoin = useCallback(
     async (join: boolean) => {
+      if (!account) {
+        walletModalToggle()
+        return
+      }
       let signatureStr = user?.signature
       if (!signatureStr) {
         signatureStr = await loginSignature()
@@ -113,7 +125,7 @@ export default function DaoInfo({ children }: { children: any }) {
       if (!signatureStr) return
       switchJoin(join, curDaoChainId, daoAddress, signatureStr)
     },
-    [curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature]
+    [account, curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature, walletModalToggle]
   )
 
   const currentTabLinks = useMemo(() => {
@@ -129,23 +141,23 @@ export default function DaoInfo({ children }: { children: any }) {
   }, [daoAddress, daoAdminLevel, daoChainId])
 
   const isDefaultTabIndex = useMemo(() => {
-    if (history.location.pathname === routes._DaoInfo + `/${params.chainId}/${params.address}`) {
+    if (history.location.pathname === routes._DaoInfo + `/${daoChainId}/${daoAddress}`) {
       return true
     }
     return false
-  }, [history.location.pathname, params.address, params.chainId])
+  }, [history.location.pathname, daoAddress, daoChainId])
 
   return (
     <Box padding="0 20px">
       <ContainerWrapper maxWidth={1248}>
         <StyledHeader>
           <div className="top1">
-            <Avatar sx={{ width: 100, height: 100 }} src={daoBaseInfo?.daoLogo || ''}></Avatar>
+            <DaoAvatars size={100} src={daoInfo?.daoLogo} />
             <Box ml={'24px'}>
               <Box display={'flex'} justifyContent="space-between" alignItems={'center'} marginBottom={6}>
                 <Stack direction="row" spacing={8} alignItems="center">
-                  <Typography variant="h5">{daoBaseInfo?.name || '--'}</Typography>
-                  {/* <VerifiedTag address={daoInfo?.daoAddress} /> */}
+                  <Typography variant="h5">{daoInfo?.name || '--'}</Typography>
+                  {backedDaoInfo?.verified && <AuthIcon />}
                   <AdminTag level={daoAdminLevel} />
                   <StyledJoin>
                     <BlackButton
@@ -168,45 +180,36 @@ export default function DaoInfo({ children }: { children: any }) {
                 </Box>
               </Box>
               <Box display={'flex'} justifyContent="space-between" mb={6}>
-                <Link
-                  target={'_blank'}
-                  underline="none"
-                  href={getEtherscanLink(curDaoChainId, daoBaseInfo?.daoTokenAddress || '', 'address')}
-                >
-                  <Box display={'flex'} alignItems="center">
-                    <CurrencyLogo currency={token || undefined} style={{ marginRight: '5px' }} />
-                    <Typography fontSize={16} variant="body2" noWrap maxWidth={'200px'}>
-                      {token ? `${token.name} (${token.symbol})` : '--'}
-                    </Typography>
-                  </Box>
-                </Link>
+                <Typography fontSize={16} variant="body2" noWrap fontWeight={400} maxWidth={'200px'}>
+                  @{daoInfo?.handle}
+                </Typography>
                 <Box display={'flex'} alignItems="center">
-                  {daoBaseInfo?.twitter && isSocialUrl('twitter', daoBaseInfo.twitter) && (
-                    <Link target={'_blank'} href={daoBaseInfo.twitter} underline="none" ml={10}>
+                  {daoInfo?.twitter && isSocialUrl('twitter', daoInfo.twitter) && (
+                    <Link target={'_blank'} href={daoInfo.twitter} underline="none" ml={10}>
                       <Twitter />
                     </Link>
                   )}
-                  {daoBaseInfo?.discord && isSocialUrl('discord', daoBaseInfo.discord) && (
-                    <Link target={'_blank'} href={daoBaseInfo.discord} underline="none" ml={10}>
+                  {daoInfo?.discord && isSocialUrl('discord', daoInfo.discord) && (
+                    <Link target={'_blank'} href={daoInfo.discord} underline="none" ml={10}>
                       <Discord />
                     </Link>
                   )}
-                  {daoBaseInfo?.github && isSocialUrl('github', daoBaseInfo.github) && (
-                    <Link fontSize={12} target={'_blank'} href={daoBaseInfo.github} underline="none" ml={10}>
-                      github
+                  {daoInfo?.github && isSocialUrl('github', daoInfo.github) && (
+                    <Link fontSize={12} target={'_blank'} href={daoInfo.github} underline="none" ml={10}>
+                      <GitHubIcon sx={{ width: 16, color: theme.palette.text.secondary }} />
                     </Link>
                   )}
-                  {daoBaseInfo?.website && isSocialUrl('', daoBaseInfo.website) && (
-                    <Link fontSize={12} target={'_blank'} href={daoBaseInfo.website} underline="none" ml={10}>
-                      {daoBaseInfo.website}
+                  {daoInfo?.website && isSocialUrl('', daoInfo.website) && (
+                    <Link fontSize={12} target={'_blank'} href={daoInfo.website} underline="none" ml={10}>
+                      {daoInfo.website}
                     </Link>
                   )}
                 </Box>
               </Box>
               <Typography mb={8} color={theme.palette.text.secondary} sx={{ wordBreak: 'break-all' }}>
-                {daoBaseInfo?.description}
+                {daoInfo?.description}
               </Typography>
-              <CategoryChips categoryStr={daoBaseInfo?.category} />
+              <CategoryChips categoryStr={daoInfo?.category} />
             </Box>
           </div>
 
@@ -222,6 +225,15 @@ export default function DaoInfo({ children }: { children: any }) {
               </NavLink>
             ))}
           </StyledTabs>
+
+          <Link
+            className="sdk"
+            href="https://www.npmjs.com/package/@myclique/governance-sdk"
+            target={'_blank'}
+            underline="none"
+          >
+            <SDK />
+          </Link>
         </StyledHeader>
         <Box padding="30px 45px">{children}</Box>
       </ContainerWrapper>

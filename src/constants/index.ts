@@ -106,11 +106,15 @@ export const BLOCKED_ADDRESSES: string[] = [
 ]
 
 export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
-  [ChainId.GOERLI]: '0x2389324477762d2307b454579b10e9118f0c568f',
-  [ChainId.POLYGON_MUMBAI]: '0x61f623d4bd01233651bb13f0055a8c09641a9121'
+  [ChainId.GOERLI]: process.env.REACT_APP_ETH_DAO_FACTORY_ADDRESS || '',
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_DAO_FACTORY_ADDRESS || ''
 }
 
-// export const serverBaseUrl = 'http://192.168.2.102:8091/'
-export const serverBaseUrl = 'https://devapiv2.myclique.io/'
+export const AIRDROP_ADDRESS: { [chainId in ChainId]?: string } = {
+  [ChainId.GOERLI]: process.env.REACT_APP_ETH_AIRDROP_ADDRESS || '',
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_AIRDROP_ADDRESS || ''
+}
+
+export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'

@@ -7,6 +7,7 @@ import useCopyClipboard from 'hooks/useCopyClipboard'
 interface Props {
   toCopy: string
   children?: React.ReactNode
+  margin?: string
 }
 
 export default function Copy(props: Props) {
@@ -22,7 +23,8 @@ export default function Copy(props: Props) {
         height: 17,
         '& svg': {
           width: 14,
-          mr: '10px'
+          mr: '10px',
+          margin: props.margin || undefined
         }
       }}
       onClick={() => setCopied(toCopy)}

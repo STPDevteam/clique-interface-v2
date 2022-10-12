@@ -12,11 +12,11 @@ export function timeStampToFormat(timeStamp: number | Date | undefined, format =
   return moment(timeStamp).format(format)
 }
 
-export function toFormatGroup(n: number | string, fixed = 0): string {
+export function toFormatGroup(n: number | string, fixed?: number): string {
   try {
     const Big = toFormat(_Big)
     const x = new Big(n || 0)
-    return x.toFormat(fixed)
+    return x.toFormat(fixed !== undefined ? fixed : undefined)
   } catch (error) {
     console.error(error)
     return ''

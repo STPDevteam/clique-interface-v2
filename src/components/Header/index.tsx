@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
+import { AppBar, Badge, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
@@ -12,6 +12,7 @@ import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import { useActiveWeb3React } from 'hooks'
+import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 
 interface TabContent {
   title: string
@@ -36,8 +37,8 @@ export const Tabs: Tab[] = [
   { title: 'Governance', route: routes.Governance },
   { title: 'Activity', route: routes.Activity },
   { title: 'Tokens', route: routes.Tokens },
-  { title: 'Creator', route: routes.Creator }
-  // { title: 'DAO', link: 'https://google.com/' },
+  { title: 'Creator', route: routes.Creator },
+  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -134,7 +135,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
   }
 }))
 
-const NoticeMsg = muiStyled('div')(({ theme }) => ({
+const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
   cursor: 'pointer',
   borderRadius: '50%',
   width: '48px',
@@ -142,8 +143,16 @@ const NoticeMsg = muiStyled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  transition: 'all 0.5s',
+  backgroundColor: theme.bgColor.bg1,
   '&:hover': {
-    backgroundColor: theme.bgColor.bg1
+    backgroundColor: theme.bgColor.bg2
+  },
+  '&.active': {
+    backgroundColor: theme.palette.primary.main,
+    '& svg path': {
+      stroke: theme.palette.common.white
+    }
   }
 }))
 
@@ -151,6 +160,9 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
+  const {
+    data: { unReadCount: notReadCount }
+  } = useNotificationListPaginationCallback()
 
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
@@ -252,11 +264,13 @@ export default function Header() {
           </HideOnMobile>
         </Box>
 
-        <Box display="flex" alignItems="center" gap={{ xs: '6px', sm: '10px' }}>
+        <Box display="flex" alignItems="center" gap={{ xs: '10px', sm: '24px' }}>
           <NetworkSelect />
           {account && (
-            <NoticeMsg>
-              <NotificationIcon />
+            <NoticeMsg to={routes.Notification}>
+              <Badge badgeContent={notReadCount} color="success">
+                <NotificationIcon />
+              </Badge>
             </NoticeMsg>
           )}
           <Web3Status />

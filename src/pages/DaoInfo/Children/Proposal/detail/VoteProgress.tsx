@@ -1,15 +1,18 @@
 import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
 import { ChainId } from 'constants/chain'
+import { routes } from 'constants/routes'
 import { TokenAmount } from 'constants/token'
 import { useProposalVoteList } from 'hooks/useBackedProposalServer'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import JSBI from 'jsbi'
 import { useMemo } from 'react'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import { useHistory } from 'react-router'
+import { shortenAddress } from 'utils'
 import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 
@@ -105,6 +108,7 @@ function VoteListModal({
   allVotes: TokenAmount
   proposalOptions: ProposalOptionProp[]
 }) {
+  const { hideModal } = useModal()
   const { result: proposalVoteList, page } = useProposalVoteList(daoChainId, daoAddress, proposalId)
   const token = useMemo(() => proposalOptions[0].amount.token, [proposalOptions])
   const showList = useMemo(() => {
@@ -115,6 +119,7 @@ function VoteListModal({
       amount: new TokenAmount(token, item.amount)
     }))
   }, [proposalOptions, proposalVoteList, token])
+  const history = useHistory()
 
   return (
     <Modal maxWidth="460px" closeIcon width="100%">
@@ -132,7 +137,16 @@ function VoteListModal({
           >
             {showList.map(item => (
               <>
-                <Link underline="none" target={'_blank'} href={getEtherscanLink(daoChainId, item.voter, 'address')}>
+                {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
+                <Link
+                  underline="none"
+                  target={'_blank'}
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    hideModal()
+                    history.push(routes._Profile + `/${item.voter}`)
+                  }}
+                >
                   <StyledListText>{shortenAddress(item.voter)}</StyledListText>
                 </Link>
                 <StyledListText noWrap>{item.optionName}</StyledListText>
@@ -140,6 +154,7 @@ function VoteListModal({
               </>
             ))}
           </Box>
+          {!showList.length && <EmptyData />}
           <Box display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}

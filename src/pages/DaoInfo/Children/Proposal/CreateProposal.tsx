@@ -26,6 +26,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import Editor from './Editor'
 import { routes } from 'constants/routes'
+import { currentTimeStamp } from 'utils'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -68,7 +69,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
   const [voteType, setVoteType] = useState<VotingTypes>(
-    daoInfo.votingType === VotingTypes.ANY ? VotingTypes.SINGLE : VotingTypes.MULTI
+    daoInfo.votingType !== VotingTypes.MULTI ? VotingTypes.SINGLE : VotingTypes.MULTI
   )
   const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
   const createProposalCallback = useCreateProposalCallback(daoInfo.daoAddress)
@@ -144,6 +145,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
+    const currentTime = currentTimeStamp()
     if (!title) {
       return {
         disabled: true,
@@ -156,13 +158,19 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         error: 'Start time required'
       }
     }
+    if (startTime < currentTime) {
+      return {
+        disabled: true,
+        error: 'The start time must be later than the current time'
+      }
+    }
     if (!endTime) {
       return {
         disabled: true,
         error: 'End time required'
       }
     }
-    if (endTime < startTime) {
+    if (endTime <= startTime) {
       return {
         disabled: true,
         error: 'The start time must be earlier than the end time'
@@ -271,6 +279,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
               <LabelText>End time</LabelText>
               <DateTimePicker
                 disabled={!daoInfo.isCustomVotes}
+                minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                 value={endTime ? new Date(endTime * 1000) : null}
                 onValue={timestamp => setEndTime(timestamp)}
               ></DateTimePicker>

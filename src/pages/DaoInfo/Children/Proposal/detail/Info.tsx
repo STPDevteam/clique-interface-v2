@@ -1,4 +1,4 @@
-import { Box, Link, styled, Typography, useTheme } from '@mui/material'
+import { Box, Link as MuiLink, styled, Typography, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
 import { useProposalSnapshot } from 'hooks/useBackedProposalServer'
@@ -18,6 +18,8 @@ import { useActiveWeb3React } from 'hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
+import { routes } from 'constants/routes'
+import { Link } from 'react-router-dom'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
@@ -70,11 +72,7 @@ export default function Info({
         <Box display={'grid'} gridTemplateColumns="86px 1fr" rowGap={15} alignItems={'center'}>
           <LeftText>Proposer</LeftText>
           <RowCenter>
-            <Link
-              underline="none"
-              target={'_blank'}
-              href={getEtherscanLink(daoChainId, proposalInfo.creator, 'address')}
-            >
+            <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.creator}`}>
               <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
                 {shortenAddress(proposalInfo.creator)}
               </Typography>
@@ -89,7 +87,7 @@ export default function Info({
           <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
 
           <LeftText>Snapshot</LeftText>
-          <Link
+          <MuiLink
             underline="none"
             sx={{ display: 'flex' }}
             href={proposalSnapshot ? getEtherscanLink(daoChainId, proposalSnapshot.toString(), 'block') : undefined}
@@ -104,9 +102,9 @@ export default function Info({
                 fill={theme.palette.primary.light}
               />
             </svg>
-          </Link>
+          </MuiLink>
         </Box>
-        {account === proposalInfo.creator && proposalInfo.status !== ProposalStatus.CLOSED && (
+        {account === proposalInfo.creator && proposalInfo.status === ProposalStatus.SOON && (
           <Box mt={15}>
             <BlackButton
               height="44px"

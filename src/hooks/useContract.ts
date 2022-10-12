@@ -5,6 +5,7 @@ import ENS_ABI from '../constants/abis/ens-registrar.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import DAO_FACTORY_ABI from '../constants/abis/daoFactory.json'
+import AIRDROP_ABI from '../constants/abis/airdrop.json'
 import GOVERNANCE_DAO_ABI from '../constants/abis/governanceDao.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
 import UNISOCKS_ABI from '../constants/abis/unisocks.json'
@@ -13,7 +14,7 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { ChainId } from '../constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
-import { DAO_FACTORY_ADDRESS } from '../constants'
+import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS } from '../constants'
 
 // returns null on errors
 function useContract(
@@ -54,8 +55,12 @@ export function useV2MigratorContract(): Contract | null {
   return useContract(MIGRATOR_ADDRESS, MIGRATOR_ABI, true)
 }
 
-export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
+export function useTokenContract(
+  tokenAddress?: string,
+  withSignerIfPossible?: boolean,
+  chainId?: ChainId
+): Contract | null {
+  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible, chainId)
 }
 
 export function useENSRegistrarContract(withSignerIfPossible?: boolean): Contract | null {
@@ -111,5 +116,15 @@ export function useDaoFactoryContract(): Contract | null {
     chainId && DAO_FACTORY_ADDRESS[chainId] ? DAO_FACTORY_ADDRESS[chainId] : undefined,
     DAO_FACTORY_ABI,
     true
+  )
+}
+
+export function useAirdropContract(queryChainId?: ChainId): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(
+    queryChainId || chainId ? AIRDROP_ADDRESS[(queryChainId || chainId) as ChainId] : undefined,
+    AIRDROP_ABI,
+    true,
+    queryChainId
   )
 }

@@ -7,18 +7,24 @@ import moment from 'moment'
 export default function DateTimePicker({
   value,
   onValue,
-  disabled
+  disabled,
+  minDateTime
 }: {
   value: Date | null
   onValue: (timestamp: number | undefined) => void
   disabled?: boolean
+  minDateTime?: Date
 }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <MobileDateTimePicker
-        DialogProps={{ sx: { '& .MuiPaper-root': { padding: '30px 0 0' } } }}
+        DialogProps={{
+          sx: { '& .MuiPaper-root': { padding: '30px 0 0' }, '& .MuiPickersToolbar-penIconButton': { display: 'none' } }
+        }}
         inputFormat={value ? moment(value).format('YYYY-MM-DD HH:mm') : ''}
         disablePast
+        disableIgnoringDatePartForTimeValidation
+        minDateTime={minDateTime}
         value={value}
         disabled={disabled}
         ampm={false}

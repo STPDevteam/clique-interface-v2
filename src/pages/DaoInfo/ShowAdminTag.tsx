@@ -1,6 +1,6 @@
-import { useTheme } from '@mui/material'
+import { Stack, useTheme } from '@mui/material'
 import { ChainId } from 'constants/chain'
-import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoAdminLevelList } from 'hooks/useDaoInfo'
 import { StyledChip } from './CategoryChips'
 
 export function AdminTagBlock({
@@ -14,6 +14,25 @@ export function AdminTagBlock({
 }) {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, chainId, account)
   return <ShowAdminTag level={daoAdminLevel} />
+}
+
+export function AdminTagListBlock({
+  daoAddress,
+  chainId,
+  account
+}: {
+  daoAddress: string
+  chainId: ChainId
+  account: string
+}) {
+  const daoAdminLevelList = useDaoAdminLevelList(daoAddress, chainId, account)
+  return (
+    <Stack direction={'row'} spacing={5}>
+      {daoAdminLevelList?.map(daoAdminLevel => (
+        <ShowAdminTag key={daoAdminLevel} level={daoAdminLevel} />
+      ))}
+    </Stack>
+  )
 }
 
 export default function ShowAdminTag({ level }: { level?: DaoAdminLevelProp }) {

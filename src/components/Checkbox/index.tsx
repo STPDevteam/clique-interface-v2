@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, useTheme } from '@mui/material'
+import { Checkbox as MuiCheckbox, FormControlLabel, useTheme } from '@mui/material'
 import { ReactComponent as CheckboxIcon } from '../../assets/componentsIcon/checkbox.svg'
 import { ReactComponent as CheckboxCheckedIcon } from '../../assets/componentsIcon/checkbox_checked.svg'
 
@@ -9,7 +9,7 @@ interface Props {
   disabled?: boolean
 }
 
-export default function NewCheckbox(props: Props) {
+export default function Checkbox(props: Props) {
   const theme = useTheme()
   const { checked, onChange, label = '', disabled } = props
   return (
@@ -21,7 +21,7 @@ export default function NewCheckbox(props: Props) {
         color: checked ? theme.palette.text.primary : theme.palette.text.secondary
       }}
       control={
-        <Checkbox
+        <MuiCheckbox
           sx={{ padding: 0, marginRight: '12px' }}
           icon={<CheckboxIcon />}
           checkedIcon={<CheckboxCheckedIcon />}

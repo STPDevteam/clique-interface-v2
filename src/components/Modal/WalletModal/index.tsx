@@ -3,7 +3,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
-import { Typography, Box } from '@mui/material'
+import { Typography, Box, Link } from '@mui/material'
 import MetamaskIcon from 'assets/walletIcon/metamask.png'
 import { fortmatic, injected, portis } from 'connectors'
 import { OVERLAY_READY } from 'connectors/Fortmatic'
@@ -262,6 +262,13 @@ export default function WalletModal({}: // pendingTransactions,
           </PendingView>
         ) : (
           <Box display="grid" gap="10px" width="100%" justifyContent="center">
+            <Typography mb={6} width={360} textAlign="center" variant="body1" lineHeight={1.3}>
+              By connecting a wallet, you acknowledge that you have read and understand the Clique{' '}
+              <Link target={'_blank'} href="https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique">
+                Disclaimer
+              </Link>
+              .
+            </Typography>
             {getOptions()}
           </Box>
         )}
@@ -270,7 +277,7 @@ export default function WalletModal({}: // pendingTransactions,
   }
 
   return (
-    <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="500px" closeIcon={true}>
+    <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="560px" closeIcon={true}>
       <Box width={'100%'} padding="32px" display="flex" flexDirection="column" alignItems="center" gap={20}>
         {getModalContent()}
       </Box>

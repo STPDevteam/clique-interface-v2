@@ -1,6 +1,7 @@
-import { styled, Box, Theme } from '@mui/material'
+import { styled, Box, Theme, Snackbar, Alert } from '@mui/material'
 import { SxProps } from '@mui/system'
 import axios from 'axios'
+import { useState } from 'react'
 import { serverUploadImage } from '../../constants'
 import Image from '../Image'
 
@@ -75,11 +76,14 @@ export default function Index({
   sx?: SxProps<Theme>
   onChange?: (val: string) => void
 }) {
+  const [openSnackbar, setOpenSnackbar] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('Upload failed')
   return (
     <StyledUpload sx={sx} size={size}>
       <input
         id="upload"
         type="file"
+        accept="image/*"
         onChange={async event => {
           const file = event.target?.files?.[0]
           if (file) {
@@ -87,7 +91,8 @@ export default function Index({
             if (ret.result) {
               onChange && onChange(ret.data)
             } else {
-              alert(ret.data)
+              setErrorMsg(ret.data)
+              setOpenSnackbar(true)
             }
           }
           event.target.value = ''
@@ -105,6 +110,14 @@ export default function Index({
           </svg>
         )}
       </label>
+      <Snackbar
+        open={openSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert severity="error">{errorMsg}</Alert>
+      </Snackbar>
     </StyledUpload>
   )
 }

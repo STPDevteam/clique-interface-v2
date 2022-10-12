@@ -8,7 +8,7 @@ import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
 import Web3ReactManager from '../components/essential/Web3ReactManager'
 // import WarningModal from '../components/Modal/WarningModal'
-import ComingSoon from './ComingSoon'
+// import ComingSoon from './ComingSoon'
 import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
 import Governance from 'pages/Governance/GovernanceContainer'
@@ -22,9 +22,15 @@ import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
 import TokenList from 'pages/TokenList'
+import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
+import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
+// import CreatePublicSale from 'pages/DaoInfo/Children/Activity/CreatePublicSale'
+import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
+// import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
+import Notification from 'pages/NotificationPage'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -97,6 +103,8 @@ export default function App() {
                                   <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
                                   <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
                                   <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
+                                  {/* <Route path={routes.CreatePublicSale} exact strict component={CreatePublicSale} /> */}
+                                  <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
                                   <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
                                   <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
                                 </Switch>
@@ -107,11 +115,14 @@ export default function App() {
                       </Governance>
                     )}
                   />
-                  <Route exact strict path={routes.Activity} component={ComingSoon} />
+                  <Route exact strict path={routes.Activity} component={Activity} />
+                  <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
+                  {/* <Route exact strict path={routes.ActivitySaleDetail} component={ActivitySaleDetail} /> */}
                   <Route exact strict path={routes.Tokens} component={TokenList} />
                   <Route exact strict path={routes.Creator} component={Creator} />
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
+                  <Route exact strict path={routes.Notification} component={Notification} />
                   <Route exact strict path={routes.Profile} component={Profile} />
                   <Route exact strict path={routes._Profile} component={Profile} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />

@@ -97,6 +97,10 @@ const chains: ChainObject = {
     link: 'https://bscscan.com',
     builder: explorers.etherscan
   },
+  [ChainId.POLYGON]: {
+    link: 'https://polygonscan.com',
+    builder: explorers.etherscan
+  },
   [ChainId.POLYGON_MUMBAI]: {
     link: 'https://mumbai.polygonscan.com',
     builder: explorers.etherscan

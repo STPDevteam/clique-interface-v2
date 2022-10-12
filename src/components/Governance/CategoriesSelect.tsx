@@ -4,10 +4,12 @@ import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
 import { SxProps } from '@mui/system'
 import { useMemo } from 'react'
 
-const itemList = Object.values(CategoriesTypeProp).map(item => ({
-  value: item,
-  label: item
-}))
+const itemList = Object.values(CategoriesTypeProp)
+  .map(item => ({
+    value: item,
+    label: item
+  }))
+  .filter(item => item.value !== CategoriesTypeProp.ALL)
 
 export default function CategoriesSelect({
   value,

@@ -14,6 +14,7 @@ export enum ChainId {
   KOVAN = 42,
   BSC = 56,
   BSCTEST = 97,
+  POLYGON = 137,
   POLYGON_MUMBAI = 80001
 }
 
@@ -28,6 +29,14 @@ export const SUPPORT_NETWORK_CHAIN_IDS: ChainId[] = process.env.REACT_APP_CHAIN_
 export const IS_TEST_NET = !!(NETWORK_CHAIN_ID === ChainId.ROPSTEN)
 
 export const AllChainList = [
+  {
+    icon: <ETH />,
+    logo: EthUrl,
+    symbol: 'ETH',
+    name: 'Ethereum Mainnet',
+    id: ChainId.MAINNET,
+    hex: '0x1'
+  },
   {
     icon: <ETH />,
     logo: EthUrl,
@@ -50,7 +59,7 @@ export const AllChainList = [
     symbol: 'Goerli',
     name: 'Goerli Testnet',
     id: ChainId.GOERLI,
-    hex: '0x4'
+    hex: '0x5'
   },
   {
     icon: <ETH />,
@@ -75,6 +84,14 @@ export const AllChainList = [
     name: 'Binance Testnet',
     id: ChainId.BSCTEST,
     hex: '0x61'
+  },
+  {
+    icon: <MaticLogo />,
+    logo: MaticSvg,
+    symbol: 'Polygon',
+    name: 'Polygon',
+    id: ChainId.POLYGON,
+    hex: '0x89'
   },
   {
     icon: <MaticLogo />,
@@ -184,6 +201,17 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
     blockExplorerUrls: ['https://testnet.bscscan.com/']
+  },
+  [ChainId.POLYGON]: {
+    chainId: '0x89',
+    chainName: 'Polygon',
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18
+    },
+    rpcUrls: ['https://rpc.ankr.com/polygon'],
+    blockExplorerUrls: ['https://polygonscan.com/']
   },
   [ChainId.POLYGON_MUMBAI]: {
     chainId: '0x13881',

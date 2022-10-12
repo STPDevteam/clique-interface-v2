@@ -3,7 +3,7 @@ import Modal from 'components/Modal'
 import { Typography, Box, styled, Link, useTheme, Alert } from '@mui/material'
 import Input from 'components/Input'
 import { BlackButton } from 'components/Button/Button'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import ChainSelect from 'components/Select/ChainSelect'
 import { ChainList, ChainListMap } from 'constants/chain'
 import InputNumerical from 'components/Input/InputNumerical'
@@ -24,6 +24,8 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
+import { routes } from 'constants/routes'
+import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -41,6 +43,12 @@ export function CreateGovernanceModal() {
   const [step, setStep] = useState<CreateGovernanceStep>(CreateGovernanceStep.BASE_INFO)
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.daoHandle)
+
+  useEffect(() => {
+    queryHandleCallback(account || undefined, chainId || undefined)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const createDaoCallback = useCreateDaoCallback()
   const { showModal } = useModal()
@@ -92,16 +100,39 @@ export function CreateGovernanceModal() {
         error: 'Categories required'
       }
     }
+    if (!account) {
+      return {
+        disabled: true,
+        error: (
+          <>
+            You need to{' '}
+            <Link sx={{ cursor: 'pointer' }} onClick={toggleWalletModal}>
+              connect
+            </Link>{' '}
+            your wallet
+          </>
+        )
+      }
+    }
+    if (daoHandleAvailable !== true) {
+      return {
+        disabled: true,
+        error: 'DAO Handle on Clique unavailable'
+      }
+    }
     return {
       disabled: false,
       handler: () => setStep(CreateGovernanceStep.CONFIG)
     }
   }, [
+    account,
     buildingDaoData.category,
     buildingDaoData.daoHandle,
     buildingDaoData.daoImage,
     buildingDaoData.daoName,
-    buildingDaoData.description
+    buildingDaoData.description,
+    daoHandleAvailable,
+    toggleWalletModal
   ])
 
   const govToken = useTokenByChain(
@@ -188,6 +219,16 @@ export function CreateGovernanceModal() {
         <Typography variant="h5" textAlign={'center'}>
           Add your on chain DAO
         </Typography>
+        <Typography pb={8} variant="body1" textAlign={'center'} fontWeight={400} color={theme.palette.text.secondary}>
+          If your DAO is not on chain yet, please{' '}
+          <Link
+            target={'_blank'}
+            underline="none"
+            href="https://stp-dao.gitbook.io/verse-network/clique/how-to-create-a-dao"
+          >
+            click here
+          </Link>
+        </Typography>
 
         <Box
           sx={{
@@ -222,14 +263,19 @@ export function CreateGovernanceModal() {
                 <Input
                   label="*DAO Handle on Clique"
                   placeholder="Lowercase characters, numbers, underscores"
+                  userPattern={'^[0-9a-z_]*$'}
                   maxLength={30}
+                  error={daoHandleAvailable === false}
+                  onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
                   endAdornment={
                     <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
                       {buildingDaoData.daoHandle.length}/30
                     </Typography>
                   }
                   value={buildingDaoData.daoHandle}
-                  onChange={e => updateBuildingDaoKeyData('daoHandle', e.target.value || '')}
+                  onChange={e =>
+                    updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || '').replace(' ', ''))
+                  }
                 />
                 <Input
                   type="textarea"
@@ -277,7 +323,7 @@ export function CreateGovernanceModal() {
                 onChange={e => updateBuildingDaoKeyData('tokenAddress', e.target.value || '')}
                 placeholder="0x"
                 label="*Token Contract Address"
-                rightLabel={<Link underline="none">{`Create a new token>`}</Link>}
+                rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create a new token>`}</Link>}
               />
               <TokenRow totalSupply={govToken?.totalSupply} />
               <InputNumerical

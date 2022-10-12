@@ -12,7 +12,7 @@ import {
   toFormatGroup
 } from 'utils/dao'
 import OutlineButton from 'components/Button/OutlineButton'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useCreateTokenCallback } from 'hooks/useCreateTokenCallback'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
@@ -24,6 +24,8 @@ import Input from 'components/Input'
 import { useCreateTokenDataCallback, useRemainderTokenAmount } from 'state/createToken/hooks'
 import DateTimePicker from 'components/DateTimePicker'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import Checkbox from 'components/Checkbox'
+import { BigNumber } from 'bignumber.js'
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
@@ -84,6 +86,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   const { showModal, hideModal } = useModal()
   const { chainId, account, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const [agreeDisclaimer, setAgreeDisclaimer] = useState(false)
 
   const onCreateToken = useCallback(() => {
     showModal(<TransacitonPendingModal />)
@@ -102,6 +105,16 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         console.error(err)
       })
   }, [createTokenCallback, hideModal, next, showModal])
+
+  const currentUsedTokenAmount = useMemo(
+    () =>
+      createTokenDistributionData.length
+        ? createTokenDistributionData
+            .map(item => item.tokenNumber)
+            .reduce((pre, cur) => new BigNumber(pre || '0').plus(cur || '0').toString()) || '0'
+        : '0',
+    [createTokenDistributionData]
+  )
 
   const nextHandler: {
     disabled: boolean
@@ -158,6 +171,13 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         error: 'There are remaining tokens that are not used'
       }
 
+    if (new BigNumber(createTokenBaseData.tokenSupply).isLessThan(currentUsedTokenAmount)) {
+      return {
+        disabled: true,
+        error: 'Distributed total amount exceed totalSupply'
+      }
+    }
+
     if (!account) {
       return {
         disabled: true,
@@ -191,6 +211,12 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         )
       }
     }
+    if (!agreeDisclaimer) {
+      return {
+        disabled: true,
+        error: 'You must agree to the disclaimer'
+      }
+    }
     return {
       disabled: false,
       handler: onCreateToken
@@ -198,18 +224,20 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   }, [
     createTokenBaseData,
     remainderTokenAmount,
-    chainId,
+    currentUsedTokenAmount,
     account,
-    library,
+    chainId,
+    agreeDisclaimer,
     onCreateToken,
     createTokenDistributionData,
-    toggleWalletModal
+    toggleWalletModal,
+    library
   ])
 
   return (
     <ContainerWrapper>
       <CreatorBox>
-        <Box display={'grid'} mb={10} gridTemplateColumns="400fr 142fr 80fr 160fr 56fr" gap="8px 10px">
+        <Box display={'grid'} mb={10} gridTemplateColumns="380fr 142fr 92fr 160fr 56fr" gap="8px 10px">
           <StyledTitle>Wallet address</StyledTitle>
           <StyledTitle>Number of Tokens</StyledTitle>
           <StyledTitle>% of Total</StyledTitle>
@@ -303,6 +331,17 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         </OutlineButton>
       </CreatorBox>
 
+      <Box display={'flex'} justifyContent="center" mb={16}>
+        <Checkbox checked={agreeDisclaimer} onChange={e => setAgreeDisclaimer(e.target.checked)}></Checkbox>
+        <Typography variant="body1">
+          I have read and agree to the{' '}
+          <Link target="_blank" href="https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique">
+            Disclaimer
+          </Link>{' '}
+          for creating a token
+        </Typography>
+      </Box>
+
       {nextHandler.error ? (
         <Alert severity="error">{nextHandler.error}</Alert>
       ) : (
@@ -314,7 +353,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           Back
         </OutlineButton>
         <BlackButton width="252px" disabled={nextHandler.disabled} onClick={nextHandler.handler}>
-          Add DAO
+          Create Token
         </BlackButton>
       </Box>
     </ContainerWrapper>

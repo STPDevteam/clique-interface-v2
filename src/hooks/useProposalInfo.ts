@@ -4,17 +4,20 @@ import { useActiveWeb3React } from 'hooks'
 import JSBI from 'jsbi'
 import { useEffect, useMemo, useState } from 'react'
 import { VotingTypes } from 'state/buildingGovDao/actions'
-import { NEVER_RELOAD, useSingleCallResult } from 'state/multicall/hooks'
+import { useSingleCallResult } from 'state/multicall/hooks'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { getProposalContent, sign } from 'utils/fetch/server'
 import { retry } from 'utils/retry'
 import { useGovernanceDaoContract } from './useContract'
+import { useDaoInfo } from './useDaoInfo'
 import { SignType } from './useProposalCallback'
 
 export enum ProposalStatus {
   SOON = 1,
   OPEN = 2,
-  CLOSED = 3
+  CLOSED = 3,
+  CANCEL = 4,
+  SUCCESS = 5
 }
 
 export interface ProposalSignProp {
@@ -25,7 +28,7 @@ export interface ProposalSignProp {
   tokenChainId: ChainId
 }
 
-export interface ProposalBaseProp {
+interface ProposalBaseProp {
   status: ProposalStatus
   creator: string
   title: string
@@ -37,6 +40,7 @@ export interface ProposalBaseProp {
   votingType: VotingTypes
   targetTimeString: string
   proposalId: number
+  votingThresholdSnapshot: string
 }
 export interface ProposalOptionProp {
   name: string
@@ -63,6 +67,7 @@ export interface ProposalDetailProp {
       }[]
     | undefined
   proposalId: number
+  votingThreshold: TokenAmount | undefined
 }
 
 export function useProposalSign(
@@ -76,15 +81,25 @@ export function useProposalSign(
 
   useEffect(() => {
     ;(async () => {
-      if (!account || !daoAddress) {
+      if (!account || !daoAddress || (signType === SignType.VOTE && proposalId === undefined)) {
         setRet(undefined)
         return
       }
-      const { promise } = retry(() => sign(chainId, account, daoAddress, signType, proposalId), {
-        n: 100,
-        minWait: 1000,
-        maxWait: 2500
-      })
+      const { promise } = retry(
+        () =>
+          sign(
+            chainId,
+            account,
+            daoAddress,
+            signType,
+            signType === SignType.CREATE_PROPOSAL ? 0 : (proposalId as number)
+          ),
+        {
+          n: 100,
+          minWait: 1000,
+          maxWait: 2500
+        }
+      )
       try {
         const returnData = await promise
         setRet(returnData.data.data as ProposalSignProp)
@@ -97,7 +112,7 @@ export function useProposalSign(
   return ret
 }
 
-export function useProposalBaseInfo(
+function useProposalBaseInfo(
   daoAddress: string,
   daoChainId: ChainId,
   proposalId: number
@@ -113,7 +128,7 @@ export function useProposalBaseInfo(
 
     let _status: ProposalStatus = ProposalStatus.CLOSED
     if (proposalInfoRes.cancel) {
-      _status = ProposalStatus.CLOSED
+      _status = ProposalStatus.CANCEL
     } else if (now >= proposalInfoRes.startTime && now <= proposalInfoRes.endTime) {
       _status = ProposalStatus.OPEN
     } else if (now < proposalInfoRes.startTime) {
@@ -144,6 +159,7 @@ export function useProposalBaseInfo(
       endTime,
       proposalId,
       votingType: proposalInfoRes.votingType as VotingTypes,
+      votingThresholdSnapshot: proposalInfoRes.votingThresholdSnapshot.toString(),
       targetTimeString
     }
   }, [proposalInfoRes, proposalId])
@@ -153,29 +169,34 @@ export function useProposalDetailInfo(
   daoAddress: string,
   daoChainId: ChainId,
   proposalId: number,
-  token?: Token,
   account?: string
 ): undefined | ProposalDetailProp {
   const [content, setContent] = useState<string>()
+  const daoInfo = useDaoInfo(daoAddress, daoChainId)
   const daoContract = useGovernanceDaoContract(daoAddress, daoChainId)
   const proposalOptionRes = useSingleCallResult(
     daoContract,
     'getProposalOptionById',
     [proposalId],
-    NEVER_RELOAD,
+    undefined,
     daoChainId
   ).result?.[0]
   const proposalBaseInfo = useProposalBaseInfo(daoAddress, daoChainId, proposalId)
 
   const totalVoteAmount: TokenAmount | undefined = useMemo(() => {
-    if (!proposalOptionRes || !token) {
+    if (!proposalOptionRes || !daoInfo?.token) {
       return undefined
     }
     const _total = proposalOptionRes
       .map((item: any) => item.amount.toString() as string)
       .reduce((a: string, b: string) => JSBI.ADD(JSBI.BigInt(a), JSBI.BigInt(b)))
-    return new TokenAmount(token, _total.toString())
-  }, [proposalOptionRes, token])
+    return new TokenAmount(daoInfo?.token, _total.toString())
+  }, [proposalOptionRes, daoInfo?.token])
+
+  const votingThreshold = useMemo(() => {
+    if (!proposalBaseInfo?.votingThresholdSnapshot || !daoInfo?.token) return undefined
+    return new TokenAmount(daoInfo.token, proposalBaseInfo.votingThresholdSnapshot)
+  }, [daoInfo?.token, proposalBaseInfo?.votingThresholdSnapshot])
 
   const proposalOptions:
     | {
@@ -184,18 +205,23 @@ export function useProposalDetailInfo(
         per: number
       }[]
     | undefined = useMemo(() => {
-    if (!proposalOptionRes || !token || !totalVoteAmount) {
+    if (!proposalOptionRes || !daoInfo?.token || !totalVoteAmount) {
       return undefined
     }
     return proposalOptionRes.map((item: any) => {
-      const _amount = new TokenAmount(token, item.amount.toString())
+      const _amount = new TokenAmount(daoInfo?.token as Token, item.amount.toString())
       return {
         name: item.name as string,
         amount: _amount,
         per: Number(_amount.divide(totalVoteAmount).toSignificant(6))
       }
     })
-  }, [proposalOptionRes, token, totalVoteAmount])
+  }, [proposalOptionRes, daoInfo?.token, totalVoteAmount])
+
+  const isSuccess = useMemo(() => {
+    if (!votingThreshold || !totalVoteAmount) return undefined
+    return !votingThreshold.greaterThan(totalVoteAmount)
+  }, [votingThreshold, totalVoteAmount])
 
   useEffect(() => {
     ;(async () => {
@@ -231,24 +257,28 @@ export function useProposalDetailInfo(
         amount: TokenAmount
       }[]
     | undefined = useMemo(() => {
-    if (!token || !accountVoteInfoRes || !proposalOptions?.length) {
+    if (!daoInfo?.token || !accountVoteInfoRes || !proposalOptions?.length) {
       return undefined
     }
     return accountVoteInfoRes.map((item: any) => ({
       name: proposalOptions[item.index].name,
-      amount: new TokenAmount(token, item.amount)
+      amount: new TokenAmount(daoInfo?.token as Token, item.amount)
     }))
-  }, [accountVoteInfoRes, proposalOptions, token])
+  }, [accountVoteInfoRes, proposalOptions, daoInfo?.token])
 
   return useMemo(() => {
     if (!proposalBaseInfo || !proposalOptions) {
       return undefined
     }
+    const _proposalBaseInfo = isSuccess
+      ? Object.assign(proposalBaseInfo, { status: ProposalStatus.SUCCESS })
+      : proposalBaseInfo
     return {
       content,
       myVoteInfo,
       proposalOptions,
-      ...proposalBaseInfo
+      votingThreshold,
+      ..._proposalBaseInfo
     }
-  }, [content, proposalBaseInfo, proposalOptions, myVoteInfo])
+  }, [proposalBaseInfo, proposalOptions, isSuccess, content, myVoteInfo, votingThreshold])
 }

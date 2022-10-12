@@ -6,14 +6,14 @@ import { useActiveWeb3React } from '.'
 import { useDaoFactoryContract, useGovernanceDaoContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
-import { commitErrorMsg } from 'utils/fetch/server'
+import { commitErrorMsg, daoHandleMakeSign } from 'utils/fetch/server'
 import { useToken } from 'state/wallet/hooks'
 import { amountAddDecimals } from 'utils/dao'
 
 export function useCreateDaoCallback() {
   const addTransaction = useTransactionAdder()
   const contract = useDaoFactoryContract()
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
   const { buildingDaoData: data, removeBuildingDaoData } = useBuildingDaoDataCallback()
   const token = useToken(data.tokenAddress, data.baseChainId)
@@ -22,6 +22,18 @@ export function useCreateDaoCallback() {
     if (!account) throw new Error('none account')
     if (!contract) throw new Error('none contract')
     if (!token) throw new Error('none token')
+    if (!chainId) throw new Error('none chainId')
+
+    let daoHandleSign: any = {}
+    try {
+      const daoHandleSignRes = await daoHandleMakeSign(data.daoHandle.trim(), account, chainId)
+      if (!daoHandleSignRes.data.data?.signature) {
+        throw new Error('Handle is used, please change the DAO Handle on Clique.')
+      }
+      daoHandleSign = daoHandleSignRes.data.data
+    } catch (error) {
+      throw new Error('Handle is used, please change the DAO Handle on Clique.')
+    }
 
     const args = [
       [
@@ -32,15 +44,18 @@ export function useCreateDaoCallback() {
         data.twitterLink.trim(),
         data.githubLink.trim(),
         data.discordLink.trim(),
-        data.daoImage.trim()
+        data.daoImage.trim(),
+        data.websiteLink.trim()
       ],
       [data.baseChainId, data.tokenAddress],
       [
-        amountAddDecimals(data.createProposalMinimum),
-        amountAddDecimals(data.executeMinimum),
+        amountAddDecimals(data.createProposalMinimum, token.decimals),
+        amountAddDecimals(data.executeMinimum, token.decimals),
         data.defaultVotingPeriod,
         data.votingTypes
-      ]
+      ],
+      daoHandleSign.lockBlockNum,
+      daoHandleSign.signature
     ]
 
     const method = 'createDAO'
@@ -74,7 +89,7 @@ export function useCreateDaoCallback() {
         }
         throw err
       })
-  }, [account, contract, token, data, gasPriceInfoCallback, addTransaction, removeBuildingDaoData])
+  }, [account, contract, token, chainId, data, gasPriceInfoCallback, addTransaction, removeBuildingDaoData])
 }
 
 export function useSetDaoAdminCallback(daoAddress: string) {
@@ -182,11 +197,11 @@ export function useAdminSetGovernanceCallback(daoAddress?: string) {
   const gasPriceInfoCallback = useGasPriceInfo()
 
   return useCallback(
-    async (proposalThreshold: string, votingQuorum: string, votingPeriod: number, votingType: number) => {
+    async (proposalThreshold: string, votingThreshold: string, votingPeriod: number, votingType: number) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
 
-      const args = [[proposalThreshold, votingQuorum, votingPeriod, votingType]]
+      const args = [[proposalThreshold, votingThreshold, votingPeriod, votingType]]
 
       const method = 'setGovernance'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
@@ -233,13 +248,13 @@ export function useAdminSetInfoCallback(daoAddress?: string) {
   return useCallback(
     async (
       daoName: string,
-      daoHandle: string,
       category: string,
       description: string,
       twitterLink: string,
       githubLink: string,
       discordLink: string,
-      daoImage: string
+      daoImage: string,
+      website: string
     ) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
@@ -247,13 +262,13 @@ export function useAdminSetInfoCallback(daoAddress?: string) {
       const args = [
         [
           daoName.trim(),
-          daoHandle.trim(),
           category.trim(),
           description.trim(),
           twitterLink.trim(),
           githubLink.trim(),
           discordLink.trim(),
-          daoImage.trim()
+          daoImage.trim(),
+          website.trim()
         ]
       ]
 

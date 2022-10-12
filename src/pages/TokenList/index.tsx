@@ -18,13 +18,14 @@ export default function TokenList() {
           </Typography>
           <ChainSelect
             empty
+            placeholder="All chains"
             width="235px"
             chainList={ChainList}
             selectedChain={selectChain}
             onChange={chain => setSelectChain(chain)}
           ></ChainSelect>
         </Box>
-        <Box mt={50}>
+        <Box mt={40}>
           <TokenListTable chainId={selectChain?.id || null} />
         </Box>
       </ContainerWrapper>

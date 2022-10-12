@@ -4,11 +4,12 @@ import EmptyData from 'components/EmptyData'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import Loading from 'components/Loading'
 import { ChainId, ChainListMap } from 'constants/chain'
+import { routes } from 'constants/routes'
 import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
 import { useDaoInfo } from 'hooks/useDaoInfo'
-import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
+import { AdminTagListBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 
@@ -116,11 +117,13 @@ export default function About() {
           <Box display={'grid'} gridTemplateColumns="1fr 1fr" alignItems={'center'} gap="10px 20px">
             {daoAdminList?.map(address => (
               <>
-                <StyledText fontWeight={600} key={address}>
-                  {address}
-                </StyledText>
+                <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${address}`}>
+                  <StyledText fontWeight={600} key={address}>
+                    {address}
+                  </StyledText>
+                </Link>
                 <div>
-                  <AdminTagBlock chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
+                  <AdminTagListBlock chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
                 </div>
               </>
             ))}

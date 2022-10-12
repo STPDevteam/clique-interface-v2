@@ -30,6 +30,11 @@ function Updaters() {
   )
 }
 
+function Self({ children }: any) {
+  if (window.top !== window.self) return null
+  return children
+}
+
 ReactDOM.render(
   <StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
@@ -41,7 +46,9 @@ ReactDOM.render(
               <MuiThemeProvider theme={theme}>
                 <CssBaseline />
                 <Router history={browserHistory}>
-                  <App />
+                  <Self>
+                    <App />
+                  </Self>
                 </Router>
               </MuiThemeProvider>
             </StyledEngineProvider>

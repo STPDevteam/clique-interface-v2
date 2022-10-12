@@ -133,7 +133,7 @@
     "name": "daoGovernance",
     "outputs": [
       { "internalType": "uint256", "name": "proposalThreshold", "type": "uint256" },
-      { "internalType": "uint256", "name": "votingQuorum", "type": "uint256" },
+      { "internalType": "uint256", "name": "votingThreshold", "type": "uint256" },
       { "internalType": "uint256", "name": "votingPeriod", "type": "uint256" },
       { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
     ],
@@ -151,7 +151,8 @@
       { "internalType": "string", "name": "twitter", "type": "string" },
       { "internalType": "string", "name": "github", "type": "string" },
       { "internalType": "string", "name": "discord", "type": "string" },
-      { "internalType": "string", "name": "daoLogo", "type": "string" }
+      { "internalType": "string", "name": "daoLogo", "type": "string" },
+      { "internalType": "string", "name": "website", "type": "string" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -221,7 +222,8 @@
           { "internalType": "string", "name": "twitter", "type": "string" },
           { "internalType": "string", "name": "github", "type": "string" },
           { "internalType": "string", "name": "discord", "type": "string" },
-          { "internalType": "string", "name": "daoLogo", "type": "string" }
+          { "internalType": "string", "name": "daoLogo", "type": "string" },
+          { "internalType": "string", "name": "website", "type": "string" }
         ],
         "internalType": "struct IDAOBase.General",
         "name": "general_",
@@ -239,7 +241,7 @@
       {
         "components": [
           { "internalType": "uint256", "name": "proposalThreshold", "type": "uint256" },
-          { "internalType": "uint256", "name": "votingQuorum", "type": "uint256" },
+          { "internalType": "uint256", "name": "votingThreshold", "type": "uint256" },
           { "internalType": "uint256", "name": "votingPeriod", "type": "uint256" },
           { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
         ],
@@ -278,6 +280,7 @@
       { "internalType": "string", "name": "content", "type": "string" },
       { "internalType": "uint256", "name": "startTime", "type": "uint256" },
       { "internalType": "uint256", "name": "endTime", "type": "uint256" },
+      { "internalType": "uint256", "name": "votingThresholdSnapshot", "type": "uint256" },
       { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
     ],
     "stateMutability": "view",
@@ -299,7 +302,7 @@
       {
         "components": [
           { "internalType": "uint256", "name": "proposalThreshold", "type": "uint256" },
-          { "internalType": "uint256", "name": "votingQuorum", "type": "uint256" },
+          { "internalType": "uint256", "name": "votingThreshold", "type": "uint256" },
           { "internalType": "uint256", "name": "votingPeriod", "type": "uint256" },
           { "internalType": "enum IDAOBase.VotingType", "name": "votingType", "type": "uint8" }
         ],
@@ -314,23 +317,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "components": [
-          { "internalType": "string", "name": "name", "type": "string" },
-          { "internalType": "string", "name": "handle", "type": "string" },
-          { "internalType": "string", "name": "category", "type": "string" },
-          { "internalType": "string", "name": "description", "type": "string" },
-          { "internalType": "string", "name": "twitter", "type": "string" },
-          { "internalType": "string", "name": "github", "type": "string" },
-          { "internalType": "string", "name": "discord", "type": "string" },
-          { "internalType": "string", "name": "daoLogo", "type": "string" }
-        ],
-        "internalType": "struct IDAOBase.General",
-        "name": "general_",
-        "type": "tuple"
-      }
-    ],
+    "inputs": [{ "internalType": "string[]", "name": "args", "type": "string[]" }],
     "name": "setInfo",
     "outputs": [],
     "stateMutability": "nonpayable",

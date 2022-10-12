@@ -1,6 +1,7 @@
 import { Select as MuiSelect, InputLabel as MuiInputLabel, styled, InputBase, useTheme, Theme } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
+import SelectedHoverIcon from 'assets/componentsIcon/selected_hover_icon.svg'
 import React, { useMemo } from 'react'
 import { SxProps } from '@mui/system'
 interface Props {
@@ -76,8 +77,15 @@ export default function Select(props: Props) {
           backgroundColor: primary ? theme.palette.primary.main : theme.bgColor.bg1,
           width: width || '100%',
           height: height || '56px',
-          padding: '0 20px',
+          padding: '0',
           fontWeight: 600,
+          '& .MuiSelect-select': {
+            width: '100%',
+            height: '100%',
+            padding: '0 50px 0 20px !important',
+            display: 'flex',
+            alignItems: 'center'
+          },
           '& span': {
             fontWeight: '600!important'
           },
@@ -117,7 +125,7 @@ export default function Select(props: Props) {
             '& .MuiPaper-root': {
               width: width ?? 'unset',
               borderRadius: '10px',
-              mt: '20px',
+              mt: '10px',
               boxShadow: theme => theme.shadows[4],
               transform: width ? 'translateX(-12px)!important' : 'none',
               '& li': {
@@ -151,6 +159,11 @@ export default function Select(props: Props) {
                   height: 20,
                   display: 'flex',
                   justifyContent: 'center'
+                },
+                '&:hover': {
+                  '&.Mui-selected::after': {
+                    content: `url(${SelectedHoverIcon})`
+                  }
                 }
               }
             }

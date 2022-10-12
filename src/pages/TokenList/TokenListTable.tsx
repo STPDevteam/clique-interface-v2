@@ -16,10 +16,12 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
   const tableList = useMemo(() => {
     if (loading) return []
     return tokenList.map(({ tokenAddress, chainId }) => [
-      <ShowTokenInfo key={0} address={tokenAddress} chainId={chainId} />,
-      <ChainText key={1} chainId={chainId} />,
+      <Box key={tokenAddress} display={'flex'}>
+        <ShowTokenInfo address={tokenAddress} chainId={chainId} />
+      </Box>,
+      <ChainText key={tokenAddress} chainId={chainId} />,
       <ShowCopyTokenAddress key={2} address={tokenAddress} chainId={chainId} />,
-      <Typography key={3} fontWeight={600} fontSize={13}>
+      <Typography key={tokenAddress} fontWeight={600} fontSize={13}>
         <ShowTokenSupply address={tokenAddress} chainId={chainId} />
       </Typography>
     ])
@@ -27,7 +29,12 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
 
   return (
     <>
-      <Table variant="outlined" header={['Token', 'Network', 'Contact', 'Total Supply']} rows={tableList}></Table>
+      <Table
+        firstAlign="left"
+        variant="outlined"
+        header={['Token', 'Network', 'Contact', 'Total Supply']}
+        rows={tableList}
+      ></Table>
       {!loading && !tokenList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
       <DelayLoading loading={loading}>
         <Loading sx={{ marginTop: 30 }} />

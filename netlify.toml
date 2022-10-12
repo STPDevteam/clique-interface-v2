@@ -14,14 +14,24 @@
 
   publish = "build/"
 
-  # Default build command.
-  command = "yarn build"
-
-
 # Deploy Preview context: all deploys generated from
 # a pull/merge request will inherit these settings.
 [context.deploy-preview]
   publish = "build/"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Content-Security-Policy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.myclique.io/ http://*.myclique.io/ https://www.googletagmanager.com https://www.google-analytics.com; frame-src 'self'; child-src 'self'; frame-ancestors 'self'; img-src 'self' http://*.myclique.io/ https://*.myclique.io/ https://assets.coingecko.com/ https://registry.walletconnect.org/ data: ;"
+
+    #  Multi-value headers are expressed with multi-line strings
+	  #  cache-control = '''
+	  #  max-age=0,
+	  #  no-cache,
+	  #  no-store,
+	  #  must-revalidate'''
 
 # The following redirect is intended for use with most SPAs
 # that handle routing internally.

@@ -64,7 +64,7 @@ export function useDaoBaseInfo(daoAddress?: string, chainId?: ChainId): DaoBaseI
       website: infoRes.website,
       daoLogo: infoRes.daoLogo,
       daoTokenAddress: tokenRes.tokenAddress,
-      daoTokenChainId: tokenRes.chainId
+      daoTokenChainId: Number(tokenRes.chainId)
     }
   }, [daoInfoRes.result, daoTokenRes.result])
 }
@@ -83,7 +83,7 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
       daoAddress: daoAddress,
       token: token || undefined,
       proposalThreshold: token ? new TokenAmount(token, governanceRes.proposalThreshold) : undefined,
-      votingThreshold: token ? new TokenAmount(token, governanceRes.votingQuorum) : undefined,
+      votingThreshold: token ? new TokenAmount(token, governanceRes.votingThreshold) : undefined,
       votingPeriod: Number(governanceRes.votingPeriod),
       votingType: Number(governanceRes.votingType),
       isCustomVotes: Number(governanceRes.votingPeriod) === 0
@@ -113,5 +113,25 @@ export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account
       return DaoAdminLevelProp.ADMIN
     }
     return DaoAdminLevelProp.NORMAL
+  }, [ownerRes, adminsRes, account])
+}
+
+export function useDaoAdminLevelList(daoAddress?: string, chainId?: ChainId, account?: string) {
+  const daoContract = useGovernanceDaoContract(daoAddress, chainId)
+
+  const adminsRes = useSingleCallResult(account ? daoContract : null, 'admins', [account], undefined, chainId)
+    .result?.[0]
+  const ownerRes = useSingleCallResult(daoContract, 'owner', [], undefined, chainId).result?.[0]
+
+  return useMemo(() => {
+    const retArr: DaoAdminLevelProp[] = []
+    if (!account || ownerRes === undefined || adminsRes === undefined) return undefined
+    if (account && ownerRes && ownerRes.toLowerCase() === account.toLowerCase()) {
+      retArr.push(DaoAdminLevelProp.SUPER_ADMIN)
+    }
+    if (adminsRes) {
+      retArr.push(DaoAdminLevelProp.ADMIN)
+    }
+    return retArr
   }, [ownerRes, adminsRes, account])
 }
