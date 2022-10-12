@@ -127,7 +127,7 @@ export default function AirdropTable({
             </div>
           )}
         </RowCenter>
-        <Link href="/template/airdrop-list.csv">
+        <Link href="/template/daodrop-list.csv">
           <Typography display={'flex'} alignItems="center" fontSize={12}>
             Download Templates
             <DownloadIcon sx={{ height: 16 }} />
