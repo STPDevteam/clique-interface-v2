@@ -165,7 +165,7 @@ export default function AirdropTable({
             placeholder="0x"
             label="Wallet address"
           />
-          <InputNumerical height={40} value={amount} onChange={e => setAmount(e.target.value)} label="Airdrop amount" />
+          <InputNumerical height={40} value={amount} onChange={e => setAmount(e.target.value)} label="DAOdrop amount" />
         </Stack>
       )}
       <RowCenter>

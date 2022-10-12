@@ -399,7 +399,7 @@ export default function Airdrop() {
                           airdropInfos?.creator === account &&
                           account ? (
                           <Box>
-                            <StyledText1>Recycle airdrop</StyledText1>
+                            <StyledText1>Recycle DAOdrop</StyledText1>
                             <RowCenter>
                               <StyledText2>
                                 {remainderRecycle?.toSignificant(6, { groupSeparator: ',' })}{' '}
