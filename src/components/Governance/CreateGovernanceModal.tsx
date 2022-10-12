@@ -100,6 +100,20 @@ export function CreateGovernanceModal() {
         error: 'Categories required'
       }
     }
+    if (!account) {
+      return {
+        disabled: true,
+        error: (
+          <>
+            You need to{' '}
+            <Link sx={{ cursor: 'pointer' }} onClick={toggleWalletModal}>
+              connect
+            </Link>{' '}
+            your wallet
+          </>
+        )
+      }
+    }
     if (daoHandleAvailable !== true) {
       return {
         disabled: true,
@@ -111,12 +125,14 @@ export function CreateGovernanceModal() {
       handler: () => setStep(CreateGovernanceStep.CONFIG)
     }
   }, [
+    account,
     buildingDaoData.category,
     buildingDaoData.daoHandle,
     buildingDaoData.daoImage,
     buildingDaoData.daoName,
     buildingDaoData.description,
-    daoHandleAvailable
+    daoHandleAvailable,
+    toggleWalletModal
   ])
 
   const govToken = useTokenByChain(

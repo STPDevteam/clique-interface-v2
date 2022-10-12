@@ -1,4 +1,4 @@
-import { styled, Box, Alert, Stack, Typography, useTheme } from '@mui/material'
+import { styled, Box, Alert, Stack, Typography, useTheme, Link } from '@mui/material'
 import { ContainerWrapper, CreatorBox } from '../StyledCreate'
 import UploadImage from 'components/UploadImage'
 import Input from 'components/Input'
@@ -9,6 +9,7 @@ import { useEffect, useMemo } from 'react'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const Wrapper = styled(CreatorBox)({
   display: 'grid',
@@ -19,6 +20,7 @@ const Wrapper = styled(CreatorBox)({
 export default function Basic({ next }: { next: () => void }) {
   const theme = useTheme()
   const { chainId, account } = useActiveWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.daoHandle)
 
@@ -58,6 +60,20 @@ export default function Basic({ next }: { next: () => void }) {
         error: 'Categories required'
       }
     }
+    if (!account) {
+      return {
+        disabled: true,
+        error: (
+          <>
+            You need to{' '}
+            <Link sx={{ cursor: 'pointer' }} onClick={toggleWalletModal}>
+              connect
+            </Link>{' '}
+            your wallet
+          </>
+        )
+      }
+    }
     if (daoHandleAvailable !== true) {
       return {
         disabled: true,
@@ -69,13 +85,15 @@ export default function Basic({ next }: { next: () => void }) {
       handler: next
     }
   }, [
+    account,
     buildingDaoData.category,
     buildingDaoData.daoHandle,
     buildingDaoData.daoImage,
     buildingDaoData.daoName,
     buildingDaoData.description,
     daoHandleAvailable,
-    next
+    next,
+    toggleWalletModal
   ])
 
   return (

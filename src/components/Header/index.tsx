@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Badge, Box, IconButton, Link, MenuItem, styled as muiStyled, styled } from '@mui/material'
+import { AppBar, Badge, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
@@ -8,7 +8,6 @@ import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/svg/logo.svg'
 import { ReactComponent as NotificationIcon } from '../../assets/svg/notification_icon.svg'
-import { ReactComponent as HeaderSDKIcon } from '../../assets/svg/header_sdk.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
@@ -38,8 +37,8 @@ export const Tabs: Tab[] = [
   { title: 'Governance', route: routes.Governance },
   { title: 'Activity', route: routes.Activity },
   { title: 'Tokens', route: routes.Tokens },
-  { title: 'Creator', route: routes.Creator }
-  // { title: 'DAO', link: 'https://google.com/' },
+  { title: 'Creator', route: routes.Creator },
+  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -266,14 +265,6 @@ export default function Header() {
         </Box>
 
         <Box display="flex" alignItems="center" gap={{ xs: '10px', sm: '24px' }}>
-          <Link
-            className="sdk"
-            href="https://www.npmjs.com/package/@myclique/governance-sdk"
-            target={'_blank'}
-            underline="none"
-          >
-            <HeaderSDKIcon />
-          </Link>
           <NetworkSelect />
           {account && (
             <NoticeMsg to={routes.Notification}>
