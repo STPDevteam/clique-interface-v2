@@ -29,7 +29,10 @@ export default function Profile() {
   const { address } = useParams<{ address: string }>()
   const { showModal, hideModal } = useModal()
   const currentAccount = useMemo(() => (isAddress(address) ? address : account), [account, address])
-  const isSelf = useMemo(() => currentAccount && account && account === currentAccount, [account, currentAccount])
+  const isSelf = useMemo(() => currentAccount && account && account.toLowerCase() === currentAccount.toLowerCase(), [
+    account,
+    currentAccount
+  ])
   const [rand, setRand] = useState(Math.random())
   const history = useHistory()
 

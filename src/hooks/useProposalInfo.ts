@@ -270,9 +270,10 @@ export function useProposalDetailInfo(
     if (!proposalBaseInfo || !proposalOptions) {
       return undefined
     }
-    const _proposalBaseInfo = isSuccess
-      ? Object.assign(proposalBaseInfo, { status: ProposalStatus.SUCCESS })
-      : proposalBaseInfo
+    const _proposalBaseInfo =
+      isSuccess && proposalBaseInfo.status === ProposalStatus.CLOSED
+        ? Object.assign(proposalBaseInfo, { status: ProposalStatus.SUCCESS })
+        : proposalBaseInfo
     return {
       content,
       myVoteInfo,
