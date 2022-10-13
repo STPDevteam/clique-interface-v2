@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
 import { getProposalList, getProposalSnapshot, getProposalVotesList } from '../utils/fetch/server'
@@ -8,6 +9,54 @@ export interface ProposalListBaseProp {
   daoChainId: ChainId
   daoAddress: string
   proposalId: number
+  title: string
+  contentV1: string
+  startTime: number
+  endTime: number
+  proposer: string
+  version: 'v1' | 'v2'
+  status: ProposalStatus
+  targetTimeString: string
+}
+
+function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
+  const now = currentTimeStamp()
+  return list.map((item: any) => {
+    const startTime = item.startTime
+    const endTime = item.endTime
+
+    let _status: ProposalStatus = ProposalStatus.CLOSED
+    if (now >= item.startTime && now <= item.endTime) {
+      _status = ProposalStatus.OPEN
+    } else if (now < item.startTime) {
+      _status = ProposalStatus.SOON
+    } else {
+      _status = ProposalStatus.CLOSED
+    }
+
+    let targetTimeString = ''
+    if (_status === ProposalStatus.SOON) {
+      targetTimeString = getTargetTimeString(now, startTime)
+    } else if (_status === ProposalStatus.OPEN) {
+      targetTimeString = getTargetTimeString(now, endTime)
+    } else {
+      targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
+    }
+
+    return {
+      proposalId: item.proposalId,
+      daoChainId,
+      version: item.version,
+      title: item.title,
+      daoAddress: item.daoAddress,
+      contentV1: item.contentV1.replace(/^\[markdown\]/, ''),
+      startTime: item.startTime,
+      endTime: item.endTime,
+      proposer: item.proposer,
+      status: _status,
+      targetTimeString
+    }
+  })
 }
 
 export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
@@ -49,11 +98,7 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = data.list.map((item: any) => ({
-          proposalId: item.proposalId,
-          daoChainId,
-          daoAddress
-        }))
+        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
         setResult(list)
       } catch (error) {
         setResult([])
@@ -82,11 +127,7 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = data.list.map((item: any) => ({
-          proposalId: item.proposalId,
-          daoChainId,
-          daoAddress
-        }))
+        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
         setResult(list)
         toTimeRefresh()
       } catch (error) {

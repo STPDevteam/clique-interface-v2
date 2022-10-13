@@ -7,6 +7,7 @@ import { getEtherscanLink, shortenAddress } from 'utils'
 import ShowProposalStatusTag from './ShowProposalStatusTag'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { myCliqueV1Domain } from '../../../../constants'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '24px',
@@ -40,7 +41,11 @@ export const RowCenter = styled(Box)({
   alignItems: 'center'
 })
 
-export default function ProposalItem({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
+export default function ProposalItem(props: ProposalListBaseProp) {
+  return props.version === 'v1' ? <ProposalV1Item {...props} /> : <ProposalV2Item {...props} />
+}
+
+function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
   const theme = useTheme()
   const history = useHistory()
   const proposalInfo = useProposalDetailInfo(daoAddress, daoChainId, proposalId)
@@ -103,6 +108,50 @@ export default function ProposalItem({ daoChainId, daoAddress, proposalId }: Pro
           ) : (
             <Skeleton animation="wave" width={100} />
           )}
+        </RowCenter>
+      </RowCenter>
+    </StyledCard>
+  )
+}
+
+function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
+  const theme = useTheme()
+  return (
+    <StyledCard
+      onClick={() =>
+        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.daoAddress}/${proposalInfo.proposalId}`)
+      }
+    >
+      <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
+        <Typography variant="h5" noWrap>
+          {proposalInfo.title}
+        </Typography>
+        <KeyboardArrowRightIcon />
+      </Box>
+      <Typography className="content" variant="body1">
+        {proposalInfo.contentV1}
+      </Typography>
+      <RowCenter mt={16}>
+        <RowCenter>
+          <>
+            <Link
+              underline="hover"
+              href={getEtherscanLink(proposalInfo.daoChainId, proposalInfo.proposer, 'address')}
+              target="_blank"
+            >
+              <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
+                {proposalInfo?.proposer && shortenAddress(proposalInfo.proposer)}
+              </Typography>
+            </Link>
+          </>
+        </RowCenter>
+        <RowCenter>
+          <>
+            <Typography color={theme.textColor.text1} fontSize={14}>
+              {proposalInfo.targetTimeString}
+            </Typography>
+            <ShowProposalStatusTag status={proposalInfo.status} />
+          </>
         </RowCenter>
       </RowCenter>
     </StyledCard>
