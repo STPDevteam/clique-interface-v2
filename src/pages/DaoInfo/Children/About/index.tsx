@@ -1,4 +1,4 @@
-import { Stack, styled, Typography } from '@mui/material'
+import { Stack, styled, Typography, Link as MuiLink } from '@mui/material'
 import { Box } from '@mui/system'
 import EmptyData from 'components/EmptyData'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
@@ -11,6 +11,7 @@ import { AdminTagListBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
+import { getEtherscanLink } from 'utils'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
@@ -53,7 +54,7 @@ export default function About() {
         <Stack spacing={16}>
           <StyledText>Network</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
-            {ChainListMap[curDaoChainId]?.name || '--'}
+            {daoInfo ? ChainListMap[daoInfo.daoTokenChainId]?.name : '--'}
           </StyledText>
         </Stack>
         <Stack spacing={16}>
@@ -61,9 +62,17 @@ export default function About() {
           <StyledText>
             <Stack direction={'row'} alignItems="center">
               <CurrencyLogo currency={daoInfo?.token || undefined} size="22px" style={{ marginRight: '5px' }} />
-              <StyledText fontWeight={600} fontSize={16}>
-                {daoInfo?.token ? `${daoInfo?.token.name} (${daoInfo?.token.symbol})` : '--'}
-              </StyledText>
+              <MuiLink
+                href={
+                  daoInfo ? getEtherscanLink(daoInfo.daoTokenChainId, daoInfo.daoTokenAddress, 'address') : undefined
+                }
+                underline="hover"
+                target="_blank"
+              >
+                <StyledText fontWeight={600} fontSize={16}>
+                  {daoInfo?.token ? `${daoInfo?.token.name} (${daoInfo?.token.symbol})` : '--'}
+                </StyledText>
+              </MuiLink>
             </Stack>
           </StyledText>
         </Stack>
