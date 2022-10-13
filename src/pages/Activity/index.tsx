@@ -1,4 +1,5 @@
 import { Box, MenuItem, Typography } from '@mui/material'
+import BannerWrapper from 'components/BannerWrapper'
 import Select from 'components/Select/Select'
 import { ActivityStatus } from 'hooks/useActivityInfo'
 import { useActivityList } from 'hooks/useBackedActivityServer'
@@ -6,6 +7,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 // import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import List from './List'
+import BannerImg from 'assets/images/activity_banner.jpg'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
@@ -45,14 +47,20 @@ export default function Activity() {
   const { search, loading, result, page } = useActivityList()
 
   return (
-    <Box padding="50px 20px">
-      <ContainerWrapper maxWidth={1150}>
-        <RowCenter>
+    <div>
+      <BannerWrapper imgSrc={BannerImg}>
+        <Typography color="#fff" fontSize={22} fontWeight={700}>
+          {`The community benefits are here, so don't miss out!`}
+        </Typography>
+      </BannerWrapper>
+      <Box padding="40px 20px">
+        <ContainerWrapper maxWidth={1150}>
           <RowCenter>
-            <Typography variant="h5" mr={24}>
-              DAO Activity
-            </Typography>
-            {/* <Select
+            <RowCenter>
+              <Typography variant="h5" mr={24}>
+                DAO Activity
+              </Typography>
+              {/* <Select
               placeholder=""
               width={235}
               height={48}
@@ -70,8 +78,8 @@ export default function Activity() {
                 </MenuItem>
               ))}
             </Select> */}
-          </RowCenter>
-          {/* <StyledButtonGroup variant="outlined">
+            </RowCenter>
+            {/* <StyledButtonGroup variant="outlined">
             {statusItemList.map(item => (
               <MuiButton
                 key={item.label}
@@ -82,27 +90,28 @@ export default function Activity() {
               </MuiButton>
             ))}
           </StyledButtonGroup> */}
-          <Select
-            placeholder=""
-            width={235}
-            height={48}
-            value={search.status}
-            onChange={e => search.setStatus(e.target.value)}
-          >
-            {statusItemList.map((item, index) => (
-              <MenuItem
-                key={index}
-                sx={{ fontWeight: 500 }}
-                value={item.value}
-                selected={search.status && search.status === item.value}
-              >
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </RowCenter>
-        <List loading={loading} page={page} result={result} />
-      </ContainerWrapper>
-    </Box>
+            <Select
+              placeholder=""
+              width={235}
+              height={48}
+              value={search.status}
+              onChange={e => search.setStatus(e.target.value)}
+            >
+              {statusItemList.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  sx={{ fontWeight: 500 }}
+                  value={item.value}
+                  selected={search.status && search.status === item.value}
+                >
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </RowCenter>
+          <List loading={loading} page={page} result={result} />
+        </ContainerWrapper>
+      </Box>
+    </div>
   )
 }
