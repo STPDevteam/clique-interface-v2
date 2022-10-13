@@ -8,6 +8,7 @@ import { ProposalStatus } from './useProposalInfo'
 export interface ProposalListBaseProp {
   daoChainId: ChainId
   daoAddress: string
+  daoAddressV1: string
   proposalId: number
   title: string
   contentV1: string
@@ -49,6 +50,7 @@ function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
       version: item.version,
       title: item.title,
       daoAddress: item.daoAddress,
+      daoAddressV1: item.daoAddressV1,
       contentV1: item.contentV1.replace(/^\[markdown\]/, ''),
       startTime: item.startTime,
       endTime: item.endTime,

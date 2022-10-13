@@ -119,7 +119,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
   return (
     <StyledCard
       onClick={() =>
-        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.daoAddress}/${proposalInfo.proposalId}`)
+        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.daoAddressV1}/${proposalInfo.proposalId}`)
       }
     >
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
