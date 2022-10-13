@@ -40,9 +40,9 @@ export default function Profile() {
   }, [hideModal])
 
   useEffect(() => {
-    if (!account) history.replace('/')
+    if (!currentAccount) history.replace('/')
     hideModal()
-  }, [account, hideModal, history])
+  }, [currentAccount, hideModal, history])
 
   return (
     <Box paddingBottom={40}>
