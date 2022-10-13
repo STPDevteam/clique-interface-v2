@@ -67,6 +67,7 @@ export default function Vote({
             {proposalInfo.proposalOptions.map(({ name }, index) => (
               <CheckBox
                 key={index}
+                disabled={proposalInfo.status !== ProposalStatus.OPEN}
                 checked={checkList[index]}
                 onChange={(e: any) => {
                   setCheckListIndex(index, e.target.checked)
