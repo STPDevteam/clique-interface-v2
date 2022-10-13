@@ -38,7 +38,7 @@ function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; 
   const { showModal, hideModal } = useModal()
   const { account } = useActiveWeb3React()
   const createERC20Claim = useCreateERC20ClaimCallback()
-  const { claimSubmitted } = useUserHasSubmittedClaim(`${account}_${item.tokenAmount.token.address}`)
+  const { claimSubmitted } = useUserHasSubmittedClaim(`${account}_claimToken_${item.tokenAmount.token.address}`)
 
   const isLocked = useMemo(() => {
     const now = new Date().getTime()

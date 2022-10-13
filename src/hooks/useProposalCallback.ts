@@ -180,7 +180,7 @@ export function useProposalVoteCallback(daoAddress: string) {
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             summary: 'Proposal vote',
-            claim: { recipient: `${contract.address}_proposalVote_${proposalId}` }
+            claim: { recipient: `${contract.address}_${account}_proposalVote_${proposalId}` }
           })
           return response.hash
         })

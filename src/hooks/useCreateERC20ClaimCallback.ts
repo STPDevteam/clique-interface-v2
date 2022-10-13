@@ -30,7 +30,7 @@ export function useCreateERC20ClaimCallback() {
         .then((response: TransactionResponse) => {
           addTransaction(response, {
             summary: 'Claim token',
-            claim: { recipient: `${account}_${address}` }
+            claim: { recipient: `${account}_claimToken_${address}` }
           })
           return response.hash
         })

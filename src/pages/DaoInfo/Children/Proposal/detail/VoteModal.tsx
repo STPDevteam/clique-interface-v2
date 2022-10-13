@@ -94,7 +94,9 @@ function VoteModalFunc({
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
   const proposalVoteCallback = useProposalVoteCallback(daoAddress)
-  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${daoAddress}_proposalVote_${proposalInfo.proposalId}`)
+  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(
+    `${daoAddress}_${account}_proposalVote_${proposalInfo.proposalId}`
+  )
 
   const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>({})
   useEffect(() => {
