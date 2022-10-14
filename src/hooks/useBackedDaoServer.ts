@@ -7,6 +7,7 @@ import {
   getDaoAdmins,
   getDaoInfo,
   getHomeDaoList,
+  getHomeOverview,
   getMyJoinedDao,
   getTokenList,
   switchJoinDao
@@ -401,4 +402,34 @@ export function useDaoHandleQuery(handle: string) {
   )
 
   return { available, queryHandleCallback }
+}
+
+export interface HomeOverviewProp {
+  totalProposal: number
+  totalApproveDao: number
+  totalDao: number
+  totalAccount: number
+}
+
+export function useHomeOverview(): HomeOverviewProp | undefined {
+  const [overview, setOverview] = useState<any>()
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await getHomeOverview()
+        const data = res.data.data as any
+        if (!data) {
+          setOverview(undefined)
+          return
+        }
+        setOverview(data)
+      } catch (error) {
+        setOverview(undefined)
+        console.error('useHomeOverview', error)
+      }
+    })()
+  }, [])
+
+  return overview
 }

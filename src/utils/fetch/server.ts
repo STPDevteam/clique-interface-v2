@@ -336,3 +336,7 @@ export function getAirdropAccountList(airdropId: number) {
     airdropId
   })
 }
+
+export function getHomeOverview() {
+  return Axios.get('stpdao/v2/overview/total')
+}

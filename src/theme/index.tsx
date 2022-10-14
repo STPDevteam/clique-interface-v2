@@ -19,6 +19,7 @@ interface TextColor {
   text3: string
   text4: string
   text5: string
+  text6: string
   primary: string
 }
 
@@ -125,6 +126,7 @@ export const theme = {
     text3: '#727272',
     text4: '#999999',
     text5: '#CCCCCC',
+    text6: '#487EDB',
     primary: '#31B047'
   },
   bgColor: {

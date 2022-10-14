@@ -144,3 +144,13 @@ export function isValidAmount(value: string | number | undefined) {
   if (new BigNumber(value).gt(0)) return true
   return false
 }
+
+export function formatMillion(value: number, fractionDigits = 1) {
+  if (value / 1_000_000 >= 1) {
+    return Number((value / 1_000_000).toFixed(fractionDigits)).toLocaleString() + 'm'
+  }
+  if (value / 1_000 >= 1) {
+    return Number((value / 1_000).toFixed(fractionDigits)).toLocaleString() + 'k'
+  }
+  return Number(value.toFixed(fractionDigits)).toLocaleString()
+}
