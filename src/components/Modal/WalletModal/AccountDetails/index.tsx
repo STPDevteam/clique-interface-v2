@@ -174,7 +174,7 @@ export function TxShow({
           <Box display="flex" justifyContent="space-between" width="100%" fontWeight={500}>
             <Typography variant="inherit">Recent Transactions</Typography>
             <TextButton primary onClick={clearAllTransactionsCallback}>
-              (clear all)
+              (Clean All)
             </TextButton>
           </Box>
           <Box display="grid">

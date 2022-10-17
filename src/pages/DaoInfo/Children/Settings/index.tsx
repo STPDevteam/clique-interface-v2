@@ -59,7 +59,7 @@ export default function Settings() {
         component: daoInfo ? <General daoInfo={daoInfo} daoChainId={curDaoChainId} /> : null
       },
       {
-        name: 'Governance setting',
+        name: 'Governance Setting',
         component: <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
       }
     ]

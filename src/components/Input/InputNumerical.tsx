@@ -68,7 +68,7 @@ export default function NumericalInput({
           <Box display="flex" alignItems="baseline">
             {!!balance && (
               <InputLabel style={{ fontSize: '12px' }}>
-                Available balance: {balance} {unit ?? ''}
+                Available Balance: {balance} {unit ?? ''}
               </InputLabel>
             )}
           </Box>

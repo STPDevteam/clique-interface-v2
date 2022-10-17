@@ -177,7 +177,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
             <StyledBoldText noWrap>{timeStampToFormat(item.eventStartTime, 'Y-MM-DD HH:mm')}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
-            <StyledText>Number of recipients</StyledText>
+            <StyledText>Number Of Recipients</StyledText>
             <StyledBoldText noWrap>{item.airdropNumber}</StyledBoldText>
           </Stack>
         </Box>

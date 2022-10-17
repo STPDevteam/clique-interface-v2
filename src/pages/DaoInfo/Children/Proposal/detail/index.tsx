@@ -15,13 +15,13 @@ export default function Index({ proposalInfo }: { proposalInfo: ProposalDetailPr
         {proposalInfo.cancel ? (
           <>
             <Typography variant="body1" fontSize={14} fontWeight={600} color={theme.palette.text.secondary}>
-              User closed
+              User Closed
             </Typography>
           </>
         ) : proposalInfo.status === ProposalStatus.SOON ? (
           <>
             <Typography fontSize={14} fontWeight={600} color={theme.textColor.text1} mr={6}>
-              Start at
+              Start At
             </Typography>
             <Typography variant="body1" fontSize={14} fontWeight={600} color={theme.palette.text.secondary}>
               {timeStampToFormat(proposalInfo.startTime)}
@@ -30,7 +30,7 @@ export default function Index({ proposalInfo }: { proposalInfo: ProposalDetailPr
         ) : (
           <>
             <Typography fontSize={14} fontWeight={600} color={theme.textColor.text1} mr={6}>
-              Close at
+              Close At
             </Typography>
             <Typography variant="body1" fontSize={14} fontWeight={600} color={theme.palette.text.secondary}>
               {timeStampToFormat(proposalInfo.endTime)}

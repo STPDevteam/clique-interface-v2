@@ -57,7 +57,7 @@ export default function Vote({
         <>
           <RowCenter>
             <Typography variant="h6" fontWeight={500}>
-              Cast your vote
+              Cast Your Vote
             </Typography>
             <Typography fontSize={13} color={theme.palette.text.secondary}>
               {proposalInfo.votingType === VotingTypes.SINGLE ? 'Single Vote' : 'Multi Vote'}
@@ -98,16 +98,16 @@ export default function Vote({
       ) : (
         <VoteResult type={proposalInfo.votingType} myVoteInfo={proposalInfo.myVoteInfo} />
       )}
-      <div>
+      <RowCenter mt={5}>
         <Typography fontSize={12} color={theme.palette.text.secondary}>
-          Minimum votes needed for success
+          Minimum Votes Needed For Success
         </Typography>
         <Typography fontSize={12}>
           {proposalInfo.votingThreshold?.toSignificant(6, {
             groupSeparator: ','
           }) || '-'}
         </Typography>
-      </div>
+      </RowCenter>
     </VoteWrapper>
   )
 }

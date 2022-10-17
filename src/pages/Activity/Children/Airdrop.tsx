@@ -314,7 +314,7 @@ export default function Airdrop() {
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
-                          <StyledText1>Event time</StyledText1>
+                          <StyledText1>Event Time</StyledText1>
                           <StyledText2 style={{ fontSize: 12 }}>
                             {airdropDescData
                               ? timeStampToFormat(airdropDescData.eventStartTime, 'Y-MM-DD HH:mm') +
@@ -324,7 +324,7 @@ export default function Airdrop() {
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
-                          <StyledText1>DAOdrop time</StyledText1>
+                          <StyledText1>DAOdrop Time</StyledText1>
                           <StyledText2 style={{ fontSize: 12 }}>
                             {airdropInfos
                               ? timeStampToFormat(airdropInfos.airdropStartTime, 'Y-MM-DD HH:mm') +

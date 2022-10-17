@@ -143,7 +143,7 @@ function useProposalBaseInfo(
     } else if (_status === ProposalStatus.OPEN) {
       targetTimeString = getTargetTimeString(now, endTime)
     } else if (proposalInfoRes.cancel) {
-      targetTimeString = 'User closed'
+      targetTimeString = 'User Closed'
     } else {
       targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
     }
