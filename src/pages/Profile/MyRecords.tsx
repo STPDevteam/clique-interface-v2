@@ -33,10 +33,10 @@ export default function MyRecords({ account }: { account: string }) {
     <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
       <Box display={'flex'} justifyContent="space-between">
         <Typography variant="h6" fontSize={16} fontWeight={600}>
-          My activity
+          My Activity
         </Typography>
         <Typography fontSize={16} fontWeight={500} color={theme.palette.text.secondary}>
-          Only visible to yourself
+          Only Visible To Yourself
         </Typography>
       </Box>
       <StyledBox mt={25}>

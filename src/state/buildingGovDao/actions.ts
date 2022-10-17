@@ -18,7 +18,7 @@ export enum CategoriesTypeProp {
   NFT = 'NFT',
   Metaverse = 'Metaverse',
   Gaming = 'Gaming',
-  Dapp = 'Dapp',
+  // Dapp = 'Dapp',
   Other = 'Other'
 }
 

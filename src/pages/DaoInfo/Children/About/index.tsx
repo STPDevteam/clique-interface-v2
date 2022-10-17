@@ -49,7 +49,7 @@ export default function About() {
 
   return (
     <div>
-      <StyledTitle variant="h5">Token info</StyledTitle>
+      <StyledTitle variant="h5">Token Information</StyledTitle>
       <StyledItem direction={'row'} justifyContent="space-between">
         <Stack spacing={16}>
           <StyledText>Network</StyledText>
@@ -88,7 +88,7 @@ export default function About() {
         </Stack>
       </StyledItem>
 
-      <StyledTitle variant="h5">Governance settings</StyledTitle>
+      <StyledTitle variant="h5">Governance Settings</StyledTitle>
       <StyledItem direction={'row'} justifyContent="space-between">
         <Stack spacing={16}>
           <StyledText>Min. holding for proposal</StyledText>
@@ -103,7 +103,7 @@ export default function About() {
           </StyledText>
         </Stack>
         <Stack spacing={16}>
-          <StyledText>Default voting period</StyledText>
+          <StyledText>Default Voting Period</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {votingPeriodDate
               ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
@@ -111,7 +111,7 @@ export default function About() {
           </StyledText>
         </Stack>
         <Stack spacing={16}>
-          <StyledText>Voting types allowed</StyledText>
+          <StyledText>Voting Types Allowed</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}
           </StyledText>

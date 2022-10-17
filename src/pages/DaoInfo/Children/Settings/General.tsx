@@ -192,7 +192,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             onChange={e => setDaoName(removeEmoji(e.target.value || ''))}
           />
           <Input
-            label="*DAO Handle on Clique"
+            label="*DAO Handle On Clique"
             maxLength={30}
             userPattern={'^[0-9a-z_]*$'}
             placeholder="Lowercase characters, numbers, underscores"
@@ -205,7 +205,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             value={daoInfo.handle}
           />
           <Input
-            label="Twitter handle"
+            label="Twitter Handle"
             placeholder="https://twitter.com/"
             type="url"
             errSet={() => setTwitterLink('')}
@@ -221,7 +221,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             onChange={e => setGithubLink(e.target.value || '')}
           />
           <Input
-            label="Discord server link"
+            label="Discord Server Link"
             type="url"
             errSet={() => setDiscordLink('')}
             placeholder="https://discord.com"
@@ -229,7 +229,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             onChange={e => setDiscordLink(e.target.value || '')}
           />
           <Input
-            label="Website link"
+            label="Website Link"
             placeholder="https://xxxx.com"
             type="url"
             errSet={() => setWebsiteLink('')}

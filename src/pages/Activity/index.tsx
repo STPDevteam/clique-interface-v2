@@ -1,4 +1,4 @@
-import { Box, MenuItem, Typography } from '@mui/material'
+import { Box, Link, MenuItem, Typography } from '@mui/material'
 import BannerWrapper from 'components/BannerWrapper'
 import Select from 'components/Select/Select'
 import { ActivityStatus } from 'hooks/useActivityInfo'
@@ -50,7 +50,8 @@ export default function Activity() {
     <div>
       <BannerWrapper imgSrc={BannerImg}>
         <Typography color="#fff" fontSize={22} fontWeight={700}>
-          {`The community benefits are here, so don't miss out!`}
+          {`Community rewards are live!`}
+          <Link sx={{ color: 'inherit', textDecoration: 'none' }} target="_blank" href="">{` Claim them here. `}</Link>
         </Typography>
       </BannerWrapper>
       <Box padding="40px 20px">

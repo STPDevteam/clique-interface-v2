@@ -141,7 +141,7 @@ export default function Basic({ next }: { next: () => void }) {
             onChange={e => updateBuildingDaoKeyData('daoName', removeEmoji(e.target.value || ''))}
           />
           <Input
-            label="*DAO Handle on Clique"
+            label="*DAO Handle On Clique"
             maxLength={30}
             userPattern={'^[0-9a-z_]*$'}
             placeholder="Lowercase characters, numbers, underscores"
@@ -156,7 +156,7 @@ export default function Basic({ next }: { next: () => void }) {
             onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || '').replace(' ', ''))}
           />
           <Input
-            label="Twitter handle"
+            label="Twitter Handle"
             placeholder="https://twitter.com/"
             type="url"
             errSet={() => updateBuildingDaoKeyData('twitterLink', '')}
@@ -172,7 +172,7 @@ export default function Basic({ next }: { next: () => void }) {
             onChange={e => updateBuildingDaoKeyData('githubLink', e.target.value || '')}
           />
           <Input
-            label="Discord server link"
+            label="Discord Server Link"
             type="url"
             errSet={() => updateBuildingDaoKeyData('discordLink', '')}
             placeholder="https://discord.com"
@@ -180,7 +180,7 @@ export default function Basic({ next }: { next: () => void }) {
             onChange={e => updateBuildingDaoKeyData('discordLink', e.target.value || '')}
           />
           <Input
-            label="Website link"
+            label="Website Link"
             placeholder="https://xxxx.com"
             type="url"
             errSet={() => updateBuildingDaoKeyData('websiteLink', '')}

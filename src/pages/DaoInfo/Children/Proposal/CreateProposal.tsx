@@ -276,7 +276,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
                   }
                 }}
               ></DateTimePicker>
-              <LabelText>End time</LabelText>
+              <LabelText>End Time</LabelText>
               <DateTimePicker
                 disabled={!daoInfo.isCustomVotes}
                 minDateTime={startTime ? new Date(startTime * 1000) : undefined}
@@ -286,7 +286,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
             </Box>
 
             <Box>
-              <LabelText mb={6}>Voting type</LabelText>
+              <LabelText mb={6}>Voting Type</LabelText>
 
               {daoInfo.votingType === VotingTypes.ANY ? (
                 <StyledButtonGroup variant="outlined">
@@ -312,7 +312,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
 
             <Box>
               <RowCenter>
-                <LabelText>Minimum tokens needed to create proposal</LabelText>
+                <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
                 <LabelText>
                   {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
                 </LabelText>
@@ -374,7 +374,7 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
   return (
     <div>
       <RowCenter>
-        <LabelText>Voting options</LabelText>
+        <LabelText>Voting Options</LabelText>
         <LabelText
           display={'flex'}
           alignItems="center"
@@ -382,7 +382,7 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
           sx={{ cursor: 'pointer', color: theme => theme.palette.primary.main }}
         >
           <AddCircleOutlineIcon sx={{ width: 16 }} />
-          Add a option
+          Add A Option
         </LabelText>
       </RowCenter>
       <Stack spacing={8} mt={16}>

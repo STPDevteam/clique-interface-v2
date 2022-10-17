@@ -177,7 +177,7 @@ function Update({
             showFormatWrapper={() => (createProposalMinimum ? toFormatGroup(createProposalMinimum) : '')}
             value={createProposalMinimum}
             onChange={e => setCreateProposalMinimum(e.target.value || '')}
-            label="*Minimum tokens needed to create proposal"
+            label="*Minimum Tokens Needed To Create Proposal"
             placeholder="100,000"
           />
           <InputNumerical
@@ -185,7 +185,7 @@ function Update({
             showFormatWrapper={() => (executeMinimum ? toFormatGroup(executeMinimum) : '')}
             value={executeMinimum}
             onChange={e => setExecuteMinimum(e.target.value || '')}
-            label="*Minimum votes needed for proposal to execute"
+            label="*Minimum Votes Needed For Proposal To Execute"
             placeholder="100,000"
           />
           <DateTimeSet value={defaultVotingPeriod} onUpdate={num => setDefaultVotingPeriod(num)} />

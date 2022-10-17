@@ -238,11 +238,11 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
     <ContainerWrapper>
       <CreatorBox>
         <Box display={'grid'} mb={10} gridTemplateColumns="380fr 142fr 92fr 160fr 56fr" gap="8px 10px">
-          <StyledTitle>Wallet address</StyledTitle>
+          <StyledTitle>Wallet Address</StyledTitle>
           <StyledTitle>Number of Tokens</StyledTitle>
           <StyledTitle>% of Total</StyledTitle>
           <StyledTitle display={'flex'} alignItems="center">
-            Lock date
+            Lock Date
             <LightTooltip
               title={`Before the lock dates, the tokens will not be accessible. Afterwards, tokens will be distributed to
                   the user's wallet address.`}

@@ -107,7 +107,7 @@ function CreatePublicSaleForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; d
                   placeholder="0x"
                   type="address"
                   label="*Token Contract Address"
-                  rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create a new token>`}</Link>}
+                  rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create A New Token>`}</Link>}
                 />
                 <TokenRow totalSupply={saleTokenInfo?.totalSupply} />
               </Box>
@@ -121,7 +121,7 @@ function CreatePublicSaleForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; d
               }}
             ></DateTimePicker>
 
-            <StyledText>End time</StyledText>
+            <StyledText>End Time</StyledText>
             <DateTimePicker
               value={endTime ? new Date(endTime * 1000) : null}
               onValue={timestamp => setEndTime(timestamp)}

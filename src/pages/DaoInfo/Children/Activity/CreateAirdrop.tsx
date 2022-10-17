@@ -35,9 +35,9 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 
 const createAirdropInputFieldList = [
-  'Username for Twitter',
-  'Username for Telegram',
-  'Discord username',
+  'Username For Twitter',
+  'Username For Telegram',
+  'Discord Username',
   'Email',
   'TXID',
   'Other'
@@ -342,29 +342,29 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
       <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
       <Box mt={20}>
         <ContainerWrapper maxWidth={709}>
-          <Typography variant="h6">Create a DAOdrop event</Typography>
+          <Typography variant="h6">Create A DAOdrop Event</Typography>
           <Stack spacing={20} mt={20}>
             <div>
-              <StyledText mb={10}>Event title</StyledText>
+              <StyledText mb={10}>Event Title</StyledText>
               <Input value={title} onChange={e => setTitle(e.target.value || '')} placeholder="title" />
             </div>
             <div>
-              <StyledText mb={10}>Event description and rule</StyledText>
+              <StyledText mb={10}>Event Description And Rule</StyledText>
               <Editor content={description} setContent={setDescription} />
             </div>
 
             <Box>
-              <StyledText mt={30}>Collect information for users</StyledText>
+              <StyledText mt={30}>Collect Information For Users</StyledText>
               <RowCenter>
-                <StyledText fontWeight={400}>Only address of participating users are collected by default</StyledText>
-                <StyledText>Required field</StyledText>
+                <StyledText fontWeight={400}>Only Address Of Participating Users Are Collected By Default</StyledText>
+                <StyledText>Required Field</StyledText>
               </RowCenter>
               <InputField fieldList={fieldList} onFieldList={list => setFieldList(list)} />
             </Box>
 
             <Box>
               <ChainSelect
-                label="Please select network"
+                label="Please Select Network"
                 chainList={ChainList}
                 selectedChain={network}
                 onChange={e => setNetwork(e)}
@@ -388,7 +388,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 errSet={() => setAirdropAddress('')}
                 onChange={e => setAirdropAddress(e.target.value || '')}
                 placeholder="0x"
-                label="Please enter the contract address"
+                label="Please Enter The Contract Address"
                 rightLabel={
                   <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress(ZERO_ADDRESS)}>
                     use native token
@@ -400,14 +400,14 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
 
             <RowCenter>
               <StyledText>
-                Token name:{' '}
+                Token Name:{' '}
                 <span style={{ color: theme.palette.text.primary }}>
                   {airdropCurrency?.name || '--'} ({airdropCurrency?.symbol || '--'})
                 </span>
               </StyledText>
               {airdropTokenSupply && (
                 <StyledText>
-                  Total supply:{' '}
+                  Total Supply:{' '}
                   <span style={{ color: theme.palette.text.primary }}>
                     {airdropTokenSupply.toSignificant(6, { groupSeparator: ',' })}
                   </span>
@@ -418,14 +418,14 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             <InputNumerical
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              label="Total amount for DAOdrop"
+              label="Total Amount For DAOdrop"
               balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
               onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
             />
 
             <Box display={'grid'} gridTemplateColumns="1fr 1fr 1fr 1fr">
               <Box>
-                <StyledText>Event start time</StyledText>
+                <StyledText>Event Start Time</StyledText>
                 <DateTimePicker
                   value={eventStartTime ? new Date(eventStartTime * 1000) : null}
                   onValue={timestamp => {
@@ -434,7 +434,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>Event end time</StyledText>
+                <StyledText>Event End Time</StyledText>
                 <DateTimePicker
                   disabled={!eventStartTime}
                   minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
@@ -443,7 +443,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>DAOdrop start time</StyledText>
+                <StyledText>DAOdrop Start Time</StyledText>
                 <DateTimePicker
                   disabled={!eventEndTime}
                   minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
@@ -452,7 +452,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>DAOdrop end time</StyledText>
+                <StyledText>DAOdrop End Time</StyledText>
                 <DateTimePicker
                   disabled={!airdropStartTime}
                   minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}

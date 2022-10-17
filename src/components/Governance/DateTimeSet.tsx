@@ -22,7 +22,7 @@ export default function DateTimeSet({ value, onUpdate }: { value: number; onUpda
   return (
     <Box maxWidth={700}>
       <Typography fontSize={12} fontWeight={500} color={theme.palette.text.secondary}>
-        *Default voting period
+        *Default Voting Period
       </Typography>
       <Box display={'grid'} gridTemplateColumns="1fr 1fr 1fr">
         <StyledItem>
