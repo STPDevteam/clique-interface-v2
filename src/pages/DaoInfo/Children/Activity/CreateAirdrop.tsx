@@ -346,7 +346,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
           <Stack spacing={20} mt={20}>
             <div>
               <StyledText mb={10}>Event Title</StyledText>
-              <Input value={title} onChange={e => setTitle(e.target.value || '')} placeholder="title" />
+              <Input value={title} onChange={e => setTitle(e.target.value || '')} placeholder="Title" />
             </div>
             <div>
               <StyledText mb={10}>Event Description And Rule</StyledText>
@@ -378,7 +378,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 readOnly
                 rightLabel={
                   <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress('')}>
-                    use Token
+                    Use Token
                   </Link>
                 }
               />
@@ -391,7 +391,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 label="Please Enter The Contract Address"
                 rightLabel={
                   <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress(ZERO_ADDRESS)}>
-                    use native token
+                    Use Native Token
                   </Link>
                 }
                 type="address"

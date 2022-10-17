@@ -251,7 +251,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
       </Typography>
       <Box display="grid" mt={20} gridTemplateColumns={{ md: '1fr 1fr', xs: 'unset' }} gap="66px">
         <Stack spacing={20}>
-          <Input value={title} placeholder="title" onChange={e => setTitle(e.target.value)} label="Title" />
+          <Input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} label="Title" />
           <Input
             value={introduction}
             onChange={e => setIntroduction(e.target.value)}
@@ -266,7 +266,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         <Box>
           <Stack paddingTop="30px" spacing={'20px'}>
             <Box display={'grid'} gridTemplateColumns="60px 1fr" alignItems={'center'} gap="12px 24px">
-              <LabelText>Start time</LabelText>
+              <LabelText>Start Time</LabelText>
               <DateTimePicker
                 value={startTime ? new Date(startTime * 1000) : null}
                 onValue={timestamp => {

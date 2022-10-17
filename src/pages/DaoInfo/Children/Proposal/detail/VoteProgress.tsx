@@ -75,7 +75,7 @@ export default function VoteProgress({
           sx={{ cursor: 'pointer' }}
           color={theme.palette.primary.main}
         >
-          View all votes ({allVotes.toSignificant(6, { groupSeparator: ',' })})
+          View All Votes ({allVotes.toSignificant(6, { groupSeparator: ',' })})
         </Typography>
       </RowCenter>
       <Stack mt={16} spacing={10}>

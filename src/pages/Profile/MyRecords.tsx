@@ -68,13 +68,13 @@ export default function MyRecords({ account }: { account: string }) {
 
 const accountBackedSendRecordTypesText = {
   [AccountBackedSendRecordTypesProp.EvCreateDao]: 'Create DAO',
-  [AccountBackedSendRecordTypesProp.EvCreateProposal]: 'Create proposal',
+  [AccountBackedSendRecordTypesProp.EvCreateProposal]: 'Create Proposal',
   [AccountBackedSendRecordTypesProp.EvVote]: 'Vote',
-  [AccountBackedSendRecordTypesProp.EvCancelProposal]: 'Cancel proposal',
-  [AccountBackedSendRecordTypesProp.EvAdmin]: 'Set admin',
-  [AccountBackedSendRecordTypesProp.EvOwnershipTransferred]: 'Admin transferred',
-  [AccountBackedSendRecordTypesProp.EvCreateERC20]: 'Create token',
-  [AccountBackedSendRecordTypesProp.EvClaimReserve]: 'Claim reserve Token',
+  [AccountBackedSendRecordTypesProp.EvCancelProposal]: 'Cancel Proposal',
+  [AccountBackedSendRecordTypesProp.EvAdmin]: 'Set Admin',
+  [AccountBackedSendRecordTypesProp.EvOwnershipTransferred]: 'Admin Transferred',
+  [AccountBackedSendRecordTypesProp.EvCreateERC20]: 'Create Token',
+  [AccountBackedSendRecordTypesProp.EvClaimReserve]: 'Claim Reserve Token',
   [AccountBackedSendRecordTypesProp.EvCreateAirdrop]: 'Create DAOdrop',
   [AccountBackedSendRecordTypesProp.EvSettleAirdrop]: 'Publish DAOdrop',
   [AccountBackedSendRecordTypesProp.EvClaimed]: 'Claim DAOdrop'

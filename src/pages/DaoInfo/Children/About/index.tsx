@@ -91,13 +91,13 @@ export default function About() {
       <StyledTitle variant="h5">Governance Settings</StyledTitle>
       <StyledItem direction={'row'} justifyContent="space-between">
         <Stack spacing={16}>
-          <StyledText>Min. holding for proposal</StyledText>
+          <StyledText>Min. Holding For Proposal</StyledText>
           <StyledText fontWeight={600} fontSize={16}>{`${daoInfo?.proposalThreshold?.toSignificant(6, {
             groupSeparator: ','
           })} ${daoInfo?.token?.symbol || '-'}`}</StyledText>
         </Stack>
         <Stack spacing={16}>
-          <StyledText>Min. votes for proposal execution</StyledText>
+          <StyledText>Min. Votes For Proposal Execution</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes
           </StyledText>

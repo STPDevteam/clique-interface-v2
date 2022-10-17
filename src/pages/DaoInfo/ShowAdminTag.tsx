@@ -38,7 +38,7 @@ export function AdminTagListBlock({
 export default function ShowAdminTag({ level }: { level?: DaoAdminLevelProp }) {
   const theme = useTheme()
   return level === DaoAdminLevelProp.SUPER_ADMIN ? (
-    <StyledChip label="Super admin" />
+    <StyledChip label="Super Admin" />
   ) : level === DaoAdminLevelProp.ADMIN ? (
     <StyledChip label="Admin" bgColor={theme.bgColor.bg6} />
   ) : null
