@@ -17,11 +17,11 @@ export default function TokenList() {
     <Box>
       <BannerWrapper imgSrc={TokenImg}>
         <Typography color="#fff" fontSize={22} fontWeight={700}>
-          Create your own tokens with a difference.
+          Tokenize your DAO with a purpose!
           <Link
             style={{ color: 'inherit', textDecoration: 'none' }}
             to={routes.CreatorToken}
-          >{` Create a token >`}</Link>
+          >{` Create your token here >`}</Link>
         </Typography>
       </BannerWrapper>
       <Box padding="40px 20px">

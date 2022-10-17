@@ -13,7 +13,7 @@ import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 
 const itemList = [
-  { value: undefined, label: 'All proposals' },
+  { value: undefined, label: 'All Proposals' },
   { value: ProposalStatus.SOON, label: 'Soon' },
   { value: ProposalStatus.OPEN, label: 'Open' },
   { value: ProposalStatus.CLOSED, label: 'Closed' }
@@ -36,7 +36,7 @@ export default function Proposal() {
           width="252px"
           onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
         >
-          + Create a proposal
+          + Create A Proposal
         </BlackButton>
         <Select
           placeholder=""

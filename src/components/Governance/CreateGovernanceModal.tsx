@@ -217,7 +217,7 @@ export function CreateGovernanceModal() {
     <Modal maxWidth="628px" closeIcon width="100%">
       <StyledBody>
         <Typography variant="h5" textAlign={'center'}>
-          Add your on chain DAO
+          Add your DAO
         </Typography>
         <Typography pb={8} variant="body1" textAlign={'center'} fontWeight={400} color={theme.palette.text.secondary}>
           If your DAO is not on chain yet, please{' '}
@@ -261,7 +261,7 @@ export function CreateGovernanceModal() {
                   onChange={e => updateBuildingDaoKeyData('daoName', removeEmoji(e.target.value || ''))}
                 />
                 <Input
-                  label="*DAO Handle on Clique"
+                  label="*DAO Handle On Clique"
                   placeholder="Lowercase characters, numbers, underscores"
                   userPattern={'^[0-9a-z_]*$'}
                   maxLength={30}
@@ -323,12 +323,12 @@ export function CreateGovernanceModal() {
                 onChange={e => updateBuildingDaoKeyData('tokenAddress', e.target.value || '')}
                 placeholder="0x"
                 label="*Token Contract Address"
-                rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create a new token>`}</Link>}
+                rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create A New Token>`}</Link>}
               />
               <TokenRow totalSupply={govToken?.totalSupply} />
               <InputNumerical
                 noDecimals
-                label="*Minimum tokens needed to create proposal"
+                label="*Minimum Tokens Needed To Create Proposal"
                 placeholder="100,000"
                 showFormatWrapper={() =>
                   buildingDaoData.createProposalMinimum ? toFormatGroup(buildingDaoData.createProposalMinimum) : ''
@@ -338,7 +338,7 @@ export function CreateGovernanceModal() {
               />
               <InputNumerical
                 noDecimals
-                label="*Minimum votes needed for proposal to execute"
+                label="*Minimum Votes Needed For Proposal To Execute"
                 placeholder="100,000"
                 showFormatWrapper={() =>
                   buildingDaoData.executeMinimum ? toFormatGroup(buildingDaoData.executeMinimum) : ''

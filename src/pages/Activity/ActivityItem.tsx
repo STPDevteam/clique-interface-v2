@@ -173,7 +173,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
             <StyledBoldText noWrap>{amount?.toSignificant(6, { groupSeparator: ',' }) || '--'}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
-            <StyledText>Start time</StyledText>
+            <StyledText>Start Time</StyledText>
             <StyledBoldText noWrap>{timeStampToFormat(item.eventStartTime, 'Y-MM-DD HH:mm')}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>

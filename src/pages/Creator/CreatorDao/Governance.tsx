@@ -172,7 +172,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
                   underline="none"
                   sx={{ cursor: 'pointer' }}
                   onClick={() => history.push(routes.CreatorToken)}
-                >{`Create a new token>`}</Link>
+                >{`Create A New Token>`}</Link>
               }
             />
             <TokenRow totalSupply={govToken?.totalSupply} />
@@ -186,7 +186,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
             }
             value={buildingDaoData.createProposalMinimum}
             onChange={e => updateBuildingDaoKeyData('createProposalMinimum', e.target.value || '')}
-            label="*Minimum tokens needed to create proposal"
+            label="*Minimum Tokens Needed To Create Proposal"
             placeholder="100,000"
           />
           <InputNumerical
@@ -196,7 +196,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
             }
             value={buildingDaoData.executeMinimum}
             onChange={e => updateBuildingDaoKeyData('executeMinimum', e.target.value || '')}
-            label="*Minimum votes needed for proposal to execute"
+            label="*Minimum Votes Needed For Proposal To Execute"
             placeholder="100,000"
           />
           <DateTimeSet

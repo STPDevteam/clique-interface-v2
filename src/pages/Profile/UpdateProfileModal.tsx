@@ -92,7 +92,7 @@ export default function UpdateProfileModal({
     <Modal maxWidth="628px" closeIcon width="100%">
       <StyledBody>
         <Typography textAlign={'center'} fontWeight={600} variant="h6">
-          Edit profile
+          Edit Profile
         </Typography>
         <Stack spacing={16}>
           <Box padding="12px">
@@ -101,7 +101,7 @@ export default function UpdateProfileModal({
               {'Supports JPG, PNG, SVG, and size <2MB.'}
             </Typography>
           </Box>
-          <Input value={name} label="Username" placeholder="nickname" onChange={e => setName(e.target.value)} />
+          <Input value={name} label="User Name" placeholder="nickname" onChange={e => setName(e.target.value)} />
           <Input
             value={bio}
             multiline

@@ -21,7 +21,7 @@ export default function TokenRow({ totalSupply }: { totalSupply?: TokenAmount })
   return (
     <Wrapper>
       <Box>
-        <Typography className="label">Token name</Typography>
+        <Typography className="label">Token Name</Typography>
         <Typography className="value">{totalSupply?.token?.name || '--'}</Typography>
       </Box>
       <Box>
@@ -29,7 +29,7 @@ export default function TokenRow({ totalSupply }: { totalSupply?: TokenAmount })
         <Typography className="value">{totalSupply?.token?.symbol || '--'}</Typography>
       </Box>
       <Box>
-        <Typography className="label">Token supply</Typography>
+        <Typography className="label">Token Supply</Typography>
         <Typography className="value">{totalSupply?.toSignificant(6, { groupSeparator: ',' }) || '--'}</Typography>
       </Box>
     </Wrapper>

@@ -1,8 +1,20 @@
-import { Select as MuiSelect, InputLabel as MuiInputLabel, styled, InputBase, useTheme, Theme } from '@mui/material'
+import {
+  Select as MuiSelect,
+  InputLabel as MuiInputLabel,
+  styled,
+  InputBase,
+  useTheme,
+  Theme,
+  MenuItem,
+  Typography
+} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
-import SelectedHoverIcon from 'assets/componentsIcon/selected_hover_icon.svg'
-import React, { useMemo } from 'react'
+// import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
+// import SelectedHoverIcon from 'assets/componentsIcon/selected_hover_icon.svg'
+import CheckboxIcon from '../../assets/componentsIcon/checkbox.svg'
+import SelectedIcon from '../../assets/componentsIcon/checkbox_checked.svg'
+
+import React, { useMemo, useState } from 'react'
 import { SxProps } from '@mui/system'
 interface Props {
   children?: React.ReactNode
@@ -68,11 +80,14 @@ export default function Select(props: Props) {
     }
     return true
   }, [defaultValue, value])
+  const [open, setOpen] = useState(false)
 
   return (
     <div>
       {label && <StyledInputLabel>{label}</StyledInputLabel>}
       <StyledSelect
+        open={multiple ? open : undefined}
+        onClick={() => multiple && setOpen(true)}
         sx={{
           backgroundColor: primary ? theme.palette.primary.main : theme.bgColor.bg1,
           width: width || '100%',
@@ -142,7 +157,7 @@ export default function Select(props: Props) {
                 }
               },
               '& li:hover': {
-                backgroundColor: theme => theme.palette.primary.light
+                backgroundColor: theme => theme.bgColor.bg1
               },
               '& li:last-child': {
                 borderBottom: 'none'
@@ -153,17 +168,15 @@ export default function Select(props: Props) {
                 alignItems: 'center',
                 gap: 8,
                 padding: 15,
-                '&.Mui-selected::after': {
-                  content: `url(${SelectedIcon})`,
+                '&::after': {
+                  content: `url(${CheckboxIcon})`,
                   width: 30,
                   height: 20,
                   display: 'flex',
                   justifyContent: 'center'
                 },
-                '&:hover': {
-                  '&.Mui-selected::after': {
-                    content: `url(${SelectedHoverIcon})`
-                  }
+                '&.Mui-selected::after': {
+                  content: `url(${SelectedIcon})`
                 }
               }
             }
@@ -183,6 +196,25 @@ export default function Select(props: Props) {
         renderValue={renderValue || undefined}
       >
         {children}
+        {multiple && (
+          <MenuItem
+            onClick={e => {
+              setOpen(false)
+              e.stopPropagation()
+            }}
+            sx={{
+              width: '100%',
+              padding: '15px 12px 10px !important',
+              '&::after': {
+                display: 'none !important'
+              }
+            }}
+          >
+            <Typography width="100%" textAlign={'center'}>
+              Confirm
+            </Typography>
+          </MenuItem>
+        )}
       </StyledSelect>
     </div>
   )
