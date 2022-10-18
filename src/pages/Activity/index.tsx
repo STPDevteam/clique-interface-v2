@@ -55,7 +55,7 @@ export default function Activity() {
             sx={{ color: 'inherit', textDecoration: 'none' }}
             target="_blank"
             href="https://stp-dao.gitbook.io/verse-network/verse-network/master"
-          >{` Claim them here. `}</Link>
+          >{` Click to know how it works. `}</Link>
         </Typography>
       </BannerWrapper>
       <Box padding="40px 20px">
