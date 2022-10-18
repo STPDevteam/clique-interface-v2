@@ -51,7 +51,11 @@ export default function Activity() {
       <BannerWrapper imgSrc={BannerImg}>
         <Typography color="#fff" fontSize={22} fontWeight={700}>
           {`Community rewards are live!`}
-          <Link sx={{ color: 'inherit', textDecoration: 'none' }} target="_blank" href="">{` Claim them here. `}</Link>
+          <Link
+            sx={{ color: 'inherit', textDecoration: 'none' }}
+            target="_blank"
+            href="https://stp-dao.gitbook.io/verse-network/verse-network/master"
+          >{` Claim them here. `}</Link>
         </Typography>
       </BannerWrapper>
       <Box padding="40px 20px">
