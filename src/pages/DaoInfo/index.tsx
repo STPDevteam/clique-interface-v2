@@ -12,7 +12,6 @@ import { ChainId } from 'constants/chain'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { isSocialUrl, toFormatGroup } from 'utils/dao'
 import { BlackButton } from 'components/Button/Button'
-import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
 import AdminTag from './ShowAdminTag'
@@ -108,8 +107,6 @@ export default function DaoInfo({ children }: { children: any }) {
     backedDaoInfo?.joinSwitch || false,
     backedDaoInfo?.members || 0
   )
-  const user = useUserInfo()
-  const loginSignature = useLoginSignature()
   const walletModalToggle = useWalletModalToggle()
 
   const toSwitchJoin = useCallback(
@@ -118,14 +115,9 @@ export default function DaoInfo({ children }: { children: any }) {
         walletModalToggle()
         return
       }
-      let signatureStr = user?.signature
-      if (!signatureStr) {
-        signatureStr = await loginSignature()
-      }
-      if (!signatureStr) return
-      switchJoin(join, curDaoChainId, daoAddress, signatureStr)
+      switchJoin(join, curDaoChainId, daoAddress)
     },
-    [account, curDaoChainId, daoAddress, loginSignature, switchJoin, user?.signature, walletModalToggle]
+    [account, curDaoChainId, daoAddress, switchJoin, walletModalToggle]
   )
 
   const currentTabLinks = useMemo(() => {

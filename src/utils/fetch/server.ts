@@ -1,4 +1,3 @@
-import { signMessage } from '../../constants'
 import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
@@ -41,18 +40,18 @@ export function switchJoinDao(
   chainId: number,
   daoAddress: string,
   isJoin: boolean,
-  signature: string
+  signature: string,
+  expireTimestamp: number
 ) {
   return Axios.post('stpdao/v2/dao/member', {
     params: {
-      account,
+      timestamp: expireTimestamp,
       chainId,
       daoAddress,
-      joinSwitch: isJoin ? 1 : 0
+      joinSwitch: isJoin ? 'join' : 'quit'
     },
     sign: {
       account,
-      message: signMessage,
       signature
     }
   })
