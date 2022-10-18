@@ -265,7 +265,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         </Stack>
         <Box>
           <Stack paddingTop="30px" spacing={'20px'}>
-            <Box display={'grid'} gridTemplateColumns="60px 1fr" alignItems={'center'} gap="12px 24px">
+            <Box display={'grid'} gridTemplateColumns="70px 1fr" alignItems={'center'} gap="12px 24px">
               <LabelText>Start Time</LabelText>
               <DateTimePicker
                 value={startTime ? new Date(startTime * 1000) : null}
