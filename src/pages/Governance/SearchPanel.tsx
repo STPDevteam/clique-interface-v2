@@ -74,10 +74,24 @@ function StaticsItem({ name, value }: { name: string; value: string }) {
   const theme = useTheme()
   return (
     <Box padding="0 25px" borderRight={`1px solid ${theme.textColor.text6}`}>
-      <Typography noWrap fontSize={16} color={theme.palette.common.white} variant="h6" fontWeight={400}>
+      <Typography
+        textAlign={'center'}
+        noWrap
+        fontSize={16}
+        color={theme.palette.common.white}
+        variant="h6"
+        fontWeight={400}
+      >
         {name}
       </Typography>
-      <Typography variant="h4" mt={10} color={theme.palette.common.white} fontSize={40} fontWeight={700}>
+      <Typography
+        textAlign={'center'}
+        variant="h4"
+        mt={10}
+        color={theme.palette.common.white}
+        fontSize={40}
+        fontWeight={700}
+      >
         {value}
       </Typography>
     </Box>
