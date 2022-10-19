@@ -1,6 +1,17 @@
 import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Alert, AppBar, Badge, Box, IconButton, Link, MenuItem, styled as muiStyled, styled } from '@mui/material'
+import {
+  Alert,
+  AppBar,
+  Badge,
+  Box,
+  IconButton,
+  Link,
+  MenuItem,
+  styled as muiStyled,
+  styled,
+  useTheme
+} from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
@@ -160,6 +171,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
+  const theme = useTheme()
   const {
     data: { unReadCount: notReadCount }
   } = useNotificationListPaginationCallback()
@@ -171,9 +183,18 @@ export default function Header() {
   return (
     <>
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
-      <Alert icon={false} severity="success">
+      <Alert
+        icon={false}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          borderRadius: 0,
+          color: '#fff',
+          backgroundColor: theme.palette.primary.main
+        }}
+      >
         {`You’re now on Clique V2, if you’d like to use the old site please navigate to:`}{' '}
-        <Link href="https://v1.myclique.io/" target={'_blank'} color="rgb(36, 76, 42)">
+        <Link href="https://v1.myclique.io/" target={'_blank'} color="inherit">
           https://v1.myclique.io/
         </Link>
       </Alert>

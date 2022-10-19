@@ -5,7 +5,8 @@ import { ChainId, SUPPORTED_NETWORKS } from '../constants/chain'
 export function getRpcUrl(chainId: ChainId) {
   switch (chainId) {
     case ChainId.MAINNET:
-      return `https://mainnet.infura.io/v3/169a2f10743f4afdaa0a17e148552867`
+      return `https://rpc.ankr.com/eth`
+    // return `https://mainnet.infura.io/v3/169a2f10743f4afdaa0a17e148552867`
     case ChainId.RINKEBY:
       return 'https://rinkeby.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
     case ChainId.GOERLI:
