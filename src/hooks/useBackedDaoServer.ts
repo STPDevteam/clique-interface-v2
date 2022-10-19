@@ -9,6 +9,7 @@ import {
   getDaoInfo,
   getHomeDaoList,
   getHomeOverview,
+  getJoinDaoMembersLogs,
   getMyJoinedDao,
   getTokenList,
   switchJoinDao
@@ -441,4 +442,61 @@ export function useHomeOverview(): HomeOverviewProp | undefined {
   }, [])
 
   return overview
+}
+
+export interface DaoMembersLogsProps {
+  account: string
+  accountLogo: string
+  chainId: string
+  daoAddress: string
+  message: string
+  operate: 'join' | 'quit'
+  signature: string
+  timestamp: number
+}
+
+export function useJoinDaoMembersLogs(chainId: number, daoAddress: string) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 4
+  const [result, setResult] = useState<DaoMembersLogsProps[]>([])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getJoinDaoMembersLogs(chainId, daoAddress, (currentPage - 1) * pageSize, pageSize)
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        setResult(data.list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useJoinDaoMembersLogs', error)
+      }
+    })()
+  }, [chainId, currentPage, daoAddress])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }

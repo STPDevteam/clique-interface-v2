@@ -20,6 +20,8 @@ import { DaoAvatars } from 'components/Avatars'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
+import MembersModal from './MembersModal'
+import useModal from 'hooks/useModal'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -96,6 +98,7 @@ const tabs = [
 export default function DaoInfo({ children }: { children: any }) {
   const theme = useTheme()
   const history = useHistory()
+  const { showModal } = useModal()
   const { account } = useActiveWeb3React()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
@@ -164,7 +167,12 @@ export default function DaoInfo({ children }: { children: any }) {
                     </BlackButton>
                   </StyledJoin>
                 </Stack>
-                <Box display={'flex'} alignItems="center">
+                <Box
+                  display={'flex'}
+                  alignItems="center"
+                  sx={{ cursor: 'pointer' }}
+                  onClick={() => showModal(<MembersModal chainId={curDaoChainId} daoAddress={daoAddress} />)}
+                >
                   <Typography mr={5} variant="caption" color={theme.palette.text.secondary}>
                     Members
                   </Typography>

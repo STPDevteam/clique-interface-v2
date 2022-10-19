@@ -54,7 +54,7 @@ export default function Activity() {
           <Link
             sx={{ color: 'inherit', textDecoration: 'none' }}
             target="_blank"
-            href="https://stp-dao.gitbook.io/verse-network/verse-network/master"
+            href="https://stp-dao.gitbook.io/verse-network/clique/daodrop"
           >{` Click to know how it works. `}</Link>
         </Typography>
       </BannerWrapper>

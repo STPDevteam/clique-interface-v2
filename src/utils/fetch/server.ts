@@ -339,3 +339,12 @@ export function getAirdropAccountList(airdropId: number) {
 export function getHomeOverview() {
   return Axios.get('stpdao/v2/overview/total')
 }
+
+export function getJoinDaoMembersLogs(chainId: number, daoAddress: string, offset: number, count: number) {
+  return Axios.get('stpdao/v2/account/sign/list', {
+    chainId,
+    daoAddress,
+    offset,
+    count
+  })
+}
