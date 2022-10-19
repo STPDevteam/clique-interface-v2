@@ -82,7 +82,7 @@ const tabs = [
     routeSuffix: 'proposal'
   },
   {
-    name: 'Activity',
+    name: 'DAODrop',
     routeSuffix: 'active_info'
   },
   {
