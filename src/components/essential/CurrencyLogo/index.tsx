@@ -55,8 +55,8 @@ export default function CurrencyLogo({
             return
           }
           const res = await getTokenLogo(args.address, args.chainId)
-          setSrcs([res.data.data.thumb || res.data.data.ownImg || ''])
-          logos[key] = [res.data.data.thumb || res.data.data.ownImg || '']
+          setSrcs([res.data.data.small || res.data.data.ownImg || ''])
+          logos[key] = [res.data.data.small || res.data.data.ownImg || '']
         } catch (error) {
           setSrcs([])
         }
