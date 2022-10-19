@@ -11,6 +11,8 @@ import { useHistory } from 'react-router-dom'
 import { useToken } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
+import useModal from 'hooks/useModal'
+import MembersModal from 'pages/DaoInfo/MembersModal'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   height: 298,
@@ -70,6 +72,7 @@ export default function DaoItem({
 }: HomeListProp) {
   const theme = useTheme()
   const history = useHistory()
+  const { showModal } = useModal()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
@@ -122,7 +125,13 @@ export default function DaoItem({
         )}
       </StyledDesc>
       <StyledTextNumber>
-        <div className="item">
+        <div
+          className="item"
+          onClick={e => {
+            e.stopPropagation()
+            showModal(<MembersModal daoAddress={daoAddress} chainId={chainId} />)
+          }}
+        >
           <Typography fontSize={13} color={theme.textColor.text1} fontWeight={600}>
             Members
           </Typography>

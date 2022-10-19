@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Badge, Box, IconButton, MenuItem, styled as muiStyled, styled } from '@mui/material'
+import { Alert, AppBar, Badge, Box, IconButton, Link, MenuItem, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile, ShowOnMobile } from 'theme/index'
@@ -171,6 +171,12 @@ export default function Header() {
   return (
     <>
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
+      <Alert icon={false} severity="success">
+        {`You’re now on Clique V2, if you’d like to use the old site please navigate to:`}{' '}
+        <Link href="https://v1.myclique.io/" target={'_blank'} color="rgb(36, 76, 42)">
+          https://v1.myclique.io/
+        </Link>
+      </Alert>
       <Filler />
       <StyledAppBar>
         <Box display="flex" alignItems="center">
