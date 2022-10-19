@@ -1,6 +1,7 @@
 import { ChainId } from 'constants/chain'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHomeListPaginationCallback } from 'state/pagination/hooks'
+import { currentTimeStamp } from 'utils'
 import { useActiveWeb3React } from '.'
 import {
   daoHandleQuery,
@@ -8,10 +9,12 @@ import {
   getDaoInfo,
   getHomeDaoList,
   getHomeOverview,
+  getJoinDaoMembersLogs,
   getMyJoinedDao,
   getTokenList,
   switchJoinDao
 } from '../utils/fetch/server'
+import { useWeb3Instance } from './useWeb3Instance'
 
 export function useMyJoinedDao() {
   const { account } = useActiveWeb3React()
@@ -209,6 +212,7 @@ export function useMemberJoinDao(defaultJoined: boolean, defaultMembers: number)
   const [curMembers, setCurMembers] = useState(defaultMembers)
   const [loading, setLoading] = useState(false)
   const { account } = useActiveWeb3React()
+  const web3 = useWeb3Instance()
 
   useEffect(() => {
     setIsJoined(defaultJoined)
@@ -219,21 +223,27 @@ export function useMemberJoinDao(defaultJoined: boolean, defaultMembers: number)
   }, [defaultMembers])
 
   const switchJoin = useCallback(
-    async (join: boolean, chainId: ChainId, daoAddress: string, signature: string) => {
-      if (!account || !signature) {
+    async (join: boolean, chainId: ChainId, daoAddress: string) => {
+      if (!account || !web3) {
         return
       }
       setLoading(true)
       try {
-        await switchJoinDao(account, chainId, daoAddress, join, signature)
-        setIsJoined(join)
-        setCurMembers(join ? curMembers + 1 : curMembers - 1)
-        setLoading(false)
+        const expireTimestamp = currentTimeStamp() + 30
+        const message = `${chainId},${daoAddress},${join ? 'join' : 'quit'},${expireTimestamp}`
+        const signature = await web3.eth.personal.sign(message, account, '')
+
+        const res = await switchJoinDao(account, chainId, daoAddress, join, signature, expireTimestamp)
+        if (res.data.data) {
+          setIsJoined(join)
+          setCurMembers(join ? curMembers + 1 : curMembers - 1)
+          setLoading(false)
+        }
       } catch (error) {
         setLoading(false)
       }
     },
-    [account, curMembers]
+    [account, curMembers, web3]
   )
 
   return {
@@ -432,4 +442,61 @@ export function useHomeOverview(): HomeOverviewProp | undefined {
   }, [])
 
   return overview
+}
+
+export interface DaoMembersLogsProps {
+  account: string
+  accountLogo: string
+  chainId: string
+  daoAddress: string
+  message: string
+  operate: 'join' | 'quit'
+  signature: string
+  timestamp: number
+}
+
+export function useJoinDaoMembersLogs(chainId: number, daoAddress: string) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 4
+  const [result, setResult] = useState<DaoMembersLogsProps[]>([])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getJoinDaoMembersLogs(chainId, daoAddress, (currentPage - 1) * pageSize, pageSize)
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        setResult(data.list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useJoinDaoMembersLogs', error)
+      }
+    })()
+  }, [chainId, currentPage, daoAddress])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }

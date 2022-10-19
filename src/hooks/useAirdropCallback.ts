@@ -37,7 +37,7 @@ export function useAirdropSignature() {
     [account, web3]
   )
   const makeMessage = useCallback((type: 'airdrop1' | 'airdrop2' | 'airdropDownload') => {
-    const timeStamp = currentTimeStamp() + 300
+    const timeStamp = currentTimeStamp() + 60
     return JSON.stringify({ expired: timeStamp, type })
   }, [])
 

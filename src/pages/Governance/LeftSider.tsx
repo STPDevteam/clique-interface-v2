@@ -13,7 +13,7 @@ import { DaoAvatars } from 'components/Avatars'
 const Wrapper = styled('div')(({ theme }) => ({
   overflowY: 'auto',
   borderRight: `1px solid ${theme.bgColor.bg2}`,
-  minHeight: `calc(100vh - ${theme.height.header})`,
+  height: `calc(100vh - ${theme.height.header})`,
   padding: '16px 8px',
   '&::-webkit-scrollbar': {
     display: 'none'
