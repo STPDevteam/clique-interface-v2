@@ -63,7 +63,7 @@ export default function Activity() {
           <RowCenter>
             <RowCenter>
               <Typography variant="h5" mr={24}>
-                DAO Activity
+                DAOdrop
               </Typography>
               {/* <Select
               placeholder=""
