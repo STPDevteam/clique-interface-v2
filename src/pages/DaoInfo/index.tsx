@@ -82,7 +82,7 @@ const tabs = [
     routeSuffix: 'proposal'
   },
   {
-    name: 'DAOdrop',
+    name: 'DAO Reward',
     routeSuffix: 'active_info'
   },
   {

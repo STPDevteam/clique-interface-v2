@@ -204,13 +204,13 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (!airdropCurrency) {
       return {
         disabled: true,
-        error: 'DAOdrop token required'
+        error: 'DAO Reward token required'
       }
     }
     if (!airdropCurrencyBalance || airdropCurrencyBalance.equalTo(JSBI.BigInt(0))) {
       return {
         disabled: true,
-        error: 'DAOdrop amount required'
+        error: 'DAO Reward amount required'
       }
     }
     if (!eventStartTime) {
@@ -240,25 +240,25 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (!airdropStartTime) {
       return {
         disabled: true,
-        error: 'DAOdrop start time required'
+        error: 'DAO Reward start time required'
       }
     }
     if (airdropStartTime <= eventEndTime) {
       return {
         disabled: true,
-        error: 'The DAOdrop start time must be later than the event end time'
+        error: 'The DAO Reward start time must be later than the event end time'
       }
     }
     if (!airdropEndTime) {
       return {
         disabled: true,
-        error: 'DAOdrop end time required'
+        error: 'DAO Reward end time required'
       }
     }
     if (airdropEndTime <= airdropStartTime) {
       return {
         disabled: true,
-        error: 'The DAOdrop end time must be later than the DAOdrop start time'
+        error: 'The DAO Reward end time must be later than the DAO Reward start time'
       }
     }
 
@@ -342,7 +342,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
       <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
       <Box mt={20}>
         <ContainerWrapper maxWidth={709}>
-          <Typography variant="h6">Create A DAOdrop Event</Typography>
+          <Typography variant="h6">Create A DAO Reward Event</Typography>
           <Stack spacing={20} mt={20}>
             <div>
               <StyledText mb={10}>Event Title</StyledText>
@@ -373,7 +373,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
 
             {isZero(airdropAddress) ? (
               <Input
-                label="DAOdrop token"
+                label="DAO Reward token"
                 value={network ? Currency.get_ETH_TOKEN(network.id as ChainId)?.symbol || '' : ''}
                 readOnly
                 rightLabel={
@@ -418,7 +418,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             <InputNumerical
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              label="Total Amount For DAOdrop"
+              label="Total Amount For DAO Reward"
               balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
               onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
             />
@@ -443,7 +443,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>DAOdrop Start Time</StyledText>
+                <StyledText>DAO Reward Start Time</StyledText>
                 <DateTimePicker
                   disabled={!eventEndTime}
                   minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
@@ -452,7 +452,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>DAOdrop End Time</StyledText>
+                <StyledText>DAO Reward End Time</StyledText>
                 <DateTimePicker
                   disabled={!airdropStartTime}
                   minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}
@@ -469,7 +469,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             </Alert>
           ) : (
             <Alert severity="success" sx={{ marginTop: 20 }}>
-              You can now create a DAOdrop
+              You can now create a DAO Reward
             </Alert>
           )}
 

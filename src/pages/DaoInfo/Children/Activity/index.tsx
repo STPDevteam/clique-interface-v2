@@ -38,7 +38,7 @@ export enum ActivityType {
 
 export const activityTypeText = {
   [ActivityType.PUBLIC_SALE]: 'Public Sale',
-  [ActivityType.AIRDROP]: 'DAOdrop'
+  [ActivityType.AIRDROP]: 'DAO Reward'
 }
 
 export default function Activity() {

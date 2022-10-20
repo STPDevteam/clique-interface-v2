@@ -39,7 +39,7 @@ const statusItemList = [
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
   { value: ActivityStatus.OPEN, label: ActivityStatus.OPEN },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
-  { value: ActivityStatus.AIRDROP, label: 'DAOdrop' },
+  { value: ActivityStatus.AIRDROP, label: 'DAO Reward' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
 ]
 
@@ -63,7 +63,7 @@ export default function Activity() {
           <RowCenter>
             <RowCenter>
               <Typography variant="h5" mr={24}>
-                DAOdrop
+                DAO Reward
               </Typography>
               {/* <Select
               placeholder=""

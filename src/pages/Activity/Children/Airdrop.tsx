@@ -239,7 +239,7 @@ export default function Airdrop() {
                     <PanelWrapper>
                       <Stack spacing={10}>
                         <RowCenter>
-                          <StyledText1>DAOdrop Token</StyledText1>
+                          <StyledText1>DAO Reward Token</StyledText1>
                           <MuiLink
                             target={'_blank'}
                             underline="none"
@@ -324,7 +324,7 @@ export default function Airdrop() {
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
-                          <StyledText1>DAOdrop Time</StyledText1>
+                          <StyledText1>DAO Reward Time</StyledText1>
                           <StyledText2 style={{ fontSize: 12 }}>
                             {airdropInfos
                               ? timeStampToFormat(airdropInfos.airdropStartTime, 'Y-MM-DD HH:mm') +
@@ -335,7 +335,7 @@ export default function Airdrop() {
                         </RowCenter>
 
                         <RowCenter>
-                          <StyledText1>Total DAOdrop</StyledText1>
+                          <StyledText1>Total DAO Reward</StyledText1>
                           <StyledText2>
                             {airdropInfos
                               ? airdropInfos.tokenStaked.toSignificant(6, { groupSeparator: ',' }) +
@@ -399,7 +399,7 @@ export default function Airdrop() {
                           airdropInfos?.creator === account &&
                           account ? (
                           <Box>
-                            <StyledText1>Recycle DAOdrop</StyledText1>
+                            <StyledText1>Recycle DAO Reward</StyledText1>
                             <RowCenter>
                               <StyledText2>
                                 {remainderRecycle?.toSignificant(6, { groupSeparator: ',' })}{' '}
@@ -574,25 +574,25 @@ function Manage({
     if (airdropList.length === 0) {
       return {
         disabled: true,
-        error: 'DAOdrop addresses required'
+        error: 'DAO Reward addresses required'
       }
     }
     if (!airdropTotalAmount || airdropTotalAmount.equalTo(JSBI.BigInt(0))) {
       return {
         disabled: true,
-        error: 'DAOdrop amount required'
+        error: 'DAO Reward amount required'
       }
     }
     if (!needStake || !airdropTokenBalance) {
       return {
         disabled: true,
-        error: 'DAOdrop token balance loading'
+        error: 'DAO Reward token balance loading'
       }
     }
     if (needStake.greaterThan(JSBI.BigInt(0)) && airdropTokenBalance.lessThan(airdropTotalAmount)) {
       return {
         disabled: true,
-        error: 'DAOdrop insufficient balance'
+        error: 'DAO Reward insufficient balance'
       }
     }
 
@@ -716,7 +716,7 @@ function Manage({
           </Alert>
         ) : isAirdropped ? null : (
           <Alert severity="success" sx={{ marginTop: 20 }}>
-            You can now publish DAOdrop
+            You can now publish DAO Reward
           </Alert>
         )}
 

@@ -119,7 +119,7 @@ export default function AirdropTable({
     <Stack spacing={10} mt={20}>
       <RowCenter>
         <RowCenter>
-          <StyledText mr={10}>DAOdrop addresses</StyledText>
+          <StyledText mr={10}>DAO Reward addresses</StyledText>
           {readonly ? null : (
             <div>
               <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
@@ -165,7 +165,12 @@ export default function AirdropTable({
             placeholder="0x"
             label="Wallet address"
           />
-          <InputNumerical height={40} value={amount} onChange={e => setAmount(e.target.value)} label="DAOdrop amount" />
+          <InputNumerical
+            height={40}
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+            label="DAO Reward amount"
+          />
         </Stack>
       )}
       <RowCenter>
