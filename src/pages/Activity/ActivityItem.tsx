@@ -99,7 +99,7 @@ export const activityStatusText = {
   [ActivityStatus.SOON]: 'Soon',
   [ActivityStatus.OPEN]: 'Open',
   [ActivityStatus.ENDED]: 'Ended',
-  [ActivityStatus.AIRDROP]: 'DAO Reward',
+  [ActivityStatus.AIRDROP]: 'DAO Rewards',
   [ActivityStatus.CLOSED]: 'Closed'
 }
 

@@ -131,7 +131,7 @@ export function useCreateAirdropONECallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Create a DAO Reward`
+            summary: `Create a DAO Rewards`
           })
           return response.hash
         })
@@ -179,7 +179,7 @@ export function useClaimAirdropCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Claim a DAO Reward`,
+            summary: `Claim a DAO Rewards`,
             claim: { recipient: `${account}_claim_airdrop_${airdropId}` }
           })
           return response.hash
@@ -341,7 +341,7 @@ export function usePublishAirdropCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Publish a DAO Reward`,
+            summary: `Publish a DAO Rewards`,
             claim: { recipient: `publish_airdrop_${airdropId}` }
           })
           return response.hash

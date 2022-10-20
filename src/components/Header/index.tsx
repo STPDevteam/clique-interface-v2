@@ -46,7 +46,7 @@ export const Tabs: Tab[] = [
   // },
 
   { title: 'Governance', route: routes.Governance },
-  { title: 'DAO Reward', route: routes.Activity },
+  { title: 'DAO Rewards', route: routes.Activity },
   { title: 'Tokens', route: routes.Tokens },
   { title: 'Creator', route: routes.Creator },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' }

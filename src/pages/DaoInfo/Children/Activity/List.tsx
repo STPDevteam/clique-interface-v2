@@ -43,7 +43,7 @@ export function AirdropList({
         />
       </Box>
       <Typography variant="body2" textAlign={'right'} sx={{ color: theme => theme.palette.text.secondary }}>
-        Notice: Newly created DAO Reward will appear here in a few minutes.
+        Notice: Newly created DAO Rewards will appear here in a few minutes.
       </Typography>
     </>
   )

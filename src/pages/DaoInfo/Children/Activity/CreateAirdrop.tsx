@@ -204,13 +204,13 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (!airdropCurrency) {
       return {
         disabled: true,
-        error: 'DAO Reward token required'
+        error: 'DAO Rewards token required'
       }
     }
     if (!airdropCurrencyBalance || airdropCurrencyBalance.equalTo(JSBI.BigInt(0))) {
       return {
         disabled: true,
-        error: 'DAO Reward amount required'
+        error: 'DAO Rewards amount required'
       }
     }
     if (!eventStartTime) {
@@ -240,25 +240,25 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     if (!airdropStartTime) {
       return {
         disabled: true,
-        error: 'DAO Reward start time required'
+        error: 'DAO Rewards start time required'
       }
     }
     if (airdropStartTime <= eventEndTime) {
       return {
         disabled: true,
-        error: 'The DAO Reward start time must be later than the event end time'
+        error: 'The DAO Rewards start time must be later than the event end time'
       }
     }
     if (!airdropEndTime) {
       return {
         disabled: true,
-        error: 'DAO Reward end time required'
+        error: 'DAO Rewards end time required'
       }
     }
     if (airdropEndTime <= airdropStartTime) {
       return {
         disabled: true,
-        error: 'The DAO Reward end time must be later than the DAO Reward start time'
+        error: 'The DAO Rewards end time must be later than the DAO Rewards start time'
       }
     }
 
@@ -342,7 +342,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
       <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
       <Box mt={20}>
         <ContainerWrapper maxWidth={709}>
-          <Typography variant="h6">Create A DAO Reward Event</Typography>
+          <Typography variant="h6">Create A DAO Rewards Event</Typography>
           <Stack spacing={20} mt={20}>
             <div>
               <StyledText mb={10}>Event Title</StyledText>
@@ -373,7 +373,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
 
             {isZero(airdropAddress) ? (
               <Input
-                label="DAO Reward token"
+                label="DAO Rewards token"
                 value={network ? Currency.get_ETH_TOKEN(network.id as ChainId)?.symbol || '' : ''}
                 readOnly
                 rightLabel={
@@ -418,7 +418,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             <InputNumerical
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              label="Total Amount For DAO Reward"
+              label="Total Amount For DAO Rewards"
               balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
               onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
             />
@@ -443,7 +443,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>DAO Reward Start Time</StyledText>
+                <StyledText>DAO Rewards Start Time</StyledText>
                 <DateTimePicker
                   disabled={!eventEndTime}
                   minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
@@ -452,7 +452,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
                 ></DateTimePicker>
               </Box>
               <Box>
-                <StyledText>DAO Reward End Time</StyledText>
+                <StyledText>DAO Rewards End Time</StyledText>
                 <DateTimePicker
                   disabled={!airdropStartTime}
                   minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}
@@ -469,7 +469,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
             </Alert>
           ) : (
             <Alert severity="success" sx={{ marginTop: 20 }}>
-              You can now create a DAO Reward
+              You can now create a DAO Rewards
             </Alert>
           )}
 
