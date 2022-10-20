@@ -49,6 +49,9 @@ async function save(
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
+    if (!res.data.data) {
+      throw res
+    }
     const data = res.data.data.path as string
     return {
       data: data,
