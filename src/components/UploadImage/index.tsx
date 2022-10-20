@@ -57,7 +57,7 @@ async function save(
   } catch (error) {
     const err = error as any
     return {
-      data: err?.data?.msg || 'upload failed',
+      data: err?.data?.msg || err?.message || 'upload failed',
       result: false
     }
   }

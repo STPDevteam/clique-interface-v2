@@ -10,7 +10,7 @@ import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 import { NavLink, useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
-import { isSocialUrl, toFormatGroup } from 'utils/dao'
+import { isSocialUrl } from 'utils/dao'
 import { BlackButton } from 'components/Button/Button'
 import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
@@ -20,8 +20,8 @@ import { DaoAvatars } from 'components/Avatars'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
-import MembersModal from './MembersModal'
-import useModal from 'hooks/useModal'
+// import MembersModal from './MembersModal'
+// import useModal from 'hooks/useModal'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -98,7 +98,7 @@ const tabs = [
 export default function DaoInfo({ children }: { children: any }) {
   const theme = useTheme()
   const history = useHistory()
-  const { showModal } = useModal()
+  // const { showModal } = useModal()
   const { account } = useActiveWeb3React()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
@@ -106,10 +106,7 @@ export default function DaoInfo({ children }: { children: any }) {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-  const { isJoined, switchJoin, curMembers } = useMemberJoinDao(
-    backedDaoInfo?.joinSwitch || false,
-    backedDaoInfo?.members || 0
-  )
+  const { isJoined, switchJoin } = useMemberJoinDao(backedDaoInfo?.joinSwitch || false, backedDaoInfo?.members || 0)
   const walletModalToggle = useWalletModalToggle()
 
   const toSwitchJoin = useCallback(
@@ -160,6 +157,7 @@ export default function DaoInfo({ children }: { children: any }) {
                       height="32px"
                       className={isJoined ? 'joined' : ''}
                       onClick={() => {
+                        if (daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN) return
                         toSwitchJoin(!isJoined)
                       }}
                     >
@@ -167,7 +165,7 @@ export default function DaoInfo({ children }: { children: any }) {
                     </BlackButton>
                   </StyledJoin>
                 </Stack>
-                <Box
+                {/* <Box
                   display={'flex'}
                   alignItems="center"
                   sx={{ cursor: 'pointer' }}
@@ -177,7 +175,7 @@ export default function DaoInfo({ children }: { children: any }) {
                     Members
                   </Typography>
                   <Typography variant="caption">{toFormatGroup(curMembers)}</Typography>
-                </Box>
+                </Box> */}
               </Box>
               <Box display={'flex'} justifyContent="space-between" mb={6}>
                 <Typography fontSize={16} variant="body2" noWrap fontWeight={400} maxWidth={'200px'}>

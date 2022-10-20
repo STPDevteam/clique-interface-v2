@@ -8,6 +8,7 @@ import { routes } from 'constants/routes'
 import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
 import { useDaoInfo } from 'hooks/useDaoInfo'
 import { AdminTagListBlock } from 'pages/DaoInfo/ShowAdminTag'
+import { ShowDaoToken } from 'pages/Governance/DaoItem'
 import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
@@ -70,7 +71,7 @@ export default function About() {
                 target="_blank"
               >
                 <StyledText fontWeight={600} fontSize={16}>
-                  {daoInfo?.token ? `${daoInfo?.token.name} (${daoInfo?.token.symbol})` : '--'}
+                  <ShowDaoToken token={daoInfo?.token} />
                 </StyledText>
               </MuiLink>
             </Stack>

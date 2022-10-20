@@ -46,9 +46,13 @@ export function useMyJoinedDao() {
         const list = data.map((item: any) => ({
           chainId: item.chainId,
           daoName: item.daoName,
-          daoAddress: item.daoAddress
+          daoAddress: item.daoAddress,
+          isSuper: item.role === 'superAdmin' ? true : false
         }))
-        setResult(list)
+        setResult([
+          ...list.filter((item: { isSuper: boolean }) => item.isSuper),
+          ...list.filter((item: { isSuper: boolean }) => !item.isSuper)
+        ])
       } catch (error) {
         setResult([])
         setLoading(false)

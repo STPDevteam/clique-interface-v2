@@ -11,8 +11,10 @@ import { useHistory } from 'react-router-dom'
 import { useToken } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
-import useModal from 'hooks/useModal'
-import MembersModal from 'pages/DaoInfo/MembersModal'
+// import useModal from 'hooks/useModal'
+// import MembersModal from 'pages/DaoInfo/MembersModal'
+import { Token } from 'constants/token'
+import { formatMillion } from 'utils/dao'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   height: 298,
@@ -60,6 +62,10 @@ const StyledTextNumber = styled(Box)(() => ({
   }
 }))
 
+export function ShowDaoToken({ token }: { token: Token | undefined }) {
+  return token ? <>{`${token.name === 'STPT' ? 'STP' : token.name} (${token.symbol})`}</> : <>--</>
+}
+
 export default function DaoItem({
   daoAddress,
   chainId,
@@ -72,7 +78,7 @@ export default function DaoItem({
 }: HomeListProp) {
   const theme = useTheme()
   const history = useHistory()
-  const { showModal } = useModal()
+  // const { showModal } = useModal()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
@@ -105,7 +111,7 @@ export default function DaoItem({
             <Box display={'flex'} alignItems="center">
               <CurrencyLogo currency={token || undefined} style={{ width: 16, height: 16, marginRight: '5px' }} />
               <Typography fontSize={16} variant="body2" noWrap maxWidth={'calc(100% - 90px)'}>
-                {token ? `${token.name} (${token.symbol})` : '--'}
+                <ShowDaoToken token={token || undefined} />
               </Typography>
             </Box>
           ) : (
@@ -125,7 +131,15 @@ export default function DaoItem({
         )}
       </StyledDesc>
       <StyledTextNumber>
-        <div
+        <div className="item">
+          <Typography fontSize={13} color={theme.textColor.text1} fontWeight={600}>
+            Members
+          </Typography>
+          <Typography fontSize={16} fontWeight={600}>
+            {formatMillion(curMembers)}
+          </Typography>
+        </div>
+        {/* <div
           className="item"
           onClick={e => {
             e.stopPropagation()
@@ -136,9 +150,9 @@ export default function DaoItem({
             Members
           </Typography>
           <Typography fontSize={16} fontWeight={600}>
-            {curMembers}
+            {formatMillion(curMembers)}
           </Typography>
-        </div>
+        </div> */}
         <div className="item">
           <Typography fontSize={13} color={theme.textColor.text1} fontWeight={600}>
             Proposals
