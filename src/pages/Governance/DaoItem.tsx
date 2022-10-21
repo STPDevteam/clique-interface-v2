@@ -1,23 +1,24 @@
 import { Box, Skeleton, styled, Typography, useTheme } from '@mui/material'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { DaoAvatars } from 'components/Avatars'
-import { BlackButton } from 'components/Button/Button'
+// import { BlackButton } from 'components/Button/Button'
 // import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { routes } from 'constants/routes'
 import { HomeListProp, useMemberJoinDao } from 'hooks/useBackedDaoServer'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { useCallback } from 'react'
+// import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 // import { useToken } from 'state/wallet/hooks'
-import { useActiveWeb3React } from 'hooks'
-import { useWalletModalToggle } from 'state/application/hooks'
+// import { useActiveWeb3React } from 'hooks'
+// import { useWalletModalToggle } from 'state/application/hooks'
 // import useModal from 'hooks/useModal'
 // import MembersModal from 'pages/DaoInfo/MembersModal'
 import { Token } from 'constants/token'
-import { formatMillion } from 'utils/dao'
+import { formatMillion, toFormatGroup } from 'utils/dao'
+import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 
 const StyledCard = styled(Box)(({ theme }) => ({
-  height: 298,
+  height: 270,
   padding: '23px',
   cursor: 'pointer',
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -73,6 +74,7 @@ export default function DaoItem({
   daoLogo,
   members,
   verified,
+  activeProposals,
   proposals,
   joinSwitch
 }: HomeListProp) {
@@ -81,20 +83,20 @@ export default function DaoItem({
   // const { showModal } = useModal()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   // const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
-  const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
-  const { account } = useActiveWeb3React()
-  const walletModalToggle = useWalletModalToggle()
+  const { curMembers } = useMemberJoinDao(joinSwitch, members)
+  // const { account } = useActiveWeb3React()
+  // const walletModalToggle = useWalletModalToggle()
 
-  const toSwitchJoin = useCallback(
-    async (join: boolean) => {
-      if (!account) {
-        walletModalToggle()
-        return
-      }
-      switchJoin(join, chainId, daoAddress)
-    },
-    [account, chainId, daoAddress, switchJoin, walletModalToggle]
-  )
+  // const toSwitchJoin = useCallback(
+  //   async (join: boolean) => {
+  //     if (!account) {
+  //       walletModalToggle()
+  //       return
+  //     }
+  //     switchJoin(join, chainId, daoAddress)
+  //   },
+  //   [account, chainId, daoAddress, switchJoin, walletModalToggle]
+  // )
 
   return (
     <StyledCard onClick={() => history.push(`${routes._DaoInfo}/${chainId}/${daoAddress}`)}>
@@ -171,7 +173,7 @@ export default function DaoItem({
           </Typography>
         </div>
       </StyledTextNumber>
-      <Box mt={20}>
+      {/* <Box mt={20}>
         <BlackButton
           className={isJoined ? 'joined' : ''}
           onClick={e => {
@@ -181,6 +183,33 @@ export default function DaoItem({
         >
           {isJoined ? 'Joined' : 'Join'}
         </BlackButton>
+      </Box> */}
+      <Box mt={20}>
+        <RowCenter
+          sx={{
+            border: `1px solid ${theme.bgColor.bg2}`,
+            borderRadius: '14px',
+            height: 26,
+            padding: '0 35.5px'
+          }}
+        >
+          <Typography color={theme.bgColor.bg7} fontSize={12} fontWeight={600}>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 5,
+                height: 5,
+                marginBottom: 2,
+                backgroundColor: theme.bgColor.bg7,
+                borderRadius: '50%'
+              }}
+            />
+            <span> Active proposal</span>
+          </Typography>
+          <Typography color={theme.palette.text.secondary} fontSize={12} fontWeight={500}>
+            {toFormatGroup(activeProposals || 0)}
+          </Typography>
+        </RowCenter>
       </Box>
     </StyledCard>
   )
