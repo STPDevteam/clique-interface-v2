@@ -7,8 +7,8 @@ import { formatMillion } from 'utils/dao'
 
 const StyledSearchPanel = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
-  height: 240,
-  padding: '52px',
+  height: 200,
+  padding: '32px 52px',
   borderRadius: theme.borderRadius.default,
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',

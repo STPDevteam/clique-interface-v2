@@ -47,7 +47,7 @@ export const Tabs: Tab[] = [
 
   { title: 'Governance', route: routes.Governance },
   { title: 'DAO Rewards', route: routes.Activity },
-  { title: 'Tokens', route: routes.Tokens },
+  // { title: 'Tokens', route: routes.Tokens },
   { title: 'Creator', route: routes.Creator },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' }
 ]
@@ -89,7 +89,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     color: theme.palette.text.secondary,
     marginRight: 48,
     fontWeight: 600,
-    paddingBottom: '43px',
+    paddingBottom: '36px',
     borderBottom: '4px solid transparent',
     '&.active': {
       color: theme.palette.primary.main,

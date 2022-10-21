@@ -30,12 +30,12 @@ const AirdropStyledItem = styled(StyledItem)({
 
 const StyledTitle = styled(Typography)(({}) => ({
   overflow: 'hidden',
-  height: 54,
-  textOverflow: 'ellipsis',
-  display: '-webkit-box',
-  '-webkit-box-orient': 'vertical',
-  '-webkit-line-clamp': '2',
-  wordBreak: 'break-all',
+  // height: 26,
+  // textOverflow: 'ellipsis',
+  // display: '-webkit-box',
+  // '-webkit-box-orient': 'vertical',
+  // '-webkit-line-clamp': '2',
+  // wordBreak: 'break-all',
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '27px'

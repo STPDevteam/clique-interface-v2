@@ -161,7 +161,7 @@ export default function DaoInfo({ children }: { children: any }) {
                         toSwitchJoin(!isJoined)
                       }}
                     >
-                      {isJoined ? 'Joined' : 'Join'}
+                      {isJoined ? 'Followed' : 'Follow'}
                     </BlackButton>
                   </StyledJoin>
                 </Stack>

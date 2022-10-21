@@ -15,7 +15,7 @@ import Pagination from 'components/Pagination'
 const itemList = [
   { value: undefined, label: 'All Proposals' },
   { value: ProposalStatus.SOON, label: 'Soon' },
-  { value: ProposalStatus.OPEN, label: 'Open' },
+  { value: ProposalStatus.OPEN, label: 'Active' },
   { value: ProposalStatus.CLOSED, label: 'Closed' }
 ]
 
