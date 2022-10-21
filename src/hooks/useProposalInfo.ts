@@ -78,6 +78,7 @@ export function useProposalSign(
 ) {
   const { account } = useActiveWeb3React()
   const [ret, setRet] = useState<ProposalSignProp>()
+  const [errRetry, setErrRetry] = useState(0)
 
   useEffect(() => {
     ;(async () => {
@@ -104,10 +105,11 @@ export function useProposalSign(
         const returnData = await promise
         setRet(returnData.data.data as ProposalSignProp)
       } catch (error) {
+        setTimeout(() => setErrRetry(Math.random()), 1000)
         setRet(undefined)
       }
     })()
-  }, [account, chainId, daoAddress, proposalId, signType])
+  }, [account, chainId, daoAddress, proposalId, signType, errRetry])
 
   return ret
 }
