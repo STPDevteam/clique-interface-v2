@@ -2,13 +2,13 @@ import { Box, Skeleton, styled, Typography, useTheme } from '@mui/material'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { DaoAvatars } from 'components/Avatars'
 import { BlackButton } from 'components/Button/Button'
-import CurrencyLogo from 'components/essential/CurrencyLogo'
+// import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { routes } from 'constants/routes'
 import { HomeListProp, useMemberJoinDao } from 'hooks/useBackedDaoServer'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useToken } from 'state/wallet/hooks'
+// import { useToken } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 // import useModal from 'hooks/useModal'
@@ -80,7 +80,7 @@ export default function DaoItem({
   const history = useHistory()
   // const { showModal } = useModal()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
-  const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
+  // const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
   const { isJoined, switchJoin, curMembers } = useMemberJoinDao(joinSwitch, members)
   const { account } = useActiveWeb3React()
   const walletModalToggle = useWalletModalToggle()
@@ -107,11 +107,20 @@ export default function DaoItem({
             </Typography>
             {verified && <AuthIcon />}
           </Box>
-          {token ? (
+          {/* {token ? (
             <Box display={'flex'} alignItems="center">
               <CurrencyLogo currency={token || undefined} style={{ width: 16, height: 16, marginRight: '5px' }} />
               <Typography fontSize={16} variant="body2" noWrap maxWidth={'calc(100% - 90px)'}>
                 <ShowDaoToken token={token || undefined} />
+              </Typography>
+            </Box>
+          ) : (
+            <Skeleton animation="wave" width={'30%'}></Skeleton>
+          )} */}
+          {daoBaseInfo ? (
+            <Box display={'flex'} alignItems="center">
+              <Typography fontSize={16} variant="body2" noWrap maxWidth={'calc(100% - 90px)'}>
+                @{daoBaseInfo?.handle}
               </Typography>
             </Box>
           ) : (
