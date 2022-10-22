@@ -3,6 +3,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { MobileDateTimePicker } from '@mui/x-date-pickers'
 import { TextField } from '@mui/material'
 import moment from 'moment'
+import { currentTimeStamp } from 'utils'
 
 export default function DateTimePicker({
   value,
@@ -29,7 +30,12 @@ export default function DateTimePicker({
         disabled={disabled}
         ampm={false}
         label=""
-        onChange={date => {
+        onOpen={() => {
+          if (!value) {
+            onValue(currentTimeStamp())
+          }
+        }}
+        onChange={(date: Date | null) => {
           onValue(date ? Number((date.getTime() / 1000).toFixed()) : undefined)
         }}
         renderInput={params => {

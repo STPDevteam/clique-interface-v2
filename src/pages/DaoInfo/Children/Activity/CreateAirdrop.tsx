@@ -15,7 +15,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { useToken, useCurrencyBalance } from 'state/wallet/hooks'
-import { currentTimeStamp, isAddress } from 'utils'
+import { isAddress } from 'utils'
 import isZero from 'utils/isZero'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import Editor from '../Proposal/Editor'
@@ -182,7 +182,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    const currentTime = currentTimeStamp()
+    // const currentTime = currentTimeStamp()
     if (!title) {
       return {
         disabled: true,
@@ -219,12 +219,12 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
         error: 'Event start time required'
       }
     }
-    if (eventStartTime < currentTime) {
-      return {
-        disabled: true,
-        error: 'The event start time must be later than the current time'
-      }
-    }
+    // if (eventStartTime < currentTime) {
+    //   return {
+    //     disabled: true,
+    //     error: 'The event start time must be later than the current time'
+    //   }
+    // }
     if (!eventEndTime) {
       return {
         disabled: true,
