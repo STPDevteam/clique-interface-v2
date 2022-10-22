@@ -17,8 +17,19 @@ import TransactionUpdater from './state/transactions/updater'
 import getLibrary from './utils/getLibrary'
 import { createBrowserHistory } from 'history'
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
-
+import ReactGA from 'react-ga4'
+import { isMobile } from 'react-device-detect'
 const browserHistory = createBrowserHistory()
+
+const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
+if (typeof GOOGLE_ANALYTICS_ID === 'string') {
+  ReactGA.initialize(GOOGLE_ANALYTICS_ID)
+  ReactGA.set({
+    customBrowserType: !isMobile ? 'desktop' : 'web3' in window || 'ethereum' in window ? 'mobileWeb3' : 'mobileRegular'
+  })
+} else {
+  ReactGA.initialize('test', { testMode: true })
+}
 
 function Updaters() {
   return (

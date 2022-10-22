@@ -31,6 +31,7 @@ import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
 import Notification from 'pages/NotificationPage'
+import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -77,6 +78,7 @@ export default function App() {
     <Suspense fallback={null}>
       <ModalProvider>
         <AppWrapper id="app">
+          <Route component={GoogleAnalyticsReporter} />
           <ContentWrapper>
             <Header />
             <BodyWrapper id="body">
