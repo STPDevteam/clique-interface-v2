@@ -82,7 +82,28 @@ export default function Index({
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [errorMsg, setErrorMsg] = useState('Upload failed')
   return (
-    <StyledUpload sx={sx} size={size}>
+    <StyledUpload
+      sx={sx}
+      size={size}
+      onDragOver={e => {
+        e.preventDefault()
+      }}
+      onDrop={async event => {
+        event.preventDefault()
+        const file = event.dataTransfer?.files?.[0]
+        if (file) {
+          const ret = await save(file)
+          if (ret.result) {
+            onChange && onChange(ret.data)
+          } else {
+            setErrorMsg(ret.data)
+            setOpenSnackbar(true)
+          }
+        }
+        const el = document.getElementById('upload') as HTMLInputElement
+        el.value = ''
+      }}
+    >
       <input
         id="upload"
         type="file"
