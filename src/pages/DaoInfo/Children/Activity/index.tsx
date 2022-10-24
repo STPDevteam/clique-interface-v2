@@ -1,4 +1,4 @@
-import { ButtonGroup, styled, Button as MuiButton, Tooltip, Box, useTheme } from '@mui/material'
+import { ButtonGroup, styled, Tooltip, Box, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
@@ -49,7 +49,7 @@ export default function Activity() {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const history = useHistory()
-  const [activityType, setActivityType] = useState<ActivityType>(ActivityType.AIRDROP)
+  const [activityType] = useState<ActivityType>(ActivityType.AIRDROP)
   const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
 
   const airdropData = useDaoActivityList(curDaoChainId, daoAddress, ActivityType.AIRDROP)
@@ -64,12 +64,12 @@ export default function Activity() {
           >
             {ActivityType.PUBLIC_SALE}
           </MuiButton> */}
-          <MuiButton
+          {/* <MuiButton
             className={activityType === ActivityType.AIRDROP ? 'active' : ''}
             onClick={() => setActivityType(ActivityType.AIRDROP)}
           >
             {activityTypeText[ActivityType.AIRDROP]}
-          </MuiButton>
+          </MuiButton> */}
         </StyledButtonGroup>
         {(daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN) && (
           <>
