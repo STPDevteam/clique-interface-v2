@@ -279,18 +279,16 @@ function UpgradeDao({
       <Box display={'grid'} justifyItems="center" gap={15}>
         {isSuper ? (
           <>
-            <Alert severity="error">This is a very important update, please complete the upgrade first.</Alert>
+            <Alert severity="error">This is a very important update, please click to upgrade.</Alert>
             <Button width="200px" disabled={isUpgrading} onClick={toUpgrade}>
               {isUpgrading ? 'Upgrading...' : 'Upgrade'}
             </Button>
           </>
         ) : (
           <>
-            <Typography>
-              The DAO information needs to be improved. Please wait for the administrator to complete it.
-            </Typography>
+            <Typography>The DAO is waiting for its creator to upgrade.</Typography>
             <Button width="200px" onClick={() => history.goBack()}>
-              Back
+              Close
             </Button>
           </>
         )}

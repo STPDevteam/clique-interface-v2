@@ -193,7 +193,7 @@ export default function Header() {
           backgroundColor: theme.palette.primary.main
         }}
       >
-        {`You’re now on Clique V2, if you’d like to use the old site please navigate to:`}{' '}
+        {`You’re now on Clique V2, if you’d like to visit the old version please navigate to:`}{' '}
         <Link href="https://v1.myclique.io/" target={'_blank'} color="inherit">
           https://v1.myclique.io/
         </Link>
