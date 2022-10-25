@@ -1,17 +1,17 @@
-import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Alert, Backdrop, Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as SDK } from 'assets/svg/sdk.svg'
 import { useCallback, useMemo } from 'react'
-import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo, useDaoVersion } from 'hooks/useDaoInfo'
 import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { NavLink, useHistory, useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
-import { BlackButton } from 'components/Button/Button'
+import Button, { BlackButton } from 'components/Button/Button'
 import CategoryChips from './CategoryChips'
 import { useActiveWeb3React } from 'hooks'
 import AdminTag from './ShowAdminTag'
@@ -20,6 +20,9 @@ import { DaoAvatars } from 'components/Avatars'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
+import { useUpgradeDaoCallback } from 'hooks/useGovernanceDaoCallback'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 // import MembersModal from './MembersModal'
 // import useModal from 'hooks/useModal'
 
@@ -141,6 +144,11 @@ export default function DaoInfo({ children }: { children: any }) {
 
   return (
     <Box padding="0 20px">
+      <UpgradeDao
+        curDaoChainId={curDaoChainId}
+        daoAddress={daoAddress}
+        isSuper={daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN}
+      />
       <ContainerWrapper maxWidth={1248}>
         <StyledHeader>
           <div className="top1">
@@ -236,5 +244,57 @@ export default function DaoInfo({ children }: { children: any }) {
         <Box padding="30px 45px">{children}</Box>
       </ContainerWrapper>
     </Box>
+  )
+}
+
+function UpgradeDao({
+  daoAddress,
+  curDaoChainId,
+  isSuper
+}: {
+  daoAddress: string
+  curDaoChainId: ChainId
+  isSuper: boolean
+}) {
+  const { chainId, account, library } = useActiveWeb3React()
+  const isLatest = useDaoVersion(daoAddress, curDaoChainId)
+  const upgradeDaoCallback = useUpgradeDaoCallback(daoAddress)
+  const { claimSubmitted: isUpgrading } = useUserHasSubmittedClaim(`${daoAddress}_upgrade`)
+  const theme = useTheme()
+  const history = useHistory()
+
+  const toUpgrade = useCallback(() => {
+    if (chainId !== curDaoChainId) {
+      triggerSwitchChain(library, curDaoChainId, account || '')
+      return
+    }
+    upgradeDaoCallback()
+  }, [account, chainId, curDaoChainId, library, upgradeDaoCallback])
+
+  return (
+    <Backdrop
+      sx={{ color: theme.palette.common.white, zIndex: theme => theme.zIndex.drawer + 1 }}
+      open={isLatest === false}
+    >
+      <Box display={'grid'} justifyItems="center" gap={15}>
+        {isSuper ? (
+          <>
+            <Alert severity="error">This is a very important update, please complete the upgrade first.</Alert>
+            <Button width="200px" disabled={isUpgrading} onClick={toUpgrade}>
+              {isUpgrading ? 'Upgrading...' : 'Upgrade'}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Typography>
+              The DAO information needs to be improved. Please wait for the administrator to complete it.
+            </Typography>
+            <Button width="200px" onClick={() => history.goBack()}>
+              Back
+            </Button>
+          </>
+        )}
+      </Box>
+    </Backdrop>
   )
 }

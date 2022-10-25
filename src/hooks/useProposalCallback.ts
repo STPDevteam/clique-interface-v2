@@ -32,6 +32,7 @@ export function useCreateProposalCallback(daoAddress: string) {
         tokenAddress: string
         balance: string
         signType: number
+        deadline: number
       },
       signature: string
     ) => {
@@ -51,7 +52,7 @@ export function useCreateProposalCallback(daoAddress: string) {
       const args = [
         [title, introduction, contentTag, startTime, endTime, votingType],
         options,
-        [extra.chainId, extra.tokenAddress, extra.balance, extra.signType],
+        [extra.chainId, extra.tokenAddress, extra.balance, extra.signType, extra.deadline],
         signature
       ]
 
@@ -162,10 +163,9 @@ export function useProposalVoteCallback(daoAddress: string) {
       if (!contract) throw new Error('none contract')
 
       const args = [
-        proposalId,
         index,
         amount,
-        [extra.chainId, extra.tokenAddress, extra.balance, extra.signType],
+        [extra.chainId, extra.tokenAddress, extra.balance, extra.signType, proposalId],
         signature
       ]
 

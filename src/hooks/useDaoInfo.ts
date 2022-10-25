@@ -1,5 +1,6 @@
 import { Token, TokenAmount } from 'constants/token'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useBlockNumber } from 'state/application/hooks'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { useToken } from 'state/wallet/hooks'
 import { ChainId } from '../constants/chain'
@@ -134,4 +135,25 @@ export function useDaoAdminLevelList(daoAddress?: string, chainId?: ChainId, acc
     }
     return retArr
   }, [ownerRes, adminsRes, account])
+}
+
+export function useDaoVersion(daoAddress: string, chainId: ChainId) {
+  const daoContract = useGovernanceDaoContract(daoAddress, chainId)
+  const blockNumber = useBlockNumber(chainId)
+  const [latest, setLatest] = useState<boolean | undefined>(undefined)
+
+  useEffect(() => {
+    daoContract
+      ?.daoVersion()
+      .then((res: string) => {
+        if (res === 'v0.2.1') setLatest(true)
+        else setLatest(false)
+      })
+      .catch(() => {
+        setLatest(false)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockNumber, daoContract])
+
+  return latest
 }

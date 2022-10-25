@@ -26,6 +26,7 @@ export interface ProposalSignProp {
   signature: string
   tokenAddress: string
   tokenChainId: ChainId
+  deadline: number
 }
 
 interface ProposalBaseProp {

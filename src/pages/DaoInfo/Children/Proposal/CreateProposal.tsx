@@ -106,7 +106,8 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         chainId: createProposalSign.tokenChainId,
         balance: createProposalSign.balance,
         tokenAddress: createProposalSign.tokenAddress,
-        signType: 0
+        signType: 0,
+        deadline: createProposalSign.deadline
       },
       createProposalSign.signature
     )
