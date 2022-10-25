@@ -239,13 +239,13 @@ function UpdaterChain({ chainId }: { chainId: ChainId }) {
               return
             }
             console.error('Failed to fetch multicall chunk', chunk, chainId, error)
-            dispatch(
-              errorFetchingMulticallResults({
-                calls: chunk,
-                chainId,
-                fetchingBlockNumber: latestBlockNumber
-              })
-            )
+            // dispatch(
+            //   errorFetchingMulticallResults({
+            //     calls: chunk,
+            //     chainId,
+            //     fetchingBlockNumber: latestBlockNumber
+            //   })
+            // )
           })
         return cancel
       })
