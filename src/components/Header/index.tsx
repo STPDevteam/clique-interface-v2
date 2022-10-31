@@ -49,7 +49,8 @@ export const Tabs: Tab[] = [
   { title: 'DAO Rewards', route: routes.Activity },
   // { title: 'Tokens', route: routes.Tokens },
   { title: 'Creator', route: routes.Creator },
-  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' }
+  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
+  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -87,7 +88,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     fontSize: 14,
     lineHeight: '20px',
     color: theme.palette.text.secondary,
-    marginRight: 48,
+    marginRight: 30,
     fontWeight: 600,
     paddingBottom: '36px',
     borderBottom: '4px solid transparent',
@@ -140,7 +141,7 @@ const MainLogo = styled(NavLink)(({ theme }) => ({
 }))
 
 const LinksWrapper = muiStyled('div')(({ theme }) => ({
-  margin: '0 80px',
+  margin: '0 40px',
   [theme.breakpoints.down('md')]: {
     margin: '0 20px'
   }
