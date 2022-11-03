@@ -109,14 +109,16 @@ export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: process.env.REACT_APP_ETH_DAO_FACTORY_ADDRESS || '',
   [ChainId.POLYGON]: process.env.REACT_APP_POLYGON_DAO_FACTORY_ADDRESS || '',
   [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_DAO_FACTORY_ADDRESS || '',
-  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_DAO_FACTORY_ADDRESS || ''
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_DAO_FACTORY_ADDRESS || '',
+  [ChainId.KLAYTN_BAOBAB]: process.env.REACT_APP_KLAYTN_BAOBAB_DAO_FACTORY_ADDRESS || ''
 }
 
 export const AIRDROP_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.MAINNET]: process.env.REACT_APP_ETH_AIRDROP_ADDRESS || '',
   [ChainId.POLYGON]: process.env.REACT_APP_POLYGON_AIRDROP_ADDRESS || '',
   [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_AIRDROP_ADDRESS || '',
-  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_AIRDROP_ADDRESS || ''
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_AIRDROP_ADDRESS || '',
+  [ChainId.KLAYTN_BAOBAB]: process.env.REACT_APP_KLAYTN_BAOBAB_AIRDROP_ADDRESS || ''
 }
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
