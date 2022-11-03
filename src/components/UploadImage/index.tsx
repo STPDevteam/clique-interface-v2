@@ -107,7 +107,7 @@ export default function Index({
       <input
         id="upload"
         type="file"
-        accept="image/*"
+        accept="image/png,image/jpg,image/jpeg"
         onChange={async event => {
           const file = event.target?.files?.[0]
           if (file) {

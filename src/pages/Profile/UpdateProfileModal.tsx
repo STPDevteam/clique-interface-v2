@@ -98,7 +98,7 @@ export default function UpdateProfileModal({
           <Box padding="12px">
             <UploadImage value={avatar || ''} size={124} onChange={val => setAvatar(val)} />
             <Typography fontSize={12} textAlign={'center'} color={theme.textColor.text1}>
-              {'Supports JPG, PNG, SVG, and size <2MB.'}
+              {'Supports JPG, PNG, and size <2MB.'}
             </Typography>
           </Box>
           <Input value={name} label="User Name" placeholder="nickname" onChange={e => setName(e.target.value)} />

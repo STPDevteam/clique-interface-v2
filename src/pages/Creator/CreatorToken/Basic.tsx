@@ -87,7 +87,7 @@ export default function Basic({ next }: { next: () => void }) {
               color={theme.textColor.text1}
               fontSize={14}
               ml={20}
-            >{`Supports JPG, PNG, SVG, and size <2MB.`}</Typography>
+            >{`Supports JPG, PNG, and size <2MB.`}</Typography>
           </Box>
           <ChainSelect
             chainList={ChainList}
