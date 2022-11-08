@@ -62,7 +62,7 @@ export default function SearchPanel({
         alignItems="center"
       >
         <StaticsItem name="DAOs" value={homeOverview ? formatMillion(homeOverview.totalDao) : '-'} />
-        <StaticsItem name="Verified DAOs" value={homeOverview ? formatMillion(homeOverview.totalApproveDao) : '-'} />
+        {/* <StaticsItem name="Verified DAOs" value={homeOverview ? formatMillion(homeOverview.totalApproveDao) : '-'} /> */}
         <StaticsItem name="Users" value={homeOverview ? formatMillion(homeOverview.totalAccount) : '-'} />
         <StaticsItem name="Proposals" value={homeOverview ? formatMillion(homeOverview.totalProposal) : '-'} />
       </Stack>
