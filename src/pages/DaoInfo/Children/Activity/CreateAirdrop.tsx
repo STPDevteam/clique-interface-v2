@@ -309,7 +309,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
           disabled: true,
           error: (
             <>
-              Loading
+              Loading (Unstable network connection, please try again later.)
               <Dots />
             </>
           )
