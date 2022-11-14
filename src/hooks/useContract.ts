@@ -92,7 +92,7 @@ export function useMulticallContract(queryChainId?: ChainId): Contract | null {
   return useContract(
     queryChainId || chainId ? MULTICALL_NETWORKS[(queryChainId || chainId) as ChainId] : undefined,
     MULTICALL_ABI,
-    undefined,
+    false,
     queryChainId
   )
 }
