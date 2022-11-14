@@ -97,6 +97,10 @@ const chains: ChainObject = {
     link: 'https://bscscan.com',
     builder: explorers.etherscan
   },
+  [ChainId.KLAYTN_BAOBAB]: {
+    link: 'https://baobab.scope.klaytn.com',
+    builder: explorers.etherscan
+  },
   [ChainId.POLYGON]: {
     link: 'https://polygonscan.com',
     builder: explorers.etherscan
