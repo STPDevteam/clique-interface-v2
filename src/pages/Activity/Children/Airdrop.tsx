@@ -198,7 +198,11 @@ export default function Airdrop() {
   }, [account, airdropDescData, chainId, isRecycling, library, recycleAirdrop, remainderRecycle])
 
   return (
-    <Box padding="30px 20px">
+    <Box
+      sx={{
+        padding: { sm: '30px 20px', xs: '16px' }
+      }}
+    >
       {airdropDescDataLoading ? (
         <DelayLoading loading={airdropDescDataLoading}>
           <Loading sx={{ marginTop: 30 }} />
@@ -670,19 +674,19 @@ function Manage({
   return (
     <ContainerWrapper maxWidth={708} margin="0">
       <Stack mt={20} spacing={20}>
-        <RowCenter>
+        <RowCenter flexWrap={'wrap'}>
           <StyledText1>User data (original)</StyledText1>
           <RowCenter>
             <StyledText3 mr={15}>Total addresses: {collectCount}</StyledText3>
             <OutlineButton
               onClick={() => airdropDownloadCallback(airdropInfo.airdropId)}
-              width="140px"
+              width="180px"
               height="20px"
               fontWeight={500}
               fontSize={12}
               style={{ borderWidth: 1 }}
             >
-              Download <DownloadIcon sx={{ height: 16 }} />
+              Download User Data <DownloadIcon sx={{ height: 16 }} />
             </OutlineButton>
           </RowCenter>
         </RowCenter>

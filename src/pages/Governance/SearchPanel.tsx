@@ -46,7 +46,7 @@ export default function SearchPanel({
       <Box>
         <Typography
           variant="h4"
-          sx={{ fontSize: { xs: 24, sm: 32 }, mb: { sm: 24, xs: 16 } }}
+          sx={{ fontSize: { xs: 24, sm: 32 }, mb: { sm: 24, xs: 16 }, textAlign: { xs: 'center', sm: 'left' } }}
           color={theme.palette.common.white}
         >
           Welcome to Clique
@@ -64,7 +64,7 @@ export default function SearchPanel({
       <Stack
         direction={'row'}
         sx={{
-          justifyContent: { md: 'start', lg: 'center' },
+          justifyContent: { xs: 'center', md: 'start', lg: 'center' },
           '&>:last-child': { border: 'none', paddingRight: 0 },
           '&>:first-child': { paddingLeft: 0 }
         }}
@@ -83,7 +83,12 @@ function StaticsItem({ name, value }: { name: string; value: string }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   return (
-    <Box padding="0 25px" borderRight={`1px solid ${theme.textColor.text6}`}>
+    <Box
+      sx={{
+        padding: { sm: '0 25px', xs: '0 16px' }
+      }}
+      borderRight={`1px solid ${theme.textColor.text6}`}
+    >
       <Typography
         textAlign={'center'}
         noWrap

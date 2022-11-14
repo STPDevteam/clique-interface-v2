@@ -1,6 +1,9 @@
 import { Box } from '@mui/material'
+import { routes } from 'constants/routes'
 import { useHomeDaoList } from 'hooks/useBackedDaoServer'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { useMemo } from 'react'
+import { useLocation } from 'react-router'
 import LeftMenu from './LeftSider'
 import SearchPanel from './SearchPanel'
 
@@ -9,6 +12,9 @@ export default function GovernanceContainer({ children }: { children: any }) {
     search: { keyword, setKeyword }
   } = useHomeDaoList()
   const isSm = useBreakpoint('sm')
+  const location = useLocation()
+  const isHome = useMemo(() => location.pathname === routes.Governance, [location.pathname])
+
   return (
     <Box
       sx={{
@@ -18,7 +24,7 @@ export default function GovernanceContainer({ children }: { children: any }) {
         width: '100%'
       }}
     >
-      {isSm && (
+      {isSm && isHome && (
         <Box
           sx={{
             padding: { sm: '16px', xs: '0 16px' }

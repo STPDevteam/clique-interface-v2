@@ -18,6 +18,7 @@ import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/Tr
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export default function GovernanceSetting({
   daoInfo,
@@ -167,10 +168,11 @@ function Update({
     votingThreshold,
     votingType
   ])
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <Box>
-      <StyledItem>
+      <StyledItem style={{ padding: isSmDown ? '20px 16px' : undefined }}>
         <Box display={'grid'} gap="16px">
           <InputNumerical
             noDecimals

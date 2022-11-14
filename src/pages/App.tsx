@@ -69,7 +69,7 @@ const ContentWrapper = styled('div')({
 const BodyWrapper = styled('div')(({ theme }) => ({
   minHeight: `calc(100vh - ${theme.height.header})`,
   [theme.breakpoints.down('md')]: {
-    minHeight: `calc(100vh - ${theme.height.header} - ${theme.height.mobileHeader})`
+    minHeight: `calc(100vh - ${theme.height.header} - ${theme.height.mobileHeader} - 50px)`
   }
 }))
 

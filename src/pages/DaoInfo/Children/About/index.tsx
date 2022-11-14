@@ -6,6 +6,7 @@ import Loading from 'components/Loading'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { useDaoInfo } from 'hooks/useDaoInfo'
 import { AdminTagListBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { ShowDaoToken } from 'pages/Governance/DaoItem'
@@ -40,6 +41,7 @@ const StyledText = styled(Typography)(
 export default function About() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
+  const isSmDown = useBreakpoint('sm')
 
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
   const { result: daoAdminList, loading: daoAdminLoading } = useBackedDaoAdmins(daoAddress, curDaoChainId)
@@ -51,14 +53,20 @@ export default function About() {
   return (
     <div>
       <StyledTitle variant="h5">Token Information</StyledTitle>
-      <StyledItem direction={'row'} justifyContent="space-between">
-        <Stack spacing={16}>
+      <StyledItem
+        direction={isSmDown ? 'column' : 'row'}
+        gap={isSmDown ? 20 : 10}
+        sx={{
+          justifyContent: { sm: 'space-between', xs: 'unset' }
+        }}
+      >
+        <Stack spacing={isSmDown ? 10 : 16}>
           <StyledText>Network</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {daoInfo ? ChainListMap[daoInfo.daoTokenChainId]?.name : '--'}
           </StyledText>
         </Stack>
-        <Stack spacing={16}>
+        <Stack spacing={isSmDown ? 10 : 16}>
           <StyledText>Token</StyledText>
           <StyledText>
             <Stack direction={'row'} alignItems="center">
@@ -77,33 +85,46 @@ export default function About() {
             </Stack>
           </StyledText>
         </Stack>
-        <Stack spacing={16}>
+        <Stack spacing={isSmDown ? 10 : 16}>
           <StyledText>Price</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             --
           </StyledText>
         </Stack>
-        <Stack spacing={16}>
+        <Stack spacing={isSmDown ? 10 : 16}>
           <StyledText>Token Contracts Address</StyledText>
-          <StyledText fontSize={12}>{daoInfo?.token?.address || '--'}</StyledText>
+          <StyledText
+            fontSize={12}
+            sx={{
+              wordBreak: 'break-all'
+            }}
+          >
+            {daoInfo?.token?.address || '--'}
+          </StyledText>
         </Stack>
       </StyledItem>
 
       <StyledTitle variant="h5">Governance Settings</StyledTitle>
-      <StyledItem direction={'row'} justifyContent="space-between">
-        <Stack spacing={16}>
+      <StyledItem
+        direction={isSmDown ? 'column' : 'row'}
+        gap={isSmDown ? 20 : 10}
+        sx={{
+          justifyContent: { sm: 'space-between', xs: 'unset' }
+        }}
+      >
+        <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Min. Holding For Proposal</StyledText>
           <StyledText fontWeight={600} fontSize={16}>{`${daoInfo?.proposalThreshold?.toSignificant(6, {
             groupSeparator: ','
           })} ${daoInfo?.token?.symbol || '-'}`}</StyledText>
         </Stack>
-        <Stack spacing={16}>
+        <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Min. Votes For Proposal Execution</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes
           </StyledText>
         </Stack>
-        <Stack spacing={16}>
+        <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Default Voting Period</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {votingPeriodDate
@@ -111,7 +132,7 @@ export default function About() {
               : '--'}
           </StyledText>
         </Stack>
-        <Stack spacing={16}>
+        <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Voting Types Allowed</StyledText>
           <StyledText fontWeight={600} fontSize={16}>
             {daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}
@@ -124,11 +145,24 @@ export default function About() {
         {daoAdminLoading ? (
           <Loading />
         ) : (
-          <Box display={'grid'} gridTemplateColumns="1fr 1fr" alignItems={'center'} gap="10px 20px">
+          <Box
+            display={'grid'}
+            sx={{
+              gridTemplateColumns: { sm: '1fr 1fr', xs: '1fr 80px' }
+            }}
+            alignItems={'center'}
+            gap="10px 20px"
+          >
             {daoAdminList?.map(address => (
               <>
                 <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${address}`}>
-                  <StyledText fontWeight={600} key={address}>
+                  <StyledText
+                    fontWeight={600}
+                    key={address}
+                    sx={{
+                      wordBreak: 'break-all'
+                    }}
+                  >
                     {address}
                   </StyledText>
                 </Link>

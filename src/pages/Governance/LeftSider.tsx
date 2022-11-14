@@ -16,15 +16,15 @@ const Wrapper = styled('div')(({ theme }) => ({
   padding: '16px 8px',
   [theme.breakpoints.down('sm')]: {
     display: 'grid',
-    gridTemplateColumns: '1fr 128px',
+    gridTemplateColumns: '1fr 138px',
     borderRight: 0,
-    padding: '16px',
-    height: 100,
+    padding: '10px 16px',
+    height: 84,
     '& .dao-box': {
       overflowY: 'hidden',
       overflowX: 'auto',
       height: '84px',
-      width: `calc(100vw - 32px - 128px)`,
+      width: `calc(100vw - 32px - 138px)`,
       '&::-webkit-scrollbar': {
         display: 'none'
       }
@@ -85,10 +85,14 @@ export default function LeftSider() {
       </Box>
       <Box
         sx={{
-          display: { sm: 'block', xs: 'inline-flex' }
+          display: { sm: 'block', xs: 'inline-flex' },
+          justifyContent: { xs: 'flex-end', sm: undefined }
         }}
       >
-        <Item onClick={() => history.push(routes.Governance)}>
+        <Item
+          sx={{ borderLeft: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
+          onClick={() => history.push(routes.Governance)}
+        >
           <div className="action">
             <SearchIcon></SearchIcon>
           </div>

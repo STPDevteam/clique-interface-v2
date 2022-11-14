@@ -8,6 +8,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import List from './List'
 import BannerImg from 'assets/images/activity_banner.jpg'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
@@ -45,6 +46,7 @@ const statusItemList = [
 
 export default function Activity() {
   const { search, loading, result, page } = useActivityList()
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <div>
@@ -97,8 +99,8 @@ export default function Activity() {
           </StyledButtonGroup> */}
             <Select
               placeholder=""
-              width={235}
-              height={48}
+              width={isSmDown ? '175px' : '235px'}
+              height={isSmDown ? '40px' : '48px'}
               value={search.status}
               onChange={e => search.setStatus(e.target.value)}
             >

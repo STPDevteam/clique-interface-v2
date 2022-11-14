@@ -124,6 +124,7 @@ const StyledMobileAppBar = styled(StyledAppBar)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     display: 'flex',
     position: 'unset',
+    marginTop: 10,
     height: `calc(${theme.height.mobileHeader} - 10px)`
   }
 }))

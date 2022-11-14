@@ -12,8 +12,8 @@ export function CloseIcon({ onClick }: { onClick?: () => void }) {
         width: 40,
         height: 40,
         position: 'absolute',
-        top: '24px',
-        right: '24px',
+        top: { xs: 0, sm: '24px' },
+        right: { xs: 8, sm: '24px' },
         boxShadow: theme => theme.boxShadow.bs2,
         '&:hover $closeIcon': {
           color: theme => theme.palette.text.primary
