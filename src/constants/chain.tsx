@@ -18,6 +18,7 @@ export enum ChainId {
   BSCTEST = 97,
   KLAYTN_BAOBAB = 1001,
   POLYGON = 137,
+  KLAYTN = 8217,
   POLYGON_MUMBAI = 80001
 }
 
@@ -95,6 +96,14 @@ export const AllChainList = [
     name: 'Klaytn Baobab',
     id: ChainId.KLAYTN_BAOBAB,
     hex: '0x3e9'
+  },
+  {
+    icon: <KlaytnLogo />,
+    logo: KlaytnSvg,
+    symbol: 'Klaytn',
+    name: 'Klaytn Mainnet',
+    id: ChainId.KLAYTN,
+    hex: '0x2019'
   },
   {
     icon: <MaticLogo />,
@@ -223,6 +232,17 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://api.baobab.klaytn.net:8651/'],
     blockExplorerUrls: ['https://baobab.scope.klaytn.com/']
+  },
+  [ChainId.KLAYTN]: {
+    chainId: '0x2019',
+    chainName: 'Klaytn Mainnet',
+    nativeCurrency: {
+      name: 'Klaytn',
+      symbol: 'KLAY',
+      decimals: 18
+    },
+    rpcUrls: ['https://public-node-api.klaytnapi.com/v1/cypress'],
+    blockExplorerUrls: ['https://scope.klaytn.com/']
   },
   [ChainId.POLYGON]: {
     chainId: '0x89',
