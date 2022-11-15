@@ -26,6 +26,7 @@ import DateTimePicker from 'components/DateTimePicker'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import Checkbox from 'components/Checkbox'
 import { BigNumber } from 'bignumber.js'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledTitle = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
@@ -87,6 +88,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   const { chainId, account, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const [agreeDisclaimer, setAgreeDisclaimer] = useState(false)
+  const isSmDown = useBreakpoint('sm')
 
   const onCreateToken = useCallback(() => {
     showModal(<TransacitonPendingModal />)
@@ -235,9 +237,28 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   ])
 
   return (
-    <ContainerWrapper>
-      <CreatorBox>
-        <Box display={'grid'} mb={10} gridTemplateColumns="380fr 142fr 92fr 160fr 56fr" gap="8px 10px">
+    <ContainerWrapper
+      sx={{
+        padding: { xs: '0 16px', sm: undefined }
+      }}
+    >
+      <CreatorBox
+        sx={{
+          overflowX: 'auto',
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        }}
+      >
+        <Box
+          display={'grid'}
+          mb={10}
+          sx={{
+            minWidth: 600,
+            gridTemplateColumns: { sm: '380fr 142fr 92fr 160fr 56fr', xs: '250fr 142fr 100fr 160fr 56fr' }
+          }}
+          gap="8px 10px"
+        >
           <StyledTitle>Wallet Address</StyledTitle>
           <StyledTitle>Number of Tokens</StyledTitle>
           <StyledTitle>% of Total</StyledTitle>
@@ -326,7 +347,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
             </>
           ))}
         </Box>
-        <OutlineButton width={250} onClick={addReservedRowCallback}>
+        <OutlineButton width={isSmDown ? 120 : 250} height={isSmDown ? 40 : 56} onClick={addReservedRowCallback}>
           + Add
         </OutlineButton>
       </CreatorBox>

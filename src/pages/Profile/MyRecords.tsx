@@ -23,7 +23,10 @@ const StyledBox = styled(Box)(({ theme }) => ({
   padding: '28px 40px',
   border: `1px solid ${theme.bgColor.bg2}`,
   boxShadow: theme.boxShadow.bs1,
-  borderRadius: theme.borderRadius.default
+  borderRadius: theme.borderRadius.default,
+  [theme.breakpoints.down('sm')]: {
+    padding: '20px'
+  }
 }))
 
 export default function MyRecords({ account }: { account: string }) {

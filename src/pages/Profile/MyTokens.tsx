@@ -31,7 +31,12 @@ const StyledClaimItem = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   border: `1px solid ${theme.bgColor.bg2}`,
   boxShadow: theme.boxShadow.bs1,
-  borderRadius: theme.borderRadius.default
+  borderRadius: theme.borderRadius.default,
+  [theme.breakpoints.down('sm')]: {
+    padding: '20px',
+    display: 'grid',
+    gridTemplateColumns: '1fr 60px'
+  }
 }))
 
 function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; lockDate: number; index: number } }) {
@@ -100,7 +105,7 @@ function CreateTokenReservedList() {
     <Box display={'grid'} gap="10px" mt={25}>
       {createTokenReserved?.map((item, index) => (
         <StyledClaimItem key={index}>
-          <Stack direction={'row'} spacing={6} alignItems="center">
+          <Stack direction={'row'} spacing={6} alignItems="center" flexWrap={'wrap'}>
             <CurrencyLogo size="24px" currency={item.tokenAmount.token} />
             <Link
               target={'_blank'}

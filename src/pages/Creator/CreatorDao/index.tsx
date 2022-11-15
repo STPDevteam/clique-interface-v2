@@ -1,5 +1,6 @@
 import { Box, styled, Typography } from '@mui/material'
 import Back from 'components/Back'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { useState } from 'react'
 import { ContainerWrapper } from '../StyledCreate'
 import Basic from './Basic'
@@ -34,8 +35,9 @@ const tabs = [
 export default function Index() {
   const [curTab, setCurTab] = useState(Tabs.BASIC)
   const [hash, setHash] = useState<string>()
+  const isSmDown = useBreakpoint('sm')
   return (
-    <ContainerWrapper maxWidth={1140} margin={'40px auto 80px'}>
+    <ContainerWrapper maxWidth={1140} margin={isSmDown ? '0 auto 40px' : '40px auto 80px'}>
       <Back />
       <Typography textAlign={'center'} mt={20} mb={40} fontSize={20} fontWeight={600}>
         Add a DAO on Clique

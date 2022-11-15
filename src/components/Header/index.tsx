@@ -112,6 +112,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'fixed'
   },
   [theme.breakpoints.down('sm')]: {
+    '& .link': { marginRight: 24 },
     // justifyContent: 'space-around',
     height: theme.height.mobileHeader,
     padding: '0 15px',

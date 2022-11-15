@@ -73,7 +73,12 @@ export default function Basic({ next }: { next: () => void }) {
   )
 
   return (
-    <ContainerWrapper maxWidth={644}>
+    <ContainerWrapper
+      maxWidth={644}
+      sx={{
+        padding: { xs: '0 16px', sm: undefined }
+      }}
+    >
       <CreatorBox>
         <Stack spacing={20}>
           <Box display={'flex'} alignItems="flex-end">

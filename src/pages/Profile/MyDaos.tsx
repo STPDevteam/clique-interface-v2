@@ -1,7 +1,8 @@
-import { Box, Stack, styled, Typography } from '@mui/material'
+import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import { routes } from 'constants/routes'
 import { UserProfileDaoProp } from 'hooks/useBackedProfileServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
 import { useHistory } from 'react-router'
@@ -16,6 +17,13 @@ const StyledBox = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   '&::-webkit-scrollbar': {
     display: 'none'
+  },
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    gridGap: '15px',
+    padding: '20px',
+    gridTemplateColumns: '1fr 2fr',
+    alignItems: 'flex-start'
   }
 }))
 
@@ -26,21 +34,31 @@ export default function MyDaos({
   adminDao: UserProfileDaoProp[] | undefined
   memberDao: UserProfileDaoProp[] | undefined
 }) {
+  const theme = useTheme()
+  const isSmDown = useBreakpoint()
   if ((!adminDao || !adminDao.length) && (!memberDao || !memberDao.length)) {
     return null
   }
   return (
-    <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
+    <ContainerWrapper maxWidth={isSmDown ? '100%' : 1150} margin={'0 auto'}>
       <Typography variant="h6" fontSize={16} fontWeight={600}>
         DAOs
       </Typography>
       <StyledBox mt={25}>
         {adminDao && !!adminDao.length && (
           <Box>
-            <Typography mb={10} variant="h6" fontSize={14} fontWeight={500}>
+            <Typography textAlign={isSmDown ? 'center' : undefined} mb={10} variant="h6" fontSize={14} fontWeight={500}>
               Admin
             </Typography>
-            <Stack direction={'row'} spacing={33} mr={65}>
+            <Stack
+              direction={'row'}
+              mr={isSmDown ? 0 : 65}
+              spacing={isSmDown ? 0 : 33}
+              sx={{
+                display: { xs: 'grid', sm: 'flex' },
+                justifyItems: 'center'
+              }}
+            >
               {adminDao.map((item, index) => (
                 <DaoBlock key={index} info={item} />
               ))}
@@ -49,11 +67,23 @@ export default function MyDaos({
         )}
 
         {memberDao && !!memberDao.length && (
-          <Box>
-            <Typography mb={10} variant="h6" fontSize={14} fontWeight={500}>
+          <Box
+            sx={{
+              borderLeft: { xs: `1px solid ${theme.bgColor.bg2}`, sm: 'none' }
+            }}
+          >
+            <Typography textAlign={isSmDown ? 'center' : undefined} mb={10} variant="h6" fontSize={14} fontWeight={500}>
               Member
             </Typography>
-            <Stack direction={'row'} spacing={33}>
+            <Stack
+              direction={'row'}
+              spacing={isSmDown ? 0 : 33}
+              sx={{
+                display: { xs: 'grid', sm: 'flex' },
+                gridTemplateColumns: '1fr 1fr',
+                justifyItems: { xs: 'center', sm: undefined }
+              }}
+            >
               {memberDao.map((item, index) => (
                 <DaoBlock key={index} info={item} />
               ))}
