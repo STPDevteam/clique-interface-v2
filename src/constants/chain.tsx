@@ -5,6 +5,8 @@ import BSCUrl from 'assets/svg/binance.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
 import MaticSvg from 'assets/svg/matic.svg'
 import { ReactComponent as MaticLogo } from 'assets/svg/matic.svg'
+import KlaytnSvg from '../assets/svg/klaytn_logo.svg'
+import { ReactComponent as KlaytnLogo } from '../assets/svg/klaytn_logo.svg'
 
 export enum ChainId {
   MAINNET = 1,
@@ -14,7 +16,9 @@ export enum ChainId {
   KOVAN = 42,
   BSC = 56,
   BSCTEST = 97,
+  KLAYTN_BAOBAB = 1001,
   POLYGON = 137,
+  KLAYTN = 8217,
   POLYGON_MUMBAI = 80001
 }
 
@@ -84,6 +88,22 @@ export const AllChainList = [
     name: 'Binance Testnet',
     id: ChainId.BSCTEST,
     hex: '0x61'
+  },
+  {
+    icon: <KlaytnLogo />,
+    logo: KlaytnSvg,
+    symbol: 'Klaytn Baobab',
+    name: 'Klaytn Baobab',
+    id: ChainId.KLAYTN_BAOBAB,
+    hex: '0x3e9'
+  },
+  {
+    icon: <KlaytnLogo />,
+    logo: KlaytnSvg,
+    symbol: 'Klaytn',
+    name: 'Klaytn Mainnet',
+    id: ChainId.KLAYTN,
+    hex: '0x2019'
   },
   {
     icon: <MaticLogo />,
@@ -201,6 +221,28 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
     blockExplorerUrls: ['https://testnet.bscscan.com/']
+  },
+  [ChainId.KLAYTN_BAOBAB]: {
+    chainId: '0x3e9',
+    chainName: 'Klaytn Baobab',
+    nativeCurrency: {
+      name: 'Klaytn Baobab',
+      symbol: 'KLAY',
+      decimals: 18
+    },
+    rpcUrls: ['https://api.baobab.klaytn.net:8651/'],
+    blockExplorerUrls: ['https://baobab.scope.klaytn.com/']
+  },
+  [ChainId.KLAYTN]: {
+    chainId: '0x2019',
+    chainName: 'Klaytn Mainnet',
+    nativeCurrency: {
+      name: 'Klaytn',
+      symbol: 'KLAY',
+      decimals: 18
+    },
+    rpcUrls: ['https://public-node-api.klaytnapi.com/v1/cypress'],
+    blockExplorerUrls: ['https://scope.klaytn.com/']
   },
   [ChainId.POLYGON]: {
     chainId: '0x89',
