@@ -92,10 +92,10 @@ export default function AirdropTable({
       const allRows = textInput.split(/\r?\n|\r/)
       for (let i = 0; i < allRows.length; i++) {
         const splitTextInput = allRows[i].split(',')
-        if (!splitTextInput[0].trim() || !splitTextInput[1].trim()) {
+        if (!splitTextInput[0]?.trim() || !splitTextInput[1]?.trim()) {
           continue
         }
-        if (!isAddress(splitTextInput[0].trim())) {
+        if (!isAddress(splitTextInput[0]?.trim())) {
           setOpenSnackbar(true)
           el.value = ''
           return
@@ -106,14 +106,14 @@ export default function AirdropTable({
         })
       }
       el.value = ''
-      let newList: ItemProp[] = [...airdropList]
+      let newList: ItemProp[] = []
       for (const item of ret) {
         newList = insertLine(newList, item)
       }
       setAirdropList(newList)
     }
     reader.readAsBinaryString(el.files[0])
-  }, [airdropList, setAirdropList])
+  }, [setAirdropList])
 
   return (
     <Stack spacing={10} mt={20}>
