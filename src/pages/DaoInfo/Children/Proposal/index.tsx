@@ -64,7 +64,7 @@ export default function Proposal() {
         <Grid container rowSpacing={18} columnSpacing={34}>
           {!loading &&
             proposalBaseList.map(item => (
-              <Grid item key={item.proposalId} lg={6} xs={12}>
+              <Grid item key={item.proposalId + item.startTime + item.endTime} lg={6} xs={12}>
                 <ProposalItem {...item} />
               </Grid>
             ))}
