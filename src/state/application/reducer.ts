@@ -1,5 +1,14 @@
 import { createReducer, nanoid } from '@reduxjs/toolkit'
-import { addPopup, PopupContent, removePopup, updateBlockNumber, ApplicationModal, setOpenModal } from './actions'
+import {
+  addPopup,
+  PopupContent,
+  removePopup,
+  updateBlockNumber,
+  ApplicationModal,
+  setOpenModal,
+  setUserLocation,
+  UserIPLocation
+} from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
 
@@ -7,12 +16,14 @@ export interface ApplicationState {
   readonly blockNumber: { readonly [chainId: number]: number }
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
+  userLocation: UserIPLocation | null | undefined
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
   popupList: [],
-  openModal: null
+  openModal: null,
+  userLocation: undefined
 }
 
 export default createReducer(initialState, builder =>
@@ -44,5 +55,8 @@ export default createReducer(initialState, builder =>
           p.show = false
         }
       })
+    })
+    .addCase(setUserLocation, (state, { payload }) => {
+      state.userLocation = payload
     })
 )

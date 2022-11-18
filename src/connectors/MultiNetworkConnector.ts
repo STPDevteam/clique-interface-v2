@@ -16,14 +16,35 @@ export function getRpcUrl(chainId: ChainId) {
   }
 }
 
-export function getOtherNetworkLibrary(chainId: ChainId) {
-  const rpc = getRpcUrl(chainId)
+export function getOtherNetworkLibrary(chainId: ChainId, countryCode?: string) {
+  const rpc = getRpcUrlByCountryCode(chainId, countryCode)
   if (!rpc) return undefined
   return new Web3Provider(
     new NetworkConnector({
       urls: {
-        [chainId]: getRpcUrl(chainId)
+        [chainId]: rpc
       }
     }).provider as any
   )
+}
+
+function getRpcUrlByCountryCode(chainId: ChainId, countryCode?: string) {
+  switch (chainId) {
+    case ChainId.MAINNET:
+      if (countryCode === 'KR') {
+        return `https://mainnet.infura.io/v3/169a2f10743f4afdaa0a17e148552867`
+      }
+      return `https://rpc.ankr.com/eth`
+    case ChainId.POLYGON:
+      if (countryCode && ['KR'].includes(countryCode)) {
+        return `https://polygon-rpc.com/`
+      }
+      return `https://rpc.ankr.com/polygon`
+    case ChainId.RINKEBY:
+      return 'https://rinkeby.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
+    case ChainId.GOERLI:
+      return 'https://goerli.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
+    default:
+      return SUPPORTED_NETWORKS[chainId]?.rpcUrls[0] || ''
+  }
 }

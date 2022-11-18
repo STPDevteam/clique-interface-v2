@@ -15,6 +15,7 @@ import { useActiveWeb3React } from './index'
 import { ChainId } from '../constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
 import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS } from '../constants'
+import { useUserLocation } from 'state/application/hooks'
 
 // returns null on errors
 function useContract(
@@ -24,13 +25,14 @@ function useContract(
   queryChainId?: ChainId
 ): Contract | null {
   const { library, account, chainId } = useActiveWeb3React()
+  const userLocation = useUserLocation()
 
   return useMemo(() => {
     if (!address || !ABI) return null
     if (!queryChainId && !chainId) return null
 
     if (queryChainId && chainId !== queryChainId) {
-      const web3Library = getOtherNetworkLibrary(queryChainId)
+      const web3Library = getOtherNetworkLibrary(queryChainId, userLocation?.country || undefined)
       if (!web3Library) return null
       try {
         return getContract(address, ABI, web3Library, undefined)
@@ -48,7 +50,7 @@ function useContract(
       }
     }
     return null
-  }, [ABI, account, address, chainId, library, queryChainId, withSignerIfPossible])
+  }, [ABI, account, address, chainId, library, queryChainId, userLocation?.country, withSignerIfPossible])
 }
 
 export function useV2MigratorContract(): Contract | null {

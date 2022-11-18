@@ -18,6 +18,7 @@ import { arrayify, parseBytes32String } from 'ethers/lib/utils'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
 import ERC20_ABI from 'constants/abis/erc20.json'
 import isZero from 'utils/isZero'
+import { useUserLocation } from 'state/application/hooks'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -298,13 +299,14 @@ export function useTokenByChain(
   const [decimals, setDecimals] = useState<number>()
   const [symbol, setSymbol] = useState<string>()
   const [totalSupply, setTotalSupply] = useState<string>()
+  const userLocation = useUserLocation()
 
   const contract = useMemo(() => {
     if (!tokenAddress || !curChainId) return undefined
-    const library = getOtherNetworkLibrary(curChainId)
+    const library = getOtherNetworkLibrary(curChainId, userLocation?.country)
     if (!library) return undefined
     return getContract(tokenAddress, ERC20_ABI, library, undefined)
-  }, [curChainId, tokenAddress])
+  }, [curChainId, tokenAddress, userLocation?.country])
 
   useEffect(() => {
     if (!contract) {

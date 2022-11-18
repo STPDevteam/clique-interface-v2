@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -32,6 +32,8 @@ import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
 import Notification from 'pages/NotificationPage'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
+import { fetchUserLocation } from 'utils/fetch/location'
+import store from 'state'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -74,6 +76,15 @@ const BodyWrapper = styled('div')(({ theme }) => ({
 }))
 
 export default function App() {
+  useEffect(() => {
+    fetchUserLocation().then(res => {
+      store.dispatch({
+        type: 'application/setUserLocation',
+        payload: res.data || null
+      })
+    })
+  }, [])
+
   return (
     <Suspense fallback={null}>
       <ModalProvider>

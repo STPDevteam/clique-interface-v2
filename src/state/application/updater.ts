@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import { SUPPORT_NETWORK_CHAIN_IDS } from 'constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
 import { useUpdateNotificationUnReadCount } from 'hooks/useBackedNotificationServer'
+import { useUserLocation } from './hooks'
 
 export default function Updater(): null {
   // add NotificationUnRead
@@ -53,13 +54,17 @@ export default function Updater(): null {
   }, [dispatch, chainId, library, blockNumberCallback, windowVisible])
 
   const debouncedState = useDebounce(state, 100)
+  const userLocation = useUserLocation()
 
   useEffect(() => {
     if (!debouncedState.chainId || !debouncedState.blockNumber || !windowVisible) return
     dispatch(updateBlockNumber({ chainId: debouncedState.chainId, blockNumber: debouncedState.blockNumber }))
   }, [windowVisible, dispatch, debouncedState.blockNumber, debouncedState.chainId])
 
-  const providers = useMemo(() => SUPPORT_NETWORK_CHAIN_IDS.map(v => getOtherNetworkLibrary(v)), [])
+  const providers = useMemo(
+    () => SUPPORT_NETWORK_CHAIN_IDS.map(v => getOtherNetworkLibrary(v, userLocation?.country)),
+    [userLocation?.country]
+  )
   const [timeInt, setTimeInt] = useState(0)
   useEffect(() => {
     setTimeout(() => setTimeInt(timeInt + 1), 10000)
