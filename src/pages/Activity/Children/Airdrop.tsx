@@ -526,7 +526,7 @@ function Manage({
   }, [airdropInfo.airdropToken, airdropInfo.tokenStaked, airdropTotalAmount])
 
   const [approveState, approveCallback] = useApproveCallback(needStake, AIRDROP_ADDRESS[airdropChainId], isEth)
-  const airdropTokenBalance = useCurrencyBalance(account || undefined, airdropInfo.airdropToken)
+  const airdropTokenBalance = useCurrencyBalance(account || undefined, airdropInfo.airdropToken, airdropChainId)
   const isAirdropped = useMemo(() => !!Number(airdropInfo.merkleRoot), [airdropInfo.merkleRoot])
 
   const toPublishAirdrop = useCallback(() => {

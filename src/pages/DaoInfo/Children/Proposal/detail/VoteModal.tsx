@@ -223,7 +223,7 @@ function VoteModalFunc({
     if (!Object.keys(validChooseOptions).length) {
       return {
         disabled: true,
-        error: 'You must choose a option'
+        error: 'Slide the bar to input the tokens you want to vote'
       }
     }
 

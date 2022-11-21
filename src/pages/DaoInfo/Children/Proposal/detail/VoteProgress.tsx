@@ -92,8 +92,8 @@ export default function VoteProgress({
               columnGap="24px"
             >
               <SimpleProgress width="100%" per={Math.floor(item.per * 100)} />
-              <Typography color={theme.palette.text.secondary} fontSize={isSmDown ? 12 : 14} fontWeight={600}>
-                {(item.per * 100).toFixed(1)}% - {item.amount.toSignificant(6, { groupSeparator: ',' })} Votes
+              <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={600}>
+                {(item.per * 100).toFixed(1)}%({item.amount.toSignificant(6, { groupSeparator: ',' })} Votes)
               </Typography>
             </Box>
           </StyledItem>
