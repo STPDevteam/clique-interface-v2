@@ -200,7 +200,7 @@ export default function Airdrop() {
   return (
     <Box
       sx={{
-        padding: { sm: '30px 20px', xs: '16px' }
+        padding: { sm: '30px 20px', xs: '0 16px 30px' }
       }}
     >
       {airdropDescDataLoading ? (

@@ -21,7 +21,10 @@ export const StyledItem = styled(Stack)(({ theme }) => ({
   padding: '30px 38px',
   borderRadius: theme.borderRadius.default,
   boxShadow: theme.boxShadow.bs1,
-  marginBottom: 30
+  marginBottom: 30,
+  [theme.breakpoints.down('sm')]: {
+    padding: '20px'
+  }
 }))
 
 const StyledTitle = styled(Typography)(({}) => ({

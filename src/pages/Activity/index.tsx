@@ -8,6 +8,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import List from './List'
 import BannerImg from 'assets/images/activity_banner.jpg'
+import BannerMobileImg from 'assets/images/activity_banner_mobile.jpeg'
 import useBreakpoint from 'hooks/useBreakpoint'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
@@ -50,8 +51,17 @@ export default function Activity() {
 
   return (
     <div>
-      <BannerWrapper imgSrc={BannerImg}>
-        <Typography color="#fff" fontSize={22} fontWeight={700}>
+      <BannerWrapper imgSrc={isSmDown ? BannerMobileImg : BannerImg}>
+        <Typography
+          color="#fff"
+          fontSize={22}
+          fontWeight={700}
+          sx={{
+            width: { sm: '100%', xs: '50%' },
+            ml: { sm: 0, xs: '16px' },
+            mt: { sm: 0, xs: '30%' }
+          }}
+        >
           {`Community rewards are live!`}
           <Link
             sx={{ color: 'inherit', textDecoration: 'none' }}
@@ -60,7 +70,11 @@ export default function Activity() {
           >{` Click to know how it works. `}</Link>
         </Typography>
       </BannerWrapper>
-      <Box padding="40px 20px">
+      <Box
+        sx={{
+          padding: { sm: '40px 20px', xs: '16px' }
+        }}
+      >
         <ContainerWrapper maxWidth={1150}>
           <RowCenter>
             <RowCenter>
