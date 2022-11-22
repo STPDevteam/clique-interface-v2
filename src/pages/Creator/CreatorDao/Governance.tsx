@@ -25,11 +25,15 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router-dom'
 
-const TopWrapper = styled(Box)({
+const TopWrapper = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '296fr 564fr',
-  gap: 24
-})
+  gap: 24,
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px 0'
+  }
+}))
 
 export default function Governance({ back, next }: { back: () => void; next: (hash: string) => void }) {
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
@@ -142,7 +146,11 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   }, [buildingDaoData, govToken?.token, onCreateDao, toggleWalletModal, account])
 
   return (
-    <ContainerWrapper>
+    <ContainerWrapper
+      sx={{
+        padding: { xs: '0 16px', sm: undefined }
+      }}
+    >
       <CreatorBox>
         <TopWrapper>
           <Box>

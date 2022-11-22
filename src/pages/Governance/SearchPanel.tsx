@@ -4,6 +4,7 @@ import { styled, Box, Typography, useTheme, Stack } from '@mui/material'
 import { useState } from 'react'
 import { useHomeOverview } from 'hooks/useBackedDaoServer'
 import { formatMillion } from 'utils/dao'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledSearchPanel = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -21,6 +22,10 @@ const StyledSearchPanel = styled(Box)(({ theme }) => ({
     gap: '20px',
     gridTemplateColumns: '1fr',
     height: 'auto'
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: 'auto',
+    padding: '26px'
   }
 }))
 
@@ -39,7 +44,11 @@ export default function SearchPanel({
   return (
     <StyledSearchPanel>
       <Box>
-        <Typography variant="h4" mb={24} color={theme.palette.common.white}>
+        <Typography
+          variant="h4"
+          sx={{ fontSize: { xs: 24, sm: 32 }, mb: { sm: 24, xs: 16 }, textAlign: { xs: 'center', sm: 'left' } }}
+          color={theme.palette.common.white}
+        >
           Welcome to Clique
         </Typography>
         <Input
@@ -55,7 +64,7 @@ export default function SearchPanel({
       <Stack
         direction={'row'}
         sx={{
-          justifyContent: { md: 'start', lg: 'center' },
+          justifyContent: { xs: 'center', md: 'start', lg: 'center' },
           '&>:last-child': { border: 'none', paddingRight: 0 },
           '&>:first-child': { paddingLeft: 0 }
         }}
@@ -72,12 +81,18 @@ export default function SearchPanel({
 
 function StaticsItem({ name, value }: { name: string; value: string }) {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   return (
-    <Box padding="0 25px" borderRight={`1px solid ${theme.textColor.text6}`}>
+    <Box
+      sx={{
+        padding: { sm: '0 25px', xs: '0 16px' }
+      }}
+      borderRight={`1px solid ${theme.textColor.text6}`}
+    >
       <Typography
         textAlign={'center'}
         noWrap
-        fontSize={16}
+        fontSize={isSmDown ? 14 : 16}
         color={theme.palette.common.white}
         variant="h6"
         fontWeight={400}
@@ -87,9 +102,9 @@ function StaticsItem({ name, value }: { name: string; value: string }) {
       <Typography
         textAlign={'center'}
         variant="h4"
-        mt={10}
+        mt={isSmDown ? 0 : 10}
         color={theme.palette.common.white}
-        fontSize={40}
+        fontSize={isSmDown ? 24 : 40}
         fontWeight={700}
       >
         {value}

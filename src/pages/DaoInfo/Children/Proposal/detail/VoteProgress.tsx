@@ -7,6 +7,7 @@ import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { TokenAmount } from 'constants/token'
 import { useProposalVoteList } from 'hooks/useBackedProposalServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import JSBI from 'jsbi'
@@ -44,6 +45,7 @@ export default function VoteProgress({
   proposalId: number
 }) {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const allVotes = useMemo(() => {
     let ret = new TokenAmount(proposalOptions[0].amount.token, JSBI.BigInt(0))
     for (const { amount } of proposalOptions) {
@@ -54,7 +56,7 @@ export default function VoteProgress({
   const { showModal } = useModal()
 
   return (
-    <VoteWrapper>
+    <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
       <RowCenter>
         <Typography variant="h6" fontWeight={500}>
           Current Results
@@ -80,9 +82,15 @@ export default function VoteProgress({
       </RowCenter>
       <Stack mt={16} spacing={10}>
         {proposalOptions.map((item, index) => (
-          <StyledItem key={index}>
+          <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
             <Typography>{item.name}</Typography>
-            <Box display={'grid'} gridTemplateColumns="1fr 180px" columnGap="24px">
+            <Box
+              display={'grid'}
+              sx={{
+                gridTemplateColumns: { sm: '1fr 180px', xs: '1fr 50px' }
+              }}
+              columnGap="24px"
+            >
               <SimpleProgress width="100%" per={Math.floor(item.per * 100)} />
               <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={600}>
                 {(item.per * 100).toFixed(1)}%({item.amount.toSignificant(6, { groupSeparator: ',' })} Votes)

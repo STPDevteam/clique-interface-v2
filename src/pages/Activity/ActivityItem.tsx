@@ -5,6 +5,7 @@ import { routes } from 'constants/routes'
 import { TokenAmount } from 'constants/token'
 import { ActivityStatus } from 'hooks/useActivityInfo'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { useNativeAndToken } from 'state/wallet/hooks'
@@ -21,7 +22,10 @@ const StyledItem = styled('div')(({ theme }) => ({
   gridTemplateColumns: '1fr 118px',
   columnGap: '24px',
   cursor: 'pointer',
-  position: 'relative'
+  position: 'relative',
+  [theme.breakpoints.down('sm')]: {
+    padding: '42px 15px 16px'
+  }
 }))
 
 const AirdropStyledItem = styled(StyledItem)({
@@ -46,14 +50,20 @@ const StyledText = styled(Typography)(
     fontSize: fontSize || 14,
     fontWeight: fontWeight || 500,
     lineHeight: '16px',
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 12
+    }
   })
 )
 
-const StyledBoldText = styled(StyledText)({
+const StyledBoldText = styled(StyledText)(({ theme }) => ({
   fontWeight: 600,
-  fontSize: 16
-})
+  fontSize: 16,
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 12
+  }
+}))
 
 const StyledStatusBox = styled(Stack)(({ theme }) => ({
   position: 'absolute',
@@ -136,6 +146,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
 
 export function AirdropItem({ item }: { item: ActivityListProp }) {
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
 
   const token = useNativeAndToken(item.tokenAddress, item.tokenChainId)
   const amount = useMemo(() => {
@@ -154,8 +165,15 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
       </StyledStatusBox>
       <Stack spacing={24}>
         <StyledTitle variant="h6">{item.title}</StyledTitle>
-        <Box display={'grid'} columnGap="16px" gridTemplateColumns="1fr 1fr 1fr 1fr 1fr">
-          <Stack spacing={16}>
+        <Box
+          display={'grid'}
+          columnGap="16px"
+          rowGap="16px"
+          sx={{
+            gridTemplateColumns: { sm: '1fr 1fr 1fr 1fr 1fr', xs: '1fr 1fr' }
+          }}
+        >
+          <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Token</StyledText>
             <StyledText>
               <Stack direction={'row'} alignItems="center">
@@ -164,19 +182,19 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
               </Stack>
             </StyledText>
           </Stack>
-          <Stack spacing={16}>
+          <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Network</StyledText>
             <StyledBoldText noWrap>{ChainListMap[item.tokenChainId]?.name || '--'}</StyledBoldText>
           </Stack>
-          <Stack spacing={16}>
+          <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Amount</StyledText>
             <StyledBoldText noWrap>{amount?.toSignificant(6, { groupSeparator: ',' }) || '--'}</StyledBoldText>
           </Stack>
-          <Stack spacing={16}>
+          <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Start Time</StyledText>
             <StyledBoldText noWrap>{timeStampToFormat(item.eventStartTime, 'Y-MM-DD HH:mm')}</StyledBoldText>
           </Stack>
-          <Stack spacing={16}>
+          <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Number Of Recipients</StyledText>
             <StyledBoldText noWrap>{item.airdropNumber}</StyledBoldText>
           </Stack>

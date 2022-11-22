@@ -18,6 +18,7 @@ import { isAddress } from 'utils'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export default function Admin() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
@@ -25,6 +26,7 @@ export default function Admin() {
   const [addAddress, setAddAddress] = useState('')
   const [appendAccounts, setAppendAccounts] = useState<string[]>([])
   const { chainId, account, library } = useActiveWeb3React()
+  const isSmDown = useBreakpoint('sm')
 
   const { result: daoAdminList, loading: daoAdminLoading } = useBackedDaoAdmins(
     daoAddress,
@@ -102,11 +104,18 @@ export default function Admin() {
   }, [account, curDaoChainId, library])
 
   return (
-    <StyledItem>
+    <StyledItem style={{ padding: isSmDown ? '20px 16px' : undefined }}>
       {daoAdminLoading ? (
         <Loading />
       ) : (
-        <Box display={'grid'} gridTemplateColumns="1fr 1fr" alignItems={'center'} gap="20px">
+        <Box
+          display={'grid'}
+          sx={{
+            gridTemplateColumns: { sm: '1fr 1fr', xs: 'unset' }
+          }}
+          alignItems={'center'}
+          gap="20px"
+        >
           {daoAdminList?.map(address => (
             <AdminBlock
               removeDaoAdminCallback={removeDaoAdminCallback}
@@ -173,10 +182,23 @@ function AdminBlock({
 
   return (
     <>
-      <Typography fontWeight={600} key={account}>
+      <Typography
+        fontWeight={600}
+        key={account}
+        sx={{
+          wordBreak: 'break-all',
+          mb: { xs: '-15px', sm: 'unset' }
+        }}
+      >
         {account}
       </Typography>
-      <Box display={'grid'} gridTemplateColumns="150px 1fr" gap={'20px'}>
+      <Box
+        display={'grid'}
+        sx={{
+          gridTemplateColumns: { sm: '150px 1fr', xs: '1fr 1fr 1fr' }
+        }}
+        gap={'20px'}
+      >
         <div>
           <AdminTagListBlock daoAddress={daoAddress} chainId={daoChainId} account={account} />
         </div>

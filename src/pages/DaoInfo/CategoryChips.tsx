@@ -21,7 +21,7 @@ export default function CategoryChips({ categoryStr }: { categoryStr: string | u
   }, [categoryStr])
 
   return (
-    <Stack direction="row" spacing={8}>
+    <Stack direction="row" spacing={8} flexWrap="wrap">
       {categoryList.map((name, index) => (
         <StyledChip
           key={name}

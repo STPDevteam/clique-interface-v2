@@ -33,6 +33,7 @@ import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const createAirdropInputFieldList = [
   'Username For Twitter',
@@ -91,6 +92,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   const [eventEndTime, setEventEndTime] = useState<number>()
   const [airdropStartTime, setAirdropStartTime] = useState<number>()
   const [airdropEndTime, setAirdropEndTime] = useState<number>()
+  const isSmDown = useBreakpoint('sm')
 
   const isEth = useMemo(() => isZero(airdropAddress), [airdropAddress])
 
@@ -353,10 +355,12 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               <Editor content={description} setContent={setDescription} />
             </div>
 
-            <Box>
+            <Box sx={{ mt: { xs: '50px !important', sm: 0 } }}>
               <StyledText mt={30}>Collect Information For Users</StyledText>
               <RowCenter>
-                <StyledText fontWeight={400}>Only Address Of Participating Users Are Collected By Default</StyledText>
+                <StyledText fontWeight={400} maxWidth="60%">
+                  Only Address Of Participating Users Are Collected By Default
+                </StyledText>
                 <StyledText>Required Field</StyledText>
               </RowCenter>
               <InputField fieldList={fieldList} onFieldList={list => setFieldList(list)} />
@@ -423,10 +427,16 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
             />
 
-            <Box display={'grid'} gridTemplateColumns="1fr 1fr 1fr 1fr">
+            <Box
+              display={'grid'}
+              sx={{
+                gridTemplateColumns: { sm: '1fr 1fr 1fr 1fr', xs: '1fr' }
+              }}
+            >
               <Box>
                 <StyledText>Event Start Time</StyledText>
                 <DateTimePicker
+                  inputWidth={isSmDown ? '100%' : undefined}
                   value={eventStartTime ? new Date(eventStartTime * 1000) : null}
                   onValue={timestamp => {
                     setEventStartTime(timestamp)
@@ -436,6 +446,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               <Box>
                 <StyledText>Event End Time</StyledText>
                 <DateTimePicker
+                  inputWidth={isSmDown ? '100%' : undefined}
                   disabled={!eventStartTime}
                   minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
                   value={eventEndTime ? new Date(eventEndTime * 1000) : null}
@@ -445,6 +456,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               <Box>
                 <StyledText>DAO Rewards Start Time</StyledText>
                 <DateTimePicker
+                  inputWidth={isSmDown ? '100%' : undefined}
                   disabled={!eventEndTime}
                   minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
                   value={airdropStartTime ? new Date(airdropStartTime * 1000) : null}
@@ -454,6 +466,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               <Box>
                 <StyledText>DAO Rewards End Time</StyledText>
                 <DateTimePicker
+                  inputWidth={isSmDown ? '100%' : undefined}
                   disabled={!airdropStartTime}
                   minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}
                   value={airdropEndTime ? new Date(airdropEndTime * 1000) : null}

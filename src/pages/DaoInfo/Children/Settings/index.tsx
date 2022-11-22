@@ -29,6 +29,9 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
       backgroundColor: theme.palette.text.primary,
       borderRadius: '0 2px 2px 0'
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    margin: '0'
   }
 }))
 
@@ -73,7 +76,13 @@ export default function Settings() {
   }, [accountLevel, daoInfo, curDaoChainId])
 
   return (
-    <Box display={'grid'} gridTemplateColumns="162px 1fr" gap={25}>
+    <Box
+      display={'grid'}
+      sx={{
+        gridTemplateColumns: { sm: '162px 1fr', xs: 'unset' }
+      }}
+      gap={25}
+    >
       <div>
         <MenuList
           sx={{

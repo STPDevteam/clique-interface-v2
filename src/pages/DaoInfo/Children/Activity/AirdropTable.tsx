@@ -11,6 +11,7 @@ import { isAddress } from 'utils'
 
 const Root = styled('div')(
   ({ theme }) => `
+  overflow: auto;
   table {
     border-collapse: collapse;
     width: 100%;
