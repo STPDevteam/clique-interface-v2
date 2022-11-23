@@ -169,7 +169,7 @@ export default function Select(props: Props) {
                 gap: 8,
                 padding: 15,
                 '&::after': {
-                  content: `url(${CheckboxIcon})`,
+                  content: multiple ? `url(${CheckboxIcon})` : "''",
                   width: 30,
                   height: 20,
                   display: 'flex',
