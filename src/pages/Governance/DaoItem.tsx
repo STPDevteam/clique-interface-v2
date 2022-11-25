@@ -137,6 +137,7 @@ export default function DaoItem({
         </Box>
       </Box>
       <StyledDesc variant="body1">
+        {(daoBaseInfo?.daoLogo, daoLogo)}
         {daoBaseInfo?.description ? (
           daoBaseInfo.description
         ) : (
