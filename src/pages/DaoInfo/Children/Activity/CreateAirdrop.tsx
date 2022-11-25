@@ -402,7 +402,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               />
             )}
 
-            <RowCenter>
+            <RowCenter flexWrap={'wrap'}>
               <StyledText>
                 Token Name:{' '}
                 <span style={{ color: theme.palette.text.primary }}>

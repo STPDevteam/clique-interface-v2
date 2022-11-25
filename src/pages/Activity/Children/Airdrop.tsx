@@ -680,11 +680,10 @@ function Manage({
             <StyledText3 mr={15}>Total addresses: {collectCount}</StyledText3>
             <OutlineButton
               onClick={() => airdropDownloadCallback(airdropInfo.airdropId)}
-              width="180px"
               height="20px"
               fontWeight={500}
               fontSize={12}
-              style={{ borderWidth: 1 }}
+              style={{ borderWidth: 1, padding: '0 6px', width: 'auto' }}
             >
               Download User Data <DownloadIcon sx={{ height: 16 }} />
             </OutlineButton>
@@ -698,8 +697,8 @@ function Manage({
           totalInputAmount={_totalInputAmount}
         />
 
-        <RowCenter>
-          <StyledText3>
+        <RowCenter flexWrap={'wrap'}>
+          <StyledText3 mr={10}>
             Contract balance: {airdropInfo.tokenStaked.toSignificant(6, { groupSeparator: ',' })}{' '}
             {airdropInfo.airdropToken.symbol}
           </StyledText3>
