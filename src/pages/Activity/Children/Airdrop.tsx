@@ -317,9 +317,9 @@ export default function Airdrop() {
                             {airdropDescData ? activityStatusText[airdropDescData.status] : '-'}
                           </StyledText2>
                         </RowCenter>
-                        <RowCenter>
+                        <RowCenter flexWrap={'wrap'}>
                           <StyledText1>Event Time</StyledText1>
-                          <StyledText2 style={{ fontSize: 12 }}>
+                          <StyledText2 style={{ fontSize: 12 }} textAlign="right">
                             {airdropDescData
                               ? timeStampToFormat(airdropDescData.eventStartTime, 'Y-MM-DD HH:mm') +
                                 ' - ' +
@@ -327,9 +327,9 @@ export default function Airdrop() {
                               : '--'}
                           </StyledText2>
                         </RowCenter>
-                        <RowCenter>
+                        <RowCenter flexWrap={'wrap'}>
                           <StyledText1>DAO Rewards Time</StyledText1>
-                          <StyledText2 style={{ fontSize: 12 }}>
+                          <StyledText2 style={{ fontSize: 12 }} textAlign="right">
                             {airdropInfos
                               ? timeStampToFormat(airdropInfos.airdropStartTime, 'Y-MM-DD HH:mm') +
                                 ' - ' +
@@ -343,7 +343,7 @@ export default function Airdrop() {
                           <StyledText2>
                             {airdropInfos
                               ? airdropInfos.tokenStaked.toSignificant(6, { groupSeparator: ',' }) +
-                                `${airdropInfos.airdropToken.symbol}`
+                                ` ${airdropInfos.airdropToken.symbol}`
                               : '--'}
                           </StyledText2>
                         </RowCenter>

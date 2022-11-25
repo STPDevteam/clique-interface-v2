@@ -38,7 +38,9 @@ function ItemWrapper({
           <DaoAvatars size={isSmDown ? 40 : 64} src={daoBaseInfo?.daoLogo} alt={''} />
         </Link>
         <RowCenter flexWrap={'wrap'}>
-          <Typography variant="h6">{daoBaseInfo?.name || '--'}</Typography>
+          <Typography variant="h6" mr={10}>
+            {daoBaseInfo?.name || '--'}
+          </Typography>
           <Typography
             fontSize={isSmDown ? 12 : 14}
             lineHeight={1.2}
