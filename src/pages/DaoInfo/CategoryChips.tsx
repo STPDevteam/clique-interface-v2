@@ -9,6 +9,11 @@ export const StyledChip = styled(Chip)(({ theme, bgColor }: { theme?: any; bgCol
   fontSize: 12,
   '& span': {
     padding: '3px 10px'
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& span': {
+      padding: '2px 6px'
+    }
   }
 }))
 

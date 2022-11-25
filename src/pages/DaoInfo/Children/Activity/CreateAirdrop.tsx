@@ -355,7 +355,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
               <Editor content={description} setContent={setDescription} />
             </div>
 
-            <Box sx={{ mt: { xs: '50px !important', sm: 0 } }}>
+            <Box sx={{ mt: { xs: '65px !important', sm: 0 } }}>
               <StyledText mt={30}>Collect Information For Users</StyledText>
               <RowCenter>
                 <StyledText fontWeight={400} maxWidth="60%">

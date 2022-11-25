@@ -32,7 +32,7 @@ const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
   padding: '40px 32px',
   [theme.breakpoints.down('sm')]: {
-    padding: '30px 16px'
+    padding: '30px 16px 60px'
   }
 }))
 
@@ -237,7 +237,7 @@ export function CreateGovernanceModal() {
 
         <Box
           sx={{
-            maxHeight: `calc(100vh - ${theme.height.header} - 120px)`,
+            maxHeight: `calc(100vh - ${theme.height.header} - 150px)`,
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               display: 'none'
@@ -366,9 +366,9 @@ export function CreateGovernanceModal() {
                 <Alert severity="info">You will create a DAO in {chainId ? ChainListMap[chainId].name : '--'}</Alert>
               )}
 
-              <Box mt={20} display="flex" justifyContent={'center'} gap="40px">
+              <Box mt={20} display="flex" justifyContent={{ sm: 'center', xs: 'space-evenly' }} gap="40px">
                 <OutlineButton
-                  width={isSmDown ? '138px' : '166px'}
+                  width={isSmDown ? '130px' : '166px'}
                   onClick={() => setStep(CreateGovernanceStep.BASE_INFO)}
                 >
                   Back

@@ -9,8 +9,8 @@ export function CloseIcon({ onClick }: { onClick?: () => void }) {
       onClick={onClick}
       sx={{
         padding: 0,
-        width: 40,
-        height: 40,
+        width: { sm: 40, xs: 30 },
+        height: { sm: 40, xs: 30 },
         position: 'absolute',
         top: { xs: 0, sm: '24px' },
         right: { xs: 8, sm: '24px' },

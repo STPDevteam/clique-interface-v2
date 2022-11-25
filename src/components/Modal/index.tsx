@@ -89,7 +89,7 @@ export default function Modal(props: Props) {
                     marginTop: theme.height.mobileHeader,
                     marginBottom: 0,
                     overflow,
-                    pb: '20px',
+                    pb: '50px',
                     pt: '10px'
                   }
                 }

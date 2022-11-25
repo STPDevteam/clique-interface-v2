@@ -248,7 +248,12 @@ export default function Header() {
           </HideOnMobile>
         </Box>
 
-        <Box display="flex" alignItems="center" gap={{ xs: '10px', sm: '24px' }}>
+        <Box
+          display={{ sm: 'flex', xs: 'grid' }}
+          gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto' }}
+          alignItems="center"
+          gap={{ xs: '10px', sm: '24px' }}
+        >
           <NetworkSelect />
           {account && (
             <NoticeMsg to={routes.Notification}>

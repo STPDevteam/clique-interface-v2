@@ -56,8 +56,10 @@ export default function SearchPanel({
           onChange={val => setSearchStr(val.target.value)}
           maxWidth="432px"
           onEnter={() => onSearchValue(searchStr)}
-          onBlur={() => setSearchStr(searchValue)}
-          startAdornment={<SearchIcon className="search" />}
+          onBlur={() => onSearchValue(searchStr)}
+          startAdornment={
+            <SearchIcon className="search" style={{ cursor: 'pointer' }} onClick={() => onSearchValue(searchStr)} />
+          }
           placeholder="Search and Discover DAOs"
         />
       </Box>

@@ -3,19 +3,21 @@ import Copy from 'components/essential/Copy'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { ChainId } from 'constants/chain'
 import { useTotalSupply } from 'data/TotalSupply'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { useToken } from 'state/wallet/hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
 
 export function ShowTokenInfo({ address, chainId }: { address: string; chainId: ChainId }) {
   const token = useToken(address, chainId)
+  const isSmDown = useBreakpoint('sm')
   return token ? (
     <Stack direction={'row'} spacing={4} justifyContent="center" alignItems={'center'}>
-      <CurrencyLogo currency={token} size="40px" />
+      <CurrencyLogo currency={token} size={isSmDown ? '30px' : '40px'} />
       <Stack>
-        <Typography fontSize={14} fontWeight={600}>
+        <Typography fontSize={14} fontWeight={600} textAlign="left">
           {token.name}
         </Typography>
-        <Typography variant="body2" fontWeight={500} alignSelf="baseline">
+        <Typography variant="body2" fontWeight={500} alignSelf="baseline" textAlign="left">
           {token.symbol}
         </Typography>
       </Stack>
@@ -44,7 +46,7 @@ export function ShowCopyTokenAddress({ address, chainId }: { address: string; ch
       <Link fontWeight={600} fontSize={13} target="_blank" href={getEtherscanLink(chainId, address, 'address')}>
         {shortenAddress(address)}
       </Link>
-      <Copy toCopy={address} />
+      <Copy toCopy={address} margin="0" />
     </Stack>
   )
 }

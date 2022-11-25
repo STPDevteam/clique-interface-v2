@@ -39,9 +39,11 @@ function Web3StatusInner() {
         <Box
           sx={{
             height: { xs: 36, sm: 50 },
-            width: { xs: 130, sm: 200 },
+            width: { xs: 'auto', sm: 200 },
+            padding: '0 15px',
             borderRadius: `${theme.shape.borderRadius}px`,
-            display: 'flex',
+            display: { sm: 'flex', xs: 'grid' },
+            gridTemplateColumns: 'auto auto',
             justifyContent: 'center',
             alignItems: 'center',
             gap: '10px',
