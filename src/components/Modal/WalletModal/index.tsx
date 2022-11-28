@@ -133,7 +133,7 @@ export default function WalletModal({}: // pendingTransactions,
               icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
             />
           )
-        } else if (isMetamask && option.name === 'MetaMask') {
+        } else if (window.web3 && option.name === 'MetaMask') {
           return (
             <Option
               onClick={() => {
