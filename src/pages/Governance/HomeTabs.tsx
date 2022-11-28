@@ -12,14 +12,24 @@ const StyledWrapper = styled('ul')(({ theme }) => ({
   fontSize: 14,
   margin: 0,
   fontWeight: 600,
+  overflowX: 'auto',
   color: theme.palette.text.secondary,
   '& li': {
     cursor: 'pointer',
     padding: '12px 0',
     marginLeft: 64,
+    '&:first-child': {
+      marginLeft: 0
+    },
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: 24
+    },
     '&.active': {
       color: theme.palette.text.primary
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    display: 'inline-flex'
   }
 }))
 
@@ -31,7 +41,15 @@ export default function HomeTabs({
   changeTab: (val: CategoriesTypeProp) => void
 }) {
   return (
-    <Box sx={{ overflowX: 'auto' }}>
+    <Box
+      sx={{
+        overflowX: 'auto',
+        width: { sm: 'unset', xs: `calc(100vw - 32px)` },
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        }
+      }}
+    >
       <StyledWrapper>
         {itemList.map(item => (
           <li

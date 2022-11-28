@@ -22,7 +22,7 @@ const MobilePopupInner = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   WebkitOverflowScrolling: 'touch',
-  '& ::-webkit-scrollbar': {
+  '&::-webkit-scrollbar': {
     display: 'none'
   }
 })

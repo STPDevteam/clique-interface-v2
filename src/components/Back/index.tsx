@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom'
 export default function Back({ text, event, sx }: { text?: string; event?: () => void; sx?: SxProps }) {
   const history = useHistory()
   return (
-    <Box sx={{ marginLeft: 40, marginTop: 40, ...sx }}>
+    <Box sx={{ marginLeft: { sm: 20, xs: 0 }, marginTop: { sm: 20, xs: 10 }, ...sx }}>
       <Typography
         sx={{ cursor: 'pointer' }}
         fontWeight={600}

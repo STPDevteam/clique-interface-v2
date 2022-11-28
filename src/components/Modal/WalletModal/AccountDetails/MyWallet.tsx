@@ -32,7 +32,11 @@ export default function MyWallet() {
   const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash)
 
   return (
-    <Box width={'84%'}>
+    <Box
+      sx={{
+        width: { sm: '84%', xs: '100%' }
+      }}
+    >
       <Stack direction={'row'} alignItems="center" spacing={6} justifyContent="center">
         <Typography fontSize={12} fontWeight={600}>
           {account}

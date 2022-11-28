@@ -1,4 +1,5 @@
 import { styled, Pagination, Typography, Box } from '@mui/material'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export const StyledPagination = styled(Pagination)(({ theme }) => ({
   color: theme.palette.text.primary,
@@ -32,6 +33,15 @@ export const StyledPagination = styled(Pagination)(({ theme }) => ({
     backgroundColor: 'transparent',
     // borderColor: theme.palette.text.primary
     color: theme.palette.primary.main
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .MuiPaginationItem-page': {
+      fontSize: 14
+    },
+    '& .MuiPaginationItem-previousNext': {
+      minWidth: 30,
+      height: 30
+    }
   }
 }))
 
@@ -56,6 +66,7 @@ export default function PaginationView({
   perPage,
   total
 }: PaginationProps) {
+  const isSmDown = useBreakpoint('sm')
   return (
     <>
       {count > 0 && (
@@ -83,7 +94,7 @@ export default function PaginationView({
           <StyledPagination
             count={count}
             page={page}
-            siblingCount={siblingCount || 1}
+            siblingCount={siblingCount || (isSmDown ? 0 : 1)}
             boundaryCount={boundaryCount || 1}
             // variant="outlined"
             shape="rounded"

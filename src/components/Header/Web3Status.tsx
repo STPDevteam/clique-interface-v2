@@ -39,16 +39,18 @@ function Web3StatusInner() {
         <Box
           sx={{
             height: { xs: 36, sm: 50 },
-            width: { xs: 140, sm: 200 },
+            width: { xs: 'auto', sm: 200 },
+            padding: '0 15px',
             borderRadius: `${theme.shape.borderRadius}px`,
-            display: 'flex',
+            display: { sm: 'flex', xs: 'grid' },
+            gridTemplateColumns: 'auto auto',
             justifyContent: 'center',
             alignItems: 'center',
             gap: '10px',
             border: `2px solid ${theme.palette.primary.main}`
           }}
         >
-          <div />
+          {/* <div /> */}
           {hasPendingTransactions ? (
             <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 10, sm: 17 }, ml: { xs: 10, sm: 20 } }}>
               <Spinner color={theme.palette.text.primary} size={isDownSm ? '10px' : '16px'} />
@@ -68,7 +70,7 @@ function Web3StatusInner() {
                   color: theme.palette.text.primary
                 }}
               >
-                {ENSName || shortenAddress(account)}
+                {ENSName || shortenAddress(account, isDownSm ? 3 : 4)}
               </Typography>
             </>
           )}

@@ -158,6 +158,7 @@ const sortIcon = ({ className }: { className: string }) => (
 const CardRow = styled('div')(`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   grid-template-columns: auto 100%;
   > div:first-of-type {
     white-space: nowrap;
@@ -203,7 +204,7 @@ export default function Table({
         <>
           {rows.map((data, index) => (
             <Card key={index}>
-              <Box display="flex" flexDirection="column" gap="16px">
+              <Box display="grid" gap="16px">
                 {header.map((headerString, index) => (
                   <CardRow key={index}>
                     <Typography variant="inherit" component="div" fontSize={12} color="#000000" sx={{ opacity: 0.5 }}>

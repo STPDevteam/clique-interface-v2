@@ -7,6 +7,7 @@ import HomeTabs from './HomeTabs'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import EmptyData from 'components/EmptyData'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export default function Home() {
   const {
@@ -15,18 +16,26 @@ export default function Home() {
     loading,
     search: { keyword, setKeyword, category, setCategory }
   } = useHomeDaoList()
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <Box sx={{ maxWidth: 1248 }}>
-      <SearchPanel searchValue={keyword} onSearchValue={val => setKeyword(val)} />
-      <Box mt={12}>
+      {!isSmDown && <SearchPanel searchValue={keyword} onSearchValue={val => setKeyword(val)} />}
+      <Box sx={{ mt: { sm: 12, xs: -24 } }}>
         <HomeTabs value={category} changeTab={val => setCategory(val)} />
         <Box minHeight={316}>
           {!loading && !homeDaoList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
             <Loading sx={{ marginTop: 30 }} />
           </DelayLoading>
-          <Grid spacing={18} container mt={7}>
+          <Grid
+            spacing={isSmDown ? 16 : 18}
+            container
+            mt={7}
+            sx={{
+              overflow: 'hidden'
+            }}
+          >
             {!loading &&
               homeDaoList.map(item => (
                 <Grid key={item.daoAddress + item.chainId} item lg={3} md={4} sm={6} xs={12}>

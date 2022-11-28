@@ -17,6 +17,7 @@ interface Props {
   hasBorder?: boolean
   background?: string
   backdropColor?: string
+  overflow?: string
 }
 
 const Transition = React.forwardRef<unknown, SlideProps | FadeProps>(function Transition(props, ref) {
@@ -36,6 +37,7 @@ export default function Modal(props: Props) {
     maxWidth,
     padding,
     background,
+    overflow,
     backdropColor
   } = props
   const { isOpen, hideModal } = useModal()
@@ -86,6 +88,7 @@ export default function Modal(props: Props) {
                     borderRadius: '0',
                     marginTop: theme.height.mobileHeader,
                     marginBottom: 0,
+                    overflow,
                     pb: '50px',
                     pt: '10px'
                   }

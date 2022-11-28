@@ -8,6 +8,8 @@ import ShowProposalStatusTag from './ShowProposalStatusTag'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { myCliqueV1Domain } from '../../../../constants'
+import useBreakpoint from 'hooks/useBreakpoint'
+import { useMemo } from 'react'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '24px',
@@ -48,12 +50,37 @@ export default function ProposalItem(props: ProposalListBaseProp) {
 function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
   const theme = useTheme()
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
   const proposalInfo = useProposalDetailInfo(daoAddress, daoChainId, proposalId)
+
+  const Creator = useMemo(() => {
+    return proposalInfo ? (
+      <>
+        <Link
+          underline="hover"
+          href={getEtherscanLink(daoChainId, proposalInfo?.creator || '', 'address')}
+          target="_blank"
+        >
+          <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
+            {proposalInfo?.creator && shortenAddress(proposalInfo.creator)}
+          </Typography>
+        </Link>
+        <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
+      </>
+    ) : (
+      <Skeleton animation="wave" width={100} />
+    )
+  }, [daoAddress, daoChainId, proposalInfo, theme.palette.text.primary])
 
   return (
     <StyledCard
       onClick={() => history.push(routes._DaoInfo + `/${daoChainId}/${daoAddress}/proposal/detail/${proposalId}`)}
     >
+      {isSmDown && (
+        <Box mb={8} display={'flex'} alignItems="center">
+          {Creator}
+        </Box>
+      )}
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
         {proposalInfo ? (
           <>
@@ -79,24 +106,7 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
         </>
       )}
       <RowCenter mt={16}>
-        <RowCenter>
-          {proposalInfo ? (
-            <>
-              <Link
-                underline="hover"
-                href={getEtherscanLink(daoChainId, proposalInfo?.creator || '', 'address')}
-                target="_blank"
-              >
-                <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
-                  {proposalInfo?.creator && shortenAddress(proposalInfo.creator)}
-                </Typography>
-              </Link>
-              <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
-            </>
-          ) : (
-            <Skeleton animation="wave" width={100} />
-          )}
-        </RowCenter>
+        <RowCenter>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           {proposalInfo ? (
             <>
@@ -116,12 +126,30 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
 
 function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
+
+  const Creator = useMemo(
+    () => (
+      <Link
+        underline="hover"
+        href={getEtherscanLink(proposalInfo.daoChainId, proposalInfo.proposer, 'address')}
+        target="_blank"
+      >
+        <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
+          {proposalInfo?.proposer && shortenAddress(proposalInfo.proposer)}
+        </Typography>
+      </Link>
+    ),
+    [proposalInfo.daoChainId, proposalInfo.proposer, theme.palette.text.primary]
+  )
+
   return (
     <StyledCard
       onClick={() =>
         window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.daoAddressV1}/${proposalInfo.proposalId}`)
       }
     >
+      {isSmDown && <Box>{Creator}</Box>}
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
         <Typography variant="h5" noWrap>
           {proposalInfo.title}
@@ -132,19 +160,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
         {proposalInfo.contentV1}
       </Typography>
       <RowCenter mt={16}>
-        <RowCenter>
-          <>
-            <Link
-              underline="hover"
-              href={getEtherscanLink(proposalInfo.daoChainId, proposalInfo.proposer, 'address')}
-              target="_blank"
-            >
-              <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
-                {proposalInfo?.proposer && shortenAddress(proposalInfo.proposer)}
-              </Typography>
-            </Link>
-          </>
-        </RowCenter>
+        <RowCenter>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           <>
             <Typography color={theme.textColor.text1} fontSize={14}>

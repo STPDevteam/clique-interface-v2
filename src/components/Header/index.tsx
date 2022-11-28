@@ -5,7 +5,7 @@ import {
   AppBar,
   Badge,
   Box,
-  IconButton,
+  // IconButton,
   Link,
   MenuItem,
   styled as muiStyled,
@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
-import { HideOnMobile, ShowOnMobile } from 'theme/index'
+import { HideOnMobile } from 'theme/index'
 import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/svg/logo.svg'
@@ -98,6 +98,9 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     },
     '&:hover': {
       color: theme.palette.primary.main
+    },
+    [theme.breakpoints.down('sm')]: {
+      paddingBottom: '10px'
     }
   },
   [theme.breakpoints.down('lg')]: {
@@ -109,8 +112,21 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'fixed'
   },
   [theme.breakpoints.down('sm')]: {
+    '& .link': { marginRight: 24 },
+    // justifyContent: 'space-around',
     height: theme.height.mobileHeader,
-    padding: '0 20px'
+    padding: '0 15px',
+    boxShadow: 'none'
+  }
+}))
+
+const StyledMobileAppBar = styled(StyledAppBar)(({ theme }) => ({
+  display: 'none',
+  [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    position: 'unset',
+    marginTop: 10,
+    height: `calc(${theme.height.mobileHeader} - 10px)`
   }
 }))
 
@@ -135,15 +151,31 @@ const MainLogo = styled(NavLink)(({ theme }) => ({
     cursor: 'pointer'
   },
   [theme.breakpoints.down('sm')]: {
-    '& img': { width: 100, height: 'auto' },
-    marginBottom: -10
+    '& img': { width: 80, height: 'auto' },
+    marginBottom: -10,
+    marginRight: 5
   }
 }))
 
 const LinksWrapper = muiStyled('div')(({ theme }) => ({
-  margin: '0 40px',
+  margin: '0 80px',
+  [theme.breakpoints.down('lg')]: {
+    margin: '0 30px'
+  },
   [theme.breakpoints.down('md')]: {
-    margin: '0 20px'
+    margin: '0 15px'
+  },
+  [theme.breakpoints.down('sm')]: {
+    margin: '0',
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    whiteSpace: 'nowrap',
+    height: 40,
+    scrollbarWidth: 'none' /* firefox */,
+    '-ms-overflow-style': 'none' /* IE 10+ */,
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
   }
 }))
 
@@ -165,12 +197,15 @@ const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
     '& svg path': {
       stroke: theme.palette.common.white
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: 30,
+    width: 30
   }
 }))
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
   const theme = useTheme()
   const {
@@ -184,6 +219,7 @@ export default function Header() {
   return (
     <>
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
+      <Filler />
       <Alert
         icon={false}
         sx={{
@@ -199,100 +235,25 @@ export default function Header() {
           https://v1.myclique.io/
         </Link>
       </Alert>
-      <Filler />
+      <StyledMobileAppBar>
+        <TabsBox />
+      </StyledMobileAppBar>
       <StyledAppBar>
         <Box display="flex" alignItems="center">
           <MainLogo to={routes.Governance}>
             <Image src={logo} alt={'logo'} />
           </MainLogo>
           <HideOnMobile breakpoint="md">
-            <LinksWrapper>
-              {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
-                subTab ? (
-                  <Box
-                    sx={{
-                      marginRight: {
-                        xs: 15,
-                        lg: 48
-                      },
-                      height: 'auto',
-                      paddingBottom: '30px',
-                      borderBottom: '2px solid transparent',
-                      borderColor: theme =>
-                        subTab.some(tab => tab.route && pathname.includes(tab.route))
-                          ? theme.palette.text.primary
-                          : 'transparnet',
-                      display: 'inline'
-                    }}
-                    key={title + idx}
-                  >
-                    <PlainSelect
-                      key={title + idx}
-                      placeholder={title}
-                      autoFocus={false}
-                      width={title === 'Test' ? '70px' : undefined}
-                      style={{
-                        height: '16px'
-                      }}
-                    >
-                      {subTab.map((sub, idx) =>
-                        sub.link ? (
-                          <MenuItem
-                            key={sub.link + idx}
-                            sx={{ backgroundColor: 'transparent!important', background: 'transparent!important' }}
-                            selected={false}
-                          >
-                            <ExternalLink
-                              href={sub.link}
-                              className={'link'}
-                              color="#00000050"
-                              sx={{
-                                '&:hover': {
-                                  color: '#232323!important'
-                                }
-                              }}
-                            >
-                              {sub.titleContent ?? sub.title}
-                            </ExternalLink>
-                          </MenuItem>
-                        ) : (
-                          <MenuItem key={sub.title + idx}>
-                            <StyledNavLink to={sub.route ?? ''}>{sub.titleContent ?? sub.title}</StyledNavLink>
-                          </MenuItem>
-                        )
-                      )}
-                    </PlainSelect>
-                  </Box>
-                ) : link ? (
-                  <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
-                    {titleContent ?? title}
-                  </ExternalLink>
-                ) : (
-                  <NavLink
-                    key={title + idx}
-                    id={`${route}-nav-link`}
-                    to={route ?? ''}
-                    className={
-                      (route
-                        ? pathname.includes(route)
-                          ? 'active'
-                          : pathname.includes('account')
-                          ? route.includes('account')
-                            ? 'active'
-                            : ''
-                          : ''
-                        : '') + ' link'
-                    }
-                  >
-                    {titleContent ?? title}
-                  </NavLink>
-                )
-              )}
-            </LinksWrapper>
+            <TabsBox />
           </HideOnMobile>
         </Box>
 
-        <Box display="flex" alignItems="center" gap={{ xs: '10px', sm: '24px' }}>
+        <Box
+          display={{ sm: 'flex', xs: 'grid' }}
+          gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto' }}
+          alignItems="center"
+          gap={{ xs: '10px', sm: '24px' }}
+        >
           <NetworkSelect />
           {account && (
             <NoticeMsg to={routes.Notification}>
@@ -302,7 +263,7 @@ export default function Header() {
             </NoticeMsg>
           )}
           <Web3Status />
-          <ShowOnMobile breakpoint="sm">
+          {/* <ShowOnMobile breakpoint="sm">
             <IconButton
               sx={{
                 border: '1px solid rgba(0, 0, 0, 0.1)',
@@ -322,9 +283,99 @@ export default function Header() {
                 <path d="M1 7H13" strokeWidth="1.4" strokeLinecap="round" />
               </svg>
             </IconButton>
-          </ShowOnMobile>
+          </ShowOnMobile> */}
         </Box>
       </StyledAppBar>
     </>
+  )
+}
+
+function TabsBox() {
+  const { pathname } = useLocation()
+
+  return (
+    <LinksWrapper>
+      {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
+        subTab ? (
+          <Box
+            sx={{
+              marginRight: {
+                xs: 15,
+                lg: 48
+              },
+              height: 'auto',
+              paddingBottom: '30px',
+              borderBottom: '2px solid transparent',
+              borderColor: theme =>
+                subTab.some(tab => tab.route && pathname.includes(tab.route))
+                  ? theme.palette.text.primary
+                  : 'transparnet',
+              display: 'inline'
+            }}
+            key={title + idx}
+          >
+            <PlainSelect
+              key={title + idx}
+              placeholder={title}
+              autoFocus={false}
+              width={title === 'Test' ? '70px' : undefined}
+              style={{
+                height: '16px'
+              }}
+            >
+              {subTab.map((sub, idx) =>
+                sub.link ? (
+                  <MenuItem
+                    key={sub.link + idx}
+                    sx={{ backgroundColor: 'transparent!important', background: 'transparent!important' }}
+                    selected={false}
+                  >
+                    <ExternalLink
+                      href={sub.link}
+                      className={'link'}
+                      color="#00000050"
+                      sx={{
+                        '&:hover': {
+                          color: '#232323!important'
+                        }
+                      }}
+                    >
+                      {sub.titleContent ?? sub.title}
+                    </ExternalLink>
+                  </MenuItem>
+                ) : (
+                  <MenuItem key={sub.title + idx}>
+                    <StyledNavLink to={sub.route ?? ''}>{sub.titleContent ?? sub.title}</StyledNavLink>
+                  </MenuItem>
+                )
+              )}
+            </PlainSelect>
+          </Box>
+        ) : link ? (
+          <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
+            {titleContent ?? title}
+          </ExternalLink>
+        ) : (
+          <NavLink
+            key={title + idx}
+            id={`${route}-nav-link`}
+            to={route ?? ''}
+            className={
+              (route
+                ? pathname.includes(route)
+                  ? 'active'
+                  : pathname.includes('account')
+                  ? route.includes('account')
+                    ? 'active'
+                    : ''
+                  : ''
+                : '') + ' link'
+            }
+          >
+            {titleContent ?? title}
+          </NavLink>
+        )
+      )}
+    </LinksWrapper>
   )
 }

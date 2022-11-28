@@ -25,14 +25,20 @@ const StyledCard = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   boxShadow: theme.boxShadow.bs2,
   transition: 'all 0.5s',
-  '&:hover': {
-    border: `2px solid ${theme.palette.primary.main}`,
-    padding: '22px'
-  },
+  // '&:hover': {
+  //   border: `2px solid ${theme.palette.primary.main}`,
+  //   padding: '22px'
+  // },
   '& .joined': {
     backgroundColor: theme.palette.text.disabled,
     '&:hover': {
       backgroundColor: theme.palette.text.disabled
+    }
+  },
+  [theme.breakpoints.up('sm')]: {
+    '&:hover': {
+      border: `2px solid ${theme.palette.primary.main}`,
+      padding: '22px'
     }
   }
 }))

@@ -15,13 +15,18 @@ import MyDaos from './MyDaos'
 import UpdateProfileModal from './UpdateProfileModal'
 import OutlineButton from 'components/Button/OutlineButton'
 import useModal from 'hooks/useModal'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   minHeight: 215,
   background: theme.palette.common.white,
   boxShadow: theme.boxShadow.bs2,
-  padding: '32px 48px 20px'
+  padding: '32px 48px 20px',
+  [theme.breakpoints.down('sm')]: {
+    padding: '20px',
+    minHeight: 150
+  }
 }))
 
 export default function Profile() {
@@ -35,6 +40,7 @@ export default function Profile() {
   ])
   const [rand, setRand] = useState(Math.random())
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
 
   const { result: profileInfo } = useUserProfileInfo(currentAccount || undefined, rand)
   const refreshProfile = useCallback(() => {
@@ -48,11 +54,19 @@ export default function Profile() {
   }, [currentAccount, hideModal, history])
 
   return (
-    <Box paddingBottom={40}>
-      <ContainerWrapper maxWidth={1248} margin={'24px auto 40px'}>
+    <Box
+      paddingBottom={40}
+      sx={{
+        padding: { sm: '0 0 40px 0', xs: '0 16px 20px' }
+      }}
+    >
+      <ContainerWrapper maxWidth={1248} margin={isSmDown ? '0 auto 24px' : '24px auto 40px'}>
         <StyledHeader>
           <Box display={'flex'}>
-            <Avatar src={profileInfo?.accountLogo} sx={{ width: 100, height: 100, marginRight: 24 }} />
+            <Avatar
+              src={profileInfo?.accountLogo}
+              sx={{ width: { xs: 64, sm: 100 }, height: { xs: 64, sm: 100 }, marginRight: isSmDown ? 8 : 24 }}
+            />
             <Box display={'flex'} flexDirection="column" justifyContent={'space-between'}>
               <Box display={'flex'} alignItems="center">
                 <Typography variant="h5" mr={10}>

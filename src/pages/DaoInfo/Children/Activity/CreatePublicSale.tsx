@@ -33,11 +33,15 @@ const StyledText = styled(Typography)(({ theme }) => ({
   fontWeight: 500
 }))
 
-const TopWrapper = styled(Box)({
+const TopWrapper = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '296fr 564fr',
-  gap: 24
-})
+  gap: 24,
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px'
+  }
+}))
 
 export default function CreatePublicSale() {
   const { chainId: daoChainId, address: daoAddress } = useParams<{ chainId: string; address: string }>()

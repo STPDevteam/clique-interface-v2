@@ -11,16 +11,25 @@ import { ChainId } from 'constants/chain'
 import { DaoAvatars } from 'components/Avatars'
 
 const Wrapper = styled('div')(({ theme }) => ({
-  overflowY: 'auto',
   borderRight: `1px solid ${theme.bgColor.bg2}`,
   height: `calc(100vh - ${theme.height.header})`,
   padding: '16px 8px',
-  '&::-webkit-scrollbar': {
-    display: 'none'
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 138px',
+    borderRight: 0,
+    padding: '10px 16px',
+    height: 84,
+    '& .dao-box': {
+      overflowY: 'hidden',
+      overflowX: 'auto',
+      height: '84px',
+      width: `calc(100vw - 32px - 138px)`,
+      '&::-webkit-scrollbar': {
+        display: 'none'
+      }
+    }
   }
-  // [theme.breakpoints.down('md')]: {
-  //   height: `calc(100vh - ${theme.height.header})`
-  // }
 }))
 
 const Text = styled(Typography)(({ theme }) => ({
@@ -63,26 +72,43 @@ export default function LeftSider() {
 
   return (
     <Wrapper>
-      {myJoinedDaoList.map(({ daoAddress, chainId, daoName }) => (
-        <DaoItem key={daoAddress + chainId} chainId={chainId} daoName={daoName} daoAddress={daoAddress} />
-      ))}
-      {!!myJoinedDaoList.length && <Box sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />}
-      <Item onClick={() => history.push(routes.Governance)}>
-        <div className="action">
-          <SearchIcon></SearchIcon>
-        </div>
-        <Text mt={'0 !important'} noWrap>
-          Search
-        </Text>
-      </Item>
-      <Item onClick={() => showModal(<CreateGovernanceModal />)}>
-        <div className="action">
-          <AddIcon width={16}></AddIcon>
-        </div>
-        <Text mt={'0 !important'} noWrap>
-          Add DAO
-        </Text>
-      </Item>
+      <Box
+        className="dao-box"
+        sx={{
+          display: { sm: 'block', xs: 'inline-flex' }
+        }}
+      >
+        {myJoinedDaoList.map(({ daoAddress, chainId, daoName }) => (
+          <DaoItem key={daoAddress + chainId} chainId={chainId} daoName={daoName} daoAddress={daoAddress} />
+        ))}
+        {!!myJoinedDaoList.length && <Box sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />}
+      </Box>
+      <Box
+        sx={{
+          display: { sm: 'block', xs: 'inline-flex' },
+          justifyContent: { xs: 'flex-end', sm: undefined }
+        }}
+      >
+        <Item
+          sx={{ borderLeft: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
+          onClick={() => history.push(routes.Governance)}
+        >
+          <div className="action">
+            <SearchIcon></SearchIcon>
+          </div>
+          <Text mt={'0 !important'} noWrap>
+            Search
+          </Text>
+        </Item>
+        <Item onClick={() => showModal(<CreateGovernanceModal />)}>
+          <div className="action">
+            <AddIcon width={16}></AddIcon>
+          </div>
+          <Text mt={'0 !important'} noWrap>
+            Add DAO
+          </Text>
+        </Item>
+      </Box>
     </Wrapper>
   )
 }

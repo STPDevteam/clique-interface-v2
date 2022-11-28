@@ -20,6 +20,7 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 import { routes } from 'constants/routes'
 import { Link } from 'react-router-dom'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
@@ -35,6 +36,7 @@ export default function Info({
   daoAddress: string
 }) {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const { account, library, chainId } = useActiveWeb3React()
   const proposalSnapshot = useProposalSnapshot(daoChainId, daoAddress, proposalInfo.proposalId)
   const cancelProposalCallback = useCancelProposalCallback(daoAddress)
@@ -74,7 +76,7 @@ export default function Info({
           <RowCenter>
             <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.creator}`}>
               <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
-                {shortenAddress(proposalInfo.creator)}
+                {shortenAddress(proposalInfo.creator, isSmDown ? 3 : 4)}
               </Typography>
             </Link>
             <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />

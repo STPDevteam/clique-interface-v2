@@ -11,6 +11,7 @@ import { isAddress } from 'utils'
 
 const Root = styled('div')(
   ({ theme }) => `
+  overflow: auto;
   table {
     border-collapse: collapse;
     width: 100%;
@@ -117,8 +118,8 @@ export default function AirdropTable({
 
   return (
     <Stack spacing={10} mt={20}>
-      <RowCenter>
-        <RowCenter>
+      <RowCenter flexWrap={'wrap'}>
+        <RowCenter flexWrap={'wrap'}>
           <StyledText mr={10}>DAO Rewards addresses</StyledText>
           {readonly ? null : (
             <div>
@@ -173,7 +174,7 @@ export default function AirdropTable({
           />
         </Stack>
       )}
-      <RowCenter>
+      <RowCenter flexWrap={'wrap'}>
         {readonly ? (
           <div />
         ) : (

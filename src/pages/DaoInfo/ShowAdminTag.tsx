@@ -1,5 +1,6 @@
 import { Stack, useTheme } from '@mui/material'
 import { ChainId } from 'constants/chain'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoAdminLevelList } from 'hooks/useDaoInfo'
 import { StyledChip } from './CategoryChips'
 
@@ -25,9 +26,10 @@ export function AdminTagListBlock({
   chainId: ChainId
   account: string
 }) {
+  const isSmDown = useBreakpoint('sm')
   const daoAdminLevelList = useDaoAdminLevelList(daoAddress, chainId, account)
   return (
-    <Stack direction={'row'} spacing={5}>
+    <Stack direction={isSmDown ? 'column' : 'row'} spacing={5}>
       {daoAdminLevelList?.map(daoAdminLevel => (
         <ShowAdminTag key={daoAdminLevel} level={daoAdminLevel} />
       ))}

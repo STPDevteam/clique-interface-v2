@@ -63,7 +63,7 @@ export default function NumericalInput({
   return (
     <Box sx={{ position: 'relative', maxWidth: maxWidth ?? 'unset', width: '100%' }}>
       {(label || balance) && (
-        <Box display="flex" justifyContent="space-between">
+        <Box display="flex" justifyContent="space-between" flexWrap={'wrap'}>
           <InputLabel>{label}</InputLabel>
           <Box display="flex" alignItems="baseline">
             {!!balance && (

@@ -11,6 +11,7 @@ import { AirdropList, PublicSaleList } from './List'
 import { useDaoActivityList } from 'hooks/useBackedActivityServer'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { ErrorOutline } from '@mui/icons-material'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -53,6 +54,7 @@ export default function Activity() {
   const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
 
   const airdropData = useDaoActivityList(curDaoChainId, daoAddress, ActivityType.AIRDROP)
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <div>
@@ -75,8 +77,10 @@ export default function Activity() {
           <>
             {backedDaoInfo?.verified ? (
               <BlackButton
-                width="252px"
-                height="48px"
+                width={isSmDown ? '146px' : '252px'}
+                fontSize={isSmDown ? 10 : 14}
+                height={isSmDown ? '40px' : '56px'}
+                borderRadius={isSmDown ? '8px' : undefined}
                 onClick={() =>
                   history.push(
                     routes._DaoInfo +
@@ -90,16 +94,16 @@ export default function Activity() {
               </BlackButton>
             ) : (
               <Box
-                width="252px"
-                height="48px"
+                width={isSmDown ? '146px' : '252px'}
+                height={isSmDown ? '40px' : '56px'}
                 display={'flex'}
                 alignItems="center"
                 justifyContent={'center'}
                 sx={{
                   backgroundColor: theme.bgColor.bg2,
-                  borderRadius: '16px',
+                  borderRadius: { xs: '8px', sm: '16px' },
                   color: theme.palette.text.secondary,
-                  fontSize: 14,
+                  fontSize: { xs: 10, sm: 14 },
                   fontWeight: 700
                 }}
               >
