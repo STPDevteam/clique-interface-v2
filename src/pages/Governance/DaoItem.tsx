@@ -16,6 +16,7 @@ import { useHistory } from 'react-router-dom'
 import { Token } from 'constants/token'
 import { formatMillion, toFormatGroup } from 'utils/dao'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   height: 270,
@@ -86,6 +87,7 @@ export default function DaoItem({
 }: HomeListProp) {
   const theme = useTheme()
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
   // const { showModal } = useModal()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   // const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
@@ -127,7 +129,7 @@ export default function DaoItem({
           )} */}
           {daoBaseInfo ? (
             <Box display={'flex'} alignItems="center">
-              <Typography fontSize={16} variant="body2" noWrap maxWidth={'calc(100% - 90px)'}>
+              <Typography fontSize={16} variant="body2" noWrap maxWidth={isSmDown ? '200px' : 'calc(100% - 90px)'}>
                 @{daoBaseInfo?.handle}
               </Typography>
             </Box>
