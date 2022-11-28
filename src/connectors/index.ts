@@ -34,7 +34,7 @@ export const injected = new InjectedConnector({
 // binance only
 export const binance = new BscConnector({ supportedChainIds: [56] })
 
-const walletConnectRpc: { [key in string]: string } = {}
+const walletConnectRpc: { [key in number]: string } = {}
 for (const id of SUPPORT_NETWORK_CHAIN_IDS) {
   walletConnectRpc[id] = getRpcUrl(id)
 }
@@ -44,6 +44,8 @@ export const walletconnect = new WalletConnectConnector({
   rpc: walletConnectRpc,
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
+  chainId: NETWORK_CHAIN_ID || undefined,
+  supportedChainIds: SUPPORT_NETWORK_CHAIN_IDS,
   pollingInterval: 15000
 })
 
