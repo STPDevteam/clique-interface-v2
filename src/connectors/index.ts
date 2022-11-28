@@ -28,7 +28,7 @@ export function getNetworkLibrary(): Web3Provider {
 }
 
 export const injected = new InjectedConnector({
-  supportedChainIds: SUPPORT_NETWORK_CHAIN_IDS
+  supportedChainIds: [5, 80001, 1001, 97]
 })
 
 // binance only

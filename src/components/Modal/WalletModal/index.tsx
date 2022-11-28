@@ -133,7 +133,7 @@ export default function WalletModal({}: // pendingTransactions,
               icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
             />
           )
-        } else if (window.web3 && option.name === 'MetaMask') {
+        } else if (window.web3 && window.ethereum && (option.name === 'MetaMask' || option.name === 'injected')) {
           return (
             <Option
               id={`connect-${key}`}
