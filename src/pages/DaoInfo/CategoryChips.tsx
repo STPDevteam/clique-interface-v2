@@ -1,4 +1,4 @@
-import { Chip, Stack, styled, useTheme } from '@mui/material'
+import { Box, Chip, styled, useTheme } from '@mui/material'
 import { useMemo } from 'react'
 
 export const StyledChip = styled(Chip)(({ theme, bgColor }: { theme?: any; bgColor?: string }) => ({
@@ -26,7 +26,13 @@ export default function CategoryChips({ categoryStr }: { categoryStr: string | u
   }, [categoryStr])
 
   return (
-    <Stack direction="row" spacing={8} flexWrap="wrap">
+    <Box
+      sx={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, 90px)',
+        gap: '5px'
+      }}
+    >
       {categoryList.map((name, index) => (
         <StyledChip
           key={name}
@@ -34,6 +40,6 @@ export default function CategoryChips({ categoryStr }: { categoryStr: string | u
           bgColor={index % 2 === 0 ? theme.palette.primary.dark : theme.palette.primary.light}
         />
       ))}
-    </Stack>
+    </Box>
   )
 }

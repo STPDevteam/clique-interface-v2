@@ -74,7 +74,7 @@ export default function Modal(props: Props) {
               overflowX: 'hidden',
               position: 'absolute',
               overflowY: 'auto',
-              maxHeight: theme => `calc(100vh - ${theme.height.header})`
+              height: theme => `calc(100vh - ${theme.height.header})`
             },
             ...(!isCardOnMobile
               ? {
@@ -83,8 +83,8 @@ export default function Modal(props: Props) {
                     border: 'none',
                     width: '100%!important',
                     maxWidth: 'unset!important',
-                    maxHeight: `calc(100vh - ${theme.height.mobileHeader})`,
-                    height: 'auto',
+                    height: `calc(100vh - ${theme.height.mobileHeader})`,
+                    // height: 'auto',
                     borderRadius: '0',
                     marginTop: theme.height.mobileHeader,
                     marginBottom: 0,

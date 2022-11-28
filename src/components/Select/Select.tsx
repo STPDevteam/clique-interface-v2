@@ -96,6 +96,7 @@ export default function Select(props: Props) {
           fontWeight: 600,
           '& .MuiSelect-select': {
             width: '100%',
+            maxWidth: 'calc(100vw - 70px)',
             height: '100%',
             padding: '0 50px 0 20px !important',
             display: 'flex',

@@ -291,10 +291,18 @@ export default function WalletModal({}: // pendingTransactions,
       </>
     )
   }
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="560px" closeIcon={true}>
-      <Box width={'100%'} padding="32px" display="flex" flexDirection="column" alignItems="center" gap={20}>
+      <Box
+        width={'100%'}
+        padding={isSmDown ? '20px' : '32px'}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={20}
+      >
         {getModalContent()}
       </Box>
     </Modal>
