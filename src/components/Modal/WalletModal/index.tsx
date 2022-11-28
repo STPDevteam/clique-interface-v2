@@ -119,21 +119,7 @@ export default function WalletModal({}: // pendingTransactions,
           return null
         }
 
-        if (!window.web3 && !window.ethereum && option.mobile) {
-          return (
-            <Option
-              onClick={() => {
-                option.connector !== connector && !option.href && tryActivation(option.connector)
-              }}
-              id={`connect-${key}`}
-              key={key}
-              active={option.connector && option.connector === connector}
-              link={option.href}
-              header={option.name}
-              icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
-            />
-          )
-        } else if (window.web3 && option.name === 'MetaMask') {
+        if ((!window.web3 && !window.ethereum && option.mobile) || option.name === 'MetaMask') {
           return (
             <Option
               onClick={() => {
