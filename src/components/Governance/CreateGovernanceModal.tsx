@@ -32,7 +32,7 @@ const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
   padding: '40px 32px',
   [theme.breakpoints.down('sm')]: {
-    padding: '30px 16px 60px'
+    padding: '30px 16px 30px'
   }
 }))
 
