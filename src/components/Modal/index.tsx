@@ -83,15 +83,18 @@ export default function Modal(props: Props) {
                     border: 'none',
                     width: '100%!important',
                     maxWidth: 'unset!important',
-                    height: `calc(100vh - ${theme.height.mobileHeader})`,
+                    position: 'fixed',
+                    height: 'auto',
+                    // height: `calc(100vh - ${theme.height.mobileHeader})`,
                     maxHeight: 'unset',
                     top: theme.height.mobileHeader,
+                    bottom: 0,
                     // height: 'auto',
                     borderRadius: '0',
                     marginBottom: 0,
                     overflow,
                     pb: '50px',
-                    pt: '10px'
+                    pt: '20px'
                   }
                 }
               : { [theme.breakpoints.down('sm')]: { margin: 0, pb: '20px', borderRadius: '0' } })
