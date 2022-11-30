@@ -11,6 +11,7 @@ import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const itemList = [
   { value: undefined, label: 'All Proposals' },
@@ -22,6 +23,7 @@ const itemList = [
 export default function Proposal() {
   const history = useHistory()
   const params = useParams<{ chainId: string; address: string }>()
+  const isSmDown = useBreakpoint('sm')
   const {
     search: { status: currentProposalStatus, setStatus: setCurrentProposalStatus },
     loading,
@@ -33,21 +35,25 @@ export default function Proposal() {
     <ContainerWrapper maxWidth={1248}>
       <Box display={'flex'} justifyContent="space-between" alignItems={'center'}>
         <BlackButton
-          width="252px"
+          width={isSmDown ? '146px' : '252px'}
+          fontSize={isSmDown ? 10 : 14}
+          height={isSmDown ? '40px' : '56px'}
+          borderRadius={isSmDown ? '8px' : undefined}
           onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
         >
           + Create A Proposal
         </BlackButton>
         <Select
           placeholder=""
-          width={235}
+          width={isSmDown ? 160 : 235}
+          height={isSmDown ? 40 : undefined}
           value={currentProposalStatus}
           onChange={e => setCurrentProposalStatus(e.target.value)}
         >
           {itemList.map(item => (
             <MenuItem
               key={item.value}
-              sx={{ fontWeight: 500 }}
+              sx={{ fontWeight: 500, fontSize: 10 }}
               value={item.value}
               selected={currentProposalStatus && currentProposalStatus === item.value}
             >
@@ -61,7 +67,7 @@ export default function Proposal() {
         <DelayLoading loading={loading}>
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
-        <Grid container rowSpacing={18} columnSpacing={34}>
+        <Grid container rowSpacing={18} columnSpacing={isSmDown ? 0 : 34}>
           {!loading &&
             proposalBaseList.map(item => (
               <Grid item key={item.proposalId + item.startTime + item.endTime} lg={6} xs={12}>

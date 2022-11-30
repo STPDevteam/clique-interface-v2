@@ -133,6 +133,22 @@ export default function WalletModal({}: // pendingTransactions,
               icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
             />
           )
+        } else if (window.web3 && window.ethereum && (option.name === 'MetaMask' || option.name === 'injected')) {
+          return (
+            <Option
+              id={`connect-${key}`}
+              onClick={() => {
+                option.connector === connector
+                  ? setWalletView(WALLET_VIEWS.ACCOUNT)
+                  : !option.href && tryActivation(option.connector)
+              }}
+              key={key}
+              active={option.connector === connector}
+              link={option.href}
+              header={option.name}
+              icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
+            />
+          )
         }
         return null
       }
@@ -275,10 +291,18 @@ export default function WalletModal({}: // pendingTransactions,
       </>
     )
   }
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="560px" closeIcon={true}>
-      <Box width={'100%'} padding="32px" display="flex" flexDirection="column" alignItems="center" gap={20}>
+      <Box
+        width={'100%'}
+        padding={isSmDown ? '20px' : '32px'}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        gap={20}
+      >
         {getModalContent()}
       </Box>
     </Modal>

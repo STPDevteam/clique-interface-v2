@@ -24,7 +24,10 @@ const Wrapper = styled(Stack)(({ theme }) => ({
   padding: '34px 39px',
   border: `1px solid ${theme.bgColor.bg2}`,
   borderRadius: theme.borderRadius.default,
-  boxShadow: theme.boxShadow.bs1
+  boxShadow: theme.boxShadow.bs1,
+  [theme.breakpoints.down('sm')]: {
+    padding: '16px'
+  }
 }))
 
 const Text = styled(Stack)(({ theme, color }: { theme?: any; color?: string }) => ({
@@ -167,7 +170,11 @@ export default function NotificationPage() {
   const { toBackedReadAll, toBackedReadOnce } = useNotificationToRead()
 
   return (
-    <Box padding="40px 20px">
+    <Box
+      sx={{
+        padding: { sm: '40px 20px', xs: '0 16px' }
+      }}
+    >
       <ContainerWrapper maxWidth={1150}>
         <RowCenter>
           <Typography variant="h6">Notifications</Typography>

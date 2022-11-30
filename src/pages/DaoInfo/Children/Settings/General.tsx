@@ -18,11 +18,15 @@ import { removeEmoji } from 'utils'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { StyledItem } from '../About'
 
-const Wrapper = styled(StyledItem)({
+const Wrapper = styled(StyledItem)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '296fr 564fr',
-  gap: 24
-})
+  gap: 24,
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px'
+  }
+}))
 
 export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
   const [daoImage, setDaoImage] = useState(daoInfo.daoLogo)

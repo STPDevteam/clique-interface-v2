@@ -8,8 +8,10 @@ import Pagination from 'components/Pagination'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
+import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
 import { PublicSaleItem, AirdropItem } from './ActivityItem'
 
@@ -27,17 +29,27 @@ function ItemWrapper({
   daoAddress: string
 }) {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const daoBaseInfo = useDaoBaseInfo(daoAddress, daoChainId)
   return (
     <Stack spacing={24}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
         <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
-          <DaoAvatars size={64} src={daoBaseInfo?.daoLogo} alt={''} />
+          <DaoAvatars size={isSmDown ? 40 : 64} src={daoBaseInfo?.daoLogo} alt={''} />
         </Link>
-        <Typography variant="h6">{daoBaseInfo?.name || '--'}</Typography>
-        <Typography fontSize={14} fontWeight={400} color={theme.palette.text.secondary}>
-          Publish at {timeStampToFormat(publishTime)}
-        </Typography>
+        <RowCenter flexWrap={'wrap'}>
+          <Typography variant="h6" mr={10}>
+            {daoBaseInfo?.name || '--'}
+          </Typography>
+          <Typography
+            fontSize={isSmDown ? 12 : 14}
+            lineHeight={1.2}
+            fontWeight={400}
+            color={theme.palette.text.secondary}
+          >
+            Publish at {timeStampToFormat(publishTime)}
+          </Typography>
+        </RowCenter>
         <OutlineButton
           style={
             type === ActivityType.AIRDROP

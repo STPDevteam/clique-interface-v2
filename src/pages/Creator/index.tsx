@@ -9,6 +9,7 @@ import Image from 'components/Image'
 import Collapse from 'components/Collapse'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const Wrapper = styled('main')(({ theme }) => ({
   paddingBottom: 40,
@@ -25,6 +26,13 @@ const Wrapper = styled('main')(({ theme }) => ({
     '&:hover': {
       border: `2px solid ${theme.palette.primary.main}`
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 16px 20px',
+    ['& .item-create']: {
+      width: 159,
+      height: 159
+    }
   }
 }))
 
@@ -33,9 +41,19 @@ export default function Index() {
   const toggleWalletModal = useWalletModalToggle()
   const theme = useTheme()
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
   return (
     <Wrapper>
-      <Box maxWidth={'100%'} pt={100} width="808px" margin={'auto'} display="flex" justifyContent={'space-between'}>
+      <Box
+        maxWidth={'808px'}
+        sx={{
+          pt: { sm: 100, xs: 20 }
+        }}
+        width="100%"
+        margin={'auto'}
+        display="flex"
+        justifyContent={'space-between'}
+      >
         <Box>
           <Box
             className="item-create"
@@ -47,9 +65,15 @@ export default function Index() {
               history.push(routes.CreatorDao)
             }}
           >
-            <Image src={addDaoIcon} width={182}></Image>
+            <Image src={addDaoIcon} width={isSmDown ? 82 : 182}></Image>
           </Box>
-          <Typography mt={20} fontWeight={600} fontSize={20} textAlign="center" color={theme.palette.text.primary}>
+          <Typography
+            mt={20}
+            fontWeight={600}
+            fontSize={isSmDown ? 14 : 20}
+            textAlign="center"
+            color={theme.palette.text.primary}
+          >
             Add a DAO
           </Typography>
         </Box>
@@ -64,9 +88,15 @@ export default function Index() {
               history.push(routes.CreatorToken)
             }}
           >
-            <Image src={createTokenIcon} width={182}></Image>
+            <Image src={createTokenIcon} width={isSmDown ? 82 : 182}></Image>
           </Box>
-          <Typography mt={20} fontWeight={600} fontSize={20} textAlign="center" color={theme.palette.text.primary}>
+          <Typography
+            mt={20}
+            fontWeight={600}
+            fontSize={isSmDown ? 14 : 20}
+            textAlign="center"
+            color={theme.palette.text.primary}
+          >
             Create a Token
           </Typography>
         </Box>

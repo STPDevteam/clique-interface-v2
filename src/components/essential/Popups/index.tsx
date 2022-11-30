@@ -3,7 +3,9 @@ import { useActivePopups } from 'state/application/hooks'
 import PopupItem from './PopupItem'
 
 const MobilePopupWrapper = styled('div')(({ height, theme }: any) => ({
-  position: 'relative',
+  position: 'absolute',
+  top: `${theme.height.mobileHeader}`,
+  right: 0,
   maxWidth: '100%',
   height: height,
   zIndex: 1301,
@@ -22,7 +24,7 @@ const MobilePopupInner = styled('div')({
   display: 'flex',
   flexDirection: 'row',
   WebkitOverflowScrolling: 'touch',
-  '& ::-webkit-scrollbar': {
+  '&::-webkit-scrollbar': {
     display: 'none'
   }
 })

@@ -11,11 +11,15 @@ import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 
-const Wrapper = styled(CreatorBox)({
+const Wrapper = styled(CreatorBox)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '296fr 564fr',
-  gap: 24
-})
+  gap: 24,
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px'
+  }
+}))
 
 export default function Basic({ next }: { next: () => void }) {
   const theme = useTheme()
@@ -97,7 +101,11 @@ export default function Basic({ next }: { next: () => void }) {
   ])
 
   return (
-    <ContainerWrapper>
+    <ContainerWrapper
+      sx={{
+        padding: { xs: '0 16px', sm: undefined }
+      }}
+    >
       <Wrapper>
         <Stack spacing={20}>
           <UploadImage

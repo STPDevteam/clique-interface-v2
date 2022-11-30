@@ -15,7 +15,11 @@ export const VoteWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
   borderRadius: theme.borderRadius.default,
   boxShadow: theme.boxShadow.bs2,
-  padding: '32px'
+  padding: '32px',
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px 16px'
+  }
 }))
 
 export default function Vote({

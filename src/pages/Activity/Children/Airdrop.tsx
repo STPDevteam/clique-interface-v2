@@ -198,7 +198,11 @@ export default function Airdrop() {
   }, [account, airdropDescData, chainId, isRecycling, library, recycleAirdrop, remainderRecycle])
 
   return (
-    <Box padding="30px 20px">
+    <Box
+      sx={{
+        padding: { sm: '30px 20px', xs: '0 16px 30px' }
+      }}
+    >
       {airdropDescDataLoading ? (
         <DelayLoading loading={airdropDescDataLoading}>
           <Loading sx={{ marginTop: 30 }} />
@@ -313,9 +317,9 @@ export default function Airdrop() {
                             {airdropDescData ? activityStatusText[airdropDescData.status] : '-'}
                           </StyledText2>
                         </RowCenter>
-                        <RowCenter>
+                        <RowCenter flexWrap={'wrap'}>
                           <StyledText1>Event Time</StyledText1>
-                          <StyledText2 style={{ fontSize: 12 }}>
+                          <StyledText2 style={{ fontSize: 12 }} textAlign="right">
                             {airdropDescData
                               ? timeStampToFormat(airdropDescData.eventStartTime, 'Y-MM-DD HH:mm') +
                                 ' - ' +
@@ -323,9 +327,9 @@ export default function Airdrop() {
                               : '--'}
                           </StyledText2>
                         </RowCenter>
-                        <RowCenter>
+                        <RowCenter flexWrap={'wrap'}>
                           <StyledText1>DAO Rewards Time</StyledText1>
-                          <StyledText2 style={{ fontSize: 12 }}>
+                          <StyledText2 style={{ fontSize: 12 }} textAlign="right">
                             {airdropInfos
                               ? timeStampToFormat(airdropInfos.airdropStartTime, 'Y-MM-DD HH:mm') +
                                 ' - ' +
@@ -339,7 +343,7 @@ export default function Airdrop() {
                           <StyledText2>
                             {airdropInfos
                               ? airdropInfos.tokenStaked.toSignificant(6, { groupSeparator: ',' }) +
-                                `${airdropInfos.airdropToken.symbol}`
+                                ` ${airdropInfos.airdropToken.symbol}`
                               : '--'}
                           </StyledText2>
                         </RowCenter>
@@ -670,19 +674,18 @@ function Manage({
   return (
     <ContainerWrapper maxWidth={708} margin="0">
       <Stack mt={20} spacing={20}>
-        <RowCenter>
+        <RowCenter flexWrap={'wrap'}>
           <StyledText1>User data (original)</StyledText1>
           <RowCenter>
             <StyledText3 mr={15}>Total addresses: {collectCount}</StyledText3>
             <OutlineButton
               onClick={() => airdropDownloadCallback(airdropInfo.airdropId)}
-              width="140px"
               height="20px"
               fontWeight={500}
               fontSize={12}
-              style={{ borderWidth: 1 }}
+              style={{ borderWidth: 1, padding: '0 6px', width: 'auto' }}
             >
-              Download <DownloadIcon sx={{ height: 16 }} />
+              Download User Data <DownloadIcon sx={{ height: 16 }} />
             </OutlineButton>
           </RowCenter>
         </RowCenter>
@@ -694,8 +697,8 @@ function Manage({
           totalInputAmount={_totalInputAmount}
         />
 
-        <RowCenter>
-          <StyledText3>
+        <RowCenter flexWrap={'wrap'}>
+          <StyledText3 mr={10}>
             Contract balance: {airdropInfo.tokenStaked.toSignificant(6, { groupSeparator: ',' })}{' '}
             {airdropInfo.airdropToken.symbol}
           </StyledText3>

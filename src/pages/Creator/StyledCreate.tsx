@@ -13,5 +13,8 @@ export const CreatorBox = styled(Box)(({ theme }) => ({
   boxShadow: `inset 0px -1px 0px ${theme.bgColor.bg2}`,
   borderRadius: theme.borderRadius.default,
   padding: '32px 40px',
-  margin: '29px auto'
+  margin: '29px auto',
+  [theme.breakpoints.down('sm')]: {
+    padding: '16px'
+  }
 }))

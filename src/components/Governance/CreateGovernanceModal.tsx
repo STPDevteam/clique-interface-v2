@@ -26,11 +26,15 @@ import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { routes } from 'constants/routes'
 import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 
-const StyledBody = styled(Box)({
+const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
-  padding: '40px 32px'
-})
+  padding: '40px 32px',
+  [theme.breakpoints.down('sm')]: {
+    padding: '30px 16px 30px'
+  }
+}))
 
 enum CreateGovernanceStep {
   BASE_INFO,
@@ -39,6 +43,7 @@ enum CreateGovernanceStep {
 
 export function CreateGovernanceModal() {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const [step, setStep] = useState<CreateGovernanceStep>(CreateGovernanceStep.BASE_INFO)
   const { account, chainId } = useActiveWeb3React()
@@ -214,7 +219,7 @@ export function CreateGovernanceModal() {
   }, [account, buildingDaoData, govToken?.token, onCreateDao, toggleWalletModal])
 
   return (
-    <Modal maxWidth="628px" closeIcon width="100%">
+    <Modal maxWidth="628px" closeIcon width="100%" overflow="hidden">
       <StyledBody>
         <Typography variant="h5" textAlign={'center'}>
           Add your DAO
@@ -232,7 +237,7 @@ export function CreateGovernanceModal() {
 
         <Box
           sx={{
-            maxHeight: `calc(100vh - ${theme.height.header} - 120px)`,
+            maxHeight: `calc(100vh - ${theme.height.header} - 150px)`,
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               display: 'none'
@@ -361,11 +366,18 @@ export function CreateGovernanceModal() {
                 <Alert severity="info">You will create a DAO in {chainId ? ChainListMap[chainId].name : '--'}</Alert>
               )}
 
-              <Box mt={20} display="flex" justifyContent={'center'} gap="40px">
-                <OutlineButton width="166px" onClick={() => setStep(CreateGovernanceStep.BASE_INFO)}>
+              <Box mt={20} display="flex" justifyContent={{ sm: 'center', xs: 'space-evenly' }} gap="40px">
+                <OutlineButton
+                  width={isSmDown ? '130px' : '166px'}
+                  onClick={() => setStep(CreateGovernanceStep.BASE_INFO)}
+                >
                   Back
                 </OutlineButton>
-                <BlackButton width="166px" disabled={nextBuildHandler.disabled} onClick={nextBuildHandler.handler}>
+                <BlackButton
+                  width={isSmDown ? '138px' : '166px'}
+                  disabled={nextBuildHandler.disabled}
+                  onClick={nextBuildHandler.handler}
+                >
                   Add DAO
                 </BlackButton>
               </Box>

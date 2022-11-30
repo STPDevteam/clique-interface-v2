@@ -9,12 +9,14 @@ export default function DateTimePicker({
   value,
   onValue,
   disabled,
+  inputWidth,
   minDateTime
 }: {
   value: Date | null
   onValue: (timestamp: number | undefined) => void
   disabled?: boolean
   minDateTime?: Date
+  inputWidth?: string
 }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -42,6 +44,7 @@ export default function DateTimePicker({
           return (
             <TextField
               sx={{
+                width: inputWidth || 'unset',
                 '& fieldset': {
                   display: 'none'
                 },
