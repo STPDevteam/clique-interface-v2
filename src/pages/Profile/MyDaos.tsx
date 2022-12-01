@@ -40,7 +40,11 @@ export default function MyDaos({
     return null
   }
   return (
-    <ContainerWrapper maxWidth={isSmDown ? '100%' : 1150} margin={'0 auto'}>
+    <ContainerWrapper
+      maxWidth={isSmDown ? '100%' : 1150}
+      style={{ width: isSmDown ? '100%' : '100vw' }}
+      margin={'0 auto'}
+    >
       <Typography variant="h6" fontSize={16} fontWeight={600}>
         DAOs
       </Typography>

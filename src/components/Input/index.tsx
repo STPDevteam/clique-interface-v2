@@ -3,7 +3,7 @@ import { Box, InputBase, styled, Typography } from '@mui/material'
 import { inputBaseClasses } from '@mui/material/InputBase'
 import InputLabel from './InputLabel'
 import { isURL } from 'utils/dao'
-import { escapeRegExp, isAddress } from 'utils'
+import { escapeRegExp, isAddress, isEmail } from 'utils'
 
 export interface InputProps {
   placeholder?: string
@@ -217,6 +217,10 @@ export default function Input({
               }
             } else if (type === 'address' && errSet) {
               if (!isAddress(e.target.value)) {
+                errSet()
+              }
+            } else if (type === 'email' && errSet) {
+              if (!isEmail(e.target.value)) {
                 errSet()
               }
             }
