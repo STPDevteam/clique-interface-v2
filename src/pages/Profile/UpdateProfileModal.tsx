@@ -31,6 +31,10 @@ export default function UpdateProfileModal({
   const [name, setName] = useState(userProfile.nickname)
   const [twitter, setTwitter] = useState(userProfile.twitter)
   const [discord, setDiscord] = useState(userProfile.discord)
+  const [email, setEmail] = useState(userProfile.email)
+  const [country, setCountry] = useState(userProfile.country)
+  const [youtube, setYoutube] = useState(userProfile.youtube)
+  const [opensea, setOpensea] = useState(userProfile.opensea)
   const [bio, setBio] = useState(userProfile.introduction)
 
   const userSignature = useUserInfo()
@@ -44,7 +48,19 @@ export default function UpdateProfileModal({
     }
     if (!signatureStr) return
     try {
-      await userProfileUpdate(avatar, name, bio, discord, twitter, account, signatureStr)
+      await userProfileUpdate(
+        avatar,
+        name,
+        bio,
+        discord,
+        twitter,
+        account,
+        country,
+        email,
+        opensea,
+        youtube,
+        signatureStr
+      )
       showModal(<TransactiontionSubmittedModal header="Update success!" hideFunc={refreshProfile} />)
     } catch (error) {
       const err: any = error
@@ -58,13 +74,17 @@ export default function UpdateProfileModal({
     account,
     avatar,
     bio,
+    country,
     discord,
+    email,
     loginSignature,
     name,
+    opensea,
     refreshProfile,
     showModal,
     twitter,
-    userSignature?.signature
+    userSignature?.signature,
+    youtube
   ])
 
   const disabledSave = useMemo(() => {
@@ -73,20 +93,13 @@ export default function UpdateProfileModal({
       name === userProfile.nickname &&
       twitter === userProfile.twitter &&
       discord === userProfile.discord &&
+      country === userProfile.country &&
+      email === userProfile.email &&
+      youtube === userProfile.youtube &&
+      opensea === userProfile.opensea &&
       bio === userProfile.introduction
     )
-  }, [
-    avatar,
-    bio,
-    discord,
-    name,
-    twitter,
-    userProfile.accountLogo,
-    userProfile.discord,
-    userProfile.introduction,
-    userProfile.nickname,
-    userProfile.twitter
-  ])
+  }, [avatar, bio, country, discord, email, name, opensea, twitter, userProfile, youtube])
 
   return (
     <Modal maxWidth="628px" closeIcon width="100%">
@@ -113,10 +126,35 @@ export default function UpdateProfileModal({
           <Input
             value={twitter}
             label="Twitter"
-            placeholder="https://"
+            placeholder="https://twitter.com/"
             onChange={e => setTwitter(e.target.value)}
             type="url"
             errSet={() => setTwitter('')}
+          />
+          <Input
+            value={email}
+            label="Email"
+            placeholder=""
+            onChange={e => setEmail(e.target.value)}
+            type="email"
+            errSet={() => setEmail('')}
+          />
+          <Input value={country} label="Country" placeholder="" onChange={e => setCountry(e.target.value)} />
+          <Input
+            value={youtube}
+            label="Youtube"
+            placeholder="https://www.youtube.com/"
+            onChange={e => setYoutube(e.target.value)}
+            type="url"
+            errSet={() => setYoutube('')}
+          />
+          <Input
+            value={opensea}
+            label="Opensea"
+            placeholder="https://opensea.io/"
+            onChange={e => setOpensea(e.target.value)}
+            type="url"
+            errSet={() => setOpensea('')}
           />
           <Input
             value={discord}

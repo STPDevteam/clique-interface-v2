@@ -23,10 +23,14 @@ const StyledItem = styled(Box)(({ theme }) => ({
   padding: '12px 32px 15px'
 }))
 
-const StyledBody = styled(Box)({
+const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
-  padding: '40px 32px'
-})
+  padding: '40px 32px',
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px 16px'
+  }
+}))
 
 const StyledListText = styled(Typography)({
   fontSize: 13,

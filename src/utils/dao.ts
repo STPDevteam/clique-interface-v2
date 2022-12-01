@@ -63,11 +63,15 @@ export function getVotingNumberByTimestamp(timestamp: number) {
 export function isSocialUrl(name: 'discord' | 'twitter' | string, url: string) {
   switch (name) {
     case 'discord':
-      return new RegExp(/^https:\/\/discord.com/).test(url)
+      return new RegExp(/^https:\/\/(www\.)?discord.com/).test(url)
     case 'twitter':
-      return new RegExp(/^https:\/\/twitter.com/).test(url)
+      return new RegExp(/^https:\/\/(www\.)?twitter.com/).test(url)
     case 'github':
-      return new RegExp(/^https:\/\/github.com/).test(url)
+      return new RegExp(/^https:\/\/(www\.)?github.com/).test(url)
+    case 'opensea':
+      return new RegExp(/^https:\/\/(www\.)?opensea.io/).test(url)
+    case 'youtube':
+      return new RegExp(/^https:\/\/(www\.)?youtube.com/).test(url)
     default:
       return isURL(url)
   }
@@ -153,4 +157,9 @@ export function formatMillion(value: number, fractionDigits = 1) {
     return Number((value / 1_000).toFixed(fractionDigits)).toLocaleString() + 'k'
   }
   return Number(value.toFixed(fractionDigits)).toLocaleString()
+}
+
+export function getSocialUrlEnd(link: string) {
+  const arr = link.split('/').reverse()
+  return arr[0] || arr[1] || ''
 }
