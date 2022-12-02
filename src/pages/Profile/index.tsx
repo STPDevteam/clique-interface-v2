@@ -60,10 +60,13 @@ const StyledBody = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledListText = styled(Typography)({
+const StyledListText = styled(Typography)(({ theme }) => ({
   fontSize: 13,
-  fontWeight: 600
-})
+  fontWeight: 600,
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 10
+  }
+}))
 
 const StyledLink = styled(Link)(({ borderColor, bgColor }: { borderColor?: string; bgColor?: string }) => ({
   maxWidth: 120,
@@ -121,28 +124,32 @@ export default function Profile() {
               src={profileInfo?.accountLogo}
               sx={{ width: { xs: 64, sm: 100 }, height: { xs: 64, sm: 100 }, marginRight: isSmDown ? 8 : 24 }}
             />
-            <Box display={'flex'} width="100%" flexDirection="column" justifyContent={'space-between'}>
+            <Box width={'100%'}>
               <Box
                 sx={{
-                  display: 'grid',
+                  display: { sm: 'grid', xs: 'flex' },
                   alignItems: 'center',
+                  flexWrap: 'wrap',
                   gap: 10,
-                  gridTemplateColumns: '1fr 200px'
+                  gridTemplateColumns: { sm: '1fr 200px', xs: 'unset' }
                 }}
               >
                 <Box
-                  display={'flex'}
+                  display={'grid'}
                   alignItems="center"
                   sx={{
-                    gridTemplateColumns: 'auto auto auto 1fr',
+                    gridTemplateColumns: { sm: 'auto auto auto 1fr', xs: 'unset' },
                     gap: '10px'
                   }}
                 >
-                  <Typography variant="h5">{profileInfo?.nickname || 'unnamed'}</Typography>
+                  <Typography variant="h5" noWrap>
+                    {profileInfo?.nickname || 'unnamed'}
+                  </Typography>
                   <Box
                     display={'flex'}
                     alignItems="center"
                     sx={{
+                      width: 'fit-content',
                       borderRadius: '30px',
                       padding: '4px 4px 2px 16px',
                       backgroundColor: '#F2F2F2'
@@ -170,9 +177,11 @@ export default function Profile() {
                     {profileInfo?.twitter && isSocialUrl('twitter', profileInfo.twitter) ? (
                       <StyledLink target={'_blank'} href={profileInfo.twitter} underline="none">
                         <Twitter />
-                        <Typography color="#0F7CAB" fontSize={12} ml={5} noWrap maxWidth={70}>
-                          {getSocialUrlEnd(profileInfo.twitter)}
-                        </Typography>
+                        {!isSmDown && (
+                          <Typography color="#0F7CAB" fontSize={12} ml={5} noWrap maxWidth={70}>
+                            {getSocialUrlEnd(profileInfo.twitter)}
+                          </Typography>
+                        )}
                       </StyledLink>
                     ) : (
                       <TwitterGray />
@@ -187,9 +196,11 @@ export default function Profile() {
                         bgColor="#FCF3FF"
                       >
                         <Discord />
-                        <Typography color="#5D619C" fontSize={12} ml={5} noWrap maxWidth={70}>
-                          {getSocialUrlEnd(profileInfo.discord)}
-                        </Typography>
+                        {!isSmDown && (
+                          <Typography color="#5D619C" fontSize={12} ml={5} noWrap maxWidth={70}>
+                            {getSocialUrlEnd(profileInfo.discord)}
+                          </Typography>
+                        )}
                       </StyledLink>
                     ) : (
                       <DiscordGray />
@@ -204,9 +215,11 @@ export default function Profile() {
                         bgColor="#FFF3F3"
                       >
                         <Youtobe />
-                        <Typography color="#5D619C" fontSize={12} ml={5} noWrap maxWidth={70}>
-                          {getSocialUrlEnd(profileInfo.youtube)}
-                        </Typography>
+                        {!isSmDown && (
+                          <Typography color="#5D619C" fontSize={12} ml={5} noWrap maxWidth={70}>
+                            {getSocialUrlEnd(profileInfo.youtube)}
+                          </Typography>
+                        )}
                       </StyledLink>
                     ) : (
                       <YoutobeGray />
@@ -221,9 +234,11 @@ export default function Profile() {
                         bgColor="#D2DAFF"
                       >
                         <Opensea />
-                        <Typography color="#5D619C" fontSize={12} ml={5} noWrap maxWidth={70}>
-                          {getSocialUrlEnd(profileInfo.opensea)}
-                        </Typography>
+                        {!isSmDown && (
+                          <Typography color="#5D619C" fontSize={12} ml={5} noWrap maxWidth={70}>
+                            {getSocialUrlEnd(profileInfo.opensea)}
+                          </Typography>
+                        )}
                       </StyledLink>
                     ) : (
                       <OpenseaGray />
@@ -236,6 +251,7 @@ export default function Profile() {
                       noBold
                       width="75px"
                       height={'24px'}
+                      style={{ marginRight: 10 }}
                       onClick={() =>
                         profileInfo &&
                         showModal(<UpdateProfileModal userProfile={profileInfo} refreshProfile={refreshProfile} />)
@@ -286,7 +302,7 @@ export default function Profile() {
                   </Box>
                 )}
               </Box>
-              <Stack direction={'row'} alignItems="center" spacing={20}>
+              <Stack mt={10} direction={'row'} alignItems="center" spacing={isSmDown ? 10 : 20}>
                 <Typography
                   fontWeight={600}
                   fontSize={16}
@@ -315,7 +331,7 @@ export default function Profile() {
                   {profileInfo?.following || 0} Following
                 </Typography>
               </Stack>
-              <Typography fontSize={14} fontWeight={600}>
+              <Typography mt={10} fontSize={14} fontWeight={600}>
                 {profileInfo?.introduction || ''}
               </Typography>
             </Box>
@@ -339,15 +355,16 @@ function AccountFollowersList({ currentAccount }: { currentAccount: string }) {
   const { result: accountFollowersList, page, loading } = useAccountFollowersList(currentAccount)
   const { hideModal } = useModal()
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
   return (
     <Modal maxWidth="600px" closeIcon width="100%">
       <StyledBody>
         <Typography variant="h5">Followers</Typography>
-        <Stack spacing={19} mt={20}>
+        <Stack spacing={isSmDown ? 10 : 19} mt={20}>
           {accountFollowersList.map(item => (
             <Box
               display={'grid'}
-              gridTemplateColumns="1fr 1fr 1fr"
+              gridTemplateColumns="1fr 1fr 1.3fr"
               gap={'10px 5px'}
               alignItems={'center'}
               justifyContent="center"
@@ -392,15 +409,16 @@ function AccountFollowingList({ currentAccount }: { currentAccount: string }) {
   const { result: accountFollowingList, page, loading } = useAccountFollowingList(currentAccount)
   const { hideModal } = useModal()
   const history = useHistory()
+  const isSmDown = useBreakpoint('sm')
   return (
     <Modal maxWidth="600px" closeIcon width="100%">
       <StyledBody>
         <Typography variant="h5">Following</Typography>
-        <Stack spacing={19} mt={20}>
+        <Stack spacing={isSmDown ? 10 : 19} mt={20}>
           {accountFollowingList.map(item => (
             <Box
               display={'grid'}
-              gridTemplateColumns="1fr 1fr 1fr"
+              gridTemplateColumns="1fr 1fr 1.3fr"
               gap={'10px 5px'}
               alignItems={'center'}
               justifyContent="center"

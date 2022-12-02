@@ -29,11 +29,14 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   }
 }))
 
-const StyledItems = styled(Box)(({}) => ({
+const StyledItems = styled(Box)(({ theme }) => ({
   height: 328,
   background: '#F9F9F9',
   border: '1px solid #E4E4E4',
-  borderRadius: '10px'
+  borderRadius: '10px',
+  [theme.breakpoints.down('sm')]: {
+    height: 200
+  }
 }))
 
 export default function AccountNFTs({ account }: { account: string }) {
@@ -49,7 +52,10 @@ export default function AccountNFTs({ account }: { account: string }) {
     if (accountNFTsList.length === 4) {
       setViewAll(true)
     }
-  }, [accountNFTsList])
+    if (isSmDown) {
+      setViewAll(true)
+    }
+  }, [accountNFTsList, isSmDown])
 
   return (
     <ContainerWrapper
@@ -83,9 +89,12 @@ export default function AccountNFTs({ account }: { account: string }) {
         mt={16}
         sx={{
           display: 'grid',
-          gridTemplateColumns: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+          gridTemplateColumns: {
+            sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+            xs: '1fr 1fr'
+          },
           gap: '15px',
-          minWidth: '800px',
+          minWidth: isSmDown ? 'unset' : '800px',
           overflowX: 'auto',
           '&::-webkit-scrollbar': {
             display: 'none'
@@ -95,7 +104,7 @@ export default function AccountNFTs({ account }: { account: string }) {
         {showAccountNFTsList.map((item, index) => (
           <NFTItem key={index} nft={item} nftChainId={currentChainId}></NFTItem>
         ))}
-        {!viewAll && accountNFTsList.length > 4 && (
+        {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
           <StyledItems
             sx={{
               display: 'flex',
@@ -139,16 +148,17 @@ export default function AccountNFTs({ account }: { account: string }) {
 }
 
 function NFTItem({ nft, nftChainId }: { nft: BVNFTInfo; nftChainId: ChainId }) {
+  const isSmDown = useBreakpoint('sm')
   return (
     <StyledItems>
-      <Typography noWrap padding="5px 16px" maxWidth={250}>
+      <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
         {nft.metadata.name || nft.metadata.collectionName || '-'}
       </Typography>
       <Image
         altSrc={placeholderImage}
         style={{
           width: '100%',
-          height: 248,
+          height: isSmDown ? 124 : 248,
           objectFit: 'cover'
         }}
         src={nft.metadata.gatewayImageURL || placeholderImage}
