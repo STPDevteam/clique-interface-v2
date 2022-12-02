@@ -76,8 +76,8 @@ export const AllChainList = [
   {
     icon: <BSC height={20} width={20} />,
     logo: BSCUrl,
-    symbol: 'BSC',
-    name: 'Binance Smart Chain',
+    symbol: 'BNB Chain',
+    name: 'BNB Chain',
     id: ChainId.BSC,
     hex: '0x38'
   },
