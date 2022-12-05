@@ -130,7 +130,7 @@ export default function Profile() {
                   display: { sm: 'grid', xs: 'flex' },
                   alignItems: 'center',
                   flexWrap: 'wrap',
-                  gap: 10,
+                  gap: { sm: 10, xs: 0 },
                   gridTemplateColumns: { sm: '1fr 200px', xs: 'unset' }
                 }}
               >
@@ -246,7 +246,7 @@ export default function Profile() {
                   </Box>
                 </Box>
                 {isSelf ? (
-                  <RowCenter>
+                  <RowCenter mt={{ xs: 10 }}>
                     <OutlineButton
                       noBold
                       width="75px"
@@ -274,7 +274,7 @@ export default function Profile() {
                     </OutlineButton>
                   </RowCenter>
                 ) : (
-                  <Box>
+                  <Box mt={{ xs: 10 }}>
                     {isFollowed ? (
                       <Button
                         onClick={() => toggleFollow(false)}
