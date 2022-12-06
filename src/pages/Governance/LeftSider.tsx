@@ -12,8 +12,21 @@ import { DaoAvatars } from 'components/Avatars'
 
 const Wrapper = styled('div')(({ theme }) => ({
   borderRight: `1px solid ${theme.bgColor.bg2}`,
-  height: `calc(100vh - ${theme.height.header})`,
+  // height: `calc(100vh - ${theme.height.header} - 48px)`,
+  // overflowY: 'auto',
   padding: '16px 8px',
+  // '&::-webkit-scrollbar': {
+  //   display: 'none'
+  // },
+  [theme.breakpoints.up('sm')]: {
+    '& .dao-box': {
+      overflowY: 'auto',
+      height: `calc(100vh - ${theme.height.header} - 48px - 210px)`,
+      '&::-webkit-scrollbar': {
+        display: 'none'
+      }
+    }
+  },
   [theme.breakpoints.down('sm')]: {
     display: 'grid',
     gridTemplateColumns: '1fr 138px',
@@ -81,7 +94,6 @@ export default function LeftSider() {
         {myJoinedDaoList.map(({ daoAddress, chainId, daoName }) => (
           <DaoItem key={daoAddress + chainId} chainId={chainId} daoName={daoName} daoAddress={daoAddress} />
         ))}
-        {!!myJoinedDaoList.length && <Box sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />}
       </Box>
       <Box
         sx={{
@@ -89,6 +101,7 @@ export default function LeftSider() {
           justifyContent: { xs: 'flex-end', sm: undefined }
         }}
       >
+        <Box mt={10} sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />
         <Item
           sx={{ borderLeft: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
           onClick={() => history.push(routes.Governance)}
