@@ -38,6 +38,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import Loading from 'components/Loading'
 import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -99,7 +100,7 @@ export default function Profile() {
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
 
-  const { result: profileInfo } = useUserProfileInfo(currentAccount || undefined, rand)
+  const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand)
   const refreshProfile = useCallback(() => {
     setRand(Math.random())
     hideModal()
@@ -109,6 +110,9 @@ export default function Profile() {
     if (!currentAccount) history.replace('/')
     hideModal()
   }, [currentAccount, hideModal, history])
+
+  const userSignature = useUserInfo()
+  const loginSignature = useLoginSignature()
 
   return (
     <Box
@@ -249,13 +253,18 @@ export default function Profile() {
                   <RowCenter mt={{ xs: 10 }}>
                     <OutlineButton
                       noBold
+                      disabled={loading}
                       width="75px"
                       height={'24px'}
                       style={{ marginRight: 10 }}
-                      onClick={() =>
-                        profileInfo &&
-                        showModal(<UpdateProfileModal userProfile={profileInfo} refreshProfile={refreshProfile} />)
-                      }
+                      onClick={async () => {
+                        if (!userSignature) {
+                          await loginSignature()
+                          refreshProfile()
+                        } else if (profileInfo) {
+                          showModal(<UpdateProfileModal userProfile={profileInfo} refreshProfile={refreshProfile} />)
+                        }
+                      }}
                     >
                       Edit
                     </OutlineButton>

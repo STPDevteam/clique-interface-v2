@@ -218,9 +218,10 @@ export function notificationToRead(account: string, notificationId: number, read
   })
 }
 
-export function userProfile(account: string) {
+export function userProfile(account: string, signature: string) {
   return Axios.post('stpdao/v2/account/query', {
-    account
+    account,
+    signature
   })
 }
 
