@@ -41,6 +41,7 @@ export interface UserProfileProp {
 export function useUserProfileInfo(account: string | undefined, refresh?: number) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<UserProfileProp>()
+  const userSignature = useUserInfo()
 
   useEffect(() => {
     ;(async () => {
@@ -49,7 +50,12 @@ export function useUserProfileInfo(account: string | undefined, refresh?: number
       }
       setLoading(true)
       try {
-        const res = await userProfile(account)
+        const res = await userProfile(
+          account,
+          userSignature?.signature && userSignature.account.toLowerCase() === account.toLowerCase()
+            ? userSignature.signature
+            : ''
+        )
         setLoading(false)
         const data = res.data.data
 
@@ -66,7 +72,7 @@ export function useUserProfileInfo(account: string | undefined, refresh?: number
         console.error('useUserProfileInfo', error)
       }
     })()
-  }, [account, refresh])
+  }, [account, refresh, userSignature])
 
   return {
     loading,
