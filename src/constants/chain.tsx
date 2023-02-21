@@ -241,7 +241,7 @@ export const SUPPORTED_NETWORKS: {
       symbol: 'KLAY',
       decimals: 18
     },
-    rpcUrls: ['https://klaytn05.fandom.finance'],
+    rpcUrls: ['https://klaytn.blockpi.network/v1/rpc/public'],
     blockExplorerUrls: ['https://scope.klaytn.com/']
   },
   [ChainId.POLYGON]: {
