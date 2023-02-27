@@ -112,6 +112,10 @@ const chains: ChainObject = {
   [ChainId.POLYGON_MUMBAI]: {
     link: 'https://mumbai.polygonscan.com',
     builder: explorers.etherscan
+  },
+  [ChainId.POLYGON_MANGO]: {
+    link: 'https://explorer.public.zkevm-test.net',
+    builder: explorers.etherscan
   }
 }
 

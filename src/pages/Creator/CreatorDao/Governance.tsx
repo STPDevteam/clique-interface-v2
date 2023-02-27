@@ -1,7 +1,7 @@
 import { Alert, Box, Link, styled } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import ChainSelect from 'components/Select/ChainSelect'
-import { ChainList, ChainListMap } from 'constants/chain'
+import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import { ContainerWrapper, CreatorBox } from '../StyledCreate'
 // import UploadImage from 'components/UploadImage'
 import Input from 'components/Input'
@@ -155,7 +155,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         <TopWrapper>
           <Box>
             <ChainSelect
-              chainList={ChainList}
+              chainList={ChainList.filter(v => v.id !== ChainId.POLYGON_MANGO)}
               height={56}
               selectedChain={currentBaseChain}
               onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}

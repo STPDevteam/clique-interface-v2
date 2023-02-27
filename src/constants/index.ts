@@ -113,7 +113,8 @@ export const DAO_FACTORY_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_DAO_FACTORY_ADDRESS || '',
   [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_DAO_FACTORY_ADDRESS || '',
   [ChainId.KLAYTN_BAOBAB]: process.env.REACT_APP_KLAYTN_BAOBAB_DAO_FACTORY_ADDRESS || '',
-  [ChainId.BSCTEST]: process.env.REACT_APP_BSC_TESTNET_DAO_FACTORY_ADDRESS || ''
+  [ChainId.BSCTEST]: process.env.REACT_APP_BSC_TESTNET_DAO_FACTORY_ADDRESS || '',
+  [ChainId.POLYGON_MANGO]: process.env.REACT_APP_POLYGON_ZKEVM_TESTNET_DAO_FACTORY_ADDRESS || ''
 }
 
 export const AIRDROP_ADDRESS: { [chainId in ChainId]?: string } = {
@@ -124,7 +125,8 @@ export const AIRDROP_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_AIRDROP_ADDRESS || '',
   [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_AIRDROP_ADDRESS || '',
   [ChainId.KLAYTN_BAOBAB]: process.env.REACT_APP_KLAYTN_BAOBAB_AIRDROP_ADDRESS || '',
-  [ChainId.BSCTEST]: process.env.REACT_APP_BSC_TESTNET_AIRDROP_ADDRESS || ''
+  [ChainId.BSCTEST]: process.env.REACT_APP_BSC_TESTNET_AIRDROP_ADDRESS || '',
+  [ChainId.POLYGON_MANGO]: process.env.REACT_APP_POLYGON_ZKEVM_TESTNET_AIRDROP_ADDRESS || ''
 }
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL

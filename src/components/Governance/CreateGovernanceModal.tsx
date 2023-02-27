@@ -27,6 +27,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { routes } from 'constants/routes'
 import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { ChainId } from 'constants/chain'
 
 const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
@@ -316,7 +317,7 @@ export function CreateGovernanceModal() {
           {step === CreateGovernanceStep.CONFIG && (
             <Box mt={24} display={'grid'} gap="16px">
               <ChainSelect
-                chainList={ChainList}
+                chainList={ChainList.filter(v => v.id !== ChainId.POLYGON_MANGO)}
                 selectedChain={currentBaseChain}
                 onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
                 label="*Network"

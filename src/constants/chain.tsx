@@ -7,6 +7,7 @@ import MaticSvg from 'assets/svg/matic.svg'
 import { ReactComponent as MaticLogo } from 'assets/svg/matic.svg'
 import KlaytnSvg from '../assets/svg/klaytn_logo.svg'
 import { ReactComponent as KlaytnLogo } from '../assets/svg/klaytn_logo.svg'
+import ZkevmSrc from '../assets/images/zkevm_logo.png'
 
 export enum ChainId {
   MAINNET = 1,
@@ -19,7 +20,8 @@ export enum ChainId {
   KLAYTN_BAOBAB = 1001,
   POLYGON = 137,
   KLAYTN = 8217,
-  POLYGON_MUMBAI = 80001
+  POLYGON_MUMBAI = 80001,
+  POLYGON_MANGO = 1422
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -120,6 +122,14 @@ export const AllChainList = [
     name: 'Polygon mumbai',
     id: ChainId.POLYGON_MUMBAI,
     hex: '0x13881'
+  },
+  {
+    icon: <img src={ZkevmSrc} />,
+    logo: ZkevmSrc,
+    symbol: 'Polygon Mongo',
+    name: 'Polygon Mongo',
+    id: ChainId.POLYGON_MANGO,
+    hex: '0x58E'
   }
 ]
 
@@ -265,5 +275,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://rpc.ankr.com/polygon_mumbai'],
     blockExplorerUrls: ['https://mumbai.polygonscan.com/']
+  },
+  [ChainId.POLYGON_MANGO]: {
+    chainId: '0x58E',
+    chainName: 'Polygon Mango',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://rpc.public.zkevm-test.net'],
+    blockExplorerUrls: ['https://explorer.public.zkevm-test.net/']
   }
 }

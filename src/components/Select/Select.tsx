@@ -9,10 +9,10 @@ import {
   Typography
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-// import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
+import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
 // import SelectedHoverIcon from 'assets/componentsIcon/selected_hover_icon.svg'
-import CheckboxIcon from '../../assets/componentsIcon/checkbox.svg'
-import SelectedIcon from '../../assets/componentsIcon/checkbox_checked.svg'
+import CheckboxMulIcon from '../../assets/componentsIcon/checkbox.svg'
+import SelectedMulIcon from '../../assets/componentsIcon/checkbox_checked.svg'
 
 import React, { useMemo, useState } from 'react'
 import { SxProps } from '@mui/system'
@@ -169,14 +169,14 @@ export default function Select(props: Props) {
                 gap: 8,
                 padding: 15,
                 '&::after': {
-                  content: multiple ? `url(${CheckboxIcon})` : "''",
+                  content: multiple ? `url(${CheckboxMulIcon})` : "''",
                   width: 30,
                   height: 20,
                   display: 'flex',
                   justifyContent: 'center'
                 },
                 '&.Mui-selected::after': {
-                  content: `url(${SelectedIcon})`
+                  content: `url(${multiple ? SelectedMulIcon : SelectedIcon})`
                 }
               }
             }
