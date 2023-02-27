@@ -1,7 +1,7 @@
 {
   "background_color": "#fff",
   "display": "standalone",
-  "homepage_url": "https://google.com/",
+  "homepage_url": "https://www.myclique.io/",
   "icons": [
     {
       "src": "./images/196x196_App_Icon.png",
@@ -17,7 +17,7 @@
     }
   ],
   "orientation": "portrait",
-  "name": "title",
+  "name": "myclique",
   "short_name": "title",
   "start_url": ".",
   "theme_color": "#7869CC"

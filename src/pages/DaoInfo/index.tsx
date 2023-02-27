@@ -63,6 +63,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
     padding: '15px 0',
     marginRight: 60,
     textDecoration: 'none',
+    whiteSpace: 'nowrap',
     color: theme.palette.text.secondary,
     cursor: 'pointer',
     '&:hover': {
@@ -73,8 +74,9 @@ const StyledTabs = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
+    justifyContent: 'space-evenly',
     '&>*': {
-      marginRight: 20,
+      marginRight: 0,
       '&:last-child': {
         marginRight: 0
       }

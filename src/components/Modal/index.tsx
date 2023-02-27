@@ -54,7 +54,8 @@ export default function Modal(props: Props) {
             boxSizing: 'border-box'
           },
           '& .MuiDialog-container ': {
-            alignItems: { xs: !isCardOnMobile ? 'flex-end' : 'center', sm: 'center' }
+            alignItems: { xs: !isCardOnMobile ? 'flex-end' : 'center', sm: 'center' },
+            backgroundColor: { xs: 'rgba(0,0,0,0.5)', sm: 'rgba(0,0,0,0.2)' }
           }
         }}
         TransitionComponent={Transition}
@@ -79,18 +80,22 @@ export default function Modal(props: Props) {
             ...(!isCardOnMobile
               ? {
                   [theme.breakpoints.down('sm')]: {
+                    borderRadius: '24px 24px 0 0',
                     margin: 0,
                     border: 'none',
                     width: '100%!important',
                     maxWidth: 'unset!important',
-                    maxHeight: `calc(100vh - ${theme.height.mobileHeader})`,
+                    position: 'fixed',
                     height: 'auto',
-                    borderRadius: '0',
-                    marginTop: theme.height.mobileHeader,
+                    // height: `calc(100vh - ${theme.height.mobileHeader})`,
+                    maxHeight: '100%',
+                    // top: theme.height.mobileHeader,
+                    bottom: 0,
+                    // height: 'auto',
                     marginBottom: 0,
                     overflow,
                     pb: '50px',
-                    pt: '10px'
+                    pt: '20px'
                   }
                 }
               : { [theme.breakpoints.down('sm')]: { margin: 0, pb: '20px', borderRadius: '0' } })

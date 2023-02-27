@@ -17,6 +17,12 @@ export function isAddress(value: any): string | false {
   }
 }
 
+export function isEmail(value: any): boolean {
+  return /^[A-Za-z\d]+([-_\.][A-Za-z\d]+)*@([A-Za-z\d]+[-\.])+[A-Za-z\d]{2,4}(,[A-Za-z\d]+([-_\.][A-Za-z\d]+)*@([A-Za-z\d]+[-\.])+[A-Za-z\d]{2,4})*$/.test(
+    value
+  )
+}
+
 const explorers = {
   etherscan: (link: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
     switch (type) {

@@ -23,10 +23,14 @@ const StyledItem = styled(Box)(({ theme }) => ({
   padding: '12px 32px 15px'
 }))
 
-const StyledBody = styled(Box)({
+const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
-  padding: '40px 32px'
-})
+  padding: '40px 32px',
+  [theme.breakpoints.down('sm')]: {
+    gridTemplateColumns: 'unset',
+    padding: '20px 16px'
+  }
+}))
 
 const StyledListText = styled(Typography)({
   fontSize: 13,
@@ -57,7 +61,7 @@ export default function VoteProgress({
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
-      <RowCenter>
+      <RowCenter flexWrap={'wrap'}>
         <Typography variant="h6" fontWeight={500}>
           Current Results
         </Typography>
@@ -83,13 +87,14 @@ export default function VoteProgress({
       <Stack mt={16} spacing={10}>
         {proposalOptions.map((item, index) => (
           <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
-            <Typography>{item.name}</Typography>
+            <Typography mb={5}>{item.name}</Typography>
             <Box
               display={'grid'}
               sx={{
-                gridTemplateColumns: { sm: '1fr 180px', xs: '1fr 50px' }
+                gridTemplateColumns: { sm: '1fr 180px', xs: '1fr' }
               }}
               columnGap="24px"
+              rowGap={'5px'}
             >
               <SimpleProgress width="100%" per={Math.floor(item.per * 100)} />
               <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={600}>
