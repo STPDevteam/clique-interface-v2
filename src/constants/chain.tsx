@@ -8,6 +8,8 @@ import { ReactComponent as MaticLogo } from 'assets/svg/matic.svg'
 import KlaytnSvg from '../assets/svg/klaytn_logo.svg'
 import { ReactComponent as KlaytnLogo } from '../assets/svg/klaytn_logo.svg'
 import ZkevmSrc from '../assets/images/zkevm_logo.png'
+import CoinbaseSvg from '../assets/svg/coinbase_logo.svg'
+import { ReactComponent as CoinbaseLogo } from '../assets/svg/coinbase_logo.svg'
 
 export enum ChainId {
   MAINNET = 1,
@@ -21,7 +23,8 @@ export enum ChainId {
   POLYGON = 137,
   KLAYTN = 8217,
   POLYGON_MUMBAI = 80001,
-  POLYGON_MANGO = 1442
+  POLYGON_MANGO = 1442,
+  COINBASE_TESTNET = 84531
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -130,6 +133,14 @@ export const AllChainList = [
     name: 'zkEVM-testnet',
     id: ChainId.POLYGON_MANGO,
     hex: '0x5A2'
+  },
+  {
+    icon: <CoinbaseSvg />,
+    logo: CoinbaseLogo,
+    symbol: 'Base Goerli',
+    name: 'Base Goerli Testnet',
+    id: ChainId.COINBASE_TESTNET,
+    hex: '0x14A33'
   }
 ]
 
@@ -286,5 +297,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://rpc.public.zkevm-test.net'],
     blockExplorerUrls: ['https://explorer.public.zkevm-test.net']
+  },
+  [ChainId.COINBASE_TESTNET]: {
+    chainId: '0x14A33',
+    chainName: 'Base Goerli Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://goerli.base.org'],
+    blockExplorerUrls: ['https://goerli.basescan.org']
   }
 }

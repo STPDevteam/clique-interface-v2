@@ -122,6 +122,10 @@ const chains: ChainObject = {
   [ChainId.POLYGON_MANGO]: {
     link: 'https://explorer.public.zkevm-test.net',
     builder: explorers.etherscan
+  },
+  [ChainId.COINBASE_TESTNET]: {
+    link: 'https://goerli.basescan.org',
+    builder: explorers.etherscan
   }
 }
 
