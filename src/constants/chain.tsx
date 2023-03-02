@@ -21,7 +21,7 @@ export enum ChainId {
   POLYGON = 137,
   KLAYTN = 8217,
   POLYGON_MUMBAI = 80001,
-  POLYGON_MANGO = 1422
+  POLYGON_MANGO = 1442
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -126,10 +126,10 @@ export const AllChainList = [
   {
     icon: <img src={ZkevmSrc} />,
     logo: ZkevmSrc,
-    symbol: 'Polygon Mongo',
-    name: 'Polygon Mongo',
+    symbol: 'zkEVM-testnet',
+    name: 'zkEVM-testnet',
     id: ChainId.POLYGON_MANGO,
-    hex: '0x58E'
+    hex: '0x5A2'
   }
 ]
 
@@ -277,14 +277,14 @@ export const SUPPORTED_NETWORKS: {
     blockExplorerUrls: ['https://mumbai.polygonscan.com/']
   },
   [ChainId.POLYGON_MANGO]: {
-    chainId: '0x58E',
-    chainName: 'Polygon Mango',
+    chainId: '0x5A2',
+    chainName: 'zkEVM-testnet',
     nativeCurrency: {
       name: 'ETH',
       symbol: 'ETH',
       decimals: 18
     },
     rpcUrls: ['https://rpc.public.zkevm-test.net'],
-    blockExplorerUrls: ['https://explorer.public.zkevm-test.net/']
+    blockExplorerUrls: ['https://explorer.public.zkevm-test.net']
   }
 }
