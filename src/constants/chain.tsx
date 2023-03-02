@@ -135,8 +135,8 @@ export const AllChainList = [
     hex: '0x5A2'
   },
   {
-    icon: <CoinbaseSvg />,
-    logo: CoinbaseLogo,
+    icon: <CoinbaseLogo />,
+    logo: CoinbaseSvg,
     symbol: 'Base Goerli',
     name: 'Base Goerli Testnet',
     id: ChainId.COINBASE_TESTNET,
