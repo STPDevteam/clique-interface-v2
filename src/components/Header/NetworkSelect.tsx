@@ -30,7 +30,7 @@ export default function NetworkSelect() {
         {ChainList.map(option => (
           <MenuItem
             onClick={() => {
-              if (Object.values(ChainId).includes(option.id)) {
+              if ([1, 3, 4, 5, 42].includes(option.id)) {
                 library?.provider?.request?.({
                   method: 'wallet_switchEthereumChain',
                   params: [{ chainId: SUPPORTED_NETWORKS[option.id as ChainId]?.chainId }, account]
