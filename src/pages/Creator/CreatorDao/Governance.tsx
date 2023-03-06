@@ -155,7 +155,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         <TopWrapper>
           <Box>
             <ChainSelect
-              chainList={ChainList.filter(v => v.id !== ChainId.POLYGON_MANGO)}
+              chainList={ChainList.filter(v => v.id !== ChainId.POLYGON_MANGO && v.id !== ChainId.COINBASE_TESTNET)}
               height={56}
               selectedChain={currentBaseChain}
               onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}

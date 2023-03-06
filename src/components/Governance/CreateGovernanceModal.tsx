@@ -317,7 +317,7 @@ export function CreateGovernanceModal() {
           {step === CreateGovernanceStep.CONFIG && (
             <Box mt={24} display={'grid'} gap="16px">
               <ChainSelect
-                chainList={ChainList.filter(v => v.id !== ChainId.POLYGON_MANGO)}
+                chainList={ChainList.filter(v => v.id !== ChainId.POLYGON_MANGO && v.id !== ChainId.COINBASE_TESTNET)}
                 selectedChain={currentBaseChain}
                 onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
                 label="*Network"
