@@ -62,7 +62,7 @@ function Web3StatusInner() {
             </Box>
           ) : (
             <>
-              <Image src={ChainListMap[chainId].logo} style={{ height: 20 }} />
+              <Image src={ChainListMap[chainId]?.logo} style={{ height: 20 }} />
               <Typography
                 fontWeight={700}
                 sx={{
