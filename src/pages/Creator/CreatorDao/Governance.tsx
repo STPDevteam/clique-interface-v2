@@ -222,7 +222,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
       {nextHandler.error ? (
         <Alert severity="error">{nextHandler.error}</Alert>
       ) : (
-        <Alert severity="info">You will create a DAO in {chainId ? ChainListMap[chainId].name : '--'}</Alert>
+        <Alert severity="info">You will create a DAO in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
       )}
 
       <Box mt={30} display="flex" justifyContent={'center'} gap="40px">

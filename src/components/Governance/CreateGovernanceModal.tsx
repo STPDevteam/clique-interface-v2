@@ -364,7 +364,7 @@ export function CreateGovernanceModal() {
               {nextBuildHandler.error ? (
                 <Alert severity="error">{nextBuildHandler.error}</Alert>
               ) : (
-                <Alert severity="info">You will create a DAO in {chainId ? ChainListMap[chainId].name : '--'}</Alert>
+                <Alert severity="info">You will create a DAO in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
               )}
 
               <Box mt={20} display="flex" justifyContent={{ sm: 'center', xs: 'space-evenly' }} gap="40px">
