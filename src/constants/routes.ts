@@ -26,5 +26,8 @@ export const routes = {
   Notification: '/notification',
 
   Profile: '/profile/:address',
-  _Profile: '/profile'
+  _Profile: '/profile',
+  CreateSales: '/createSale',
+  SaleDetails: '/saleDetails',
+  SaleList: '/saleList'
 }

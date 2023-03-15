@@ -1,12 +1,12 @@
-import { Box, Link, Stack, Typography, useTheme } from '@mui/material'
-import { DaoAvatars } from 'components/Avatars'
+import { Box, Stack, Typography, useTheme } from '@mui/material'
+// import { DaoAvatars } from 'components/Avatars'
 import OutlineButton from 'components/Button/OutlineButton'
 import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import { ChainId } from 'constants/chain'
-import { routes } from 'constants/routes'
+// import { routes } from 'constants/routes'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
@@ -34,9 +34,9 @@ function ItemWrapper({
   return (
     <Stack spacing={24}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
-        <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
+        {/* <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
           <DaoAvatars size={isSmDown ? 40 : 64} src={daoBaseInfo?.daoLogo} alt={''} />
-        </Link>
+        </Link> */}
         <RowCenter flexWrap={'wrap'}>
           <Typography variant="h6" mr={10}>
             {daoBaseInfo?.name || '--'}
