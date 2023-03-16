@@ -1,16 +1,21 @@
-import { Box, Card, Link, Stack, styled, Typography } from '@mui/material'
+import { Box, Card, CircularProgress, Stack, styled, Typography } from '@mui/material'
 import Back from 'components/Back'
 import theme from 'theme'
 import Input from 'components/Input'
 import { BlackButton } from 'components/Button/Button'
 import { useCallback, useState } from 'react'
-import Pagination from 'components/Pagination'
+import TransactionList from './TransactionList'
 import { useActivityList } from 'hooks/useBackedActivityServer'
 import icon from 'assets/images/placeholder.png'
 
 enum Tabs {
   ABOUT,
   TRASACTION
+}
+
+enum statusType {
+  ACTIVE,
+  CLOSED
 }
 
 const tabs = [
@@ -46,13 +51,6 @@ export default function Details() {
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row'
-  }))
-
-  const TransactionWrapper = styled(Stack)(() => ({
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    alignItems: 'center'
   }))
 
   const CardWrapper = styled(Card)(({ theme }) => ({
@@ -96,11 +94,11 @@ export default function Details() {
       color: '#808191'
     }
   }))
-
-  const { page } = useActivityList()
+  const { loading, page } = useActivityList()
   const handlePay = useCallback(() => {}, [])
   const handleSale = useCallback(() => {}, [])
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
+  const status = statusType.ACTIVE
 
   return (
     <Box
@@ -166,20 +164,30 @@ export default function Details() {
             </ColSentence>
             <ColSentence>
               <p>Sale progress</p>
-              <p>40%</p>
+              <p
+                style={{
+                  display: 'flex',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                  flexDirection: 'row'
+                }}
+              >
+                <span>40%</span>
+                <CircularProgress sx={{ marginLeft: 10 }} variant="determinate" value={100} />
+              </p>
             </ColSentence>
           </Stack>
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr">
             <ColSentence>
               <p>Status</p>
-              <p>Active</p>
+              <p style={{ color: status === statusType.ACTIVE ? '#00ff43' : '#b2b3bd' }}>Active</p>
             </ColSentence>
             <ColSentence>
               <p>Close at</p>
               <p>in 2 days</p>
             </ColSentence>
           </Stack>
-          <Stack display={'flex'} flexDirection={'row'}>
+          <Stack display={'flex'} flexDirection={'row'} mt={30}>
             {tabs.map(({ value, name }) => (
               <Box
                 sx={{
@@ -198,27 +206,13 @@ export default function Details() {
           </Stack>
           {curTab === Tabs.ABOUT ? (
             <Stack spacing={10}>
-              about texttext text there is a text there is a text there is a text there sis a text there is a text
+              <p>
+                about texttext text there is a text there is a text there is a text there sis a text there is a text
+              </p>
               <p>there si a etxt text there is a text</p>
             </Stack>
           ) : (
-            <Stack>
-              {transactionDataList.map(({ id, title, date }) => {
-                return (
-                  <TransactionWrapper key={id}>
-                    <Link>{title}</Link>
-                    <p>{date}</p>
-                  </TransactionWrapper>
-                )
-              })}
-              <Box mt={20} display={'flex'} justifyContent="center">
-                <Pagination
-                  count={page.totalPage}
-                  page={page.currentPage}
-                  onChange={(_, value) => page.setCurrentPage(value)}
-                />
-              </Box>
-            </Stack>
+            <TransactionList loading={loading} page={page} result={transactionDataList} />
           )}
         </Stack>
         <Stack className="right_content">

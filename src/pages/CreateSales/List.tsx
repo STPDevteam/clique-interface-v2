@@ -13,7 +13,7 @@ import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
-import { PublicSaleItem, AirdropItem } from 'pages/Activity/ActivityItem'
+import PublicSaleItem from './PublicSaleItem'
 
 function ItemWrapper({
   children,
@@ -34,9 +34,6 @@ function ItemWrapper({
   return (
     <Stack spacing={24}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
-        {/* <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
-          <DaoAvatars size={isSmDown ? 40 : 64} src={daoBaseInfo?.daoLogo} alt={''} />
-        </Link> */}
         <RowCenter flexWrap={'wrap'}>
           <Typography variant="h6" mr={10}>
             {daoBaseInfo?.name || '--'}
@@ -100,7 +97,7 @@ export default function List({
               publishTime={item.publishTime}
               type={ActivityType.AIRDROP}
             >
-              {item.types === ActivityType.AIRDROP ? <AirdropItem item={item} /> : <PublicSaleItem />}
+              <PublicSaleItem />
             </ItemWrapper>
           ))}
         </Stack>
