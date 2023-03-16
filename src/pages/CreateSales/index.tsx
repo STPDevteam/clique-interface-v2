@@ -207,7 +207,19 @@ export default function Index() {
       if (!minPurchase) {
         return {
           disabled: true,
-          error: 'Min Price required'
+          error: 'Min Purchase required'
+        }
+      }
+      if (Number(minPurchase) < 0) {
+        return {
+          disabled: true,
+          error: 'Min Purchase must be bigger than 0'
+        }
+      }
+      if (Number(maxPurchase) < 0) {
+        return {
+          disabled: true,
+          error: 'Max Purchase must be bigger than 0'
         }
       }
       if (!maxPurchase) {
@@ -245,7 +257,20 @@ export default function Index() {
       disabled: false,
       handler: handlePublic
     }
-  }, [baseChainId, endTime, handlePublic, packagePrice, salePriceType, salesAmount, startTime, unitPrice])
+  }, [
+    baseChainId,
+    endTime,
+    handlePublic,
+    maxPurchase,
+    minPurchase,
+    oneTimePrice,
+    packagePrice,
+    purchase,
+    salePriceType,
+    salesAmount,
+    startTime,
+    unitPrice
+  ])
 
   return (
     <Box
