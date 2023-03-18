@@ -143,6 +143,61 @@ export function getProposalVotesList(
   })
 }
 
+export function getPublicSaleList(saleId: number, offset: number, count: number) {
+  return Axios.get('stpdao/v2/swap/list', {
+    saleId,
+    offset,
+    count
+  })
+}
+
+export function getTransactionList(saleId: number, offset: number, count: number) {
+  return Axios.get('stpdao/v2/swap/transactions', {
+    saleId,
+    offset,
+    count
+  })
+}
+
+export function getTokenPrices(chainId: number, tokens: string) {
+  return Axios.get('stpdao/v2/swap/prices', {
+    chainId,
+    tokens
+  })
+}
+
+export function toCreatePublicSale(
+  about: string,
+  chainId: number,
+  creator: string | undefined,
+  endTime: string | number,
+  limitMax: string,
+  limitMin: string,
+  receiveToken: string,
+  saleAmount: string | number,
+  salePrice: string | number,
+  saleToken: string,
+  saleWay: string,
+  startTime: number | string,
+  whiteList: string[]
+) {
+  return Axios.post('stpdao/v2/swap/create', {
+    about,
+    chainId,
+    creator,
+    endTime,
+    limitMax,
+    limitMin,
+    receiveToken,
+    saleAmount,
+    salePrice,
+    saleToken,
+    saleWay,
+    startTime,
+    whiteList
+  })
+}
+
 export function saveAirdropAddress(
   address: string[],
   amount: string[],

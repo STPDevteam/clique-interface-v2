@@ -118,9 +118,8 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
 
 export const activityStatusText = {
   [ActivityStatus.SOON]: 'Soon',
-  [ActivityStatus.OPEN]: 'Open',
+  [ActivityStatus.OPEN]: 'Active',
   [ActivityStatus.ENDED]: 'Ended',
-  [ActivityStatus.AIRDROP]: 'DAO Rewards',
   [ActivityStatus.CLOSED]: 'Closed'
 }
 

@@ -7,23 +7,20 @@ import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import { ChainId } from 'constants/chain'
 // import { routes } from 'constants/routes'
-import { ActivityListProp } from 'hooks/useBackedActivityServer'
+import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
 import PublicSaleItem from './PublicSaleItem'
 
 function ItemWrapper({
   children,
-  type,
   publishTime,
   daoChainId,
   daoAddress
 }: {
   children: any
-  type: ActivityType
   publishTime: number
   daoChainId: ChainId
   daoAddress: string
@@ -48,17 +45,13 @@ function ItemWrapper({
           </Typography>
         </RowCenter>
         <OutlineButton
-          style={
-            type === ActivityType.AIRDROP
-              ? { color: theme.palette.primary.light, borderColor: theme.palette.primary.light }
-              : undefined
-          }
+          style={{ color: theme.palette.primary.light, borderColor: theme.palette.primary.light }}
           primary
           borderRadius="30px"
           height={40}
           width="154px"
         >
-          {activityTypeText[type]}
+          Public Sale
         </OutlineButton>
       </Stack>
       {children}
@@ -79,7 +72,7 @@ export default function List({
     totalPage: number
     pageSize: number
   }
-  result: ActivityListProp[]
+  result: PublicSaleListBaseProp[]
 }) {
   return (
     <>
@@ -90,13 +83,7 @@ export default function List({
         </DelayLoading>
         <Stack mt={40} spacing={40}>
           {result.map(item => (
-            <ItemWrapper
-              daoAddress={item.daoAddress}
-              daoChainId={item.chainId}
-              key={item.activityId}
-              publishTime={item.publishTime}
-              type={ActivityType.AIRDROP}
-            >
+            <ItemWrapper daoAddress={''} daoChainId={item.chainId} key={''} publishTime={0}>
               <PublicSaleItem />
             </ItemWrapper>
           ))}

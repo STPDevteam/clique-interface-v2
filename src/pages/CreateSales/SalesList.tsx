@@ -1,14 +1,14 @@
 import { Box, Link, Stack, Typography } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { routes } from 'constants/routes'
-import { useActivityList } from 'hooks/useBackedActivityServer'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import List from './List'
 import banner from 'assets/images/a.png'
+import { usePublicSaleBaseList } from 'hooks/useBackedPublicSaleServer'
 
-export default function Activity() {
-  const { loading, result, page } = useActivityList()
+export default function SalesList() {
+  const { loading, result: result, page } = usePublicSaleBaseList()
 
   return (
     <div>

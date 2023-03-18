@@ -131,6 +131,19 @@ export const AIRDROP_ADDRESS: { [chainId in ChainId]?: string } = {
   [ChainId.COINBASE_TESTNET]: process.env.REACT_APP_COINBASE_TESTNET_AIRDROP_ADDRESS || ''
 }
 
+export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
+  [ChainId.MAINNET]: process.env.REACT_APP_ETH_PUBLICSALE_ADDRESS || '',
+  [ChainId.POLYGON]: process.env.REACT_APP_POLYGON_PUBLICSALE_ADDRESS || '',
+  [ChainId.KLAYTN]: process.env.REACT_APP_KLAYTN_PUBLICSALE_ADDRESS || '',
+  [ChainId.BSC]: process.env.REACT_APP_BSC_PUBLICSALE_ADDRESS || '',
+  [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_PUBLICSALE_ADDRESS || '',
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_PUBLICSALE_ADDRESS || '',
+  [ChainId.KLAYTN_BAOBAB]: process.env.REACT_APP_KLAYTN_BAOBAB_PUBLICSALE_ADDRESS || '',
+  [ChainId.BSCTEST]: process.env.REACT_APP_BSC_TESTNET_PUBLICSALE_ADDRESS || '',
+  [ChainId.POLYGON_MANGO]: process.env.REACT_APP_POLYGON_ZKEVM_TESTNET_PUBLICSALE_ADDRESS || '',
+  [ChainId.COINBASE_TESTNET]: process.env.REACT_APP_COINBASE_TESTNET_PUBLICSALE_ADDRESS || ''
+}
+
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'
