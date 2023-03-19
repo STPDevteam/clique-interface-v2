@@ -143,15 +143,15 @@ export function getProposalVotesList(
   })
 }
 
-export function getPublicSaleList(saleId: number, offset: number, count: number) {
+export function getPublicSaleList(saleId: string | undefined, offset: number, count: number) {
   return Axios.get('stpdao/v2/swap/list', {
-    saleId,
+    saleId: saleId || '',
     offset,
     count
   })
 }
 
-export function getTransactionList(saleId: number, offset: number, count: number) {
+export function getTransactionList(saleId: string, offset: number, count: number) {
   return Axios.get('stpdao/v2/swap/transactions', {
     saleId,
     offset,

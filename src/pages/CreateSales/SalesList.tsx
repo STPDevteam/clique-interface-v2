@@ -8,7 +8,7 @@ import banner from 'assets/images/a.png'
 import { usePublicSaleBaseList } from 'hooks/useBackedPublicSaleServer'
 
 export default function SalesList() {
-  const { loading, result: result, page } = usePublicSaleBaseList()
+  const { loading, result, page } = usePublicSaleBaseList()
 
   return (
     <div>

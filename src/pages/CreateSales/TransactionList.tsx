@@ -3,7 +3,9 @@ import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
+import { transactionListProp } from 'hooks/useBackedPublicSaleServer'
 import theme from 'theme'
+import { timeStampToFormat } from 'utils/dao'
 
 export default function TransactionList({
   loading,
@@ -18,7 +20,7 @@ export default function TransactionList({
     totalPage: number
     pageSize: number
   }
-  result: any[]
+  result: transactionListProp[]
 }) {
   return (
     <>
@@ -30,10 +32,12 @@ export default function TransactionList({
         <Stack mt={40} spacing={40}>
           {result.map(item => {
             return (
-              <Stack key={item} display={'flex'} justifyContent={'space-between'} flexDirection={'row'}>
-                <Link>{item.title}</Link>
+              <Stack key={item.saleId} display={'flex'} justifyContent={'space-between'} flexDirection={'row'}>
+                <Link>
+                  Swap {item.payAmount} {item.payTokenName} to {item.buyAmount} {item.buyTokenName}
+                </Link>
                 <Typography color={theme.palette.text.secondary} fontWeight={500} lineHeight={1.5} variant="inherit">
-                  {item.date}
+                  {timeStampToFormat(Number(item.time))}
                 </Typography>
               </Stack>
             )

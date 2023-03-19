@@ -50,6 +50,8 @@ enum priceType {
   UNIT,
   PACKAGE
 }
+
+const _DISCOUNT = 0.9
 const RowWrapper = styled(Stack)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -211,7 +213,6 @@ export default function Index() {
   }, [chainId, receiveToken, saleToken])
 
   const inputValueAmount = tryParseAmount(salesAmount, saleToken || undefined)
-
   const maxPurchaseCa = tryParseAmount(maxPurchase, receiveToken)
   const minPurchaseCa = tryParseAmount(minPurchase, receiveToken)
   const salePriceCa = tryParseAmount(salePrice, receiveToken)
@@ -540,13 +541,13 @@ export default function Index() {
               onClick={() => {
                 setSalePriceType(priceType.UNIT)
                 const val = new BigNumber(Number(estimation))
-                  .div(new BigNumber(0.9))
+                  .div(new BigNumber(_DISCOUNT))
                   .div(new BigNumber(Number(salesAmount)))
-                setUnitPrice(val.toString())
+                setUnitPrice(Number(val.toFixed(6, BigNumber.ROUND_DOWN)).toString())
                 const discountAmount = new BigNumber(Number(unitPrice))
                   .multipliedBy(Number(salesAmount))
-                  .multipliedBy(new BigNumber(0.9))
-                setEstimation(discountAmount.toString())
+                  .multipliedBy(new BigNumber(_DISCOUNT))
+                setEstimation(Number(discountAmount.toFixed(6, BigNumber.ROUND_DOWN)).toString())
               }}
             >
               Unit price
@@ -556,7 +557,7 @@ export default function Index() {
               onClick={() => {
                 setSalePriceType(priceType.PACKAGE)
                 const discountAmount = new BigNumber(Number(unitPrice)).multipliedBy(Number(salesAmount))
-                setPackagePrice(discountAmount.toString())
+                setPackagePrice(Number(discountAmount.toFixed(6, BigNumber.ROUND_DOWN)).toString())
               }}
             >
               Package price
@@ -573,8 +574,8 @@ export default function Index() {
               setSalePrice(e.target.value || '')
               const discountAmount = new BigNumber(Number(e.target.value || ''))
                 .multipliedBy(Number(salesAmount))
-                .multipliedBy(new BigNumber(0.9))
-              setEstimation(discountAmount.toString())
+                .multipliedBy(new BigNumber(_DISCOUNT))
+              setEstimation(Number(discountAmount.toFixed(6, BigNumber.ROUND_DOWN)).toString())
             }}
             placeholder="0.1"
             endAdornment={saleToken?.symbol}
@@ -591,9 +592,9 @@ export default function Index() {
               setPackagePrice(e.target.value || '')
               setSalePrice(e.target.value || '')
               const discountAmount = new BigNumber(Number(e.target.value || '')).multipliedBy(new BigNumber(0.9))
-              setEstimation(discountAmount.toString())
+              setEstimation(Number(discountAmount.toFixed(6, BigNumber.ROUND_DOWN)).toString())
               const val = new BigNumber(Number(estimation)).div(new BigNumber(Number(salesAmount)))
-              setUnitPrice(val.toString())
+              setUnitPrice(Number(val.toFixed(6, BigNumber.ROUND_DOWN)).toString())
             }}
             placeholder="0"
             endAdornment={saleToken?.symbol}
@@ -668,7 +669,7 @@ export default function Index() {
                 onChange={e => setMinPurchase(e.target.value || '')}
                 placeholder="min"
                 label=""
-                endAdornment="RAI"
+                endAdornment={saleToken?.symbol}
                 rightLabel={<></>}
                 type="min"
               />
@@ -678,7 +679,7 @@ export default function Index() {
                 value={maxPurchase}
                 errSet={() => setMaxPurchase('')}
                 onChange={e => setMaxPurchase(e.target.value || '')}
-                endAdornment="RAI"
+                endAdornment={saleToken?.symbol}
                 placeholder="max"
                 label=""
                 rightLabel={<></>}

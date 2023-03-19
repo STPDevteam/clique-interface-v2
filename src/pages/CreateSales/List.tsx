@@ -1,18 +1,16 @@
 import { Box, Stack, Typography, useTheme } from '@mui/material'
-// import { DaoAvatars } from 'components/Avatars'
 import OutlineButton from 'components/Button/OutlineButton'
 import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import { ChainId } from 'constants/chain'
-// import { routes } from 'constants/routes'
 import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
-import PublicSaleItem from './PublicSaleItem'
+import PublicSaleListItem from './PublicSaleListItem'
 
 function ItemWrapper({
   children,
@@ -82,9 +80,9 @@ export default function List({
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
         <Stack mt={40} spacing={40}>
-          {result.map(item => (
-            <ItemWrapper daoAddress={''} daoChainId={item.chainId} key={''} publishTime={0}>
-              <PublicSaleItem />
+          {result.map((item: PublicSaleListBaseProp) => (
+            <ItemWrapper daoAddress={item.creator} daoChainId={item.chainId} key={''} publishTime={0}>
+              <PublicSaleListItem item={item} />
             </ItemWrapper>
           ))}
         </Stack>

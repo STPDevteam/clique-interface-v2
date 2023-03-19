@@ -28,6 +28,7 @@ export const routes = {
   Profile: '/profile/:address',
   _Profile: '/profile',
   CreateSales: '/createSale',
-  SaleDetails: '/saleDetails',
+  SaleDetails: '/saleDetails/:saleId',
+  _SaleDetails: '/saleDetails',
   SaleList: '/saleList'
 }

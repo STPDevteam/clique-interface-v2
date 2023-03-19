@@ -5,8 +5,20 @@ import Input from 'components/Input'
 import { BlackButton } from 'components/Button/Button'
 import { useCallback, useState } from 'react'
 import TransactionList from './TransactionList'
-import { useActivityList } from 'hooks/useBackedActivityServer'
 import icon from 'assets/images/placeholder.png'
+import { useParams } from 'react-router-dom'
+import ReactHtmlParser from 'react-html-parser'
+import {
+  PublicSaleListBaseProp,
+  usePublicSaleBaseList,
+  usePublicSaleTransactionList
+} from 'hooks/useBackedPublicSaleServer'
+import { useToken } from 'state/wallet/hooks'
+import { escapeAttrValue } from 'xss'
+import { useCancelSaleCallback } from 'hooks/useCreatePublicSaleCallback'
+import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import useModal from 'hooks/useModal'
 
 enum Tabs {
   ABOUT,
@@ -23,82 +35,87 @@ const tabs = [
   { name: 'Transaction', value: Tabs.TRASACTION }
 ]
 
-const imgDataList = [icon, icon, icon, icon]
+const RowSentence = styled('p')(({}) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexDirection: 'row'
+}))
 
-const transactionDataList = [
-  {
-    id: 0,
-    title: 'Swap 1,000 STPT to 21,000 RAI',
-    link: '',
-    date: '2021-12-26 16:05:50'
+const CardWrapper = styled(Card)(({ theme }) => ({
+  border: '1px solid',
+  borderRadius: 10,
+  padding: 10,
+  borderColor: theme.bgColor.bg2,
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  '& img': {
+    width: 80
   },
-  {
-    id: 1,
-    title: 'Swap 1,000 STPT to 21,000 RAI',
-    link: '',
-    date: '2021-12-26 16:05:50'
-  },
-  {
-    id: 2,
-    title: 'Swap 1,000 STPT to 21,000 RAI',
-    link: '',
-    date: '2021-12-26 16:05:50'
-  }
-]
-
-export default function Details() {
-  const RowSentence = styled('p')(({}) => ({
+  '& div': {
+    textAlign: 'left',
     display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'row'
-  }))
-
-  const CardWrapper = styled(Card)(({ theme }) => ({
-    border: '1px solid',
-    borderRadius: 10,
-    padding: 10,
-    borderColor: theme.bgColor.bg2,
+    justifyContent: 'flex-start',
+    flexDirection: 'column'
+  },
+  '& .iconList': {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    '& img': {
-      width: 80
-    },
-    '& div': {
-      textAlign: 'left',
-      display: 'flex',
-      justifyContent: 'flex-start',
-      flexDirection: 'column'
-    },
-    '& .iconList': {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'flex-start'
-    },
-    '& .iconList img': {
-      width: 30
-    }
-  }))
+    justifyContent: 'flex-start'
+  },
+  '& .iconList img': {
+    width: 30
+  }
+}))
 
-  const ColSentence = styled('div')(() => ({
-    display: 'flex',
-    justifyContent: 'flex-start',
-    flexDirection: 'column',
-    '& p': {
-      fontSize: 16,
-      color: '#000'
-    },
-    '& p:first-of-type': {
-      fontSize: 12,
-      color: '#808191'
-    }
-  }))
-  const { loading, page } = useActivityList()
-  const handlePay = useCallback(() => {}, [])
-  const handleSale = useCallback(() => {}, [])
+const ColSentence = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  flexDirection: 'column',
+  '& p': {
+    fontSize: 16,
+    color: '#000'
+  },
+  '& p:first-of-type': {
+    fontSize: 12,
+    color: '#808191'
+  }
+}))
+
+const imgDataList = [icon, icon, icon, icon]
+
+export default function Details() {
+  const { saleId } = useParams<{ saleId: string }>()
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const status = statusType.ACTIVE
+  const cancelSaleCallback = useCancelSaleCallback()
+  const { showModal, hideModal } = useModal()
+
+  const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
+  const { result } = usePublicSaleBaseList(saleId)
+  const SwapData: PublicSaleListBaseProp = result[0]
+  const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
+  const receiveToken = useToken(SwapData?.receiveToken, SwapData?.chainId)
+  console.log(SwapData)
+  const handlePay = useCallback(() => {}, [])
+  const handleSale = useCallback(() => {}, [])
+  const handleCancel = useCallback(() => {
+    cancelSaleCallback(saleId)
+      .then(hash => {
+        hideModal()
+        showModal(<TransactiontionSubmittedModal hash={hash} />)
+      })
+      .catch((err: any) => {
+        hideModal()
+        showModal(
+          <MessageBox type="error">
+            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          </MessageBox>
+        )
+        console.error(err)
+      })
+  }, [cancelSaleCallback, hideModal, saleId, showModal])
 
   return (
     <Box
@@ -124,9 +141,9 @@ export default function Details() {
             gap={10}
           >
             <CardWrapper>
-              <img src={icon} alt="" />
+              <img src={SwapData?.saleTokenImg} alt="" />
               <div>
-                <p>STPT</p>
+                <p>{saleToken?.symbol}</p>
                 <div className="iconList">
                   {imgDataList.map((item, inx) => {
                     return <img key={inx} src={item} alt="" />
@@ -136,9 +153,9 @@ export default function Details() {
             </CardWrapper>
             <p>&gt;&gt;</p>
             <CardWrapper>
-              <img src={icon} alt="" />
+              <img src={SwapData?.receiveTokenImg} alt="" />
               <div>
-                <p>RAI</p>
+                <p>{receiveToken?.symbol}</p>
                 <div className="iconList">
                   {imgDataList.map((item, inx) => {
                     return <img key={inx} src={item} alt="" />
@@ -150,11 +167,15 @@ export default function Details() {
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr">
             <ColSentence>
               <p>Original price (create at xxx)</p>
-              <p>1 STPT = 10,000 RAI</p>
+              <p>
+                1 {saleToken?.symbol} = {SwapData?.originalDiscount} {receiveToken?.symbol}
+              </p>
             </ColSentence>
             <ColSentence>
               <p>Current price</p>
-              <p>1 STPT = 13,000 RAI</p>
+              <p>
+                1 {saleToken?.symbol} = 13,000 {receiveToken?.symbol}
+              </p>
             </ColSentence>
           </Stack>
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr">
@@ -206,13 +227,19 @@ export default function Details() {
           </Stack>
           {curTab === Tabs.ABOUT ? (
             <Stack spacing={10}>
-              <p>
-                about texttext text there is a text there is a text there is a text there sis a text there is a text
-              </p>
-              <p>there si a etxt text there is a text</p>
+              {ReactHtmlParser(
+                filterXSS(SwapData?.about || '', {
+                  onIgnoreTagAttr: function(_, name, value) {
+                    if (name === 'class') {
+                      return name + '="' + escapeAttrValue(value) + '"'
+                    }
+                    return undefined
+                  }
+                })
+              )}
             </Stack>
           ) : (
-            <TransactionList loading={loading} page={page} result={transactionDataList} />
+            <TransactionList loading={ListLoading} page={listPage} result={listRes} />
           )}
         </Stack>
         <Stack className="right_content">
@@ -235,26 +262,28 @@ export default function Details() {
             </RowSentence>
             <RowSentence>
               <span>Est.discount</span>
-              <span>-20%</span>
+              <span>-10%</span>
             </RowSentence>
             <Input
               readOnly
-              value={'10,000'}
+              value={''}
               errSet={() => {}}
               onChange={() => {}}
               placeholder=""
               label="Swap"
+              endAdornment="10,000"
               rightLabel=""
               type="swap"
             />
             <Input
               readOnly
-              value={'10,000'}
+              value={''}
               errSet={() => {}}
               onChange={() => {}}
               placeholder=""
               label="Pay"
-              rightLabel="Balance: 20,000 STPT"
+              endAdornment="10,000"
+              rightLabel={`Balance: 20,000 ${saleToken?.symbol}`}
               type="pay"
             />
             <RowSentence>
@@ -290,7 +319,7 @@ export default function Details() {
           >
             <RowSentence>
               <span>Sale type</span>
-              <span>One-time urchase</span>
+              <span>One-time purchase</span>
             </RowSentence>
             <RowSentence>
               <span>Price</span>
@@ -342,7 +371,7 @@ export default function Details() {
               <BlackButton width="252px" onClick={handlePay}>
                 Claim all
               </BlackButton>
-              <BlackButton width="252px" onClick={handleSale}>
+              <BlackButton width="252px" onClick={handleCancel}>
                 Cancel event
               </BlackButton>
             </Stack>

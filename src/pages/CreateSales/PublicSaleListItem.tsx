@@ -1,11 +1,16 @@
 import { Box, Stack, styled, Typography } from '@mui/material'
 // import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { ChainListMap } from 'constants/chain'
-import { ActivityStatus } from 'hooks/useActivityInfo'
 import CircularStatic from 'pages/Activity/CircularStatic'
 import discountIcon from 'assets/images/ethereum-logo.png'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router'
+import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
+import { useToken } from 'state/wallet/hooks'
+import { TokenAmount } from 'constants/token'
+import { useMemo } from 'react'
+import JSBI from 'jsbi'
+import { currentTimeStamp, getTargetTimeString } from 'utils'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -116,54 +121,107 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
   }
 }))
 
-export const activityStatusText = {
-  [ActivityStatus.SOON]: 'Soon',
-  [ActivityStatus.OPEN]: 'Active',
-  [ActivityStatus.ENDED]: 'Ended',
-  [ActivityStatus.CLOSED]: 'Closed'
+enum SwapStatus {
+  SOON = 'Soon',
+  OPEN = 'Active',
+  ENDED = 'Ended',
+  CLOSED = 'Closed'
 }
 
-export default function PublicSaleItem() {
-  const history = useHistory()
+export const activityStatusText = {
+  [SwapStatus.SOON]: 'Soon',
+  [SwapStatus.OPEN]: 'Active',
+  [SwapStatus.ENDED]: 'Ended',
+  [SwapStatus.CLOSED]: 'Closed'
+}
+
+function ShowStatus({ item }: { item: any }) {
+  const now = currentTimeStamp()
+  let targetTimeString = ''
+  if (item.status === SwapStatus.SOON) {
+    targetTimeString = getTargetTimeString(now, item.eventStartTime)
+  } else if (item.status === SwapStatus.OPEN) {
+    targetTimeString = getTargetTimeString(now, item.eventEndTime)
+  } else if (item.status === SwapStatus.ENDED) {
+    targetTimeString = getTargetTimeString(now, item.airdropStartTime)
+  }
+
   return (
-    <StyledItem onClick={() => history.push(routes.SaleDetails + '?:13')}>
+    <>
+      <StyledStatusText
+        color={
+          [SwapStatus.OPEN].includes(item.status)
+            ? 'active'
+            : [SwapStatus.SOON, SwapStatus.ENDED].includes(item.status)
+            ? 'soon'
+            : ''
+        }
+      >
+        {/* {activityStatusText[item.status]} */}
+      </StyledStatusText>
+      <StyledText fontSize={12}>{targetTimeString}</StyledText>
+    </>
+  )
+}
+
+export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseProp }) {
+  const history = useHistory()
+  console.log(item)
+  const saleToken = useToken(item.saleToken, item.chainId)
+  const receiveToken = useToken(item.receiveToken, item.chainId)
+  const saleAmount = useMemo(() => {
+    if (!saleToken) return
+    return new TokenAmount(saleToken, JSBI.BigInt(item.saleAmount))
+  }, [item.saleAmount, saleToken])
+
+  // const salePrice = useMemo(() => {
+  //   if (!salePrice) return
+  //   return new TokenAmount(salePrice, JSBI.BigInt(item.salePrice))
+  // }, [item.salePrice])
+
+  return (
+    <StyledItem onClick={() => history.push(routes._SaleDetails + `/${item.saleId}`)}>
       <StyledStatusBox direction={'row'} spacing={24}>
-        <StyledStatusText color={'active'}>Active</StyledStatusText>
-        <StyledText fontSize={12}>2 days left</StyledText>
+        <ShowStatus item={item} />
       </StyledStatusBox>
       <DiscountTag>
         <img src={discountIcon} alt="" />
-        <Typography variant="inherit">Sale off 20%</Typography>
+        <Typography variant="inherit">Sale off 10%</Typography>
       </DiscountTag>
       <Stack spacing={24}>
         <StyledTitle variant="h6">
           The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
           with interacting with all projects on the protocol...
         </StyledTitle>
-        <Box display={'grid'} gridTemplateColumns="100px 1fr 1fr 1fr 1fr">
-          <Stack spacing={16}>
-            <img src={discountIcon} height={50} alt="" />
+        <Box display={'grid'} gridTemplateColumns="100px 1fr 1fr 1fr 1fr 1fr">
+          <Stack display={'flex'} flexDirection={'row'} spacing={16}>
+            <img src={item.saleTokenImg} height={50} alt="" />
+            <img src={item.receiveTokenImg} height={50} alt="" />
           </Stack>
           <Stack spacing={16}>
             <StyledText>Swap</StyledText>
             <StyledText>
               <Stack direction={'row'} alignItems="center">
                 {/* <CurrencyLogo currency={undefined} size="22px" style={{ marginRight: '5px' }} /> */}
-                <StyledBoldText noWrap>Swap STPT for RAI</StyledBoldText>
+                <StyledBoldText noWrap>
+                  Swap {saleToken?.symbol} for {receiveToken?.symbol}
+                </StyledBoldText>
               </Stack>
             </StyledText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Network</StyledText>
-            <StyledBoldText noWrap>{ChainListMap[5]?.name || '--'}</StyledBoldText>
+            <StyledBoldText noWrap>{ChainListMap[item?.chainId]?.name || '--'}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Amount</StyledText>
-            <StyledBoldText noWrap>4,000,000 RAI</StyledBoldText>
+            <StyledBoldText noWrap>{saleAmount?.toSignificant(6, { groupSeparator: ',' })}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Price</StyledText>
-            <StyledBoldText noWrap>1 STPT = 13,000 RAI</StyledBoldText>
+            <StyledBoldText noWrap>
+              1 {saleToken?.symbol} = {item?.originalDiscount} {receiveToken?.symbol}
+            </StyledBoldText>
           </Stack>
         </Box>
       </Stack>
