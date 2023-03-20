@@ -201,6 +201,15 @@ export default function Details() {
     if (!swapAmount || !receiveToken) return
     return tryParseAmount(swapAmount, receiveToken || undefined)
   }, [receiveToken, swapAmount])
+
+  const remainingBalance = useMemo(() => {
+    if (!saleToken || !salesInfo?.soldAmount || !salesInfo.saleAmount) return undefined
+    const soldAmountCa = tryParseAmount(salesInfo?.soldAmount, saleToken || undefined)
+    if (!soldAmountCa) return
+    return tryParseAmount(salesInfo.saleAmount, saleToken)
+      ?.subtract(soldAmountCa)
+      .multiply(salesInfo?.pricePer)
+  }, [saleToken, salesInfo])
   const isOneTimePurchase = new BigNumber(Number(salesInfo?.limitMax)).isEqualTo(
     new BigNumber(Number(salesInfo?.limitMin))
   )
@@ -418,7 +427,7 @@ export default function Details() {
               <RowSentence>
                 <span>Claimable balance:</span>
                 <span>
-                  {claimableBalance?.toSignificant(6, { groupSeparator: ',' })}
+                  {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
                   {receiveToken?.symbol}
                 </span>
               </RowSentence>
@@ -474,7 +483,7 @@ export default function Details() {
               <RowSentence>
                 <span>Saled</span>
                 <span>
-                  {saledAmount?.toSignificant(6, { groupSeparator: ',' })} {receiveToken?.symbol}
+                  {saledAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '-'} {receiveToken?.symbol}
                 </span>
               </RowSentence>
               <RowSentence>
@@ -516,7 +525,8 @@ export default function Details() {
               <RowSentence>
                 <span>Claimable balance:</span>
                 <span>
-                  {new BigNumber(swapAmount).toFixed(6, BigNumber.ROUND_HALF_DOWN).toString()} {receiveToken?.symbol}
+                  {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
+                  {receiveToken?.symbol}
                 </span>
               </RowSentence>
             </Stack>
@@ -532,7 +542,9 @@ export default function Details() {
             >
               <RowSentence>
                 <span>Balance</span>
-                <span>1,000 RAI</span>
+                <span>
+                  {remainingBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'} {receiveToken?.symbol}
+                </span>
               </RowSentence>
               <Stack display="grid" gridTemplateRows="1fr 1fr" alignItems={'center'} justifyContent={'center'} pt={30}>
                 <BlackButton width="252px" onClick={handleCancel}>
