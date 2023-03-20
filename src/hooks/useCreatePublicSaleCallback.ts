@@ -1,11 +1,113 @@
 import { TransactionResponse } from '@ethersproject/providers'
 import { useActiveWeb3React } from 'hooks'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import ReactGA from 'react-ga4'
+import { useSingleCallResult } from 'state/multicall/hooks'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { commitErrorMsg, toCreatePublicSale } from 'utils/fetch/server'
+import { commitErrorMsg, toCreatePublicSale, toPurchase } from 'utils/fetch/server'
 import { usePublicSaleContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
+
+export enum SwapStatus {
+  SOON = 'soon',
+  OPEN = 'normal',
+  ENDED = 'ended',
+  CANCEL = 'cancel'
+}
+
+export interface SalesInfoProp {
+  creator: string
+  saleToken: string
+  saleAmount: string
+  receiveToken: string
+  pricePer: string
+  limitMin: string
+  limitMax: string
+  startTime: number
+  endTime: number
+  soldAmount: string
+  isCancel: boolean
+}
+
+export function usePurchaseCallback() {
+  const addTransaction = useTransactionAdder()
+  const contract = usePublicSaleContract()
+  const gasPriceInfoCallback = useGasPriceInfo()
+
+  return useCallback(
+    async (account: string, buyAmount: string, saleId: string) => {
+      if (!account) throw new Error('none account')
+      if (!contract) throw new Error('none contract')
+      let result: any = {}
+      try {
+        const res = await toPurchase(account, buyAmount, saleId)
+        if (!res.data.data) throw new Error(res.data.msg || 'Network error')
+        result = res.data.data as any
+      } catch (error) {
+        console.error('Purchase', error)
+        throw error
+      }
+      console.log(result)
+
+      const args = [saleId, buyAmount, result.signature]
+      const method = 'Purchase'
+      console.log('hhhh', ...args)
+
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        from: account
+      })
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: `Purchase a public sale`
+          })
+          return response.hash
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001) {
+            commitErrorMsg(
+              'useCreatePublicSaleCallback',
+              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [addTransaction, contract, gasPriceInfoCallback]
+  )
+}
+
+export function useGetSalesInfo(saleId: string): SalesInfoProp | undefined {
+  const { chainId } = useActiveWeb3React()
+  const contract = usePublicSaleContract()
+  const salesRes = useSingleCallResult(chainId ? contract : null, 'sales', [saleId], undefined, chainId).result
+
+  return useMemo(() => {
+    if (!salesRes) return undefined
+    return {
+      creator: salesRes.creator,
+      saleToken: salesRes.saleToken.toString(),
+      saleAmount: salesRes.saleAmount.toString(),
+      receiveToken: salesRes.receiveToken,
+      pricePer: salesRes.pricePer.toString(),
+      limitMin: salesRes.limitMin.toString(),
+      limitMax: salesRes.limitMax.toString(),
+      startTime: Number(salesRes.startTime.toString()),
+      endTime: Number(salesRes.endTime.toString()),
+      soldAmount: salesRes.soldAmount.toString(),
+      isCancel: salesRes.isCancel
+    }
+  }, [salesRes])
+}
 
 export function useCancelSaleCallback() {
   const contract = usePublicSaleContract()
@@ -19,7 +121,7 @@ export function useCancelSaleCallback() {
       if (!contract) throw new Error('none contract')
 
       const args = [saleId]
-      const method = 'CancelSale'
+      const method = 'Cancel'
       console.log('hhhh', ...args)
 
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)

@@ -101,7 +101,7 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
       : color
       ? color
       : theme.palette.text.secondary,
-  fontSize: 12,
+  fontSize: 14,
   '&:before': {
     content: `''`,
     position: 'absolute',
@@ -122,28 +122,19 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
 }))
 
 enum SwapStatus {
-  SOON = 'Soon',
-  OPEN = 'Active',
-  ENDED = 'Ended',
-  CLOSED = 'Closed'
-}
-
-export const activityStatusText = {
-  [SwapStatus.SOON]: 'Soon',
-  [SwapStatus.OPEN]: 'Active',
-  [SwapStatus.ENDED]: 'Ended',
-  [SwapStatus.CLOSED]: 'Closed'
+  SOON = 'soon',
+  OPEN = 'normal',
+  ENDED = 'ended',
+  CANCEL = 'cancel'
 }
 
 function ShowStatus({ item }: { item: any }) {
   const now = currentTimeStamp()
   let targetTimeString = ''
   if (item.status === SwapStatus.SOON) {
-    targetTimeString = getTargetTimeString(now, item.eventStartTime)
+    targetTimeString = 'in ' + getTargetTimeString(now, item.startTime).replace('left', '')
   } else if (item.status === SwapStatus.OPEN) {
-    targetTimeString = getTargetTimeString(now, item.eventEndTime)
-  } else if (item.status === SwapStatus.ENDED) {
-    targetTimeString = getTargetTimeString(now, item.airdropStartTime)
+    targetTimeString = getTargetTimeString(now, item.endTime)
   }
 
   return (
@@ -157,7 +148,7 @@ function ShowStatus({ item }: { item: any }) {
             : ''
         }
       >
-        {/* {activityStatusText[item.status]} */}
+        {item.status}
       </StyledStatusText>
       <StyledText fontSize={12}>{targetTimeString}</StyledText>
     </>
@@ -173,11 +164,6 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
     if (!saleToken) return
     return new TokenAmount(saleToken, JSBI.BigInt(item.saleAmount))
   }, [item.saleAmount, saleToken])
-
-  // const salePrice = useMemo(() => {
-  //   if (!salePrice) return
-  //   return new TokenAmount(salePrice, JSBI.BigInt(item.salePrice))
-  // }, [item.salePrice])
 
   return (
     <StyledItem onClick={() => history.push(routes._SaleDetails + `/${item.saleId}`)}>

@@ -1,61 +1,10 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material'
-import OutlineButton from 'components/Button/OutlineButton'
+import { Box, Stack } from '@mui/material'
 import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
-import { ChainId } from 'constants/chain'
 import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
-import useBreakpoint from 'hooks/useBreakpoint'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
-import { timeStampToFormat } from 'utils/dao'
 import PublicSaleListItem from './PublicSaleListItem'
-
-function ItemWrapper({
-  children,
-  publishTime,
-  daoChainId,
-  daoAddress
-}: {
-  children: any
-  publishTime: number
-  daoChainId: ChainId
-  daoAddress: string
-}) {
-  const theme = useTheme()
-  const isSmDown = useBreakpoint('sm')
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, daoChainId)
-  return (
-    <Stack spacing={24}>
-      <Stack direction={'row'} alignItems="center" spacing={16}>
-        <RowCenter flexWrap={'wrap'}>
-          <Typography variant="h6" mr={10}>
-            {daoBaseInfo?.name || '--'}
-          </Typography>
-          <Typography
-            fontSize={isSmDown ? 12 : 14}
-            lineHeight={1.2}
-            fontWeight={400}
-            color={theme.palette.text.secondary}
-          >
-            Publish at {timeStampToFormat(publishTime)}
-          </Typography>
-        </RowCenter>
-        <OutlineButton
-          style={{ color: theme.palette.primary.light, borderColor: theme.palette.primary.light }}
-          primary
-          borderRadius="30px"
-          height={40}
-          width="154px"
-        >
-          Public Sale
-        </OutlineButton>
-      </Stack>
-      {children}
-    </Stack>
-  )
-}
 
 export default function List({
   loading,
@@ -81,9 +30,9 @@ export default function List({
         </DelayLoading>
         <Stack mt={40} spacing={40}>
           {result.map((item: PublicSaleListBaseProp) => (
-            <ItemWrapper daoAddress={item.creator} daoChainId={item.chainId} key={''} publishTime={0}>
+            <Stack key={item.saleId} spacing={24}>
               <PublicSaleListItem item={item} />
-            </ItemWrapper>
+            </Stack>
           ))}
         </Stack>
       </Box>

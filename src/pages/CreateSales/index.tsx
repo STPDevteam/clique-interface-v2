@@ -35,6 +35,8 @@ import SelectCurrencyModal from 'components/Input/CurrencyInputPanel/SelectCurre
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { BigNumber } from 'bignumber.js'
 import JSBI from 'jsbi'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 enum saleTypes {
   GENERAL = 'general',
@@ -132,6 +134,7 @@ export default function Index() {
   const [baseChainId, setCurrentBaseChain] = useState<any>('')
   const [oneTimePrice, setOnetimePrice] = useState<string>('')
   const [currencyRatio, setCurrencyRatio] = useState('')
+  const history = useHistory()
   const { showModal, hideModal } = useModal()
 
   const handleChangeOneTimePrice = useCallback(e => {
@@ -241,7 +244,7 @@ export default function Index() {
     )
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} />)
+        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)} />)
       })
       .catch((err: any) => {
         hideModal()
@@ -270,7 +273,8 @@ export default function Index() {
     minPurchaseCa?.raw,
     saleMode,
     publicSaleList,
-    hideModal
+    hideModal,
+    history
   ])
 
   const [approveState, approveCallback] = useApproveCallback(
@@ -470,7 +474,7 @@ export default function Index() {
           value={salesAmount}
           errSet={() => setSalesAmount('')}
           onChange={e => {
-            if (JSBI.GT(JSBI.BigInt(e.target.value), JSBI.BigInt(saleTokenBalance?.raw?.toString() || '0'))) return
+            if (JSBI.GT(JSBI.BigInt(e.target.value), JSBI.BigInt(saleTokenBalance?.toSignificant(6) || '0'))) return
             setSalesAmount(e.target.value || '')
           }}
           placeholder="0"

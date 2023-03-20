@@ -8,6 +8,7 @@ import { ProposalStatus } from './useProposalInfo'
 export interface PublicSaleListBaseProp {
   about: string
   chainId: ChainId
+  createTime: string
   creator: string
   endTime: string | number
   limitMax: string
@@ -20,6 +21,7 @@ export interface PublicSaleListBaseProp {
   saleTokenImg: string
   salePrice: string | number
   saleId: string
+  saleWay: string
   startTime: number | string
   status: string
 }

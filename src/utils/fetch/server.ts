@@ -166,6 +166,14 @@ export function getTokenPrices(chainId: number, tokens: string) {
   })
 }
 
+export function toPurchase(account: string, buyAmount: string, saleId: string) {
+  return Axios.post('stpdao/v2/swap/purchased', {
+    account,
+    buyAmount,
+    saleId
+  })
+}
+
 export function toCreatePublicSale(
   about: string,
   chainId: number,
