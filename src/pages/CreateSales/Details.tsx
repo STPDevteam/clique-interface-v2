@@ -167,7 +167,7 @@ export default function Details() {
     cancelSaleCallback(saleId)
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} />)
+        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.replace(routes.SaleList)} />)
       })
       .catch((err: any) => {
         hideModal()
@@ -178,7 +178,7 @@ export default function Details() {
         )
         console.error(err)
       })
-  }, [cancelSaleCallback, hideModal, saleId, showModal])
+  }, [cancelSaleCallback, hideModal, history, saleId, showModal])
 
   const closeTimeLeft = useMemo(() => {
     if (!SwapData || !salesInfo) return
@@ -365,134 +365,57 @@ export default function Details() {
           )}
         </Stack>
         <Stack className="right_content">
-          {!isOneTimePurchase ? (
-            <Stack
-              mb={50}
-              sx={{
-                padding: 16,
-                fontSize: 12,
-                border: `1px solid ${theme.bgColor.bg2}`,
-                boxShadow: `inset 0px -1px 0px ${theme.bgColor.bg2}`
-              }}
-            >
-              <RowSentence>
-                <span>Sale type</span>
-                <span>Purchase limit</span>
-              </RowSentence>
-              <RowSentence>
-                <span>Price</span>
-                <span>
-                  1 {saleToken?.symbol} ={' '}
-                  {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
-                  {receiveToken?.symbol}
-                </span>
-              </RowSentence>
-              <RowSentence>
-                <span>Est.discount</span>
-                <span>-10%</span>
-              </RowSentence>
-              <Input
-                readOnly
-                value={swapAmount}
-                errSet={() => {}}
-                onChange={() => {}}
-                placeholder=""
-                label="Swap"
-                endAdornment={`${receiveToken?.symbol}`}
-                rightLabel=""
-                type="swap"
-              />
-              <Input
-                value={salesAmount}
-                errSet={() => {}}
-                onChange={e => {
-                  if (
-                    saleTokenBalance &&
-                    new BigNumber(e.target.value).isGreaterThan(new BigNumber(saleTokenBalance?.toSignificant(6)))
-                  )
-                    return
-                  setSalesAmount(e.target.value || '')
-                  const ratio = Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))
-                  const value = new BigNumber(Number(salesAmount)).multipliedBy(new BigNumber(ratio))
-                  setSwapAmount(value.toString() || '')
+          {!isCreator ? (
+            !isOneTimePurchase ? (
+              <Stack
+                mb={50}
+                sx={{
+                  padding: 16,
+                  fontSize: 12,
+                  border: `1px solid ${theme.bgColor.bg2}`,
+                  boxShadow: `inset 0px -1px 0px ${theme.bgColor.bg2}`
                 }}
-                placeholder=""
-                label="Pay"
-                endAdornment={`${saleToken?.symbol}`}
-                rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
-                  saleToken?.symbol
-                }`}
-                type="pay"
-              />
-              <RowSentence>
-                <span>Claimable balance:</span>
-                <span>
-                  {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
-                  {receiveToken?.symbol}
-                </span>
-              </RowSentence>
-              <Typography color={theme.palette.text.secondary} fontWeight={500} lineHeight={1.5} variant="inherit">
-                *You should do your own research and understand the risks before committing your funds.
-              </Typography>
-              <Stack display="grid" gridTemplateRows="1fr 1fr" alignItems={'center'} justifyContent={'center'} pt={30}>
-                {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
-                  <BlackButton disabled width="252px">
-                    Sale ended
-                  </BlackButton>
-                ) : (
-                  <BlackButton
-                    width="252px"
-                    disabled={new BigNumber(salesAmount).isLessThan(0)}
-                    onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
-                  >
-                    {approveState === ApprovalState.PENDING
-                      ? 'Approving'
-                      : approveState === ApprovalState.NOT_APPROVED
-                      ? 'Approve'
-                      : 'Pay'}
-                  </BlackButton>
-                )}
-              </Stack>
-            </Stack>
-          ) : (
-            <Stack
-              mb={50}
-              sx={{
-                fontSize: 12,
-                padding: 16,
-                border: `1px solid ${theme.bgColor.bg2}`,
-                boxShadow: `inset 0px -1px 0px ${theme.bgColor.bg2}`
-              }}
-            >
-              <RowSentence>
-                <span>Sale type</span>
-                <span>One-time purchase</span>
-              </RowSentence>
-              <RowSentence>
-                <span>Price</span>
-                <span>
-                  1 {saleToken?.symbol} ={' '}
-                  {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
-                  {receiveToken?.symbol}
-                </span>
-              </RowSentence>
-              <RowSentence>
-                <span>Discount</span>
-                <span>-10%</span>
-              </RowSentence>
-              <RowSentence>
-                <span>Saled</span>
-                <span>
-                  {saledAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '-'} {receiveToken?.symbol}
-                </span>
-              </RowSentence>
-              <RowSentence>
-                <span></span>
+              >
+                <RowSentence>
+                  <span>Sale type</span>
+                  <span>Purchase limit</span>
+                </RowSentence>
+                <RowSentence>
+                  <span>Price</span>
+                  <span>
+                    1 {saleToken?.symbol} ={' '}
+                    {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
+                    {receiveToken?.symbol}
+                  </span>
+                </RowSentence>
+                <RowSentence>
+                  <span>Est.discount</span>
+                  <span>-10%</span>
+                </RowSentence>
+                <Input
+                  readOnly
+                  value={swapAmount}
+                  errSet={() => {}}
+                  onChange={() => {}}
+                  placeholder=""
+                  label="Swap"
+                  endAdornment={`${receiveToken?.symbol}`}
+                  rightLabel=""
+                  type="swap"
+                />
                 <Input
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
+                    if (
+                      saleTokenBalance &&
+                      new BigNumber(e.target.value).isGreaterThan(new BigNumber(saleTokenBalance?.toSignificant(6)))
+                    )
+                      return
                     setSalesAmount(e.target.value || '')
+                    const ratio = Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))
+                    const value = new BigNumber(Number(salesAmount)).multipliedBy(new BigNumber(ratio))
+                    setSwapAmount(value.toString() || '')
                   }}
                   placeholder=""
                   label="Pay"
@@ -502,34 +425,127 @@ export default function Details() {
                   }`}
                   type="pay"
                 />
-              </RowSentence>
-              <Stack display="grid" gridTemplateRows="1fr 1fr" alignItems={'center'} justifyContent={'center'} pt={30}>
-                {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
-                  <BlackButton disabled width="252px">
-                    Sale ended
-                  </BlackButton>
-                ) : (
-                  <BlackButton
-                    width="252px"
-                    disabled={new BigNumber(salesAmount).isLessThan(0)}
-                    onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
-                  >
-                    {approveState === ApprovalState.PENDING
-                      ? 'Approving'
-                      : approveState === ApprovalState.NOT_APPROVED
-                      ? 'Approve'
-                      : 'Pay'}
-                  </BlackButton>
-                )}
+                <RowSentence>
+                  <span>Claimable balance:</span>
+                  <span>
+                    {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
+                    {receiveToken?.symbol}
+                  </span>
+                </RowSentence>
+                <Typography color={theme.palette.text.secondary} fontWeight={500} lineHeight={1.5} variant="inherit">
+                  *You should do your own research and understand the risks before committing your funds.
+                </Typography>
+                <Stack
+                  display="grid"
+                  gridTemplateRows="1fr 1fr"
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  pt={30}
+                >
+                  {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
+                    <BlackButton disabled width="252px">
+                      Sale ended
+                    </BlackButton>
+                  ) : (
+                    <BlackButton
+                      width="252px"
+                      disabled={new BigNumber(salesAmount).isLessThan(0)}
+                      onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
+                    >
+                      {approveState === ApprovalState.PENDING
+                        ? 'Approving'
+                        : approveState === ApprovalState.NOT_APPROVED
+                        ? 'Approve'
+                        : 'Pay'}
+                    </BlackButton>
+                  )}
+                </Stack>
               </Stack>
-              <RowSentence>
-                <span>Claimable balance:</span>
-                <span>
-                  {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
-                  {receiveToken?.symbol}
-                </span>
-              </RowSentence>
-            </Stack>
+            ) : (
+              <Stack
+                mb={50}
+                sx={{
+                  fontSize: 12,
+                  padding: 16,
+                  border: `1px solid ${theme.bgColor.bg2}`,
+                  boxShadow: `inset 0px -1px 0px ${theme.bgColor.bg2}`
+                }}
+              >
+                <RowSentence>
+                  <span>Sale type</span>
+                  <span>One-time purchase</span>
+                </RowSentence>
+                <RowSentence>
+                  <span>Price</span>
+                  <span>
+                    1 {saleToken?.symbol} ={' '}
+                    {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
+                    {receiveToken?.symbol}
+                  </span>
+                </RowSentence>
+                <RowSentence>
+                  <span>Discount</span>
+                  <span>-10%</span>
+                </RowSentence>
+                <RowSentence>
+                  <span>Saled</span>
+                  <span>
+                    {saledAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '-'} {receiveToken?.symbol}
+                  </span>
+                </RowSentence>
+                <RowSentence>
+                  <span></span>
+                  <Input
+                    value={salesAmount}
+                    errSet={() => {}}
+                    onChange={e => {
+                      setSalesAmount(e.target.value || '')
+                    }}
+                    placeholder=""
+                    label="Pay"
+                    endAdornment={`${saleToken?.symbol}`}
+                    rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
+                      saleToken?.symbol
+                    }`}
+                    type="pay"
+                  />
+                </RowSentence>
+                <Stack
+                  display="grid"
+                  gridTemplateRows="1fr 1fr"
+                  alignItems={'center'}
+                  justifyContent={'center'}
+                  pt={30}
+                >
+                  {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
+                    <BlackButton disabled width="252px">
+                      Sale ended
+                    </BlackButton>
+                  ) : (
+                    <BlackButton
+                      width="252px"
+                      disabled={new BigNumber(salesAmount).isLessThan(0)}
+                      onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
+                    >
+                      {approveState === ApprovalState.PENDING
+                        ? 'Approving'
+                        : approveState === ApprovalState.NOT_APPROVED
+                        ? 'Approve'
+                        : 'Pay'}
+                    </BlackButton>
+                  )}
+                </Stack>
+                <RowSentence>
+                  <span>Claimable balance:</span>
+                  <span>
+                    {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
+                    {receiveToken?.symbol}
+                  </span>
+                </RowSentence>
+              </Stack>
+            )
+          ) : (
+            ''
           )}
           {isCreator ? (
             <Stack

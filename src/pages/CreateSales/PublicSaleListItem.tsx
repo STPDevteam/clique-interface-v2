@@ -63,10 +63,9 @@ const StyledStatusBox = styled(Stack)(({ theme }) => ({
   position: 'absolute',
   border: `1px solid ${theme.bgColor.bg2}`,
   padding: '0 24px 0 32px',
-  height: 26,
+  height: 46,
   display: 'inline-flex',
   alignItems: 'center',
-  borderRadius: '14px',
   background: theme.palette.common.white
 }))
 
@@ -98,10 +97,11 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
       ? theme.bgColor.bg7
       : color === 'soon'
       ? theme.bgColor.bg6
-      : color
-      ? color
-      : theme.palette.text.secondary,
-  fontSize: 14,
+      : color === 'ended'
+      ? '#000000'
+      : theme.bgColor.bg2,
+  fontSize: 18,
+  padding: '10px 0',
   '&:before': {
     content: `''`,
     position: 'absolute',
@@ -112,9 +112,9 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
         ? theme.bgColor.bg7
         : color === 'soon'
         ? theme.bgColor.bg6
-        : color
-        ? color
-        : theme.palette.text.secondary,
+        : color === 'ended'
+        ? '#000000'
+        : theme.bgColor.bg2,
     marginLeft: -10,
     marginTop: 5,
     borderRadius: '50%'
@@ -143,14 +143,14 @@ function ShowStatus({ item }: { item: any }) {
         color={
           [SwapStatus.OPEN].includes(item.status)
             ? 'active'
-            : [SwapStatus.SOON, SwapStatus.ENDED].includes(item.status)
+            : [SwapStatus.SOON].includes(item.status)
             ? 'soon'
-            : ''
+            : 'ended'
         }
       >
         {item.status}
       </StyledStatusText>
-      <StyledText fontSize={12}>{targetTimeString}</StyledText>
+      <StyledText fontSize={16}>{targetTimeString}</StyledText>
     </>
   )
 }

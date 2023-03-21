@@ -37,6 +37,7 @@ import { BigNumber } from 'bignumber.js'
 import JSBI from 'jsbi'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 enum saleTypes {
   GENERAL = 'general',
@@ -108,13 +109,13 @@ const UploadLabel = styled('label')({
 const currencyOptions = [
   new Token(ChainId.GOERLI, '0x57F013F27360E62efc1904D8c4f4021648ABa7a9', 6, 'mUSDT', 'mUSDT'),
   new Token(ChainId.GOERLI, '0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267', 18, 'tyy', 'tyy'),
-  new Token(ChainId.GOERLI, '0x3c0837064c3a440fe44c9002c743dcab94e16454', 18, 'A', 'A'),
-  new Token(ChainId.GOERLI, '0x2358fbd8a8e0470b593328503c0f9666540339a1', 18, 'B', 'B'),
-  new Token(ChainId.GOERLI, '0xe8a67c44933b8750204ca4ddd2307aab0547310d', 18, 'C', 'C')
+  new Token(ChainId.SEPOLIA, '0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD', 18, 'STPT', 'STPT'),
+  new Token(ChainId.SEPOLIA, '0x0090847C22856a346C6069B8d1ed08A4A1D18241', 18, 'RAI', 'RAI'),
+  new Token(ChainId.SEPOLIA, '0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E', 6, 'USDT', 'USDT')
 ]
 
 export default function Index() {
-  const { chainId, account } = useActiveWeb3React()
+  const { chainId, account, library } = useActiveWeb3React()
   const [salePriceType, setSalePriceType] = useState(priceType.UNIT)
   const [saleMode, setSaleMode] = useState(saleTypes.DISCOUNT)
   const [purchase, setPurchaseLimit] = useState(purchaseType.ONETIME)
@@ -134,6 +135,7 @@ export default function Index() {
   const [baseChainId, setCurrentBaseChain] = useState<any>('')
   const [oneTimePrice, setOnetimePrice] = useState<string>('')
   const [currencyRatio, setCurrencyRatio] = useState('')
+  const [estimation, setEstimation] = useState('')
   const history = useHistory()
   const { showModal, hideModal } = useModal()
 
@@ -145,7 +147,7 @@ export default function Index() {
 
   const createPublicSaleCallback = useCreatePublicSaleCallback()
 
-  const [publicSaleList, setPublicSaleList] = useState<string[]>(['0x5159ed45c75C406CFCd832caCEE5B5E48eaD568E'])
+  const [publicSaleList, setPublicSaleList] = useState<string[]>([])
 
   const insertLine = useCallback((list: string[], newItem: string) => {
     const _ret = list.filter(item => item.toLowerCase() !== newItem.toLowerCase())
@@ -282,18 +284,40 @@ export default function Index() {
     baseChainId ? PUBLICSALE_ADDRESS[baseChainId as ChainId] : undefined
   )
 
-  console.log(approveState)
-  const [estimation, setEstimation] = useState('')
+  console.log(approveState, inputValueAmount, baseChainId)
 
   const paramsCheck: {
     disabled: boolean
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
+    if (!account) {
+      return {
+        disabled: true,
+        error: 'Connect wallet first'
+      }
+    }
     if (!baseChainId) {
       return {
         disabled: true,
         error: 'Network required'
+      }
+    }
+    if (baseChainId !== chainId) {
+      return {
+        disabled: true,
+        error: (
+          <>
+            You need{' '}
+            <Link
+              sx={{ cursor: 'pointer' }}
+              onClick={() => baseChainId && triggerSwitchChain(library, baseChainId, account || '')}
+            >
+              switch
+            </Link>{' '}
+            to {ChainListMap[baseChainId].name}
+          </>
+        )
       }
     }
     if (!saleToken) {
@@ -387,9 +411,12 @@ export default function Index() {
       handler: handlePublic
     }
   }, [
+    account,
     baseChainId,
+    chainId,
     endTime,
     handlePublic,
+    library,
     maxPurchase,
     minPurchase,
     oneTimePrice,
@@ -457,9 +484,12 @@ export default function Index() {
       >
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
           <Input
-            onClick={() =>
-              showModal(<SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={currencyOptions} />)
-            }
+            onClick={() => {
+              const saleTokenCurrencyOptions = currencyOptions.filter(item => item !== receiveToken)
+              showModal(
+                <SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={saleTokenCurrencyOptions} />
+              )
+            }}
             style={{ marginTop: 0 }}
             value={saleToken?.symbol || ''}
             placeholder=""
@@ -490,11 +520,15 @@ export default function Index() {
       </Stack>
       <Stack display={'grid'} style={{ marginBottom: 20 }} gridTemplateColumns="1fr 1fr" gap={50}>
         <Input
-          onClick={() =>
+          onClick={() => {
+            const receiveTokenCurrencyOptions = currencyOptions.filter(item => item !== saleToken)
             showModal(
-              <SelectCurrencyModal onSelectCurrency={onSelectReceiveCurrency} currencyOptions={currencyOptions} />
+              <SelectCurrencyModal
+                onSelectCurrency={onSelectReceiveCurrency}
+                currencyOptions={receiveTokenCurrencyOptions}
+              />
             )
-          }
+          }}
           readOnly
           value={receiveToken?.symbol || ''}
           placeholder=""
