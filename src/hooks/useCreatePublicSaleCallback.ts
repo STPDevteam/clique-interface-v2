@@ -1,4 +1,5 @@
 import { TransactionResponse } from '@ethersproject/providers'
+import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import { useCallback, useMemo } from 'react'
 import ReactGA from 'react-ga4'
@@ -29,26 +30,30 @@ export interface SalesInfoProp {
   isCancel: boolean
 }
 
+export interface SoldAmountProp {
+  amount: string
+}
+
 export function usePurchaseCallback() {
   const addTransaction = useTransactionAdder()
   const contract = usePublicSaleContract()
   const gasPriceInfoCallback = useGasPriceInfo()
 
   return useCallback(
-    async (account: string, buyAmount: string, saleId: string) => {
+    async (account: string, buyAmount: string, saleId: number) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
       let result: any = {}
+
       try {
         const res = await toPurchase(account, buyAmount, saleId)
+        console.log(res)
         if (!res.data.data) throw new Error(res.data.msg || 'Network error')
         result = res.data.data as any
       } catch (error) {
         console.error('Purchase', error)
         throw error
       }
-      console.log(result)
-
       const args = [saleId, buyAmount, result.signature]
       const method = 'Purchase'
       console.log('hhhh', ...args)
@@ -86,10 +91,9 @@ export function usePurchaseCallback() {
   )
 }
 
-export function useGetSalesInfo(saleId: string): SalesInfoProp | undefined {
-  const { chainId } = useActiveWeb3React()
+export function useGetSalesInfo(saleId: string, saleChainId?: ChainId): SalesInfoProp | undefined {
   const contract = usePublicSaleContract()
-  const salesRes = useSingleCallResult(chainId ? contract : null, 'sales', [saleId], undefined, chainId).result
+  const salesRes = useSingleCallResult(saleChainId ? contract : null, 'sales', [saleId], undefined, saleChainId).result
 
   return useMemo(() => {
     if (!salesRes) return undefined
@@ -107,6 +111,24 @@ export function useGetSalesInfo(saleId: string): SalesInfoProp | undefined {
       isCancel: salesRes.isCancel
     }
   }, [salesRes])
+}
+
+export function useGetSoldAmount(saleId: string, account: string, saleChainId?: ChainId): SoldAmountProp | undefined {
+  const contract = usePublicSaleContract()
+  const res = useSingleCallResult(
+    saleChainId ? contract : null,
+    'querySoldAmount',
+    [saleId, account],
+    undefined,
+    saleChainId
+  ).result
+
+  return useMemo(() => {
+    if (!res) return undefined
+    return {
+      amount: res?.[0]
+    }
+  }, [res])
 }
 
 export function useCancelSaleCallback() {
@@ -204,7 +226,6 @@ export function useCreatePublicSaleCallback() {
         console.error('createPublicSale', error)
         throw error
       }
-      console.log(result)
 
       const args = [
         result.saleId,

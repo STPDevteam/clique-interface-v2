@@ -3,7 +3,7 @@ import Back from 'components/Back'
 import theme from 'theme'
 import Input from 'components/Input'
 import { BlackButton } from 'components/Button/Button'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import TransactionList from './TransactionList'
 import icon from 'assets/images/placeholder.png'
 import { useHistory, useParams } from 'react-router-dom'
@@ -20,6 +20,7 @@ import {
   SwapStatus,
   useCancelSaleCallback,
   useGetSalesInfo,
+  useGetSoldAmount,
   usePurchaseCallback
 } from 'hooks/useCreatePublicSaleCallback'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
@@ -30,13 +31,13 @@ import { TokenAmount } from 'constants/token'
 import JSBI from 'jsbi'
 import { timeStampToFormat } from 'utils/dao'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-// import { getTokenPrices } from 'utils/fetch/server'
 import { useActiveWeb3React } from 'hooks'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'utils/parseAmount'
 import { PUBLICSALE_ADDRESS } from '../../constants'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
+import { getTokenPrices } from 'utils/fetch/server'
 
 enum Tabs {
   ABOUT,
@@ -110,46 +111,109 @@ export default function Details() {
   const { account, chainId } = useActiveWeb3React()
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const [salesAmount, setSalesAmount] = useState('')
-  const [swapAmount, setSwapAmount] = useState('')
+  const [ratio, setRatio] = useState('')
   const history = useHistory()
   const purchaseCallback = usePurchaseCallback()
   const cancelSaleCallback = useCancelSaleCallback()
   const { showModal, hideModal } = useModal()
-  const salesInfo = useGetSalesInfo(saleId)
-
-  console.log(salesInfo)
-  const progress = useMemo(() => {
-    if (!salesInfo) return
-    const res = Number(
-      new BigNumber(Number(salesInfo?.soldAmount))
-        .div(new BigNumber(Number(salesInfo?.saleAmount)))
-        .toFixed(6, BigNumber.ROUND_DOWN)
-    )
-    return res
-  }, [salesInfo])
-
-  const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
+  const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
+  const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
   const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useToken(SwapData?.receiveToken, SwapData?.chainId)
+  const soldCurrencyAmount = tryParseAmount(
+    JSBI.BigInt(salesInfo?.soldAmount || 0).toString(),
+    receiveToken || undefined
+  )
+  const saleCurrencyAmount = tryParseAmount(salesInfo?.saleAmount, saleToken || undefined)
+  const soldTokenAmountData = useMemo(() => {
+    if (!saleToken || !SoldAmountData) return
+    return new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
+  }, [SoldAmountData, saleToken])
+  console.log(SoldAmountData, soldTokenAmountData?.toSignificant(6))
+  console.log(salesInfo)
   console.log(SwapData)
+
+  useEffect(() => {
+    if (!saleToken || !receiveToken) return
+    let result: any = []
+    let ratio
+    const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
+    ;(async () => {
+      if (!chainId) {
+        setRatio('')
+        return
+      }
+      try {
+        const res = await getTokenPrices(chainId, tokens)
+        result = res?.data
+        const saleTokenData = result?.data[0]
+        const receiveTokenData = result?.data[1]
+        ratio = new BigNumber(saleTokenData?.price)
+          .div(new BigNumber(receiveTokenData?.price))
+          .toFixed(6, BigNumber.ROUND_FLOOR)
+          .toString()
+      } catch (error) {
+        console.error(error)
+      }
+      setRatio(ratio ?? '')
+    })()
+  }, [chainId, receiveToken, saleToken])
+
+  const progress = useMemo(() => {
+    if (!salesInfo || !saleCurrencyAmount || !soldCurrencyAmount || !saleToken || !receiveToken) return
+    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.soldAmount))
+      .divide(new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.saleAmount)))
+      .multiply(JSBI.BigInt(100))
+      .toSignificant(6)
+  }, [receiveToken, saleCurrencyAmount, saleToken, salesInfo, soldCurrencyAmount])
+
+  const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
+
   const totalAmount = useMemo(() => {
     if (!salesInfo || !saleToken || !receiveToken) return
-    const res = new TokenAmount(saleToken, JSBI.BigInt(salesInfo.saleAmount)).multiply(
-      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo.pricePer))
-    )
-    return res
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo.saleAmount))
   }, [receiveToken, saleToken, salesInfo])
-  const inputValueAmount = tryParseAmount(salesAmount, saleToken || undefined)
+  const inputValueAmount = tryParseAmount(salesAmount, receiveToken || undefined)
+
+  const swapAmount = useMemo(() => {
+    if (!salesAmount) return ''
+    const ra = Number(new BigNumber(1).div(new BigNumber(ratio)))
+    const value = new BigNumber(Number(salesAmount)).multipliedBy(new BigNumber(ra))
+    return value.toString()
+  }, [ratio, salesAmount])
+
+  const isOneTimePurchase = useMemo(() => {
+    if (!SwapData) return
+    return new BigNumber(Number(SwapData?.limitMax)).isEqualTo(new BigNumber(Number(SwapData?.limitMin)))
+  }, [SwapData])
+
+  const oneTimePayPrice = useMemo(() => {
+    if (!saleToken || !salesInfo) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
+  }, [saleToken, salesInfo])
+
+  const canPricePay = useMemo(() => {
+    if (!salesInfo || !salesAmount) return
+    return (
+      new BigNumber(salesAmount).isGreaterThan(new BigNumber(salesInfo?.limitMin)) &&
+      new BigNumber(salesAmount).isLessThan(new BigNumber(salesInfo?.limitMax))
+    )
+  }, [salesAmount, salesInfo])
+  console.log(canPricePay)
 
   const handlePay = useCallback(() => {
-    if (!account || !inputValueAmount || !saleId) return
+    if (!account || !saleId) return
     showModal(<TransacitonPendingModal />)
-    purchaseCallback(account, inputValueAmount.raw.toString(), saleId)
+    purchaseCallback(
+      account,
+      isOneTimePurchase ? oneTimePayPrice?.raw.toString() || '' : inputValueAmount?.raw.toString() || '',
+      Number(saleId)
+    )
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)} />)
+        showModal(<TransactiontionSubmittedModal hash={hash} />)
       })
       .catch((err: any) => {
         hideModal()
@@ -160,7 +224,16 @@ export default function Details() {
         )
         console.error(err)
       })
-  }, [account, hideModal, history, inputValueAmount, purchaseCallback, saleId, showModal])
+  }, [
+    account,
+    hideModal,
+    inputValueAmount?.raw,
+    isOneTimePurchase,
+    oneTimePayPrice,
+    purchaseCallback,
+    saleId,
+    showModal
+  ])
   const handleCancel = useCallback(() => {
     if (!saleId) return
     showModal(<TransacitonPendingModal />)
@@ -185,38 +258,31 @@ export default function Details() {
     const now = currentTimeStamp()
     let targetTimeString = ''
     if (SwapData.status === SwapStatus.SOON) {
-      targetTimeString = getTargetTimeString(Number(salesInfo?.startTime), now)
+      targetTimeString = getTargetTimeString(Number(SwapData?.startTime), now)
     } else if (SwapData.status === SwapStatus.OPEN) {
-      targetTimeString = getTargetTimeString(now, Number(salesInfo?.endTime))
+      targetTimeString = getTargetTimeString(now, Number(SwapData?.endTime))
     } else if (SwapData.status === SwapStatus.CANCEL) {
       targetTimeString = 'canceled'
     } else {
-      targetTimeString = getTargetTimeString(Number(salesInfo?.endTime), now)
+      targetTimeString = getTargetTimeString(now, Number(SwapData?.endTime))
     }
     return targetTimeString
   }, [SwapData, salesInfo])
 
-  const saleTokenBalance = useCurrencyBalance(account || undefined, saleToken || undefined)
-  const claimableBalance = useMemo(() => {
-    if (!swapAmount || !receiveToken) return
-    return tryParseAmount(swapAmount, receiveToken || undefined)
-  }, [receiveToken, swapAmount])
+  const saleTokenBalance = useCurrencyBalance(account || undefined, receiveToken || undefined)
 
   const remainingBalance = useMemo(() => {
-    if (!saleToken || !salesInfo?.soldAmount || !salesInfo.saleAmount) return undefined
-    const soldAmountCa = tryParseAmount(salesInfo?.soldAmount, saleToken || undefined)
-    if (!soldAmountCa) return
-    return tryParseAmount(salesInfo.saleAmount, saleToken)
-      ?.subtract(soldAmountCa)
-      .multiply(salesInfo?.pricePer)
-  }, [saleToken, salesInfo])
-  const isOneTimePurchase = new BigNumber(Number(salesInfo?.limitMax)).isEqualTo(
-    new BigNumber(Number(salesInfo?.limitMin))
-  )
-  const saledAmount = useMemo(() => {
-    if (!saleToken || !salesInfo) return
-    return tryParseAmount(salesInfo.soldAmount, saleToken || undefined)
-  }, [saleToken, salesInfo])
+    if (!saleToken || !salesInfo || !receiveToken) return undefined
+    const balance = new BigNumber(salesInfo.saleAmount).minus(new BigNumber(salesInfo?.soldAmount))
+    return new TokenAmount(saleToken, balance.toString())
+  }, [receiveToken, saleToken, salesInfo])
+
+  const canPayAmount = useMemo(() => {
+    if (!saleToken || !receiveToken || !salesInfo) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.saleAmount)).subtract(
+      new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.soldAmount))
+    )
+  }, [receiveToken, saleToken, salesInfo])
 
   const isCreator = useMemo(() => {
     if (!salesInfo || !account) return
@@ -227,7 +293,12 @@ export default function Details() {
     inputValueAmount,
     chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
   )
-  console.log(approveState)
+  const oneTimePayAmount = tryParseAmount(oneTimePayPrice?.raw.toString(), receiveToken || undefined)
+  const [approveState1, approveCallback1] = useApproveCallback(
+    oneTimePayAmount,
+    chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
+  )
+  console.log(approveState, approveState1)
 
   return (
     <Box
@@ -286,9 +357,7 @@ export default function Details() {
             <ColSentence>
               <p>Current price</p>
               <p>
-                1 {saleToken?.symbol} ={' '}
-                {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
-                {receiveToken?.symbol}
+                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
               </p>
             </ColSentence>
           </Stack>
@@ -296,7 +365,7 @@ export default function Details() {
             <ColSentence>
               <p>Funding target</p>
               <p>
-                {totalAmount?.toSignificant(6, { groupSeparator: ',' })} {receiveToken?.symbol}
+                {totalAmount?.toSignificant(6, { groupSeparator: ',' })} {saleToken?.symbol}
               </p>
             </ColSentence>
             <ColSentence>
@@ -309,8 +378,12 @@ export default function Details() {
                   flexDirection: 'row'
                 }}
               >
-                <span>{progress ? progress : 0}%</span>
-                <CircularProgress sx={{ marginLeft: 10 }} variant="determinate" value={progress ? progress : 0} />
+                <span>{Number(progress ? Number(progress) : 0)}%</span>
+                <CircularProgress
+                  sx={{ marginLeft: 10 }}
+                  variant="determinate"
+                  value={Number(progress) ? Number(progress) : 0}
+                />
               </p>
             </ColSentence>
           </Stack>
@@ -383,8 +456,7 @@ export default function Details() {
                 <RowSentence>
                   <span>Price</span>
                   <span>
-                    1 {saleToken?.symbol} ={' '}
-                    {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
+                    1 {saleToken?.symbol} = {ratio}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
@@ -392,6 +464,36 @@ export default function Details() {
                   <span>Est.discount</span>
                   <span>-10%</span>
                 </RowSentence>
+                <RowSentence>
+                  <span>Saled</span>
+                  <span>
+                    {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
+                  </span>
+                </RowSentence>
+                <Input
+                  value={salesAmount}
+                  errSet={() => {}}
+                  onChange={e => {
+                    if (
+                      new BigNumber(e.target.value).isGreaterThan(
+                        new BigNumber(canPayAmount?.toSignificant(6) || '')
+                      ) ||
+                      (new BigNumber(e.target.value).isGreaterThan(
+                        new BigNumber(soldTokenAmountData?.toSignificant(6) || '')
+                      ) &&
+                        new BigNumber(e.target.value).isGreaterThan(salesInfo?.limitMax || ''))
+                    )
+                      return
+                    setSalesAmount(e.target.value || '')
+                  }}
+                  placeholder=""
+                  label="Pay"
+                  endAdornment={`${receiveToken?.symbol}`}
+                  rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
+                    receiveToken?.symbol
+                  }`}
+                  type="pay"
+                />
                 <Input
                   readOnly
                   value={swapAmount}
@@ -399,39 +501,17 @@ export default function Details() {
                   onChange={() => {}}
                   placeholder=""
                   label="Swap"
-                  endAdornment={`${receiveToken?.symbol}`}
+                  endAdornment={`${saleToken?.symbol}`}
                   rightLabel=""
                   type="swap"
                 />
-                <Input
-                  value={salesAmount}
-                  errSet={() => {}}
-                  onChange={e => {
-                    if (
-                      saleTokenBalance &&
-                      new BigNumber(e.target.value).isGreaterThan(new BigNumber(saleTokenBalance?.toSignificant(6)))
-                    )
-                      return
-                    setSalesAmount(e.target.value || '')
-                    const ratio = Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))
-                    const value = new BigNumber(Number(salesAmount)).multipliedBy(new BigNumber(ratio))
-                    setSwapAmount(value.toString() || '')
-                  }}
-                  placeholder=""
-                  label="Pay"
-                  endAdornment={`${saleToken?.symbol}`}
-                  rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
-                    saleToken?.symbol
-                  }`}
-                  type="pay"
-                />
-                <RowSentence>
+                {/* <RowSentence>
                   <span>Claimable balance:</span>
                   <span>
                     {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
-                    {receiveToken?.symbol}
+                    {saleToken?.symbol}
                   </span>
-                </RowSentence>
+                </RowSentence> */}
                 <Typography color={theme.palette.text.secondary} fontWeight={500} lineHeight={1.5} variant="inherit">
                   *You should do your own research and understand the risks before committing your funds.
                 </Typography>
@@ -449,7 +529,7 @@ export default function Details() {
                   ) : (
                     <BlackButton
                       width="252px"
-                      disabled={new BigNumber(salesAmount).isLessThan(0)}
+                      disabled={!salesAmount}
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
                       {approveState === ApprovalState.PENDING
@@ -490,22 +570,23 @@ export default function Details() {
                 <RowSentence>
                   <span>Saled</span>
                   <span>
-                    {saledAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '-'} {receiveToken?.symbol}
+                    {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
                   </span>
                 </RowSentence>
                 <RowSentence>
                   <span></span>
                   <Input
-                    value={salesAmount}
+                    readOnly
+                    value={oneTimePayPrice?.toSignificant(6) ?? ''}
                     errSet={() => {}}
                     onChange={e => {
                       setSalesAmount(e.target.value || '')
                     }}
                     placeholder=""
                     label="Pay"
-                    endAdornment={`${saleToken?.symbol}`}
+                    endAdornment={`${receiveToken?.symbol}`}
                     rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
-                      saleToken?.symbol
+                      receiveToken?.symbol
                     }`}
                     type="pay"
                   />
@@ -524,24 +605,23 @@ export default function Details() {
                   ) : (
                     <BlackButton
                       width="252px"
-                      disabled={new BigNumber(salesAmount).isLessThan(0)}
-                      onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
+                      onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
-                      {approveState === ApprovalState.PENDING
+                      {approveState1 === ApprovalState.PENDING
                         ? 'Approving'
-                        : approveState === ApprovalState.NOT_APPROVED
+                        : approveState1 === ApprovalState.NOT_APPROVED
                         ? 'Approve'
                         : 'Pay'}
                     </BlackButton>
                   )}
                 </Stack>
-                <RowSentence>
+                {/* <RowSentence>
                   <span>Claimable balance:</span>
                   <span>
                     {claimableBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'}
-                    {receiveToken?.symbol}
+                    {saleToken?.symbol}
                   </span>
-                </RowSentence>
+                </RowSentence> */}
               </Stack>
             )
           ) : (
@@ -559,12 +639,12 @@ export default function Details() {
               <RowSentence>
                 <span>Balance</span>
                 <span>
-                  {remainingBalance?.toSignificant(6, { groupSeparator: ',' }) ?? '-'} {receiveToken?.symbol}
+                  {remainingBalance?.toSignificant(6, { groupSeperator: ',' }).toString() ?? '-'} {saleToken?.symbol}
                 </span>
               </RowSentence>
               <Stack display="grid" gridTemplateRows="1fr 1fr" alignItems={'center'} justifyContent={'center'} pt={30}>
                 <BlackButton width="252px" onClick={handleCancel}>
-                  Cancel event
+                  {salesInfo?.isCancel || SwapData?.status === 'ended' ? 'Claim' : 'Cancel event'}
                 </BlackButton>
               </Stack>
             </Stack>

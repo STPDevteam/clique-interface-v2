@@ -16,12 +16,13 @@ export interface PublicSaleListBaseProp {
   originalDiscount: string
   receiveToken: string
   receiveTokenImg: string
-  saleAmount: string | number
+  saleAmount: string
   saleToken: string
   saleTokenImg: string
   salePrice: string | number
   saleId: string
   saleWay: string
+  soldAmount: string
   startTime: number | string
   status: string
 }
