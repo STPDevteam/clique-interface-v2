@@ -175,15 +175,18 @@ export default function Details() {
     if (!salesInfo || !saleToken || !receiveToken) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo.saleAmount))
   }, [receiveToken, saleToken, salesInfo])
-  const inputValueAmount = tryParseAmount(salesAmount, receiveToken || undefined)
 
+  const curPrice = useMemo(() => {
+    if (!saleToken || !SwapData) return
+    return new TokenAmount(saleToken, JSBI.BigInt(SwapData?.salePrice))
+  }, [SwapData, saleToken])
   const swapAmount = useMemo(() => {
-    if (!salesAmount) return ''
+    if (!salesAmount || !curPrice) return ''
     const value = new BigNumber(Number(salesAmount)).multipliedBy(
-      new BigNumber(Number(new BigNumber(1).div(new BigNumber(ratio))))
+      new BigNumber(Number(new BigNumber(1).multipliedBy(new BigNumber(curPrice.toSignificant(6)))))
     )
     return value.toString()
-  }, [ratio, salesAmount])
+  }, [curPrice, salesAmount])
 
   const isOneTimePurchase = useMemo(() => {
     if (!SwapData) return
@@ -196,21 +199,24 @@ export default function Details() {
   }, [receiveToken, salesInfo])
 
   const canBuyMaxValue = useMemo(() => {
-    if (!saleToken || !salesInfo) return
-    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
-  }, [saleToken, salesInfo])
+    if (!receiveToken || !salesInfo) return
+    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
+  }, [receiveToken, salesInfo])
   const canBuyMinValue = useMemo(() => {
-    if (!saleToken || !salesInfo) return
-    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMin))
-  }, [saleToken, salesInfo])
+    if (!receiveToken || !salesInfo) return
+    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMin))
+  }, [receiveToken, salesInfo])
   const restCanBuyValue = useMemo(() => {
-    if (!saleToken || !salesInfo || !SoldAmountData) return
-    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax)).subtract(
-      new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
+    if (!receiveToken || !salesInfo || !SoldAmountData) return
+    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax)).subtract(
+      new TokenAmount(receiveToken, JSBI.BigInt(SoldAmountData?.amount))
     )
-  }, [SoldAmountData, saleToken, salesInfo])
+  }, [SoldAmountData, receiveToken, salesInfo])
+  const inputValueAmount = tryParseAmount(swapAmount, receiveToken || undefined)
+
   console.log(canBuyMaxValue?.toSignificant(6), canBuyMinValue?.toSignificant(6), restCanBuyValue?.toSignificant(6))
   const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
+  console.log(isEth)
 
   const handlePay = useCallback(() => {
     if (!account || !saleId) return
@@ -303,14 +309,17 @@ export default function Details() {
 
   const [approveState, approveCallback] = useApproveCallback(
     inputValueAmount,
-    chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
+    chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined,
+    isEth
   )
+  console.log(approveState)
+
   const oneTimePayAmount = tryParseAmount(oneTimePayPrice?.raw.toString(), receiveToken || undefined)
   const [approveState1, approveCallback1] = useApproveCallback(
     oneTimePayAmount,
     chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
   )
-  console.log(approveState, approveState1)
+
   const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_purchase_swap_${saleId}`)
   const { claimSubmitted: isClaimingBalance } = useUserHasSubmittedClaim(`${account}_claim_balance_${saleId}`)
 
@@ -338,9 +347,9 @@ export default function Details() {
             gap={10}
           >
             <CardWrapper>
-              <img src={SwapData?.saleTokenImg} alt="" />
+              <img src={SwapData?.receiveTokenImg} alt="" />
               <div>
-                <p>{saleToken?.symbol}</p>
+                <p>{receiveToken?.symbol}</p>
                 <div className="iconList">
                   {imgDataList.map((item, inx) => {
                     return <img key={inx} src={item} alt="" />
@@ -350,9 +359,9 @@ export default function Details() {
             </CardWrapper>
             <p>&gt;&gt;</p>
             <CardWrapper>
-              <img src={SwapData?.receiveTokenImg} alt="" />
+              <img src={SwapData?.saleTokenImg} alt="" />
               <div>
-                <p>{receiveToken?.symbol}</p>
+                <p>{saleToken?.symbol}</p>
                 <div className="iconList">
                   {imgDataList.map((item, inx) => {
                     return <img key={inx} src={item} alt="" />
@@ -479,7 +488,7 @@ export default function Details() {
                   <span>-10%</span>
                 </RowSentence>
                 <RowSentence>
-                  <span>Saled</span>
+                  <span>Sold</span>
                   <span>
                     {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
                   </span>
@@ -488,22 +497,11 @@ export default function Details() {
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
-                    if (
-                      new BigNumber(e.target.value).isGreaterThan(
-                        new BigNumber(saleTokenBalance?.toSignificant(6) || '')
-                      ) ||
-                      new BigNumber(e.target.value).isGreaterThan(
-                        new BigNumber(canPayAmount?.toSignificant(6) || '')
-                      ) ||
-                      new BigNumber(e.target.value).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
-                      new BigNumber(e.target.value).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
-                    )
-                      return
                     setSalesAmount(e.target.value || '')
                   }}
                   placeholder=""
-                  label="Pay"
-                  endAdornment={`${receiveToken?.symbol}`}
+                  label="Buy"
+                  endAdornment={`${saleToken?.symbol}`}
                   rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
                     receiveToken?.symbol
                   }`}
@@ -516,8 +514,10 @@ export default function Details() {
                   onChange={() => {}}
                   placeholder=""
                   label="Swap"
-                  endAdornment={`${saleToken?.symbol}`}
-                  rightLabel=""
+                  endAdornment={`${receiveToken?.symbol}`}
+                  rightLabel={`min: ${canBuyMinValue?.toSignificant(6)} ${
+                    receiveToken?.symbol
+                  } max: ${canBuyMaxValue?.toSignificant(6)} ${receiveToken?.symbol}`}
                   type="swap"
                 />
                 {/* <RowSentence>
@@ -547,12 +547,18 @@ export default function Details() {
                       disabled={
                         isClaiming ||
                         approveState === ApprovalState.PENDING ||
-                        !salesAmount ||
+                        !swapAmount ||
                         !saleTokenBalance?.toSignificant(6) ||
                         new BigNumber(Number(SoldAmountData?.amount)).isGreaterThan(
                           new BigNumber(Number(salesInfo?.limitMax))
                         ) ||
-                        saleTokenBalance.lessThan(JSBI.BigInt(restCanBuyValue?.toSignificant(6) || ''))
+                        saleTokenBalance.lessThan(JSBI.BigInt(restCanBuyValue?.toSignificant(6) || '')) ||
+                        new BigNumber(swapAmount).isGreaterThan(
+                          new BigNumber(saleTokenBalance?.toSignificant(6) || '')
+                        ) ||
+                        new BigNumber(swapAmount).isGreaterThan(new BigNumber(canPayAmount?.toSignificant(6) || '')) ||
+                        new BigNumber(swapAmount).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
+                        new BigNumber(swapAmount).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
@@ -591,7 +597,7 @@ export default function Details() {
                   <span>-10%</span>
                 </RowSentence>
                 <RowSentence>
-                  <span>Saled</span>
+                  <span>Sold</span>
                   <span>
                     {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
                   </span>
@@ -606,7 +612,7 @@ export default function Details() {
                       setSalesAmount(e.target.value || '')
                     }}
                     placeholder=""
-                    label="Pay"
+                    label="Buy"
                     endAdornment={`${receiveToken?.symbol}`}
                     rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
                       receiveToken?.symbol

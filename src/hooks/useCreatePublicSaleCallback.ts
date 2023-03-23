@@ -56,7 +56,7 @@ export function usePurchaseCallback() {
       }
       const args = [saleId, buyAmount, result.signature]
       const method = 'Purchase'
-      console.log('hhhh', ...args)
+      console.log('hhhh', ...args, contract.address)
 
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
       return contract[method](...args, {
