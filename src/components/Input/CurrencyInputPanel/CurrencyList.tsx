@@ -47,7 +47,7 @@ export default function CurrencyList({ mode, onSelectCurrency, currencyOptions }
               <Typography variant="caption">{currency.name}</Typography>
             </Box>
           </Box>
-          {mode === Mode.SELECT && <span style={{ fontWeight: 500 }}>{0}</span>}
+          {mode === Mode.SELECT && <span style={{ fontWeight: 500 }}>{}</span>}
         </ListItem>
       )
     },

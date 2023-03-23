@@ -120,7 +120,7 @@ export function useGetSoldAmount(saleId: string, account: string, saleChainId?: 
   const res = useSingleCallResult(
     saleChainId ? contract : null,
     'querySoldAmount',
-    [saleId, account],
+    [saleId, account || undefined],
     undefined,
     saleChainId
   ).result

@@ -210,7 +210,9 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       </StyledStatusBox>
       <DiscountTag>
         <img src={discountIcon} alt="" />
-        <Typography variant="inherit">Sale off 10%</Typography>
+        <Typography variant="inherit">
+          Sale off {new BigNumber(item.originalDiscount).multipliedBy(100).toString()}%
+        </Typography>
       </DiscountTag>
       <Stack spacing={24}>
         <StyledTitle variant="h6">

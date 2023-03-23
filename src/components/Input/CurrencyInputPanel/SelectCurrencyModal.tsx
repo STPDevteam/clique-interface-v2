@@ -24,9 +24,19 @@ export default function SelectCurrencyModal({
 
   // const onManage = useCallback(() => {}, [])
 
-  const onInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
-  }, [])
+  const onInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setInput(e.target.value)
+      if (!input) return currencyOptions
+      return currencyOptions.filter(
+        item =>
+          item.address.toLowerCase() === input.toLowerCase() ||
+          item.name?.toLowerCase().includes(input.toLowerCase()) ||
+          item.symbol?.toLowerCase().includes(input.toLowerCase())
+      )
+    },
+    [currencyOptions, input]
+  )
 
   useEffect(() => {
     if (input !== '') {
