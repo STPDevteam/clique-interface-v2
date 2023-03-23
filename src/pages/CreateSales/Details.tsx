@@ -14,7 +14,7 @@ import {
   usePublicSaleBaseList,
   usePublicSaleTransactionList
 } from 'hooks/useBackedPublicSaleServer'
-import { useCurrencyBalance, useToken } from 'state/wallet/hooks'
+import { useCurrencyBalance, useNativeAndToken } from 'state/wallet/hooks'
 import { escapeAttrValue } from 'xss'
 import {
   SwapStatus,
@@ -120,8 +120,8 @@ export default function Details() {
   const SwapData: PublicSaleListBaseProp = result[0]
   const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
   const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
-  const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
-  const receiveToken = useToken(SwapData?.receiveToken, SwapData?.chainId)
+  const saleToken = useNativeAndToken(SwapData?.saleToken, SwapData?.chainId)
+  const receiveToken = useNativeAndToken(SwapData?.receiveToken, SwapData?.chainId)
   const soldCurrencyAmount = useMemo(() => {
     if (!salesInfo || !receiveToken) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.soldAmount || 0))

@@ -4,12 +4,14 @@ import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import { TokenAmount } from 'constants/token'
+import { useActiveWeb3React } from 'hooks'
 import { PublicSaleListBaseProp, transactionListProp, usePublicSaleBaseList } from 'hooks/useBackedPublicSaleServer'
 import JSBI from 'jsbi'
 import { useToken } from 'state/wallet/hooks'
 import theme from 'theme'
-// import { getEtherscanLink } from 'utils'
+import { getEtherscanLink } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
+import isZero from 'utils/isZero'
 
 export default function TransactionList({
   loading,
@@ -28,6 +30,7 @@ export default function TransactionList({
   result0: transactionListProp[]
   saleId: string
 }) {
+  const { chainId } = useActiveWeb3React()
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
   // const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
@@ -46,7 +49,13 @@ export default function TransactionList({
           {result0.map(item => {
             return (
               <Stack key={item.saleId} display={'flex'} justifyContent={'space-between'} flexDirection={'row'}>
-                <Link>
+                <Link
+                  href={
+                    receiveToken && chainId && !isZero(receiveToken?.address)
+                      ? getEtherscanLink(chainId, receiveToken?.address, 'address')
+                      : undefined
+                  }
+                >
                   Swap{' '}
                   {item.buy_amount &&
                     receiveToken &&

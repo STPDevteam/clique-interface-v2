@@ -23,7 +23,7 @@ import { useActiveWeb3React } from 'hooks'
 import { isAddress } from 'utils'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'utils/parseAmount'
-import { PUBLICSALE_ADDRESS } from '../../constants'
+import { PUBLICSALE_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { Currency, Token } from 'constants/token'
 import { getTokenPrices } from 'utils/fetch/server'
 import useModal from 'hooks/useModal'
@@ -106,7 +106,8 @@ const currencyOptions = [
   // new Token(ChainId.GOERLI, '0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267', 18, 'tyy', 'tyy'),
   new Token(ChainId.SEPOLIA, '0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD', 18, 'STPT', 'STPT'),
   new Token(ChainId.SEPOLIA, '0x0090847C22856a346C6069B8d1ed08A4A1D18241', 18, 'RAI', 'RAI'),
-  new Token(ChainId.SEPOLIA, '0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E', 6, 'USDT', 'USDT')
+  new Token(ChainId.SEPOLIA, '0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E', 6, 'USDT', 'USDT'),
+  new Token(ChainId.SEPOLIA, ZERO_ADDRESS, 18, 'ETH', 'ETH')
 ]
 
 export default function Index() {

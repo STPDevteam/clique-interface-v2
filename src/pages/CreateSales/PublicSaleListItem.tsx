@@ -6,7 +6,7 @@ import discountIcon from 'assets/images/ethereum-logo.png'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router'
 import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
-import { useToken } from 'state/wallet/hooks'
+import { useNativeAndToken } from 'state/wallet/hooks'
 import { TokenAmount } from 'constants/token'
 import { useMemo } from 'react'
 import JSBI from 'jsbi'
@@ -158,8 +158,8 @@ function ShowStatus({ item }: { item: any }) {
 export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseProp }) {
   const history = useHistory()
   console.log(item)
-  const saleToken = useToken(item.saleToken, item.chainId)
-  const receiveToken = useToken(item.receiveToken, item.chainId)
+  const saleToken = useNativeAndToken(item.saleToken, item.chainId)
+  const receiveToken = useNativeAndToken(item.receiveToken, item.chainId)
   const saleAmount = useMemo(() => {
     if (!saleToken) return
     return new TokenAmount(saleToken, JSBI.BigInt(item.saleAmount))

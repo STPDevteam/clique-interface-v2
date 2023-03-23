@@ -27,7 +27,7 @@ export default function SalesList() {
               Swap list
             </Typography>
             <Link to={routes.CreateSales} style={{ width: 252, textDecoration: 'none' }}>
-              <BlackButton>Create Proposal</BlackButton>
+              <BlackButton>Create pool</BlackButton>
             </Link>
           </RowCenter>
           <List loading={loading} page={page} result={result} />
