@@ -794,7 +794,7 @@ export default function Index() {
             ? 'Approving'
             : approveState === ApprovalState.NOT_APPROVED
             ? 'Approve'
-            : 'Public'}
+            : 'Create'}
         </BlackButton>
       </Stack>
       <Snackbar

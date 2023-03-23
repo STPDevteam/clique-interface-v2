@@ -179,8 +179,9 @@ export default function Details() {
 
   const swapAmount = useMemo(() => {
     if (!salesAmount) return ''
-    const ra = Number(new BigNumber(1).div(new BigNumber(ratio)))
-    const value = new BigNumber(Number(salesAmount)).multipliedBy(new BigNumber(ra))
+    const value = new BigNumber(Number(salesAmount)).multipliedBy(
+      new BigNumber(Number(new BigNumber(1).div(new BigNumber(ratio))))
+    )
     return value.toString()
   }, [ratio, salesAmount])
 
