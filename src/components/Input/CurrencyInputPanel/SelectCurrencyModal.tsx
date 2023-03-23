@@ -30,9 +30,7 @@ export default function SelectCurrencyModal({
       if (!input) return currencyOptions
       return currencyOptions.filter(
         item =>
-          item.address.toLowerCase() === input.toLowerCase() ||
-          item.name?.toLowerCase().includes(input.toLowerCase()) ||
-          item.symbol?.toLowerCase().includes(input.toLowerCase())
+          item.address.toLowerCase() === input.toLowerCase() || item.name?.toLowerCase().includes(input.toLowerCase())
       )
     },
     [currencyOptions, input]

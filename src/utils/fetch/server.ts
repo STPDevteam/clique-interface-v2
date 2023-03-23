@@ -159,7 +159,7 @@ export function getTransactionList(saleId: string, offset: number, limit: number
   })
 }
 
-export function getTokenPrices(chainId: number, tokens: string) {
+export function getTokenPrices(chainId: number, tokens?: string) {
   return Axios.get('stpdao/v2/swap/prices', {
     chainId,
     tokens

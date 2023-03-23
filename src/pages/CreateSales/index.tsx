@@ -23,8 +23,8 @@ import { useActiveWeb3React } from 'hooks'
 import { isAddress } from 'utils'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'utils/parseAmount'
-import { PUBLICSALE_ADDRESS, ZERO_ADDRESS } from '../../constants'
-import { Currency, Token } from 'constants/token'
+import { PUBLICSALE_ADDRESS } from '../../constants'
+import { Currency } from 'constants/token'
 import { getTokenPrices } from 'utils/fetch/server'
 import useModal from 'hooks/useModal'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
@@ -100,15 +100,6 @@ const UploadLabel = styled('label')({
   textAlign: 'center',
   borderRadius: '16px'
 })
-
-const currencyOptions = [
-  // new Token(ChainId.GOERLI, '0x57F013F27360E62efc1904D8c4f4021648ABa7a9', 6, 'mUSDT', 'mUSDT'),
-  // new Token(ChainId.GOERLI, '0x53C0475aa628D9C8C5724A2eb8B5Fd81c32a9267', 18, 'tyy', 'tyy'),
-  new Token(ChainId.SEPOLIA, '0x41526D8dE5ae045aCb88Eb0EedA752874B222ccD', 18, 'STPT', 'STPT'),
-  new Token(ChainId.SEPOLIA, '0x0090847C22856a346C6069B8d1ed08A4A1D18241', 18, 'RAI', 'RAI'),
-  new Token(ChainId.SEPOLIA, '0x5c58eC0b4A18aFB85f9D6B02FE3e6454f988436E', 6, 'USDT', 'USDT'),
-  new Token(ChainId.SEPOLIA, ZERO_ADDRESS, 18, 'ETH', 'ETH')
-]
 
 export default function Index() {
   const { chainId, account, library } = useActiveWeb3React()
@@ -187,7 +178,7 @@ export default function Index() {
   const onSelectReceiveCurrency = useCallback((cur: Currency) => {
     setReceiveToken(cur)
   }, [])
-
+  const [currencyOptions, setCurrencyOptions] = useState<any>([])
   useEffect(() => {
     if (!saleToken || !receiveToken) return
     let result: any = []
@@ -213,6 +204,22 @@ export default function Index() {
       setCurrencyRatio(ratio ?? '')
     })()
   }, [currentBaseChain?.id, receiveToken, saleToken])
+  useEffect(() => {
+    let result: any = []
+    ;(async () => {
+      if (!currentBaseChain?.id) {
+        setCurrencyOptions([])
+        return
+      }
+      try {
+        const res = await getTokenPrices(currentBaseChain?.id)
+        result = res?.data
+        setCurrencyOptions(result.data)
+      } catch (error) {
+        console.error(error)
+      }
+    })()
+  }, [currentBaseChain?.id])
 
   const inputValueAmount = tryParseAmount(salesAmount, saleToken || undefined)
   const maxPurchaseCa = tryParseAmount(maxPurchase, receiveToken)
@@ -477,7 +484,7 @@ export default function Index() {
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
           <Input
             onClick={() => {
-              const saleTokenCurrencyOptions = currencyOptions.filter(item => item !== receiveToken)
+              const saleTokenCurrencyOptions = currencyOptions.filter((item: any) => item !== receiveToken)
               showModal(
                 <SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={saleTokenCurrencyOptions} />
               )
@@ -513,7 +520,7 @@ export default function Index() {
       <Stack display={'grid'} style={{ marginBottom: 20 }} gridTemplateColumns="1fr 1fr" gap={50}>
         <Input
           onClick={() => {
-            const receiveTokenCurrencyOptions = currencyOptions.filter(item => item !== saleToken)
+            const receiveTokenCurrencyOptions = currencyOptions.filter((item: any) => item !== saleToken)
             showModal(
               <SelectCurrencyModal
                 onSelectCurrency={onSelectReceiveCurrency}
