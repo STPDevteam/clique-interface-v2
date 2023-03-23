@@ -40,7 +40,7 @@ export function usePurchaseCallback() {
   const gasPriceInfoCallback = useGasPriceInfo()
 
   return useCallback(
-    async (account: string, buyAmount: string, saleId: number) => {
+    async (account: string, buyAmount: string, saleId: number, isEth?: boolean) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
       let result: any = {}
@@ -62,11 +62,13 @@ export function usePurchaseCallback() {
       return contract[method](...args, {
         gasPrice,
         gasLimit,
-        from: account
+        from: account,
+        value: isEth ? buyAmount : undefined
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Purchase a public sale`
+            summary: `Purchase a public sale`,
+            claim: { recipient: `${account}_purchase_swap_${saleId}` }
           })
           return response.hash
         })
@@ -154,7 +156,8 @@ export function useCancelSaleCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Cancel a public sale`
+            summary: `Cancel a public sale`,
+            claim: { recipient: `${account}_claim_balance_${saleId}` }
           })
           return response.hash
         })

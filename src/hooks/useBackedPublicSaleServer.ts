@@ -29,7 +29,7 @@ export interface PublicSaleListBaseProp {
 
 export interface transactionListProp {
   buyTokenName: string
-  buyAmount: string
+  buy_amount: string
   buyer: string
   payAmount: string
   payTokenName: string

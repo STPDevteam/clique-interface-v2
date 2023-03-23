@@ -6,7 +6,7 @@ import { BlackButton } from 'components/Button/Button'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import TransactionList from './TransactionList'
 import icon from 'assets/images/placeholder.png'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import ReactHtmlParser from 'react-html-parser'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import {
@@ -36,8 +36,9 @@ import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'utils/parseAmount'
 import { PUBLICSALE_ADDRESS } from '../../constants'
 import { ChainId } from 'constants/chain'
-import { routes } from 'constants/routes'
 import { getTokenPrices } from 'utils/fetch/server'
+import isZero from 'utils/isZero'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 
 enum Tabs {
   ABOUT,
@@ -112,7 +113,6 @@ export default function Details() {
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const [salesAmount, setSalesAmount] = useState('')
   const [ratio, setRatio] = useState('')
-  const history = useHistory()
   const purchaseCallback = usePurchaseCallback()
   const cancelSaleCallback = useCancelSaleCallback()
   const { showModal, hideModal } = useModal()
@@ -122,10 +122,10 @@ export default function Details() {
   const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
   const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useToken(SwapData?.receiveToken, SwapData?.chainId)
-  const soldCurrencyAmount = tryParseAmount(
-    JSBI.BigInt(salesInfo?.soldAmount || 0).toString(),
-    receiveToken || undefined
-  )
+  const soldCurrencyAmount = useMemo(() => {
+    if (!salesInfo || !receiveToken) return
+    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.soldAmount || 0))
+  }, [receiveToken, salesInfo])
   const saleCurrencyAmount = tryParseAmount(salesInfo?.saleAmount, saleToken || undefined)
   const soldTokenAmountData = useMemo(() => {
     if (!saleToken || !SoldAmountData) return
@@ -190,18 +190,26 @@ export default function Details() {
   }, [SwapData])
 
   const oneTimePayPrice = useMemo(() => {
+    if (!receiveToken || !salesInfo) return
+    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
+  }, [receiveToken, salesInfo])
+
+  const canBuyMaxValue = useMemo(() => {
     if (!saleToken || !salesInfo) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [saleToken, salesInfo])
-
-  const canPricePay = useMemo(() => {
-    if (!salesInfo || !salesAmount) return
-    return (
-      new BigNumber(salesAmount).isGreaterThan(new BigNumber(salesInfo?.limitMin)) &&
-      new BigNumber(salesAmount).isLessThan(new BigNumber(salesInfo?.limitMax))
+  const canBuyMinValue = useMemo(() => {
+    if (!saleToken || !salesInfo) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMin))
+  }, [saleToken, salesInfo])
+  const restCanBuyValue = useMemo(() => {
+    if (!saleToken || !salesInfo || !SoldAmountData) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax)).subtract(
+      new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
     )
-  }, [salesAmount, salesInfo])
-  console.log(canPricePay)
+  }, [SoldAmountData, saleToken, salesInfo])
+  console.log(canBuyMaxValue?.toSignificant(6), canBuyMinValue?.toSignificant(6), restCanBuyValue?.toSignificant(6))
+  const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
 
   const handlePay = useCallback(() => {
     if (!account || !saleId) return
@@ -209,7 +217,8 @@ export default function Details() {
     purchaseCallback(
       account,
       isOneTimePurchase ? oneTimePayPrice?.raw.toString() || '' : inputValueAmount?.raw.toString() || '',
-      Number(saleId)
+      Number(saleId),
+      isEth
     )
       .then(hash => {
         hideModal()
@@ -228,8 +237,9 @@ export default function Details() {
     account,
     hideModal,
     inputValueAmount?.raw,
+    isEth,
     isOneTimePurchase,
-    oneTimePayPrice,
+    oneTimePayPrice?.raw,
     purchaseCallback,
     saleId,
     showModal
@@ -240,7 +250,7 @@ export default function Details() {
     cancelSaleCallback(saleId)
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.replace(routes.SaleList)} />)
+        showModal(<TransactiontionSubmittedModal hash={hash} />)
       })
       .catch((err: any) => {
         hideModal()
@@ -251,7 +261,7 @@ export default function Details() {
         )
         console.error(err)
       })
-  }, [cancelSaleCallback, hideModal, history, saleId, showModal])
+  }, [cancelSaleCallback, hideModal, saleId, showModal])
 
   const closeTimeLeft = useMemo(() => {
     if (!SwapData || !salesInfo) return
@@ -270,6 +280,7 @@ export default function Details() {
   }, [SwapData, salesInfo])
 
   const saleTokenBalance = useCurrencyBalance(account || undefined, receiveToken || undefined)
+  console.log(saleTokenBalance?.toSignificant(6), oneTimePayPrice?.toSignificant(6))
 
   const remainingBalance = useMemo(() => {
     if (!saleToken || !salesInfo || !receiveToken) return undefined
@@ -299,6 +310,8 @@ export default function Details() {
     chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
   )
   console.log(approveState, approveState1)
+  const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_purchase_swap_${saleId}`)
+  const { claimSubmitted: isClaimingBalance } = useUserHasSubmittedClaim(`${account}_claim_balance_${saleId}`)
 
   return (
     <Box
@@ -434,7 +447,7 @@ export default function Details() {
               )}
             </Stack>
           ) : (
-            <TransactionList loading={ListLoading} page={listPage} result={listRes} />
+            <TransactionList loading={ListLoading} page={listPage} result0={listRes} saleId={saleId} />
           )}
         </Stack>
         <Stack className="right_content">
@@ -476,12 +489,13 @@ export default function Details() {
                   onChange={e => {
                     if (
                       new BigNumber(e.target.value).isGreaterThan(
+                        new BigNumber(saleTokenBalance?.toSignificant(6) || '')
+                      ) ||
+                      new BigNumber(e.target.value).isGreaterThan(
                         new BigNumber(canPayAmount?.toSignificant(6) || '')
                       ) ||
-                      (new BigNumber(e.target.value).isGreaterThan(
-                        new BigNumber(soldTokenAmountData?.toSignificant(6) || '')
-                      ) &&
-                        new BigNumber(e.target.value).isGreaterThan(salesInfo?.limitMax || ''))
+                      new BigNumber(e.target.value).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
+                      new BigNumber(e.target.value).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
                     )
                       return
                     setSalesAmount(e.target.value || '')
@@ -529,7 +543,16 @@ export default function Details() {
                   ) : (
                     <BlackButton
                       width="252px"
-                      disabled={!salesAmount}
+                      disabled={
+                        isClaiming ||
+                        approveState === ApprovalState.PENDING ||
+                        !salesAmount ||
+                        !saleTokenBalance?.toSignificant(6) ||
+                        new BigNumber(Number(SoldAmountData?.amount)).isGreaterThan(
+                          new BigNumber(Number(salesInfo?.limitMax))
+                        ) ||
+                        saleTokenBalance.lessThan(JSBI.BigInt(restCanBuyValue?.toSignificant(6) || ''))
+                      }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
                       {approveState === ApprovalState.PENDING
@@ -558,8 +581,7 @@ export default function Details() {
                 <RowSentence>
                   <span>Price</span>
                   <span>
-                    1 {saleToken?.symbol} ={' '}
-                    {Number(new BigNumber(0.9).multipliedBy(new BigNumber(SwapData?.originalDiscount)))}{' '}
+                    1 {saleToken?.symbol} = {ratio}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
@@ -605,6 +627,15 @@ export default function Details() {
                   ) : (
                     <BlackButton
                       width="252px"
+                      disabled={
+                        isClaiming ||
+                        approveState1 === ApprovalState.PENDING ||
+                        new BigNumber(Number(SoldAmountData?.amount)).isGreaterThan(0) ||
+                        new BigNumber(Number(saleTokenBalance?.toSignificant(6))).isLessThan(new BigNumber(0)) ||
+                        new BigNumber(Number(oneTimePayPrice?.toSignificant(6))).isGreaterThan(
+                          new BigNumber(Number(saleTokenBalance?.toSignificant(6)))
+                        )
+                      }
                       onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
                       {approveState1 === ApprovalState.PENDING
@@ -643,7 +674,11 @@ export default function Details() {
                 </span>
               </RowSentence>
               <Stack display="grid" gridTemplateRows="1fr 1fr" alignItems={'center'} justifyContent={'center'} pt={30}>
-                <BlackButton width="252px" onClick={handleCancel}>
+                <BlackButton
+                  width="252px"
+                  disabled={salesInfo?.isCancel || SwapData?.status === 'ended' || isClaimingBalance}
+                  onClick={handleCancel}
+                >
                   {salesInfo?.isCancel || SwapData?.status === 'ended' ? 'Claim' : 'Cancel event'}
                 </BlackButton>
               </Stack>

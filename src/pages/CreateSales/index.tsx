@@ -458,7 +458,7 @@ export default function Index() {
           Select Network
         </Typography>
         <ChainSelect
-          width="200px"
+          width="440px"
           chainList={ChainList}
           selectedChain={currentBaseChain}
           label=""
@@ -786,7 +786,7 @@ export default function Index() {
       <Stack display="flex" justifyContent="center" mt={30} flexDirection={'row'} spacing={60}>
         <BlackButton
           width="252px"
-          disabled={paramsCheck.disabled}
+          disabled={paramsCheck.disabled || approveState === ApprovalState.PENDING}
           onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : paramsCheck.handler}
         >
           {approveState === ApprovalState.PENDING

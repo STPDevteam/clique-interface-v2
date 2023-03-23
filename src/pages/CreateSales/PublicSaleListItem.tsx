@@ -11,7 +11,6 @@ import { TokenAmount } from 'constants/token'
 import { useMemo } from 'react'
 import JSBI from 'jsbi'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
-import { BigNumber } from 'bignumber.js'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -166,12 +165,12 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
     return new TokenAmount(saleToken, JSBI.BigInt(item.saleAmount))
   }, [item.saleAmount, saleToken])
   const progress = useMemo(() => {
-    if (!item) return 0
-    return new BigNumber(item?.soldAmount)
-      .div(new BigNumber(item?.saleAmount))
-      .multipliedBy(100)
-      .toFixed(6)
-  }, [item])
+    if (!item || !receiveToken || !saleToken) return 0
+    return new TokenAmount(receiveToken, JSBI.BigInt(item?.soldAmount))
+      .divide(new TokenAmount(saleToken, JSBI.BigInt(item?.saleAmount)))
+      .multiply(JSBI.BigInt(100))
+      .toSignificant(6)
+  }, [item, receiveToken, saleToken])
 
   return (
     <StyledItem onClick={() => history.push(routes._SaleDetails + `/${item.saleId}`)}>
@@ -219,7 +218,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
           </Stack>
         </Box>
       </Stack>
-      <CircularStatic value={Number(progress) ? Number(progress) : 0} />
+      <CircularStatic value={Number(progress) || 0} />
     </StyledItem>
   )
 }
