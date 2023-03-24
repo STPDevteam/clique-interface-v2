@@ -195,10 +195,11 @@ export default function Details() {
 
   const buyTokenAmount = tryParseAmount(salesAmount, saleToken || undefined)
 
-  const oneTimePayPrice = useMemo(() => {
+  const payLimitMax = useMemo(() => {
     if (!receiveToken || !salesInfo) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [receiveToken, salesInfo])
+  const oneTimePayPrice = tryParseAmount(payLimitMax?.toSignificant(), saleToken || undefined)
 
   const oneTimePayPriceApproveValue = useMemo(() => {
     if (!SwapData || !ratio) return
