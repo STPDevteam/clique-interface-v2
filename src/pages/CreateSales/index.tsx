@@ -112,7 +112,7 @@ export default function Index() {
   const [content, setContent] = useState('')
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
-  const [isWhitelist, setIsWhiteList] = useState<boolean>(true)
+  const [isWhitelist, setIsWhiteList] = useState<boolean>(false)
   const [saleToken, setSaleToken] = useState<Currency>()
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [salesAmount, setSalesAmount] = useState('')
@@ -222,7 +222,7 @@ export default function Index() {
           if (item.tokenAddress === ZERO_ADDRESS) {
             return Currency.get_ETH_TOKEN(item.chainId)
           }
-          return new Token(item.chainId, item.tokenAddress, item.decimals, item.symbol, item.name, item.img)
+          return new Token(item.chainId, item.tokenAddress, item.decimals, item.symbol, item.tokenName, item.img)
         })
         setCurrencyOptions(result)
       } catch (error) {
@@ -258,7 +258,7 @@ export default function Index() {
       saleTokenAddr,
       'discount',
       startTime,
-      publicSaleList
+      isWhitelist ? publicSaleList : []
     )
       .then(hash => {
         hideModal()
@@ -274,13 +274,13 @@ export default function Index() {
         console.error(err)
       })
   }, [
-    salePriceCa,
     saleToken,
     startTime,
     endTime,
     account,
     receiveToken,
     inputValueAmount,
+    salePriceCa,
     purchase,
     oneTimePriceCa?.raw,
     maxPurchaseCa?.raw,
@@ -289,6 +289,7 @@ export default function Index() {
     createPublicSaleCallback,
     content,
     baseChainId,
+    isWhitelist,
     publicSaleList,
     hideModal,
     history
@@ -317,9 +318,9 @@ export default function Index() {
   }, [oneTimePrice, salesAmount])
 
   const sharePer = useMemo(() => {
-    if (!currencyRatio || !oneTimePrice) return
-    return new BigNumber(oneTimePrice).multipliedBy(new BigNumber(currencyRatio))
-  }, [currencyRatio, oneTimePrice])
+    if (!salePrice || !oneTimePrice) return
+    return new BigNumber(oneTimePrice).multipliedBy(new BigNumber(salePrice))
+  }, [salePrice, oneTimePrice])
 
   const paramsCheck: {
     disabled: boolean
@@ -785,6 +786,7 @@ export default function Index() {
         <Switch
           checked={isWhitelist}
           onChange={() => {
+            if (!isWhitelist) setPublicSaleList([])
             setIsWhiteList(!isWhitelist)
           }}
         />
