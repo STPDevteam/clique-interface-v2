@@ -113,10 +113,10 @@ export default function Index() {
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
   const [isWhitelist, setIsWhiteList] = useState<boolean>(true)
-  const [saleToken, setSaleToken] = useState<Currency>()
+  const [saleToken, setSaleToken] = useState<any>()
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [salesAmount, setSalesAmount] = useState('')
-  const [receiveToken, setReceiveToken] = useState<Currency>()
+  const [receiveToken, setReceiveToken] = useState<any>()
   const [baseChainId, setCurrentBaseChain] = useState<any>('')
   const [oneTimePrice, setOnetimePrice] = useState<string>('')
   const [currencyRatio, setCurrencyRatio] = useState('')
@@ -183,7 +183,7 @@ export default function Index() {
     if (!saleToken || !receiveToken) return
     let result: any = []
     let ratio
-    const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
+    const tokens = (saleToken?.tokenAddress || '') + ',' + (receiveToken?.tokenAddress || '')
     ;(async () => {
       if (!currentBaseChain?.id) {
         setCurrencyRatio('')
@@ -229,8 +229,8 @@ export default function Index() {
 
   const handlePublic = useCallback(() => {
     if (!saleToken || !startTime || !endTime || !account || !receiveToken || !inputValueAmount || !salePriceCa) return
-    const receiveTokenAddr = receiveToken?.address
-    const saleTokenAddr = saleToken?.address
+    const receiveTokenAddr = receiveToken?.tokenAddress
+    const saleTokenAddr = saleToken?.tokenAddress
     const limitMax = purchase === purchaseType.ONETIME ? oneTimePriceCa?.raw.toString() : maxPurchaseCa?.raw.toString()
     const limitMin =
       purchase === purchaseType.ONETIME ? oneTimePriceCa?.raw.toString() : minPurchaseCa?.raw.toString() || '0'
@@ -292,6 +292,8 @@ export default function Index() {
   const toggleWallet = useWalletModalToggle()
 
   console.log(approveState)
+  console.log(currencyRatio)
+
   const tokenPriceText = useMemo(() => {
     if (!saleToken || !receiveToken) return
     return `1 ${saleToken?.symbol} = ${currencyRatio} ${receiveToken?.symbol} / 1 ${
@@ -484,7 +486,9 @@ export default function Index() {
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
           <Input
             onClick={() => {
-              const saleTokenCurrencyOptions = currencyOptions.filter((item: any) => item !== receiveToken)
+              const saleTokenCurrencyOptions = currencyOptions.filter(
+                (item: any) => item !== receiveToken && item !== saleToken
+              )
               showModal(
                 <SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={saleTokenCurrencyOptions} />
               )
@@ -503,7 +507,12 @@ export default function Index() {
           value={salesAmount}
           errSet={() => setSalesAmount('')}
           onChange={e => {
-            if (JSBI.GT(JSBI.BigInt(e.target.value), JSBI.BigInt(saleTokenBalance?.toSignificant(6) || '0'))) return
+            if (
+              new BigNumber(Number(e.target.value)).isGreaterThan(
+                new BigNumber(Number(saleTokenBalance?.toSignificant(6)))
+              )
+            )
+              return
             setSalesAmount(e.target.value || '')
           }}
           placeholder="0"
@@ -520,7 +529,9 @@ export default function Index() {
       <Stack display={'grid'} style={{ marginBottom: 20 }} gridTemplateColumns="1fr 1fr" gap={50}>
         <Input
           onClick={() => {
-            const receiveTokenCurrencyOptions = currencyOptions.filter((item: any) => item !== saleToken)
+            const receiveTokenCurrencyOptions = currencyOptions.filter(
+              (item: any) => item !== saleToken && item !== receiveToken
+            )
             showModal(
               <SelectCurrencyModal
                 onSelectCurrency={onSelectReceiveCurrency}
@@ -564,7 +575,7 @@ export default function Index() {
           <Typography color={theme.palette.text.secondary} textAlign={'left'} fontWeight={500} variant="inherit">
             Set sale price
           </Typography>
-          <StyledButtonGroup style={{ width: '350px' }}>
+          <StyledButtonGroup style={{ width: '350px', marginTop: 20 }}>
             <MuiButton
               className={salePriceType === priceType.UNIT ? 'active' : ''}
               onClick={() => {
@@ -589,7 +600,7 @@ export default function Index() {
             value={salePrice}
             errSet={() => setSalePrice('')}
             onChange={e => {
-              setSalePrice(e.target.value || '')
+              setSalePrice(e.target.value)
             }}
             placeholder="0"
             endAdornment={receiveToken?.symbol}
@@ -626,7 +637,12 @@ export default function Index() {
           Discount
         </Typography>
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
-          10%
+          {salePrice &&
+            new BigNumber(salePrice)
+              .multipliedBy(new BigNumber(100))
+              .div(Number(currencyRatio))
+              .toFixed(6)}
+          %
         </Typography>
       </RowWrapper>
       <RowWrapper padding={'0 16px'}>

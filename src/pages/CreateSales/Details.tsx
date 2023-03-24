@@ -374,7 +374,9 @@ export default function Details() {
             <ColSentence>
               <p>Original price (create at {timeStampToFormat(Number(SwapData?.createTime))})</p>
               <p>
-                1 {saleToken?.symbol} = {SwapData?.originalDiscount} {receiveToken?.symbol}
+                1 {saleToken?.symbol} ={' '}
+                {new BigNumber(ratio).multipliedBy(new BigNumber(SwapData?.originalDiscount)).toFixed(6)}{' '}
+                {receiveToken?.symbol}
               </p>
             </ColSentence>
             <ColSentence>
