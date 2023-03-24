@@ -482,7 +482,13 @@ export default function Index() {
           chainList={ChainList}
           selectedChain={currentBaseChain}
           label=""
-          onChange={e => setCurrentBaseChain(e?.id || null)}
+          onChange={e => {
+            setCurrentBaseChain(e?.id || null)
+            if (e?.id !== baseChainId) {
+              setSaleToken(undefined)
+              setReceiveToken(undefined)
+            }
+          }}
         />
       </RowWrapper>
       <Stack
@@ -626,6 +632,8 @@ export default function Index() {
             errSet={() => setPackagePrice('')}
             onChange={e => {
               setPackagePrice(e.target.value || '')
+              const uPrice = new BigNumber(e.target.value).div(new BigNumber(salesAmount)).toFixed(6)
+              setSalePrice(uPrice)
             }}
             placeholder="0"
             endAdornment={receiveToken?.symbol}
