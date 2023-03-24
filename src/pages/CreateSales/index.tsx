@@ -303,9 +303,6 @@ export default function Index() {
 
   const toggleWallet = useWalletModalToggle()
 
-  console.log(approveState)
-  console.log(currencyRatio)
-
   const tokenPriceText = useMemo(() => {
     if (!saleToken || !receiveToken) return
     return `1 ${saleToken?.symbol} = ${currencyRatio} ${receiveToken?.symbol} / 1 ${

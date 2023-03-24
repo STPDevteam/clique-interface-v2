@@ -57,13 +57,14 @@ export default function TransactionList({
                   }
                 >
                   Swap{' '}
-                  {item.buy_amount &&
-                    receiveToken &&
-                    new TokenAmount(receiveToken, JSBI.BigInt(item.buy_amount)).toSignificant(6)}{' '}
-                  {item.payTokenName} to{' '}
                   {item.payAmount &&
                     receiveToken &&
                     new TokenAmount(receiveToken, JSBI.BigInt(item.payAmount)).toSignificant(6)}{' '}
+                  to{' '}
+                  {item.buy_amount &&
+                    receiveToken &&
+                    new TokenAmount(receiveToken, JSBI.BigInt(item.buy_amount)).toSignificant(6)}{' '}
+                  {item.payTokenName}
                   {item.buyTokenName}
                 </Link>
                 <Typography color={theme.palette.text.secondary} fontWeight={500} lineHeight={1.5} variant="inherit">

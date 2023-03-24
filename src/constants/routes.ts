@@ -30,5 +30,7 @@ export const routes = {
   CreateSales: '/createSale',
   SaleDetails: '/saleDetails/:saleId',
   _SaleDetails: '/saleDetails',
-  SaleList: '/saleList'
+  SaleList: '/saleList',
+
+  Push: '/push'
 }

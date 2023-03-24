@@ -34,6 +34,7 @@ import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
 import Notification from 'pages/NotificationPage'
+import Push from 'pages/Notification'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
@@ -144,6 +145,7 @@ export default function App() {
                   <Route exact strict path={routes.CreateSales} component={CreateSales} />
                   <Route exact strict path={routes.SaleDetails} component={SaleDetail} />
                   <Route exact strict path={routes.SaleList} component={SaleList} />
+                  <Route exact strict path={routes.Push} component={Push} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>

@@ -510,19 +510,34 @@ export default function Details() {
                 <RowSentence>
                   <span>Sold</span>
                   <span>
-                    {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
+                    {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {saleToken?.symbol}
                   </span>
                 </RowSentence>
                 <NumericalInput
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
-                    if (new BigNumber(Number(e.target.value)).isGreaterThan(Number(canBuyMaxValue?.toSignificant()))) {
-                      setSalesAmount(Number(canBuyMaxValue?.toSignificant()).toString())
+                    if (
+                      new BigNumber(e.target.value).isGreaterThanOrEqualTo(
+                        new BigNumber(canBuyMinValue?.toSignificant() || '')
+                      ) &&
+                      new BigNumber(e.target.value).isLessThanOrEqualTo(
+                        new BigNumber(canBuyMaxValue?.toSignificant() || '')
+                      )
+                    ) {
+                      setSalesAmount(e.target.value)
                       return
                     }
-                    if (new BigNumber(Number(e.target.value)).isLessThan(Number(canBuyMinValue?.toSignificant()))) {
-                      setSalesAmount(Number(canBuyMinValue?.toSignificant()).toString())
+                    if (
+                      new BigNumber(e.target.value).isLessThan(new BigNumber(canBuyMinValue?.toSignificant() || ''))
+                    ) {
+                      setSalesAmount(new BigNumber(canBuyMinValue?.toSignificant() || '').toString())
+                      return
+                    }
+                    if (
+                      new BigNumber(e.target.value).isGreaterThan(new BigNumber(canBuyMaxValue?.toSignificant() || ''))
+                    ) {
+                      setSalesAmount(new BigNumber(canBuyMaxValue?.toSignificant() || '').toString())
                       return
                     }
                     setSalesAmount(e.target.value || '')
@@ -629,7 +644,7 @@ export default function Details() {
                 <RowSentence>
                   <span>Sold</span>
                   <span>
-                    {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
+                    {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {saleToken?.symbol}
                   </span>
                 </RowSentence>
                 <RowSentence>
