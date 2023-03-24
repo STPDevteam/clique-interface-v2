@@ -2,6 +2,7 @@ import { Box, Card, CircularProgress, Stack, styled, Typography } from '@mui/mat
 import Back from 'components/Back'
 import theme from 'theme'
 import Input from 'components/Input'
+import NumericalInput from 'components/Input/InputNumerical'
 import { BlackButton } from 'components/Button/Button'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import TransactionList from './TransactionList'
@@ -198,6 +199,15 @@ export default function Details() {
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [receiveToken, salesInfo])
 
+  const oneTimePayPriceApproveValue = useMemo(() => {
+    if (!SwapData || !ratio) return
+    return new BigNumber(ratio)
+      .multipliedBy(new BigNumber(100))
+      .multipliedBy(new BigNumber(SwapData?.originalDiscount))
+      .toFixed(6)
+    // return new BigNumber(Number(oneTimePayPrice?.toSignificant(6))).multipliedBy(new BigNumber(ratio)).toString()
+  }, [SwapData, ratio])
+
   const canBuyMaxValue = useMemo(() => {
     if (!receiveToken || !salesInfo) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
@@ -206,17 +216,16 @@ export default function Details() {
     if (!receiveToken || !salesInfo) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMin))
   }, [receiveToken, salesInfo])
-  const restCanBuyValue = useMemo(() => {
-    if (!receiveToken || !salesInfo || !SoldAmountData) return
-    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax)).subtract(
-      new TokenAmount(receiveToken, JSBI.BigInt(SoldAmountData?.amount))
-    )
-  }, [SoldAmountData, receiveToken, salesInfo])
+  // const restCanBuyValue = useMemo(() => {
+  //   if (!receiveToken || !salesInfo || !SoldAmountData) return
+  //   return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax)).subtract(
+  //     new TokenAmount(receiveToken, JSBI.BigInt(SoldAmountData?.amount))
+  //   )
+  // }, [SoldAmountData, receiveToken, salesInfo])
   const inputValueAmount = tryParseAmount(swapAmount, receiveToken || undefined)
+  const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
 
-  console.log(canBuyMaxValue?.toSignificant(6), canBuyMinValue?.toSignificant(6), restCanBuyValue?.toSignificant(6))
   const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
-  console.log(isEth)
 
   const handlePay = useCallback(() => {
     if (!account || !saleId) return
@@ -312,13 +321,11 @@ export default function Details() {
     chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined,
     isEth
   )
-  console.log(approveState)
-
-  const oneTimePayAmount = tryParseAmount(oneTimePayPrice?.raw.toString(), receiveToken || undefined)
   const [approveState1, approveCallback1] = useApproveCallback(
-    oneTimePayAmount,
+    oneTimePriceCurrencyAmount,
     chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
   )
+  console.log(approveState1)
 
   const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_purchase_swap_${saleId}`)
   const { claimSubmitted: isClaimingBalance } = useUserHasSubmittedClaim(`${account}_claim_balance_${saleId}`)
@@ -449,7 +456,7 @@ export default function Details() {
             ))}
           </Stack>
           {curTab === Tabs.ABOUT ? (
-            <Stack spacing={10}>
+            <Stack spacing={10} maxWidth={800}>
               {ReactHtmlParser(
                 filterXSS(SwapData?.about || '', {
                   onIgnoreTagAttr: function(_, name, value) {
@@ -498,7 +505,7 @@ export default function Details() {
                     {soldCurrencyAmount?.toSignificant(6, { groupSeparator: ',' }) ?? '0'} {receiveToken?.symbol}
                   </span>
                 </RowSentence>
-                <Input
+                <NumericalInput
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
@@ -506,20 +513,20 @@ export default function Details() {
                   }}
                   placeholder=""
                   label="Buy"
-                  endAdornment={`${saleToken?.symbol}`}
+                  endAdornment={<>{`${saleToken?.symbol}`}</>}
                   rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
                     receiveToken?.symbol
                   }`}
                   type="pay"
                 />
-                <Input
+                <NumericalInput
                   readOnly
                   value={swapAmount}
                   errSet={() => {}}
                   onChange={() => {}}
                   placeholder=""
                   label="Swap"
-                  endAdornment={`${receiveToken?.symbol}`}
+                  endAdornment={<>{`${receiveToken?.symbol}`}</>}
                   rightLabel={`min: ${canBuyMinValue?.toSignificant(6)} ${
                     receiveToken?.symbol
                   } max: ${canBuyMaxValue?.toSignificant(6)} ${receiveToken?.symbol}`}
@@ -550,6 +557,7 @@ export default function Details() {
                     <BlackButton
                       width="252px"
                       disabled={
+                        new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0) ||
                         isClaiming ||
                         approveState === ApprovalState.PENDING ||
                         !swapAmount ||
@@ -557,7 +565,6 @@ export default function Details() {
                         new BigNumber(Number(SoldAmountData?.amount)).isGreaterThan(
                           new BigNumber(Number(salesInfo?.limitMax))
                         ) ||
-                        saleTokenBalance.lessThan(JSBI.BigInt(restCanBuyValue?.toSignificant(6) || '')) ||
                         new BigNumber(swapAmount).isGreaterThan(
                           new BigNumber(saleTokenBalance?.toSignificant(6) || '')
                         ) ||
@@ -567,7 +574,9 @@ export default function Details() {
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
-                      {approveState === ApprovalState.PENDING
+                      {new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0)
+                        ? 'Purchased'
+                        : approveState === ApprovalState.PENDING
                         ? 'Approving'
                         : approveState === ApprovalState.NOT_APPROVED
                         ? 'Approve'
@@ -617,9 +626,23 @@ export default function Details() {
                       setSalesAmount(e.target.value || '')
                     }}
                     placeholder=""
-                    label="Buy"
+                    label="Get"
+                    endAdornment={`${saleToken?.symbol}`}
+                    rightLabel={``}
+                    type="pay"
+                  />
+                </RowSentence>
+                <RowSentence>
+                  <span></span>
+                  <Input
+                    readOnly
+                    value={oneTimePayPriceApproveValue ?? ''}
+                    errSet={() => {}}
+                    onChange={() => {}}
+                    placeholder=""
+                    label="Pay"
                     endAdornment={`${receiveToken?.symbol}`}
-                    rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
+                    rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) || ''} ${
                       receiveToken?.symbol
                     }`}
                     type="pay"
@@ -650,7 +673,9 @@ export default function Details() {
                       }
                       onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
-                      {approveState1 === ApprovalState.PENDING
+                      {new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0)
+                        ? 'Purchased'
+                        : approveState1 === ApprovalState.PENDING
                         ? 'Approving'
                         : approveState1 === ApprovalState.NOT_APPROVED
                         ? 'Approve'

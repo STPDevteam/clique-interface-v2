@@ -13,6 +13,7 @@ import {
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import theme from 'theme'
 import Input from 'components/Input'
+import NumericalInput from 'components/Input/InputNumerical'
 import DownloadIcon from '@mui/icons-material/Download'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import DateTimePicker from 'components/DateTimePicker'
@@ -520,7 +521,7 @@ export default function Index() {
             type="amount"
           />
         </Stack>
-        <Input
+        <NumericalInput
           style={{ marginTop: 0 }}
           value={salesAmount}
           errSet={() => setSalesAmount('')}
@@ -535,7 +536,7 @@ export default function Index() {
           }}
           placeholder="0"
           label="Sale amount"
-          endAdornment={saleToken?.symbol}
+          endAdornment={<>{saleToken?.symbol}</>}
           rightLabel={
             <>
               Balance: {saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) || '-'} {saleToken?.symbol}
@@ -613,7 +614,7 @@ export default function Index() {
           </StyledButtonGroup>
         </Stack>
         {salePriceType === priceType.UNIT ? (
-          <Input
+          <NumericalInput
             style={{ marginTop: 0 }}
             value={salePrice}
             errSet={() => setSalePrice('')}
@@ -621,13 +622,13 @@ export default function Index() {
               setSalePrice(e.target.value)
             }}
             placeholder="0"
-            endAdornment={receiveToken?.symbol}
+            endAdornment={<>{receiveToken?.symbol}</>}
             label="Unit price"
             rightLabel={``}
             type="unit"
           />
         ) : (
-          <Input
+          <NumericalInput
             style={{ marginTop: 0 }}
             value={packagePrice}
             errSet={() => setPackagePrice('')}
@@ -637,7 +638,7 @@ export default function Index() {
               setSalePrice(uPrice)
             }}
             placeholder="0"
-            endAdornment={receiveToken?.symbol}
+            endAdornment={<>{receiveToken?.symbol}</>}
             label="package price"
             rightLabel={``}
             type="package"
@@ -705,25 +706,25 @@ export default function Index() {
             <Typography color={theme.palette.text.secondary} textAlign={'left'} fontWeight={500} variant="inherit">
               One-time purchase amount
             </Typography>
-            <Input
+            <NumericalInput
               style={{ marginTop: 0 }}
               value={oneTimePrice}
               errSet={() => setOnetimePrice('')}
               onChange={handleChangeOneTimePrice}
               placeholder=""
               label=""
-              endAdornment={saleToken?.symbol}
+              endAdornment={<>{saleToken?.symbol}</>}
               rightLabel={<></>}
               type="oneTime"
             />
-            <Input
+            <NumericalInput
               readOnly
               value={`Total share: ${totalShare ?? '-'} ${sharePer ?? '-'} ${receiveToken?.symbol ?? ''}/share`}
               errSet={() => {}}
               onChange={() => {}}
               placeholder=""
               label=""
-              endAdornment={''}
+              endAdornment={<></>}
               rightLabel={<></>}
               type="oneTime"
             />
@@ -734,24 +735,24 @@ export default function Index() {
               purchase limit
             </Typography>
             <Stack display={'grid'} gridTemplateColumns="4fr 1fr 4fr" alignItems={'center'}>
-              <Input
+              <NumericalInput
                 style={{ marginTop: 0 }}
                 value={minPurchase}
                 errSet={() => setMinPurchase('')}
                 onChange={e => setMinPurchase(e.target.value || '')}
                 placeholder="min"
                 label=""
-                endAdornment={saleToken?.symbol}
+                endAdornment={<>{saleToken?.symbol}</>}
                 rightLabel={<></>}
                 type="min"
               />
               -
-              <Input
+              <NumericalInput
                 style={{ marginTop: 0 }}
                 value={maxPurchase}
                 errSet={() => setMaxPurchase('')}
                 onChange={e => setMaxPurchase(e.target.value || '')}
-                endAdornment={saleToken?.symbol}
+                endAdornment={<>{saleToken?.symbol}</>}
                 placeholder="max"
                 label=""
                 rightLabel={<></>}
