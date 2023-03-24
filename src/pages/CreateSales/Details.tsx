@@ -110,7 +110,7 @@ const imgDataList = [icon, icon, icon, icon]
 
 export default function Details() {
   const { saleId } = useParams<{ saleId: string }>()
-  const { account, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const [salesAmount, setSalesAmount] = useState('')
   const [ratio, setRatio] = useState('')
@@ -132,7 +132,6 @@ export default function Details() {
     if (!saleToken || !SoldAmountData) return
     return new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
   }, [SoldAmountData, saleToken])
-  console.log(SoldAmountData, soldTokenAmountData?.toSignificant(6))
   console.log(salesInfo)
   console.log(SwapData)
 
@@ -194,6 +193,8 @@ export default function Details() {
     return new BigNumber(Number(SwapData?.limitMax)).isEqualTo(new BigNumber(Number(SwapData?.limitMin)))
   }, [SwapData])
 
+  const buyTokenAmount = tryParseAmount(salesAmount, saleToken || undefined)
+
   const oneTimePayPrice = useMemo(() => {
     if (!receiveToken || !salesInfo) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
@@ -232,7 +233,7 @@ export default function Details() {
     showModal(<TransacitonPendingModal />)
     purchaseCallback(
       account,
-      isOneTimePurchase ? oneTimePayPrice?.raw.toString() || '' : inputValueAmount?.raw.toString() || '',
+      isOneTimePurchase ? oneTimePayPrice?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
       Number(saleId),
       isEth
     )
@@ -251,8 +252,8 @@ export default function Details() {
       })
   }, [
     account,
+    buyTokenAmount,
     hideModal,
-    inputValueAmount?.raw,
     isEth,
     isOneTimePurchase,
     oneTimePayPrice?.raw,
@@ -296,7 +297,6 @@ export default function Details() {
   }, [SwapData, salesInfo])
 
   const saleTokenBalance = useCurrencyBalance(account || undefined, receiveToken || undefined)
-  console.log(saleTokenBalance?.toSignificant(6), oneTimePayPrice?.toSignificant(6))
 
   const remainingBalance = useMemo(() => {
     if (!saleToken || !salesInfo || !receiveToken) return undefined
@@ -318,15 +318,13 @@ export default function Details() {
 
   const [approveState, approveCallback] = useApproveCallback(
     inputValueAmount,
-    chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined,
+    SwapData?.chainId ? PUBLICSALE_ADDRESS[SwapData?.chainId as ChainId] : undefined,
     isEth
   )
   const [approveState1, approveCallback1] = useApproveCallback(
     oneTimePriceCurrencyAmount,
-    chainId ? PUBLICSALE_ADDRESS[chainId as ChainId] : undefined
+    SwapData?.chainId ? PUBLICSALE_ADDRESS[SwapData?.chainId as ChainId] : undefined
   )
-  console.log(approveState1)
-
   const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_purchase_swap_${saleId}`)
   const { claimSubmitted: isClaimingBalance } = useUserHasSubmittedClaim(`${account}_claim_balance_${saleId}`)
 
@@ -456,7 +454,17 @@ export default function Details() {
             ))}
           </Stack>
           {curTab === Tabs.ABOUT ? (
-            <Stack spacing={10} maxWidth={800}>
+            <Stack
+              spacing={10}
+              sx={{
+                maxWidth: 800,
+                width: '100%',
+                '& img': {
+                  width: '100%',
+                  overflow: 'hidden'
+                }
+              }}
+            >
               {ReactHtmlParser(
                 filterXSS(SwapData?.about || '', {
                   onIgnoreTagAttr: function(_, name, value) {
@@ -509,14 +517,22 @@ export default function Details() {
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
+                    if (new BigNumber(Number(e.target.value)).isGreaterThan(Number(canBuyMaxValue?.toSignificant()))) {
+                      setSalesAmount(Number(canBuyMaxValue?.toSignificant()).toString())
+                      return
+                    }
+                    if (new BigNumber(Number(e.target.value)).isLessThan(Number(canBuyMinValue?.toSignificant()))) {
+                      setSalesAmount(Number(canBuyMinValue?.toSignificant()).toString())
+                      return
+                    }
                     setSalesAmount(e.target.value || '')
                   }}
                   placeholder=""
                   label="Buy"
                   endAdornment={<>{`${saleToken?.symbol}`}</>}
-                  rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
-                    receiveToken?.symbol
-                  }`}
+                  rightLabel={`min: ${canBuyMinValue?.toSignificant(6)} ${
+                    saleToken?.symbol
+                  } max: ${canBuyMaxValue?.toSignificant(6)} ${saleToken?.symbol}`}
                   type="pay"
                 />
                 <NumericalInput
@@ -527,9 +543,9 @@ export default function Details() {
                   placeholder=""
                   label="Swap"
                   endAdornment={<>{`${receiveToken?.symbol}`}</>}
-                  rightLabel={`min: ${canBuyMinValue?.toSignificant(6)} ${
+                  rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
                     receiveToken?.symbol
-                  } max: ${canBuyMaxValue?.toSignificant(6)} ${receiveToken?.symbol}`}
+                  }`}
                   type="swap"
                 />
                 {/* <RowSentence>
@@ -560,17 +576,17 @@ export default function Details() {
                         new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0) ||
                         isClaiming ||
                         approveState === ApprovalState.PENDING ||
-                        !swapAmount ||
+                        !salesAmount ||
                         !saleTokenBalance?.toSignificant(6) ||
                         new BigNumber(Number(SoldAmountData?.amount)).isGreaterThan(
                           new BigNumber(Number(salesInfo?.limitMax))
                         ) ||
-                        new BigNumber(swapAmount).isGreaterThan(
+                        new BigNumber(salesAmount).isGreaterThan(
                           new BigNumber(saleTokenBalance?.toSignificant(6) || '')
                         ) ||
-                        new BigNumber(swapAmount).isGreaterThan(new BigNumber(canPayAmount?.toSignificant(6) || '')) ||
-                        new BigNumber(swapAmount).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
-                        new BigNumber(swapAmount).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
+                        new BigNumber(salesAmount).isGreaterThan(new BigNumber(canPayAmount?.toSignificant(6) || '')) ||
+                        new BigNumber(salesAmount).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
+                        new BigNumber(salesAmount).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
