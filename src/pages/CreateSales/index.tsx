@@ -786,7 +786,7 @@ export default function Index() {
         <Switch
           checked={isWhitelist}
           onChange={() => {
-            if (!isWhitelist) setPublicSaleList([])
+            if (isWhitelist) setPublicSaleList([])
             setIsWhiteList(!isWhitelist)
           }}
         />

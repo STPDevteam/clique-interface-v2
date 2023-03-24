@@ -141,12 +141,12 @@ export default function Details() {
     let ratio
     const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
     ;(async () => {
-      if (!chainId) {
+      if (!SwapData?.chainId) {
         setRatio('')
         return
       }
       try {
-        const res = await getTokenPrices(chainId, tokens)
+        const res = await getTokenPrices(SwapData?.chainId, tokens)
         result = res?.data
         const saleTokenData = result?.data[0]
         const receiveTokenData = result?.data[1]
@@ -159,7 +159,7 @@ export default function Details() {
       }
       setRatio(ratio ?? '')
     })()
-  }, [chainId, receiveToken, saleToken])
+  }, [SwapData?.chainId, receiveToken, saleToken])
 
   const progress = useMemo(() => {
     if (!salesInfo || !saleCurrencyAmount || !soldCurrencyAmount || !saleToken || !receiveToken) return
@@ -375,7 +375,10 @@ export default function Details() {
               <p>Original price (create at {timeStampToFormat(Number(SwapData?.createTime))})</p>
               <p>
                 1 {saleToken?.symbol} ={' '}
-                {new BigNumber(ratio).multipliedBy(new BigNumber(SwapData?.originalDiscount)).toFixed(6)}{' '}
+                {(ratio &&
+                  SwapData &&
+                  new BigNumber(ratio).multipliedBy(new BigNumber(SwapData?.originalDiscount)).toFixed(6)) ||
+                  ''}{' '}
                 {receiveToken?.symbol}
               </p>
             </ColSentence>

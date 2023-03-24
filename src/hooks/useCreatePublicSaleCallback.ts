@@ -94,8 +94,9 @@ export function usePurchaseCallback() {
 }
 
 export function useGetSalesInfo(saleId: string, saleChainId?: ChainId): SalesInfoProp | undefined {
-  const contract = usePublicSaleContract()
+  const contract = usePublicSaleContract(saleChainId)
   const salesRes = useSingleCallResult(saleChainId ? contract : null, 'sales', [saleId], undefined, saleChainId).result
+  console.log('salesRes', salesRes, saleChainId)
 
   return useMemo(() => {
     if (!salesRes) return undefined
@@ -116,7 +117,7 @@ export function useGetSalesInfo(saleId: string, saleChainId?: ChainId): SalesInf
 }
 
 export function useGetSoldAmount(saleId: string, account: string, saleChainId?: ChainId): SoldAmountProp | undefined {
-  const contract = usePublicSaleContract()
+  const contract = usePublicSaleContract(saleChainId)
   const res = useSingleCallResult(
     saleChainId ? contract : null,
     'querySoldAmount',

@@ -326,7 +326,7 @@ export const SUPPORTED_NETWORKS: {
       symbol: 'ETH',
       decimals: 18
     },
-    rpcUrls: ['https://sepolia.infura.io/v3/'],
+    rpcUrls: ['https://sepolia.infura.io/v3/169a2f10743f4afdaa0a17e148552867'],
     blockExplorerUrls: ['https://sepolia.etherscan.io/']
   }
 }

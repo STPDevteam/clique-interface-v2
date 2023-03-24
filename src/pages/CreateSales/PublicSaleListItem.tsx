@@ -12,7 +12,6 @@ import { useEffect, useMemo, useState } from 'react'
 import JSBI from 'jsbi'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { getTokenPrices } from 'utils/fetch/server'
-import { useActiveWeb3React } from 'hooks'
 import { BigNumber } from 'bignumber.js'
 
 const StyledItem = styled('div')(({ theme }) => ({
@@ -160,7 +159,6 @@ function ShowStatus({ item }: { item: any }) {
 
 export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseProp }) {
   const history = useHistory()
-  const { chainId } = useActiveWeb3React()
   console.log(item)
   const [ratio, setRatio] = useState('')
   const saleToken = useNativeAndToken(item.saleToken, item.chainId)
@@ -183,13 +181,14 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
     let ratio
     const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
     ;(async () => {
-      if (!chainId) {
+      if (!item.chainId) {
         setRatio('')
         return
       }
       try {
-        const res = await getTokenPrices(chainId, tokens)
+        const res = await getTokenPrices(item.chainId, tokens)
         result = res?.data
+        if (!result) return
         const saleTokenData = result?.data[0]
         const receiveTokenData = result?.data[1]
         ratio = new BigNumber(saleTokenData?.price)
@@ -201,7 +200,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       }
       setRatio(ratio ?? '')
     })()
-  }, [chainId, receiveToken, saleToken])
+  }, [item.chainId, receiveToken, saleToken])
 
   return (
     <StyledItem onClick={() => history.push(routes._SaleDetails + `/${item.saleId}`)}>
