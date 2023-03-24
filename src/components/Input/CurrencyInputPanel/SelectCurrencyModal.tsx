@@ -14,10 +14,12 @@ export enum Mode {
 
 export default function SelectCurrencyModal({
   onSelectCurrency,
-  currencyOptions
+  currencyOptions,
+  disabled
 }: {
   onSelectCurrency?: (currency: Currency) => void
   currencyOptions: Currency[]
+  disabled?: (Currency | undefined)[]
 }) {
   const [input, setInput] = useState('')
   const [mode, SetMode] = useState(Mode.SELECT)
@@ -55,7 +57,11 @@ export default function SelectCurrencyModal({
         </Box>
         <Divider />
         <Box paddingTop={'24px'}>
-          <CurrencyList mode={mode} currencyOptions={currencyOptions} onSelectCurrency={onSelectCurrency} />
+          <CurrencyList
+            mode={mode}
+            currencyOptions={currencyOptions.filter(item => !disabled?.includes(item))}
+            onSelectCurrency={onSelectCurrency}
+          />
         </Box>
         <Divider />
         <Box height="55px" justifyContent="center" display="flex">

@@ -23,8 +23,8 @@ import { useActiveWeb3React } from 'hooks'
 import { isAddress } from 'utils'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'utils/parseAmount'
-import { PUBLICSALE_ADDRESS } from '../../constants'
-import { Currency } from 'constants/token'
+import { PUBLICSALE_ADDRESS, ZERO_ADDRESS } from '../../constants'
+import { Currency, Token } from 'constants/token'
 import { getTokenPrices } from 'utils/fetch/server'
 import useModal from 'hooks/useModal'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
@@ -113,10 +113,10 @@ export default function Index() {
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
   const [isWhitelist, setIsWhiteList] = useState<boolean>(true)
-  const [saleToken, setSaleToken] = useState<any>()
+  const [saleToken, setSaleToken] = useState<Currency>()
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [salesAmount, setSalesAmount] = useState('')
-  const [receiveToken, setReceiveToken] = useState<any>()
+  const [receiveToken, setReceiveToken] = useState<Currency>()
   const [baseChainId, setCurrentBaseChain] = useState<any>('')
   const [oneTimePrice, setOnetimePrice] = useState<string>('')
   const [currencyRatio, setCurrencyRatio] = useState('')
@@ -173,7 +173,8 @@ export default function Index() {
     setSaleToken(cur)
   }, [])
 
-  const saleTokenBalance = useCurrencyBalance(account || undefined, saleToken)
+  const saleTokenBalance = useCurrencyBalance(account || undefined, saleToken, baseChainId)
+  console.log('saleTokenBalance', saleToken)
 
   const onSelectReceiveCurrency = useCallback((cur: Currency) => {
     setReceiveToken(cur)
@@ -183,7 +184,7 @@ export default function Index() {
     if (!saleToken || !receiveToken) return
     let result: any = []
     let ratio
-    const tokens = (saleToken?.tokenAddress || '') + ',' + (receiveToken?.tokenAddress || '')
+    const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
     ;(async () => {
       if (!currentBaseChain?.id) {
         setCurrencyRatio('')
@@ -205,7 +206,6 @@ export default function Index() {
     })()
   }, [currentBaseChain?.id, receiveToken, saleToken])
   useEffect(() => {
-    let result: any = []
     ;(async () => {
       if (!currentBaseChain?.id) {
         setCurrencyOptions([])
@@ -213,8 +213,18 @@ export default function Index() {
       }
       try {
         const res = await getTokenPrices(currentBaseChain?.id)
-        result = res?.data
-        setCurrencyOptions(result.data)
+
+        if (!res?.data?.data) {
+          setCurrencyOptions([])
+          return
+        }
+        const result: Currency = res.data.data.map((item: any) => {
+          if (item.tokenAddress === ZERO_ADDRESS) {
+            return Currency.get_ETH_TOKEN(item.chainId)
+          }
+          return new Token(item.chainId, item.tokenAddress, item.decimals, item.symbol, item.name, item.img)
+        })
+        setCurrencyOptions(result)
       } catch (error) {
         console.error(error)
       }
@@ -229,8 +239,8 @@ export default function Index() {
 
   const handlePublic = useCallback(() => {
     if (!saleToken || !startTime || !endTime || !account || !receiveToken || !inputValueAmount || !salePriceCa) return
-    const receiveTokenAddr = receiveToken?.tokenAddress
-    const saleTokenAddr = saleToken?.tokenAddress
+    const receiveTokenAddr = receiveToken?.address
+    const saleTokenAddr = saleToken?.address
     const limitMax = purchase === purchaseType.ONETIME ? oneTimePriceCa?.raw.toString() : maxPurchaseCa?.raw.toString()
     const limitMin =
       purchase === purchaseType.ONETIME ? oneTimePriceCa?.raw.toString() : minPurchaseCa?.raw.toString() || '0'
@@ -486,11 +496,12 @@ export default function Index() {
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
           <Input
             onClick={() => {
-              const saleTokenCurrencyOptions = currencyOptions.filter(
-                (item: any) => item !== receiveToken && item !== saleToken
-              )
               showModal(
-                <SelectCurrencyModal onSelectCurrency={onSelectCurrency} currencyOptions={saleTokenCurrencyOptions} />
+                <SelectCurrencyModal
+                  disabled={[saleToken, receiveToken]}
+                  onSelectCurrency={onSelectCurrency}
+                  currencyOptions={currencyOptions}
+                />
               )
             }}
             style={{ marginTop: 0 }}

@@ -487,7 +487,7 @@ export default function Details() {
                 </RowSentence>
                 <RowSentence>
                   <span>Est.discount</span>
-                  <span>-10%</span>
+                  <span>{new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(6)}%</span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
@@ -596,7 +596,7 @@ export default function Details() {
                 </RowSentence>
                 <RowSentence>
                   <span>Discount</span>
-                  <span>-10%</span>
+                  <span>{ratio}%</span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
