@@ -33,7 +33,7 @@ export default function TransactionList({
   const { chainId } = useActiveWeb3React()
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
-  // const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
+  const saleToken = useToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useToken(SwapData?.receiveToken, SwapData?.chainId)
   console.log(result)
   console.log(result0)
@@ -59,12 +59,11 @@ export default function TransactionList({
                   Swap{' '}
                   {item.payAmount &&
                     receiveToken &&
-                    new TokenAmount(receiveToken, JSBI.BigInt(item.payAmount)).toSignificant(6)}{' '}
-                  to{' '}
+                    new TokenAmount(receiveToken, JSBI.BigInt(item.payAmount)).toSignificant()}{' '}
+                  {item.payTokenName} to{' '}
                   {item.buy_amount &&
-                    receiveToken &&
-                    new TokenAmount(receiveToken, JSBI.BigInt(item.buy_amount)).toSignificant(6)}{' '}
-                  {item.payTokenName}
+                    saleToken &&
+                    new TokenAmount(saleToken, JSBI.BigInt(item.buy_amount)).toSignificant()}{' '}
                   {item.buyTokenName}
                 </Link>
                 <Typography color={theme.palette.text.secondary} fontWeight={500} lineHeight={1.5} variant="inherit">

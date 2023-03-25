@@ -233,10 +233,10 @@ export default function Index() {
   }, [currentBaseChain?.id])
 
   const inputValueAmount = tryParseAmount(salesAmount, saleToken || undefined)
-  const maxPurchaseCa = tryParseAmount(maxPurchase, receiveToken)
-  const minPurchaseCa = tryParseAmount(minPurchase, receiveToken)
+  const maxPurchaseCa = tryParseAmount(maxPurchase, saleToken)
+  const minPurchaseCa = tryParseAmount(minPurchase, saleToken)
   const salePriceCa = tryParseAmount(salePrice, receiveToken)
-  const oneTimePriceCa = tryParseAmount(oneTimePrice, receiveToken)
+  const oneTimePriceCa = tryParseAmount(oneTimePrice, saleToken)
 
   const handlePublic = useCallback(() => {
     if (!saleToken || !startTime || !endTime || !account || !receiveToken || !inputValueAmount || !salePriceCa) return

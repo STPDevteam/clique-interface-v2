@@ -145,13 +145,14 @@ export default function Details() {
       }
       try {
         const res = await getTokenPrices(SwapData?.chainId, tokens)
-        result = res?.data
-        const saleTokenData = result?.data[0]
-        const receiveTokenData = result?.data[1]
-
-        ratio = new BigNumber(saleTokenData?.price)
-          .div(new BigNumber(receiveTokenData?.price))
-          .toFixed(6, BigNumber.ROUND_FLOOR)
+        result = res?.data.data
+        if (!result) {
+          setRatio('')
+          return
+        }
+        ratio = new BigNumber(result[0]?.price)
+          .div(new BigNumber(result[1]?.price))
+          .toFixed(6, BigNumber.ROUND_DOWN)
           .toString()
       } catch (error) {
         console.error(error)
@@ -198,19 +199,17 @@ export default function Details() {
   const buyTokenAmount = tryParseAmount(salesAmount, receiveToken || undefined)
 
   const payLimitMax = useMemo(() => {
-    if (!receiveToken || !salesInfo) return
-    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
-  }, [receiveToken, salesInfo])
+    if (!saleToken || !salesInfo) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
+  }, [saleToken, salesInfo])
 
-  const oneTimePurchaseTokenAmount = tryParseAmount(payLimitMax?.toSignificant(6), receiveToken || undefined)
+  const oneTimePurchaseTokenAmount = payLimitMax
 
   const oneTimePayPriceApproveValue = useMemo(() => {
     if (!SwapData || !oneTimePurchaseTokenAmount) return
     return Number(
-      new BigNumber(oneTimePurchaseTokenAmount.toSignificant())
-        .multipliedBy(new BigNumber(SwapData?.originalDiscount))
-        .multipliedBy(100)
-    ).toFixed()
+      new BigNumber(oneTimePurchaseTokenAmount.toExact()).multipliedBy(SwapData?.originalDiscount || 1)
+    ).toString()
   }, [SwapData, oneTimePurchaseTokenAmount])
 
   const canBuyMaxValue = useMemo(() => {
@@ -223,13 +222,14 @@ export default function Details() {
   }, [receiveToken, salesInfo])
 
   const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, saleToken || undefined)
-  const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, saleToken || undefined)
+  const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
 
   const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
 
   const handlePay = useCallback(() => {
     if (!account || !saleId) return
     showModal(<TransacitonPendingModal />)
+
     purchaseCallback(
       account,
       isOneTimePurchase ? oneTimePurchaseTokenAmount?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
@@ -255,7 +255,7 @@ export default function Details() {
     hideModal,
     isEth,
     isOneTimePurchase,
-    oneTimePurchaseTokenAmount?.raw,
+    oneTimePurchaseTokenAmount,
     purchaseCallback,
     saleId,
     showModal
@@ -516,30 +516,32 @@ export default function Details() {
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
+                    setSalesAmount(e.target.value)
+                  }}
+                  onBlur={e => {
                     let inputValue = e.target.value
                     const inputValueTokenAmount = tryParseAmount(inputValue, saleToken || undefined)
                     if (
                       new BigNumber(inputValue).isGreaterThanOrEqualTo(
                         new BigNumber(canBuyMinValue?.toSignificant() || '')
-                      ) ||
+                      ) &&
                       new BigNumber(inputValue).isLessThanOrEqualTo(
                         new BigNumber(canBuyMaxValue?.toSignificant() || '')
                       )
                     ) {
-                      setSalesAmount(inputValueTokenAmount?.toSignificant(6).toString() || '')
+                      setSalesAmount(inputValueTokenAmount?.toSignificant().toString() || '')
+                      return
                     } else {
-                      if (inputValueTokenAmount?.greaterThan(JSBI.BigInt(canBuyMinValue || ''))) {
-                        inputValue = new BigNumber(canBuyMinValue?.toSignificant() || '').toString()
+                      if (inputValueTokenAmount?.lessThan(canBuyMinValue || '')) {
+                        inputValue = canBuyMinValue?.toSignificant() || ''.toString()
                         setSalesAmount(inputValue)
                         return
                       }
-                      if (inputValueTokenAmount?.lessThan(JSBI.BigInt(canBuyMaxValue || ''))) {
-                        inputValue = new BigNumber(canBuyMaxValue?.toSignificant() || '').toString()
+                      if (inputValueTokenAmount?.greaterThan(canBuyMaxValue || '')) {
+                        inputValue = canBuyMaxValue?.toSignificant() || ''.toString()
                         setSalesAmount(inputValue)
                         return
                       }
-                      console.log(inputValue)
-                      setSalesAmount(inputValue)
                     }
                   }}
                   placeholder=""
@@ -651,7 +653,7 @@ export default function Details() {
                   <span></span>
                   <Input
                     readOnly
-                    value={oneTimePurchaseTokenAmount?.toSignificant(6) ?? ''}
+                    value={oneTimePurchaseTokenAmount?.toSignificant() ?? ''}
                     errSet={() => {}}
                     onChange={e => {
                       setSalesAmount(e.target.value || '')
