@@ -42,8 +42,6 @@ export function useApproveCallback(
       : ApprovalState.APPROVED
   }, [amountToApprove, currentAllowance, isEth, pendingApproval, spender])
 
-  console.log('currentAllowance', approvalState, currentAllowance?.currency.address, spender)
-
   const tokenContract = useTokenContract(token?.address)
   const addTransaction = useTransactionAdder()
 

@@ -132,8 +132,6 @@ export default function Details() {
     if (!saleToken || !SoldAmountData) return
     return new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
   }, [SoldAmountData, saleToken])
-  console.log(salesInfo)
-  console.log(SwapData)
 
   useEffect(() => {
     if (!saleToken || !receiveToken) return
@@ -150,6 +148,7 @@ export default function Details() {
         result = res?.data
         const saleTokenData = result?.data[0]
         const receiveTokenData = result?.data[1]
+
         ratio = new BigNumber(saleTokenData?.price)
           .div(new BigNumber(receiveTokenData?.price))
           .toFixed(6, BigNumber.ROUND_FLOOR)
@@ -157,6 +156,7 @@ export default function Details() {
       } catch (error) {
         console.error(error)
       }
+
       setRatio(ratio ?? '')
     })()
   }, [SwapData?.chainId, receiveToken, saleToken])
@@ -182,8 +182,10 @@ export default function Details() {
   }, [SwapData, saleToken])
   const swapAmount = useMemo(() => {
     if (!salesAmount || !curPrice) return ''
-    const value = new BigNumber(Number(salesAmount)).multipliedBy(
-      new BigNumber(Number(new BigNumber(1).multipliedBy(new BigNumber(curPrice.toSignificant(6)))))
+    const value = Number(
+      new BigNumber(Number(salesAmount)).multipliedBy(
+        new BigNumber(Number(new BigNumber(1).multipliedBy(new BigNumber(curPrice.toSignificant(6)))))
+      )
     )
     return value.toString()
   }, [curPrice, salesAmount])
@@ -193,22 +195,23 @@ export default function Details() {
     return new BigNumber(Number(SwapData?.limitMax)).isEqualTo(new BigNumber(Number(SwapData?.limitMin)))
   }, [SwapData])
 
-  const buyTokenAmount = tryParseAmount(salesAmount, saleToken || undefined)
+  const buyTokenAmount = tryParseAmount(salesAmount, receiveToken || undefined)
 
   const payLimitMax = useMemo(() => {
     if (!receiveToken || !salesInfo) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [receiveToken, salesInfo])
-  const oneTimePayPrice = tryParseAmount(payLimitMax?.toSignificant(), saleToken || undefined)
+
+  const oneTimePurchaseTokenAmount = tryParseAmount(payLimitMax?.toSignificant(6), receiveToken || undefined)
 
   const oneTimePayPriceApproveValue = useMemo(() => {
-    if (!SwapData || !ratio) return
-    return new BigNumber(ratio)
-      .multipliedBy(new BigNumber(100))
-      .multipliedBy(new BigNumber(SwapData?.originalDiscount))
-      .toFixed(6)
-    // return new BigNumber(Number(oneTimePayPrice?.toSignificant(6))).multipliedBy(new BigNumber(ratio)).toString()
-  }, [SwapData, ratio])
+    if (!SwapData || !oneTimePurchaseTokenAmount) return
+    return Number(
+      new BigNumber(oneTimePurchaseTokenAmount.toSignificant())
+        .multipliedBy(new BigNumber(SwapData?.originalDiscount))
+        .multipliedBy(100)
+    ).toFixed()
+  }, [SwapData, oneTimePurchaseTokenAmount])
 
   const canBuyMaxValue = useMemo(() => {
     if (!receiveToken || !salesInfo) return
@@ -218,14 +221,9 @@ export default function Details() {
     if (!receiveToken || !salesInfo) return
     return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMin))
   }, [receiveToken, salesInfo])
-  // const restCanBuyValue = useMemo(() => {
-  //   if (!receiveToken || !salesInfo || !SoldAmountData) return
-  //   return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax)).subtract(
-  //     new TokenAmount(receiveToken, JSBI.BigInt(SoldAmountData?.amount))
-  //   )
-  // }, [SoldAmountData, receiveToken, salesInfo])
-  const inputValueAmount = tryParseAmount(swapAmount, receiveToken || undefined)
-  const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
+
+  const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, saleToken || undefined)
+  const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, saleToken || undefined)
 
   const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
 
@@ -234,7 +232,7 @@ export default function Details() {
     showModal(<TransacitonPendingModal />)
     purchaseCallback(
       account,
-      isOneTimePurchase ? oneTimePayPrice?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
+      isOneTimePurchase ? oneTimePurchaseTokenAmount?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
       Number(saleId),
       isEth
     )
@@ -253,11 +251,11 @@ export default function Details() {
       })
   }, [
     account,
-    buyTokenAmount,
+    buyTokenAmount?.raw,
     hideModal,
     isEth,
     isOneTimePurchase,
-    oneTimePayPrice?.raw,
+    oneTimePurchaseTokenAmount?.raw,
     purchaseCallback,
     saleId,
     showModal
@@ -318,7 +316,7 @@ export default function Details() {
   }, [account, salesInfo])
 
   const [approveState, approveCallback] = useApproveCallback(
-    inputValueAmount,
+    oneTimePurchaseApproveTokenAmount,
     SwapData?.chainId ? PUBLICSALE_ADDRESS[SwapData?.chainId as ChainId] : undefined,
     isEth
   )
@@ -518,30 +516,31 @@ export default function Details() {
                   value={salesAmount}
                   errSet={() => {}}
                   onChange={e => {
+                    let inputValue = e.target.value
+                    const inputValueTokenAmount = tryParseAmount(inputValue, saleToken || undefined)
                     if (
-                      new BigNumber(e.target.value).isGreaterThanOrEqualTo(
+                      new BigNumber(inputValue).isGreaterThanOrEqualTo(
                         new BigNumber(canBuyMinValue?.toSignificant() || '')
-                      ) &&
-                      new BigNumber(e.target.value).isLessThanOrEqualTo(
+                      ) ||
+                      new BigNumber(inputValue).isLessThanOrEqualTo(
                         new BigNumber(canBuyMaxValue?.toSignificant() || '')
                       )
                     ) {
-                      setSalesAmount(e.target.value)
-                      return
+                      setSalesAmount(inputValueTokenAmount?.toSignificant(6).toString() || '')
+                    } else {
+                      if (inputValueTokenAmount?.greaterThan(JSBI.BigInt(canBuyMinValue || ''))) {
+                        inputValue = new BigNumber(canBuyMinValue?.toSignificant() || '').toString()
+                        setSalesAmount(inputValue)
+                        return
+                      }
+                      if (inputValueTokenAmount?.lessThan(JSBI.BigInt(canBuyMaxValue || ''))) {
+                        inputValue = new BigNumber(canBuyMaxValue?.toSignificant() || '').toString()
+                        setSalesAmount(inputValue)
+                        return
+                      }
+                      console.log(inputValue)
+                      setSalesAmount(inputValue)
                     }
-                    if (
-                      new BigNumber(e.target.value).isLessThan(new BigNumber(canBuyMinValue?.toSignificant() || ''))
-                    ) {
-                      setSalesAmount(new BigNumber(canBuyMinValue?.toSignificant() || '').toString())
-                      return
-                    }
-                    if (
-                      new BigNumber(e.target.value).isGreaterThan(new BigNumber(canBuyMaxValue?.toSignificant() || ''))
-                    ) {
-                      setSalesAmount(new BigNumber(canBuyMaxValue?.toSignificant() || '').toString())
-                      return
-                    }
-                    setSalesAmount(e.target.value || '')
                   }}
                   placeholder=""
                   label="Buy"
@@ -559,7 +558,7 @@ export default function Details() {
                   placeholder=""
                   label="Swap"
                   endAdornment={<>{`${receiveToken?.symbol}`}</>}
-                  rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' })} ${
+                  rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) || ''} ${
                     receiveToken?.symbol
                   }`}
                   type="swap"
@@ -640,7 +639,7 @@ export default function Details() {
                 </RowSentence>
                 <RowSentence>
                   <span>Discount</span>
-                  <span>{ratio}%</span>
+                  <span>{Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(6)}%</span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
@@ -652,7 +651,7 @@ export default function Details() {
                   <span></span>
                   <Input
                     readOnly
-                    value={oneTimePayPrice?.toSignificant(6) ?? ''}
+                    value={oneTimePurchaseTokenAmount?.toSignificant(6) ?? ''}
                     errSet={() => {}}
                     onChange={e => {
                       setSalesAmount(e.target.value || '')
@@ -699,7 +698,7 @@ export default function Details() {
                         approveState1 === ApprovalState.PENDING ||
                         new BigNumber(Number(SoldAmountData?.amount)).isGreaterThan(0) ||
                         new BigNumber(Number(saleTokenBalance?.toSignificant(6))).isLessThan(new BigNumber(0)) ||
-                        new BigNumber(Number(oneTimePayPrice?.toSignificant(6))).isGreaterThan(
+                        new BigNumber(Number(oneTimePurchaseTokenAmount?.toSignificant(6))).isGreaterThan(
                           new BigNumber(Number(saleTokenBalance?.toSignificant(6)))
                         )
                       }

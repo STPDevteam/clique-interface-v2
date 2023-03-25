@@ -312,7 +312,7 @@ export default function Index() {
 
   const totalShare = useMemo(() => {
     if (!salesAmount || !oneTimePrice) return
-    return new BigNumber(salesAmount).div(new BigNumber(oneTimePrice)).toFixed(6)
+    return Number(new BigNumber(salesAmount).div(new BigNumber(oneTimePrice))).toFixed()
   }, [oneTimePrice, salesAmount])
 
   const sharePer = useMemo(() => {
@@ -428,7 +428,7 @@ export default function Index() {
         error: 'End time required'
       }
     }
-    if (endTime <= startTime) {
+    if (endTime < startTime) {
       return {
         disabled: true,
         error: 'The start time must be earlier than the end time'
@@ -499,7 +499,7 @@ export default function Index() {
         }}
       >
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
-          <Input
+          <NumericalInput
             onClick={() => {
               showModal(
                 <SelectCurrencyModal
@@ -513,8 +513,8 @@ export default function Index() {
             value={saleToken?.symbol || ''}
             placeholder=""
             label="Sale token"
-            endAdornment=""
-            rightLabel={<></>}
+            endAdornment={<></>}
+            rightLabel={<p></p>}
             type="amount"
           />
         </Stack>
@@ -534,11 +534,8 @@ export default function Index() {
           placeholder="0"
           label="Sale amount"
           endAdornment={<>{saleToken?.symbol}</>}
-          rightLabel={
-            <>
-              Balance: {saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) || '-'} {saleToken?.symbol}
-            </>
-          }
+          rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) ||
+            '-'} ${saleToken?.symbol || ''}`}
           type="amount"
         />
       </Stack>

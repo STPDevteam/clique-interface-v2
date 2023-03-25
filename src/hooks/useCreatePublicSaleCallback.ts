@@ -47,7 +47,6 @@ export function usePurchaseCallback() {
 
       try {
         const res = await toPurchase(account, buyAmount, saleId)
-        console.log(res)
         if (!res.data.data) throw new Error(res.data.msg || 'Network error')
         result = res.data.data as any
       } catch (error) {
@@ -56,7 +55,6 @@ export function usePurchaseCallback() {
       }
       const args = [saleId, buyAmount, result.signature]
       const method = 'Purchase'
-      console.log('hhhh', ...args, contract.address)
 
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
       return contract[method](...args, {
@@ -96,7 +94,6 @@ export function usePurchaseCallback() {
 export function useGetSalesInfo(saleId: string, saleChainId?: ChainId): SalesInfoProp | undefined {
   const contract = usePublicSaleContract(saleChainId)
   const salesRes = useSingleCallResult(saleChainId ? contract : null, 'sales', [saleId], undefined, saleChainId).result
-  console.log('salesRes', salesRes, saleChainId)
 
   return useMemo(() => {
     if (!salesRes) return undefined
@@ -147,7 +144,6 @@ export function useCancelSaleCallback() {
 
       const args = [saleId]
       const method = 'Cancel'
-      console.log('hhhh', ...args)
 
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
       return contract[method](...args, {
@@ -244,7 +240,6 @@ export function useCreatePublicSaleCallback() {
         result.signature
       ]
       const method = 'CreateSale'
-      console.log('hhhh', ...args)
 
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
       return contract[method](...args, {
