@@ -381,7 +381,7 @@ export default function Details() {
                 1 {saleToken?.symbol} ={' '}
                 {(ratio &&
                   SwapData &&
-                  new BigNumber(ratio).multipliedBy(new BigNumber(SwapData?.originalDiscount)).toFixed(6)) ||
+                  Number(new BigNumber(ratio).multipliedBy(new BigNumber(SwapData?.originalDiscount))).toFixed()) ||
                   ''}{' '}
                 {receiveToken?.symbol}
               </p>
@@ -389,7 +389,7 @@ export default function Details() {
             <ColSentence>
               <p>Current price</p>
               <p>
-                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
+                1 {saleToken?.symbol} = {Number(ratio).toFixed(6)} {receiveToken?.symbol}
               </p>
             </ColSentence>
           </Stack>

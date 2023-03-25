@@ -151,8 +151,6 @@ export function usePublicSaleBaseList(saleId?: string) {
         const res = await getPublicSaleList(saleId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data.data as any
-        console.log(data)
-
         if (!data) {
           setResult([])
           setTotal(0)

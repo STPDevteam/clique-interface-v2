@@ -175,7 +175,6 @@ export default function Index() {
   }, [])
 
   const saleTokenBalance = useCurrencyBalance(account || undefined, saleToken, baseChainId)
-  console.log('saleTokenBalance', saleToken)
 
   const onSelectReceiveCurrency = useCallback((cur: Currency) => {
     setReceiveToken(cur)
@@ -511,7 +510,7 @@ export default function Index() {
             }}
             style={{ marginTop: 0 }}
             value={saleToken?.symbol || ''}
-            placeholder=""
+            placeholder=" "
             label="Sale token"
             endAdornment={<></>}
             rightLabel={<p></p>}

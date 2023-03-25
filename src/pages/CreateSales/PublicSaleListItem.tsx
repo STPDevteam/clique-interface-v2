@@ -8,10 +8,10 @@ import { useHistory } from 'react-router'
 import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
 import { useNativeAndToken } from 'state/wallet/hooks'
 import { TokenAmount } from 'constants/token'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import JSBI from 'jsbi'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
-import { getTokenPrices } from 'utils/fetch/server'
+// import { getTokenPrices } from 'utils/fetch/server'
 import { BigNumber } from 'bignumber.js'
 
 const StyledItem = styled('div')(({ theme }) => ({
@@ -30,12 +30,6 @@ const StyledItem = styled('div')(({ theme }) => ({
 
 const StyledTitle = styled(Typography)(({}) => ({
   overflow: 'hidden',
-  // height: 26,
-  // textOverflow: 'ellipsis',
-  // display: '-webkit-box',
-  // '-webkit-box-orient': 'vertical',
-  // '-webkit-line-clamp': '2',
-  // wordBreak: 'break-all',
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '27px'
@@ -159,8 +153,8 @@ function ShowStatus({ item }: { item: any }) {
 
 export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseProp }) {
   const history = useHistory()
-  console.log(item)
-  const [ratio, setRatio] = useState('')
+  console.log(item.originalDiscount)
+  // const [ratio, setRatio] = useState('')
   const saleToken = useNativeAndToken(item.saleToken, item.chainId)
   const receiveToken = useNativeAndToken(item.receiveToken, item.chainId)
   const saleAmount = useMemo(() => {
@@ -175,32 +169,34 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       .toSignificant(6)
   }, [item, receiveToken, saleToken])
 
-  useEffect(() => {
-    if (!saleToken || !receiveToken) return
-    let result: any = []
-    let ratio
-    const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
-    ;(async () => {
-      if (!item.chainId) {
-        setRatio('')
-        return
-      }
-      try {
-        const res = await getTokenPrices(item.chainId, tokens)
-        result = res?.data
-        if (!result) return
-        const saleTokenData = result?.data[0]
-        const receiveTokenData = result?.data[1]
-        ratio = new BigNumber(saleTokenData?.price)
-          .div(new BigNumber(receiveTokenData?.price))
-          .toFixed(6, BigNumber.ROUND_FLOOR)
-          .toString()
-      } catch (error) {
-        console.error(error)
-      }
-      setRatio(ratio ?? '')
-    })()
-  }, [item.chainId, receiveToken, saleToken])
+  // useEffect(() => {
+  //   if (!saleToken || !receiveToken) return
+  //   let result: any = []
+  //   let ratio
+  //   const tokens = (saleToken?.address || '') + ',' + (receiveToken?.address || '')
+  //   ;(async () => {
+  //     if (!item.chainId) {
+  //       setRatio('')
+  //       return
+  //     }
+  //     try {
+  //       const res = await getTokenPrices(item.chainId, tokens)
+  //       console.log('try')
+
+  //       result = res?.data
+  //       if (!result) return
+  //       const saleTokenData = result?.data[0]
+  //       const receiveTokenData = result?.data[1]
+  //       ratio = new BigNumber(saleTokenData?.price)
+  //         .div(new BigNumber(receiveTokenData?.price))
+  //         .toFixed(6, BigNumber.ROUND_FLOOR)
+  //         .toString()
+  //     } catch (error) {
+  //       console.error(error)
+  //     }
+  //     setRatio(ratio ?? '')
+  //   })()
+  // }, [item.chainId, receiveToken, saleToken])
 
   return (
     <StyledItem onClick={() => history.push(routes._SaleDetails + `/${item.saleId}`)}>
@@ -245,7 +241,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
           <Stack spacing={16}>
             <StyledText>Price</StyledText>
             <StyledBoldText noWrap>
-              1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
+              1 {saleToken?.symbol} = {new BigNumber(item.originalDiscount).toString()} {receiveToken?.symbol}
             </StyledBoldText>
           </Stack>
         </Box>
