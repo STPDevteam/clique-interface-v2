@@ -153,7 +153,6 @@ function ShowStatus({ item }: { item: any }) {
 
 export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseProp }) {
   const history = useHistory()
-  console.log(item.originalDiscount)
   // const [ratio, setRatio] = useState('')
   const saleToken = useNativeAndToken(item.saleToken, item.chainId)
   const receiveToken = useNativeAndToken(item.receiveToken, item.chainId)
@@ -162,12 +161,12 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
     return new TokenAmount(saleToken, JSBI.BigInt(item.saleAmount))
   }, [item.saleAmount, saleToken])
   const progress = useMemo(() => {
-    if (!item || !receiveToken || !saleToken) return 0
-    return new TokenAmount(receiveToken, JSBI.BigInt(item?.soldAmount))
+    if (!item || !saleToken) return 0
+    return new TokenAmount(saleToken, JSBI.BigInt(item?.soldAmount))
       .divide(new TokenAmount(saleToken, JSBI.BigInt(item?.saleAmount)))
       .multiply(JSBI.BigInt(100))
       .toSignificant(6)
-  }, [item, receiveToken, saleToken])
+  }, [item, saleToken])
 
   // useEffect(() => {
   //   if (!saleToken || !receiveToken) return
@@ -241,12 +240,13 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
           <Stack spacing={16}>
             <StyledText>Price</StyledText>
             <StyledBoldText noWrap>
-              1 {saleToken?.symbol} = {new BigNumber(item.originalDiscount).toString()} {receiveToken?.symbol}
+              1 {saleToken?.symbol} = {new BigNumber(item.originalDiscount).multipliedBy(100).toString()}{' '}
+              {receiveToken?.symbol}
             </StyledBoldText>
           </Stack>
         </Box>
       </Stack>
-      <CircularStatic value={Number(progress) || 0} />
+      <CircularStatic value={Number(progress) ? Number(progress) : 0} />
     </StyledItem>
   )
 }

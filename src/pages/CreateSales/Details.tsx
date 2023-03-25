@@ -120,13 +120,16 @@ export default function Details() {
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
   const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
+  console.log(salesInfo)
+  console.log(SwapData)
+
   const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
   const saleToken = useNativeAndToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useNativeAndToken(SwapData?.receiveToken, SwapData?.chainId)
   const soldCurrencyAmount = useMemo(() => {
-    if (!salesInfo || !receiveToken) return
-    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.soldAmount || 0))
-  }, [receiveToken, salesInfo])
+    if (!salesInfo || !saleToken) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.soldAmount || 0))
+  }, [saleToken, salesInfo])
   const saleCurrencyAmount = tryParseAmount(salesInfo?.saleAmount, saleToken || undefined)
   const soldTokenAmountData = useMemo(() => {
     if (!saleToken || !SoldAmountData) return
@@ -152,7 +155,7 @@ export default function Details() {
         }
         ratio = new BigNumber(result[0]?.price)
           .div(new BigNumber(result[1]?.price))
-          .toFixed(6, BigNumber.ROUND_DOWN)
+          .toFixed()
           .toString()
       } catch (error) {
         console.error(error)
@@ -163,12 +166,12 @@ export default function Details() {
   }, [SwapData?.chainId, receiveToken, saleToken])
 
   const progress = useMemo(() => {
-    if (!salesInfo || !saleCurrencyAmount || !soldCurrencyAmount || !saleToken || !receiveToken) return
-    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.soldAmount))
+    if (!salesInfo || !saleCurrencyAmount || !soldCurrencyAmount || !saleToken) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.soldAmount))
       .divide(new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.saleAmount)))
       .multiply(JSBI.BigInt(100))
       .toSignificant(6)
-  }, [receiveToken, saleCurrencyAmount, saleToken, salesInfo, soldCurrencyAmount])
+  }, [saleCurrencyAmount, saleToken, salesInfo, soldCurrencyAmount])
 
   const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
 
@@ -198,17 +201,17 @@ export default function Details() {
 
   const buyTokenAmount = tryParseAmount(salesAmount, receiveToken || undefined)
 
-  const payLimitMax = useMemo(() => {
+  const oneTimePurchaseTokenAmount = useMemo(() => {
     if (!saleToken || !salesInfo) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [saleToken, salesInfo])
 
-  const oneTimePurchaseTokenAmount = payLimitMax
-
   const oneTimePayPriceApproveValue = useMemo(() => {
     if (!SwapData || !oneTimePurchaseTokenAmount) return
     return Number(
-      new BigNumber(oneTimePurchaseTokenAmount.toExact()).multipliedBy(SwapData?.originalDiscount || 1)
+      new BigNumber(oneTimePurchaseTokenAmount.toExact())
+        .multipliedBy(100)
+        .multipliedBy(SwapData?.originalDiscount || 1)
     ).toString()
   }, [SwapData, oneTimePurchaseTokenAmount])
 
@@ -379,17 +382,15 @@ export default function Details() {
               <p>Original price (create at {timeStampToFormat(Number(SwapData?.createTime))})</p>
               <p>
                 1 {saleToken?.symbol} ={' '}
-                {(ratio &&
-                  SwapData &&
-                  Number(new BigNumber(ratio).multipliedBy(new BigNumber(SwapData?.originalDiscount))).toFixed()) ||
-                  ''}{' '}
+                {/* {salesInfo && receiveToken && tryParseAmount(salesInfo?.pricePer || '', receiveToken)?.toSignificant()} */}
+                {new BigNumber(SwapData?.originalDiscount).multipliedBy(100).toString()}
                 {receiveToken?.symbol}
               </p>
             </ColSentence>
             <ColSentence>
               <p>Current price</p>
               <p>
-                1 {saleToken?.symbol} = {Number(ratio).toFixed(6)} {receiveToken?.symbol}
+                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
               </p>
             </ColSentence>
           </Stack>
@@ -410,7 +411,7 @@ export default function Details() {
                   flexDirection: 'row'
                 }}
               >
-                <span>{Number(progress ? Number(progress) : 0)}%</span>
+                <span>{Number(progress) ? Number(progress) : 0}%</span>
                 <CircularProgress
                   sx={{ marginLeft: 10 }}
                   variant="determinate"
