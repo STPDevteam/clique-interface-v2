@@ -25,6 +25,7 @@ export interface PublicSaleListBaseProp {
   soldAmount: string
   startTime: number | string
   status: string
+  title: string
 }
 
 export interface transactionListProp {

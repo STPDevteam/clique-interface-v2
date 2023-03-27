@@ -114,6 +114,7 @@ export default function Index() {
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
   const [isWhitelist, setIsWhiteList] = useState<boolean>(false)
+  const [publicSaleList, setPublicSaleList] = useState<string[]>([])
   const [saleToken, setSaleToken] = useState<Currency>()
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [salesAmount, setSalesAmount] = useState('')
@@ -121,6 +122,7 @@ export default function Index() {
   const [baseChainId, setCurrentBaseChain] = useState<any>('')
   const [oneTimePrice, setOnetimePrice] = useState<string>('')
   const [currencyRatio, setCurrencyRatio] = useState('')
+  const [eventTitle, setEventTitle] = useState('')
   const history = useHistory()
   const { showModal, hideModal } = useModal()
 
@@ -131,8 +133,6 @@ export default function Index() {
   }, [])
 
   const createPublicSaleCallback = useCreatePublicSaleCallback()
-
-  const [publicSaleList, setPublicSaleList] = useState<string[]>([])
 
   const insertLine = useCallback((list: string[], newItem: string) => {
     const _ret = list.filter(item => item.toLowerCase() !== newItem.toLowerCase())
@@ -150,7 +150,7 @@ export default function Index() {
       const allRows = textInput.split(/\r?\n|\r/)
       for (let i = 0; i < allRows.length; i++) {
         const splitTextInput = allRows[i].split(',')
-        if (!splitTextInput[0]?.trim() || !splitTextInput[1]?.trim()) {
+        if (!splitTextInput[0]?.trim()) {
           continue
         }
         if (!isAddress(splitTextInput[0]?.trim())) {
@@ -258,6 +258,7 @@ export default function Index() {
       saleTokenAddr,
       'discount',
       startTime,
+      eventTitle,
       isWhitelist ? publicSaleList : []
     )
       .then(hash => {
@@ -289,6 +290,7 @@ export default function Index() {
     createPublicSaleCallback,
     content,
     baseChainId,
+    eventTitle,
     isWhitelist,
     publicSaleList,
     hideModal,
@@ -710,17 +712,19 @@ export default function Index() {
               rightLabel={<></>}
               type="oneTime"
             />
-            <NumericalInput
-              readOnly
-              value={`Total share: ${totalShare ?? '-'} ${sharePer ?? '-'} ${receiveToken?.symbol ?? ''}/share`}
-              errSet={() => {}}
-              onChange={() => {}}
-              placeholder=""
-              label=""
-              endAdornment={<></>}
-              rightLabel={<></>}
-              type="oneTime"
-            />
+            <div
+              style={{
+                color: '#1b1d21',
+                fontSize: 16,
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '13px 10px 5px',
+                fontWeight: 600
+              }}
+            >
+              <span>{`Total share: ${totalShare ?? '-'}`}</span>
+              <span>{`${sharePer ?? '-'} ${receiveToken?.symbol ?? ''}/share`}</span>
+            </div>
           </Stack>
         ) : (
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr" alignItems={'center'}>
@@ -787,30 +791,57 @@ export default function Index() {
       </RowWrapper>
 
       {isWhitelist ? (
-        <Stack
-          gap={20}
-          sx={{
-            height: 60,
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}
-        >
-          <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
-          <UploadLabel htmlFor="upload_CSV">Upload CSV file</UploadLabel>
-          <Typography color={theme.palette.text.secondary} textAlign={'left'} fontWeight={500} variant="inherit">
-            {publicSaleList.length} address(s)
-          </Typography>
-          <Link href="/template/swap-list.csv">
-            <Typography display={'flex'} alignItems="center" fontSize={12}>
-              Download Templates
-              <DownloadIcon sx={{ height: 16 }} />
+        <>
+          <Stack
+            gap={20}
+            sx={{
+              height: 60,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
+            <UploadLabel htmlFor="upload_CSV">Upload CSV file</UploadLabel>
+            <Typography color={theme.palette.text.secondary} textAlign={'left'} fontWeight={500} variant="inherit">
+              {publicSaleList.length} address(s)
             </Typography>
-          </Link>
-        </Stack>
+            <Link href="/template/swap-list.csv">
+              <Typography display={'flex'} alignItems="center" fontSize={12}>
+                Download Templates
+                <DownloadIcon sx={{ height: 16 }} />
+              </Typography>
+            </Link>
+          </Stack>
+          <Stack sx={{ textAlign: 'left', padding: 20 }}>
+            {publicSaleList
+              ? publicSaleList.map(item => (
+                  <Typography key={item} fontSize={12}>
+                    {item}
+                  </Typography>
+                ))
+              : ''}
+          </Stack>
+        </>
       ) : (
         ''
       )}
+      <Stack spacing={10} padding={'0 16px'} mb={70}>
+        <Typography color={theme.palette.text.secondary} textAlign={'left'} fontWeight={500} variant="inherit">
+          Event title
+        </Typography>
+        <Input
+          style={{ marginTop: 0 }}
+          value={eventTitle ?? '-'}
+          errSet={() => {}}
+          onChange={e => setEventTitle(e.target.value)}
+          placeholder=""
+          label=""
+          endAdornment={''}
+          rightLabel={''}
+          type="estimate"
+        />
+      </Stack>
       <Stack spacing={10} padding={'0 16px'} mb={50}>
         <Typography color={theme.palette.text.secondary} textAlign={'left'} fontWeight={500} variant="inherit">
           About Product

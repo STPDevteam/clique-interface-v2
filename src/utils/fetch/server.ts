@@ -187,6 +187,7 @@ export function toCreatePublicSale(
   saleToken: string,
   saleWay: string,
   startTime: number | string,
+  eventTitle: string,
   whiteList: string[]
 ) {
   return Axios.post('stpdao/v2/swap/create', {
@@ -202,6 +203,7 @@ export function toCreatePublicSale(
     saleToken,
     saleWay,
     startTime,
+    eventTitle,
     whiteList
   })
 }

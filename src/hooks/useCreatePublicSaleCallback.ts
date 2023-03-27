@@ -198,6 +198,7 @@ export function useCreatePublicSaleCallback() {
       currentSaleToken: string,
       saleMode,
       startTime: number | string,
+      eventTitle: string,
       whiteList: string[]
     ) => {
       if (!account) throw new Error('none account')
@@ -217,6 +218,7 @@ export function useCreatePublicSaleCallback() {
           currentSaleToken,
           saleMode,
           startTime,
+          eventTitle,
           whiteList
         )
         if (!res.data.data) throw new Error(res.data.msg || 'Network error')

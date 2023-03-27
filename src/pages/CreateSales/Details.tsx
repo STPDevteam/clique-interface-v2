@@ -30,7 +30,7 @@ import { BigNumber } from 'bignumber.js'
 import useModal from 'hooks/useModal'
 import { TokenAmount } from 'constants/token'
 import JSBI from 'jsbi'
-import { timeStampToFormat } from 'utils/dao'
+import { timeStampToFormat, titleCase } from 'utils/dao'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import { useActiveWeb3React } from 'hooks'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
@@ -55,7 +55,7 @@ export const SwapStatusText = {
 
 const tabs = [
   { name: 'About', value: Tabs.ABOUT },
-  { name: 'Transaction', value: Tabs.TRASACTION }
+  { name: 'Transactions', value: Tabs.TRASACTION }
 ]
 
 const RowSentence = styled('p')(({}) => ({
@@ -414,7 +414,7 @@ export default function Details() {
               >
                 <span>{Number(progress) ? Number(progress) : 0}%</span>
                 <CircularProgress
-                  sx={{ marginLeft: 10 }}
+                  sx={{ marginLeft: 10, '& .css-oxts8u-MuiCircularProgress-circle': { fill: '#eee' } }}
                   variant="determinate"
                   value={Number(progress) ? Number(progress) : 0}
                 />
@@ -429,7 +429,7 @@ export default function Details() {
                   color: SwapData?.status === SwapStatus.SOON ? '#00a0ff' : SwapStatus.OPEN ? '#0a9700' : '#000'
                 }}
               >
-                {SwapData?.status}
+                {titleCase(SwapData?.status ?? '')}
               </p>
             </ColSentence>
             <ColSentence>

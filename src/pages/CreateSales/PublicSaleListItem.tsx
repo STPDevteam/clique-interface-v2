@@ -14,6 +14,7 @@ import { currentTimeStamp, getTargetTimeString } from 'utils'
 // import { getTokenPrices } from 'utils/fetch/server'
 import { BigNumber } from 'bignumber.js'
 import { useGetSalesInfo } from 'hooks/useCreatePublicSaleCallback'
+import { titleCase } from 'utils/dao'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -90,11 +91,11 @@ const DiscountTag = styled(Stack)(({ theme }) => ({
 
 const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string; theme?: any }) => ({
   color:
-    color === 'active'
+    color === 'Normal'
       ? theme.bgColor.bg7
-      : color === 'soon'
+      : color === 'Soon'
       ? theme.bgColor.bg6
-      : color === 'ended'
+      : color === 'Ended'
       ? '#000000'
       : theme.bgColor.bg2,
   fontSize: 18,
@@ -105,11 +106,11 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
     width: 5,
     height: 5,
     background:
-      color === 'active'
+      color === 'Normal'
         ? theme.bgColor.bg7
-        : color === 'soon'
+        : color === 'Soon'
         ? theme.bgColor.bg6
-        : color === 'ended'
+        : color === 'Ended'
         ? '#000000'
         : theme.bgColor.bg2,
     marginLeft: -10,
@@ -139,13 +140,13 @@ function ShowStatus({ item }: { item: any }) {
       <StyledStatusText
         color={
           [SwapStatus.OPEN].includes(item.status)
-            ? 'active'
+            ? 'Normal'
             : [SwapStatus.SOON].includes(item.status)
-            ? 'soon'
-            : 'ended'
+            ? 'Soon'
+            : 'Ended'
         }
       >
-        {item.status}
+        {titleCase(item.status)}
       </StyledStatusText>
       <StyledText fontSize={16}>{targetTimeString}</StyledText>
     </>
@@ -169,6 +170,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       .toSignificant(6)
   }, [item, saleToken])
   const salesInfo = useGetSalesInfo(item?.saleId, item?.chainId)
+  console.log(item)
 
   // useEffect(() => {
   //   if (!saleToken || !receiveToken) return
@@ -211,10 +213,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
         </Typography>
       </DiscountTag>
       <Stack spacing={24}>
-        <StyledTitle variant="h6">
-          The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
-          with interacting with all projects on the protocol...
-        </StyledTitle>
+        <StyledTitle variant="h6">{item?.title}</StyledTitle>
         <Box display={'grid'} gridTemplateColumns="100px 1fr 1fr 1fr 1fr 1fr">
           <Stack display={'flex'} flexDirection={'row'} spacing={16}>
             <img src={item.saleTokenImg} height={50} alt="" />
