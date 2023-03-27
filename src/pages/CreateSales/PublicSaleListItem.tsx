@@ -13,6 +13,7 @@ import JSBI from 'jsbi'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 // import { getTokenPrices } from 'utils/fetch/server'
 import { BigNumber } from 'bignumber.js'
+import { useGetSalesInfo } from 'hooks/useCreatePublicSaleCallback'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -167,6 +168,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       .multiply(JSBI.BigInt(100))
       .toSignificant(6)
   }, [item, saleToken])
+  const salesInfo = useGetSalesInfo(item?.saleId, item?.chainId)
 
   // useEffect(() => {
   //   if (!saleToken || !receiveToken) return
@@ -240,7 +242,10 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
           <Stack spacing={16}>
             <StyledText>Price</StyledText>
             <StyledBoldText noWrap>
-              1 {saleToken?.symbol} = {new BigNumber(item.originalDiscount).multipliedBy(100).toString()}{' '}
+              1 {saleToken?.symbol} ={' '}
+              {salesInfo &&
+                receiveToken &&
+                new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
               {receiveToken?.symbol}
             </StyledBoldText>
           </Stack>

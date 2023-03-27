@@ -180,26 +180,26 @@ export default function Details() {
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo.saleAmount))
   }, [receiveToken, saleToken, salesInfo])
 
-  const curPrice = useMemo(() => {
-    if (!saleToken || !SwapData) return
-    return new TokenAmount(saleToken, JSBI.BigInt(SwapData?.salePrice))
-  }, [SwapData, saleToken])
+  // const curPrice = useMemo(() => {
+  //   if (!saleToken || !SwapData) return
+  //   return new TokenAmount(saleToken, JSBI.BigInt(SwapData?.salePrice))
+  // }, [SwapData, saleToken])
   const swapAmount = useMemo(() => {
-    if (!salesAmount || !curPrice) return ''
+    if (!salesAmount || !receiveToken || !salesInfo) return ''
     const value = Number(
       new BigNumber(Number(salesAmount)).multipliedBy(
-        new BigNumber(Number(new BigNumber(1).multipliedBy(new BigNumber(curPrice.toSignificant(6)))))
+        new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()
       )
     )
     return value.toString()
-  }, [curPrice, salesAmount])
+  }, [receiveToken, salesAmount, salesInfo])
 
   const isOneTimePurchase = useMemo(() => {
     if (!SwapData) return
     return new BigNumber(Number(SwapData?.limitMax)).isEqualTo(new BigNumber(Number(SwapData?.limitMin)))
   }, [SwapData])
 
-  const buyTokenAmount = tryParseAmount(salesAmount, receiveToken || undefined)
+  const buyTokenAmount = tryParseAmount(salesAmount, saleToken || undefined)
 
   const oneTimePurchaseTokenAmount = useMemo(() => {
     if (!saleToken || !salesInfo) return
@@ -207,24 +207,24 @@ export default function Details() {
   }, [saleToken, salesInfo])
 
   const oneTimePayPriceApproveValue = useMemo(() => {
-    if (!SwapData || !oneTimePurchaseTokenAmount) return
+    if (!SwapData || !oneTimePurchaseTokenAmount || !receiveToken || !salesInfo) return
     return Number(
-      new BigNumber(oneTimePurchaseTokenAmount.toExact())
-        .multipliedBy(100)
-        .multipliedBy(SwapData?.originalDiscount || 1)
+      new BigNumber(oneTimePurchaseTokenAmount.toExact()).multipliedBy(
+        new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()
+      )
     ).toString()
-  }, [SwapData, oneTimePurchaseTokenAmount])
+  }, [SwapData, oneTimePurchaseTokenAmount, receiveToken, salesInfo])
 
   const canBuyMaxValue = useMemo(() => {
-    if (!receiveToken || !salesInfo) return
-    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMax))
-  }, [receiveToken, salesInfo])
+    if (!saleToken || !salesInfo) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
+  }, [saleToken, salesInfo])
   const canBuyMinValue = useMemo(() => {
-    if (!receiveToken || !salesInfo) return
-    return new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.limitMin))
-  }, [receiveToken, salesInfo])
+    if (!saleToken || !salesInfo) return
+    return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMin))
+  }, [saleToken, salesInfo])
 
-  const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, saleToken || undefined)
+  const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, receiveToken || undefined)
   const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
 
   const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
@@ -382,8 +382,9 @@ export default function Details() {
               <p>Original price (create at {timeStampToFormat(Number(SwapData?.createTime))})</p>
               <p>
                 1 {saleToken?.symbol} ={' '}
-                {/* {salesInfo && receiveToken && tryParseAmount(salesInfo?.pricePer || '', receiveToken)?.toSignificant()} */}
-                {new BigNumber(SwapData?.originalDiscount).multipliedBy(100).toString()}
+                {salesInfo &&
+                  receiveToken &&
+                  new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
                 {receiveToken?.symbol}
               </p>
             </ColSentence>
@@ -499,7 +500,10 @@ export default function Details() {
                 <RowSentence>
                   <span>Price</span>
                   <span>
-                    1 {saleToken?.symbol} = {ratio}
+                    1 {saleToken?.symbol} ={' '}
+                    {salesInfo &&
+                      receiveToken &&
+                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
@@ -546,7 +550,7 @@ export default function Details() {
                     }
                   }}
                   placeholder=""
-                  label="Buy"
+                  label="Get"
                   endAdornment={<>{`${saleToken?.symbol}`}</>}
                   rightLabel={`min: ${canBuyMinValue?.toSignificant(6)} ${
                     saleToken?.symbol
@@ -636,7 +640,10 @@ export default function Details() {
                 <RowSentence>
                   <span>Price</span>
                   <span>
-                    1 {saleToken?.symbol} = {ratio}
+                    1 {saleToken?.symbol} ={' '}
+                    {salesInfo &&
+                      receiveToken &&
+                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
