@@ -16,9 +16,11 @@ export class Token extends Currency {
     decimals: number,
     symbol?: string,
     name?: string,
-    logo?: string
+    logo?: string,
+    urlCoingecko?: string,
+    urlCoinmarketcap?: string
   ) {
-    super(chainId, address, decimals, symbol, name, logo)
+    super(chainId, address, decimals, symbol, name, logo, urlCoingecko, urlCoinmarketcap)
     this.chainId = chainId
     this.address = validateAndParseAddress(address)
   }

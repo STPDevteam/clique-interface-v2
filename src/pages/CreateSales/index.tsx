@@ -222,7 +222,16 @@ export default function Index() {
           if (item.tokenAddress === ZERO_ADDRESS) {
             return Currency.get_ETH_TOKEN(item.chainId)
           }
-          return new Token(item.chainId, item.tokenAddress, item.decimals, item.symbol, item.tokenName, item.img)
+          return new Token(
+            item.chainId,
+            item.tokenAddress,
+            item.decimals,
+            item.symbol,
+            item.tokenName,
+            item.img,
+            item.urlCoingecko,
+            item.urlCoinmarketcap
+          )
         })
         setCurrencyOptions(result)
       } catch (error) {
@@ -245,6 +254,7 @@ export default function Index() {
     const limitMin =
       purchase === purchaseType.ONETIME ? oneTimePriceCa?.raw.toString() : minPurchaseCa?.raw.toString() || '0'
     showModal(<TransacitonPendingModal />)
+
     createPublicSaleCallback(
       content,
       baseChainId,
@@ -832,9 +842,9 @@ export default function Index() {
         </Typography>
         <Input
           style={{ marginTop: 0 }}
-          value={eventTitle ?? '-'}
+          value={eventTitle}
           errSet={() => {}}
-          onChange={e => setEventTitle(e.target.value)}
+          onChange={e => setEventTitle(e.target.value || '')}
           placeholder=""
           label=""
           endAdornment={''}

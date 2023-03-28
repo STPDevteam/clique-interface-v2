@@ -2,7 +2,6 @@ import { Box, Stack, styled, Typography } from '@mui/material'
 // import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { ChainListMap } from 'constants/chain'
 import CircularStatic from 'pages/Activity/CircularStatic'
-import discountIcon from 'assets/images/ethereum-logo.png'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router'
 import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
@@ -15,12 +14,14 @@ import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { BigNumber } from 'bignumber.js'
 import { useGetSalesInfo } from 'hooks/useCreatePublicSaleCallback'
 import { titleCase } from 'utils/dao'
+import { publicSaleStatus } from 'hooks/useBackedPublicSaleServer'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
   boxShadow: theme.boxShadow.bs1,
   padding: '50px 39px 24px',
   display: 'grid',
+  borderRadius: 24,
   gridTemplateColumns: '1fr 118px',
   columnGap: '24px',
   cursor: 'pointer',
@@ -62,6 +63,7 @@ const StyledStatusBox = styled(Stack)(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
   padding: '0 24px 0 32px',
   height: 46,
+  borderRadius: 24,
   display: 'inline-flex',
   alignItems: 'center',
   background: theme.palette.common.white
@@ -77,7 +79,7 @@ const DiscountTag = styled(Stack)(({ theme }) => ({
   alignItems: 'center',
   padding: '4px 16px',
   border: `1px solid ${theme.bgColor.bg2}`,
-  borderRadius: '14px 0 0 14px',
+  borderRadius: 24,
   '& img': {
     width: 20
   },
@@ -91,7 +93,7 @@ const DiscountTag = styled(Stack)(({ theme }) => ({
 
 const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string; theme?: any }) => ({
   color:
-    color === 'Normal'
+    color === 'Active'
       ? theme.bgColor.bg7
       : color === 'Soon'
       ? theme.bgColor.bg6
@@ -106,7 +108,7 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
     width: 5,
     height: 5,
     background:
-      color === 'Normal'
+      color === 'Active'
         ? theme.bgColor.bg7
         : color === 'Soon'
         ? theme.bgColor.bg6
@@ -119,19 +121,12 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
   }
 }))
 
-enum SwapStatus {
-  SOON = 'soon',
-  OPEN = 'normal',
-  ENDED = 'ended',
-  CANCEL = 'cancel'
-}
-
 function ShowStatus({ item }: { item: any }) {
   const now = currentTimeStamp()
   let targetTimeString = ''
-  if (item.status === SwapStatus.SOON) {
+  if (item.status === publicSaleStatus.SOON) {
     targetTimeString = 'in ' + getTargetTimeString(now, item.startTime).replace('left', '')
-  } else if (item.status === SwapStatus.OPEN) {
+  } else if (item.status === publicSaleStatus.OPEN) {
     targetTimeString = getTargetTimeString(now, item.endTime)
   }
 
@@ -139,14 +134,14 @@ function ShowStatus({ item }: { item: any }) {
     <>
       <StyledStatusText
         color={
-          [SwapStatus.OPEN].includes(item.status)
-            ? 'Normal'
-            : [SwapStatus.SOON].includes(item.status)
+          [publicSaleStatus.OPEN].includes(item.status)
+            ? 'Active'
+            : [publicSaleStatus.SOON].includes(item.status)
             ? 'Soon'
             : 'Ended'
         }
       >
-        {titleCase(item.status)}
+        {titleCase(item.status === 'normal' ? 'active' : item.status)}
       </StyledStatusText>
       <StyledText fontSize={16}>{targetTimeString}</StyledText>
     </>
@@ -207,7 +202,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
         <ShowStatus item={item} />
       </StyledStatusBox>
       <DiscountTag>
-        <img src={discountIcon} alt="" />
+        <img src={ChainListMap[item?.chainId]?.logo} alt="" />
         <Typography variant="inherit">
           Sale off {new BigNumber(item.originalDiscount).multipliedBy(100).toString()}%
         </Typography>
@@ -215,9 +210,17 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       <Stack spacing={24}>
         <StyledTitle variant="h6">{item?.title}</StyledTitle>
         <Box display={'grid'} gridTemplateColumns="100px 1fr 1fr 1fr 1fr 1fr">
-          <Stack display={'flex'} flexDirection={'row'} spacing={16}>
-            <img src={item.saleTokenImg} height={50} alt="" />
-            <img src={item.receiveTokenImg} height={50} alt="" />
+          <Stack display={'flex'} flexDirection={'row'}>
+            <img
+              src={item.saleTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
+              height={50}
+              alt=""
+            />
+            <img
+              src={item.receiveTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
+              height={50}
+              alt=""
+            />
           </Stack>
           <Stack spacing={16}>
             <StyledText>Swap</StyledText>
