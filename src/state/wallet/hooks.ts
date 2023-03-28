@@ -160,9 +160,9 @@ export function useCurrencyBalance(
   const tokenBalance = useTokenBalance(account, isEth ? undefined : (currency as Token))
 
   return useMemo(() => {
-    if (!account) return undefined
+    if (!account || !currency) return undefined
     return isEth ? ethBalance[account] : tokenBalance
-  }, [account, ethBalance, isEth, tokenBalance])
+  }, [account, currency, ethBalance, isEth, tokenBalance])
 }
 
 export function useBaseTokenBalance(): TokenAmount | undefined {

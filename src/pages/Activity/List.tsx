@@ -13,7 +13,7 @@ import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
-import { PublicSaleItem, AirdropItem } from './ActivityItem'
+import { PublicSaleItem, AirdropItem } from 'pages/Activity/ActivityItem'
 
 function ItemWrapper({
   children,

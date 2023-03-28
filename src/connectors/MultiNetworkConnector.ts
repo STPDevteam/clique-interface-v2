@@ -11,6 +11,8 @@ export function getRpcUrl(chainId: ChainId) {
       return 'https://rinkeby.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
     case ChainId.GOERLI:
       return 'https://goerli.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
+    case ChainId.SEPOLIA:
+      return 'https://sepolia.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
     default:
       return SUPPORTED_NETWORKS[chainId]?.rpcUrls[0] || ''
   }

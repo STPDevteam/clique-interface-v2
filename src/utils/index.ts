@@ -126,6 +126,10 @@ const chains: ChainObject = {
   [ChainId.COINBASE_TESTNET]: {
     link: 'https://goerli.basescan.org',
     builder: explorers.etherscan
+  },
+  [ChainId.SEPOLIA]: {
+    link: 'https://sepolia.etherscan.io',
+    builder: explorers.etherscan
   }
 }
 

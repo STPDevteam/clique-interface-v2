@@ -143,6 +143,71 @@ export function getProposalVotesList(
   })
 }
 
+export function getPublicSaleList(saleId: string | undefined, offset: number, limit: number) {
+  return Axios.get('stpdao/v2/swap/list', {
+    saleId: saleId || '',
+    offset,
+    limit
+  })
+}
+
+export function getTransactionList(saleId: string, offset: number, limit: number) {
+  return Axios.get('stpdao/v2/swap/transactions', {
+    saleId,
+    offset,
+    limit
+  })
+}
+
+export function getTokenPrices(chainId: number, tokens?: string) {
+  return Axios.get('stpdao/v2/swap/prices', {
+    chainId,
+    tokens
+  })
+}
+
+export function toPurchase(account: string, buyAmount: string, saleId: number) {
+  return Axios.post('stpdao/v2/swap/purchased', {
+    account,
+    buyAmount,
+    saleId
+  })
+}
+
+export function toCreatePublicSale(
+  about: string,
+  chainId: number,
+  creator: string | undefined,
+  endTime: string | number,
+  limitMax: string,
+  limitMin: string,
+  receiveToken: string,
+  saleAmount: string | number,
+  salePrice: string | number,
+  saleToken: string,
+  saleWay: string,
+  startTime: number | string,
+  eventTitle: string,
+  whiteList: string[]
+) {
+  return Axios.post('stpdao/v2/swap/create', {
+    about,
+    chainId,
+    creator,
+    endTime,
+    limitMax,
+    limitMin,
+    receiveToken,
+    saleAmount,
+    salePrice,
+    saleToken,
+    saleWay,
+    startTime,
+    eventTitle,
+    whiteList
+  })
+}
+
 export function saveAirdropAddress(
   address: string[],
   amount: string[],

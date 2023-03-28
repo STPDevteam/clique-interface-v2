@@ -2,7 +2,7 @@ import { useState, ChangeEvent, useCallback, useEffect } from 'react'
 import { Box, Typography } from '@mui/material'
 import Modal from 'components/Modal'
 import CurrencyList from './CurrencyList'
-import TextButton from 'components/Button/TextButton'
+// import TextButton from 'components/Button/TextButton'
 import Divider from 'components/Divider'
 import Input from 'components/Input'
 import { Currency } from 'constants/token'
@@ -12,15 +12,31 @@ export enum Mode {
   IMPORT = 'import'
 }
 
-export default function SelectCurrencyModal({ onSelectCurrency }: { onSelectCurrency?: (currency: Currency) => void }) {
+export default function SelectCurrencyModal({
+  onSelectCurrency,
+  currencyOptions,
+  disabled
+}: {
+  onSelectCurrency?: (currency: Currency) => void
+  currencyOptions: Currency[]
+  disabled?: (Currency | undefined)[]
+}) {
   const [input, setInput] = useState('')
   const [mode, SetMode] = useState(Mode.SELECT)
 
-  const onManage = useCallback(() => {}, [])
+  // const onManage = useCallback(() => {}, [])
 
-  const onInput = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setInput(e.target.value)
-  }, [])
+  const onInput = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setInput(e.target.value)
+      if (!input) return currencyOptions
+      return currencyOptions.filter(
+        item =>
+          item.address.toLowerCase() === input.toLowerCase() || item.name?.toLowerCase().includes(input.toLowerCase())
+      )
+    },
+    [currencyOptions, input]
+  )
 
   useEffect(() => {
     if (input !== '') {
@@ -41,13 +57,17 @@ export default function SelectCurrencyModal({ onSelectCurrency }: { onSelectCurr
         </Box>
         <Divider />
         <Box paddingTop={'24px'}>
-          <CurrencyList mode={mode} currencyOptions={[]} onSelectCurrency={onSelectCurrency} />
+          <CurrencyList
+            mode={mode}
+            currencyOptions={currencyOptions.filter(item => !disabled?.includes(item))}
+            onSelectCurrency={onSelectCurrency}
+          />
         </Box>
         <Divider />
         <Box height="55px" justifyContent="center" display="flex">
-          <TextButton onClick={onManage} primary>
+          {/* <TextButton onClick={onManage} primary>
             Manage
-          </TextButton>
+          </TextButton> */}
         </Box>
       </Modal>
     </>

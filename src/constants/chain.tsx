@@ -24,7 +24,8 @@ export enum ChainId {
   KLAYTN = 8217,
   POLYGON_MUMBAI = 80001,
   POLYGON_MANGO = 1442,
-  COINBASE_TESTNET = 84531
+  COINBASE_TESTNET = 84531,
+  SEPOLIA = 11155111
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -141,6 +142,14 @@ export const AllChainList = [
     name: 'Base Goerli Testnet',
     id: ChainId.COINBASE_TESTNET,
     hex: '0x14A33'
+  },
+  {
+    icon: <ETH />,
+    logo: EthUrl,
+    symbol: 'Sepolia',
+    name: 'Sepolia Testnet',
+    id: ChainId.SEPOLIA,
+    hex: '0xaa36a7'
   }
 ]
 
@@ -308,5 +317,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://goerli.base.org'],
     blockExplorerUrls: ['https://goerli.basescan.org']
+  },
+  [ChainId.SEPOLIA]: {
+    chainId: '0xaa36a7',
+    chainName: 'Sepolia',
+    nativeCurrency: {
+      name: 'Sepolia Testnet',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://sepolia.infura.io/v3/169a2f10743f4afdaa0a17e148552867'],
+    blockExplorerUrls: ['https://sepolia.etherscan.io/']
   }
 }
