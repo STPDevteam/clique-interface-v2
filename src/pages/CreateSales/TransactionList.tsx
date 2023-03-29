@@ -50,6 +50,7 @@ export default function TransactionList({
             return (
               <Stack key={item.saleId} display={'flex'} justifyContent={'space-between'} flexDirection={'row'}>
                 <Link
+                  target={'_blank'}
                   href={
                     receiveToken && chainId && !isZero(receiveToken?.address)
                       ? getEtherscanLink(chainId, receiveToken?.address, 'address')

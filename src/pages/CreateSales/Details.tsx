@@ -780,7 +780,7 @@ export default function Details() {
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
                       {!isWhitelist
-                        ? 'you are not in whiteList'
+                        ? 'You are not in whiteList'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
                         : saleTokenBalance?.lessThan('0') || saleTokenBalance?.equalTo('0')
@@ -894,7 +894,7 @@ export default function Details() {
                       onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
                       {!isWhitelist
-                        ? 'you are not in whiteList'
+                        ? 'You are not in whiteList'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
                         : new BigNumber(Number(oneTimePayPriceApproveValue))?.isGreaterThan(
