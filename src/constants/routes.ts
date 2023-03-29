@@ -28,8 +28,8 @@ export const routes = {
   Profile: '/profile/:address',
   _Profile: '/profile',
   CreateSales: '/createSale',
-  SaleDetails: '/saleDetails/:saleId',
-  _SaleDetails: '/saleDetails',
+  SaleDetails: '/saleList/saleDetails/:saleId',
+  _SaleDetails: '/saleList/saleDetails',
   SaleList: '/saleList',
 
   Push: '/push'

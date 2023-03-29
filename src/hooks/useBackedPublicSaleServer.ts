@@ -3,8 +3,13 @@ import { useEffect, useState } from 'react'
 // import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
 import { getPublicSaleList, getTransactionList } from '../utils/fetch/server'
-import { ProposalStatus } from './useProposalInfo'
 
+export enum publicSaleStatus {
+  SOON = 'soon',
+  OPEN = 'normal',
+  ENDED = 'ended',
+  CANCEL = 'cancel'
+}
 export interface PublicSaleListBaseProp {
   about: string
   chainId: ChainId
@@ -26,6 +31,8 @@ export interface PublicSaleListBaseProp {
   startTime: number | string
   status: string
   title: string
+  urlCoingecko: string
+  urlCoinmarketcap: string
 }
 
 export interface transactionListProp {
@@ -39,7 +46,7 @@ export interface transactionListProp {
 }
 
 export function usePublicSaleTransactionList(saleId: string) {
-  const [status, setStatus] = useState<ProposalStatus>()
+  const [status, setStatus] = useState<publicSaleStatus>()
   const [currentPage, setCurrentPage] = useState(1)
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -65,7 +72,6 @@ export function usePublicSaleTransactionList(saleId: string) {
         const res = await getTransactionList(saleId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data.data as any
-        console.log(data)
 
         if (!data) {
           setResult([])
@@ -126,7 +132,7 @@ export function usePublicSaleTransactionList(saleId: string) {
 }
 
 export function usePublicSaleBaseList(saleId?: string) {
-  const [status, setStatus] = useState<ProposalStatus>()
+  const [status, setStatus] = useState<any>()
   const [currentPage, setCurrentPage] = useState(1)
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
@@ -149,7 +155,9 @@ export function usePublicSaleBaseList(saleId?: string) {
     ;(async () => {
       try {
         setLoading(true)
-        const res = await getPublicSaleList(saleId, (currentPage - 1) * pageSize, pageSize)
+        console.log(status)
+
+        const res = await getPublicSaleList(status, saleId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -176,7 +184,7 @@ export function usePublicSaleBaseList(saleId?: string) {
         return
       }
       try {
-        const res = await getPublicSaleList(saleId, (currentPage - 1) * pageSize, pageSize)
+        const res = await getPublicSaleList(status, saleId, (currentPage - 1) * pageSize, pageSize)
         const data = res.data.data as any
         if (!data) {
           return

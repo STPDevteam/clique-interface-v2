@@ -15,6 +15,8 @@ export class Currency {
   public readonly symbol?: string
   public readonly name?: string
   public readonly logo?: string
+  public readonly urlCoingecko?: string
+  public readonly urlCoinmarketcap?: string
 
   /**
    * The only instance of the base class `Currency`.
@@ -51,7 +53,9 @@ export class Currency {
     decimals: number,
     symbol?: string,
     name?: string,
-    logo?: string
+    logo?: string,
+    urlCoingecko?: string,
+    urlCoinmarketCap?: string
   ) {
     validateSolidityTypeInstance(JSBI.BigInt(decimals), SolidityType.uint8)
 
@@ -61,6 +65,8 @@ export class Currency {
     this.symbol = symbol
     this.name = name
     this.logo = logo
+    this.urlCoingecko = urlCoingecko
+    this.urlCoinmarketcap = urlCoinmarketCap
   }
 }
 

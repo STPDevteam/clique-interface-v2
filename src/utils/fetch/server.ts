@@ -143,8 +143,14 @@ export function getProposalVotesList(
   })
 }
 
-export function getPublicSaleList(saleId: string | undefined, offset: number, limit: number) {
+export function getPublicSaleList(
+  status: string | undefined,
+  saleId: string | undefined,
+  offset: number,
+  limit: number
+) {
   return Axios.get('stpdao/v2/swap/list', {
+    status: status || '',
     saleId: saleId || '',
     offset,
     limit
@@ -174,6 +180,13 @@ export function toPurchase(account: string, buyAmount: string, saleId: number) {
   })
 }
 
+export function getIsWhiteList(account: string, saleId: number) {
+  return Axios.get('stpdao/v2/swap/isWhite', {
+    account,
+    saleId
+  })
+}
+
 export function toCreatePublicSale(
   about: string,
   chainId: number,
@@ -187,7 +200,7 @@ export function toCreatePublicSale(
   saleToken: string,
   saleWay: string,
   startTime: number | string,
-  eventTitle: string,
+  title: string,
   whiteList: string[]
 ) {
   return Axios.post('stpdao/v2/swap/create', {
@@ -203,7 +216,7 @@ export function toCreatePublicSale(
     saleToken,
     saleWay,
     startTime,
-    eventTitle,
+    title,
     whiteList
   })
 }
