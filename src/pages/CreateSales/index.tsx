@@ -503,6 +503,9 @@ export default function Index() {
               setSaleToken(undefined)
               setReceiveToken(undefined)
             }
+            if (e?.id !== chainId) {
+              e?.id && triggerSwitchChain(library, e?.id, account || '')
+            }
           }}
         />
       </RowWrapper>
