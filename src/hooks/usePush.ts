@@ -5,7 +5,7 @@ import { PUSH_CONFIG } from '../constants'
 
 function useSubscribe() {
   const { account, library } = useActiveWeb3React()
-  return useCallback(
+  const subscribe = useCallback(
     (channelAddress: string = PUSH_CONFIG.channelAddress) => {
       if (!library || !account) return undefined
 
@@ -24,6 +24,27 @@ function useSubscribe() {
     },
     [account, library]
   )
+  const unSubscribe = useCallback(
+    (channelAddress: string = PUSH_CONFIG.channelAddress) => {
+      if (!library || !account) return undefined
+
+      return PushAPI.channels.unsubscribe({
+        signer: library.getSigner(account),
+        channelAddress: `eip155:5:${channelAddress}`, // channel address in CAIP
+        userAddress: `eip155:5:${account}`, // user address in CAIP
+        onSuccess: () => {
+          console.log('opt in success')
+        },
+        onError: () => {
+          console.error('opt in error')
+        },
+        env: PUSH_CONFIG.env
+      })
+    },
+    [account, library]
+  )
+
+  return { unSubscribe, subscribe }
 }
 
 function useQuerySubscribeList() {
