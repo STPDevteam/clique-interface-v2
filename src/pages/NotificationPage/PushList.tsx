@@ -1,25 +1,16 @@
-import { Badge, Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
-import OutlineButton from 'components/Button/OutlineButton'
 import Pagination from 'components/Pagination'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
-import {
-  NotificationProp,
-  NotificationTypes,
-  useNotificationListInfo,
-  useNotificationToRead
-} from 'hooks/useBackedNotificationServer'
+import { NotificationProp, NotificationTypes, useNotificationListInfo } from 'hooks/useBackedNotificationServer'
 import EmptyData from 'components/EmptyData'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import { timeStampToFormat } from 'utils/dao'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
-import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
-import PushManagementModal from './PushManagementModal'
-import useModal from 'hooks/useModal'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
   marginTop: 24,
@@ -69,19 +60,7 @@ function TypeTitle({ isRead, type }: { isRead: boolean; type: NotificationTypes 
   )
 }
 
-function MsgItem({
-  item,
-  setReadOnce,
-  isReadAll,
-  toBackedReadOnce
-}: {
-  item: NotificationProp
-  setReadOnce: () => void
-  isReadAll: boolean
-  toBackedReadOnce: (notificationId: number) => Promise<any>
-}) {
-  const [isRead, setIsRead] = useState(item.alreadyRead)
-
+function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boolean }) {
   const history = useHistory()
   const showData: {
     text: string
@@ -113,19 +92,9 @@ function MsgItem({
   }, [item.info, item.types])
 
   return (
-    <Box
-      sx={{ cursor: isRead || isReadAll ? 'auto' : 'pointer' }}
-      onClick={() => {
-        if (!isRead || !isReadAll) {
-          toBackedReadOnce(item.notificationId).then(() => {
-            setIsRead(true)
-            setReadOnce()
-          })
-        }
-      }}
-    >
+    <Box sx={{ cursor: isReadAll ? 'auto' : 'pointer' }}>
       <RowCenter mb={16}>
-        <TypeTitle isRead={isRead || isReadAll} type={item.types} />
+        <TypeTitle isRead={isReadAll} type={item.types} />
         <Text>{timeStampToFormat(item.notificationTime)}</Text>
       </RowCenter>
       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
@@ -161,17 +130,8 @@ function MsgItem({
   )
 }
 
-export default function NotificationPage() {
-  const [isReadAll, setIsReadAll] = useState(false)
-  const { showModal } = useModal()
+export default function PushList() {
   const { result: notificationList, loading, page } = useNotificationListInfo()
-  const {
-    setReadOnce,
-    setReadAll,
-    data: { unReadCount }
-  } = useNotificationListPaginationCallback()
-  const { toBackedReadAll, toBackedReadOnce } = useNotificationToRead()
-  const history = useHistory()
 
   return (
     <Box
@@ -181,36 +141,9 @@ export default function NotificationPage() {
     >
       <ContainerWrapper maxWidth={1150}>
         <RowCenter>
-          <RowCenter>
-            <Typography mr={10} variant="h6">
-              Notifications
-            </Typography>
-            <OutlineButton height={24} width={140} noBold onClick={() => history.push(routes.PushList)}>
-              Push Message
-            </OutlineButton>
-          </RowCenter>
-          <Stack display={'grid'} gridTemplateColumns="1fr 1fr" gap={16}>
-            <Badge badgeContent={4} color="primary">
-              <OutlineButton noBold height={24} width={140} onClick={() => showModal(<PushManagementModal />)}>
-                Push management
-              </OutlineButton>
-            </Badge>
-            <OutlineButton
-              height={24}
-              width={140}
-              noBold
-              onClick={() => {
-                if (unReadCount) {
-                  toBackedReadAll().then(() => {
-                    setReadAll()
-                    setIsReadAll(true)
-                  })
-                }
-              }}
-            >
-              Make all as read
-            </OutlineButton>
-          </Stack>
+          <Typography mr={10} variant="h6">
+            Push Message
+          </Typography>
         </RowCenter>
         <Wrapper spacing={26}>
           <Box minHeight={150}>
@@ -222,15 +155,7 @@ export default function NotificationPage() {
             </DelayLoading>
             <Stack spacing={16}>
               {!loading &&
-                notificationList.map(item => (
-                  <MsgItem
-                    setReadOnce={setReadOnce}
-                    toBackedReadOnce={toBackedReadOnce}
-                    key={item.notificationId}
-                    isReadAll={isReadAll}
-                    item={item}
-                  />
-                ))}
+                notificationList.map(item => <MsgItem key={item.notificationId} isReadAll={true} item={item} />)}
             </Stack>
           </Box>
           <Box display={'flex'} justifyContent="center">
