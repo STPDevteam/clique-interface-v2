@@ -204,7 +204,11 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       <DiscountTag>
         <img src={ChainListMap[item?.chainId]?.logo} alt="" />
         <Typography variant="inherit">
-          {new BigNumber(item.originalDiscount).multipliedBy(100).toString()}% discount
+          {new BigNumber(item.originalDiscount)
+            .multipliedBy(100)
+            .toFixed(2)
+            .toString()}
+          % discount
         </Typography>
       </DiscountTag>
       <Stack spacing={24}>

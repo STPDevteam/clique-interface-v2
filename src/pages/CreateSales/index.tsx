@@ -521,6 +521,8 @@ export default function Index() {
           <NumericalInput
             onClick={() => {
               const noEthCurrenncyOptions = currencyOptions.filter((item: any) => !isZero(item?.address))
+              console.log(currencyOptions)
+
               showModal(
                 <SelectCurrencyModal
                   disabled={[saleToken, receiveToken]}

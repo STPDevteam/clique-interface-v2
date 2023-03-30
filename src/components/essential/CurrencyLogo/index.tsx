@@ -30,7 +30,10 @@ export default function CurrencyLogo({
 
   useEffect(() => {
     if (currency) {
-      if (args?.address !== currency.address && args?.chainId !== currency.chainId) {
+      if (currency.logo) {
+        setSrcs([currency.logo])
+        return
+      } else if (args?.address !== currency.address && args?.chainId !== currency.chainId) {
         setArgs({
           address: currency.address,
           chainId: currency.chainId
@@ -43,7 +46,7 @@ export default function CurrencyLogo({
 
   useEffect(() => {
     ;(async () => {
-      if (args) {
+      if (args && srcs.length === 0) {
         const key = `${args.chainId}_${args.address}`
         try {
           if (logos[key]) {
@@ -60,11 +63,9 @@ export default function CurrencyLogo({
         } catch (error) {
           setSrcs([])
         }
-      } else {
-        setSrcs([])
       }
     })()
-  }, [args])
+  }, [args, srcs.length])
 
   return (
     <Logo
