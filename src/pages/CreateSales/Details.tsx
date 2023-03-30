@@ -463,6 +463,7 @@ export default function Details() {
                     width={20}
                     onClick={() => {
                       receiveToken &&
+                        !isZero(receiveToken?.address) &&
                         addTokenToWallet(receiveToken?.address, receiveToken?.symbol || '', receiveToken?.decimals)
                     }}
                     src={metamaskIcon}
