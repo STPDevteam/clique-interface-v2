@@ -204,24 +204,26 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
       <DiscountTag>
         <img src={ChainListMap[item?.chainId]?.logo} alt="" />
         <Typography variant="inherit">
-          {new BigNumber(item.originalDiscount)
-            .multipliedBy(100)
-            .toFixed(2)
-            .toString()}
+          {new BigNumber(item.originalDiscount).multipliedBy(100).isGreaterThanOrEqualTo(0.01)
+            ? new BigNumber(item.originalDiscount)
+                .multipliedBy(100)
+                .toFixed(2)
+                .toString()
+            : '< 0.01'}
           % discount
         </Typography>
       </DiscountTag>
       <Stack spacing={24}>
         <StyledTitle variant="h6">{item?.title}</StyledTitle>
         <Box display={'grid'} gridTemplateColumns="100px 1fr 1fr 1fr 1fr 1fr">
-          <Stack display={'flex'} flexDirection={'row'}>
+          <Stack display={'flex'} flexDirection={'row'} alignItems={'center'}>
             <img
-              src={item.saleTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
+              src={item.receiveTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
               height={50}
               alt=""
             />
             <img
-              src={item.receiveTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
+              src={item.saleTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
               height={50}
               alt=""
             />

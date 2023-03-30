@@ -1,4 +1,4 @@
-import { Box, Card, CircularProgress, Stack, Link, styled, Typography } from '@mui/material'
+import { Box, Card, Stack, Link, styled, Typography } from '@mui/material'
 import Back from 'components/Back'
 import theme from 'theme'
 import Input from 'components/Input'
@@ -44,6 +44,8 @@ import isZero from 'utils/isZero'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { addTokenToWallet } from 'utils/addTokenToWallet'
 import Image from 'components/Image'
+import CircularStatic from 'pages/Activity/CircularStatic'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 enum Tabs {
   ABOUT,
@@ -120,7 +122,7 @@ const ColSentence = styled('div')(() => ({
 
 export default function Details() {
   const { saleId } = useParams<{ saleId: string }>()
-  const { account } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const [salesAmount, setSalesAmount] = useState('')
   const [ratio, setRatio] = useState('')
@@ -191,7 +193,7 @@ export default function Details() {
         }
         ratio = new BigNumber(result[0]?.price)
           .div(new BigNumber(result[1]?.price))
-          .toFixed()
+          .toFixed(6)
           .toString()
         setUrl([result[0], result[1]])
       } catch (error) {
@@ -404,7 +406,7 @@ export default function Details() {
                 alt=""
               />
               <div>
-                <p>{receiveToken?.symbol}</p>
+                <p>{receiveToken?.name}</p>
                 {!isReceiveTokenEth ? (
                   <div className="iconList">
                     <Link
@@ -474,7 +476,7 @@ export default function Details() {
                 alt=""
               />
               <div>
-                <p>{saleToken?.symbol}</p>
+                <p>{saleToken?.name}</p>
                 <div className="iconList">
                   <Link
                     href={
@@ -567,11 +569,16 @@ export default function Details() {
                   flexDirection: 'row'
                 }}
               >
-                <span>{Number(progress) ? Number(progress) : 0}%</span>
-                <CircularProgress
+                {/* <span>{Number(progress) ? Number(progress) : 0}%</span> */}
+                {/* <CircularProgress
                   sx={{ marginLeft: 10, '& .css-oxts8u-MuiCircularProgress-circle': { fill: '#c9cdd4' } }}
                   variant="determinate"
                   value={Number(progress) ? Number(progress) : 0}
+                /> */}
+                <CircularStatic
+                  value={Number(progress) ? Number(progress) : 0}
+                  borderValue={5}
+                  style={{ width: '60px', height: '60px' }}
                 />
               </p>
             </ColSentence>
@@ -674,7 +681,14 @@ export default function Details() {
                 </RowSentence>
                 <RowSentence>
                   <span>Est.discount</span>
-                  <span>{new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(6)}%</span>
+                  <span>
+                    {new BigNumber(SwapData?.originalDiscount)
+                      .multipliedBy(new BigNumber(100))
+                      .isGreaterThanOrEqualTo(0.01)
+                      ? new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(6)
+                      : '< 0.01'}
+                    %
+                  </span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
@@ -779,7 +793,9 @@ export default function Details() {
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
-                      {!isWhitelist
+                      {chainId !== SwapData?.chainId
+                        ? 'Switch network'
+                        : !isWhitelist
                         ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
@@ -826,7 +842,12 @@ export default function Details() {
                 </RowSentence>
                 <RowSentence>
                   <span>Discount</span>
-                  <span>{Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(6)}%</span>
+                  <span>
+                    {new BigNumber(SwapData?.originalDiscount).multipliedBy(100).isGreaterThanOrEqualTo(0.01)
+                      ? Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(6)
+                      : '< 0.01'}
+                    %
+                  </span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
@@ -891,9 +912,17 @@ export default function Details() {
                           new BigNumber(Number(saleTokenBalance?.toExact() || ''))
                         )
                       }
-                      onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
+                      onClick={
+                        approveState1 === ApprovalState.NOT_APPROVED
+                          ? approveCallback1
+                          : chainId !== SwapData?.chainId
+                          ? () => triggerSwitchChain(library, SwapData?.chainId, account || '')
+                          : handlePay
+                      }
                     >
-                      {!isWhitelist
+                      {chainId !== SwapData?.chainId
+                        ? 'Switch network'
+                        : !isWhitelist
                         ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'

@@ -405,6 +405,17 @@ export default function Index() {
           error: 'One-time Price required'
         }
       }
+      // if (
+      //   new BigNumber(salePrice)
+      //     .multipliedBy(new BigNumber(100))
+      //     .div(Number(currencyRatio))
+      //     .isGreaterThan(200)
+      // ) {
+      //   return {
+      //     disabled: true,
+      //     error: 'Discount can not be over 200%'
+      //   }
+      // }
     }
     if (purchase === purchaseType.LIMIT) {
       if (minPurchaseCa?.lessThan(JSBI.BigInt(0))) {
@@ -458,20 +469,20 @@ export default function Index() {
     account,
     baseChainId,
     chainId,
+    saleToken,
+    salePriceType,
+    salesAmount,
+    purchase,
+    startTime,
     endTime,
     handlePublic,
-    library,
-    maxPurchaseCa,
-    minPurchaseCa,
-    oneTimePrice,
-    packagePrice,
-    purchase,
-    salePriceType,
-    saleToken,
-    salesAmount,
-    startTime,
     toggleWallet,
-    salePrice
+    library,
+    salePrice,
+    packagePrice,
+    oneTimePrice,
+    minPurchaseCa,
+    maxPurchaseCa
   ])
 
   return (
@@ -521,8 +532,6 @@ export default function Index() {
           <NumericalInput
             onClick={() => {
               const noEthCurrenncyOptions = currencyOptions.filter((item: any) => !isZero(item?.address))
-              console.log(currencyOptions)
-
               showModal(
                 <SelectCurrencyModal
                   disabled={[saleToken, receiveToken]}
@@ -690,8 +699,16 @@ export default function Index() {
               : new BigNumber(salePrice)
                   .multipliedBy(new BigNumber(100))
                   .div(Number(currencyRatio))
-                  .toFixed())}
+                  .toFixed(2))}
           %
+          {/* {new BigNumber(salePrice)
+            .multipliedBy(new BigNumber(100))
+            .div(Number(currencyRatio))
+            .isGreaterThan(200) ? (
+            <span style={{ color: 'red' }}> discount can not be over 200%</span>
+          ) : (
+            ''
+          )} */}
         </Typography>
       </RowWrapper>
       <RowWrapper padding={'0 16px'}>
