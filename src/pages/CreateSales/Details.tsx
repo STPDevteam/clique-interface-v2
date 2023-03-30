@@ -401,7 +401,10 @@ export default function Details() {
           >
             <CardWrapper>
               <Image
-                width={80}
+                style={{
+                  maxWidth: '80px',
+                  maxHeight: '80px'
+                }}
                 src={SwapData?.receiveTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
                 alt=""
               />
@@ -471,7 +474,10 @@ export default function Details() {
             <p>&gt;&gt;</p>
             <CardWrapper>
               <Image
-                width={80}
+                style={{
+                  maxWidth: '80px',
+                  maxHeight: '80px'
+                }}
                 src={SwapData?.saleTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
                 alt=""
               />
