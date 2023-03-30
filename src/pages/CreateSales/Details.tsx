@@ -406,7 +406,7 @@ export default function Details() {
                 alt=""
               />
               <div>
-                <p>{receiveToken?.name}</p>
+                <p>{receiveToken?.symbol}</p>
                 {!isReceiveTokenEth ? (
                   <div className="iconList">
                     <Link
@@ -476,7 +476,7 @@ export default function Details() {
                 alt=""
               />
               <div>
-                <p>{saleToken?.name}</p>
+                <p>{saleToken?.symbol}</p>
                 <div className="iconList">
                   <Link
                     href={
@@ -767,9 +767,15 @@ export default function Details() {
                   pt={30}
                 >
                   {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
-                    <BlackButton disabled width="252px">
+                    <BlackButton
+                      disabled
+                      width="252px"
+                      onClick={() => triggerSwitchChain(library, SwapData?.chainId, account || '')}
+                    >
                       Sale ended
                     </BlackButton>
+                  ) : chainId !== SwapData?.chainId ? (
+                    <BlackButton width="252px">Switch network</BlackButton>
                   ) : (
                     <BlackButton
                       width="252px"
@@ -793,9 +799,7 @@ export default function Details() {
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
-                      {chainId !== SwapData?.chainId
-                        ? 'Switch network'
-                        : !isWhitelist
+                      {!isWhitelist
                         ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
@@ -844,7 +848,7 @@ export default function Details() {
                   <span>Discount</span>
                   <span>
                     {new BigNumber(SwapData?.originalDiscount).multipliedBy(100).isGreaterThanOrEqualTo(0.01)
-                      ? Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(6)
+                      ? Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(2)
                       : '< 0.01'}
                     %
                   </span>
@@ -898,6 +902,13 @@ export default function Details() {
                     <BlackButton disabled width="252px">
                       Sale ended
                     </BlackButton>
+                  ) : chainId !== SwapData?.chainId ? (
+                    <BlackButton
+                      width="252px"
+                      onClick={() => triggerSwitchChain(library, SwapData?.chainId, account || '')}
+                    >
+                      Switch network
+                    </BlackButton>
                   ) : (
                     <BlackButton
                       width="252px"
@@ -912,17 +923,9 @@ export default function Details() {
                           new BigNumber(Number(saleTokenBalance?.toExact() || ''))
                         )
                       }
-                      onClick={
-                        approveState1 === ApprovalState.NOT_APPROVED
-                          ? approveCallback1
-                          : chainId !== SwapData?.chainId
-                          ? () => triggerSwitchChain(library, SwapData?.chainId, account || '')
-                          : handlePay
-                      }
+                      onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
-                      {chainId !== SwapData?.chainId
-                        ? 'Switch network'
-                        : !isWhitelist
+                      {!isWhitelist
                         ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
