@@ -17,7 +17,7 @@ const statusItemList = [
   { value: publicSaleStatus.SOON, label: 'Soon' },
   { value: publicSaleStatus.OPEN, label: 'Active' },
   { value: publicSaleStatus.ENDED, label: 'Ended' },
-  { value: publicSaleStatus.CANCEL, label: 'Cancel' }
+  { value: publicSaleStatus.CANCEL, label: 'Cancelled' }
 ]
 
 export default function SalesList() {

@@ -40,6 +40,7 @@ import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useWalletModalToggle } from 'state/application/hooks'
+import isZero from 'utils/isZero'
 
 enum purchaseType {
   ONETIME,
@@ -273,7 +274,11 @@ export default function Index() {
     )
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)} />)
+        showModal(
+          <TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)}>
+            Your swap can take up to 5 minutes to appear
+          </TransactiontionSubmittedModal>
+        )
       })
       .catch((err: any) => {
         hideModal()
@@ -512,11 +517,12 @@ export default function Index() {
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
           <NumericalInput
             onClick={() => {
+              const noEthCurrenncyOptions = currencyOptions.filter((item: any) => !isZero(item?.address))
               showModal(
                 <SelectCurrencyModal
                   disabled={[saleToken, receiveToken]}
                   onSelectCurrency={onSelectCurrency}
-                  currencyOptions={currencyOptions}
+                  currencyOptions={noEthCurrenncyOptions}
                 />
               )
             }}
@@ -654,9 +660,15 @@ export default function Index() {
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
           Sale price
         </Typography>
-        <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
-          {salePrice ? `1 ${saleToken?.symbol} = ${salePrice} ${receiveToken?.symbol}` : ''}
-        </Typography>
+        {new BigNumber(salePrice).isLessThan(0.000001) ? (
+          <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
+            {salePrice ? `1 ${saleToken?.symbol} < 0.000001 ${receiveToken?.symbol}` : ''}
+          </Typography>
+        ) : (
+          <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
+            {salePrice ? `1 ${saleToken?.symbol} = ${salePrice} ${receiveToken?.symbol}` : ''}
+          </Typography>
+        )}
       </RowWrapper>
       <RowWrapper padding={'40px 16px'}>
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
@@ -664,10 +676,16 @@ export default function Index() {
         </Typography>
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
           {salePrice &&
-            new BigNumber(salePrice)
+            currencyRatio &&
+            (new BigNumber(salePrice)
               .multipliedBy(new BigNumber(100))
               .div(Number(currencyRatio))
-              .toFixed(6)}
+              .isLessThan(0.01)
+              ? '< 0.01'
+              : new BigNumber(salePrice)
+                  .multipliedBy(new BigNumber(100))
+                  .div(Number(currencyRatio))
+                  .toFixed())}
           %
         </Typography>
       </RowWrapper>

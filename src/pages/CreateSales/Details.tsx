@@ -261,7 +261,8 @@ export default function Details() {
   const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, receiveToken || undefined)
   const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
 
-  const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
+  const isReceiveTokenEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
+  const isSaleTokenEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
 
   const handlePay = useCallback(() => {
     if (!account || !saleId) return
@@ -271,7 +272,7 @@ export default function Details() {
       account,
       isOneTimePurchase ? oneTimePurchaseTokenAmount?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
       Number(saleId),
-      isEth
+      isReceiveTokenEth
     )
       .then(hash => {
         hideModal()
@@ -290,9 +291,9 @@ export default function Details() {
     account,
     buyTokenAmount?.raw,
     hideModal,
-    isEth,
     isOneTimePurchase,
-    oneTimePurchaseTokenAmount,
+    isReceiveTokenEth,
+    oneTimePurchaseTokenAmount?.raw,
     purchaseCallback,
     saleId,
     showModal
@@ -327,7 +328,7 @@ export default function Details() {
     } else if (SwapData.status === SwapStatus.CANCEL) {
       targetTimeString = 'canceled'
     } else {
-      targetTimeString = getTargetTimeString(now, Number(SwapData?.endTime))
+      targetTimeString = timeStampToFormat(Number(SwapData?.endTime))
     }
     return targetTimeString
   }, [SwapData, salesInfo])
@@ -360,7 +361,7 @@ export default function Details() {
   const [approveState, approveCallback] = useApproveCallback(
     oneTimePurchaseApproveTokenAmount,
     SwapData?.chainId ? PUBLICSALE_ADDRESS[SwapData?.chainId as ChainId] : undefined,
-    isEth
+    isReceiveTokenEth
   )
   const [approveState1, approveCallback1] = useApproveCallback(
     oneTimePriceCurrencyAmount,
@@ -401,7 +402,7 @@ export default function Details() {
               />
               <div>
                 <p>{receiveToken?.symbol}</p>
-                {!isEth ? (
+                {!isReceiveTokenEth ? (
                   <div className="iconList">
                     <Link
                       href={
@@ -471,7 +472,7 @@ export default function Details() {
               />
               <div>
                 <p>{saleToken?.symbol}</p>
-                {!isEth ? (
+                {!isSaleTokenEth ? (
                   <div className="iconList">
                     <Link
                       href={
@@ -780,7 +781,7 @@ export default function Details() {
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
                       {!isWhitelist
-                        ? 'You are not in whiteList'
+                        ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
                         : saleTokenBalance?.lessThan('0') || saleTokenBalance?.equalTo('0')
@@ -894,7 +895,7 @@ export default function Details() {
                       onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
                       {!isWhitelist
-                        ? 'You are not in whiteList'
+                        ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
                         : new BigNumber(Number(oneTimePayPriceApproveValue))?.isGreaterThan(
@@ -944,7 +945,11 @@ export default function Details() {
                   disabled={salesInfo?.isCancel || SwapData?.status === 'ended' || isClaimingBalance}
                   onClick={handleCancel}
                 >
-                  {salesInfo?.isCancel || SwapData?.status === 'ended' ? 'Sale ended' : 'Cancel event'}
+                  {salesInfo?.isCancel
+                    ? 'Event cancelled'
+                    : SwapData?.status === 'ended'
+                    ? 'Sale ended'
+                    : 'Cancel event'}
                 </BlackButton>
               </Stack>
             </Stack>
