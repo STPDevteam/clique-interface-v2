@@ -693,7 +693,7 @@ export default function Details() {
                     {new BigNumber(SwapData?.originalDiscount)
                       .multipliedBy(new BigNumber(100))
                       .isGreaterThanOrEqualTo(0.01)
-                      ? new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(6)
+                      ? new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(2)
                       : '< 0.01'}
                     %
                   </span>
@@ -775,15 +775,16 @@ export default function Details() {
                   pt={30}
                 >
                   {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
-                    <BlackButton
-                      disabled
-                      width="252px"
-                      onClick={() => triggerSwitchChain(library, SwapData?.chainId, account || '')}
-                    >
+                    <BlackButton disabled width="252px">
                       Sale ended
                     </BlackButton>
                   ) : chainId !== SwapData?.chainId ? (
-                    <BlackButton width="252px">Switch network</BlackButton>
+                    <BlackButton
+                      width="252px"
+                      onClick={() => triggerSwitchChain(library, SwapData?.chainId, account || '')}
+                    >
+                      Switch network
+                    </BlackButton>
                   ) : (
                     <BlackButton
                       width="252px"
