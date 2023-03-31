@@ -330,8 +330,6 @@ export default function Details() {
       targetTimeString = getAllTargetTimeString(now, Number(SwapData?.endTime))
     } else if (SwapData.status === SwapStatus.OPEN) {
       targetTimeString = getAllTargetTimeString(now, Number(SwapData?.endTime))
-    } else if (SwapData.status === SwapStatus.CANCEL) {
-      targetTimeString = 'cancelled'
     } else {
       targetTimeString = timeStampToFormat(Number(SwapData?.endTime))
     }
@@ -774,9 +772,13 @@ export default function Details() {
                   justifyContent={'center'}
                   pt={30}
                 >
-                  {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
+                  {SwapData?.status === SwapStatus.ENDED ? (
                     <BlackButton disabled width="252px">
                       Sale ended
+                    </BlackButton>
+                  ) : SwapData?.status === SwapStatus.CANCEL ? (
+                    <BlackButton disabled width="252px">
+                      Sale cancelled
                     </BlackButton>
                   ) : chainId !== SwapData?.chainId ? (
                     <BlackButton
@@ -907,9 +909,13 @@ export default function Details() {
                   justifyContent={'center'}
                   pt={30}
                 >
-                  {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
+                  {SwapData?.status === SwapStatus.ENDED ? (
                     <BlackButton disabled width="252px">
                       Sale ended
+                    </BlackButton>
+                  ) : SwapData?.status === SwapStatus.CANCEL ? (
+                    <BlackButton disabled width="252px">
+                      Sale cancelled
                     </BlackButton>
                   ) : chainId !== SwapData?.chainId ? (
                     <BlackButton
@@ -985,7 +991,7 @@ export default function Details() {
                   disabled={salesInfo?.isCancel || SwapData?.status === 'ended' || isClaimingBalance}
                   onClick={handleCancel}
                 >
-                  {salesInfo?.isCancel
+                  {SwapData?.status === 'cancel'
                     ? 'Event cancelled'
                     : SwapData?.status === 'ended'
                     ? 'Sale ended'
