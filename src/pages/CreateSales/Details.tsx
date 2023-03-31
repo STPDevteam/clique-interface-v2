@@ -712,6 +712,7 @@ export default function Details() {
                 </RowSentence>
                 <NumericalInput
                   value={salesAmount}
+                  autoFocus
                   errSet={() => {}}
                   onChange={e => {
                     setSalesAmount(e.target.value)
