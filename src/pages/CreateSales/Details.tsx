@@ -992,7 +992,7 @@ export default function Details() {
                   onClick={handleCancel}
                 >
                   {SwapData?.status === 'cancel'
-                    ? 'Event cancelled'
+                    ? 'Sale cancelled'
                     : SwapData?.status === 'ended'
                     ? 'Sale ended'
                     : 'Cancel event'}
