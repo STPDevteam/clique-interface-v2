@@ -901,7 +901,7 @@ export default function Index() {
       {paramsCheck.error ? (
         <Alert severity="error">{paramsCheck.error}</Alert>
       ) : (
-        <Alert severity="info">You will create a public sale in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
+        <Alert severity="info">You will create a swap in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
       )}
       <Stack display="flex" justifyContent="center" mt={30} flexDirection={'row'} spacing={60}>
         <BlackButton

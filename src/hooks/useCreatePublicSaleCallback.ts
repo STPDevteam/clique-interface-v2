@@ -65,7 +65,7 @@ export function usePurchaseCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Purchase a public sale`,
+            summary: `Purchased a swap`,
             claim: { recipient: `${account}_purchase_swap_${saleId}` }
           })
           return response.hash
@@ -251,7 +251,7 @@ export function useCreatePublicSaleCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Create a public sale`
+            summary: `Create a swap`
           })
           return response.hash
         })
