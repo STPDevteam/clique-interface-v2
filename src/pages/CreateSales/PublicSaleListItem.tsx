@@ -141,7 +141,7 @@ function ShowStatus({ item }: { item: any }) {
             : 'Ended'
         }
       >
-        {titleCase(item.status === 'normal' ? 'active' : item.status)}
+        {titleCase(item.status === 'normal' ? 'active' : item.status === 'cancel' ? 'cancelled' : item.status)}
       </StyledStatusText>
       <StyledText fontSize={16}>{targetTimeString}</StyledText>
     </>

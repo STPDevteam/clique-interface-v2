@@ -153,7 +153,7 @@ export function useCancelSaleCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Cancel a public sale`,
+            summary: `Cancel a swap`,
             claim: { recipient: `${account}_claim_balance_${saleId}` }
           })
           return response.hash
