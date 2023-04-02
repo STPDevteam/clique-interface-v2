@@ -333,7 +333,10 @@ export default function Index() {
 
   const sharePer = useMemo(() => {
     if (!salePrice || !oneTimePrice) return
-    return new BigNumber(oneTimePrice).multipliedBy(new BigNumber(salePrice))
+    return new BigNumber(oneTimePrice)
+      .multipliedBy(new BigNumber(salePrice))
+      .toFixed()
+      .toString()
   }, [salePrice, oneTimePrice])
 
   const paramsCheck: {

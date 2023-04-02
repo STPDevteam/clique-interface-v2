@@ -247,11 +247,10 @@ export default function Details() {
 
   const oneTimePayPriceApproveValue = useMemo(() => {
     if (!SwapData || !oneTimePurchaseTokenAmount || !receiveToken || !salesInfo) return
-    return Number(
-      new BigNumber(oneTimePurchaseTokenAmount.toExact()).multipliedBy(
-        new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()
-      )
-    ).toString()
+    const _Percent = new BigNumber(oneTimePurchaseTokenAmount.toExact())
+      .multipliedBy(new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toExact())
+      .toFixed()
+    return _Percent.toString()
   }, [SwapData, oneTimePurchaseTokenAmount, receiveToken, salesInfo])
 
   const canBuyMaxValue = useMemo(() => {
