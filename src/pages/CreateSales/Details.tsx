@@ -132,8 +132,6 @@ export default function Details() {
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
   const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
-  console.log(salesInfo)
-  console.log(SwapData)
 
   const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
   const saleToken = useNativeAndToken(SwapData?.saleToken, SwapData?.chainId)
@@ -148,7 +146,6 @@ export default function Details() {
     return new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
   }, [SoldAmountData, saleToken])
 
-  console.log(saleToken, receiveToken)
   const [url, setUrl] = useState<any>([])
   const [isWhitelist, setIsWhiteList] = useState(false)
 
@@ -225,11 +222,9 @@ export default function Details() {
   // }, [SwapData, saleToken])
   const swapAmount = useMemo(() => {
     if (!salesAmount || !receiveToken || !salesInfo) return ''
-    const value = Number(
-      new BigNumber(Number(salesAmount)).multipliedBy(
-        new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()
-      )
-    )
+    const value = new BigNumber(Number(salesAmount))
+      .multipliedBy(new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toExact())
+      .toFixed()
     return value.toString()
   }, [receiveToken, salesAmount, salesInfo])
 
@@ -276,7 +271,8 @@ export default function Details() {
       account,
       isOneTimePurchase ? oneTimePurchaseTokenAmount?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
       Number(saleId),
-      isReceiveTokenEth
+      isReceiveTokenEth,
+      isOneTimePurchase ? oneTimePriceCurrencyAmount?.raw.toString() : oneTimePurchaseApproveTokenAmount?.raw.toString()
     )
       .then(hash => {
         hideModal()
@@ -297,6 +293,8 @@ export default function Details() {
     hideModal,
     isOneTimePurchase,
     isReceiveTokenEth,
+    oneTimePriceCurrencyAmount?.raw,
+    oneTimePurchaseApproveTokenAmount?.raw,
     oneTimePurchaseTokenAmount?.raw,
     purchaseCallback,
     saleId,

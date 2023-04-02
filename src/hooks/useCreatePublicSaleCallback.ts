@@ -40,7 +40,7 @@ export function usePurchaseCallback() {
   const gasPriceInfoCallback = useGasPriceInfo()
 
   return useCallback(
-    async (account: string, buyAmount: string, saleId: number, isEth?: boolean) => {
+    async (account: string, buyAmount: string, saleId: number, isEth?: boolean, ethValue?: string) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
       let result: any = {}
@@ -55,13 +55,13 @@ export function usePurchaseCallback() {
       }
       const args = [saleId, buyAmount, result.signature]
       const method = 'Purchase'
-
-      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args, isEth ? ethValue : undefined)
       return contract[method](...args, {
         gasPrice,
         gasLimit,
+        // gasLimit: '3500000',
         from: account,
-        value: isEth ? buyAmount : undefined
+        value: isEth ? ethValue : undefined
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
