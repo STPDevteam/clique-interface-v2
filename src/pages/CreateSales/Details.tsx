@@ -256,9 +256,9 @@ export default function Details() {
   }, [saleToken, salesInfo])
 
   const restCanBuyValue = useMemo(() => {
-    if (!soldTokenAmountData) return
-    const amount = canBuyMaxValue?.subtract(soldTokenAmountData).toSignificant()
-    return tryParseAmount(amount || undefined, saleToken || undefined)
+    if (!soldTokenAmountData || !saleToken || !canBuyMaxValue) return
+    const amount = canBuyMaxValue?.subtract(soldTokenAmountData)
+    return tryParseAmount(amount?.toSignificant() || undefined, saleToken || undefined)
   }, [canBuyMaxValue, saleToken, soldTokenAmountData])
 
   const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, receiveToken || undefined)
@@ -631,7 +631,15 @@ export default function Details() {
                   fontSize: 12,
                   borderRadius: '24px',
                   boxShadow: 'rgb(174 174 174 / 20%) 0px 0px 5px',
-                  padding: '32px'
+                  padding: '32px',
+                  '& .MuiBox-root .css-9m85nc': {
+                    display: 'flex',
+                    gap: 10,
+                    flexDirection: 'row-reverse'
+                  },
+                  '& .MuiBox-root .css-9m85nc button': {
+                    width: '50px'
+                  }
                 }}
               >
                 <RowSentence>
@@ -673,14 +681,12 @@ export default function Details() {
                   value={salesAmount}
                   autoFocus
                   onMax={() => {
-                    if (restCanBuyValue?.toSignificant()) {
+                    if (restCanBuyValue) {
                       setSalesAmount(restCanBuyValue?.toSignificant())
                     }
                   }}
                   errSet={() => {}}
-                  onChange={e => {
-                    setSalesAmount(e.target.value)
-                  }}
+                  onChange={e => setSalesAmount(e.target.value)}
                   onBlur={e => {
                     let inputValue = e.target.value
                     const inputValueTokenAmount = tryParseAmount(inputValue, saleToken || undefined)
