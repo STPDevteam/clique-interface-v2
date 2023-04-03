@@ -64,9 +64,8 @@ const RowWrapper = styled(Stack)(({ theme }) => ({
     backgroundColor: theme.palette.primary.main
   },
   '& .css-1ujnqem-MuiTabs-root': {
-    border: '2px solid',
-    borderRadius: 16,
-    borderColor: theme.palette.primary.main
+    border: `2px solid ${theme.palette.primary.main}`,
+    borderRadius: 16
   },
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
@@ -214,7 +213,6 @@ export default function Index() {
       }
       try {
         const res = await getTokenPrices(currentBaseChain?.id)
-
         if (!res?.data?.data) {
           setCurrencyOptions([])
           return
@@ -632,17 +630,13 @@ export default function Index() {
           <StyledButtonGroup style={{ width: '350px', marginTop: 20 }}>
             <MuiButton
               className={salePriceType === priceType.UNIT ? 'active' : ''}
-              onClick={() => {
-                setSalePriceType(priceType.UNIT)
-              }}
+              onClick={() => setSalePriceType(priceType.UNIT)}
             >
               Unit price
             </MuiButton>
             <MuiButton
               className={salePriceType === priceType.PACKAGE ? 'active' : ''}
-              onClick={() => {
-                setSalePriceType(priceType.PACKAGE)
-              }}
+              onClick={() => setSalePriceType(priceType.PACKAGE)}
             >
               Package price
             </MuiButton>
@@ -653,9 +647,7 @@ export default function Index() {
             style={{ marginTop: 0 }}
             value={salePrice}
             errSet={() => setSalePrice('')}
-            onChange={e => {
-              setSalePrice(e.target.value)
-            }}
+            onChange={e => setSalePrice(e.target.value)}
             placeholder="0"
             endAdornment={<>{receiveToken?.symbol}</>}
             label="Unit price"
