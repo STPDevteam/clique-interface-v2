@@ -100,11 +100,11 @@ function MsgItem({
           : item.types === 'ReserveToken'
           ? 'You have a new token can be claimed'
           : item.types === 'PublicSaleCreated'
-          ? item.info.activityName || ''
+          ? 'You create a new swap'
           : item.types === 'PublicSalePurchased'
-          ? item.info.activityName || ''
+          ? 'You purchase a swap'
           : item.types === 'PublicSaleCanceled'
-          ? item.info.activityName || ''
+          ? 'You cancel a swap'
           : 'message',
       link:
         item.types === 'Airdrop'
@@ -118,7 +118,9 @@ function MsgItem({
             : ''
           : item.types === 'ReserveToken'
           ? routes._Profile
-          : item.types === 'PublicSaleCreated'
+          : item.types === 'PublicSaleCreated' ||
+            item.types === 'PublicSalePurchased' ||
+            item.types === 'PublicSaleCanceled'
           ? routes._SaleDetails + `/${item.info.activityId || 0}`
           : ''
     }
@@ -162,7 +164,7 @@ function MsgItem({
         <Box display={'flex'} alignItems="center">
           <DaoAvatars size={64} src={item.info.tokenLogo} />
           <Box ml={16}>
-            {/* <Text>{item.info.activityName}</Text> */}
+            <Text>{item.info.activityName}</Text>
             <Text display={'inline-block'}>
               {showData.text}
               {'. '}

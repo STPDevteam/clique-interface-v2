@@ -464,6 +464,12 @@ export default function Index() {
         error: 'The start time must be earlier than the end time'
       }
     }
+    if (!eventTitle) {
+      return {
+        disabled: true,
+        error: 'The event title required'
+      }
+    }
     return {
       disabled: false,
       handler: handlePublic
@@ -478,6 +484,7 @@ export default function Index() {
     purchase,
     startTime,
     endTime,
+    eventTitle,
     handlePublic,
     toggleWallet,
     library,
