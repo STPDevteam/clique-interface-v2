@@ -18,6 +18,7 @@ import { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
   marginTop: 24,
@@ -85,6 +86,7 @@ function MsgItem({
   toBackedReadOnce: (notificationId: number) => Promise<any>
 }) {
   const [isRead, setIsRead] = useState(item.alreadyRead)
+  const { account } = useActiveWeb3React()
 
   const history = useHistory()
   const showData: {
@@ -100,11 +102,13 @@ function MsgItem({
           : item.types === 'ReserveToken'
           ? 'You have a new token can be claimed'
           : item.types === 'PublicSaleCreated'
-          ? 'You create a new swap'
-          : item.types === 'PublicSalePurchased'
-          ? 'You purchase a swap'
+          ? 'You created a new swap'
+          : account?.toLowerCase() === item.info.creator?.toLowerCase()
+          ? `${item.info.buyer ?? ''} purchased your swap`
+          : item.info.creator?.toLowerCase() !== account?.toLowerCase()
+          ? 'You purchased a swap'
           : item.types === 'PublicSaleCanceled'
-          ? 'You cancel a swap'
+          ? 'You cancelled a swap'
           : 'message',
       link:
         item.types === 'Airdrop'
@@ -124,7 +128,17 @@ function MsgItem({
           ? routes._SaleDetails + `/${item.info.activityId || 0}`
           : ''
     }
-  }, [item.info, item.types])
+  }, [
+    account,
+    item.info.activityId,
+    item.info.buyer,
+    item.info.chainId,
+    item.info.creator,
+    item.info.daoAddress,
+    item.info.proposalId,
+    item.info.proposalName,
+    item.types
+  ])
 
   return (
     <Box

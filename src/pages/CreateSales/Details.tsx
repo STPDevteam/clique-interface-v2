@@ -482,24 +482,16 @@ export default function Details() {
                   >
                     <ETHERSCAN />
                   </Link>
+                  <Image onClick={() => window.open(url[0]?.urlCoingecko, '_blank')} src={coingeckoIcon} alt="" />
                   <Image
-                    onClick={() => {
-                      window.open(url[0]?.urlCoingecko, '_blank')
-                    }}
-                    src={coingeckoIcon}
-                    alt=""
-                  />
-                  <Image
-                    onClick={() => {
-                      window.open(url[0]?.urlCoinmarketcap, '_blank')
-                    }}
+                    onClick={() => window.open(url[0]?.urlCoinmarketcap, '_blank')}
                     src={coinmarcketcapIcon}
                     alt=""
                   />
                   <Image
-                    onClick={() => {
+                    onClick={() =>
                       saleToken && addTokenToWallet(saleToken?.address, saleToken?.symbol || '', saleToken?.decimals)
-                    }}
+                    }
                     src={metamaskIcon}
                     alt=""
                   />
@@ -509,19 +501,19 @@ export default function Details() {
           </Stack>
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr">
             <ColSentence>
-              <p>Original price (create at {timeStampToFormat(Number(SwapData?.createTime))})</p>
+              <p>Current price (Updated at {timeStampToFormat(Number(new Date().getTime()))})</p>
+              <p>
+                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
+              </p>
+            </ColSentence>
+            <ColSentence>
+              <p>Sale price</p>
               <p>
                 1 {saleToken?.symbol} ={' '}
                 {salesInfo &&
                   receiveToken &&
-                  new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
+                  new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
                 {receiveToken?.symbol}
-              </p>
-            </ColSentence>
-            <ColSentence>
-              <p>Current price</p>
-              <p>
-                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
               </p>
             </ColSentence>
           </Stack>
@@ -656,7 +648,7 @@ export default function Details() {
                     1 {saleToken?.symbol} ={' '}
                     {salesInfo &&
                       receiveToken &&
-                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
+                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
@@ -832,7 +824,7 @@ export default function Details() {
                     1 {saleToken?.symbol} ={' '}
                     {salesInfo &&
                       receiveToken &&
-                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
+                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
@@ -857,9 +849,7 @@ export default function Details() {
                     readOnly
                     value={oneTimePurchaseTokenAmount?.toSignificant() ?? ''}
                     errSet={() => {}}
-                    onChange={e => {
-                      setSalesAmount(e.target.value || '')
-                    }}
+                    onChange={e => setSalesAmount(e.target.value || '')}
                     placeholder=""
                     label="Get"
                     endAdornment={`${saleToken?.symbol}`}

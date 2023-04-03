@@ -23,6 +23,8 @@ export interface NotificationInfoProp {
   proposalName?: string
   tokenLogo?: string
   tokenAddress?: string
+  creator?: string
+  buyer?: string
 }
 
 export interface NotificationProp {
