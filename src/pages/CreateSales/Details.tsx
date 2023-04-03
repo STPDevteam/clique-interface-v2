@@ -130,7 +130,6 @@ export default function Details() {
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
   const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
-
   const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
   const saleToken = useNativeAndToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useNativeAndToken(SwapData?.receiveToken, SwapData?.chainId)
@@ -204,7 +203,7 @@ export default function Details() {
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.soldAmount))
       .divide(new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.saleAmount)))
       .multiply(JSBI.BigInt(100))
-      .toSignificant(6)
+      .toSignificant(2)
   }, [saleCurrencyAmount, saleToken, salesInfo, soldCurrencyAmount])
 
   const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
@@ -250,10 +249,17 @@ export default function Details() {
     if (!saleToken || !salesInfo) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [saleToken, salesInfo])
+
   const canBuyMinValue = useMemo(() => {
     if (!saleToken || !salesInfo) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMin))
   }, [saleToken, salesInfo])
+
+  const restCanBuyValue = useMemo(() => {
+    if (!soldTokenAmountData) return
+    const amount = canBuyMaxValue?.subtract(soldTokenAmountData).toSignificant()
+    return tryParseAmount(amount || undefined, saleToken || undefined)
+  }, [canBuyMaxValue, saleToken, soldTokenAmountData])
 
   const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, receiveToken || undefined)
   const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
@@ -666,6 +672,11 @@ export default function Details() {
                 <NumericalInput
                   value={salesAmount}
                   autoFocus
+                  onMax={() => {
+                    if (restCanBuyValue?.toSignificant()) {
+                      setSalesAmount(restCanBuyValue?.toSignificant())
+                    }
+                  }}
                   errSet={() => {}}
                   onChange={e => {
                     setSalesAmount(e.target.value)
@@ -755,7 +766,6 @@ export default function Details() {
                       disabled={
                         !isWhitelist ||
                         SwapData?.status === SwapStatus.SOON ||
-                        new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0) ||
                         isClaiming ||
                         approveState === ApprovalState.PENDING ||
                         !salesAmount ||
@@ -767,8 +777,9 @@ export default function Details() {
                           new BigNumber(saleTokenBalance?.toSignificant(6) || '')
                         ) ||
                         new BigNumber(salesAmount).isGreaterThan(new BigNumber(canPayAmount?.toSignificant(6) || '')) ||
-                        new BigNumber(salesAmount).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
-                        new BigNumber(salesAmount).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
+                        new BigNumber(Number(soldTokenAmountData?.toSignificant())).isEqualTo(
+                          new BigNumber(Number(canBuyMaxValue?.toSignificant()))
+                        )
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
@@ -778,7 +789,9 @@ export default function Details() {
                         ? 'Sale time has no started'
                         : saleTokenBalance?.lessThan('0') || saleTokenBalance?.equalTo('0')
                         ? 'Insufficient balance'
-                        : new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0)
+                        : new BigNumber(Number(soldTokenAmountData?.toSignificant())).isEqualTo(
+                            new BigNumber(Number(canBuyMaxValue?.toSignificant()))
+                          )
                         ? 'Purchased'
                         : approveState === ApprovalState.PENDING
                         ? 'Approving'
