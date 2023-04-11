@@ -214,15 +214,41 @@ export function getTargetTimeString(fromTime: number, toTime: number) {
   const days = Math.floor(sec / 86400)
   const hours = Math.floor(sec / 3600)
   const mins = Math.ceil(sec / 60)
+  const hourText = hours > 1 ? `${hours} hours left` : `${hours} hour left`
+  const agoHourText = hours > 1 ? `${hours} hours ago` : `${hours} hour ago`
   return direction
     ? days
       ? `${days} days left`
       : hours
-      ? `${hours} hours left`
+      ? hourText
       : `${mins} mins left`
     : days
     ? `${days} days ago`
     : hours
-    ? `${hours} hours ago`
+    ? agoHourText
     : `${mins} mins ago`
+}
+
+export function getAllTargetTimeString(fromTime: number, toTime: number) {
+  const _sec = toTime - fromTime
+  const direction = _sec >= 0 ? true : false
+
+  const sec = Math.abs(_sec)
+  const days = Math.floor(sec / 86400)
+  const hours = Math.floor((sec / 3600) % 24)
+  const mins = Math.floor((sec / 60) % 60)
+  const secs = Math.floor((sec / 1000) % 60)
+  if (direction) {
+    if (days) {
+      return `${days} d ${hours} h ${mins} m ${secs} s`
+    } else {
+      return `${hours} h ${mins} m ${secs} s`
+    }
+  } else {
+    if (days) {
+      return `${days} d ${hours} h ${mins} m ${secs} s`
+    } else {
+      return `${hours} h ${mins} m ${secs} s`
+    }
+  }
 }

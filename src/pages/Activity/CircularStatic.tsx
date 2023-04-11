@@ -3,8 +3,11 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material'
 
-export default function CircularStatic(props: CircularProgressProps & { value: number; over?: boolean }) {
+export default function CircularStatic(
+  props: CircularProgressProps & { value: number; over?: boolean; borderValue?: number }
+) {
   const theme = useTheme()
+  const bor = props.borderValue ? props.borderValue : 10
   return (
     <Box
       sx={{
@@ -24,7 +27,7 @@ export default function CircularStatic(props: CircularProgressProps & { value: n
             bottom: 0,
             right: 0,
             position: 'absolute',
-            border: `10px solid ${theme.bgColor.bg2}`,
+            border: `${bor}px solid ${theme.bgColor.bg2}`,
             borderRadius: '50%',
             zIndex: -1
           }

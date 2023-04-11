@@ -4,7 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { getNotificationListInfo, getNotificationUnreadTotal, notificationToRead } from '../utils/fetch/server'
 
-export type NotificationTypes = 'Airdrop' | 'NewProposal' | 'ReserveToken'
+export type NotificationTypes =
+  | 'Airdrop'
+  | 'PublicSaleCreated'
+  | 'PublicSalePurchased'
+  | 'PublicSaleCanceled'
+  | 'NewProposal'
+  | 'ReserveToken'
 
 export interface NotificationInfoProp {
   activityId?: number
@@ -15,6 +21,10 @@ export interface NotificationInfoProp {
   daoName?: string
   proposalId?: number
   proposalName?: string
+  tokenLogo?: string
+  tokenAddress?: string
+  creator?: string
+  buyer?: string
 }
 
 export interface NotificationProp {

@@ -40,6 +40,7 @@ import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useWalletModalToggle } from 'state/application/hooks'
+import isZero from 'utils/isZero'
 
 enum purchaseType {
   ONETIME,
@@ -63,9 +64,8 @@ const RowWrapper = styled(Stack)(({ theme }) => ({
     backgroundColor: theme.palette.primary.main
   },
   '& .css-1ujnqem-MuiTabs-root': {
-    border: '2px solid',
-    borderRadius: 16,
-    borderColor: theme.palette.primary.main
+    border: `2px solid ${theme.palette.primary.main}`,
+    borderRadius: 16
   },
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
@@ -213,7 +213,6 @@ export default function Index() {
       }
       try {
         const res = await getTokenPrices(currentBaseChain?.id)
-
         if (!res?.data?.data) {
           setCurrencyOptions([])
           return
@@ -273,7 +272,11 @@ export default function Index() {
     )
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)} />)
+        showModal(
+          <TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)}>
+            Your swap can take up to 5 minutes to appear
+          </TransactiontionSubmittedModal>
+        )
       })
       .catch((err: any) => {
         hideModal()
@@ -328,7 +331,10 @@ export default function Index() {
 
   const sharePer = useMemo(() => {
     if (!salePrice || !oneTimePrice) return
-    return new BigNumber(oneTimePrice).multipliedBy(new BigNumber(salePrice))
+    return new BigNumber(oneTimePrice)
+      .multipliedBy(new BigNumber(salePrice))
+      .toFixed()
+      .toString()
   }, [salePrice, oneTimePrice])
 
   const paramsCheck: {
@@ -400,6 +406,17 @@ export default function Index() {
           error: 'One-time Price required'
         }
       }
+      // if (
+      //   new BigNumber(salePrice)
+      //     .multipliedBy(new BigNumber(100))
+      //     .div(Number(currencyRatio))
+      //     .isGreaterThan(200)
+      // ) {
+      //   return {
+      //     disabled: true,
+      //     error: 'Discount can not be over 200%'
+      //   }
+      // }
     }
     if (purchase === purchaseType.LIMIT) {
       if (minPurchaseCa?.lessThan(JSBI.BigInt(0))) {
@@ -445,6 +462,12 @@ export default function Index() {
         error: 'The start time must be earlier than the end time'
       }
     }
+    if (!eventTitle) {
+      return {
+        disabled: true,
+        error: 'The event title required'
+      }
+    }
     return {
       disabled: false,
       handler: handlePublic
@@ -453,20 +476,21 @@ export default function Index() {
     account,
     baseChainId,
     chainId,
-    endTime,
-    handlePublic,
-    library,
-    maxPurchaseCa,
-    minPurchaseCa,
-    oneTimePrice,
-    packagePrice,
-    purchase,
-    salePriceType,
     saleToken,
+    salePriceType,
     salesAmount,
+    purchase,
     startTime,
+    endTime,
+    eventTitle,
+    handlePublic,
     toggleWallet,
-    salePrice
+    library,
+    salePrice,
+    packagePrice,
+    oneTimePrice,
+    minPurchaseCa,
+    maxPurchaseCa
   ])
 
   return (
@@ -498,6 +522,9 @@ export default function Index() {
               setSaleToken(undefined)
               setReceiveToken(undefined)
             }
+            if (e?.id !== chainId) {
+              e?.id && triggerSwitchChain(library, e?.id, account || '')
+            }
           }}
         />
       </RowWrapper>
@@ -512,11 +539,12 @@ export default function Index() {
         <Stack display={'flex'} alignItems={'space'} flexDirection={'column'} justifyContent={'space-Between'} gap={10}>
           <NumericalInput
             onClick={() => {
+              const noEthCurrenncyOptions = currencyOptions.filter((item: any) => !isZero(item?.address))
               showModal(
                 <SelectCurrencyModal
                   disabled={[saleToken, receiveToken]}
                   onSelectCurrency={onSelectCurrency}
-                  currencyOptions={currencyOptions}
+                  currencyOptions={noEthCurrenncyOptions}
                 />
               )
             }}
@@ -602,17 +630,13 @@ export default function Index() {
           <StyledButtonGroup style={{ width: '350px', marginTop: 20 }}>
             <MuiButton
               className={salePriceType === priceType.UNIT ? 'active' : ''}
-              onClick={() => {
-                setSalePriceType(priceType.UNIT)
-              }}
+              onClick={() => setSalePriceType(priceType.UNIT)}
             >
               Unit price
             </MuiButton>
             <MuiButton
               className={salePriceType === priceType.PACKAGE ? 'active' : ''}
-              onClick={() => {
-                setSalePriceType(priceType.PACKAGE)
-              }}
+              onClick={() => setSalePriceType(priceType.PACKAGE)}
             >
               Package price
             </MuiButton>
@@ -623,9 +647,7 @@ export default function Index() {
             style={{ marginTop: 0 }}
             value={salePrice}
             errSet={() => setSalePrice('')}
-            onChange={e => {
-              setSalePrice(e.target.value)
-            }}
+            onChange={e => setSalePrice(e.target.value)}
             placeholder="0"
             endAdornment={<>{receiveToken?.symbol}</>}
             label="Unit price"
@@ -654,9 +676,15 @@ export default function Index() {
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
           Sale price
         </Typography>
-        <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
-          {salePrice ? `1 ${saleToken?.symbol} = ${salePrice} ${receiveToken?.symbol}` : ''}
-        </Typography>
+        {new BigNumber(salePrice).isLessThan(0.000001) ? (
+          <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
+            {salePrice ? `1 ${saleToken?.symbol} < 0.000001 ${receiveToken?.symbol}` : ''}
+          </Typography>
+        ) : (
+          <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
+            {salePrice ? `1 ${saleToken?.symbol} = ${salePrice} ${receiveToken?.symbol}` : ''}
+          </Typography>
+        )}
       </RowWrapper>
       <RowWrapper padding={'40px 16px'}>
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
@@ -664,11 +692,25 @@ export default function Index() {
         </Typography>
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
           {salePrice &&
-            new BigNumber(salePrice)
+            currencyRatio &&
+            (new BigNumber(salePrice)
               .multipliedBy(new BigNumber(100))
               .div(Number(currencyRatio))
-              .toFixed(6)}
+              .isLessThan(0.01)
+              ? '< 0.01'
+              : new BigNumber(salePrice)
+                  .multipliedBy(new BigNumber(100))
+                  .div(Number(currencyRatio))
+                  .toFixed(2))}
           %
+          {/* {new BigNumber(salePrice)
+            .multipliedBy(new BigNumber(100))
+            .div(Number(currencyRatio))
+            .isGreaterThan(200) ? (
+            <span style={{ color: 'red' }}> discount can not be over 200%</span>
+          ) : (
+            ''
+          )} */}
         </Typography>
       </RowWrapper>
       <RowWrapper padding={'0 16px'}>
@@ -861,7 +903,7 @@ export default function Index() {
       {paramsCheck.error ? (
         <Alert severity="error">{paramsCheck.error}</Alert>
       ) : (
-        <Alert severity="info">You will create a public sale in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
+        <Alert severity="info">You will create a swap in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
       )}
       <Stack display="flex" justifyContent="center" mt={30} flexDirection={'row'} spacing={60}>
         <BlackButton

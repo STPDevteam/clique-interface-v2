@@ -18,6 +18,7 @@ import { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
   marginTop: 24,
@@ -46,6 +47,12 @@ function TypeTitle({ isRead, type }: { isRead: boolean; type: NotificationTypes 
         ? 'New active proposal'
         : type === 'ReserveToken'
         ? 'Reserve token'
+        : type === 'PublicSaleCreated'
+        ? 'Create swap'
+        : type === 'PublicSalePurchased'
+        ? 'Purchased a swap'
+        : type === 'PublicSaleCanceled'
+        ? 'Cancelled a swap'
         : 'message',
     [type]
   )
@@ -79,6 +86,7 @@ function MsgItem({
   toBackedReadOnce: (notificationId: number) => Promise<any>
 }) {
   const [isRead, setIsRead] = useState(item.alreadyRead)
+  const { account } = useActiveWeb3React()
 
   const history = useHistory()
   const showData: {
@@ -93,6 +101,14 @@ function MsgItem({
           ? item.info.proposalName || ''
           : item.types === 'ReserveToken'
           ? 'You have a new token can be claimed'
+          : item.types === 'PublicSaleCreated'
+          ? 'You created a new swap'
+          : account?.toLowerCase() === item.info.creator?.toLowerCase()
+          ? `${item.info.buyer ?? ''} purchased your swap`
+          : item.info.creator?.toLowerCase() !== account?.toLowerCase()
+          ? 'You purchased a swap'
+          : item.types === 'PublicSaleCanceled'
+          ? 'You cancelled a swap'
           : 'message',
       link:
         item.types === 'Airdrop'
@@ -106,9 +122,23 @@ function MsgItem({
             : ''
           : item.types === 'ReserveToken'
           ? routes._Profile
+          : item.types === 'PublicSaleCreated' ||
+            item.types === 'PublicSalePurchased' ||
+            item.types === 'PublicSaleCanceled'
+          ? routes._SaleDetails + `/${item.info.activityId || 0}`
           : ''
     }
-  }, [item.info, item.types])
+  }, [
+    account,
+    item.info.activityId,
+    item.info.buyer,
+    item.info.chainId,
+    item.info.creator,
+    item.info.daoAddress,
+    item.info.proposalId,
+    item.info.proposalName,
+    item.types
+  ])
 
   return (
     <Box
@@ -131,6 +161,24 @@ function MsgItem({
           <DaoAvatars size={64} src={item.info.daoLogo} />
           <Box ml={16}>
             <Text>{item.info.daoName}</Text>
+            <Text display={'inline-block'}>
+              {showData.text}
+              {'. '}
+              {showData.link && (
+                <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+                  View
+                </Link>
+              )}
+            </Text>
+          </Box>
+        </Box>
+      ) : item.types === 'PublicSaleCreated' ||
+        item.types === 'PublicSalePurchased' ||
+        item.types === 'PublicSaleCanceled' ? (
+        <Box display={'flex'} alignItems="center">
+          <DaoAvatars size={64} src={item.info.tokenLogo} />
+          <Box ml={16}>
+            <Text>{item.info.activityName}</Text>
             <Text display={'inline-block'}>
               {showData.text}
               {'. '}

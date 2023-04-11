@@ -1,4 +1,4 @@
-import { Box, Card, CircularProgress, Stack, Link, styled, Typography } from '@mui/material'
+import { Box, Card, Stack, Link, styled, Typography } from '@mui/material'
 import Back from 'components/Back'
 import theme from 'theme'
 import Input from 'components/Input'
@@ -11,7 +11,7 @@ import coinmarcketcapIcon from 'assets/images/cap.png'
 import coingeckoIcon from 'assets/images/coingecko.png'
 import { useParams } from 'react-router-dom'
 import ReactHtmlParser from 'react-html-parser'
-import { currentTimeStamp, getEtherscanLink, getTargetTimeString } from 'utils'
+import { currentTimeStamp, getEtherscanLink, getAllTargetTimeString } from 'utils'
 import {
   PublicSaleListBaseProp,
   usePublicSaleBaseList,
@@ -44,6 +44,9 @@ import isZero from 'utils/isZero'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { addTokenToWallet } from 'utils/addTokenToWallet'
 import Image from 'components/Image'
+import { ReactComponent as ETHERSCAN } from 'assets/svg/etherscan.svg'
+import CircularStatic from 'pages/Activity/CircularStatic'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 enum Tabs {
   ABOUT,
@@ -69,10 +72,9 @@ const RowSentence = styled('p')(({}) => ({
 }))
 
 const CardWrapper = styled(Card)(({ theme }) => ({
-  border: '1px solid',
+  border: `1px solid ${theme.bgColor.bg2}`,
   borderRadius: 10,
   padding: 10,
-  borderColor: theme.bgColor.bg2,
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-start',
@@ -93,10 +95,11 @@ const CardWrapper = styled(Card)(({ theme }) => ({
     gap: 10,
     justifyContent: 'flex-start'
   },
-  '& .iconList img': {
-    width: '15%'
+  '& .iconList img, & .iconList svg': {
+    width: '20px',
+    height: '20px'
   },
-  '& .iconList img:hover': {
+  '& .iconList a:hover, & .iconList img:hover': {
     cursor: 'pointer'
   }
 }))
@@ -117,7 +120,7 @@ const ColSentence = styled('div')(() => ({
 
 export default function Details() {
   const { saleId } = useParams<{ saleId: string }>()
-  const { account } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const [salesAmount, setSalesAmount] = useState('')
   const [ratio, setRatio] = useState('')
@@ -127,9 +130,6 @@ export default function Details() {
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
   const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
-  console.log(salesInfo)
-  console.log(SwapData)
-
   const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
   const saleToken = useNativeAndToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useNativeAndToken(SwapData?.receiveToken, SwapData?.chainId)
@@ -143,7 +143,6 @@ export default function Details() {
     return new TokenAmount(saleToken, JSBI.BigInt(SoldAmountData?.amount))
   }, [SoldAmountData, saleToken])
 
-  console.log(saleToken, receiveToken)
   const [url, setUrl] = useState<any>([])
   const [isWhitelist, setIsWhiteList] = useState(false)
 
@@ -188,7 +187,7 @@ export default function Details() {
         }
         ratio = new BigNumber(result[0]?.price)
           .div(new BigNumber(result[1]?.price))
-          .toFixed()
+          .toFixed(6)
           .toString()
         setUrl([result[0], result[1]])
       } catch (error) {
@@ -204,7 +203,7 @@ export default function Details() {
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.soldAmount))
       .divide(new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.saleAmount)))
       .multiply(JSBI.BigInt(100))
-      .toSignificant(6)
+      .toSignificant(2)
   }, [saleCurrencyAmount, saleToken, salesInfo, soldCurrencyAmount])
 
   const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
@@ -220,11 +219,9 @@ export default function Details() {
   // }, [SwapData, saleToken])
   const swapAmount = useMemo(() => {
     if (!salesAmount || !receiveToken || !salesInfo) return ''
-    const value = Number(
-      new BigNumber(Number(salesAmount)).multipliedBy(
-        new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()
-      )
-    )
+    const value = new BigNumber(Number(salesAmount))
+      .multipliedBy(new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toExact())
+      .toFixed()
     return value.toString()
   }, [receiveToken, salesAmount, salesInfo])
 
@@ -242,26 +239,33 @@ export default function Details() {
 
   const oneTimePayPriceApproveValue = useMemo(() => {
     if (!SwapData || !oneTimePurchaseTokenAmount || !receiveToken || !salesInfo) return
-    return Number(
-      new BigNumber(oneTimePurchaseTokenAmount.toExact()).multipliedBy(
-        new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()
-      )
-    ).toString()
+    const _Percent = new BigNumber(oneTimePurchaseTokenAmount.toExact())
+      .multipliedBy(new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toExact())
+      .toFixed()
+    return _Percent.toString()
   }, [SwapData, oneTimePurchaseTokenAmount, receiveToken, salesInfo])
 
   const canBuyMaxValue = useMemo(() => {
     if (!saleToken || !salesInfo) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMax))
   }, [saleToken, salesInfo])
+
   const canBuyMinValue = useMemo(() => {
     if (!saleToken || !salesInfo) return
     return new TokenAmount(saleToken, JSBI.BigInt(salesInfo?.limitMin))
   }, [saleToken, salesInfo])
 
+  const restCanBuyValue = useMemo(() => {
+    if (!soldTokenAmountData || !saleToken || !canBuyMaxValue) return
+    const amount = canBuyMaxValue?.subtract(soldTokenAmountData)
+    return tryParseAmount(amount?.toSignificant() || undefined, saleToken || undefined)
+  }, [canBuyMaxValue, saleToken, soldTokenAmountData])
+
   const oneTimePurchaseApproveTokenAmount = tryParseAmount(swapAmount, receiveToken || undefined)
   const oneTimePriceCurrencyAmount = tryParseAmount(oneTimePayPriceApproveValue, receiveToken || undefined)
 
-  const isEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
+  const isReceiveTokenEth = useMemo(() => isZero(receiveToken?.address || ''), [receiveToken])
+  // const isSaleTokenEth = useMemo(() => isZero(saleToken?.address || ''), [saleToken])
 
   const handlePay = useCallback(() => {
     if (!account || !saleId) return
@@ -271,7 +275,8 @@ export default function Details() {
       account,
       isOneTimePurchase ? oneTimePurchaseTokenAmount?.raw.toString() || '' : buyTokenAmount?.raw.toString() || '',
       Number(saleId),
-      isEth
+      isReceiveTokenEth,
+      isOneTimePurchase ? oneTimePriceCurrencyAmount?.raw.toString() : oneTimePurchaseApproveTokenAmount?.raw.toString()
     )
       .then(hash => {
         hideModal()
@@ -290,9 +295,11 @@ export default function Details() {
     account,
     buyTokenAmount?.raw,
     hideModal,
-    isEth,
     isOneTimePurchase,
-    oneTimePurchaseTokenAmount,
+    isReceiveTokenEth,
+    oneTimePriceCurrencyAmount?.raw,
+    oneTimePurchaseApproveTokenAmount?.raw,
+    oneTimePurchaseTokenAmount?.raw,
     purchaseCallback,
     saleId,
     showModal
@@ -321,13 +328,11 @@ export default function Details() {
     const now = currentTimeStamp()
     let targetTimeString = ''
     if (SwapData.status === SwapStatus.SOON) {
-      targetTimeString = getTargetTimeString(now, Number(SwapData?.endTime)).replace('left', 'later')
+      targetTimeString = getAllTargetTimeString(now, Number(SwapData?.endTime))
     } else if (SwapData.status === SwapStatus.OPEN) {
-      targetTimeString = getTargetTimeString(now, Number(SwapData?.endTime))
-    } else if (SwapData.status === SwapStatus.CANCEL) {
-      targetTimeString = 'canceled'
+      targetTimeString = getAllTargetTimeString(now, Number(SwapData?.endTime))
     } else {
-      targetTimeString = getTargetTimeString(now, Number(SwapData?.endTime))
+      targetTimeString = timeStampToFormat(Number(SwapData?.endTime))
     }
     return targetTimeString
   }, [SwapData, salesInfo])
@@ -360,7 +365,7 @@ export default function Details() {
   const [approveState, approveCallback] = useApproveCallback(
     oneTimePurchaseApproveTokenAmount,
     SwapData?.chainId ? PUBLICSALE_ADDRESS[SwapData?.chainId as ChainId] : undefined,
-    isEth
+    isReceiveTokenEth
   )
   const [approveState1, approveCallback1] = useApproveCallback(
     oneTimePriceCurrencyAmount,
@@ -395,14 +400,20 @@ export default function Details() {
           >
             <CardWrapper>
               <Image
-                width={80}
+                style={{
+                  maxWidth: '80px',
+                  maxHeight: '80px',
+                  marginRight: 10
+                }}
                 src={SwapData?.receiveTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
                 alt=""
               />
               <div>
                 <p>{receiveToken?.symbol}</p>
-                {!isEth ? (
-                  <div className="iconList">
+                <div className="iconList">
+                  {receiveToken && isZero(receiveToken?.address) ? (
+                    ''
+                  ) : (
                     <Link
                       href={
                         receiveToken && SwapData?.chainId && !isZero(receiveToken?.address)
@@ -411,44 +422,31 @@ export default function Details() {
                       }
                       target="_blank"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20.775"
-                        height="20.671"
-                        viewBox="0 0 293.775 293.671"
-                      >
-                        <g id="etherscan-logo-circle" transform="translate(-219.378 -213.33)">
-                          <path
-                            id="Path_1"
-                            data-name="Path 1"
-                            d="M280.433,353.152A12.45,12.45,0,0,1,292.941,340.7l20.737.068a12.467,12.467,0,0,1,12.467,12.467v78.414c2.336-.692,5.332-1.43,8.614-2.2a10.389,10.389,0,0,0,8.009-10.11V322.073a12.469,12.469,0,0,1,12.468-12.47h20.778a12.469,12.469,0,0,1,12.467,12.467v90.279s5.2-2.106,10.269-4.245a10.408,10.408,0,0,0,6.353-9.577V290.9a12.466,12.466,0,0,1,12.466-12.467h20.778A12.468,12.468,0,0,1,450.815,290.9v88.625c18.014-13.055,36.271-28.758,50.759-47.639a20.926,20.926,0,0,0,3.185-19.537,146.6,146.6,0,0,0-136.644-99.006c-81.439-1.094-148.744,65.385-148.736,146.834a146.371,146.371,0,0,0,19.5,73.45,18.56,18.56,0,0,0,17.707,9.173c3.931-.346,8.825-.835,14.643-1.518a10.383,10.383,0,0,0,9.209-10.306V353.152"
-                            fill="#21325b"
-                          />
-                          <path
-                            id="Path_2"
-                            data-name="Path 2"
-                            d="M244.417,398.641A146.808,146.808,0,0,0,477.589,279.9c0-3.381-.157-6.724-.383-10.049-53.642,80-152.686,117.4-232.79,128.793"
-                            transform="translate(35.564 80.269)"
-                            fill="#979695"
-                          />
-                        </g>
-                      </svg>
+                      <ETHERSCAN />
                     </Link>
-                    <img
-                      onClick={() => {
-                        window.open(url[1]?.urlCoingecko, '_blank')
-                      }}
-                      src={coingeckoIcon}
-                      alt=""
-                    />
-                    <img
-                      onClick={() => {
-                        window.open(url[1]?.urlCoinmarketcap, '_blank')
-                      }}
-                      src={coinmarcketcapIcon}
-                      alt=""
-                    />
-                    <img
+                  )}
+
+                  <Image
+                    width={20}
+                    onClick={() => {
+                      window.open(url[1]?.urlCoingecko, '_blank')
+                    }}
+                    src={coingeckoIcon}
+                    alt=""
+                  />
+                  <Image
+                    width={20}
+                    onClick={() => {
+                      window.open(url[1]?.urlCoinmarketcap, '_blank')
+                    }}
+                    src={coinmarcketcapIcon}
+                    alt=""
+                  />
+                  {receiveToken && isZero(receiveToken?.address) ? (
+                    ''
+                  ) : (
+                    <Image
+                      width={20}
                       onClick={() => {
                         receiveToken &&
                           addTokenToWallet(receiveToken?.address, receiveToken?.symbol || '', receiveToken?.decimals)
@@ -456,97 +454,66 @@ export default function Details() {
                       src={metamaskIcon}
                       alt=""
                     />
-                  </div>
-                ) : (
-                  ''
-                )}
+                  )}
+                </div>
               </div>
             </CardWrapper>
             <p>&gt;&gt;</p>
             <CardWrapper>
               <Image
-                width={80}
+                style={{
+                  maxWidth: '80px',
+                  maxHeight: '80px',
+                  marginRight: 10
+                }}
                 src={SwapData?.saleTokenImg || 'https://devapiv2.myclique.io/static/1665558531929085683.png'}
                 alt=""
               />
               <div>
                 <p>{saleToken?.symbol}</p>
-                {!isEth ? (
-                  <div className="iconList">
-                    <Link
-                      href={
-                        receiveToken && SwapData?.chainId && !isZero(receiveToken?.address)
-                          ? getEtherscanLink(SwapData?.chainId, receiveToken?.address, 'address')
-                          : undefined
-                      }
-                      target="_blank"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20.775"
-                        height="20.671"
-                        viewBox="0 0 293.775 293.671"
-                      >
-                        <g id="etherscan-logo-circle" transform="translate(-219.378 -213.33)">
-                          <path
-                            id="Path_1"
-                            data-name="Path 1"
-                            d="M280.433,353.152A12.45,12.45,0,0,1,292.941,340.7l20.737.068a12.467,12.467,0,0,1,12.467,12.467v78.414c2.336-.692,5.332-1.43,8.614-2.2a10.389,10.389,0,0,0,8.009-10.11V322.073a12.469,12.469,0,0,1,12.468-12.47h20.778a12.469,12.469,0,0,1,12.467,12.467v90.279s5.2-2.106,10.269-4.245a10.408,10.408,0,0,0,6.353-9.577V290.9a12.466,12.466,0,0,1,12.466-12.467h20.778A12.468,12.468,0,0,1,450.815,290.9v88.625c18.014-13.055,36.271-28.758,50.759-47.639a20.926,20.926,0,0,0,3.185-19.537,146.6,146.6,0,0,0-136.644-99.006c-81.439-1.094-148.744,65.385-148.736,146.834a146.371,146.371,0,0,0,19.5,73.45,18.56,18.56,0,0,0,17.707,9.173c3.931-.346,8.825-.835,14.643-1.518a10.383,10.383,0,0,0,9.209-10.306V353.152"
-                            fill="#21325b"
-                          />
-                          <path
-                            id="Path_2"
-                            data-name="Path 2"
-                            d="M244.417,398.641A146.808,146.808,0,0,0,477.589,279.9c0-3.381-.157-6.724-.383-10.049-53.642,80-152.686,117.4-232.79,128.793"
-                            transform="translate(35.564 80.269)"
-                            fill="#979695"
-                          />
-                        </g>
-                      </svg>
-                    </Link>
-                    <img
-                      onClick={() => {
-                        window.open(url[0]?.urlCoingecko, '_blank')
-                      }}
-                      src={coingeckoIcon}
-                      alt=""
-                    />
-                    <img
-                      onClick={() => {
-                        window.open(url[0]?.urlCoinmarketcap, '_blank')
-                      }}
-                      src={coinmarcketcapIcon}
-                      alt=""
-                    />
-                    <img
-                      onClick={() => {
-                        saleToken && addTokenToWallet(saleToken?.address, saleToken?.symbol || '', saleToken?.decimals)
-                      }}
-                      src={metamaskIcon}
-                      alt=""
-                    />
-                  </div>
-                ) : (
-                  ''
-                )}
+                <div className="iconList">
+                  <Link
+                    href={
+                      saleToken && SwapData?.chainId
+                        ? getEtherscanLink(SwapData?.chainId, saleToken?.address, 'address')
+                        : undefined
+                    }
+                    target="_blank"
+                  >
+                    <ETHERSCAN />
+                  </Link>
+                  <Image onClick={() => window.open(url[0]?.urlCoingecko, '_blank')} src={coingeckoIcon} alt="" />
+                  <Image
+                    onClick={() => window.open(url[0]?.urlCoinmarketcap, '_blank')}
+                    src={coinmarcketcapIcon}
+                    alt=""
+                  />
+                  <Image
+                    onClick={() =>
+                      saleToken && addTokenToWallet(saleToken?.address, saleToken?.symbol || '', saleToken?.decimals)
+                    }
+                    src={metamaskIcon}
+                    alt=""
+                  />
+                </div>
               </div>
             </CardWrapper>
           </Stack>
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr">
             <ColSentence>
-              <p>Original price (create at {timeStampToFormat(Number(SwapData?.createTime))})</p>
+              <p>Current price (Updated at {timeStampToFormat(Number(new Date().getTime()))})</p>
+              <p>
+                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
+              </p>
+            </ColSentence>
+            <ColSentence>
+              <p>Sale price</p>
               <p>
                 1 {saleToken?.symbol} ={' '}
                 {salesInfo &&
                   receiveToken &&
-                  new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
+                  new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
                 {receiveToken?.symbol}
-              </p>
-            </ColSentence>
-            <ColSentence>
-              <p>Current price</p>
-              <p>
-                1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
               </p>
             </ColSentence>
           </Stack>
@@ -567,11 +534,16 @@ export default function Details() {
                   flexDirection: 'row'
                 }}
               >
-                <span>{Number(progress) ? Number(progress) : 0}%</span>
-                <CircularProgress
-                  sx={{ marginLeft: 10, '& .css-oxts8u-MuiCircularProgress-circle': { fill: '#eee' } }}
+                {/* <span>{Number(progress) ? Number(progress) : 0}%</span> */}
+                {/* <CircularProgress
+                  sx={{ marginLeft: 10, '& .css-oxts8u-MuiCircularProgress-circle': { fill: '#c9cdd4' } }}
                   variant="determinate"
                   value={Number(progress) ? Number(progress) : 0}
+                /> */}
+                <CircularStatic
+                  value={Number(progress) ? Number(progress) : 0}
+                  borderValue={5}
+                  style={{ width: '60px', height: '60px' }}
                 />
               </p>
             </ColSentence>
@@ -651,7 +623,15 @@ export default function Details() {
                   fontSize: 12,
                   borderRadius: '24px',
                   boxShadow: 'rgb(174 174 174 / 20%) 0px 0px 5px',
-                  padding: '32px'
+                  padding: '32px',
+                  '& .MuiBox-root .css-9m85nc': {
+                    display: 'flex',
+                    gap: 10,
+                    flexDirection: 'row-reverse'
+                  },
+                  '& .MuiBox-root .css-9m85nc button': {
+                    width: '50px'
+                  }
                 }}
               >
                 <RowSentence>
@@ -668,13 +648,20 @@ export default function Details() {
                     1 {saleToken?.symbol} ={' '}
                     {salesInfo &&
                       receiveToken &&
-                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
+                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
                 <RowSentence>
                   <span>Est.discount</span>
-                  <span>{new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(6)}%</span>
+                  <span>
+                    {new BigNumber(SwapData?.originalDiscount)
+                      .multipliedBy(new BigNumber(100))
+                      .isGreaterThanOrEqualTo(0.01)
+                      ? new BigNumber(SwapData?.originalDiscount).multipliedBy(new BigNumber(100)).toFixed(2)
+                      : '< 0.01'}
+                    %
+                  </span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
@@ -684,10 +671,14 @@ export default function Details() {
                 </RowSentence>
                 <NumericalInput
                   value={salesAmount}
-                  errSet={() => {}}
-                  onChange={e => {
-                    setSalesAmount(e.target.value)
+                  autoFocus
+                  onMax={() => {
+                    if (restCanBuyValue) {
+                      setSalesAmount(restCanBuyValue?.toSignificant())
+                    }
                   }}
+                  errSet={() => {}}
+                  onChange={e => setSalesAmount(e.target.value)}
                   onBlur={e => {
                     let inputValue = e.target.value
                     const inputValueTokenAmount = tryParseAmount(inputValue, saleToken || undefined)
@@ -752,9 +743,20 @@ export default function Details() {
                   justifyContent={'center'}
                   pt={30}
                 >
-                  {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
+                  {SwapData?.status === SwapStatus.ENDED ? (
                     <BlackButton disabled width="252px">
                       Sale ended
+                    </BlackButton>
+                  ) : SwapData?.status === SwapStatus.CANCEL ? (
+                    <BlackButton disabled width="252px">
+                      Sale cancelled
+                    </BlackButton>
+                  ) : chainId !== SwapData?.chainId ? (
+                    <BlackButton
+                      width="252px"
+                      onClick={() => triggerSwitchChain(library, SwapData?.chainId, account || '')}
+                    >
+                      Switch network
                     </BlackButton>
                   ) : (
                     <BlackButton
@@ -762,7 +764,6 @@ export default function Details() {
                       disabled={
                         !isWhitelist ||
                         SwapData?.status === SwapStatus.SOON ||
-                        new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0) ||
                         isClaiming ||
                         approveState === ApprovalState.PENDING ||
                         !salesAmount ||
@@ -774,18 +775,21 @@ export default function Details() {
                           new BigNumber(saleTokenBalance?.toSignificant(6) || '')
                         ) ||
                         new BigNumber(salesAmount).isGreaterThan(new BigNumber(canPayAmount?.toSignificant(6) || '')) ||
-                        new BigNumber(salesAmount).isLessThan(new BigNumber(canBuyMinValue?.toSignificant(6) || '')) ||
-                        new BigNumber(salesAmount).isGreaterThan(canBuyMaxValue?.toSignificant(6) || '')
+                        new BigNumber(Number(soldTokenAmountData?.toSignificant())).isEqualTo(
+                          new BigNumber(Number(canBuyMaxValue?.toSignificant()))
+                        )
                       }
                       onClick={approveState === ApprovalState.NOT_APPROVED ? approveCallback : handlePay}
                     >
                       {!isWhitelist
-                        ? 'You are not in whiteList'
+                        ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
                         : saleTokenBalance?.lessThan('0') || saleTokenBalance?.equalTo('0')
                         ? 'Insufficient balance'
-                        : new BigNumber(Number(soldTokenAmountData?.toSignificant(6))).isGreaterThan(0)
+                        : new BigNumber(Number(soldTokenAmountData?.toSignificant())).isEqualTo(
+                            new BigNumber(Number(canBuyMaxValue?.toSignificant()))
+                          )
                         ? 'Purchased'
                         : approveState === ApprovalState.PENDING
                         ? 'Approving'
@@ -820,13 +824,18 @@ export default function Details() {
                     1 {saleToken?.symbol} ={' '}
                     {salesInfo &&
                       receiveToken &&
-                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}
+                      new TokenAmount(receiveToken, JSBI.BigInt(salesInfo?.pricePer))?.toSignificant()}{' '}
                     {receiveToken?.symbol}
                   </span>
                 </RowSentence>
                 <RowSentence>
                   <span>Discount</span>
-                  <span>{Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(6)}%</span>
+                  <span>
+                    {new BigNumber(SwapData?.originalDiscount).multipliedBy(100).isGreaterThanOrEqualTo(0.01)
+                      ? Number(new BigNumber(SwapData?.originalDiscount).multipliedBy(100)).toFixed(2)
+                      : '< 0.01'}
+                    %
+                  </span>
                 </RowSentence>
                 <RowSentence>
                   <span>Sold</span>
@@ -840,9 +849,7 @@ export default function Details() {
                     readOnly
                     value={oneTimePurchaseTokenAmount?.toSignificant() ?? ''}
                     errSet={() => {}}
-                    onChange={e => {
-                      setSalesAmount(e.target.value || '')
-                    }}
+                    onChange={e => setSalesAmount(e.target.value || '')}
                     placeholder=""
                     label="Get"
                     endAdornment={`${saleToken?.symbol}`}
@@ -873,9 +880,20 @@ export default function Details() {
                   justifyContent={'center'}
                   pt={30}
                 >
-                  {SwapData?.status === SwapStatus.ENDED || SwapData?.status === SwapStatus.CANCEL ? (
+                  {SwapData?.status === SwapStatus.ENDED ? (
                     <BlackButton disabled width="252px">
                       Sale ended
+                    </BlackButton>
+                  ) : SwapData?.status === SwapStatus.CANCEL ? (
+                    <BlackButton disabled width="252px">
+                      Sale cancelled
+                    </BlackButton>
+                  ) : chainId !== SwapData?.chainId ? (
+                    <BlackButton
+                      width="252px"
+                      onClick={() => triggerSwitchChain(library, SwapData?.chainId, account || '')}
+                    >
+                      Switch network
                     </BlackButton>
                   ) : (
                     <BlackButton
@@ -894,7 +912,7 @@ export default function Details() {
                       onClick={approveState1 === ApprovalState.NOT_APPROVED ? approveCallback1 : handlePay}
                     >
                       {!isWhitelist
-                        ? 'You are not in whiteList'
+                        ? 'You are not in the whitelist'
                         : SwapData?.status === SwapStatus.SOON
                         ? 'Sale time has no started'
                         : new BigNumber(Number(oneTimePayPriceApproveValue))?.isGreaterThan(
@@ -944,7 +962,11 @@ export default function Details() {
                   disabled={salesInfo?.isCancel || SwapData?.status === 'ended' || isClaimingBalance}
                   onClick={handleCancel}
                 >
-                  {salesInfo?.isCancel || SwapData?.status === 'ended' ? 'Sale ended' : 'Cancel event'}
+                  {SwapData?.status === 'cancel'
+                    ? 'Sale cancelled'
+                    : SwapData?.status === 'ended'
+                    ? 'Sale ended'
+                    : 'Cancel event'}
                 </BlackButton>
               </Stack>
             </Stack>
