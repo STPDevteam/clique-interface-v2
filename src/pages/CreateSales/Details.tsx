@@ -124,6 +124,7 @@ export default function Details() {
   const [curTab, setCurTab] = useState(Tabs.ABOUT)
   const [salesAmount, setSalesAmount] = useState('')
   const [ratio, setRatio] = useState('')
+  const [updateTime, setUpdateTime] = useState('')
   const purchaseCallback = usePurchaseCallback()
   const cancelSaleCallback = useCancelSaleCallback()
   const { showModal, hideModal } = useModal()
@@ -183,6 +184,7 @@ export default function Details() {
         result = res?.data.data
         if (!result) {
           setRatio('')
+          setUpdateTime('')
           return
         }
         ratio = new BigNumber(result[0]?.price)
@@ -190,10 +192,10 @@ export default function Details() {
           .toFixed(6)
           .toString()
         setUrl([result[0], result[1]])
+        setUpdateTime(result[0]?.updateAt)
       } catch (error) {
         console.error(error)
       }
-
       setRatio(ratio ?? '')
     })()
   }, [SwapData?.chainId, receiveToken, saleToken])
@@ -501,7 +503,7 @@ export default function Details() {
           </Stack>
           <Stack display={'grid'} gridTemplateColumns="1fr 1fr">
             <ColSentence>
-              <p>Current price (Updated at {timeStampToFormat(Number(new Date().getTime()))})</p>
+              <p>Current price (Updated at {timeStampToFormat(Number(updateTime))})</p>
               <p>
                 1 {saleToken?.symbol} = {ratio} {receiveToken?.symbol}
               </p>

@@ -26,7 +26,7 @@ import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'utils/parseAmount'
 import { PUBLICSALE_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { Currency, Token } from 'constants/token'
-import { getTokenPrices } from 'utils/fetch/server'
+import { getTokenPrices, getIsCreatorWhite } from 'utils/fetch/server'
 import useModal from 'hooks/useModal'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
@@ -123,6 +123,7 @@ export default function Index() {
   const [oneTimePrice, setOnetimePrice] = useState<string>('')
   const [currencyRatio, setCurrencyRatio] = useState('')
   const [eventTitle, setEventTitle] = useState('')
+  const [isAccountWhite, setIsAccountWhite] = useState(false)
   const history = useHistory()
   const { showModal, hideModal } = useModal()
 
@@ -180,6 +181,30 @@ export default function Index() {
     setReceiveToken(cur)
   }, [])
   const [currencyOptions, setCurrencyOptions] = useState<any>([])
+  useEffect(() => {
+    if (!account) return
+    let result: any = []
+    ;(async () => {
+      try {
+        const res = await getIsCreatorWhite(account)
+        result = res?.data.data
+        console.log(result?.isWhite)
+        if (!result.isWhite) {
+          setIsAccountWhite(false)
+          showModal(
+            <MessageBox type="error" hideFunc={() => history.goBack()}>
+              You are not in the whitelist, you can&apos;t create a swap
+            </MessageBox>
+          )
+        } else {
+          setIsAccountWhite(true)
+        }
+      } catch (error) {
+        setIsAccountWhite(false)
+        console.error(error)
+      }
+    })()
+  }, [account, history, showModal])
   useEffect(() => {
     if (!saleToken || !receiveToken) return
     let result: any = []
@@ -348,6 +373,12 @@ export default function Index() {
         error: <span onClick={toggleWallet}>Connect wallet first</span>
       }
     }
+    if (!isAccountWhite) {
+      return {
+        disabled: true,
+        error: 'You are not in the whitelist'
+      }
+    }
     if (!baseChainId) {
       return {
         disabled: true,
@@ -474,6 +505,7 @@ export default function Index() {
     }
   }, [
     account,
+    isAccountWhite,
     baseChainId,
     chainId,
     saleToken,

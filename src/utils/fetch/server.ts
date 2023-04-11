@@ -187,6 +187,12 @@ export function getIsWhiteList(account: string, saleId: number) {
   })
 }
 
+export function getIsCreatorWhite(account: string) {
+  return Axios.get('stpdao/v2/swap/isCreatorWhite', {
+    account
+  })
+}
+
 export function toCreatePublicSale(
   about: string,
   chainId: number,

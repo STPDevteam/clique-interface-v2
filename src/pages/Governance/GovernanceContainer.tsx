@@ -36,7 +36,8 @@ export default function GovernanceContainer({ children }: { children: any }) {
       <LeftMenu />
       <Box
         sx={{
-          padding: { sm: '24px 32px', xs: '20px 16px' }
+          padding: { sm: '24px 32px', xs: '20px 16px' },
+          paddingLeft: { sm: '200px', xs: '240px' }
         }}
       >
         {children}

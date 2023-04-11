@@ -1,17 +1,6 @@
 import { useState, useCallback } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import {
-  Alert,
-  AppBar,
-  Badge,
-  Box,
-  // IconButton,
-  Link,
-  MenuItem,
-  styled as muiStyled,
-  styled,
-  useTheme
-} from '@mui/material'
+import { Alert, AppBar, Badge, Box, Link, MenuItem, styled as muiStyled, styled, useTheme } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile } from 'theme/index'
@@ -37,14 +26,6 @@ interface Tab extends TabContent {
 }
 
 export const Tabs: Tab[] = [
-  // {
-  //   title: 'Test',
-  //   subTab: [
-  //     { title: 'Test1', route: routes.test1 },
-  //     { title: 'Test2', route: routes.test2 }
-  //   ]
-  // },
-
   { title: 'Governance', route: routes.Governance },
   { title: 'DAO Rewards', route: routes.Activity },
   { title: 'Swap', route: routes.SaleList },
@@ -96,6 +77,25 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     '&.active': {
       color: theme.palette.primary.main,
       borderColor: theme.palette.primary.main
+    },
+    '&:hover': {
+      color: theme.palette.primary.main
+    },
+    [theme.breakpoints.down('sm')]: {
+      paddingBottom: '10px'
+    }
+  },
+  '& .menuLink': {
+    textDecoration: 'none',
+    fontSize: 14,
+    lineHeight: '20px',
+    color: theme.palette.text.secondary,
+    marginRight: 30,
+    fontWeight: 600,
+    paddingBottom: '16px',
+    '&.active': {
+      color: theme.palette.primary.main,
+      borderColor: 'rgba(0, 91, 198, 0.06)'
     },
     '&:hover': {
       color: theme.palette.primary.main
@@ -248,7 +248,6 @@ export default function Header() {
             <TabsBox />
           </HideOnMobile>
         </Box>
-
         <Box
           display={{ sm: 'flex', xs: 'grid' }}
           gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto' }}
