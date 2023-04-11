@@ -14,6 +14,7 @@ import { routes } from 'constants/routes'
 import Governance from 'pages/Governance/GovernanceContainer'
 import GovernanceHome from 'pages/Governance'
 import DaoInfoBase from 'pages/DaoInfo'
+import DaoInfoLayout from 'pages/DaoInfo/DaoInfoLayout'
 import ProposalList from 'pages/DaoInfo/Children/Proposal'
 import DaoInfoActivity from 'pages/DaoInfo/Children/Activity'
 import DaoInfoSettings from 'pages/DaoInfo/Children/Settings'
@@ -73,6 +74,7 @@ const ContentWrapper = styled('div')({
 })
 
 const BodyWrapper = styled('div')(({ theme }) => ({
+  paddingTop: theme.height.header,
   minHeight: `calc(100vh - ${theme.height.header})`,
   [theme.breakpoints.down('md')]: {
     minHeight: `calc(100vh - ${theme.height.header} - ${theme.height.mobileHeader} - 50px)`
@@ -104,31 +106,31 @@ export default function App() {
                 <Switch>
                   <Route
                     strict
+                    path={routes.DaoInfo}
+                    render={() => (
+                      <DaoInfoLayout>
+                        <DaoInfoBase>
+                          <Switch>
+                            <Route path={routes.DaoInfo} exact strict component={ProposalList} />
+                            <Route path={routes.Proposal} exact strict component={ProposalList} />
+                            <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
+                            <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
+                            <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
+                            {/* <Route path={routes.CreatePublicSale} exact strict component={CreatePublicSale} /> */}
+                            <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
+                            <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
+                            <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
+                          </Switch>
+                        </DaoInfoBase>
+                      </DaoInfoLayout>
+                    )}
+                  />
+                  <Route
+                    strict
                     path={routes.Governance}
                     render={() => (
                       <Governance>
-                        <Switch>
-                          <Route path={routes.Governance} exact strict component={GovernanceHome} />
-                          <Route
-                            strict
-                            path={routes.DaoInfo}
-                            render={() => (
-                              <DaoInfoBase>
-                                <Switch>
-                                  <Route path={routes.DaoInfo} exact strict component={ProposalList} />
-                                  <Route path={routes.Proposal} exact strict component={ProposalList} />
-                                  <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
-                                  <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
-                                  <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
-                                  {/* <Route path={routes.CreatePublicSale} exact strict component={CreatePublicSale} /> */}
-                                  <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
-                                  <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
-                                  <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
-                                </Switch>
-                              </DaoInfoBase>
-                            )}
-                          />
-                        </Switch>
+                        <GovernanceHome />
                       </Governance>
                     )}
                   />

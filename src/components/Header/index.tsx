@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Alert, AppBar, Badge, Box, Link, MenuItem, styled as muiStyled, styled, useTheme } from '@mui/material'
+import { AppBar, Badge, Box, Breadcrumbs, Link, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile } from 'theme/index'
@@ -48,7 +48,7 @@ const navLinkSX = ({ theme }: any) => ({
 const StyledNavLink = styled(NavLink)(navLinkSX)
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  position: 'relative',
+  position: 'fixed',
   height: theme.height.header,
   backgroundColor: theme.palette.background.paper,
   flexDirection: 'row',
@@ -207,35 +207,39 @@ const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { account } = useActiveWeb3React()
-  const theme = useTheme()
-  const {
-    data: { unReadCount: notReadCount }
-  } = useNotificationListPaginationCallback()
-
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
   }, [])
 
+  const { pathname } = useLocation()
+  const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
+
+  if (isGovernance) {
+    return (
+      <StyledAppBar
+        sx={{
+          paddingLeft: '292px !important'
+        }}
+      >
+        <Box width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link underline="hover" color="inherit" href="/">
+              STP
+            </Link>
+            <Link underline="hover" color="inherit" href="/material-ui/getting-started/installation/">
+              Core
+            </Link>
+            <Typography color="text.primary">Breadcrumbs</Typography>
+          </Breadcrumbs>
+          <HeaderRight />
+        </Box>
+      </StyledAppBar>
+    )
+  }
   return (
     <>
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
       <Filler />
-      <Alert
-        icon={false}
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          borderRadius: 0,
-          color: '#fff',
-          backgroundColor: theme.palette.primary.main
-        }}
-      >
-        {`You’re now on Clique V2, if you’d like to visit the old version please navigate to:`}{' '}
-        <Link href="https://v1.myclique.io/" target={'_blank'} color="inherit">
-          https://v1.myclique.io/
-        </Link>
-      </Alert>
       <StyledMobileAppBar>
         <TabsBox />
       </StyledMobileAppBar>
@@ -248,43 +252,7 @@ export default function Header() {
             <TabsBox />
           </HideOnMobile>
         </Box>
-        <Box
-          display={{ sm: 'flex', xs: 'grid' }}
-          gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto' }}
-          alignItems="center"
-          gap={{ xs: '10px', sm: '24px' }}
-        >
-          <NetworkSelect />
-          {account && (
-            <NoticeMsg to={routes.Notification}>
-              <Badge badgeContent={notReadCount} color="success">
-                <NotificationIcon />
-              </Badge>
-            </NoticeMsg>
-          )}
-          <Web3Status />
-          {/* <ShowOnMobile breakpoint="sm">
-            <IconButton
-              sx={{
-                border: '1px solid rgba(0, 0, 0, 0.1)',
-                height: { xs: 24, sm: 32 },
-                width: { xs: 24, sm: 32 },
-                mb: { xs: 0, sm: 15 },
-                mt: { xs: 0, sm: 8 },
-                padding: '4px',
-                borderRadius: '8px'
-              }}
-              onClick={() => {
-                setMobileMenuOpen(open => !open)
-              }}
-            >
-              <svg width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="#252525">
-                <path d="M1 1H13" strokeWidth="1.4" strokeLinecap="round" />
-                <path d="M1 7H13" strokeWidth="1.4" strokeLinecap="round" />
-              </svg>
-            </IconButton>
-          </ShowOnMobile> */}
-        </Box>
+        <HeaderRight />
       </StyledAppBar>
     </>
   )
@@ -377,5 +345,31 @@ function TabsBox() {
         )
       )}
     </LinksWrapper>
+  )
+}
+
+export function HeaderRight() {
+  const { account } = useActiveWeb3React()
+  const {
+    data: { unReadCount: notReadCount }
+  } = useNotificationListPaginationCallback()
+
+  return (
+    <Box
+      display={{ sm: 'flex', xs: 'grid' }}
+      gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto' }}
+      alignItems="center"
+      gap={{ xs: '10px', sm: '24px' }}
+    >
+      <NetworkSelect />
+      {account && (
+        <NoticeMsg to={routes.Notification}>
+          <Badge badgeContent={notReadCount} color="success">
+            <NotificationIcon />
+          </Badge>
+        </NoticeMsg>
+      )}
+      <Web3Status />
+    </Box>
   )
 }

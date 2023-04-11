@@ -19,7 +19,7 @@ export default function GovernanceContainer({ children }: { children: any }) {
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: { xs: '1fr', sm: '80px 1fr' },
+        // gridTemplateColumns: { xs: '1fr', sm: '80px 1fr' },
         minHeight: '100%',
         width: '100%'
       }}
@@ -36,8 +36,7 @@ export default function GovernanceContainer({ children }: { children: any }) {
       <LeftMenu />
       <Box
         sx={{
-          padding: { sm: '24px 32px', xs: '20px 16px' },
-          paddingLeft: { sm: '200px', xs: '240px' }
+          padding: { sm: '24px 32px 24px 104px', xs: '20px 16px ' }
         }}
       >
         {children}

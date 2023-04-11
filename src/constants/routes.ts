@@ -1,5 +1,5 @@
 export const routes = {
-  Governance: '/governance',
+  Governance: '/daos',
 
   _DaoInfo: '/governance/daoInfo',
   DaoInfo: '/governance/daoInfo/:chainId/:address',
