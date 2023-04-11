@@ -1,25 +1,16 @@
 import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
-import OutlineButton from 'components/Button/OutlineButton'
 import Pagination from 'components/Pagination'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
-import {
-  NotificationProp,
-  NotificationTypes,
-  useNotificationListInfo,
-  useNotificationToRead
-} from 'hooks/useBackedNotificationServer'
+import { NotificationProp, NotificationTypes, useNotificationListInfo } from 'hooks/useBackedNotificationServer'
 import EmptyData from 'components/EmptyData'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import { timeStampToFormat } from 'utils/dao'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
-import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
-import { useActiveWeb3React } from 'hooks'
-// import PushManagementModal from './PushManagementModal'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
   marginTop: 24,
@@ -48,12 +39,6 @@ function TypeTitle({ isRead, type }: { isRead: boolean; type: NotificationTypes 
         ? 'New active proposal'
         : type === 'ReserveToken'
         ? 'Reserve token'
-        : type === 'PublicSaleCreated'
-        ? 'Create swap'
-        : type === 'PublicSalePurchased'
-        ? 'Purchased a swap'
-        : type === 'PublicSaleCanceled'
-        ? 'Cancelled a swap'
         : 'message',
     [type]
   )
@@ -75,20 +60,7 @@ function TypeTitle({ isRead, type }: { isRead: boolean; type: NotificationTypes 
   )
 }
 
-function MsgItem({
-  item,
-  setReadOnce,
-  isReadAll,
-  toBackedReadOnce
-}: {
-  item: NotificationProp
-  setReadOnce: () => void
-  isReadAll: boolean
-  toBackedReadOnce: (notificationId: number) => Promise<any>
-}) {
-  const [isRead, setIsRead] = useState(item.alreadyRead)
-  const { account } = useActiveWeb3React()
-
+function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boolean }) {
   const history = useHistory()
   const showData: {
     text: string
@@ -102,14 +74,6 @@ function MsgItem({
           ? item.info.proposalName || ''
           : item.types === 'ReserveToken'
           ? 'You have a new token can be claimed'
-          : item.types === 'PublicSaleCreated'
-          ? 'You created a new swap'
-          : account?.toLowerCase() === item.info.creator?.toLowerCase()
-          ? `${item.info.buyer ?? ''} purchased your swap`
-          : item.info.creator?.toLowerCase() !== account?.toLowerCase()
-          ? 'You purchased a swap'
-          : item.types === 'PublicSaleCanceled'
-          ? 'You cancelled a swap'
           : 'message',
       link:
         item.types === 'Airdrop'
@@ -123,38 +87,14 @@ function MsgItem({
             : ''
           : item.types === 'ReserveToken'
           ? routes._Profile
-          : item.types === 'PublicSaleCreated' ||
-            item.types === 'PublicSalePurchased' ||
-            item.types === 'PublicSaleCanceled'
-          ? routes._SaleDetails + `/${item.info.activityId || 0}`
           : ''
     }
-  }, [
-    account,
-    item.info.activityId,
-    item.info.buyer,
-    item.info.chainId,
-    item.info.creator,
-    item.info.daoAddress,
-    item.info.proposalId,
-    item.info.proposalName,
-    item.types
-  ])
+  }, [item.info, item.types])
 
   return (
-    <Box
-      sx={{ cursor: isRead || isReadAll ? 'auto' : 'pointer' }}
-      onClick={() => {
-        if (!isRead || !isReadAll) {
-          toBackedReadOnce(item.notificationId).then(() => {
-            setIsRead(true)
-            setReadOnce()
-          })
-        }
-      }}
-    >
+    <Box sx={{ cursor: isReadAll ? 'auto' : 'pointer' }}>
       <RowCenter mb={16}>
-        <TypeTitle isRead={isRead || isReadAll} type={item.types} />
+        <TypeTitle isRead={isReadAll} type={item.types} />
         <Text>{timeStampToFormat(item.notificationTime)}</Text>
       </RowCenter>
       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
@@ -162,24 +102,6 @@ function MsgItem({
           <DaoAvatars size={64} src={item.info.daoLogo} />
           <Box ml={16}>
             <Text>{item.info.daoName}</Text>
-            <Text display={'inline-block'}>
-              {showData.text}
-              {'. '}
-              {showData.link && (
-                <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
-                  View
-                </Link>
-              )}
-            </Text>
-          </Box>
-        </Box>
-      ) : item.types === 'PublicSaleCreated' ||
-        item.types === 'PublicSalePurchased' ||
-        item.types === 'PublicSaleCanceled' ? (
-        <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} src={item.info.tokenLogo} />
-          <Box ml={16}>
-            <Text>{item.info.activityName}</Text>
             <Text display={'inline-block'}>
               {showData.text}
               {'. '}
@@ -208,15 +130,8 @@ function MsgItem({
   )
 }
 
-export default function NotificationPage() {
-  const [isReadAll, setIsReadAll] = useState(false)
+export default function PushList() {
   const { result: notificationList, loading, page } = useNotificationListInfo()
-  const {
-    setReadOnce,
-    setReadAll,
-    data: { unReadCount }
-  } = useNotificationListPaginationCallback()
-  const { toBackedReadAll, toBackedReadOnce } = useNotificationToRead()
 
   return (
     <Box
@@ -226,36 +141,9 @@ export default function NotificationPage() {
     >
       <ContainerWrapper maxWidth={1150}>
         <RowCenter>
-          <RowCenter>
-            <Typography mr={10} variant="h6">
-              Notifications
-            </Typography>
-            {/* <OutlineButton height={24} width={140} noBold onClick={() => history.push(routes.PushList)}>
-              Push Message
-            </OutlineButton> */}
-          </RowCenter>
-          <Stack display={'grid'} gridTemplateColumns="1fr" gap={16}>
-            {/* <Badge badgeContent={4} color="primary">
-              <OutlineButton noBold height={24} width={140} onClick={() => showModal(<PushManagementModal />)}>
-                Push management
-              </OutlineButton>
-            </Badge> */}
-            <OutlineButton
-              height={24}
-              width={140}
-              noBold
-              onClick={() => {
-                if (unReadCount) {
-                  toBackedReadAll().then(() => {
-                    setReadAll()
-                    setIsReadAll(true)
-                  })
-                }
-              }}
-            >
-              Make all as read
-            </OutlineButton>
-          </Stack>
+          <Typography mr={10} variant="h6">
+            Push Message
+          </Typography>
         </RowCenter>
         <Wrapper spacing={26}>
           <Box minHeight={150}>
@@ -267,15 +155,7 @@ export default function NotificationPage() {
             </DelayLoading>
             <Stack spacing={16}>
               {!loading &&
-                notificationList.map(item => (
-                  <MsgItem
-                    setReadOnce={setReadOnce}
-                    toBackedReadOnce={toBackedReadOnce}
-                    key={item.notificationId}
-                    isReadAll={isReadAll}
-                    item={item}
-                  />
-                ))}
+                notificationList.map(item => <MsgItem key={item.notificationId} isReadAll={true} item={item} />)}
             </Stack>
           </Box>
           <Box display={'flex'} justifyContent="center">

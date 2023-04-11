@@ -2,6 +2,7 @@ import { Box, Stack, styled, Switch, Typography } from '@mui/material'
 import theme from 'theme'
 import Modal from 'components/Modal'
 import { useState } from 'react'
+// import Push from 'hooks/usePush'
 
 const RowWrapper = styled(Stack)(({ theme }) => ({
   width: '100%',
@@ -30,6 +31,10 @@ export default function PushManagementModal() {
   const [isSubscribeNewDAO, setIsSubscribeNewDAO] = useState<boolean>(false)
   const [isSubscribeAirdrop, setIsSubscribeAirdrop] = useState<boolean>(true)
   const [isSubscribeProposal, setIsSubscribeProposal] = useState<boolean>(true)
+
+  // const isSubscribeSTP = Push.useIsSubscribe('0xC7BBDed82767c2eEcA8a9C9E03a1F63c5725DaBa')
+  // console.log('🚀 ~ file: PushManagementModal.tsx:36 ~ PushManagementModal ~ isSubscribeSTP:', isSubscribeSTP)
+
   return (
     <Modal closeIcon>
       <Box display="grid" padding="40px 24px" gap="24px" justifyItems="center">

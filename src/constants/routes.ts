@@ -24,6 +24,7 @@ export const routes = {
   CreatorToken: '/creator/token',
 
   Notification: '/notification',
+  PushList: '/notification/push/list',
 
   Profile: '/profile/:address',
   _Profile: '/profile',

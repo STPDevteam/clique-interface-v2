@@ -149,3 +149,14 @@ export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
 export const signMessage = 'Welcome come Clique'
 export const myCliqueV1Domain = 'https://v1.myclique.io/'
+
+enum ENV {
+  PROD = 'prod',
+  STAGING = 'staging',
+  DEV = 'dev'
+}
+export const PUSH_CONFIG = {
+  channelAddress: '0xC7BBDed82767c2eEcA8a9C9E03a1F63c5725DaBa',
+  env: ENV.STAGING,
+  app: ''
+}

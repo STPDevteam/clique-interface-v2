@@ -22,9 +22,12 @@ import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
-import CreateSales from 'pages/CreateSales'
-import SaleDetail from 'pages/CreateSales/Details'
-import SaleList from 'pages/CreateSales/SalesList'
+
+// swap
+// import CreateSales from 'pages/CreateSales'
+// import SaleDetail from 'pages/CreateSales/Details'
+// import SaleList from 'pages/CreateSales/SalesList'
+
 // import TokenList from 'pages/TokenList'
 import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
@@ -35,7 +38,6 @@ import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
 import Notification from 'pages/NotificationPage'
-import Push from 'pages/Notification'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
@@ -142,12 +144,12 @@ export default function App() {
                   <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
                   <Route exact strict path={routes.Notification} component={Notification} />
+                  {/* <Route exact strict path={routes.PushList} component={PushList} /> */}
                   <Route exact strict path={routes.Profile} component={Profile} />
                   <Route exact strict path={routes._Profile} component={Profile} />
-                  <Route exact strict path={routes.CreateSales} component={CreateSales} />
-                  <Route exact strict path={routes.SaleDetails} component={SaleDetail} />
-                  <Route exact strict path={routes.SaleList} component={SaleList} />
-                  <Route exact strict path={routes.Push} component={Push} />
+                  {/* <Route exact strict path={routes.CreateSales} component={CreateSales} /> */}
+                  {/* <Route exact strict path={routes.SaleDetails} component={SaleDetail} /> */}
+                  {/* <Route exact strict path={routes.SaleList} component={SaleList} /> */}
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>
