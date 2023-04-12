@@ -41,6 +41,7 @@ import Notification from 'pages/NotificationPage'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
+import Home from './Home'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -149,7 +150,7 @@ export default function App() {
                   <Route exact strict path={routes._Profile} component={Profile} />
                   {/* <Route exact strict path={routes.CreateSales} component={CreateSales} /> */}
                   {/* <Route exact strict path={routes.SaleDetails} component={SaleDetail} /> */}
-                  {/* <Route exact strict path={routes.SaleList} component={SaleList} /> */}
+                  <Route exact strict path={routes.Home} component={Home} />
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>

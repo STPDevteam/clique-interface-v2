@@ -32,6 +32,6 @@ export const routes = {
   SaleDetails: '/saleList/saleDetails/:saleId',
   _SaleDetails: '/saleList/saleDetails',
   SaleList: '/saleList',
-
+  Home: '/home',
   Push: '/push'
 }

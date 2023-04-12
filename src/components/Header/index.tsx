@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { AppBar, Badge, Box, Breadcrumbs, Link, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
+import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile } from 'theme/index'
@@ -205,6 +206,23 @@ const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
   }
 }))
 
+// const StyledBreadcrumb = styled(Chip)(({ theme }) => {
+//   const backgroundColor = theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]
+//   return {
+//     backgroundColor,
+//     // height: theme.spacing(3),
+//     color: theme.palette.text.primary,
+//     fontWeight: theme.typography.fontWeightRegular,
+//     '&:hover, &:focus': {
+//       backgroundColor: emphasize(backgroundColor, 0.06)
+//     },
+//     '&:active': {
+//       boxShadow: theme.shadows[1],
+//       backgroundColor: emphasize(backgroundColor, 0.12)
+//     }
+//   }
+// }) as typeof Chip
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleMobileMenueDismiss = useCallback(() => {
@@ -221,13 +239,27 @@ export default function Header() {
           paddingLeft: '292px !important'
         }}
       >
-        <Box width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
+        <Box
+          width={'100%'}
+          display={'flex'}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+          sx={{
+            '& li a': {
+              color: '#0049c6',
+              display: 'flex',
+              alignItems: 'center',
+              textDecoration: 'none'
+            }
+          }}
+        >
           <Breadcrumbs aria-label="breadcrumb">
-            <Link underline="hover" color="inherit" href="/">
-              STP
-            </Link>
-            <Link underline="hover" color="inherit" href="/material-ui/getting-started/installation/">
-              Core
+            <NavLink to="/">
+              <HomeIcon fontSize="small" />
+              Home
+            </NavLink>
+            <Link underline="hover" color="inherit" href="/governance">
+              Governancce
             </Link>
             <Typography color="text.primary">Breadcrumbs</Typography>
           </Breadcrumbs>

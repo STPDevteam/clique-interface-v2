@@ -2,6 +2,13 @@ import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
 
+export function getHomeContributorsList(offset: number, count: number) {
+  return Axios.get('stpdao/v2/account/top/list', {
+    offset,
+    count
+  })
+}
+
 export function commitErrorMsg(title: string, content: string, func: string, params: string) {
   return Axios.post('error', {
     title,
