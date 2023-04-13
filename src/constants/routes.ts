@@ -11,6 +11,7 @@ export const routes = {
   CreateAirdrop: '/governance/daoInfo/:chainId/:address/active_info/create_dao_drop',
   DaoInfoAbout: '/governance/daoInfo/:chainId/:address/about',
   DaoInfoSettings: '/governance/daoInfo/:chainId/:address/settings',
+  Member: '/governance/daoInfo/:chainId/:address/member',
 
   Activity: '/activity',
   _ActivityAirdropDetail: '/activity/dao_drop',

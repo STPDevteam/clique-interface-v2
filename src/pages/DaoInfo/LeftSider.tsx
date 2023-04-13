@@ -139,7 +139,7 @@ const menuList = [
   {
     text: 'Member',
     icon: member,
-    route: routes._DaoInfo
+    route: routes.Member
   },
   {
     text: 'About & Settings',
@@ -173,7 +173,7 @@ const teamspacesList = [
 
 export default function LeftSider() {
   const { pathname } = useLocation()
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [gameOpen, setGameOpen] = useState(false)
   const handleClick = () => {
     setOpen(prevOpen => !prevOpen)
@@ -247,7 +247,7 @@ export default function LeftSider() {
             gap={10}
             sx={{
               '& li a': {
-                paddingLeft: 60
+                paddingLeft: 80
               },
               '& li::marker': {
                 display: 'inline-block',
@@ -264,6 +264,7 @@ export default function LeftSider() {
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 10,
+                color: '#3f5170',
                 cursor: 'pointer',
                 '& img': {
                   width: 14
@@ -288,6 +289,7 @@ export default function LeftSider() {
                       backgroundColor: 'rgba(0, 91, 198, 0.06)'
                     },
                     '& a': {
+                      color: theme => theme.palette.text.secondary,
                       display: 'flex',
                       alignItems: 'center',
                       gap: 10,
@@ -321,6 +323,7 @@ export default function LeftSider() {
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 10,
+                color: '#3f5170',
                 cursor: 'pointer',
                 '& img': {
                   width: 14
@@ -344,7 +347,7 @@ export default function LeftSider() {
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 10,
-                padding: '16px 20px',
+                padding: '16px 54px',
                 '&:hover': {
                   color: '#232323!important'
                 }

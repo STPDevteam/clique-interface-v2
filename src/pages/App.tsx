@@ -42,6 +42,7 @@ import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporte
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 import Home from './Home'
+import Member from './Member'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -112,8 +113,9 @@ export default function App() {
                     path={routes.DaoInfo}
                     render={() => (
                       <DaoInfoLayout>
-                        <DaoInfoBase>
-                          <Switch>
+                        <Switch>
+                          <Route path={routes.Member} exact strict component={Member} />
+                          <DaoInfoBase>
                             <Route path={routes.DaoInfo} exact strict component={ProposalList} />
                             <Route path={routes.Proposal} exact strict component={ProposalList} />
                             <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
@@ -123,8 +125,8 @@ export default function App() {
                             <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
                             <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
                             <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
-                          </Switch>
-                        </DaoInfoBase>
+                          </DaoInfoBase>
+                        </Switch>
                       </DaoInfoLayout>
                     )}
                   />
