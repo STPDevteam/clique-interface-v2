@@ -67,18 +67,18 @@ const StyledTableHead = styled(TableHead)(({ theme }) => ({
   borderRadius: 8,
   overflow: 'hidden',
   '& .MuiTableCell-root': {
-    fontWeight: 600,
+    fontWeight: 400,
     fontSize: '14px!important',
     whiteSpace: 'pre',
     lineHeight: '12px',
-    background: theme.bgColor.bg1,
+    // background: theme.bgColor.bg1,
     padding: '18px 20px 18px 0',
-    color: theme.palette.text.primary,
-    borderBottom: 'none',
+    color: '#80829F',
+    borderBottom: `1px solid ${theme.bgColor.bg2}`,
     '& .MuiTableSortLabel-root': {
       // fontWeight: 600,
       // fontSize: '14px!important',
-      color: theme.palette.text.secondary
+      color: '#80829F'
     },
     '&:first-of-type': {
       paddingLeft: 20,
@@ -210,7 +210,7 @@ export default function Table({
                     <Typography variant="inherit" component="div" fontSize={12} color="#000000" sx={{ opacity: 0.5 }}>
                       {headerString}
                     </Typography>
-                    <Typography sx={{ color: theme => theme.palette.text.secondary }} component="div">
+                    <Typography sx={{ color: '#80829F' }} component="div">
                       {data[index] ?? null}
                     </Typography>
                     {collapsible && index + 1 === header.length && (

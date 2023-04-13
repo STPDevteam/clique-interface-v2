@@ -1,4 +1,4 @@
-import { Box, Typography, styled, Tabs, Tab } from '@mui/material'
+import { Box, Typography, styled, Tabs, Tab, Divider } from '@mui/material'
 import { ReactComponent as MemberIcon } from 'assets/svg/member.svg'
 import Button from 'components/Button/Button'
 // import Image from 'components/Image'
@@ -7,6 +7,8 @@ import { ReactComponent as Job } from 'assets/svg/job.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import { useState } from 'react'
 import CardView from './Children/CardView'
+import JobApplication from './Children/JobApplication'
+import InviteUser from './Children/InviteUser'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -14,9 +16,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
   fontSize: 14,
   listStyle: 'none',
   padding: 0,
-  marginTop: 20,
   '&>*': {
-    padding: '15px 0',
     marginRight: 60,
     textDecoration: 'none',
     whiteSpace: 'nowrap',
@@ -56,6 +56,21 @@ const StyledTabs = styled('div')(({ theme }) => ({
     }
   }
 }))
+
+const tabList = [
+  {
+    label: 'Card View',
+    icon: <View />
+  },
+  {
+    label: 'Job Application',
+    icon: <Job />
+  },
+  {
+    label: 'Invite User',
+    icon: <Invite />
+  }
+]
 
 export default function Member() {
   const [tabValue, setTabValue] = useState(0)
@@ -105,33 +120,21 @@ export default function Member() {
       </Typography>
       <StyledTabs>
         <Tabs value={tabValue}>
-          <Tab
-            icon={<View />}
-            iconPosition="start"
-            label="Card View"
-            onClick={() => setTabValue(0)}
-            sx={{ gap: 10 }}
-            className={tabValue === 0 ? 'active' : ''}
-          ></Tab>
-          <Tab
-            icon={<Job />}
-            iconPosition="start"
-            label="Job Application"
-            onClick={() => setTabValue(1)}
-            sx={{ gap: 10 }}
-            className={tabValue === 1 ? 'active' : ''}
-          ></Tab>
-          <Tab
-            icon={<Invite />}
-            iconPosition="start"
-            label="Invite User"
-            onClick={() => setTabValue(2)}
-            sx={{ gap: 10 }}
-            className={tabValue === 2 ? 'active' : ''}
-          ></Tab>
+          {tabList.map((item, idx) => (
+            <Tab
+              key={item.label + idx}
+              icon={item.icon}
+              iconPosition="start"
+              label={item.label}
+              onClick={() => setTabValue(idx)}
+              sx={{ gap: 10 }}
+              className={tabValue === idx ? 'active' : ''}
+            ></Tab>
+          ))}
         </Tabs>
       </StyledTabs>
-      {tabValue === 0 ? <CardView /> : ''}
+      <Divider />
+      {tabValue === 0 ? <CardView /> : tabValue === 1 ? <JobApplication /> : <InviteUser />}
     </Box>
   )
 }
