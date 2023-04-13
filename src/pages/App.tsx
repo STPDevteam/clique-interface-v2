@@ -43,6 +43,7 @@ import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 import Home from './Home'
 import Member from './Member'
+import ComingSoon from './ComingSoon'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -114,9 +115,13 @@ export default function App() {
                     render={() => (
                       <DaoInfoLayout>
                         <Switch>
-                          <Route path={routes.Member} exact strict component={Member} />
+                          <Route path={routes.DaoMember} exact strict component={Member} />
+                          <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoBounty} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoAboutSetting} exact strict component={ComingSoon} />
                           <DaoInfoBase>
-                            <Route path={routes.DaoInfo} exact strict component={ProposalList} />
+                            {/* <Route path={routes.DaoInfo} exact strict component={ProposalList} /> */}
                             <Route path={routes.Proposal} exact strict component={ProposalList} />
                             <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
                             <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
@@ -125,6 +130,11 @@ export default function App() {
                             <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
                             <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
                             <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
+                            <Route
+                              exact
+                              path={routes.DaoInfo}
+                              render={() => <Redirect to={location.pathname + '/proposal'} />}
+                            />
                           </DaoInfoBase>
                         </Switch>
                       </DaoInfoLayout>
@@ -153,6 +163,7 @@ export default function App() {
                   {/* <Route exact strict path={routes.CreateSales} component={CreateSales} /> */}
                   {/* <Route exact strict path={routes.SaleDetails} component={SaleDetail} /> */}
                   <Route exact strict path={routes.Home} component={Home} />
+
                   <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                 </Switch>
               </Web3ReactManager>
