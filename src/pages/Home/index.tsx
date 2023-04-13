@@ -63,16 +63,15 @@ function DaoItem({
           display: 'none'
         },
         '& .des': {
-          display: '-webkit-flex',
+          display: '-webkit-box',
           fontSize: 14,
           width: '247px',
-          height: '60px',
-          textAlign: 'left'
-          // overflow: 'hidden',
-          // textOverflow: 'ellipsis',
-          // WebkitBoxOrient: 'vertical',
-          // wordBreak: 'break-all',
-          // WebkitLineClamp: 3
+          height: '76px',
+          textAlign: 'left',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 3
         }
       }}
     >
@@ -86,7 +85,7 @@ function DaoItem({
           <div style={{ fontSize: 14, textAlign: 'left' }}>@{daoBaseInfo?.handle}</div>
         </Box>
       </Box>
-      <p className="des">{daoBaseInfo?.description}</p>
+      <Typography className="des">{daoBaseInfo?.description}</Typography>
       <Box
         display={'flex'}
         justifyContent={'space-between'}
