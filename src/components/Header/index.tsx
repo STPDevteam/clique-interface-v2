@@ -50,7 +50,11 @@ export const Tabs: Tab[] = [
   // { title: 'Tokens', route: routes.Tokens },
   { title: 'Creator', route: routes.Creator },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
-  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
+  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' },
+  {
+    title: 'Apply For Grant',
+    link: 'https://docs.google.com/forms/d/e/1FAIpQLSdSl2HuWLXMQDRjB4npQP0BoAcpGL2e3BQK9HldkU7TZMgSRQ/viewform'
+  }
 ]
 
 const navLinkSX = ({ theme }: any) => ({
@@ -230,9 +234,13 @@ export default function Header() {
           backgroundColor: theme.palette.primary.main
         }}
       >
-        {`You’re now on Clique V2, if you’d like to visit the old version please navigate to:`}{' '}
-        <Link href="https://v1.myclique.io/" target={'_blank'} color="inherit">
-          https://v1.myclique.io/
+        {`The DAO Booster Program is live,`}{' '}
+        <Link
+          href="https://docs.google.com/forms/d/e/1FAIpQLSdSl2HuWLXMQDRjB4npQP0BoAcpGL2e3BQK9HldkU7TZMgSRQ/viewform"
+          target={'_blank'}
+          color="inherit"
+        >
+          apply for the grant
         </Link>
       </Alert>
       <StyledMobileAppBar>
