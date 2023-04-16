@@ -4,31 +4,30 @@ import { timeStampToFormat } from 'utils/dao'
 import Table from 'components/Table'
 import { useMemo } from 'react'
 // import Button from 'components/Button/Button'
-
+const applicationList = [
+  {
+    icon: <Twitter />,
+    userName: 'User001',
+    applyFor: 'Manager',
+    applyTime: new Date().getTime(),
+    message: 'There is a bio'
+  },
+  {
+    icon: <Twitter />,
+    userName: 'User002',
+    applyFor: 'Manager',
+    applyTime: new Date().getTime(),
+    message: 'There is a bio'
+  },
+  {
+    icon: <Twitter />,
+    userName: 'User003',
+    applyFor: 'Manager',
+    applyTime: new Date().getTime(),
+    message: 'There is a bio'
+  }
+]
 export default function JobApplication() {
-  const applicationList = [
-    {
-      icon: <Twitter />,
-      userName: 'User001',
-      applyFor: 'Manager',
-      applyTime: new Date().getTime(),
-      message: 'There is a bio'
-    },
-    {
-      icon: <Twitter />,
-      userName: 'User002',
-      applyFor: 'Manager',
-      applyTime: new Date().getTime(),
-      message: 'There is a bio'
-    },
-    {
-      icon: <Twitter />,
-      userName: 'User003',
-      applyFor: 'Manager',
-      applyTime: new Date().getTime(),
-      message: 'There is a bio'
-    }
-  ]
   const tableList = useMemo(() => {
     return applicationList.map(({ icon, userName, applyFor, applyTime, message }) => [
       <Box key={message} display={'flex'} gap={10} alignItems={'center'} fontWeight={500}>
@@ -67,7 +66,7 @@ export default function JobApplication() {
         </Typography>
       </Box>
     ])
-  }, [applicationList])
+  }, [])
 
   return (
     <Box sx={{}}>

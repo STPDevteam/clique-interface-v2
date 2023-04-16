@@ -185,7 +185,7 @@ export default function Input({
             },
             [`&.${inputBaseClasses.root}`]: {
               border: theme =>
-                `2px solid ${outlined ? 'rgba(255,255,255,.4)' : error ? theme.palette.error.main : 'transparent'}`
+                `2px solid ${outlined ? 'rgba(212,215,226, 1)' : error ? theme.palette.error.main : 'transparent'}`
             },
             [`&.${inputBaseClasses.focused}`]: {
               border: theme =>

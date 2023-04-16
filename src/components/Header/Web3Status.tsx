@@ -41,7 +41,7 @@ function Web3StatusInner() {
             height: { xs: 36, sm: 50 },
             width: { xs: 'auto', sm: 200 },
             padding: '0 15px',
-            borderRadius: `${theme.shape.borderRadius}px`,
+            borderRadius: `${theme.shape.borderRadius}`,
             display: { sm: 'flex', xs: 'grid' },
             gridTemplateColumns: 'auto auto',
             justifyContent: 'center',

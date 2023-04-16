@@ -139,7 +139,7 @@ export const theme = {
     bg7: '#7FBA7A'
   },
   borderRadius: {
-    default: '24px'
+    default: '8px'
   },
   boxShadow: {
     bs1: 'inset 0px -1px 0px #E4E4E4',
@@ -158,7 +158,7 @@ export const theme = {
   },
   shape: {
     border: '1px solid',
-    borderRadius: 16
+    borderRadius: 8
   },
   spacing: (factor: number) => `${1 * factor}px`
   // gray: {
@@ -204,7 +204,7 @@ export const override: any = {
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif!important',
         color: theme.palette.primary.contrastText,
         fontWeight: 500,
-        borderRadius: `${theme.shape.borderRadius}px`,
+        borderRadius: `${theme.shape.borderRadius}`,
         transition: '.3s',
         textTransform: 'none' as const
       },

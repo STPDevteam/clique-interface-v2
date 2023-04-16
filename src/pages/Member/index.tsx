@@ -1,14 +1,14 @@
 import { Box, Typography, styled, Tabs, Tab, Divider } from '@mui/material'
 import { ReactComponent as MemberIcon } from 'assets/svg/member.svg'
 import Button from 'components/Button/Button'
-// import Image from 'components/Image'
 import { ReactComponent as View } from 'assets/svg/view.svg'
 import { ReactComponent as Job } from 'assets/svg/job.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import CardView from './Children/CardView'
 import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
+// import OpenJobs from './Children/OpenJobs'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -70,10 +70,15 @@ const tabList = [
     label: 'Invite User',
     icon: <Invite />
   }
+  // {
+  //   label: 'Open Jobs',
+  //   icon: <Job />
+  // }
 ]
 
 export default function Member() {
   const [tabValue, setTabValue] = useState(0)
+  const addMemberCallback = useCallback(() => {}, [])
 
   return (
     <Box
@@ -81,7 +86,18 @@ export default function Member() {
         margin: '0 auto'
       }}
     >
-      <Box display={'flex'} justifyContent={'space-between'} flexDirection={'row'} alignItems={'center'}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexDirection: 'row',
+          '& button': {
+            width: 125,
+            height: 36,
+            borderRadius: '8px'
+          }
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -102,9 +118,7 @@ export default function Member() {
           <MemberIcon />
           <Typography>Member</Typography>
         </Box>
-        <Button width="125px" height="36px" borderRadius="8px">
-          + Add Member
-        </Button>
+        <Button onClick={addMemberCallback}>+ Add Member</Button>
       </Box>
       <Typography
         variant="h5"
@@ -134,6 +148,15 @@ export default function Member() {
         </Tabs>
       </StyledTabs>
       <Divider />
+      {/* {tabValue === 0 ? (
+        <CardView />
+      ) : tabValue === 1 ? (
+        <JobApplication />
+      ) : tabValue === 2 ? (
+        <InviteUser />
+      ) : (
+        <OpenJobs />
+      )} */}
       {tabValue === 0 ? <CardView /> : tabValue === 1 ? <JobApplication /> : <InviteUser />}
     </Box>
   )
