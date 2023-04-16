@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Badge, Box, Breadcrumbs, Link, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
+import { AppBar, Badge, Box, Breadcrumbs, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
@@ -14,6 +14,8 @@ import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import { useActiveWeb3React } from 'hooks'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
+import { useDaoInfo } from 'hooks/useDaoInfo'
+import { ChainId } from 'constants/chain'
 
 interface TabContent {
   title: string
@@ -223,6 +225,10 @@ const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
 //   }
 // }) as typeof Chip
 
+function capitalizeFirstLetter(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleMobileMenueDismiss = useCallback(() => {
@@ -230,6 +236,26 @@ export default function Header() {
   }, [])
 
   const { pathname } = useLocation()
+  const [daoChainId, daoAddress] = useMemo(() => {
+    const path = pathname.split('/')
+    return [path[3], path[4]]
+  }, [pathname])
+  const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
+
+  const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\/0x[\da-zA-Z]+\//, ''), [pathname])
+  const makeBreadcrumbs = useMemo(() => {
+    if (!daoInfo?.name) {
+      return []
+    }
+    const _list = curPath.split('/').map(v => {
+      if (v === 'about_setting') {
+        return 'About & Setting'
+      }
+      return capitalizeFirstLetter(v)
+    })
+    return [daoInfo.name, ..._list]
+  }, [curPath, daoInfo?.name])
+
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 
   if (isGovernance) {
@@ -258,10 +284,11 @@ export default function Header() {
               <HomeIcon fontSize="small" />
               Home
             </NavLink>
-            <Link underline="hover" color="inherit" href="/governance">
-              Governancce
-            </Link>
-            <Typography color="text.primary">Breadcrumbs</Typography>
+            {makeBreadcrumbs.map(v => (
+              <Typography key={v} color="text.primary">
+                {v}
+              </Typography>
+            ))}
           </Breadcrumbs>
           <HeaderRight />
         </Box>

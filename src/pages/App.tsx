@@ -80,9 +80,9 @@ const ContentWrapper = styled('div')({
 
 const BodyWrapper = styled('div')(({ theme }) => ({
   paddingTop: theme.height.header,
-  minHeight: `calc(100vh - ${theme.height.header})`,
+  minHeight: '100vh',
   [theme.breakpoints.down('md')]: {
-    minHeight: `calc(100vh - ${theme.height.header} - ${theme.height.mobileHeader} - 50px)`
+    minHeight: `${theme.height.mobileHeader} - 50px)`
   }
 }))
 
@@ -120,6 +120,10 @@ export default function App() {
                           <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
                           <Route path={routes.DaoBounty} exact strict component={ComingSoon} />
                           <Route path={routes.DaoAboutSetting} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamTask} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
                           <DaoInfoBase>
                             {/* <Route path={routes.DaoInfo} exact strict component={ProposalList} /> */}
                             <Route path={routes.Proposal} exact strict component={ProposalList} />

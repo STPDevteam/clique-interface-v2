@@ -3,8 +3,20 @@ import { useState } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 
-export default function Index({ children, title }: { children: any; title: string | JSX.Element }) {
-  const [isOpen, setIsOpen] = useState(false)
+export default function Index({
+  children,
+  title,
+  defaultOpen,
+  hiddenArrow,
+  bodyPl
+}: {
+  children: any
+  title: string | JSX.Element
+  defaultOpen?: boolean
+  hiddenArrow?: boolean
+  bodyPl?: number
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen || false)
   const theme = useTheme()
   return (
     <Box>
@@ -18,13 +30,18 @@ export default function Index({ children, title }: { children: any; title: strin
         }}
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        {!hiddenArrow ? isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon /> : null}
         <Typography fontSize={13} fontWeight={600} variant="body1" color={theme.palette.text.primary}>
           {title}
         </Typography>
       </Box>
       <Collapse in={isOpen}>
-        <Box pl={28} fontSize={12} fontWeight={500} color={theme.palette.text.secondary}>
+        <Box
+          pl={bodyPl !== undefined ? bodyPl : 28}
+          fontSize={12}
+          fontWeight={500}
+          color={theme.palette.text.secondary}
+        >
           {children}
         </Box>
       </Collapse>
