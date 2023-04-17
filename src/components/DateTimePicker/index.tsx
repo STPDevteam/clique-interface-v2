@@ -10,13 +10,15 @@ export default function DateTimePicker({
   onValue,
   disabled,
   inputWidth,
-  minDateTime
+  minDateTime,
+  label
 }: {
   value: Date | null
   onValue: (timestamp: number | undefined) => void
   disabled?: boolean
   minDateTime?: Date
   inputWidth?: string
+  label?: string
 }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -57,7 +59,7 @@ export default function DateTimePicker({
                   fontWeight: 500
                 }
               }}
-              placeholder="Select Date"
+              placeholder={label ?? 'Select Date'}
               {...params}
             />
           )

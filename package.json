@@ -121,6 +121,7 @@
     "react-ga4": "^1.4.1",
     "react-html-parser": "^2.0.2",
     "react-quill": "^2.0.0",
+    "react-select-material-ui": "^9.2.0",
     "styled-components": "^5.3.9",
     "toformat": "^2.0.0",
     "web3": "^1.7.4",

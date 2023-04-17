@@ -43,6 +43,7 @@ import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 import Home from './Home'
 import Member from './Member'
+import Task from './Task'
 import ComingSoon from './ComingSoon'
 
 const AppWrapper = styled('div')(({ theme }) => ({
@@ -122,7 +123,7 @@ export default function App() {
                           <Route path={routes.DaoAboutSetting} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoTeamTask} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamTask} exact strict component={Task} />
                           <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
                           <DaoInfoBase>
                             {/* <Route path={routes.DaoInfo} exact strict component={ProposalList} /> */}
