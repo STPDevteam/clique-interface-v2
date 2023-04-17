@@ -46,6 +46,8 @@ import Member from './Member'
 import Task from './Task'
 import ComingSoon from './ComingSoon'
 
+import TeamSpacesTask from 'pages/TeamSpaces/Task'
+
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'flex-start',
@@ -123,8 +125,8 @@ export default function App() {
                           <Route path={routes.DaoAboutSetting} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoTeamTask} exact strict component={Task} />
-                          <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamTask} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamCalendar} exact strict component={TeamSpacesTask} />
                           <DaoInfoBase>
                             {/* <Route path={routes.DaoInfo} exact strict component={ProposalList} /> */}
                             <Route path={routes.Proposal} exact strict component={ProposalList} />
