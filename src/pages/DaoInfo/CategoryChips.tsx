@@ -1,7 +1,9 @@
 import { Box, Chip, styled, useTheme } from '@mui/material'
 import { useMemo } from 'react'
 
-export const StyledChip = styled(Chip)(({ theme, bgColor }: { theme?: any; bgColor?: string }) => ({
+export const StyledChip = styled(Chip, {
+  shouldForwardProp: () => true
+})<{ bgColor?: string }>(({ theme, bgColor }) => ({
   fontWeight: 600,
   backgroundColor: bgColor || theme.palette.primary.dark,
   color: theme.palette.common.white,

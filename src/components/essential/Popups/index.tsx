@@ -1,8 +1,10 @@
-import { styled } from '@mui/material/styles'
 import { useActivePopups } from 'state/application/hooks'
 import PopupItem from './PopupItem'
+import { styled } from '@mui/material'
 
-const MobilePopupWrapper = styled('div')(({ height, theme }: any) => ({
+const MobilePopupWrapper = styled('div', {
+  shouldForwardProp: () => true
+})<{ height?: string | number }>(({ theme, height }) => ({
   position: 'absolute',
   top: `${theme.height.mobileHeader}`,
   right: 0,
