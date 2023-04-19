@@ -7,6 +7,7 @@ export interface UserInfo {
   // twitter: string
   // discord: string
   signature: string
+  loggedToken: string
 }
 
 export const removeUserInfo = createAction('userInfo/removeUserInfo')

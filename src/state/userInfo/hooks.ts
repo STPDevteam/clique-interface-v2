@@ -7,6 +7,7 @@ import { useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { signMessage } from '../../constants'
 import { useWeb3Instance } from 'hooks/useWeb3Instance'
+import { useLogin } from 'hooks/useBackedDaoServer'
 
 export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
   const allUserInfo = store.getState().userInfo
@@ -33,15 +34,27 @@ export function useUserInfo(): UserInfo | undefined {
 }
 
 export function useLoginSignature() {
+  const login = useLogin()
   const web3 = useWeb3Instance()
   const { account } = useActiveWeb3React()
+  const address = store.getState().application.curAddress
+  const _account = store.getState().userInfo[address]?.account
+  const _signature = store.getState().userInfo[address]?.signature
   const dispatch = useDispatch()
 
-  return useCallback(() => {
+  return useCallback(async () => {
     if (!account || !web3) return
-    return web3.eth.personal.sign(signMessage, account, '').then(signStr => {
-      dispatch(saveUserInfo({ userInfo: { account, signature: signStr } }))
-      return signStr
-    })
-  }, [account, web3, dispatch])
+
+    if (_account) {
+      const res = await login.login(_account, _signature)
+      dispatch(saveUserInfo({ userInfo: { account: _account, signature: _signature, loggedToken: res } }))
+      return
+    } else {
+      return web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
+        const res = await login.login(account, signStr)
+        dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res } }))
+        return signStr
+      })
+    }
+  }, [account, web3, _account, login, _signature, dispatch])
 }

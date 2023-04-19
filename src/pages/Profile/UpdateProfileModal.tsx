@@ -48,19 +48,7 @@ export default function UpdateProfileModal({
     }
     if (!signatureStr) return
     try {
-      await userProfileUpdate(
-        avatar,
-        name,
-        bio,
-        discord,
-        twitter,
-        account,
-        country,
-        email,
-        opensea,
-        youtube,
-        signatureStr
-      )
+      await userProfileUpdate(avatar, name, bio, discord, twitter, country, email, opensea, youtube)
       showModal(<TransactiontionSubmittedModal header="Update success!" hideFunc={refreshProfile} />)
     } catch (error) {
       const err: any = error

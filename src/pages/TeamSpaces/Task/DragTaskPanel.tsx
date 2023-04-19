@@ -141,7 +141,7 @@ export default function DragTaskPanel() {
         width: 942
       }}
     >
-      <Box mb={30}>
+      <Box mb={30} mt={20}>
         <Button variant="outlined" onClick={() => addNewItem(2)}>
           Add new
         </Button>

@@ -8,6 +8,8 @@ import { useState, useCallback } from 'react'
 import CardView from './Children/CardView'
 import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
+import { useJobsList } from 'hooks/useBackedDaoServer'
+import { useParams } from 'react-router-dom'
 // import OpenJobs from './Children/OpenJobs'
 
 const StyledTabs = styled('div')(({ theme }) => ({
@@ -77,8 +79,10 @@ const tabList = [
 ]
 
 export default function Member() {
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const addMemberCallback = useCallback(() => {}, [])
+  const { result: jobsList } = useJobsList(daoAddress, Number(daoChainId))
 
   return (
     <Box
@@ -157,7 +161,7 @@ export default function Member() {
       ) : (
         <OpenJobs />
       )} */}
-      {tabValue === 0 ? <CardView /> : tabValue === 1 ? <JobApplication /> : <InviteUser />}
+      {tabValue === 0 ? <CardView result={jobsList} /> : tabValue === 1 ? <JobApplication /> : <InviteUser />}
     </Box>
   )
 }

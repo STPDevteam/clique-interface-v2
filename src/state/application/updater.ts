@@ -2,18 +2,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'
 import useDebounce from '../../hooks/useDebounce'
 import useIsWindowVisible from '../../hooks/useIsWindowVisible'
-import { updateBlockNumber } from './actions'
+import { updateBlockNumber, setCurAddress } from './actions'
 import { useDispatch } from 'react-redux'
 import { SUPPORT_NETWORK_CHAIN_IDS } from 'constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
 import { useUpdateNotificationUnReadCount } from 'hooks/useBackedNotificationServer'
 import { useUserLocation } from './hooks'
+import { useLogin } from 'hooks/useBackedDaoServer'
+import { useWeb3Instance } from 'hooks/useWeb3Instance'
+// import { saveUserInfo } from 'state/userInfo/actions'
+// import { signMessage } from '../../constants'
 
 export default function Updater(): null {
   // add NotificationUnRead
   useUpdateNotificationUnReadCount()
-
-  const { library, chainId } = useActiveWeb3React()
+  const web3 = useWeb3Instance()
+  const login = useLogin()
+  const { library, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch()
 
   const windowVisible = useIsWindowVisible()
@@ -74,6 +79,16 @@ export default function Updater(): null {
         .then(bn => dispatch(updateBlockNumber({ chainId: SUPPORT_NETWORK_CHAIN_IDS[index], blockNumber: bn })))
     )
   }, [providers, timeInt, dispatch])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!account || !web3 || !web3.eth.personal.sign) return
+      // web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
+      //   dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: '' } }))
+      // })
+      dispatch(setCurAddress(account))
+    })()
+  }, [account, dispatch, login, web3])
 
   return null
 }

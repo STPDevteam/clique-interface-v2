@@ -7,7 +7,8 @@ import {
   ApplicationModal,
   setOpenModal,
   setUserLocation,
-  UserIPLocation
+  UserIPLocation,
+  setCurAddress
 } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
@@ -17,16 +18,18 @@ export interface ApplicationState {
   readonly popupList: PopupList
   readonly openModal: ApplicationModal | null
   userLocation: UserIPLocation | null | undefined
+  curAddress: string
 }
 
 const initialState: ApplicationState = {
   blockNumber: {},
   popupList: [],
   openModal: null,
-  userLocation: undefined
+  userLocation: undefined,
+  curAddress: ''
 }
 
-export default createReducer(initialState, builder =>
+export default createReducer(initialState, builder => {
   builder
     .addCase(updateBlockNumber, (state, action) => {
       const { chainId, blockNumber } = action.payload
@@ -59,4 +62,7 @@ export default createReducer(initialState, builder =>
     .addCase(setUserLocation, (state, { payload }) => {
       state.userLocation = payload
     })
-)
+    .addCase(setCurAddress, (state, action) => {
+      state.curAddress = action.payload
+    })
+})

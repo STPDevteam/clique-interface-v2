@@ -1,6 +1,7 @@
 import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
+import { ChainId } from 'constants/chain'
 
 export function getHomeContributorsList(offset: number, count: number) {
   return Axios.get('stpdao/v2/account/top/list', {
@@ -42,6 +43,20 @@ export function getHomeDaoList(
   })
 }
 
+export function Login(account: string, signature: string) {
+  return Axios.post('stpdao/v2/account/jwt/signIn', {
+    account,
+    signature
+  })
+}
+
+export function checkIsJoin(chainId: ChainId, daoAddress: string) {
+  return Axios.get('stpdao/v2/jobs/isJoin', {
+    chainId,
+    daoAddress
+  })
+}
+
 export function switchJoinDao(
   account: string,
   chainId: number,
@@ -61,6 +76,42 @@ export function switchJoinDao(
       account,
       signature
     }
+  })
+}
+
+export function applyReview(chainId: number, daoAddress: string, isPass: boolean, jobsApplyId: number) {
+  return Axios.post('stpdao/v2/jobs/apply/review', {
+    chainId,
+    daoAddress,
+    isPass,
+    jobsApplyId
+  })
+}
+
+export function getApplyList(offset: number, count: number, chainId: number, daoAddress: string) {
+  return Axios.get('stpdao/v2/jobs/apply/list', {
+    offset,
+    count,
+    chainId,
+    daoAddress
+  })
+}
+
+export function getJobsList(offset: number, count: number, chainId: number, daoAddress: string) {
+  return Axios.get('stpdao/v2/jobs/list', {
+    offset,
+    count,
+    chainId,
+    daoAddress
+  })
+}
+
+export function jobsApply(applyRole: string, chainId: number, daoAddress: string, message: string) {
+  return Axios.post('stpdao/v2/jobs/apply', {
+    applyRole,
+    chainId,
+    daoAddress,
+    message
   })
 }
 
@@ -309,10 +360,9 @@ export function notificationToRead(account: string, notificationId: number, read
   })
 }
 
-export function userProfile(account: string, signature: string) {
+export function userProfile(account: string) {
   return Axios.post('stpdao/v2/account/query', {
-    account,
-    signature
+    account
   })
 }
 
@@ -322,12 +372,10 @@ export function userProfileUpdate(
   introduction: string,
   discord: string,
   twitter: string,
-  account: string,
   country: string,
   email: string,
   opensea: string,
-  youtube: string,
-  signature: string
+  youtube: string
 ) {
   return Axios.post('stpdao/v2/account/update', {
     param: {
@@ -341,23 +389,15 @@ export function userProfileUpdate(
       opensea,
       youtube,
       twitter
-    },
-    sign: {
-      signature,
-      account
     }
   })
 }
 
-export function userFollowAccount(followAccount: string, status: boolean, account: string, signature: string) {
+export function userFollowAccount(followAccount: string, status: boolean) {
   return Axios.post('stpdao/v2/account/update/follow', {
     params: {
       followAccount,
       status
-    },
-    sign: {
-      signature,
-      account
     }
   })
 }

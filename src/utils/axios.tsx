@@ -1,32 +1,49 @@
 import axios, { AxiosResponse, AxiosPromise } from 'axios'
 import { clearAllSignStoreSync } from 'state/userInfo/hooks'
 import { serverBaseUrl } from '../constants'
+import store from 'state'
 
 const axiosInstance = axios.create({
   baseURL: serverBaseUrl,
-  timeout: 10000,
-  headers: { 'content-type': 'application/json', accept: 'application/json' }
+  timeout: 10000
 })
 
+function MakeHeaders() {
+  const address = store.getState().application.curAddress
+  const _token = store.getState().userInfo[address]?.loggedToken
+
+  return {
+    headers: {
+      'content-type': 'application/json',
+      accept: 'application/json',
+      Authorization: _token ? `Bearer ${_token}` : ''
+    }
+  }
+}
+
 axiosInstance.interceptors.response.use(
-  function(response) {
-    return response
-  },
-  function(error) {
-    if (JSON.parse(JSON.stringify(error)).status === 401) {
-      alert('signature error')
+  async response => {
+    if (response.data.code === 401) {
       clearAllSignStoreSync()
     }
-    return Promise.reject(error)
+    return response
   }
+  // function(error) {
+  //   if (JSON.parse(JSON.stringify(error)).status === 401) {
+  //     alert('signature error')
+  //     clearAllSignStoreSync()
+  //   }
+
+  //   return Promise.reject(error)
+  // }
 )
 
 export const Axios = {
   get<T = any>(url: string, params: { [key: string]: any } = {}): AxiosPromise<ResponseType<T>> {
-    return axiosInstance.get(url, { params })
+    return axiosInstance.get(url, Object.assign(MakeHeaders(), { params }))
   },
   post<T = any>(url: string, data: { [key: string]: any }, params = {}): AxiosPromise<ResponseType<T>> {
-    return axiosInstance.post(url, data, { params })
+    return axiosInstance.post(url, data, Object.assign(MakeHeaders(), { params }))
   }
 }
 

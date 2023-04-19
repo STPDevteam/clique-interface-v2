@@ -12,7 +12,11 @@ import {
   getJoinDaoMembersLogs,
   getMyJoinedDao,
   getTokenList,
-  switchJoinDao
+  switchJoinDao,
+  jobsApply,
+  Login,
+  checkIsJoin,
+  getJobsList
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 
@@ -209,6 +213,175 @@ export function useHomeDaoList() {
     },
     result
   }
+}
+
+export function useIsJoined(chainId: ChainId, daoAddress: string) {
+  const [loading, setLoading] = useState(false)
+  const [isJoined, setIsJoined] = useState<boolean>()
+  const { account } = useActiveWeb3React()
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await checkIsJoin(chainId, daoAddress)
+        if (res.data.data) {
+          setLoading(false)
+          setIsJoined(true)
+        }
+      } catch (error) {
+        setLoading(false)
+        setIsJoined(false)
+      }
+    })()
+  }, [chainId, daoAddress, account])
+
+  return {
+    loading,
+    isJoined
+  }
+}
+
+export function useApplyMember() {
+  const [loading, setLoading] = useState(false)
+  const { account } = useActiveWeb3React()
+
+  const joinApply = useCallback(
+    async (role: string, chainId: ChainId, daoAddress: string, message: string) => {
+      if (!account) {
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await jobsApply(role, chainId, daoAddress, message)
+        if (res.data.data) {
+          setLoading(false)
+        }
+      } catch (error) {
+        setLoading(false)
+      }
+    },
+    [account]
+  )
+
+  return {
+    loading,
+    joinApply
+  }
+}
+
+export function useLogin() {
+  // const { account } = useActiveWeb3React()
+  // const [loading, setLoading] = useState(false)
+  const [loginToken, setLoginToken] = useState('')
+  const login = useCallback(async (account: string, signature: string) => {
+    if (!account) {
+      return
+    }
+    // setLoading(true)
+    try {
+      const res = await Login(account, signature)
+      if (res.data.data) {
+        setLoginToken(res.data.data)
+        // setLoading(false)
+        return res.data.data
+      }
+    } catch (error) {
+      // setLoading(false)
+    }
+  }, [])
+  return {
+    login,
+    loginToken
+  }
+}
+
+export function useJobsList(daoAddress: string, chainId: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 8
+  const [result, setResult] = useState<
+    {
+      account: string
+      avatar: string
+      chainId: ChainId
+      daoAddress: string
+      discord: string
+      jobId: number
+      nickname: string
+      opensea: string
+      twitter: string
+      youtobe: string
+    }[]
+  >([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daoAddress, chainId])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getJobsList((currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: {
+          account: string
+          avatar: string
+          chainId: ChainId
+          daoAddress: string
+          discord: string
+          jobId: number
+          nickname: string
+          opensea: string
+          twitter: string
+          youtobe: string
+        }[] = data.map((item: any) => ({
+          account: item.account,
+          avatar: item.avatar,
+          chainId: item.chainId,
+          daoAddress: item.daoAddress,
+          discord: item.discord,
+          jobId: item.jobId,
+          nickname: item.nickname,
+          opensea: item.opensea,
+          twitter: item.twitter,
+          youtobe: item.youtobe
+        }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useJobsList', error)
+      }
+    })()
+  }, [chainId, currentPage, daoAddress])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }
 
 export function useMemberJoinDao(defaultJoined: boolean, defaultMembers: number) {

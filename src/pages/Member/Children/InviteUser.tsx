@@ -3,11 +3,13 @@ import Button from 'components/Button/OutlineButton'
 import Input from 'components/Input'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import useCopyClipboard from 'hooks/useCopyClipboard'
+import { useMemo } from 'react'
 
-//TODO 1、join DAO modal 2、verify account and signature
 export default function InviteUser() {
-  const link = 'http://localhost:3000/governance/daoInfo/:chainId/:address/member'
   const [isCopied, setCopied] = useCopyClipboard()
+  const link = useMemo(() => {
+    return window.location.toString()
+  }, [])
 
   return (
     <Box mt={10}>

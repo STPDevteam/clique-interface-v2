@@ -34,3 +34,5 @@ export const addPopup = createAction<{ key?: string; removeAfterMs?: number | nu
 export const removePopup = createAction<{ key: string }>('application/removePopup')
 
 export const setUserLocation = createAction<UserIPLocation | null>('application/setUserLocation')
+
+export const setCurAddress = createAction<string>('application/setCurAddress')

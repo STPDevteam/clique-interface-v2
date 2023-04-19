@@ -50,12 +50,7 @@ export function useUserProfileInfo(account: string | undefined, refresh?: number
       }
       setLoading(true)
       try {
-        const res = await userProfile(
-          account,
-          userSignature?.signature && userSignature.account.toLowerCase() === account.toLowerCase()
-            ? userSignature.signature
-            : ''
-        )
+        const res = await userProfile(account)
         setLoading(false)
         const data = res.data.data
 
@@ -253,7 +248,7 @@ export function useUserFollowStatus(account: string | undefined, followAccount: 
       }
       if (!signatureStr || !followAccount) return
       try {
-        await userFollowAccount(followAccount, status, account, signatureStr)
+        await userFollowAccount(followAccount, status)
         setIsFollowed(status)
       } catch (error) {
         console.log(error)
