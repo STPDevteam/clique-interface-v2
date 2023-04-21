@@ -1,6 +1,6 @@
 import { Box, Typography, styled, Tabs, Tab, Divider } from '@mui/material'
 import { ReactComponent as MemberIcon } from 'assets/svg/member.svg'
-import Button from 'components/Button/Button'
+// import Button from 'components/Button/Button'
 import { ReactComponent as View } from 'assets/svg/view.svg'
 import { ReactComponent as Job } from 'assets/svg/job.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
@@ -8,9 +8,10 @@ import { useState, useCallback } from 'react'
 import CardView from './Children/CardView'
 import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
-import { useJobsList } from 'hooks/useBackedDaoServer'
+import { useIsJoined, useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
-// import OpenJobs from './Children/OpenJobs'
+import { ChainId } from 'constants/chain'
+import OpenJobs from './Children/OpenJobs'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -59,31 +60,41 @@ const StyledTabs = styled('div')(({ theme }) => ({
   }
 }))
 
-const tabList = [
-  {
-    label: 'Card View',
-    icon: <View />
-  },
-  {
-    label: 'Job Application',
-    icon: <Job />
-  },
-  {
-    label: 'Invite User',
-    icon: <Invite />
-  }
-  // {
-  //   label: 'Open Jobs',
-  //   icon: <Job />
-  // }
-]
-
 export default function Member() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const [tabValue, setTabValue] = useState(0)
-  const addMemberCallback = useCallback(() => {}, [])
+  const curDaoChainId = Number(daoChainId) as ChainId
+  useCallback(() => {}, [])
+  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
+  const { result: applyList } = useJobsApplyList(daoAddress, Number(daoChainId))
   const { result: jobsList } = useJobsList(daoAddress, Number(daoChainId))
 
+  const tabList =
+    isJoined && isJoined === 'C_member'
+      ? [
+          {
+            label: 'Card View',
+            icon: <View />
+          },
+          {
+            label: 'Open Jobs',
+            icon: <Job />
+          }
+        ]
+      : [
+          {
+            label: 'Card View',
+            icon: <View />
+          },
+          {
+            label: 'Job Application',
+            icon: <Job />
+          },
+          {
+            label: 'Invite User',
+            icon: <Invite />
+          }
+        ]
   return (
     <Box
       sx={{
@@ -122,7 +133,7 @@ export default function Member() {
           <MemberIcon />
           <Typography>Member</Typography>
         </Box>
-        <Button onClick={addMemberCallback}>+ Add Member</Button>
+        {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}
       </Box>
       <Typography
         variant="h5"
@@ -152,16 +163,19 @@ export default function Member() {
         </Tabs>
       </StyledTabs>
       <Divider />
-      {/* {tabValue === 0 ? (
-        <CardView />
+      {tabList.length === 2 ? (
+        tabValue === 0 ? (
+          <CardView result={jobsList} />
+        ) : (
+          <OpenJobs />
+        )
+      ) : tabValue === 0 ? (
+        <CardView result={jobsList} />
       ) : tabValue === 1 ? (
-        <JobApplication />
-      ) : tabValue === 2 ? (
-        <InviteUser />
+        <JobApplication result={applyList} />
       ) : (
-        <OpenJobs />
-      )} */}
-      {tabValue === 0 ? <CardView result={jobsList} /> : tabValue === 1 ? <JobApplication /> : <InviteUser />}
+        <InviteUser />
+      )}
     </Box>
   )
 }

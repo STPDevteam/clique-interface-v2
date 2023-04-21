@@ -1,50 +1,29 @@
 import { Box, Typography } from '@mui/material'
-import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
+// import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
+import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
 import Table from 'components/Table'
 import { useMemo } from 'react'
 // import Button from 'components/Button/Button'
-const applicationList = [
-  {
-    icon: <Twitter />,
-    userName: 'User001',
-    applyFor: 'Manager',
-    applyTime: new Date().getTime(),
-    message: 'There is a bio'
-  },
-  {
-    icon: <Twitter />,
-    userName: 'User002',
-    applyFor: 'Manager',
-    applyTime: new Date().getTime(),
-    message: 'There is a bio'
-  },
-  {
-    icon: <Twitter />,
-    userName: 'User003',
-    applyFor: 'Manager',
-    applyTime: new Date().getTime(),
-    message: 'There is a bio'
-  }
-]
-export default function JobApplication() {
+
+export default function JobApplication({ result }: any) {
   const tableList = useMemo(() => {
-    return applicationList.map(({ icon, userName, applyFor, applyTime, message }) => [
-      <Box key={message} display={'flex'} gap={10} alignItems={'center'} fontWeight={500}>
-        {icon}
-        {userName}
+    return result.map((item: any) => [
+      <Box key={item.message} display={'flex'} gap={10} alignItems={'center'} fontWeight={500}>
+        <Image src={item.avatar}></Image>
+        {item.nickname}
       </Box>,
-      <Typography key={message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {applyFor}
+      <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
+        {item.applyRole}
       </Typography>,
-      <Typography key={message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {timeStampToFormat(applyTime)}
+      <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
+        {timeStampToFormat(item.applyTime)}
       </Typography>,
-      <Typography key={message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {message}
+      <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
+        {item.message}
       </Typography>,
       <Box
-        key={message}
+        key={item.message}
         sx={{
           gap: 10,
           display: 'flex',
@@ -55,18 +34,18 @@ export default function JobApplication() {
           }
         }}
       >
-        <Typography key={message} fontWeight={400} fontSize={13} color={'#3F5170'}>
+        <Typography key={item.message} fontWeight={400} fontSize={13} color={'#3F5170'}>
           Agree
         </Typography>
-        <Typography key={message} fontWeight={400} fontSize={13}>
+        <Typography key={item.message} fontWeight={400} fontSize={13}>
           |
         </Typography>
-        <Typography key={message} fontWeight={400} fontSize={13} color={'#e46767'}>
+        <Typography key={item.message} fontWeight={400} fontSize={13} color={'#e46767'}>
           Reject
         </Typography>
       </Box>
     ])
-  }, [])
+  }, [result])
 
   return (
     <Box sx={{}}>

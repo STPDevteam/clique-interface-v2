@@ -1,10 +1,7 @@
 import { Box, Typography, Tabs, Tab, Divider, styled } from '@mui/material'
-import Button from 'components/Button/Button'
-import { useCallback, useState } from 'react'
-import SidePanel from './Children/SidePanel'
+import { useState } from 'react'
 import TaskIcon from 'assets/images/task.png'
 import Image from 'components/Image'
-import useModal from 'hooks/useModal'
 import { ReactComponent as Board } from 'assets/svg/board.svg'
 import { ReactComponent as ALlTask } from 'assets/svg/allTask.svg'
 import TeamSpacesTask from 'pages/TeamSpaces/Task'
@@ -71,10 +68,6 @@ const tabList = [
 export default function Index() {
   const [tabValue, setTabValue] = useState(0)
 
-  const { showModal, hideModal } = useModal()
-  const showSidePanel = useCallback(() => {
-    showModal(<SidePanel open={true} onDismiss={hideModal} />)
-  }, [hideModal, showModal])
   return (
     <Box gap={10}>
       <Box
@@ -101,9 +94,9 @@ export default function Index() {
           <Image src={TaskIcon}></Image>
           <Typography>Task</Typography>
         </Box>
-        <Button width="100px" height="36px" onClick={showSidePanel}>
+        {/* <Button width="100px" height="36px" onClick={showSidePanel}>
           + New
-        </Button>
+        </Button> */}
       </Box>
       <Typography maxWidth={740}>
         Use this template to track your personal tasks. Click{' '}

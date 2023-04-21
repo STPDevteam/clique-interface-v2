@@ -70,11 +70,21 @@ export default function CardView({ result }: any) {
                 zIndex: 1,
                 '& button': {
                   fontWeight: 500
+                },
+                '& .A_superAdmin': {
+                  backgroundColor: '#0049C6'
+                },
+                '& .A_admin': {
+                  backgroundColor: '#97B7EF'
+                },
+                '& .A_member': {
+                  backgroundColor: '#EBF0F7',
+                  color: '#80829F'
                 }
               }}
             >
               <Image src={item.avatar || owl}></Image>
-              <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18}>
+              <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24}>
                 {item.nickname}
               </Typography>
               <Typography noWrap maxWidth={'100%'} color="#0049c6" fontSize={13}>
@@ -95,8 +105,8 @@ export default function CardView({ result }: any) {
                 <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
                 <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
               </Box>
-              <Button width="98px" height="22px" borderRadius="30px" fontSize={13}>
-                {item.jobs}
+              <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={item.jobs}>
+                {item.jobs || 'unnamed'}
               </Button>
             </Box>
           </Card>

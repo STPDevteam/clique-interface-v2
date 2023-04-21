@@ -35,7 +35,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
   }, [account, curDaoChainId, daoAddress, joinApply, loginSignature, toggleWalletModal, userSignature])
 
   useEffect(() => {
-    if (!account || !userSignature || isJoined === false) {
+    if (!account || !userSignature || isJoined === '') {
       setOpen(true)
     } else {
       setOpen(false)

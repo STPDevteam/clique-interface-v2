@@ -16,7 +16,8 @@ import {
   jobsApply,
   Login,
   checkIsJoin,
-  getJobsList
+  getJobsList,
+  getApplyList
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 
@@ -217,7 +218,7 @@ export function useHomeDaoList() {
 
 export function useIsJoined(chainId: ChainId, daoAddress: string) {
   const [loading, setLoading] = useState(false)
-  const [isJoined, setIsJoined] = useState<boolean>()
+  const [isJoined, setIsJoined] = useState<string>()
   const { account } = useActiveWeb3React()
 
   useEffect(() => {
@@ -227,11 +228,11 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
         const res = await checkIsJoin(chainId, daoAddress)
         if (res.data.data) {
           setLoading(false)
-          setIsJoined(true)
+          setIsJoined(res.data.data)
         }
       } catch (error) {
         setLoading(false)
-        setIsJoined(false)
+        setIsJoined('')
       }
     })()
   }, [chainId, daoAddress, account])
@@ -258,6 +259,7 @@ export function useApplyMember() {
           setLoading(false)
         }
       } catch (error) {
+        console.log(error)
         setLoading(false)
       }
     },
@@ -294,6 +296,90 @@ export function useLogin() {
     login,
     loginToken
   }
+}
+
+export function useJobsApplyList(daoAddress: string, chainId: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 8
+  const [result, setResult] = useState<
+    {
+      account: string
+      applyId: number
+      applyRole: string
+      applyTime: number
+      avatar: string
+      chainId: number
+      daoAddress: string
+      message: string
+      nickname: string
+    }[]
+  >([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daoAddress, chainId])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getApplyList((currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: {
+          account: string
+          applyId: number
+          applyRole: string
+          applyTime: number
+          avatar: string
+          chainId: number
+          daoAddress: string
+          message: string
+          nickname: string
+        }[] = data.map((item: any) => ({
+          account: item.account,
+          applyId: item.applyId,
+          applyRole: item.applyRole,
+          applyTime: item.applyTime,
+          avatar: item.avatar,
+          chainId: item.chainId,
+          daoAddress: item.daoAddress,
+          message: item.message,
+          nickname: item.nickname
+        }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useJobsApplyList', error)
+      }
+    })()
+  }, [chainId, currentPage, daoAddress])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }
 
 export function useJobsList(daoAddress: string, chainId: number) {

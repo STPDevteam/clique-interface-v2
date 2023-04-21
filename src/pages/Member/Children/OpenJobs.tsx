@@ -1,10 +1,26 @@
 import { Box, Typography } from '@mui/material'
 import Button from 'components/Button/Button'
 import Input from 'components/Input'
-import { useState } from 'react'
+import { ChainId } from 'constants/chain'
+import { useActiveWeb3React } from 'hooks'
+import { useApplyMember } from 'hooks/useBackedDaoServer'
+import { useCallback, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 export default function OpenJobs() {
+  const { account } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
+  const { joinApply } = useApplyMember()
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const curDaoChainId = Number(daoChainId) as ChainId
+
+  const applyCallback = useCallback(() => {
+    if (!account) return
+    joinApply('B_admin', curDaoChainId, daoAddress, inputValue).then(res => {
+      console.log(res)
+      setInputValue('')
+    })
+  }, [account, curDaoChainId, daoAddress, inputValue, joinApply])
 
   return (
     <Box gap={10} mt={10}>
@@ -52,7 +68,7 @@ export default function OpenJobs() {
             placeholder="Say something (300 character limit)."
             maxLength={300}
           />
-          <Button>Apply</Button>
+          <Button onClick={applyCallback}>Apply</Button>
         </Box>
       </Box>
     </Box>

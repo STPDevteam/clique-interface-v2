@@ -1,13 +1,11 @@
 import { Box, Button, Container, Typography } from '@mui/material'
-import { useCallback, useMemo, useState } from 'react'
+import { ChainId } from 'constants/chain'
+import { ITaskItem, useGetTaskList, useSpacesInfo, useTaskProposalList, useUpdateTask } from 'hooks/useBackedTaskServer'
+import useModal from 'hooks/useModal'
+import SidePanel from 'pages/Task/Children/SidePanel'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
-
-// fake data generator
-const getItems = (count: number, offset = 0) =>
-  Array.from({ length: count }, (v, k) => k).map(k => ({
-    id: `item-${k + offset}-${new Date().getTime()}`,
-    content: `item ${k + offset}`
-  }))
+import { useParams } from 'react-router-dom'
 
 const reorder = (list: ITaskQuote[], startIndex: number, endIndex: number) => {
   const result = Array.from(list)
@@ -62,8 +60,18 @@ const getListStyle = (isDraggingOver: boolean) => ({
 })
 
 interface ITaskQuote {
-  id: string
-  content: string
+  assignAccount: string
+  assignAvatar: string
+  assignNickname: string
+  deadline: number
+  priority: string
+  proposalId: number
+  reward: string
+  spacesId: number
+  status: string
+  taskId: number
+  taskName: string
+  weight: number
 }
 
 const taskTypeList = [
@@ -74,18 +82,41 @@ const taskTypeList = [
 ]
 
 export default function DragTaskPanel() {
-  const [taskList, setTaskList] = useState<ITaskQuote[][]>([
-    getItems(10),
-    getItems(5, 10),
-    getItems(5, 15),
-    getItems(5, 20)
-  ])
+  const { showModal, hideModal } = useModal()
+  const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const curDaoChainId = Number(daoChainId) as ChainId
+  const update = useUpdateTask()
+  const { result } = useTaskProposalList(curDaoChainId, daoAddress)
+  const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
+  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '')
+
+  const showSidePanel = useCallback(() => {
+    showModal(
+      <SidePanel open={true} onDismiss={hideModal} proposalBaseList={result} spacesId={TeamSpacesInfo?.teamSpacesId} />
+    )
+  }, [TeamSpacesInfo?.teamSpacesId, hideModal, result, showModal])
+  const taskAllTypeList = useMemo(() => {
+    const _arr: ITaskItem[][] = []
+    type.map((item, index) => {
+      _arr[index] = taskTypeListRes.filter(task => {
+        return task.status === item
+      })
+    })
+    return _arr
+  }, [taskTypeListRes, type])
+  console.log(taskAllTypeList, 'taskAllTypeList')
+
+  const [taskList, setTaskList] = useState<ITaskQuote[][]>([])
+  useEffect(() => {
+    setTaskList(taskAllTypeList)
+  }, [taskAllTypeList])
+  console.log(taskList, 'taskList')
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
       const { source, destination } = result
 
-      // dropped outside the list
       if (!destination) {
         return
       }
@@ -96,30 +127,77 @@ export default function DragTaskPanel() {
         const items = reorder(taskList[sInd], source.index, destination.index)
         const newState = [...taskList]
         newState[sInd] = items
+
+        if (destination.index === 0) {
+          if (source.index === 0) {
+          } else taskList[sInd][source.index].weight = taskList[dInd][0].weight / 2
+        } else {
+          taskList[sInd][source.index].weight =
+            taskList[dInd][destination.index].weight + taskList[dInd][destination.index].weight / 2
+        }
+        update(
+          taskList[sInd][source.index].assignAccount,
+          '',
+          taskList[sInd][source.index].deadline,
+          taskList[sInd][source.index].priority,
+          taskList[sInd][source.index].proposalId,
+          taskList[sInd][source.index].reward,
+          taskList[sInd][source.index].spacesId,
+          type[Number(destination.droppableId)],
+          taskList[sInd][source.index].taskId,
+          taskList[sInd][source.index].taskName,
+          taskList[sInd][source.index].weight
+        )
+          .then(res => console.log(res))
+          .catch(err => console.log(err))
         setTaskList(newState)
       } else {
         const result = move(taskList[sInd], taskList[dInd], source, destination)
         const newState = [...taskList]
         newState[sInd] = result[sInd]
         newState[dInd] = result[dInd]
+
+        if (destination.index === 0) {
+        } else if (destination.index === taskList[dInd].length) {
+          taskList[sInd][source.index].weight =
+            taskList[dInd][taskList[dInd].length - 1].weight + taskList[dInd][taskList[dInd].length - 1].weight / 2
+        } else {
+          taskList[sInd][source.index].weight =
+            (taskList[dInd][destination.index - 1].weight + taskList[dInd][destination.index].weight) / 2
+        }
+        update(
+          taskList[sInd][source.index].assignAccount,
+          '',
+          taskList[sInd][source.index].deadline,
+          taskList[sInd][source.index].priority,
+          taskList[sInd][source.index].proposalId,
+          taskList[sInd][source.index].reward,
+          taskList[sInd][source.index].spacesId,
+          type[Number(destination.droppableId)],
+          taskList[sInd][source.index].taskId,
+          taskList[sInd][source.index].taskName,
+          taskList[sInd][source.index].weight
+        )
+          .then(res => console.log(res))
+          .catch(err => console.log(err))
         setTaskList(newState)
       }
     },
-    [taskList]
+    [taskList, type, update]
   )
 
-  const addNewItem = useCallback(
+  useCallback(
     (index?: number) => {
       const curIndex = index === undefined ? taskList.length - 1 : index
       if (!taskList.length) {
-        setTaskList([getItems(1)])
+        setTaskList([])
         return
       }
       const newList = taskList.map((item, idx) => {
         if (idx !== curIndex) {
           return item
         }
-        return [...taskList[idx], getItems(1)[0]]
+        return [...taskList[idx]]
       })
       setTaskList(newList)
     },
@@ -142,7 +220,7 @@ export default function DragTaskPanel() {
       }}
     >
       <Box mb={30} mt={20}>
-        <Button variant="outlined" onClick={() => addNewItem(2)}>
+        <Button variant="outlined" onClick={showSidePanel}>
           Add new
         </Button>
       </Box>
@@ -156,7 +234,7 @@ export default function DragTaskPanel() {
                     {curTaskTypeList[ind].title}
                   </TaskTypeBtn>
                   {el.map((item, index) => (
-                    <Draggable key={item.id} draggableId={item.id} index={index}>
+                    <Draggable key={item.taskId} draggableId={item.taskId.toString()} index={index}>
                       {(provided, snapshot) => (
                         <div
                           ref={provided.innerRef}
@@ -167,12 +245,12 @@ export default function DragTaskPanel() {
                           <div
                             style={{
                               display: 'flex',
-                              justifyContent: 'space-around'
+                              justifyContent: 'space-around',
+                              alignItems: 'center'
                             }}
                           >
-                            {item.content}
-                            <button
-                              type="button"
+                            {item.taskName}
+                            <Button
                               onClick={() => {
                                 const newState = [...taskList]
                                 newState[ind].splice(index, 1)
@@ -180,7 +258,7 @@ export default function DragTaskPanel() {
                               }}
                             >
                               delete
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       )}

@@ -1,20 +1,20 @@
 import { Box, Drawer, Typography, styled } from '@mui/material'
-import SaveButton from 'components/Button/OutlineButton'
+// import SaveButton from 'components/Button/OutlineButton'
 import ConfirmButton from 'components/Button/Button'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
 import Select from 'components/Select/SearchSelect'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
-import Back from 'components/Back'
 import React, { SetStateAction, useCallback, useState } from 'react'
 import assign from 'assets/images/assign.png'
 import select from 'assets/images/select.png'
 import dateIcon from 'assets/images/date.png'
 import proposalIcon from 'assets/images/proposal.png'
-// import rewardIcon from 'assets/images/reward.png'
-// import addIcon from 'assets/images/add.png'
+import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { useCreateTask, useJobsList } from 'hooks/useBackedTaskServer'
+import { useParams } from 'react-router-dom'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -26,7 +26,7 @@ const ColSentence = styled(Box)(() => ({
     color: '#0049c6',
     border: '1px solid #0049c6'
   },
-  '& button:nth-of-type(2)': {
+  '& button:nth-of-type(1)': {
     color: '#fff'
   }
 }))
@@ -74,26 +74,39 @@ const RowContent = styled(Box)(() => ({
   }
 }))
 
-enum TaskStatus {
-  'A_notStarted' = 'Not started',
-  'B_inProgress' = 'In progress',
-  'C_done' = 'Done',
-  'D_notStatus' = 'Not status'
+const TaskStatus = {
+  'Not started': 'A_notStarted',
+  'In progress': 'B_inProgress',
+  Done: 'C_done',
+  'Not status': 'D_notStatus'
 }
 
-enum PriorityType {
-  'A_High' = 'High',
-  'B_Medium' = 'Medium',
-  'C_Low' = 'Low'
+const PriorityType: any = {
+  High: 'A_High',
+  Medium: 'B_Medium',
+  Low: 'C_Low'
 }
 
-const statusList = ['No Type', 'In progress', 'Not started', 'Done']
-const assigneeList = ['admin', 'super admin', 'none']
+const statusList = ['In progress', 'Not started', 'Done', 'Not status']
 const priorityList = ['High', 'Medium', 'Low']
-const proposalList = ['proposal0', 'proposal1', 'proposal2', 'proposal3']
 console.log(TaskStatus, priorityList, PriorityType)
 
-export default function SidePanel({ open, onDismiss }: { open: boolean; onDismiss: () => void }) {
+export default function SidePanel({
+  open,
+  onDismiss,
+  proposalBaseList,
+  spacesId
+}: {
+  open: boolean
+  onDismiss: () => void
+  proposalBaseList: any
+  spacesId: number | undefined
+}) {
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { result: jobsList } = useJobsList(daoAddress, Number(daoChainId))
+  const assigneeList = jobsList.map((item: any) => item.account)
+  const proposalList = proposalBaseList.map((item: any) => item.proposalId + '.' + item.title)
+
   const toggleDrawer = useCallback(
     e => {
       if (
@@ -108,11 +121,38 @@ export default function SidePanel({ open, onDismiss }: { open: boolean; onDismis
   )
   const isSmDown = useBreakpoint('sm')
   const [currentStatus, setCurrentStatus] = useState()
-  const [assignees, setAssignees] = useState()
-  const [priority, setPriority] = useState()
-  const [proposal, setProposal] = useState()
+  const [assignees, setAssignees] = useState('')
+  const [priority, setPriority] = useState<any>('')
+  const [proposal, setProposal] = useState('')
   const [value, setValue] = useState<string>('')
   const [endTime, setEndTime] = useState<number>()
+  const create = useCreateTask()
+  const createCallback = useCallback(() => {
+    if (!spacesId || !value) return
+
+    const proposalId = Number(proposal.split('.')[0])
+
+    create(assignees, '', endTime, PriorityType[priority], proposalId, '0', spacesId, 'A_notStarted', value)
+      .then(res => {
+        onDismiss()
+        console.log(res)
+      })
+      .catch(err => console.log(err))
+  }, [assignees, create, endTime, onDismiss, priority, proposal, spacesId, value])
+
+  const getActions = useCallback(() => {
+    if (!value)
+      return (
+        <ConfirmButton disabled width="140px" height="36px">
+          Title required
+        </ConfirmButton>
+      )
+    return (
+      <ConfirmButton width="140px" height="36px" onClick={createCallback}>
+        Confirm
+      </ConfirmButton>
+    )
+  }, [createCallback, value])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -137,7 +177,18 @@ export default function SidePanel({ open, onDismiss }: { open: boolean; onDismis
         open={open}
         onClose={toggleDrawer}
       >
-        <Back />
+        <Box sx={{ marginLeft: { sm: 20, xs: 0 }, marginTop: { sm: 20, xs: 10 } }}>
+          <Typography
+            sx={{ cursor: 'pointer' }}
+            fontWeight={600}
+            display={'inline-flex'}
+            onClick={onDismiss}
+            alignItems="center"
+          >
+            <ArrowBackIcon style={{ marginRight: 10 }}></ArrowBackIcon>
+            Back
+          </Typography>
+        </Box>
         <Input
           className="title"
           value={value}
@@ -191,9 +242,7 @@ export default function SidePanel({ open, onDismiss }: { open: boolean; onDismis
             height={isSmDown ? 40 : undefined}
             value={priority}
             multiple={false}
-            onChange={(value: any) => {
-              setPriority(value)
-            }}
+            onChange={(value: any) => setPriority(value)}
           />
         </RowContent>
         {/* <RowContent>
@@ -219,7 +268,7 @@ export default function SidePanel({ open, onDismiss }: { open: boolean; onDismis
             <Image src={dateIcon}></Image>
             <Typography>Date Created</Typography>
           </Box>
-          <Typography>{timeStampToFormat(new Date().getTime())}</Typography>
+          <Typography marginLeft={20}>{timeStampToFormat(new Date().getTime())}</Typography>
         </RowContent>
         <RowContent mt={10}>
           <Box className={'lContent'}>
@@ -266,12 +315,10 @@ export default function SidePanel({ open, onDismiss }: { open: boolean; onDismis
           <Typography>Add Property</Typography>
         </Box> */}
         <ColSentence>
-          <SaveButton width={140} height={36} onClick={() => {}}>
+          {/* <SaveButton width={140} height={36} onClick={() => {}}>
             Save
-          </SaveButton>
-          <ConfirmButton width="140px" height="36px" onClick={() => {}}>
-            Confirm
-          </ConfirmButton>
+          </SaveButton> */}
+          {getActions()}
         </ColSentence>
       </Drawer>
     </Box>

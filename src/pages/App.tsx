@@ -43,7 +43,7 @@ import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 import Home from './Home'
 import Member from './Member'
-// import Task from './Task'
+import Task from './Task'
 import ComingSoon from './ComingSoon'
 
 const AppWrapper = styled('div')(({ theme }) => ({

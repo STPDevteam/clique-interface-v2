@@ -51,7 +51,7 @@ export function Login(account: string, signature: string) {
 }
 
 export function checkIsJoin(chainId: ChainId, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/isJoin', {
+  return Axios.get('stpdao/v2/jobs/identity', {
     chainId,
     daoAddress
   })
@@ -76,6 +76,13 @@ export function switchJoinDao(
       account,
       signature
     }
+  })
+}
+
+export function getSpaceId(chainId: number, daoAddress: string) {
+  return Axios.get('stpdao/v2/spaces/list', {
+    chainId,
+    daoAddress
   })
 }
 
@@ -106,12 +113,80 @@ export function getJobsList(offset: number, count: number, chainId: number, daoA
   })
 }
 
+export function getTaskList(
+  offset: number,
+  count: number,
+  spacesId: number | undefined,
+  status: string | '',
+  priority: string | ''
+) {
+  return Axios.get('stpdao/v2/task/list', {
+    offset,
+    count,
+    spacesId,
+    status,
+    priority
+  })
+}
+
 export function jobsApply(applyRole: string, chainId: number, daoAddress: string, message: string) {
   return Axios.post('stpdao/v2/jobs/apply', {
     applyRole,
     chainId,
     daoAddress,
     message
+  })
+}
+
+export function updateTask(
+  assignAccount: string,
+  content: string,
+  deadline: number,
+  priority: string,
+  proposalId: number,
+  reward: string,
+  spaceId: number,
+  status: string,
+  taskId: number,
+  taskName: string,
+  weight: number
+) {
+  return Axios.post('stpdao/v2/task/update', {
+    assignAccount,
+    content,
+    deadline,
+    priority,
+    proposalId,
+    reward,
+    spaceId,
+    status,
+    taskId,
+    taskName,
+    weight
+  })
+}
+
+export function createTask(
+  assignAccount: string,
+  content: string,
+  deadline: number | undefined,
+  priority: string,
+  proposalId: number,
+  reward: string,
+  spacesId: number,
+  status: string,
+  taskName: string
+) {
+  return Axios.post('stpdao/v2/task/create', {
+    assignAccount,
+    content,
+    deadline,
+    priority,
+    proposalId,
+    reward,
+    spacesId,
+    status,
+    taskName
   })
 }
 
