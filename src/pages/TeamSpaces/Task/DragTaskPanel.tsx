@@ -1,3 +1,4 @@
+import AddButton from 'components/Button/Button'
 import { Box, Button, Container, Typography } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import { ITaskItem, useGetTaskList, useSpacesInfo, useTaskProposalList, useUpdateTask } from 'hooks/useBackedTaskServer'
@@ -44,12 +45,10 @@ const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
   padding: grid,
   margin: `0 0 ${grid}px 0`,
   minHeight: 100,
-
   // change background colour if dragging
   background: isDragging ? '#e8e8e8' : '#fff',
   border: '1px solid #D4D7E2',
   borderRadius: '8px',
-
   // styles we need to apply on draggables
   ...draggableStyle
 })
@@ -105,7 +104,6 @@ export default function DragTaskPanel() {
     })
     return _arr
   }, [taskTypeListRes, type])
-  console.log(taskAllTypeList, 'taskAllTypeList')
 
   const [taskList, setTaskList] = useState<ITaskQuote[][]>([])
   useEffect(() => {
@@ -158,6 +156,8 @@ export default function DragTaskPanel() {
         newState[dInd] = result[dInd]
 
         if (destination.index === 0) {
+          if (taskList[dInd].length !== 0)
+            taskList[sInd][source.index].weight = taskList[dInd][destination.index].weight / 2
         } else if (destination.index === taskList[dInd].length) {
           taskList[sInd][source.index].weight =
             taskList[dInd][taskList[dInd].length - 1].weight + taskList[dInd][taskList[dInd].length - 1].weight / 2
@@ -165,6 +165,8 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].weight =
             (taskList[dInd][destination.index - 1].weight + taskList[dInd][destination.index].weight) / 2
         }
+        console.log(taskList[sInd][source.index].weight)
+
         update(
           taskList[sInd][source.index].assignAccount,
           '',
@@ -220,9 +222,9 @@ export default function DragTaskPanel() {
       }}
     >
       <Box mb={30} mt={20}>
-        <Button variant="outlined" onClick={showSidePanel}>
-          Add new
-        </Button>
+        <AddButton width={'80px'} height={'36px'} onClick={showSidePanel}>
+          + New
+        </AddButton>
       </Box>
       <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid}>
         <DragDropContext onDragEnd={onDragEnd}>
@@ -236,7 +238,19 @@ export default function DragTaskPanel() {
                   {el.map((item, index) => (
                     <Draggable key={item.taskId} draggableId={item.taskId.toString()} index={index}>
                       {(provided, snapshot) => (
-                        <div
+                        <Box
+                          sx={{
+                            '&.B_Medium': {
+                              borderTop: '5px solid #EFCC97!important'
+                            },
+                            '&.A_High': {
+                              borderTop: '5px solid #E46767!important'
+                            },
+                            '&.C_Low': {
+                              borderTop: '5px solid #CAE7ED!important'
+                            }
+                          }}
+                          className={item.priority}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
@@ -260,7 +274,7 @@ export default function DragTaskPanel() {
                               delete
                             </Button>
                           </div>
-                        </div>
+                        </Box>
                       )}
                     </Draggable>
                   ))}
