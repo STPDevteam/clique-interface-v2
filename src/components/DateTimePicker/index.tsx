@@ -55,8 +55,13 @@ export default function DateTimePicker({
                   boxSizing: 'border-box',
                   backgroundColor: theme => theme.bgColor.bg4,
                   borderRadius: '14px',
-                  fontSize: 12,
-                  fontWeight: 500
+                  fontSize: 16,
+                  paddingLeft: '14px!important',
+                  fontWeight: 500,
+                  '&::placeholder': {
+                    color: '#0049C6',
+                    fontSize: 16
+                  }
                 }
               }}
               placeholder={label ?? 'Select Date'}

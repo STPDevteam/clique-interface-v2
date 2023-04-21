@@ -1,9 +1,18 @@
 import AddButton from 'components/Button/Button'
-import { Box, Button, Container, Typography } from '@mui/material'
+import { Box, Container, Tooltip, Typography } from '@mui/material'
 import { ChainId } from 'constants/chain'
-import { ITaskItem, useGetTaskList, useSpacesInfo, useTaskProposalList, useUpdateTask } from 'hooks/useBackedTaskServer'
+import {
+  ITaskItem,
+  useGetTaskList,
+  // useRemoveTask,
+  useSpacesInfo,
+  useTaskProposalList,
+  useUpdateTask
+} from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import SidePanel from 'pages/Task/Children/SidePanel'
+import DeleteIcon from '@mui/icons-material/Delete'
+// import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
@@ -58,7 +67,7 @@ const getListStyle = (isDraggingOver: boolean) => ({
   borderRadius: '8px'
 })
 
-interface ITaskQuote {
+export interface ITaskQuote {
   assignAccount: string
   assignAvatar: string
   assignNickname: string
@@ -81,20 +90,34 @@ const taskTypeList = [
 ]
 
 export default function DragTaskPanel() {
+  const [rand, setRand] = useState(Math.random())
   const { showModal, hideModal } = useModal()
   const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const update = useUpdateTask()
+  // const remove = useRemoveTask()
   const { result } = useTaskProposalList(curDaoChainId, daoAddress)
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
-  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '')
+  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
 
-  const showSidePanel = useCallback(() => {
-    showModal(
-      <SidePanel open={true} onDismiss={hideModal} proposalBaseList={result} spacesId={TeamSpacesInfo?.teamSpacesId} />
-    )
-  }, [TeamSpacesInfo?.teamSpacesId, hideModal, result, showModal])
+  const showSidePanel = useCallback(
+    editData => {
+      showModal(
+        <SidePanel
+          open={true}
+          onDismiss={() => {
+            setRand(Math.random())
+            hideModal()
+          }}
+          proposalBaseList={result}
+          spacesId={TeamSpacesInfo?.teamSpacesId}
+          editData={editData}
+        />
+      )
+    },
+    [TeamSpacesInfo?.teamSpacesId, hideModal, result, showModal]
+  )
   const taskAllTypeList = useMemo(() => {
     const _arr: ITaskItem[][] = []
     type.map((item, index) => {
@@ -222,7 +245,7 @@ export default function DragTaskPanel() {
       }}
     >
       <Box mb={30} mt={20}>
-        <AddButton width={'80px'} height={'36px'} onClick={showSidePanel}>
+        <AddButton width={'80px'} height={'36px'} onClick={() => showSidePanel(undefined)}>
           + New
         </AddButton>
       </Box>
@@ -250,30 +273,36 @@ export default function DragTaskPanel() {
                               borderTop: '5px solid #CAE7ED!important'
                             }
                           }}
+                          onClick={() => showSidePanel(item)}
                           className={item.priority}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                         >
-                          <div
+                          <Box
                             style={{
                               display: 'flex',
-                              justifyContent: 'space-around',
+                              justifyContent: 'space-between',
                               alignItems: 'center'
                             }}
                           >
-                            {item.taskName}
-                            <Button
-                              onClick={() => {
-                                const newState = [...taskList]
-                                newState[ind].splice(index, 1)
-                                setTaskList(newState)
-                              }}
-                            >
-                              delete
-                            </Button>
-                          </div>
+                            <Typography fontSize={14} color={'#3F5170'} textAlign={'left'}>
+                              {item.taskName}
+                            </Typography>
+                            <Tooltip title="Delete" sx={{ cursor: 'pointer' }}>
+                              {/* <MoreVertIcon /> */}
+                              <DeleteIcon
+                                onClick={e => {
+                                  const newState = [...taskList]
+                                  newState[ind].splice(index, 1)
+                                  // remove(del[0].spacesId, [del[0].taskId])
+                                  setTaskList(newState)
+                                  e.stopPropagation()
+                                }}
+                              />
+                            </Tooltip>
+                          </Box>
                         </Box>
                       )}
                     </Draggable>

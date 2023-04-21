@@ -9,7 +9,8 @@ import {
   createTask,
   getTaskList,
   updateTask,
-  getProposalList
+  getProposalList,
+  removeTask
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -55,6 +56,14 @@ export function useSpacesInfo(chainId: ChainId, daoAddress: string) {
     loading,
     result
   }
+}
+
+export function useRemoveTask() {
+  return useCallback((spacesId: number, taskId: number[]) => {
+    return removeTask(spacesId, taskId)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
 }
 
 export function useCreateTask() {
@@ -127,7 +136,7 @@ export interface ITaskItem {
   taskName: string
   weight: number
 }
-export function useGetTaskList(spacesId: number | undefined, status: string, priority: string) {
+export function useGetTaskList(spacesId: number | undefined, status: string, priority: string, refresh?: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -161,7 +170,7 @@ export function useGetTaskList(spacesId: number | undefined, status: string, pri
           priority: item.priority,
           proposalId: item.proposalId,
           reward: item.reward,
-          spacesId: item.spaceId,
+          spacesId: item.spacesId,
           status: item.status,
           taskId: item.taskId,
           taskName: item.taskName,
@@ -175,7 +184,7 @@ export function useGetTaskList(spacesId: number | undefined, status: string, pri
         console.error('useGetTaskList', error)
       }
     })()
-  }, [currentPage, priority, spacesId, status])
+  }, [currentPage, priority, spacesId, status, refresh])
 
   return useMemo(
     () => ({

@@ -52,7 +52,8 @@ export default function Button(props: Props) {
           backgroundColor: theme.palette.primary.dark
         },
         '&:disabled': {
-          backgroundColor: theme.palette.primary.light
+          backgroundColor: theme.palette.primary.light,
+          border: 0
         },
         ...style
       }}

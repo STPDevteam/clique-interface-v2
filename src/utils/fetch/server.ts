@@ -138,6 +138,13 @@ export function jobsApply(applyRole: string, chainId: number, daoAddress: string
   })
 }
 
+export function removeTask(spacesId: number, taskId: number[]) {
+  return Axios.post('stpdao/v2/task/remove', {
+    spacesId,
+    taskId
+  })
+}
+
 export function updateTask(
   assignAccount: string,
   content: string,
@@ -145,7 +152,7 @@ export function updateTask(
   priority: string,
   proposalId: number,
   reward: string,
-  spaceId: number,
+  spacesId: number,
   status: string,
   taskId: number,
   taskName: string,
@@ -158,7 +165,7 @@ export function updateTask(
     priority,
     proposalId,
     reward,
-    spaceId,
+    spacesId,
     status,
     taskId,
     taskName,

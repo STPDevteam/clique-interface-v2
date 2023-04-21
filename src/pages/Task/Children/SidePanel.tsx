@@ -1,33 +1,32 @@
 import { Box, Drawer, Typography, styled } from '@mui/material'
-// import SaveButton from 'components/Button/OutlineButton'
+import SaveButton from 'components/Button/OutlineButton'
 import ConfirmButton from 'components/Button/Button'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
 import Select from 'components/Select/SearchSelect'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
-import React, { SetStateAction, useCallback, useState } from 'react'
+import React, { SetStateAction, useCallback, useMemo, useState } from 'react'
 import assign from 'assets/images/assign.png'
 import select from 'assets/images/select.png'
 import dateIcon from 'assets/images/date.png'
 import proposalIcon from 'assets/images/proposal.png'
 import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useCreateTask, useJobsList } from 'hooks/useBackedTaskServer'
+import { useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
 import { useParams } from 'react-router-dom'
+import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import useModal from 'hooks/useModal'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
-  justifyContent: 'space-between',
+  justifyContent: 'center',
   flexDirection: 'row',
   alignItems: 'center',
   margin: '60px 0 0',
   '& button': {
-    color: '#0049c6',
     border: '1px solid #0049c6'
-  },
-  '& button:nth-of-type(1)': {
-    color: '#fff'
   }
 }))
 
@@ -74,11 +73,18 @@ const RowContent = styled(Box)(() => ({
   }
 }))
 
-const TaskStatus = {
+const TaskStatus: any = {
   'Not started': 'A_notStarted',
   'In progress': 'B_inProgress',
   Done: 'C_done',
   'Not status': 'D_notStatus'
+}
+
+const MapTaskStatus: any = {
+  A_notStarted: 'Not started',
+  B_inprogress: 'In progress',
+  C_done: 'Done',
+  G_notStatus: 'Not status'
 }
 
 const PriorityType: any = {
@@ -87,25 +93,37 @@ const PriorityType: any = {
   Low: 'C_Low'
 }
 
-const statusList = ['In progress', 'Not started', 'Done', 'Not status']
+const MapPriorityType: any = {
+  A_High: 'High',
+  B_Medium: 'Medium',
+  C_Low: 'Low'
+}
+
+const statusList = ['Not started', 'In progress', 'Done', 'Not status']
 const priorityList = ['High', 'Medium', 'Low']
-console.log(TaskStatus, priorityList, PriorityType)
 
 export default function SidePanel({
   open,
   onDismiss,
   proposalBaseList,
-  spacesId
+  spacesId,
+  editData
 }: {
   open: boolean
   onDismiss: () => void
   proposalBaseList: any
   spacesId: number | undefined
+  editData: ITaskQuote
 }) {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const { result: jobsList } = useJobsList(daoAddress, Number(daoChainId))
   const assigneeList = jobsList.map((item: any) => item.account)
   const proposalList = proposalBaseList.map((item: any) => item.proposalId + '.' + item.title)
+  const updateProposal = useMemo(() => {
+    if (!editData) return
+    const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
+    return editData.proposalId + '.' + res.title
+  }, [editData, proposalBaseList])
 
   const toggleDrawer = useCallback(
     e => {
@@ -119,26 +137,54 @@ export default function SidePanel({
     },
     [onDismiss]
   )
+  console.log(editData)
+
   const isSmDown = useBreakpoint('sm')
-  const [currentStatus, setCurrentStatus] = useState()
-  const [assignees, setAssignees] = useState('')
-  const [priority, setPriority] = useState<any>('')
-  const [proposal, setProposal] = useState('')
-  const [value, setValue] = useState<string>('')
-  const [endTime, setEndTime] = useState<number>()
+  const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
+  const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
+  const [priority, setPriority] = useState<any>(MapPriorityType[editData?.priority] ?? '')
+  const [proposal, setProposal] = useState(updateProposal ?? '')
+  const [value, setValue] = useState(editData?.taskName ?? '')
+  const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
   const create = useCreateTask()
+  const update = useUpdateTask()
+  const { showModal } = useModal()
   const createCallback = useCallback(() => {
     if (!spacesId || !value) return
-
     const proposalId = Number(proposal.split('.')[0])
 
     create(assignees, '', endTime, PriorityType[priority], proposalId, '0', spacesId, 'A_notStarted', value)
       .then(res => {
         onDismiss()
+        showModal(<MessageBox type="success">create task success</MessageBox>)
+
         console.log(res)
       })
       .catch(err => console.log(err))
-  }, [assignees, create, endTime, onDismiss, priority, proposal, spacesId, value])
+  }, [assignees, create, endTime, onDismiss, priority, proposal, showModal, spacesId, value])
+
+  const updateCallback = useCallback(() => {
+    if (!editData) return
+    update(
+      assignees,
+      '',
+      endTime,
+      PriorityType[priority],
+      editData?.proposalId,
+      '0',
+      editData.spacesId,
+      TaskStatus[currentStatus],
+      editData.taskId,
+      value,
+      editData.weight
+    )
+      .then(res => {
+        onDismiss()
+        showModal(<MessageBox type="success">update success</MessageBox>)
+        console.log(res)
+      })
+      .catch(err => console.log(err))
+  }, [assignees, currentStatus, editData, endTime, onDismiss, priority, showModal, update, value])
 
   const getActions = useCallback(() => {
     if (!value)
@@ -147,12 +193,20 @@ export default function SidePanel({
           Title required
         </ConfirmButton>
       )
-    return (
-      <ConfirmButton width="140px" height="36px" onClick={createCallback}>
-        Confirm
-      </ConfirmButton>
-    )
-  }, [createCallback, value])
+    if (editData) {
+      return (
+        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
+          Save
+        </SaveButton>
+      )
+    } else {
+      return (
+        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
+          Confirm
+        </ConfirmButton>
+      )
+    }
+  }, [createCallback, editData, updateCallback, value])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -208,9 +262,7 @@ export default function SidePanel({
             height={isSmDown ? 40 : undefined}
             value={assignees}
             multiple={true}
-            onChange={(value: any) => {
-              setAssignees(value)
-            }}
+            onChange={(value: any) => setAssignees(value)}
           />
         </RowContent>
         <RowContent>
@@ -225,9 +277,7 @@ export default function SidePanel({
             height={isSmDown ? 40 : undefined}
             value={currentStatus}
             multiple={false}
-            onChange={(value: any) => {
-              setCurrentStatus(value)
-            }}
+            onChange={(value: any) => setCurrentStatus(value)}
           />
         </RowContent>
         <RowContent>
@@ -268,7 +318,9 @@ export default function SidePanel({
             <Image src={dateIcon}></Image>
             <Typography>Date Created</Typography>
           </Box>
-          <Typography marginLeft={20}>{timeStampToFormat(new Date().getTime())}</Typography>
+          <Typography fontSize={16} marginLeft={14}>
+            {timeStampToFormat(new Date().getTime(), 'Y-MM-DD HH:mm')}
+          </Typography>
         </RowContent>
         <RowContent mt={10}>
           <Box className={'lContent'}>
@@ -282,9 +334,7 @@ export default function SidePanel({
             height={isSmDown ? 40 : undefined}
             value={proposal}
             multiple={false}
-            onChange={(value: any) => {
-              setProposal(value)
-            }}
+            onChange={(value: any) => setProposal(value)}
           />
         </RowContent>
         {/* <RowContent mt={10}>
