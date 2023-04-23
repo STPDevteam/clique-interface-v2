@@ -111,12 +111,12 @@ export default function DragTaskPanel() {
             hideModal()
           }}
           proposalBaseList={result}
-          spacesId={TeamSpacesInfo?.teamSpacesId}
+          TeamSpacesInfo={TeamSpacesInfo}
           editData={editData}
         />
       )
     },
-    [TeamSpacesInfo?.teamSpacesId, hideModal, result, showModal]
+    [TeamSpacesInfo, hideModal, result, showModal]
   )
   const taskAllTypeList = useMemo(() => {
     const _arr: ITaskItem[][] = []

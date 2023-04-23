@@ -1,113 +1,162 @@
-import { Box, styled } from '@mui/material'
-// import { DataGrid, GridColDef } from '@mui/x-data-grid'
-// import { timeStampToFormat } from 'utils/dao'
+import { Box, Typography, styled } from '@mui/material'
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridValueFormatterParams,
+  GridSelectionModel
+} from '@mui/x-data-grid'
+import { useGetTaskList, useSpacesInfo } from 'hooks/useBackedTaskServer'
+import { useMemo } from 'react'
+import { useParams } from 'react-router-dom'
+import { timeStampToFormat } from 'utils/dao'
+import { MapPriorityType, MapTaskStatus } from './SidePanel'
 
-styled(Box)(() => ({
-  width: 'fit-content',
-  padding: '10px 16px',
+const StatusWrapper = styled(Box)(() => ({
+  width: 'fit-conent',
+  padding: '4px 10px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   borderRadius: '40px',
-  '& .Done': {
+  color: '#fff',
+  '&.C_done': {
     backgroundColor: '#21C331'
   },
-  '& .In progress': {
+  '&.B_inProgress': {
     backgroundColor: '#2C9EF0'
   },
-  '& .Not started': {
+  '&.A_notStarted, &.D_notStatus': {
     backgroundColor: '#80829F'
+  },
+  '&.A_High': {
+    backgroundColor: '#E46767'
+  },
+  '&.B_Medium': {
+    backgroundColor: '#EFCC97'
+  },
+  '&.C_Low': {
+    color: '#7FB6C1',
+    backgroundColor: '#CAE7ED'
   }
 }))
 
-// const columns: GridColDef[] = [
-//   { field: 'id', headerName: 'ID', width: 50, align: 'center', sortable: false, headerAlign: 'center' },
-//   {
-//     field: 'taskName',
-//     headerName: 'Task Name',
-//     flex: 2,
-//     align: 'center',
-//     sortable: false,
-//     headerAlign: 'center'
-//   },
-//   {
-//     field: 'assign',
-//     headerName: 'Assign',
-//     align: 'center',
-//     sortable: false,
-//     headerAlign: 'center',
-//     flex: 1
-//   },
-//   { field: 'dueTime', headerName: 'Due', align: 'center', sortable: false, headerAlign: 'center', flex: 1 },
-//   {
-//     field: 'status',
-//     headerName: 'Status',
-//     align: 'center',
-//     sortable: false,
-//     headerAlign: 'center',
-//     minWidth: 150,
-//     renderCell: params => {
-//       return <StatusBg className={params.value}>{params.value}</StatusBg>
-//     }
-//   }
-// ]
+const columns: GridColDef[] = [
+  // { field: 'id', headerName: 'ID', width: 0, align: 'center', sortable: false, headerAlign: 'center' },
+  {
+    field: 'taskName',
+    headerName: 'Task Name',
+    flex: 2,
+    align: 'center',
+    sortable: false,
+    headerAlign: 'center',
+    renderCell: (params: GridRenderCellParams) => {
+      return (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            '& p': {
+              textOverflow: 'ellipsis'
+            }
+          }}
+        >
+          <Typography noWrap textAlign={'left'}>
+            {params.value}
+          </Typography>
+          <StatusWrapper className={params.row.priority} sx={{ width: '88px!important' }}>
+            {MapPriorityType[params.row.priority]}
+          </StatusWrapper>
+        </Box>
+      )
+    }
+  },
+  {
+    field: 'assign',
+    headerName: 'Assign',
+    align: 'center',
+    sortable: false,
+    headerAlign: 'center',
+    flex: 1
+  },
+  {
+    field: 'deadline',
+    headerName: 'Due',
+    align: 'center',
+    sortable: false,
+    headerAlign: 'center',
+    flex: 1,
+    valueFormatter: (params: GridValueFormatterParams<number>) => {
+      if (params.value == null) {
+        return '-'
+      }
+      return timeStampToFormat(params.value * 1000).toLocaleString()
+    }
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    align: 'center',
+    sortable: false,
+    headerAlign: 'center',
+    minWidth: 150,
+    renderCell: (params: GridRenderCellParams) => {
+      return (
+        <StatusWrapper className={params.value} sx={{ width: '88px!important' }}>
+          {MapTaskStatus[params.value]}
+        </StatusWrapper>
+      )
+    }
+  }
+]
+export default function AllTaskTable({
+  priority,
+  status
+}: {
+  priority: string | undefined
+  status: string | undefined
+}) {
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
+  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, status, priority)
+  const rows = useMemo(() => {
+    if (!taskTypeListRes) return []
+    const _arr: any = []
+    taskTypeListRes.map((item, index) => {
+      _arr.push(Object.assign({}, item, { id: index }))
+    })
+    return _arr
+  }, [taskTypeListRes])
+  console.log(rows)
 
-// const rows = [
-//   {
-//     id: 0,
-//     taskName: 'Planned task title',
-//     assign: 'Admin',
-//     dueTime: `${timeStampToFormat(1681791358361)}`,
-//     status: 'Not started'
-//   },
-//   {
-//     id: 1,
-//     taskName: 'Planned task title',
-//     assign: 'Lulu',
-//     dueTime: `${timeStampToFormat(1681791358361)}`,
-//     status: 'In progress'
-//   },
-//   {
-//     id: 2,
-//     taskName: 'Planned task title',
-//     assign: 'Alan',
-//     dueTime: `${timeStampToFormat(1681791358361)}`,
-//     status: 'Done'
-//   },
-//   {
-//     id: 3,
-//     taskName: 'Planned task title',
-//     assign: 'Alan',
-//     dueTime: `${timeStampToFormat(1681791358361)}`,
-//     status: 'Not type'
-//   }
-// ]
-export default function AllTaskTable() {
   return (
     <Box
       sx={{
         mt: 20,
         width: '100%',
+        height: '400px',
         textAlign: 'center',
         '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {
           width: '100%'
-        },
-        '& .css-dld2hn-MuiTablePagination-displayedRows': {
-          display: 'none'
-        },
-        '& .MuiTablePagination-actions': {
-          display: 'none'
         }
       }}
     >
-      {/* <DataGrid
+      <DataGrid
         disableColumnMenu
         rows={rows}
         columns={columns}
-        pageSize={5}
+        autoHeight={true}
+        pageSize={10}
         rowsPerPageOptions={[5]}
         checkboxSelection
-      /> */}
+        hideFooterPagination={true}
+        onSelectionModelChange={(newRowSelectionModel: GridSelectionModel) => {
+          console.log(newRowSelectionModel)
+        }}
+      />
     </Box>
   )
 }

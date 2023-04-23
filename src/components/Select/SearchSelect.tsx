@@ -42,7 +42,8 @@ const StyledMultiSelect = styled(MultipleSelect)(({ theme }) => ({
 }))
 
 const StyledSelect = styled(SingleSelect)(({ theme }) => ({
-  width: 219,
+  minWidth: 219,
+  width: 'fit-content',
   cursor: 'pointer',
   borderRadius: '10px',
   border: '2px solid transparent',

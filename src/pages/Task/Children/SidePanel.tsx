@@ -14,10 +14,10 @@ import proposalIcon from 'assets/images/proposal.png'
 import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
-import { useParams } from 'react-router-dom'
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
+import { shortenAddress } from 'utils'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -80,11 +80,11 @@ const TaskStatus: any = {
   'Not status': 'D_notStatus'
 }
 
-const MapTaskStatus: any = {
+export const MapTaskStatus: any = {
   A_notStarted: 'Not started',
   B_inprogress: 'In progress',
   C_done: 'Done',
-  G_notStatus: 'Not status'
+  D_notStatus: 'Not status'
 }
 
 const PriorityType: any = {
@@ -93,7 +93,7 @@ const PriorityType: any = {
   Low: 'C_Low'
 }
 
-const MapPriorityType: any = {
+export const MapPriorityType: any = {
   A_High: 'High',
   B_Medium: 'Medium',
   C_Low: 'Low'
@@ -106,23 +106,22 @@ export default function SidePanel({
   open,
   onDismiss,
   proposalBaseList,
-  spacesId,
+  TeamSpacesInfo,
   editData
 }: {
   open: boolean
   onDismiss: () => void
   proposalBaseList: any
-  spacesId: number | undefined
+  TeamSpacesInfo: any
   editData: ITaskQuote
 }) {
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const { result: jobsList } = useJobsList(daoAddress, Number(daoChainId))
-  const assigneeList = jobsList.map((item: any) => item.account)
+  const { result: jobsList } = useJobsList(TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
+  const assigneeList = jobsList.map((item: any) => shortenAddress(item.account))
   const proposalList = proposalBaseList.map((item: any) => item.proposalId + '.' + item.title)
   const updateProposal = useMemo(() => {
-    if (!editData) return
+    if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
-    return editData.proposalId + '.' + res.title
+    return res ? editData.proposalId + '.' + res.title : ''
   }, [editData, proposalBaseList])
 
   const toggleDrawer = useCallback(
@@ -137,7 +136,6 @@ export default function SidePanel({
     },
     [onDismiss]
   )
-  console.log(editData)
 
   const isSmDown = useBreakpoint('sm')
   const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
@@ -150,18 +148,26 @@ export default function SidePanel({
   const update = useUpdateTask()
   const { showModal } = useModal()
   const createCallback = useCallback(() => {
-    if (!spacesId || !value) return
+    if (!TeamSpacesInfo || !value) return
     const proposalId = Number(proposal.split('.')[0])
 
-    create(assignees, '', endTime, PriorityType[priority], proposalId, '0', spacesId, 'A_notStarted', value)
-      .then(res => {
+    create(
+      assignees,
+      '',
+      endTime,
+      PriorityType[priority],
+      proposalId,
+      '0',
+      TeamSpacesInfo.teamSpacesId,
+      'A_notStarted',
+      value
+    ).then((res: any) => {
+      if (res.code === 200) {
         onDismiss()
-        showModal(<MessageBox type="success">create task success</MessageBox>)
-
-        console.log(res)
-      })
-      .catch(err => console.log(err))
-  }, [assignees, create, endTime, onDismiss, priority, proposal, showModal, spacesId, value])
+        showModal(<MessageBox type="success">Create task success</MessageBox>)
+      }
+    })
+  }, [TeamSpacesInfo, assignees, create, endTime, onDismiss, priority, proposal, showModal, value])
 
   const updateCallback = useCallback(() => {
     if (!editData) return
@@ -177,13 +183,11 @@ export default function SidePanel({
       editData.taskId,
       value,
       editData.weight
-    )
-      .then(res => {
-        onDismiss()
-        showModal(<MessageBox type="success">update success</MessageBox>)
-        console.log(res)
-      })
-      .catch(err => console.log(err))
+    ).then(res => {
+      onDismiss()
+      showModal(<MessageBox type="success">Update success</MessageBox>)
+      console.log(res)
+    })
   }, [assignees, currentStatus, editData, endTime, onDismiss, priority, showModal, update, value])
 
   const getActions = useCallback(() => {
@@ -225,6 +229,11 @@ export default function SidePanel({
           },
           '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             border: 'none!important'
+          },
+          '& input': {
+            color: '#3F5170',
+            fontWeight: 700,
+            fontSize: 30
           }
         }}
         anchor={'right'}
@@ -261,7 +270,7 @@ export default function SidePanel({
             width={isSmDown ? 160 : 219}
             height={isSmDown ? 40 : undefined}
             value={assignees}
-            multiple={true}
+            multiple={false}
             onChange={(value: any) => setAssignees(value)}
           />
         </RowContent>

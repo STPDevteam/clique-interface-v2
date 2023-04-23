@@ -79,7 +79,18 @@ function DaoItem({
         <Image src={daoLogo} width={48} height={48}></Image>
         <Box display={'flex'} flexDirection={'column'} justifyContent={'flex-start'}>
           <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
-            <p style={{ fontSize: 20, margin: 0, fontWeight: 700 }}>{daoName}</p>
+            <p
+              style={{
+                fontSize: 20,
+                margin: 0,
+                fontWeight: 700,
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+              }}
+            >
+              {daoName}
+            </p>
             <Image src={tag} width={16}></Image>
           </Box>
           <div style={{ fontSize: 14, textAlign: 'left' }}>@{daoBaseInfo?.handle}</div>

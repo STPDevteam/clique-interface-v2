@@ -50,9 +50,10 @@ export default function OutlineButton(props: Props) {
         borderRadius: borderRadius ?? 1,
         '&:hover': {
           // color: theme.palette.common.white,
-          color: theme.palette.primary.main,
+          color: color ? color : theme.palette.primary.main,
           // backgroundColor: theme.palette.primary.main,
-          borderColor: theme.palette.primary.main
+          borderColor: color ? color : theme.palette.primary.main,
+          opacity: 0.8
         },
         '&:disabled': {
           opacity: theme.palette.action.disabledOpacity,

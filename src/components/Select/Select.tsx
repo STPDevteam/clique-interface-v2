@@ -29,8 +29,10 @@ interface Props {
   multiple?: boolean
   primary?: boolean
   label?: string
+  color?: string
   renderValue?: any
   style?: React.CSSProperties | SxProps<Theme>
+  noBold?: boolean
 }
 
 const StyledInputLabel = styled(MuiInputLabel)(({ theme }) => ({
@@ -44,7 +46,6 @@ const StyledInputLabel = styled(MuiInputLabel)(({ theme }) => ({
 const StyledSelect = styled(MuiSelect)(({ theme }) => ({
   cursor: 'pointer',
   borderRadius: '10px',
-  border: '2px solid transparent',
   position: 'relative',
   padding: '10px',
   '& .MuiSelect-icon': {
@@ -70,7 +71,9 @@ export default function Select(props: Props) {
     placeholder,
     renderValue,
     multiple,
-    style
+    style,
+    color,
+    noBold
   } = props
   const theme = useTheme()
   const hasValue = useMemo(() => {
@@ -93,13 +96,16 @@ export default function Select(props: Props) {
           width: width || '100%',
           height: height || '56px',
           padding: '0',
-          fontWeight: 600,
+          fontWeight: noBold ? 400 : 600,
+          border: `${noBold ? 1 : 2}px solid`,
+          borderColor: color ? color : 'transparent',
           '& .MuiSelect-select': {
             width: '100%',
             maxWidth: 'calc(100vw - 70px)',
             height: '100%',
             padding: '0 50px 0 20px !important',
             display: 'flex',
+            color: color ? color : 'unset',
             alignItems: 'center'
           },
           '& span': {
@@ -117,7 +123,7 @@ export default function Select(props: Props) {
           },
           '& .MuiSelect-icon': {
             display: disabled ? 'none' : 'block',
-            color: theme.palette.text.primary
+            color: color ? color : theme.palette.text.primary
           },
           '&:hover': {
             color: disabled ? theme.palette.text.primary : theme.palette.common.white,
@@ -127,8 +133,8 @@ export default function Select(props: Props) {
             }
           },
           '& .Mui-disabled.MuiInputBase-input': {
-            color: theme.palette.text.primary,
-            WebkitTextFillColor: theme.palette.text.primary
+            color: color ? color : theme.palette.text.primary,
+            WebkitTextFillColor: color ? color : theme.palette.text.primary
           },
           ...style
         }}

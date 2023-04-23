@@ -60,6 +60,7 @@ export default function DateTimePicker({
                   fontWeight: 500,
                   '&::placeholder': {
                     color: '#0049C6',
+                    fontWeight: 500,
                     fontSize: 16
                   }
                 }

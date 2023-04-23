@@ -7,6 +7,7 @@ import { escapeRegExp, isAddress, isEmail } from 'utils'
 
 export interface InputProps {
   placeholder?: string
+  placeholderSize?: string
   value: string
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void
   label?: string
@@ -38,9 +39,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     fontWeight: 600,
     backgroundColor: theme.bgColor.bg4,
     padding: '5px 0 5px 20px',
-    borderRadius: 14
+    borderRadius: 14,
+    border: 'none!important'
   },
-  [`&.${inputBaseClasses.focused}`]: { border: `1px solid ${theme.palette.primary.main} !important` },
+  [`&.${inputBaseClasses.focused}`]: { border: `none !important` },
   [`& .${inputBaseClasses.input}`]: {
     maxWidth: '100%',
     '&::-webkit-outer-spin-button': {
@@ -93,6 +95,7 @@ const StyledInputWrapper = styled(Box)(({ theme }) => ({
 export default function Input({
   focused,
   placeholder,
+  placeholderSize,
   onChange,
   value,
   disabled,
@@ -188,14 +191,11 @@ export default function Input({
                 `2px solid ${outlined ? 'rgba(212,215,226, 1)' : error ? theme.palette.error.main : 'transparent'}`
             },
             [`&.${inputBaseClasses.focused}`]: {
-              border: theme =>
-                error
-                  ? `2px solid ${theme.palette.error.main}!important`
-                  : `2px solid ${theme.palette.primary.main}!important`
+              border: 'none'
             },
             [`& .${inputBaseClasses.input}`]: {
               '&::placeholder': {
-                fontSize: smallPlaceholder ? 12 : 14,
+                fontSize: placeholderSize ? placeholderSize : smallPlaceholder ? 12 : placeholderSize,
                 color: theme => (error ? theme.palette.error.main : ''),
                 fontWeight: 600
                 // textOverflow: 'ellipsis',

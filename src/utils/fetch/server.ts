@@ -117,8 +117,8 @@ export function getTaskList(
   offset: number,
   count: number,
   spacesId: number | undefined,
-  status: string | '',
-  priority: string | ''
+  status: string | undefined,
+  priority: string | undefined
 ) {
   return Axios.get('stpdao/v2/task/list', {
     offset,
