@@ -1,10 +1,10 @@
 import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem } from '@mui/material'
 import Select from 'components/Select/Select'
-// import Button from 'components/Button/Button'
+import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import TaskIcon from 'assets/images/task.png'
-// import EditIcon from 'assets/images/edit.png'
+import EditIcon from 'assets/images/edit.png'
 import Image from 'components/Image'
 import { ReactComponent as Board } from 'assets/svg/board.svg'
 import { ReactComponent as ALlTask } from 'assets/svg/allTask.svg'
@@ -71,13 +71,12 @@ const columns: GridColDef[] = [
             alignItems: 'center',
             justifyContent: 'space-between',
             '& p': {
-              textOverflow: 'ellipsis'
+              textOverflow: 'ellipsis',
+              marginLeft: 20
             }
           }}
         >
-          <Typography noWrap textAlign={'left'}>
-            {params.value}
-          </Typography>
+          <Typography noWrap>{params.value}</Typography>
           <StatusWrapper className={params.row.priority} sx={{ width: '88px!important' }}>
             {MapPriorityType[params.row.priority]}
           </StatusWrapper>
@@ -127,7 +126,7 @@ const columns: GridColDef[] = [
     align: 'center',
     sortable: false,
     headerAlign: 'center',
-    flex: 1,
+    minWidth: 180,
     valueFormatter: (params: GridValueFormatterParams<number>) => {
       if (params.value == null) {
         return '-'
@@ -141,7 +140,7 @@ const columns: GridColDef[] = [
     align: 'center',
     sortable: false,
     headerAlign: 'center',
-    minWidth: 150,
+    minWidth: 180,
     renderCell: (params: GridRenderCellParams) => {
       return <StatusWrapper className={params.value}>{MapTaskStatus[params.value]}</StatusWrapper>
     }
@@ -221,7 +220,7 @@ const statusFilter = [
   { value: 'C_notStatus', label: 'Not status' }
 ]
 
-function AllTaskTable({ priority, status }: { priority: string | undefined; status: string | undefined }) {
+const AllTaskTable = function({ priority, status }: { priority: string | undefined; status: string | undefined }) {
   // const [selectedRow, setSelectRow] = useState<GridSelectionModel>()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
@@ -244,6 +243,14 @@ function AllTaskTable({ priority, status }: { priority: string | undefined; stat
   // }, [rows, selectedRow])
 
   console.log(rows)
+
+  const editTask = useCallback(
+    (newRowSelectionModel: GridSelectionModel) => {
+      if (!rows || !newRowSelectionModel) return
+      console.log(rows.newRowSelectionModel, newRowSelectionModel)
+    },
+    [rows]
+  )
 
   return (
     <Box
@@ -273,11 +280,9 @@ function AllTaskTable({ priority, status }: { priority: string | undefined; stat
         autoHeight={true}
         pageSize={10}
         rowsPerPageOptions={[5]}
-        // checkboxSelection
+        checkboxSelection
         hideFooterPagination={true}
-        onSelectionModelChange={(newRowSelectionModel: GridSelectionModel) => {
-          console.log(newRowSelectionModel)
-        }}
+        onSelectionModelChange={editTask}
       />
     </Box>
   )
@@ -288,6 +293,8 @@ export default function Index() {
   const [tabValue, setTabValue] = useState(0)
   const [currentPriority, setCurrentPriority] = useState()
   const [currentStatus, setCurrentStatus] = useState()
+
+  const handleEdit = useCallback(() => {}, [])
 
   return (
     <Box gap={10}>
@@ -315,13 +322,24 @@ export default function Index() {
           <Image src={TaskIcon}></Image>
           <Typography>Task</Typography>
         </Box>
-        {/* <Button
-          onClick={() => {}}
-          style={{ width: '80px', height: '36px', display: 'flex', justifyContent: 'space-between', padding: '0 16px' }}
-        >
-          <Image width={16} src={EditIcon}></Image>
-          Edit
-        </Button> */}
+
+        {tabValue === 1 ? (
+          <Button
+            onClick={handleEdit}
+            style={{
+              width: '80px',
+              height: '36px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '0 16px'
+            }}
+          >
+            <Image width={16} src={EditIcon}></Image>
+            Edit
+          </Button>
+        ) : (
+          ''
+        )}
       </Box>
       <Typography maxWidth={740}>
         Use this template to track your personal tasks. Click{' '}
@@ -366,6 +384,7 @@ export default function Index() {
               height={25}
               color="#80829F"
               noBold
+              style={{ borderRadius: '40px' }}
               value={currentPriority}
               onChange={e => {
                 setCurrentPriority(e.target.value)
@@ -389,6 +408,7 @@ export default function Index() {
               color="#80829F"
               noBold
               value={currentStatus}
+              style={{ borderRadius: '40px' }}
               onChange={e => {
                 setCurrentStatus(e.target.value)
               }}

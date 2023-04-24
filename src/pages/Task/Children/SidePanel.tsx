@@ -1,4 +1,4 @@
-import { Box, Drawer, Typography, styled } from '@mui/material'
+import { Alert, Box, Drawer, Typography, styled } from '@mui/material'
 import SaveButton from 'components/Button/OutlineButton'
 import ConfirmButton from 'components/Button/Button'
 import Image from 'components/Image'
@@ -125,7 +125,13 @@ export default function SidePanel({
     return _arr
   }, [jobsList])
 
-  const proposalList = proposalBaseList.map((item: any) => item.proposalId + '.' + item.title)
+  const proposalList = useMemo(() => {
+    if (!proposalBaseList) return
+    const arr = proposalBaseList.map((item: any) => {
+      return item.proposalId + '.' + item.title
+    })
+    return arr
+  }, [proposalBaseList])
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
@@ -199,21 +205,15 @@ export default function SidePanel({
   }, [assignees, currentStatus, editData, endTime, onDismiss, priority, showModal, update, value])
 
   const getActions = useCallback(() => {
-    if (!value)
-      return (
-        <ConfirmButton disabled width="140px" height="36px">
-          Title required
-        </ConfirmButton>
-      )
     if (editData) {
       return (
-        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
+        <SaveButton disabled={!value.trim()} width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
+        <ConfirmButton disabled={!value.trim()} width="140px" height="36px" color="#ffffff" onClick={createCallback}>
           Confirm
         </ConfirmButton>
       )
@@ -227,7 +227,7 @@ export default function SidePanel({
           width: '100%',
           '& .css-ld25lh-MuiPaper-root-MuiDrawer-paper': {
             padding: 20,
-            width: '50vw'
+            width: '40vw'
           },
           '& .title': {
             margin: '10px 0'
@@ -237,11 +237,6 @@ export default function SidePanel({
           },
           '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             border: 'none!important'
-          },
-          '& input': {
-            color: '#3F5170',
-            fontWeight: 700,
-            fontSize: 30
           }
         }}
         anchor={'right'}
@@ -266,6 +261,7 @@ export default function SidePanel({
           onChange={e => setValue(e.target.value)}
           placeholder="Untitled"
           focused
+          style={{ fontSize: 30, color: '#3F5170', fontWeight: 700 }}
         />
         <RowContent>
           <Box className={'lContent'}>
@@ -342,7 +338,7 @@ export default function SidePanel({
             {timeStampToFormat(new Date().getTime(), 'Y-MM-DD HH:mm')}
           </Typography>
         </RowContent>
-        <RowContent mt={10}>
+        <RowContent mt={10} mb={20}>
           <Box className={'lContent'}>
             <Image src={proposalIcon}></Image>
             <Typography>Proposal</Typography>
@@ -357,6 +353,7 @@ export default function SidePanel({
             onChange={(value: any) => setProposal(value)}
           />
         </RowContent>
+        {!value.trim() ? <Alert severity="error">Title required</Alert> : ''}
         {/* <RowContent mt={10}>
           <Box className={'lContent'}>
             <Image src={rewardIcon}></Image>

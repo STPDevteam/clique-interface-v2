@@ -88,7 +88,7 @@ const taskTypeList = [
   { title: 'Not started', color: '#80829F' },
   { title: 'In progress', color: '#2C9EF0' },
   { title: 'Done', color: '#21C331' },
-  { title: 'No Type', color: '#97B7EF' }
+  { title: 'No Status', color: '#97B7EF' }
 ]
 
 export default function DragTaskPanel() {
