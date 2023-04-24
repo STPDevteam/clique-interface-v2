@@ -4,7 +4,7 @@ import { ChainId } from 'constants/chain'
 import {
   ITaskItem,
   useGetTaskList,
-  // useRemoveTask,
+  useRemoveTask,
   useSpacesInfo,
   useTaskProposalList,
   useUpdateTask
@@ -96,7 +96,7 @@ export default function DragTaskPanel() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const update = useUpdateTask()
-  // const remove = useRemoveTask()
+  const remove = useRemoveTask()
   const { result } = useTaskProposalList(curDaoChainId, daoAddress)
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
@@ -295,8 +295,8 @@ export default function DragTaskPanel() {
                               <DeleteIcon
                                 onClick={e => {
                                   const newState = [...taskList]
-                                  newState[ind].splice(index, 1)
-                                  // remove(del[0].spacesId, [del[0].taskId])
+                                  const del = newState[ind].splice(index, 1)
+                                  remove(del[0].spacesId, [del[0].taskId])
                                   setTaskList(newState)
                                   e.stopPropagation()
                                 }}

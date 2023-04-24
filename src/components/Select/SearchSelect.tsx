@@ -1,6 +1,7 @@
 import { styled, useTheme, Theme } from '@mui/material'
 import { MultipleSelect, SelectOption, SingleSelect } from 'react-select-material-ui'
 import React from 'react'
+import { StylesConfig } from 'react-select'
 import { SxProps } from '@mui/system'
 interface Props {
   options: string[] | SelectOption[]
@@ -42,7 +43,7 @@ const StyledMultiSelect = styled(MultipleSelect)(({ theme }) => ({
 }))
 
 const StyledSelect = styled(SingleSelect)(({ theme }) => ({
-  minWidth: 219,
+  minWidth: 268,
   width: 'fit-content',
   cursor: 'pointer',
   borderRadius: '10px',
@@ -70,6 +71,54 @@ const StyledSelect = styled(SingleSelect)(({ theme }) => ({
   }
 }))
 
+const stylesFn: StylesConfig<unknown, false> = {
+  clearIndicator: (base: any) => ({
+    ...base
+  }),
+  control: (base: any) => ({
+    ...base,
+    background: 'transparent',
+    borderBottomColor: '#D4D7E2',
+    borderBottomWidth: 1,
+    borderBottomStyle: 'solid',
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderTopWidth: 0,
+    borderRadius: 0,
+    boxShadow: 'none',
+    marginRight: 15,
+    '&:hover': {
+      borderBottomColor: '#1e80ff'
+    }
+  }),
+  dropdownIndicator: (base: any) => ({
+    ...base
+  }),
+  menuList: (base: any) => ({
+    ...base
+  }),
+  multiValue: (base: any) => ({
+    ...base
+  }),
+  multiValueLabel: (base: any) => ({
+    ...base
+  }),
+  multiValueRemove: (base: any) => ({
+    ...base,
+    color: '#ffff80',
+    '&:hover': { color: '#000', backgroundColor: 'rgba(0,0,0,0)' }
+  }),
+  noOptionsMessage: (base: any) => ({
+    ...base
+  }),
+  option: (base: any) => ({
+    ...base
+  }),
+  singleValue: (base: any) => ({
+    ...base
+  })
+}
+
 export default function SearchSelect(props: Props) {
   const { options, disabled, onChange, width, height, label, value, defaultValue, placeholder, multiple, style } = props
   useTheme()
@@ -91,6 +140,7 @@ export default function SearchSelect(props: Props) {
             isClearable: multiple || undefined,
             width: width ?? 'unset',
             height: height ?? 'auto',
+            styles: stylesFn,
             sx: {
               ...style
             },
@@ -115,9 +165,10 @@ export default function SearchSelect(props: Props) {
           defaltValue={defaultValue}
           SelectProps={{
             isCreatable: false,
-            isClearable: multiple || undefined,
+            isClearable: true,
             width: width ?? 'unset',
             height: height ?? 'auto',
+            styles: stylesFn,
             sx: {
               ...style
             },

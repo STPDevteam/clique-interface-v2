@@ -106,7 +106,10 @@ export default function Select(props: Props) {
             padding: '0 50px 0 20px !important',
             display: 'flex',
             color: color ? color : 'unset',
-            alignItems: 'center'
+            alignItems: 'center',
+            '&:hover': {
+              color: 'white'
+            }
           },
           '& span': {
             fontWeight: '600!important'
@@ -133,8 +136,8 @@ export default function Select(props: Props) {
             }
           },
           '& .Mui-disabled.MuiInputBase-input': {
-            color: color ? color : theme.palette.text.primary,
-            WebkitTextFillColor: color ? color : theme.palette.text.primary
+            color: theme.palette.text.primary,
+            WebkitTextFillColor: theme.palette.text.primary
           },
           ...style
         }}

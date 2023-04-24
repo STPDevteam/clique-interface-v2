@@ -9,8 +9,6 @@ import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 
 export default function CardView({ result }: any) {
-  console.log(result)
-
   return (
     <Box
       sx={{
@@ -33,7 +31,8 @@ export default function CardView({ result }: any) {
               '& img': {
                 zIndex: 10,
                 marginTop: 20,
-                width: 70
+                width: 70,
+                height: 70
               },
               '& p': {
                 fontWeight: 600

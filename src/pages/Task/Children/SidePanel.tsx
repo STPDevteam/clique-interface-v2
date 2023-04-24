@@ -17,7 +17,7 @@ import { useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskSe
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
-import { shortenAddress } from 'utils'
+// import { shortenAddress } from 'utils'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -116,7 +116,15 @@ export default function SidePanel({
   editData: ITaskQuote
 }) {
   const { result: jobsList } = useJobsList(TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
-  const assigneeList = jobsList.map((item: any) => shortenAddress(item.account))
+  const assigneeList = useMemo(() => {
+    if (!jobsList) return []
+    const _arr: any = []
+    jobsList.map(item => {
+      _arr.push(Object.assign({}, item, { label: item.nickname, value: item.account }))
+    })
+    return _arr
+  }, [jobsList])
+
   const proposalList = proposalBaseList.map((item: any) => item.proposalId + '.' + item.title)
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
@@ -162,10 +170,10 @@ export default function SidePanel({
       'A_notStarted',
       value
     ).then((res: any) => {
-      if (res.code === 200) {
+      if (res.data.code === 200) {
         onDismiss()
         showModal(<MessageBox type="success">Create task success</MessageBox>)
-      }
+      } else showModal(<MessageBox type="failure">Something wrong</MessageBox>)
     })
   }, [TeamSpacesInfo, assignees, create, endTime, onDismiss, priority, proposal, showModal, value])
 
@@ -271,7 +279,10 @@ export default function SidePanel({
             height={isSmDown ? 40 : undefined}
             value={assignees}
             multiple={false}
-            onChange={(value: any) => setAssignees(value)}
+            onChange={(value: any, option: any) => {
+              console.log(value)
+              setAssignees(option.value)
+            }}
           />
         </RowContent>
         <RowContent>

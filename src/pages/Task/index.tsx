@@ -1,10 +1,10 @@
 import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem } from '@mui/material'
 import Select from 'components/Select/Select'
-import Button from 'components/Button/Button'
+// import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
 import { useState } from 'react'
 import TaskIcon from 'assets/images/task.png'
-import EditIcon from 'assets/images/edit.png'
+// import EditIcon from 'assets/images/edit.png'
 import Image from 'components/Image'
 import { ReactComponent as Board } from 'assets/svg/board.svg'
 import { ReactComponent as ALlTask } from 'assets/svg/allTask.svg'
@@ -86,12 +86,38 @@ const columns: GridColDef[] = [
     }
   },
   {
-    field: 'assign',
+    field: 'assignAccount',
     headerName: 'Assign',
     align: 'center',
     sortable: false,
     headerAlign: 'center',
-    flex: 1
+    flex: 1,
+    renderCell: (params: GridRenderCellParams) => {
+      return (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 10,
+            '& image': {
+              borderRadius: '50%',
+              border: '1px solid #D4DCE2'
+            },
+            '& p': {
+              textOverflow: 'ellipsis'
+            }
+          }}
+        >
+          <Image width={18} src={params.row?.assignAvatar}></Image>
+          <Typography noWrap textAlign={'left'}>
+            {params.row?.assignNickname}
+          </Typography>
+        </Box>
+      )
+    }
   },
   {
     field: 'deadline',
@@ -222,8 +248,8 @@ function AllTaskTable({ priority, status }: { priority: string | undefined; stat
       sx={{
         mt: 20,
         width: '100%',
-        height: '400px',
         textAlign: 'center',
+        mb: 40,
         '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {
           width: '100%'
         },
@@ -245,7 +271,7 @@ function AllTaskTable({ priority, status }: { priority: string | undefined; stat
         autoHeight={true}
         pageSize={10}
         rowsPerPageOptions={[5]}
-        checkboxSelection
+        // checkboxSelection
         hideFooterPagination={true}
         onSelectionModelChange={(newRowSelectionModel: GridSelectionModel) => {
           console.log(newRowSelectionModel)
@@ -287,13 +313,13 @@ export default function Index() {
           <Image src={TaskIcon}></Image>
           <Typography>Task</Typography>
         </Box>
-        <Button
+        {/* <Button
           onClick={() => {}}
           style={{ width: '80px', height: '36px', display: 'flex', justifyContent: 'space-between', padding: '0 16px' }}
         >
           <Image width={16} src={EditIcon}></Image>
           Edit
-        </Button>
+        </Button> */}
       </Box>
       <Typography maxWidth={740}>
         Use this template to track your personal tasks. Click{' '}
