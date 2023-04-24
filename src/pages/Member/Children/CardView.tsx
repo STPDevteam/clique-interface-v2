@@ -19,15 +19,14 @@ export default function CardView({ result }: any) {
       }}
     >
       {result.map((item: any) => (
-        <Box key={item} margin={'20px auto 10px'}>
+        <Box key={item} width={'30%'} margin={'20px auto 10px'}>
           <Card
             sx={{
               position: 'relative',
-              width: 220,
+              width: '100%',
               height: 226,
               textAlign: 'center',
               border: '1px solid #d4d7e2',
-
               '& img': {
                 zIndex: 10,
                 marginTop: 20,

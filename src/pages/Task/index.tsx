@@ -102,7 +102,9 @@ const columns: GridColDef[] = [
             alignItems: 'center',
             justifyContent: 'center',
             gap: 10,
-            '& image': {
+            '& img': {
+              width: 18,
+              height: 18,
               borderRadius: '50%',
               border: '1px solid #D4DCE2'
             },
@@ -111,7 +113,7 @@ const columns: GridColDef[] = [
             }
           }}
         >
-          <Image width={18} src={params.row?.assignAvatar}></Image>
+          {params.row?.assignAvatar && <Image src={params.row?.assignAvatar}></Image>}
           <Typography noWrap textAlign={'left'}>
             {params.row?.assignNickname}
           </Typography>

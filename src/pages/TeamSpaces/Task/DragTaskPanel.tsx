@@ -12,6 +12,8 @@ import {
 import useModal from 'hooks/useModal'
 import SidePanel from 'pages/Task/Children/SidePanel'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { timeStampToFormat } from 'utils/dao'
+import Image from 'components/Image'
 // import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
@@ -132,7 +134,8 @@ export default function DragTaskPanel() {
   useEffect(() => {
     setTaskList(taskAllTypeList)
   }, [taskAllTypeList])
-  console.log(taskList, 'taskList')
+
+  console.log(taskList)
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
@@ -188,7 +191,6 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].weight =
             (taskList[dInd][destination.index - 1].weight + taskList[dInd][destination.index].weight) / 2
         }
-        console.log(taskList[sInd][source.index].weight)
 
         update(
           taskList[sInd][source.index].assignAccount,
@@ -281,13 +283,18 @@ export default function DragTaskPanel() {
                           style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                         >
                           <Box
-                            style={{
+                            sx={{
                               display: 'flex',
                               justifyContent: 'space-between',
-                              alignItems: 'center'
+                              alignItems: 'center',
+                              '& p': {
+                                width: 140,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }
                             }}
                           >
-                            <Typography fontSize={14} color={'#3F5170'} textAlign={'left'}>
+                            <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
                               {item.taskName}
                             </Typography>
                             <Tooltip title="Delete" sx={{ cursor: 'pointer' }}>
@@ -302,6 +309,33 @@ export default function DragTaskPanel() {
                                 }}
                               />
                             </Tooltip>
+                          </Box>
+                          <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
+                            {timeStampToFormat(item.deadline)}
+                          </Typography>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'flex-start',
+                              alignItems: 'center',
+                              gap: 10,
+                              '& img': {
+                                width: 18,
+                                height: 18,
+                                border: '1px solid #D4DCE2',
+                                borderRadius: '50%'
+                              },
+                              '& p': {
+                                width: 140,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                              }
+                            }}
+                          >
+                            {item.assignAvatar && <Image src={item.assignAvatar}></Image>}
+                            <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
+                              {item.assignNickname}
+                            </Typography>
                           </Box>
                         </Box>
                       )}

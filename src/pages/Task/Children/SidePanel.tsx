@@ -82,7 +82,7 @@ const TaskStatus: any = {
 
 export const MapTaskStatus: any = {
   A_notStarted: 'Not started',
-  B_inprogress: 'In progress',
+  B_inProgress: 'In progress',
   C_done: 'Done',
   D_notStatus: 'Not status'
 }
