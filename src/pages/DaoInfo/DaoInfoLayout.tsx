@@ -10,6 +10,7 @@ import { ChainId } from 'constants/chain'
 import JoinDAOModal from './Children/JoinDAOModal'
 
 export default function DaoInfoLayout({ children }: { children: any }) {
+  const [btnDisabled, setBtnDisabled] = useState(false)
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const { account } = useActiveWeb3React()
   const curDaoChainId = Number(daoChainId) as ChainId
@@ -29,9 +30,13 @@ export default function DaoInfoLayout({ children }: { children: any }) {
       loginSignature()
       return
     }
-    joinApply('C_member', curDaoChainId, daoAddress, '').then(() => {
-      setOpen(false)
-    })
+    setBtnDisabled(true)
+    joinApply('C_member', curDaoChainId, daoAddress, '')
+      .then(() => {
+        setOpen(false)
+        setBtnDisabled(false)
+      })
+      .catch(() => setBtnDisabled(false))
   }, [account, curDaoChainId, daoAddress, joinApply, loginSignature, toggleWalletModal, userSignature])
 
   useEffect(() => {
@@ -51,7 +56,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
         width: '100%'
       }}
     >
-      <JoinDAOModal onClick={joinDAOCallback} open={open} />
+      <JoinDAOModal onClick={joinDAOCallback} open={open} disable={btnDisabled} />
       <LeftMenu />
       <Box
         sx={{

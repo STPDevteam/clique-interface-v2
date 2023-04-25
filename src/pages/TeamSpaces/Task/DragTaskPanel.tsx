@@ -1,5 +1,5 @@
 import AddButton from 'components/Button/Button'
-import { Box, Container, Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import {
   ITaskItem,
@@ -241,12 +241,13 @@ export default function DragTaskPanel() {
   )
 
   return (
-    <Container
+    <Box
       sx={{
-        width: 942
+        // width: 942
+        width: '100%'
       }}
     >
-      <Box mb={30} mt={20}>
+      <Box mb={30} mt={20} ml={10}>
         <AddButton width={'80px'} height={'36px'} onClick={() => showSidePanel(undefined)}>
           + New
         </AddButton>
@@ -348,7 +349,7 @@ export default function DragTaskPanel() {
           ))}
         </DragDropContext>
       </Box>
-    </Container>
+    </Box>
   )
 }
 

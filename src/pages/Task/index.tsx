@@ -255,10 +255,9 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
   return (
     <Box
       sx={{
-        mt: 20,
         width: '100%',
         textAlign: 'center',
-        mb: 40,
+        margin: '20px auto 40px',
         '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {
           width: '100%'
         },
@@ -297,7 +296,7 @@ export default function Index() {
   const handleEdit = useCallback(() => {}, [])
 
   return (
-    <Box gap={10}>
+    <Box gap={10} ml={100} mr={100}>
       <Box
         sx={{
           display: 'flex',

@@ -381,12 +381,7 @@ export default function SidePanel({
           <Image src={addIcon}></Image>
           <Typography>Add Property</Typography>
         </Box> */}
-        <ColSentence>
-          {/* <SaveButton width={140} height={36} onClick={() => {}}>
-            Save
-          </SaveButton> */}
-          {getActions()}
-        </ColSentence>
+        <ColSentence>{getActions()}</ColSentence>
       </Drawer>
     </Box>
   )

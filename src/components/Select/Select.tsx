@@ -93,7 +93,7 @@ export default function Select(props: Props) {
         onClick={() => multiple && setOpen(true)}
         sx={{
           // backgroundColor: primary ? theme.palette.primary.main : theme.bgColor.bg1,
-          backgroundColor: primary ? theme.palette.primary.main : 'transparent',
+          backgroundColor: color ? 'transparent' : primary ? theme.palette.primary.main : 'transparent',
           width: width || '100%',
           height: height || '56px',
           padding: '0',

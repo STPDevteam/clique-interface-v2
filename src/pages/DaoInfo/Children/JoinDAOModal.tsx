@@ -6,7 +6,15 @@ import cliqueIcon from 'assets/images/cliqueIcon.png'
 import cereIcon from 'assets/images/cereIcon.png'
 import Image from 'components/Image'
 
-export default function JoinDAOModal({ onClick, open }: { onClick: () => void; open: boolean }) {
+export default function JoinDAOModal({
+  onClick,
+  open,
+  disable
+}: {
+  onClick: () => void
+  open: boolean
+  disable: boolean
+}) {
   return (
     <Modal maxWidth="608px" width="100%" customIsOpen={open}>
       <Box
@@ -34,7 +42,9 @@ export default function JoinDAOModal({ onClick, open }: { onClick: () => void; o
           decentralized decision-making for users, communities and organizations.
         </Typography>
         <Typography variant="inherit">Member 3.3k</Typography>
-        <Button onClick={onClick}>Join DAO</Button>
+        <Button onClick={onClick} disabled={disable}>
+          Join DAO
+        </Button>
       </Box>
     </Modal>
   )
