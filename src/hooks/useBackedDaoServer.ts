@@ -229,6 +229,7 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
         if (res.data.code === 200) {
           setLoading(false)
           setIsJoined(res.data.data)
+          return
         }
         throw new Error()
       } catch (error) {

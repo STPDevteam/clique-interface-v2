@@ -25,7 +25,6 @@ export default function JoinDAOModal({
 }) {
   const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
   const { result: membersInfo } = useGetMembersInfo(daoAddress, (daoChainId as unknown) as ChainId)
-  console.log('member', membersInfo)
 
   return (
     <Modal maxWidth="608px" width="100%" customIsOpen={open}>
@@ -52,7 +51,7 @@ export default function JoinDAOModal({
         <Typography variant="inherit" fontSize={14} fontWeight={600} color="#80829F">
           {daoInfo?.description}
         </Typography>
-        <Typography variant="inherit">Member {formatMillion(membersInfo?.members)}</Typography>
+        <Typography variant="inherit">Member {membersInfo && formatMillion(membersInfo?.members)}</Typography>
         <Button onClick={onClick} disabled={disable}>
           Join DAO
         </Button>

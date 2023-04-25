@@ -148,7 +148,6 @@ export default function Home() {
     history.push('/daos')
   }, [history])
   // const loadAll = useCallback(() => {}, [])
-  console.log(homeDaoList)
 
   return (
     <Box
@@ -237,6 +236,7 @@ export default function Home() {
               borderRadius: '8px',
               padding: '10px',
               marginRight: 10,
+              cursor: 'pointer',
               '& img': {
                 width: 160,
                 height: 160
@@ -245,6 +245,9 @@ export default function Home() {
                 textAlign: 'left',
                 margin: 0
               }
+            }}
+            onClick={() => {
+              history.push(routes._Profile + `/${item.account}`)
             }}
           >
             <Image src={item.avatar || ball} alt=""></Image>
@@ -311,11 +314,13 @@ export default function Home() {
           }
         }}
       >
-        <Tg />
-        <Tw />
-        <Mirror />
-        <Wechat />
-        <Email />
+        <Tg onClick={() => window.open('https://t.me/STPofficial', '_blank')} />
+        <Tw onClick={() => window.open('https://twitter.com/STP_Networks', '_blank')} />
+        <Mirror
+          onClick={() => window.open('https://mirror.xyz/0xB9d761AF53845D1F3C68f99c38f4dB6fcCfB66A1', '_blank')}
+        />
+        <Wechat onClick={() => window.open('https://verse.one/static/media/QR.96a0857f.jpeg', '_blank')} />
+        <Email onClick={() => window.open('mailto:contact@stp.network', '_blank')} />
       </Box>
     </Box>
   )
