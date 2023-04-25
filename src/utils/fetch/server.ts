@@ -197,6 +197,13 @@ export function createTask(
   })
 }
 
+export function getMembersCount(daoAddress: string, chainId: number) {
+  return Axios.get('stpdao/v2/dao/one', {
+    daoAddress,
+    chainId
+  })
+}
+
 export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
   return Axios.get('stpdao/v2/dao/info', {
     account: account || '',

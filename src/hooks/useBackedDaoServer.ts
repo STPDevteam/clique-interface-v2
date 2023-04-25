@@ -226,10 +226,11 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
       setLoading(true)
       try {
         const res = await checkIsJoin(chainId, daoAddress)
-        if (res.data.data) {
+        if (res.data.code === 200) {
           setLoading(false)
           setIsJoined(res.data.data)
         }
+        throw new Error()
       } catch (error) {
         setLoading(false)
         setIsJoined('')

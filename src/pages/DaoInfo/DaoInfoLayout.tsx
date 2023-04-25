@@ -38,6 +38,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
       })
       .catch(() => setBtnDisabled(false))
   }, [account, curDaoChainId, daoAddress, joinApply, loginSignature, toggleWalletModal, userSignature])
+  console.log(isJoined)
 
   useEffect(() => {
     if (!account || !userSignature || isJoined === '') {
@@ -56,7 +57,13 @@ export default function DaoInfoLayout({ children }: { children: any }) {
         width: '100%'
       }}
     >
-      <JoinDAOModal onClick={joinDAOCallback} open={open} disable={btnDisabled} />
+      <JoinDAOModal
+        onClick={joinDAOCallback}
+        open={open}
+        disable={btnDisabled}
+        daoChainId={curDaoChainId}
+        daoAddress={daoAddress}
+      />
       <LeftMenu />
       <Box
         sx={{

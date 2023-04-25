@@ -10,7 +10,8 @@ import lBanner from 'assets/images/l_banner.png'
 import rBanner from 'assets/images/r_banner.png'
 import tag from 'assets/images/tag.png'
 import ball from 'assets/images/ball.png'
-import stp from 'assets/images/stp.png'
+import { useHistory } from 'react-router'
+// import stp from 'assets/images/stp.png'
 import { ReactComponent as Mirror } from 'assets/svg/mirror.svg'
 import { ReactComponent as Tg } from 'assets/svg/tg.svg'
 import { ReactComponent as Tw } from 'assets/svg/tw.svg'
@@ -20,6 +21,7 @@ import { useHomeTopList } from 'hooks/useBackedHomeServer'
 import { useHomeDaoList } from 'hooks/useBackedDaoServer'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { HomeListProp } from 'hooks/useBackedDaoServer'
+import { routes } from 'constants/routes'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -46,6 +48,7 @@ function DaoItem({
   proposals,
   joinSwitch
 }: HomeListProp) {
+  const history = useHistory()
   const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   console.log(verified, joinSwitch)
 
@@ -59,6 +62,10 @@ function DaoItem({
         border: '1px solid #d4d7e2',
         borderRadius: '10px',
         marginRight: 10,
+        cursor: 'pointer',
+        '&:hover': {
+          border: `2px solid #0049C6`
+        },
         '&::-webkit-scrollbar': {
           display: 'none'
         },
@@ -73,6 +80,9 @@ function DaoItem({
           WebkitBoxOrient: 'vertical',
           WebkitLineClamp: 3
         }
+      }}
+      onClick={() => {
+        history.push(routes._DaoInfo + `/${chainId}/${daoAddress}/proposal`)
       }}
     >
       <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'} gap={10}>
@@ -131,10 +141,13 @@ function DaoItem({
 }
 
 export default function Home() {
+  const history = useHistory()
   const { result } = useHomeTopList()
   const { result: homeDaoList } = useHomeDaoList()
-  const showAll = useCallback(() => {}, [])
-  const loadAll = useCallback(() => {}, [])
+  const showAll = useCallback(() => {
+    history.push('/daos')
+  }, [history])
+  // const loadAll = useCallback(() => {}, [])
   console.log(homeDaoList)
 
   return (
@@ -199,7 +212,8 @@ export default function Home() {
         <Typography color="#3f5170" variant="h5" fontSize={40}>
           Top Contributors
         </Typography>
-        <Button onClick={loadAll}>Load more</Button>
+        <Typography color="#3f5170" variant="h5" fontSize={40}></Typography>
+        {/* <Button onClick={loadAll}>Load more</Button> */}
       </ColSentence>
       <Box
         mt={40}
@@ -242,7 +256,7 @@ export default function Home() {
           </Box>
         ))}
       </Box>
-      <ColSentence>
+      {/* <ColSentence>
         <Typography color="#3f5170" variant="h5" fontSize={40}>
           Open Jobs
         </Typography>
@@ -283,7 +297,7 @@ export default function Home() {
             <p>2. Work content</p>
           </Box>
         </Box>
-      </Box>
+      </Box> */}
       <Box
         display={'flex'}
         alignItems={'center'}

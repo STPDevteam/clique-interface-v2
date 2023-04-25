@@ -7,7 +7,8 @@ import {
   getTaskList,
   updateTask,
   getProposalList,
-  removeTask
+  removeTask,
+  getMembersCount
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -26,6 +27,28 @@ export interface SpaceInfoProp {
   teamSpacesId: number
   title: string
   url: string
+}
+
+export function useGetMembersInfo(daoAddress: string, chainId: ChainId) {
+  const [result, setResult] = useState<any>()
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await getMembersCount(daoAddress, chainId)
+        if (res.data.data) {
+          setResult(res.data.data)
+        }
+      } catch (error) {
+        console.log(error)
+        setResult(null)
+      }
+    })()
+  }, [chainId, daoAddress])
+
+  return {
+    result
+  }
 }
 
 export function useSpacesInfo(chainId: ChainId, daoAddress: string) {
