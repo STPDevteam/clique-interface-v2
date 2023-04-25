@@ -169,7 +169,7 @@ export default function App() {
                   {/* <Route exact strict path={routes.SaleDetails} component={SaleDetail} /> */}
                   <Route exact strict path={routes.Home} component={Home} />
 
-                  <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
+                  <Route exact path="/" render={() => <Redirect to={routes.Home} />} />
                 </Switch>
               </Web3ReactManager>
             </BodyWrapper>

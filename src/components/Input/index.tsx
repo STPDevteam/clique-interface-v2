@@ -14,6 +14,7 @@ export interface InputProps {
   disabled?: boolean
   focused?: boolean
   outlined?: boolean
+  hideBorder?: boolean
   type?: string
   endAdornment?: React.ReactNode
   startAdornment?: React.ReactNode
@@ -39,10 +40,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     fontWeight: 600,
     backgroundColor: theme.bgColor.bg4,
     padding: '5px 0 5px 20px',
-    borderRadius: 14,
-    border: 'none!important'
+    borderRadius: 8
+    // border: `1px solid`
   },
-  [`&.${inputBaseClasses.focused}`]: { border: `none !important` },
   [`& .${inputBaseClasses.input}`]: {
     maxWidth: '100%',
     '&::-webkit-outer-spin-button': {
@@ -74,7 +74,7 @@ const StyledInputWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.bgColor.bg4,
   paddingLeft: 20,
   borderRadius: 14,
-  border: '2px solid transparent',
+  border: '1px solid',
   zIndex: 1,
   cursor: 'text',
   display: 'flex',
@@ -103,6 +103,7 @@ export default function Input({
   outlined,
   startAdornment,
   onEnter,
+  hideBorder,
   showFormatWrapper,
   multiline,
   rows,
@@ -188,10 +189,20 @@ export default function Input({
             },
             [`&.${inputBaseClasses.root}`]: {
               border: theme =>
-                `2px solid ${outlined ? 'rgba(212,215,226, 1)' : error ? theme.palette.error.main : 'transparent'}`
+                `1px solid ${
+                  hideBorder
+                    ? 'transparent'
+                    : outlined
+                    ? 'rgba(212,215,226, 1)'
+                    : error
+                    ? theme.palette.error.main
+                    : '#D4D7E2'
+                }`
             },
-            [`&.${inputBaseClasses.focused}`]: {
-              border: 'none'
+            [`&.${inputBaseClasses.input}`]: {
+              '&.Mui-focused': {
+                border: '1px solid !important'
+              }
             },
             [`& .${inputBaseClasses.input}`]: {
               '&::placeholder': {

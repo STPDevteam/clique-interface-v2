@@ -99,7 +99,7 @@ export default function Select(props: Props) {
           padding: '0',
           fontWeight: noBold ? 400 : 600,
           border: `${noBold ? 1 : 2}px solid`,
-          borderColor: color ? color : 'transparent',
+          borderColor: color ? color : '#D4D7E2',
           '& .MuiSelect-select': {
             width: '100%',
             maxWidth: 'calc(100vw - 70px)',
@@ -127,7 +127,7 @@ export default function Select(props: Props) {
           },
           '& .MuiSelect-icon': {
             display: disabled ? 'none' : 'block',
-            color: color ? color : theme.palette.text.primary
+            color: color ? color : '#D4D7E2'
           },
           '&:hover': {
             color: disabled ? theme.palette.text.primary : theme.palette.common.white,

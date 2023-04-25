@@ -57,7 +57,7 @@ function DaoItem({
       minWidth={281}
       height={218}
       sx={{
-        overflowX: 'scroll',
+        width: '100%',
         padding: 16,
         border: '1px solid #d4d7e2',
         borderRadius: '10px',

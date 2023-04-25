@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 import Button from 'components/Button/OutlineButton'
-import Input from 'components/Input'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import useCopyClipboard from 'hooks/useCopyClipboard'
 import { useMemo } from 'react'
@@ -20,7 +19,7 @@ export default function InviteUser() {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
           alignItems: 'center',
           gap: 10,
           mt: 10,
@@ -33,20 +32,22 @@ export default function InviteUser() {
           '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             border: 'none!important'
           },
-          '& input': {
+          '& .input': {
+            width: '100% - 160px',
             fontSize: 14,
             fontWeight: 500,
-            height: 30,
             color: '#80829f',
-            padding: 0,
-            border: 0
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            padding: '10px 0 10px 10px'
           },
           '& button': {
             gap: 10,
             width: 160,
             height: 36,
             marginRight: 10,
-            borderColor: '#97b7ef',
+            border: '1px solid #97b7ef',
             borderRadius: '8px',
             '&:hover': {
               borderColor: '#97b7ef'
@@ -62,7 +63,7 @@ export default function InviteUser() {
           }
         }}
       >
-        <Input value={link} readOnly />
+        <Box className="input">{link}</Box>
         <Button onClick={() => setCopied(link)}>
           <Invite />
           <Typography maxWidth={'100%'}>{isCopied ? 'Copied Link' : 'Copy Link'}</Typography>

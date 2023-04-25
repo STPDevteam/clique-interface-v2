@@ -8,6 +8,12 @@ import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 
+const JobsType: any = {
+  A_superAdmin: 'Super Admin',
+  B_admin: 'Admin',
+  C_member: 'Member'
+}
+
 export default function CardView({ result }: any) {
   return (
     <Box
@@ -72,10 +78,10 @@ export default function CardView({ result }: any) {
                 '& .A_superAdmin': {
                   backgroundColor: '#0049C6'
                 },
-                '& .A_admin': {
+                '& .B_admin': {
                   backgroundColor: '#97B7EF'
                 },
-                '& .A_member': {
+                '& .C_member': {
                   backgroundColor: '#EBF0F7',
                   color: '#80829F'
                 }
@@ -104,7 +110,7 @@ export default function CardView({ result }: any) {
                 <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
               </Box>
               <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={item.jobs}>
-                {item.jobs || 'unnamed'}
+                {JobsType[item.jobs] || 'unnamed'}
               </Button>
             </Box>
           </Card>

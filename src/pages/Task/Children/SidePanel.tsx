@@ -258,6 +258,7 @@ export default function SidePanel({
         <Input
           className="title"
           value={value}
+          hideBorder={true}
           onChange={e => setValue(e.target.value)}
           placeholder="Untitled"
           focused

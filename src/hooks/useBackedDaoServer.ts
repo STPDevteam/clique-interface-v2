@@ -397,6 +397,7 @@ export function useJobsList(daoAddress: string, chainId: number) {
       daoAddress: string
       discord: string
       jobId: number
+      jobs: string
       nickname: string
       opensea: string
       twitter: string
@@ -430,6 +431,7 @@ export function useJobsList(daoAddress: string, chainId: number) {
           daoAddress: string
           discord: string
           jobId: number
+          jobs: string
           nickname: string
           opensea: string
           twitter: string
@@ -441,6 +443,7 @@ export function useJobsList(daoAddress: string, chainId: number) {
           daoAddress: item.daoAddress,
           discord: item.discord,
           jobId: item.jobId,
+          jobs: item.jobs,
           nickname: item.nickname,
           opensea: item.opensea,
           twitter: item.twitter,
