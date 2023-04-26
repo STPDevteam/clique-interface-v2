@@ -235,7 +235,7 @@ export default function SidePanel({
           '& .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             padding: '0 0 0 20px'
           },
-          '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
+          '& .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             border: 'none!important'
           }
         }}

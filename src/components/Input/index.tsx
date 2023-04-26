@@ -74,7 +74,7 @@ const StyledInputWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.bgColor.bg4,
   paddingLeft: 20,
   borderRadius: 14,
-  border: '1px solid',
+  border: '1px solid #fff',
   zIndex: 1,
   cursor: 'text',
   display: 'flex',
@@ -191,7 +191,7 @@ export default function Input({
               border: theme =>
                 `1px solid ${
                   hideBorder
-                    ? 'transparent'
+                    ? 'white'
                     : outlined
                     ? 'rgba(212,215,226, 1)'
                     : error
@@ -201,7 +201,7 @@ export default function Input({
             },
             [`&.${inputBaseClasses.input}`]: {
               '&.Mui-focused': {
-                border: '1px solid !important'
+                border: '1px solid #fff!important'
               }
             },
             [`& .${inputBaseClasses.input}`]: {
