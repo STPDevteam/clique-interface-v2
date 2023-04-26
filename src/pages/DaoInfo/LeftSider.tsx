@@ -321,7 +321,7 @@ export default function LeftSider() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 10,
-                padding: '8px 24px 8px 52px',
+                padding: '8px 24px 8px 30px',
                 textDecoration: 'none',
                 '&.active': {
                   backgroundColor: '#F0F5FC'
