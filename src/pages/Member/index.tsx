@@ -11,7 +11,7 @@ import InviteUser from './Children/InviteUser'
 import { useIsJoined, useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
-import OpenJobs from './Children/OpenJobs'
+// import OpenJobs from './Children/OpenJobs'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -75,11 +75,11 @@ export default function Member() {
           {
             label: 'Card View',
             icon: <View />
-          },
-          {
-            label: 'Open Jobs',
-            icon: <Job />
           }
+          // {
+          //   label: 'Open Jobs',
+          //   icon: <Job />
+          // }
         ]
       : [
           {
@@ -164,12 +164,9 @@ export default function Member() {
       </StyledTabs>
       <Divider />
       {tabList.length === 2 ? (
-        tabValue === 0 ? (
-          <CardView result={jobsList} />
-        ) : (
-          <OpenJobs />
-        )
-      ) : tabValue === 0 ? (
+        <CardView result={jobsList} />
+      ) : // <OpenJobs />
+      tabValue === 0 ? (
         <CardView result={jobsList} />
       ) : tabValue === 1 ? (
         <JobApplication result={applyList} />
