@@ -20,6 +20,7 @@ export const routes = {
   DaoTeamDocs: '/governance/daoInfo/:chainId/:address/teamspaces/general/docs',
   DaoTeamTask: '/governance/daoInfo/:chainId/:address/teamspaces/general/task',
   DaoTeamCalendar: '/governance/daoInfo/:chainId/:address/teamspaces/general/calendar',
+  DaoTeamTrash: '/governance/daoInfo/:chainId/:address/teamspaces/general/trash',
 
   Activity: '/activity',
   _ActivityAirdropDetail: '/activity/dao_drop',

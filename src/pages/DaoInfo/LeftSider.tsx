@@ -16,7 +16,7 @@ import meetingIcon from 'assets/images/meeting.png'
 import taskIcon from 'assets/images/task.png'
 import calendarIcon from 'assets/images/calendar.png'
 import docsIcon from 'assets/images/docs.png'
-import { ExternalLink } from 'theme/components'
+// import { ExternalLink } from 'theme/components'
 import { useCallback, useMemo } from 'react'
 import { useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
@@ -309,8 +309,42 @@ export default function LeftSider() {
               </MyCollapse>
             </Box>
           ))}
-          <ExternalLink
-            href={''}
+          <List
+            disablePadding
+            style={{ marginRight: 0 }}
+            sx={{
+              '&:hover': {
+                backgroundColor: 'rgba(0, 91, 198, 0.06)'
+              },
+              '& a': {
+                color: theme => theme.palette.text.secondary,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '8px 24px 8px 52px',
+                textDecoration: 'none',
+                '&.active': {
+                  backgroundColor: '#F0F5FC'
+                },
+                '& img': {
+                  width: 14
+                },
+                '& p': {
+                  fontSize: 14,
+                  fontWeight: 500,
+                  margin: 0,
+                  color: '#3f5170'
+                }
+              }
+            }}
+          >
+            <NavLink to={routes.DaoTeamTrash || ''}>
+              <Image src={trash}></Image>
+              <p>Trash</p>
+            </NavLink>
+          </List>
+          {/* <ExternalLink
+            href={routes.DaoTeamTrash}
             className={'link'}
             color="#000050"
             sx={{
@@ -328,7 +362,7 @@ export default function LeftSider() {
             <Typography textAlign={'left'} fontSize={14} sx={{ color: theme => theme.palette.text.secondary }}>
               Trash
             </Typography>
-          </ExternalLink>
+          </ExternalLink> */}
         </Box>
         {/* <Box
             display={'flex'}

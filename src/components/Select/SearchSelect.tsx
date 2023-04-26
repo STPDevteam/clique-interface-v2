@@ -135,9 +135,9 @@ export default function SearchSelect(props: Props) {
           placeholder={placeholder}
           defaltValue={defaultValue}
           SelectProps={{
-            isMulti: multiple,
+            isMulti: true,
             isCreatable: false,
-            isClearable: multiple || undefined,
+            isClearable: true,
             width: width ?? 'unset',
             height: height ?? 'auto',
             styles: stylesFn,

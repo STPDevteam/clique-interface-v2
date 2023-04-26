@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 import { Redirect, Route, Switch } from 'react-router-dom'
@@ -47,7 +47,8 @@ import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 import Home from './Home'
 import Member from './Member'
-import Task from './Task'
+// import Task from './Task'
+const Task = lazy(() => import('./Task'))
 import ComingSoon from './ComingSoon'
 
 const AppWrapper = styled('div')(({ theme }) => ({
@@ -129,6 +130,7 @@ export default function App() {
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamTask} exact strict component={Task} />
                           <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoTeamTrash} exact strict component={ComingSoon} />
                           <DaoInfoBase>
                             {/* <Route path={routes.DaoInfo} exact strict component={ProposalList} /> */}
                             <Route path={routes.Proposal} exact strict component={ProposalList} />

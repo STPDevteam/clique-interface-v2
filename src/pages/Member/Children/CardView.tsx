@@ -19,13 +19,13 @@ export default function CardView({ result }: any) {
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         flexDirection: 'row',
         flexWrap: 'wrap'
       }}
     >
       {result.map((item: any) => (
-        <Box key={item} width={'22%'} margin={'20px auto 10px'}>
+        <Box key={item} width={'22%'} margin={'20px 1.5% 10px'}>
           <Card
             sx={{
               position: 'relative',

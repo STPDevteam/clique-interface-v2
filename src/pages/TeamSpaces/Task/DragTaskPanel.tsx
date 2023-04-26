@@ -18,6 +18,7 @@ import Image from 'components/Image'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
+import { useIsJoined } from 'hooks/useBackedDaoServer'
 
 const reorder = (list: ITaskQuote[], startIndex: number, endIndex: number) => {
   const result = Array.from(list)
@@ -99,9 +100,12 @@ export default function DragTaskPanel() {
   const curDaoChainId = Number(daoChainId) as ChainId
   const update = useUpdateTask()
   const remove = useRemoveTask()
+  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
   const { result } = useTaskProposalList(curDaoChainId, daoAddress)
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
+
+  console.log(isJoined)
 
   const showSidePanel = useCallback(
     editData => {
@@ -248,7 +252,14 @@ export default function DragTaskPanel() {
       }}
     >
       <Box mb={30} mt={20} ml={10}>
-        <AddButton width={'80px'} height={'36px'} onClick={() => showSidePanel(undefined)}>
+        <AddButton
+          width={'80px'}
+          height={'36px'}
+          disabled={isJoined === 'C_member'}
+          onClick={() => {
+            showSidePanel(undefined)
+          }}
+        >
           + New
         </AddButton>
       </Box>
@@ -262,7 +273,12 @@ export default function DragTaskPanel() {
                     {curTaskTypeList[ind].title}
                   </TaskTypeBtn>
                   {el.map((item, index) => (
-                    <Draggable key={item.taskId} draggableId={item.taskId.toString()} index={index}>
+                    <Draggable
+                      key={item.taskId}
+                      draggableId={item.taskId.toString()}
+                      index={index}
+                      isDragDisabled={isJoined === 'C_member'}
+                    >
                       {(provided, snapshot) => (
                         <Box
                           sx={{
@@ -276,7 +292,10 @@ export default function DragTaskPanel() {
                               borderTop: '5px solid #CAE7ED!important'
                             }
                           }}
-                          onClick={() => showSidePanel(item)}
+                          onClick={() => {
+                            if (isJoined === 'C_member') return
+                            showSidePanel(item)
+                          }}
                           className={item.priority}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
@@ -302,6 +321,7 @@ export default function DragTaskPanel() {
                               {/* <MoreVertIcon /> */}
                               <DeleteIcon
                                 onClick={e => {
+                                  if (isJoined === 'C_member') return
                                   const newState = [...taskList]
                                   const del = newState[ind].splice(index, 1)
                                   remove(del[0].spacesId, [del[0].taskId])

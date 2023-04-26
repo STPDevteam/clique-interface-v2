@@ -1,10 +1,10 @@
 import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem } from '@mui/material'
 import Select from 'components/Select/Select'
-import Button from 'components/Button/Button'
+// import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
 import { useCallback, useState } from 'react'
 import TaskIcon from 'assets/images/task.png'
-import EditIcon from 'assets/images/edit.png'
+// import EditIcon from 'assets/images/edit.png'
 import Image from 'components/Image'
 import { ReactComponent as Board } from 'assets/svg/board.svg'
 import { ReactComponent as ALlTask } from 'assets/svg/allTask.svg'
@@ -293,7 +293,7 @@ export default function Index() {
   const [currentPriority, setCurrentPriority] = useState()
   const [currentStatus, setCurrentStatus] = useState()
 
-  const handleEdit = useCallback(() => {}, [])
+  // const handleEdit = useCallback(() => {}, [])
 
   return (
     <Box gap={10} ml={100} mr={100}>
@@ -321,8 +321,7 @@ export default function Index() {
           <Image src={TaskIcon}></Image>
           <Typography>Task</Typography>
         </Box>
-
-        {tabValue === 1 ? (
+        {/* {tabValue === 1 ? (
           <Button
             onClick={handleEdit}
             style={{
@@ -338,7 +337,7 @@ export default function Index() {
           </Button>
         ) : (
           ''
-        )}
+        )} */}
       </Box>
       <Typography maxWidth={740}>
         Use this template to track your personal tasks. Click{' '}
