@@ -104,8 +104,9 @@ export function getApplyList(offset: number, count: number, chainId: number, dao
   })
 }
 
-export function getJobsList(offset: number, count: number, chainId: number, daoAddress: string) {
+export function getJobsList(exceptLevel: string, offset: number, count: number, chainId: number, daoAddress: string) {
   return Axios.get('stpdao/v2/jobs/list', {
+    exceptLevel,
     offset,
     count,
     chainId,

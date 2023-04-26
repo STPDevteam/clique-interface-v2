@@ -67,7 +67,7 @@ export default function Member() {
   useCallback(() => {}, [])
   const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
   // const { result: applyList } = useJobsApplyList(daoAddress, Number(daoChainId))
-  const { result: jobsList } = useJobsList(daoAddress, Number(daoChainId))
+  const { result: jobsList } = useJobsList('', daoAddress, Number(daoChainId))
 
   const tabList =
     isJoined && isJoined === 'C_member'

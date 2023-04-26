@@ -116,7 +116,7 @@ export default function SidePanel({
   TeamSpacesInfo: any
   editData: ITaskQuote
 }) {
-  const { result: jobsList } = useJobsList(TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
+  const { result: jobsList } = useJobsList('C_member', TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
   const assigneeList = useMemo(() => {
     if (!jobsList) return []
     const _arr: any = []

@@ -389,7 +389,7 @@ export function useJobsApplyList(daoAddress: string, chainId: number) {
   )
 }
 
-export function useJobsList(daoAddress: string, chainId: number) {
+export function useJobsList(exceptLevel: string, daoAddress: string, chainId: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -419,7 +419,7 @@ export function useJobsList(daoAddress: string, chainId: number) {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getJobsList((currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+        const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
 
         setLoading(false)
         const data = res.data.data as any
@@ -462,7 +462,7 @@ export function useJobsList(daoAddress: string, chainId: number) {
         console.error('useJobsList', error)
       }
     })()
-  }, [chainId, currentPage, daoAddress])
+  }, [chainId, currentPage, daoAddress, exceptLevel])
 
   return useMemo(
     () => ({
