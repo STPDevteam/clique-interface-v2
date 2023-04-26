@@ -127,6 +127,10 @@ const chains: ChainObject = {
     link: 'https://goerli.basescan.org',
     builder: explorers.etherscan
   },
+  [ChainId.ZetaChain_TESTNET]: {
+    link: 'https://explorer.zetachain.com',
+    builder: explorers.etherscan
+  },
   [ChainId.SEPOLIA]: {
     link: 'https://sepolia.etherscan.io',
     builder: explorers.etherscan

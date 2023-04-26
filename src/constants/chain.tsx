@@ -10,6 +10,8 @@ import { ReactComponent as KlaytnLogo } from '../assets/svg/klaytn_logo.svg'
 import ZkevmSrc from '../assets/images/zkevm_logo.png'
 import CoinbaseSvg from '../assets/svg/coinbase_logo.svg'
 import { ReactComponent as CoinbaseLogo } from '../assets/svg/coinbase_logo.svg'
+import ZetaSvg from '../assets/svg/zeta-chain.svg'
+import { ReactComponent as ZetaLogo } from '../assets/svg/zeta-chain.svg'
 
 export enum ChainId {
   MAINNET = 1,
@@ -25,6 +27,7 @@ export enum ChainId {
   POLYGON_MUMBAI = 80001,
   POLYGON_MANGO = 1442,
   COINBASE_TESTNET = 84531,
+  ZetaChain_TESTNET = 7001,
   SEPOLIA = 11155111
 }
 
@@ -150,6 +153,14 @@ export const AllChainList = [
     name: 'Sepolia Testnet',
     id: ChainId.SEPOLIA,
     hex: '0xaa36a7'
+  },
+  {
+    icon: <ZetaLogo />,
+    logo: ZetaSvg,
+    symbol: 'ZetaChain Athens',
+    name: 'ZetaChain Athens 2',
+    id: ChainId.ZetaChain_TESTNET,
+    hex: '0x1B59'
   }
 ]
 
@@ -317,6 +328,17 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://goerli.base.org'],
     blockExplorerUrls: ['https://goerli.basescan.org']
+  },
+  [ChainId.ZetaChain_TESTNET]: {
+    chainId: '0x1B59',
+    chainName: 'ZetaChain Athens 2',
+    nativeCurrency: {
+      name: 'ZETA',
+      symbol: 'ZETA',
+      decimals: 18
+    },
+    rpcUrls: ['https://api.athens2.zetachain.com/evm'],
+    blockExplorerUrls: ['https://explorer.zetachain.com']
   },
   [ChainId.SEPOLIA]: {
     chainId: '0xaa36a7',
