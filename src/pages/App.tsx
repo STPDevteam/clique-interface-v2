@@ -50,6 +50,7 @@ import Home from './Home'
 // import Member from './Member'
 // import Task from './Task'
 import ComingSoon from './ComingSoon'
+import Loading from 'components/Loading'
 // lazy
 const Member = lazy(() => import('./Member'))
 const Task = lazy(() => import('./Task'))
@@ -106,7 +107,7 @@ export default function App() {
   }, [])
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<Loading />}>
       <ModalProvider>
         <AppWrapper id="app">
           <Route component={GoogleAnalyticsReporter} />
