@@ -2,6 +2,7 @@ import { Suspense, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 import { Redirect, Route, Switch } from 'react-router-dom'
+import { lazy } from 'react'
 import { styled } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
@@ -46,9 +47,12 @@ import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporte
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 import Home from './Home'
-import Member from './Member'
-import Task from './Task'
+// import Member from './Member'
+// import Task from './Task'
 import ComingSoon from './ComingSoon'
+// lazy
+const Member = lazy(() => import('./Member'))
+const Task = lazy(() => import('./Task'))
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
