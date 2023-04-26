@@ -247,7 +247,7 @@ export default function DragTaskPanel() {
   return (
     <Box
       sx={{
-        // width: 942
+        minWidth: 942,
         width: '100%'
       }}
     >

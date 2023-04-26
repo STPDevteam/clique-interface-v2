@@ -255,6 +255,7 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
   return (
     <Box
       sx={{
+        minWidth: '942px',
         width: '100%',
         textAlign: 'center',
         margin: '20px auto 40px',

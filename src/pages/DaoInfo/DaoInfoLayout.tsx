@@ -14,6 +14,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const { account } = useActiveWeb3React()
   const curDaoChainId = Number(daoChainId) as ChainId
+  const [status, setStatus] = useState<string | undefined>()
   const [open, setOpen] = useState(true)
   const { joinApply } = useApplyMember()
   const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
@@ -41,6 +42,9 @@ export default function DaoInfoLayout({ children }: { children: any }) {
   console.log(isJoined)
 
   useEffect(() => {
+    if (!account) setStatus('Connect Wallet')
+    else if (!userSignature) setStatus('Log In')
+    else if (isJoined === '') setStatus('Join DAO')
     if (!account || !userSignature || isJoined === '') {
       setOpen(true)
     } else {
@@ -63,6 +67,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
         disable={btnDisabled}
         daoChainId={curDaoChainId}
         daoAddress={daoAddress}
+        status={status}
       />
       <LeftMenu />
       <Box

@@ -17,6 +17,7 @@ import { useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskSe
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
+import { shortenAddress } from 'utils'
 // import { shortenAddress } from 'utils'
 
 const ColSentence = styled(Box)(() => ({
@@ -120,7 +121,9 @@ export default function SidePanel({
     if (!jobsList) return []
     const _arr: any = []
     jobsList.map(item => {
-      _arr.push(Object.assign({}, item, { label: item.nickname, value: item.account }))
+      _arr.push(
+        Object.assign({}, item, { label: item.nickname + '-' + shortenAddress(item.account), value: item.account })
+      )
     })
     return _arr
   }, [jobsList])

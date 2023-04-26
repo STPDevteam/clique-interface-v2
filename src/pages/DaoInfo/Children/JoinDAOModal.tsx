@@ -15,13 +15,15 @@ export default function JoinDAOModal({
   open,
   disable,
   daoChainId,
-  daoAddress
+  daoAddress,
+  status
 }: {
   onClick: () => void
   open: boolean
   disable: boolean
   daoChainId: ChainId
   daoAddress: string
+  status: string | undefined
 }) {
   const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
   const { result: membersInfo } = useGetMembersInfo(daoAddress, (daoChainId as unknown) as ChainId)
@@ -53,7 +55,7 @@ export default function JoinDAOModal({
         </Typography>
         <Typography variant="inherit">Member {membersInfo && formatMillion(membersInfo?.members)}</Typography>
         <Button onClick={onClick} disabled={disable}>
-          Join DAO
+          {status}
         </Button>
       </Box>
     </Modal>
