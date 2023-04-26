@@ -20,6 +20,7 @@ import {
   getApplyList
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 export function useMyJoinedDao() {
   const { account } = useActiveWeb3React()
@@ -219,10 +220,14 @@ export function useHomeDaoList() {
 export function useIsJoined(chainId: ChainId, daoAddress: string) {
   const [loading, setLoading] = useState(false)
   const [isJoined, setIsJoined] = useState<string>()
-  const { account } = useActiveWeb3React()
+  const userInfo = useUserInfo()
 
   useEffect(() => {
     ;(async () => {
+      if (!userInfo?.loggedToken) {
+        setIsJoined('')
+        return
+      }
       setLoading(true)
       try {
         const res = await checkIsJoin(chainId, daoAddress)
@@ -237,7 +242,7 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
         setIsJoined('')
       }
     })()
-  }, [chainId, daoAddress, account])
+  }, [chainId, daoAddress, userInfo])
 
   return {
     loading,

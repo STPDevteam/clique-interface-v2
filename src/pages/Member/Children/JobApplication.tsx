@@ -9,7 +9,23 @@ import { useMemo } from 'react'
 export default function JobApplication({ result }: any) {
   const tableList = useMemo(() => {
     return result.map((item: any) => [
-      <Box key={item.message} display={'flex'} gap={10} alignItems={'center'} fontWeight={500}>
+      <Box
+        key={item.message}
+        display={'flex'}
+        gap={10}
+        alignItems={'center'}
+        fontWeight={500}
+        sx={{
+          minWidth: '924px',
+          width: '100%',
+          '& img': {
+            width: 24,
+            height: 24,
+            borderRadius: '50%',
+            border: '1px solid #D4DCE2'
+          }
+        }}
+      >
         <Image src={item.avatar}></Image>
         {item.nickname}
       </Box>,
