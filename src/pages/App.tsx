@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 import { Redirect, Route, Switch } from 'react-router-dom'
 import { lazy } from 'react'
-import { styled } from '@mui/material'
+import { Box, styled } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
@@ -21,8 +21,8 @@ import DaoInfoActivity from 'pages/DaoInfo/Children/Activity'
 import DaoInfoSettings from 'pages/DaoInfo/Children/Settings'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
-import CreatorDao from 'pages/Creator/CreatorDao'
-import CreatorToken from 'pages/Creator/CreatorToken'
+// import CreatorDao from 'pages/Creator/CreatorDao'
+// import CreatorToken from 'pages/Creator/CreatorToken'
 
 // swap
 // import CreateSales from 'pages/CreateSales'
@@ -46,14 +46,15 @@ import Notification from 'pages/NotificationPage'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
-import Home from './Home'
-// import Member from './Member'
-// import Task from './Task'
+// import Home from './Home'
+import Member from './Member'
+import Task from './Task'
 import ComingSoon from './ComingSoon'
 import Loading from 'components/Loading'
 // lazy
-const Member = lazy(() => import('./Member'))
-const Task = lazy(() => import('./Task'))
+const Home = lazy(() => import('./Home'))
+const CreatorDao = lazy(() => import('pages/Creator/CreatorDao'))
+const CreatorToken = lazy(() => import('pages/Creator/CreatorToken'))
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -107,7 +108,13 @@ export default function App() {
   }, [])
 
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense
+      fallback={
+        <Box mt={'20vh'}>
+          <Loading />
+        </Box>
+      }
+    >
       <ModalProvider>
         <AppWrapper id="app">
           <Route component={GoogleAnalyticsReporter} />
