@@ -225,15 +225,12 @@ export default function SidePanel({
       <Drawer
         sx={{
           width: '100%',
-          '& .css-ld25lh-MuiPaper-root-MuiDrawer-paper': {
+          '& .MuiDrawer-paper': {
             padding: 20,
             width: '40vw'
           },
           '& .title': {
             margin: '10px 0'
-          },
-          '& .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
-            padding: '0 0 0 20px'
           },
           '& .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             border: 'none!important'

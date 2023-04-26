@@ -33,12 +33,6 @@ const StyledMultiSelect = styled(MultipleSelect)(({ theme }) => ({
   },
   '&.Mui-focused': {
     borderColor: theme.palette.primary.main
-  },
-  '& .css-1u9des2-indicatorSeparator': {
-    width: 0
-  },
-  '& .css-1jqq78o-placeholder': {
-    color: '#97B7EF'
   }
 }))
 
@@ -53,21 +47,12 @@ const StyledSelect = styled(SingleSelect)(({ theme }) => ({
   '& .MuiFormLabel-root': {
     paddingLeft: 5
   },
-  '& .css-qbdosj-Input': {
-    position: 'absolute'
-  },
   '& .MuiSelect-icon': {
     color: theme.palette.primary.contrastText,
     right: '10px'
   },
   '&.Mui-focused': {
     borderColor: theme.palette.primary.main
-  },
-  '& .css-1u9des2-indicatorSeparator': {
-    width: 0
-  },
-  '& .css-1jqq78o-placeholder': {
-    color: '#97B7EF'
   }
 }))
 
@@ -90,6 +75,18 @@ const stylesFn: StylesConfig<unknown, false> = {
     '&:hover': {
       borderBottomColor: '#1e80ff'
     }
+  }),
+  input: (base: any) => ({
+    ...base,
+    position: 'absolute'
+  }),
+  indicatorSeparator: (base: any) => ({
+    ...base,
+    width: 0
+  }),
+  placeholder: (base: any) => ({
+    ...base,
+    color: '#97B7EF'
   }),
   dropdownIndicator: (base: any) => ({
     ...base
