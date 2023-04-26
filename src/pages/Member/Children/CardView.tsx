@@ -34,6 +34,8 @@ export default function CardView({ result }: any) {
               textAlign: 'center',
               border: '1px solid #d4d7e2',
               '& img': {
+                border: '1px solid #d4d7e2',
+                borderRadius: '50%',
                 zIndex: 10,
                 marginTop: 20,
                 width: 70,
