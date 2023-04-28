@@ -389,26 +389,26 @@ export function useJobsApplyList(daoAddress: string, chainId: number) {
   )
 }
 
+export interface JobsListProps {
+  account: string
+  avatar: string
+  chainId: ChainId
+  daoAddress: string
+  discord: string
+  jobId: number
+  jobs: string
+  nickname: string
+  opensea: string
+  twitter: string
+  youtobe: string
+}
+
 export function useJobsList(exceptLevel: string, daoAddress: string, chainId: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
-  const [result, setResult] = useState<
-    {
-      account: string
-      avatar: string
-      chainId: ChainId
-      daoAddress: string
-      discord: string
-      jobId: number
-      jobs: string
-      nickname: string
-      opensea: string
-      twitter: string
-      youtobe: string
-    }[]
-  >([])
+  const [result, setResult] = useState<JobsListProps[]>([])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -420,7 +420,6 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
       setLoading(true)
       try {
         const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
-
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -429,19 +428,7 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
           return
         }
         setTotal(data.total)
-        const list: {
-          account: string
-          avatar: string
-          chainId: ChainId
-          daoAddress: string
-          discord: string
-          jobId: number
-          jobs: string
-          nickname: string
-          opensea: string
-          twitter: string
-          youtobe: string
-        }[] = data.map((item: any) => ({
+        const list: JobsListProps[] = data.map((item: JobsListProps) => ({
           account: item.account,
           avatar: item.avatar,
           chainId: item.chainId,

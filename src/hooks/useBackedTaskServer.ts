@@ -342,7 +342,6 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
       try {
         const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
         const data = res.data.data as any
-
         if (!data) {
           return
         }
