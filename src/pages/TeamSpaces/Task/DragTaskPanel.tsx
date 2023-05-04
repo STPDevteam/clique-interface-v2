@@ -251,18 +251,22 @@ export default function DragTaskPanel() {
         width: '100%'
       }}
     >
-      <Box mb={30} mt={20} ml={10}>
-        <AddButton
-          width={'80px'}
-          height={'36px'}
-          disabled={isJoined === 'C_member'}
-          onClick={() => {
-            showSidePanel(undefined)
-          }}
-        >
-          + New
-        </AddButton>
-      </Box>
+      {isJoined === 'C_member' ? (
+        ''
+      ) : (
+        <Box mb={30} mt={20} ml={10}>
+          <AddButton
+            width={'80px'}
+            height={'36px'}
+            disabled={isJoined === 'C_member'}
+            onClick={() => {
+              showSidePanel(undefined)
+            }}
+          >
+            + New
+          </AddButton>
+        </Box>
+      )}
       <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid}>
         <DragDropContext onDragEnd={onDragEnd}>
           {taskList.map((el, ind) => (
