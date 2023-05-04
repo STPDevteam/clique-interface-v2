@@ -52,6 +52,14 @@ export default function DaoInfoLayout({ children }: { children: any }) {
     }
   }, [account, isJoined, userSignature])
 
+  const handleCloseModal = useCallback(() => {
+    joinApply('noRole', curDaoChainId, daoAddress, '')
+      .then(() => {
+        setOpen(false)
+      })
+      .catch(err => console.log(err))
+  }, [curDaoChainId, daoAddress, joinApply])
+
   return (
     <Box
       sx={{
@@ -63,6 +71,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
     >
       <JoinDAOModal
         onClick={joinDAOCallback}
+        handleCloseModal={handleCloseModal}
         open={open}
         disable={btnDisabled}
         daoChainId={curDaoChainId}

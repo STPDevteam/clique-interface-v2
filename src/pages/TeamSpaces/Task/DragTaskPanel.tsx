@@ -251,14 +251,14 @@ export default function DragTaskPanel() {
         width: '100%'
       }}
     >
-      {isJoined === 'C_member' ? (
+      {isJoined === 'C_member' || isJoined === 'noRole' ? (
         ''
       ) : (
         <Box mb={30} mt={20} ml={10}>
           <AddButton
             width={'80px'}
             height={'36px'}
-            disabled={isJoined === 'C_member'}
+            disabled={isJoined === 'C_member' || isJoined === 'noRole'}
             onClick={() => {
               showSidePanel(undefined)
             }}
@@ -281,7 +281,7 @@ export default function DragTaskPanel() {
                       key={item.taskId}
                       draggableId={item.taskId.toString()}
                       index={index}
-                      isDragDisabled={isJoined === 'C_member'}
+                      isDragDisabled={isJoined === 'C_member' || isJoined === 'noRole'}
                     >
                       {(provided, snapshot) => (
                         <Box
@@ -297,7 +297,7 @@ export default function DragTaskPanel() {
                             }
                           }}
                           onClick={() => {
-                            if (isJoined === 'C_member') return
+                            if (isJoined === 'C_member' || isJoined === 'noRole') return
                             showSidePanel(item)
                           }}
                           className={item.priority}
@@ -325,7 +325,7 @@ export default function DragTaskPanel() {
                               {/* <MoreVertIcon /> */}
                               <DeleteIcon
                                 onClick={e => {
-                                  if (isJoined === 'C_member') return
+                                  if (isJoined === 'C_member' || isJoined === 'noRole') return
                                   const newState = [...taskList]
                                   const del = newState[ind].splice(index, 1)
                                   remove(del[0].spacesId, [del[0].taskId])

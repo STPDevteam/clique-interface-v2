@@ -12,6 +12,7 @@ import { formatMillion } from 'utils/dao'
 
 export default function JoinDAOModal({
   onClick,
+  handleCloseModal,
   open,
   disable,
   daoChainId,
@@ -19,6 +20,7 @@ export default function JoinDAOModal({
   status
 }: {
   onClick: () => void
+  handleCloseModal: () => void
   open: boolean
   disable: boolean
   daoChainId: ChainId
@@ -29,7 +31,7 @@ export default function JoinDAOModal({
   const { result: membersInfo } = useGetMembersInfo(daoAddress, (daoChainId as unknown) as ChainId)
 
   return (
-    <Modal maxWidth="608px" width="100%" customIsOpen={open}>
+    <Modal maxWidth="608px" width="100%" customIsOpen={open} closeIcon customOnDismiss={handleCloseModal}>
       <Box
         display="grid"
         gap="24px"

@@ -70,7 +70,7 @@ export default function Member() {
   const { result: jobsList } = useJobsList('', daoAddress, Number(daoChainId))
 
   const tabList =
-    isJoined && isJoined === 'C_member'
+    isJoined && (isJoined === 'C_member' || isJoined === 'noRole')
       ? [
           {
             label: 'Card View',
