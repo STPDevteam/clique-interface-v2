@@ -72,7 +72,7 @@ export default function AiChat() {
         {account && userInfo?.loggedToken ? (
           <Box
             sx={{
-              width: { sm: 450, xs: '100%' },
+              width: { sm: 450, xs: '100vw' },
               height: '100vh',
               display: 'grid',
               padding: '10px',
@@ -163,7 +163,7 @@ export default function AiChat() {
         ) : (
           <Box
             sx={{
-              width: { sm: 450, xs: '100%' },
+              width: { sm: 450, xs: '100vw' },
               height: '100vh',
               display: 'flex',
               padding: '10px',
