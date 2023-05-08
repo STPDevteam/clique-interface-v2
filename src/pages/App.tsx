@@ -45,11 +45,12 @@ import Notification from 'pages/NotificationPage'
 import GoogleAnalyticsReporter from 'components/analytics/GoogleAnalyticsReporter'
 import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
-import Home from './Home'
+// import Home from './Home'
 import Member from './Member'
 // import Task from './Task'
 const Task = lazy(() => import('./Task'))
 import ComingSoon from './ComingSoon'
+import Page from './RedirectPage'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -107,6 +108,7 @@ export default function App() {
       <ModalProvider>
         <AppWrapper id="app">
           <Route component={GoogleAnalyticsReporter} />
+          <Route path={routes.Page} component={Page} />
           <ContentWrapper>
             <Header />
             <BodyWrapper id="body">
@@ -173,8 +175,8 @@ export default function App() {
                   <Route exact strict path={routes._Profile} component={Profile} />
                   {/* <Route exact strict path={routes.CreateSales} component={CreateSales} /> */}
                   {/* <Route exact strict path={routes.SaleDetails} component={SaleDetail} /> */}
-                  <Route exact strict path={routes.Home} component={Home} />
-                  <Route exact path="/" render={() => <Redirect to={routes.Home} />} />
+                  {/* <Route exact strict path={routes.Home} component={Home} /> */}
+                  <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
                   {/* <Route exact strict path={routes.CreateSales} component={CreateSales} />
                   <Route exact strict path={routes.SaleDetails} component={SaleDetail} />
                   <Route exact strict path={routes.SaleList} component={SaleList} />

@@ -9,10 +9,11 @@ import { useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
 import { useGetMembersInfo } from 'hooks/useBackedTaskServer'
 import { formatMillion } from 'utils/dao'
+import { useCallback } from 'react'
+import { useHistory } from 'react-router-dom'
 
 export default function JoinDAOModal({
   onClick,
-  handleCloseModal,
   open,
   disable,
   daoChainId,
@@ -20,18 +21,21 @@ export default function JoinDAOModal({
   status
 }: {
   onClick: () => void
-  handleCloseModal: () => void
   open: boolean
   disable: boolean
   daoChainId: ChainId
   daoAddress: string
   status: string | undefined
 }) {
+  const history = useHistory()
   const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
   const { result: membersInfo } = useGetMembersInfo(daoAddress, (daoChainId as unknown) as ChainId)
+  const handleCloseModal = useCallback(() => {
+    history.goBack()
+  }, [history])
 
   return (
-    <Modal maxWidth="608px" width="100%" customIsOpen={open} closeIcon customOnDismiss={handleCloseModal}>
+    <Modal maxWidth="608px" width="100%" customIsOpen={open} closeIcon customOnDismiss={handleCloseModal} BackdropClick>
       <Box
         display="grid"
         gap="24px"

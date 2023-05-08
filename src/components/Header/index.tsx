@@ -29,7 +29,7 @@ interface Tab extends TabContent {
 }
 
 export const Tabs: Tab[] = [
-  { title: 'HOME', route: routes.Home },
+  // { title: 'HOME', route: routes.Home },
   { title: 'DAOs', route: routes.Governance },
   { title: 'DAO Rewards', route: routes.Activity },
   // { title: 'Swap', route: routes.SaleList },

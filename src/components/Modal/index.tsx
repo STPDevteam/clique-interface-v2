@@ -18,6 +18,7 @@ interface Props {
   background?: string
   backdropColor?: string
   overflow?: string
+  BackdropClick?: boolean
 }
 
 const Transition = React.forwardRef<unknown, SlideProps | FadeProps>(function Transition(props, ref) {
@@ -38,7 +39,8 @@ export default function Modal(props: Props) {
     padding,
     background,
     overflow,
-    backdropColor
+    backdropColor,
+    BackdropClick = false
   } = props
   const { isOpen, hideModal } = useModal()
   const node = useRef<any>()
@@ -109,7 +111,10 @@ export default function Modal(props: Props) {
             }
           }
         }}
-        onClose={hide}
+        onClose={() => {
+          if (BackdropClick) return
+          else hide()
+        }}
       >
         <Box width="100%" height="100%" position="relative" padding={padding || 0}>
           {closeIcon && <CloseIcon onClick={hide} />}

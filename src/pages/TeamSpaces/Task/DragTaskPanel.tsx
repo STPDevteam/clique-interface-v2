@@ -105,7 +105,7 @@ export default function DragTaskPanel() {
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
 
-  console.log(isJoined)
+  console.log(isJoined === '')
 
   const showSidePanel = useCallback(
     editData => {
@@ -176,7 +176,10 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].taskName,
           taskList[sInd][source.index].weight
         )
-          .then(res => console.log(res))
+          .then(res => {
+            setRand(Math.random())
+            console.log(res)
+          })
           .catch(err => console.log(err))
         setTaskList(newState)
       } else {
@@ -209,7 +212,10 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].taskName,
           taskList[sInd][source.index].weight
         )
-          .then(res => console.log(res))
+          .then(res => {
+            setRand(Math.random())
+            console.log(res)
+          })
           .catch(err => console.log(err))
         setTaskList(newState)
       }
@@ -251,10 +257,8 @@ export default function DragTaskPanel() {
         width: '100%'
       }}
     >
-      {isJoined === 'C_member' || isJoined === 'noRole' ? (
-        ''
-      ) : (
-        <Box mb={30} mt={20} ml={10}>
+      <Box mb={30} mt={20} ml={10}>
+        <Tooltip title="Only administrators are allow to create tasks">
           <AddButton
             width={'80px'}
             height={'36px'}
@@ -265,8 +269,8 @@ export default function DragTaskPanel() {
           >
             + New
           </AddButton>
-        </Box>
-      )}
+        </Tooltip>
+      </Box>
       <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid}>
         <DragDropContext onDragEnd={onDragEnd}>
           {taskList.map((el, ind) => (

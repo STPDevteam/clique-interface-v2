@@ -131,7 +131,7 @@ export default function SidePanel({
   const proposalList = useMemo(() => {
     if (!proposalBaseList) return
     const arr = proposalBaseList.map((item: any) => {
-      return item.proposalId + '.' + item.title
+      return item.title
     })
     return arr
   }, [proposalBaseList])
@@ -176,7 +176,7 @@ export default function SidePanel({
       proposalId,
       '0',
       TeamSpacesInfo.teamSpacesId,
-      'A_notStarted',
+      currentStatus ? TaskStatus[currentStatus] : 'A_notStarted',
       value
     ).then((res: any) => {
       if (res.data.code === 200) {
@@ -184,7 +184,7 @@ export default function SidePanel({
         showModal(<MessageBox type="success">Create task success</MessageBox>)
       } else showModal(<MessageBox type="failure">Something wrong</MessageBox>)
     })
-  }, [TeamSpacesInfo, assignees, create, endTime, onDismiss, priority, proposal, showModal, value])
+  }, [TeamSpacesInfo, assignees, create, currentStatus, endTime, onDismiss, priority, proposal, showModal, value])
 
   const updateCallback = useCallback(() => {
     if (!editData) return
