@@ -84,7 +84,7 @@ export default function AiChat() {
                 borderBottom: '1px solid #ccc'
               }}
             >
-              <Typography textAlign={'center'}>Clique gpt</Typography>
+              <Typography textAlign={'center'}>Clique GPT</Typography>
               <Close
                 sx={{
                   position: 'absolute',
@@ -163,7 +163,7 @@ export default function AiChat() {
         ) : (
           <Box
             sx={{
-              width: { md: 400, xs: '80%' },
+              width: { sm: 450, xs: '100%' },
               height: '100vh',
               display: 'flex',
               padding: '10px',
