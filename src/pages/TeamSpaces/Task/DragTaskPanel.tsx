@@ -157,7 +157,9 @@ export default function DragTaskPanel() {
 
         if (destination.index === 0) {
           if (source.index === 0) {
-          } else taskList[sInd][source.index].weight = taskList[dInd][0].weight / 2
+          } else {
+            taskList[sInd][source.index].weight = taskList[dInd][0].weight / 2
+          }
         } else {
           taskList[sInd][source.index].weight =
             taskList[dInd][destination.index].weight + taskList[dInd][destination.index].weight / 2
@@ -188,14 +190,18 @@ export default function DragTaskPanel() {
         newState[dInd] = result[dInd]
 
         if (destination.index === 0) {
-          if (taskList[dInd].length !== 0)
+          if (taskList[dInd].length !== 0) {
             taskList[sInd][source.index].weight = taskList[dInd][destination.index].weight / 2
+            taskList[sInd][source.index].status = taskList[dInd][destination.index].status
+          }
         } else if (destination.index === taskList[dInd].length) {
           taskList[sInd][source.index].weight =
             taskList[dInd][taskList[dInd].length - 1].weight + taskList[dInd][taskList[dInd].length - 1].weight / 2
+          taskList[sInd][source.index].status = taskList[dInd][taskList[dInd].length - 1].status
         } else {
           taskList[sInd][source.index].weight =
             (taskList[dInd][destination.index - 1].weight + taskList[dInd][destination.index].weight) / 2
+          taskList[sInd][source.index].status = taskList[dInd][destination.index - 1].status
         }
         setTaskList(newState)
         update(
