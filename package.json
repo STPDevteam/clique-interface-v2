@@ -125,6 +125,7 @@
     "react-beautiful-dnd": "^13.1.1",
     "react-ga4": "^1.4.1",
     "react-html-parser": "^2.0.2",
+    "react-markdown": "^8.0.7",
     "react-quill": "^2.0.0",
     "react-select-material-ui": "^9.2.0",
     "styled-components": "^5.3.9",

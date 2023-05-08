@@ -622,3 +622,9 @@ export function getJoinDaoMembersLogs(chainId: number, daoAddress: string, offse
     count
   })
 }
+
+export function sendAiChat(content: string[]) {
+  return Axios.post('stpdao/v2/ai', {
+    content
+  })
+}
