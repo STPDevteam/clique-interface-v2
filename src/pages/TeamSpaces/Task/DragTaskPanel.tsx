@@ -1,5 +1,5 @@
 import AddButton from 'components/Button/Button'
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography, useTheme } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import {
   ITaskItem,
@@ -104,8 +104,7 @@ export default function DragTaskPanel() {
   const { result } = useTaskProposalList(curDaoChainId, daoAddress)
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
-
-  console.log(isJoined === '')
+  const theme = useTheme()
 
   const showSidePanel = useCallback(
     editData => {
@@ -258,18 +257,36 @@ export default function DragTaskPanel() {
       }}
     >
       <Box mb={30} mt={20} ml={10}>
-        <Tooltip title="Only administrators are allow to create tasks">
+        {isJoined === 'C_member' ? (
+          <Tooltip title="Only administrators are allow to create tasks" arrow>
+            <Box
+              sx={{
+                width: 80,
+                height: 36,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.textColor.text2,
+                borderRadius: '8px',
+                color: theme.palette.secondary.contrastText,
+                cursor: 'pointer'
+              }}
+            >
+              + New
+            </Box>
+          </Tooltip>
+        ) : (
           <AddButton
             width={'80px'}
             height={'36px'}
-            disabled={isJoined === 'C_member' || isJoined === 'noRole'}
+            disabled={isJoined === 'C_member'}
             onClick={() => {
               showSidePanel(undefined)
             }}
           >
             + New
           </AddButton>
-        </Tooltip>
+        )}
       </Box>
       <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid}>
         <DragDropContext onDragEnd={onDragEnd}>

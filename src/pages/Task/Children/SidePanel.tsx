@@ -1,4 +1,4 @@
-import { Alert, Box, Drawer, Typography, styled } from '@mui/material'
+import { Alert, Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel } from '@mui/material'
 import SaveButton from 'components/Button/OutlineButton'
 import ConfirmButton from 'components/Button/Button'
 import Image from 'components/Image'
@@ -101,7 +101,7 @@ export const MapPriorityType: any = {
 }
 
 const statusList = ['Not started', 'In progress', 'Done', 'Not status']
-const priorityList = ['High', 'Medium', 'Low']
+// const priorityList = ['High', 'Medium', 'Low']
 
 export default function SidePanel({
   open,
@@ -153,11 +153,12 @@ export default function SidePanel({
     },
     [onDismiss]
   )
+  console.log(editData?.priority)
 
   const isSmDown = useBreakpoint('sm')
   const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
   const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
-  const [priority, setPriority] = useState<any>(MapPriorityType[editData?.priority] ?? '')
+  const [priority, setPriority] = useState<any>(editData?.priority ?? '')
   const [proposal, setProposal] = useState(updateProposal ?? '')
   const [value, setValue] = useState(editData?.taskName ?? '')
   const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
@@ -172,7 +173,7 @@ export default function SidePanel({
       assignees,
       '',
       endTime,
-      PriorityType[priority],
+      priority,
       proposalId,
       '0',
       TeamSpacesInfo.teamSpacesId,
@@ -302,7 +303,7 @@ export default function SidePanel({
             <Image src={select}></Image>
             <Typography>Priority</Typography>
           </Box>
-          <Select
+          {/* <Select
             options={priorityList}
             placeholder="Empty"
             width={isSmDown ? 160 : 219}
@@ -310,7 +311,57 @@ export default function SidePanel({
             value={priority}
             multiple={false}
             onChange={(value: any) => setPriority(value)}
-          />
+          /> */}
+          <RadioGroup
+            row
+            aria-labelledby="demo-row-radio-buttons-group-label"
+            name="row-radio-buttons-group"
+            value={priority}
+            onChange={(e: any) => setPriority(e.target.value)}
+          >
+            <FormControlLabel
+              value="A_High"
+              control={<Radio />}
+              label="High"
+              sx={{
+                '&::after': {
+                  content: "''",
+                  width: 4,
+                  height: 16,
+                  marginLeft: 4,
+                  backgroundColor: '#E46767'
+                }
+              }}
+            />
+            <FormControlLabel
+              value="B_Medium"
+              control={<Radio />}
+              label="Medium"
+              sx={{
+                '&::after': {
+                  content: "''",
+                  width: 4,
+                  height: 16,
+                  marginLeft: 4,
+                  backgroundColor: '#EFCC97'
+                }
+              }}
+            />
+            <FormControlLabel
+              value="C_Low"
+              control={<Radio />}
+              label="Low"
+              sx={{
+                '&::after': {
+                  content: "''",
+                  width: 4,
+                  height: 16,
+                  marginLeft: 4,
+                  backgroundColor: '#CAE7ED'
+                }
+              }}
+            />
+          </RadioGroup>
         </RowContent>
         {/* <RowContent>
           <Box className={'lContent'}>
