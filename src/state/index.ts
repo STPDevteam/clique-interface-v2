@@ -9,6 +9,7 @@ import multicall from './multicall/reducer'
 import buildingGovernanceDao from './buildingGovDao/reducer'
 import pagination from './pagination/reducer'
 import userInfo from './userInfo/reducer'
+import chatHistory from './chatHistory/reducer'
 import createTokenData from './createToken/reducer'
 
 const PERSISTED_KEYS: string[] = ['user', 'transactions', 'buildingGovernanceDao', 'userInfo', 'createTokenData']
@@ -22,6 +23,7 @@ const store = configureStore({
     pagination,
     buildingGovernanceDao,
     userInfo,
+    chatHistory,
     createTokenData
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],

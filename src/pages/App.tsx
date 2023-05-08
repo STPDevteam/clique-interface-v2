@@ -22,6 +22,7 @@ import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
+import AiChat from 'pages/AiChat'
 
 // swap
 // import CreateSales from 'pages/CreateSales'
@@ -111,6 +112,7 @@ export default function App() {
           <Route path={routes.Page} component={Page} />
           <ContentWrapper>
             <Header />
+            <AiChat />
             <BodyWrapper id="body">
               <Popups />
               <Polling />

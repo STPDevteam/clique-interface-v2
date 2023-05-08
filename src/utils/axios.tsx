@@ -5,7 +5,7 @@ import store from 'state'
 
 const axiosInstance = axios.create({
   baseURL: serverBaseUrl,
-  timeout: 10000
+  timeout: 30000
 })
 
 function MakeHeaders() {
