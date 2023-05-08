@@ -162,6 +162,7 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].weight =
             taskList[dInd][destination.index].weight + taskList[dInd][destination.index].weight / 2
         }
+        setTaskList(newState)
         update(
           taskList[sInd][source.index].assignAccount,
           '',
@@ -180,7 +181,6 @@ export default function DragTaskPanel() {
             console.log(res)
           })
           .catch(err => console.log(err))
-        setTaskList(newState)
       } else {
         const result = move(taskList[sInd], taskList[dInd], source, destination)
         const newState = [...taskList]
@@ -197,7 +197,7 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].weight =
             (taskList[dInd][destination.index - 1].weight + taskList[dInd][destination.index].weight) / 2
         }
-
+        setTaskList(newState)
         update(
           taskList[sInd][source.index].assignAccount,
           '',
@@ -216,7 +216,6 @@ export default function DragTaskPanel() {
             console.log(res)
           })
           .catch(err => console.log(err))
-        setTaskList(newState)
       }
     },
     [taskList, type, update]

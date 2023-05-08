@@ -338,7 +338,7 @@ export default function LeftSider() {
               }
             }}
           >
-            <NavLink to={routes.DaoTeamTrash || ''}>
+            <NavLink to={makeRouteLink(routes.DaoTeamTrash) || ''}>
               <Image src={trash}></Image>
               <p>Trash</p>
             </NavLink>
