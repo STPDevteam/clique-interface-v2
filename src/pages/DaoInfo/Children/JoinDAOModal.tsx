@@ -52,7 +52,7 @@ export default function JoinDAOModal({
           <div />
           <Image width={83} src={cliqueIcon}></Image>
         </Box>
-        <Image width={147} src={daoInfo?.daoLogo || ''}></Image>
+        <Image width={147} height={147} src={daoInfo?.daoLogo || ''}></Image>
         <Typography variant="inherit" fontSize={24} fontWeight={600}>
           {daoInfo?.name}
         </Typography>

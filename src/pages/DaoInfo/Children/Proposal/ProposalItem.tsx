@@ -163,7 +163,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
         <RowCenter>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           <>
-            <Typography color={theme.textColor.text1} fontSize={14}>
+            <Typography color={'#97B7EF'} fontSize={14}>
               {proposalInfo.targetTimeString}
             </Typography>
             <ShowProposalStatusTag status={proposalInfo.status} />

@@ -1,5 +1,5 @@
 import { Box, Grid, MenuItem, Typography } from '@mui/material'
-import { BlackButton } from 'components/Button/Button'
+import Button from 'components/Button/Button'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Select from 'components/Select/Select'
 import { ProposalStatus } from 'hooks/useProposalInfo'
@@ -34,16 +34,18 @@ export default function Proposal() {
   return (
     <ContainerWrapper maxWidth={1248}>
       <Box display={'flex'} justifyContent="space-between" alignItems={'center'}>
-        <BlackButton
+        <Button
           width={isSmDown ? '146px' : '252px'}
           fontSize={isSmDown ? 10 : 14}
           height={isSmDown ? '40px' : '56px'}
           borderRadius={isSmDown ? '8px' : undefined}
+          style={{ fontWeight: 700 }}
           onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
         >
           + Create A Proposal
-        </BlackButton>
+        </Button>
         <Select
+          noBold
           placeholder=""
           width={isSmDown ? 160 : 235}
           height={isSmDown ? 40 : undefined}

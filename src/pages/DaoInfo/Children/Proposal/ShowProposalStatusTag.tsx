@@ -8,7 +8,7 @@ export const StyledChip = styled(Chip)(
     backgroundColor: bgColor,
     color: textColor,
     height: 24,
-    borderRadius: '4px',
+    borderRadius: '18px',
     fontSize: 14,
     '& span': {
       padding: '3px 10px'
