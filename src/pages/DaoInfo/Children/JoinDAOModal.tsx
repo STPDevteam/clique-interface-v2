@@ -56,10 +56,12 @@ export default function JoinDAOModal({
         <Typography variant="inherit" fontSize={24} fontWeight={600}>
           {daoInfo?.name}
         </Typography>
-        <Typography variant="inherit" fontSize={14} fontWeight={600} color="#80829F">
+        <Typography variant="inherit" fontSize={14} fontWeight={400} color="#80829F">
           {daoInfo?.description}
         </Typography>
-        <Typography variant="inherit">Member {membersInfo && formatMillion(membersInfo?.members)}</Typography>
+        <Typography variant="inherit">
+          Member <span style={{ fontWeight: 600 }}>{membersInfo && formatMillion(membersInfo?.members)}</span>
+        </Typography>
         <Button onClick={onClick} disabled={disable}>
           {status}
         </Button>

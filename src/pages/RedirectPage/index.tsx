@@ -62,7 +62,7 @@ export default function Page() {
       setOpen(true)
     } else {
       setOpen(false)
-      history.push(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+      history.goBack()
     }
   }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
 

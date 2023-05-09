@@ -258,10 +258,18 @@ export default function DragTaskPanel() {
     <Box
       sx={{
         minWidth: 942,
-        width: '100%'
+        width: '100%',
+        position: 'relative'
       }}
     >
-      <Box mb={30} mt={20} ml={10}>
+      <Box
+        mb={30}
+        sx={{
+          position: 'absolute',
+          right: 0,
+          top: '-60px'
+        }}
+      >
         {isJoined === 'C_member' ? (
           <Tooltip title="Only administrators are allow to create tasks" arrow>
             <Box
@@ -293,7 +301,7 @@ export default function DragTaskPanel() {
           </AddButton>
         )}
       </Box>
-      <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid}>
+      <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid} mt={14}>
         <DragDropContext onDragEnd={onDragEnd}>
           {taskList.map((el, ind) => (
             <Droppable key={ind} droppableId={`${ind}`}>

@@ -18,18 +18,22 @@ export default function CardView({ result }: any) {
   return (
     <Box
       sx={{
-        display: 'flex',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr 1fr',
         justifyContent: 'flex-start',
         flexDirection: 'row',
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        gap: 20,
+        padding: '20px 0'
       }}
     >
       {result.map((item: any) => (
-        <Box key={item} width={'22%'} margin={'20px 1.5% 10px'}>
+        <Box key={item}>
           <Card
             sx={{
               position: 'relative',
               width: '100%',
+              minWidth: 220,
               height: 226,
               textAlign: 'center',
               border: '1px solid #d4d7e2',

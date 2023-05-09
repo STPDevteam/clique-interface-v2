@@ -179,6 +179,9 @@ const StyledTabs = styled('div')(({ theme }) => ({
     '&:hover svg path': {
       fill: '#0049c6'
     },
+    '&.active': {
+      fontWeight: 600
+    },
     '&.active svg path': {
       fill: '#0049c6'
     }
@@ -297,7 +300,7 @@ export default function Index() {
   // const handleEdit = useCallback(() => {}, [])
 
   return (
-    <Box gap={10} ml={100} mr={100}>
+    <Box gap={10} padding={'40px 110px'}>
       <Box
         sx={{
           display: 'flex',

@@ -17,7 +17,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
 
   useEffect(() => {
     if (!account || !userSignature || isJoined === '') {
-      history.push('/page/' + daoChainId + '/' + daoAddress)
+      history.replace('/page/' + daoChainId + '/' + daoAddress)
     }
   }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
 
@@ -33,7 +33,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
       <LeftMenu />
       <Box
         sx={{
-          padding: { sm: '24px 32px 24px 284px', xs: '20px 16px' }
+          padding: { sm: '0 0 0 260px', xs: '20px 16px' }
         }}
       >
         {children}

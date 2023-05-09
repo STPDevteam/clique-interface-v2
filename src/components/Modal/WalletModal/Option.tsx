@@ -43,13 +43,19 @@ export default function Option({
         onClick={onClick}
         color={active ? 'transparent' : undefined}
         disabled={!clickable || active}
+        noBold
+        style={{
+          border: '1px solid #D4D7E2',
+          justifyContent: 'flex-start',
+          paddingLeft: '24px'
+        }}
       >
         {active ? (
           <GreenCircle>
             <div />
           </GreenCircle>
         ) : null}
-        <LogoText logo={icon} text={header} />
+        <LogoText logo={icon} text={header} size="40px" />
       </OutlineButton>
     </>
   )

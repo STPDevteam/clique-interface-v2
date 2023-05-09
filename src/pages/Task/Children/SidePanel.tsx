@@ -138,7 +138,7 @@ export default function SidePanel({
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
-    return res ? editData.proposalId + '.' + res.title : ''
+    return res ? res.title : ''
   }, [editData, proposalBaseList])
 
   const toggleDrawer = useCallback(

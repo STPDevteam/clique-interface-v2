@@ -163,7 +163,7 @@ export default function DaoInfo({ children }: { children: any }) {
   return (
     <Box
       sx={{
-        padding: { sm: '0 20px', xs: 0 }
+        padding: { sm: '40px 130px', xs: 0 }
       }}
     >
       {/* <UpgradeDao
@@ -273,7 +273,7 @@ export default function DaoInfo({ children }: { children: any }) {
         </StyledHeader>
         <Box
           sx={{
-            padding: { sm: '30px 45px', xs: '24px 0' }
+            padding: { sm: '30px 0', xs: '24px 0' }
           }}
         >
           {children}

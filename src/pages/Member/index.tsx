@@ -39,11 +39,15 @@ const StyledTabs = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
     border: 0,
+    paddingLeft: 0,
     '&:hover': {
       color: '#0049c6'
     },
     '&:hover svg path': {
       fill: '#0049c6'
+    },
+    '&.active': {
+      fontWeight: 600
     },
     '&.active svg path': {
       fill: '#0049c6'
@@ -98,7 +102,7 @@ export default function Member() {
   return (
     <Box
       sx={{
-        margin: '0 auto'
+        margin: '40px 110px'
       }}
     >
       <Box
@@ -137,6 +141,8 @@ export default function Member() {
       </Box>
       <Typography
         variant="h5"
+        fontWeight={400}
+        lineHeight={'20px'}
         sx={{
           width: '700px',
           textAlign: 'left',

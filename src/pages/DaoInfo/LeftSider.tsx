@@ -39,7 +39,7 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
     textDecoration: 'none',
     fontSize: 14,
     lineHeight: '20px',
-    color: theme.palette.text.secondary,
+    color: '#3F5170',
     marginRight: 30,
     fontWeight: 600,
     padding: '9px 16px',
@@ -235,12 +235,7 @@ export default function LeftSider() {
           ))}
         </List>
         <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'}>
-          <Typography
-            variant="h5"
-            textAlign={'left'}
-            fontSize={16}
-            sx={{ color: theme => theme.palette.text.secondary, padding: '6px 24px 16px' }}
-          >
+          <Typography variant="h5" textAlign={'left'} fontSize={16} sx={{ color: '#3F5170', padding: '6px 24px 16px' }}>
             Teamspaces
           </Typography>
         </Box>
