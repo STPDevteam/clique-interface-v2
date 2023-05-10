@@ -1,5 +1,5 @@
-import AddButton from 'components/Button/Button'
-import { Box, Tooltip, Typography, useTheme } from '@mui/material'
+// import AddButton from 'components/Button/Button'
+import { Box, Tooltip, Typography } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import {
   ITaskItem,
@@ -15,6 +15,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
 // import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { ReactComponent as AddIcon } from 'assets/svg/newIcon.svg'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
@@ -104,7 +105,6 @@ export default function DragTaskPanel() {
   const { result } = useTaskProposalList(curDaoChainId, daoAddress)
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
-  const theme = useTheme()
 
   const showSidePanel = useCallback(
     editData => {
@@ -267,38 +267,51 @@ export default function DragTaskPanel() {
         sx={{
           position: 'absolute',
           right: 0,
-          top: '-60px'
+          top: '-50px'
         }}
       >
         {isJoined === 'C_member' ? (
           <Tooltip title="Only administrators are allowed to create tasks" arrow>
             <Box
               sx={{
-                width: 80,
+                width: 84,
                 height: 36,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: theme.textColor.text2,
-                borderRadius: '8px',
-                color: theme.palette.secondary.contrastText,
-                cursor: 'pointer'
+                color: '#B5B7CF',
+                gap: 8,
+                cursor: 'pointer',
+                '& svg circle': {
+                  fill: '#B5B7CF'
+                }
               }}
             >
-              + New
+              <AddIcon />
+              <Typography fontWeight={400}>Add New</Typography>
             </Box>
           </Tooltip>
         ) : (
-          <AddButton
-            width={'80px'}
+          <Box
+            width={'84px'}
             height={'36px'}
-            disabled={isJoined === 'C_member'}
+            sx={{
+              color: '#97B7EF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              cursor: 'pointer'
+            }}
             onClick={() => {
               showSidePanel(undefined)
             }}
           >
-            + New
-          </AddButton>
+            <AddIcon />
+            <Typography fontWeight={400} width={'fit-content'}>
+              Add New
+            </Typography>
+          </Box>
         )}
       </Box>
       <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid} mt={14}>

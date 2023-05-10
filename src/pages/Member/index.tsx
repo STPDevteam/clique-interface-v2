@@ -19,6 +19,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
   fontSize: 14,
   listStyle: 'none',
   padding: 0,
+  height: 60,
   '&>*': {
     marginRight: 60,
     textDecoration: 'none',

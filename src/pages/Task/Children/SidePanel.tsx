@@ -87,11 +87,11 @@ export const MapTaskStatus: any = {
   D_notStatus: 'Not status'
 }
 
-const PriorityType: any = {
-  High: 'A_High',
-  Medium: 'B_Medium',
-  Low: 'C_Low'
-}
+// const PriorityType: any = {
+//   High: 'A_High',
+//   Medium: 'B_Medium',
+//   Low: 'C_Low'
+// }
 
 export const MapPriorityType: any = {
   A_High: 'High',
@@ -192,7 +192,7 @@ export default function SidePanel({
       assignees,
       '',
       endTime,
-      PriorityType[priority],
+      priority,
       Number(proposal),
       '0',
       editData.spacesId,
