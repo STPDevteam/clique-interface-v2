@@ -13,12 +13,11 @@ import dateIcon from 'assets/images/date.png'
 import proposalIcon from 'assets/images/proposal.png'
 import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
+import { ProposalListBaseProp, useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
 import { shortenAddress } from 'utils'
-// import { shortenAddress } from 'utils'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -112,7 +111,7 @@ export default function SidePanel({
 }: {
   open: boolean
   onDismiss: () => void
-  proposalBaseList: any
+  proposalBaseList: ProposalListBaseProp[]
   TeamSpacesInfo: any
   editData: ITaskQuote
 }) {
@@ -129,16 +128,17 @@ export default function SidePanel({
   }, [jobsList])
 
   const proposalList = useMemo(() => {
-    if (!proposalBaseList) return
-    const arr = proposalBaseList.map((item: any) => {
-      return item.title
+    if (!proposalBaseList) return []
+    const arr: any = []
+    proposalBaseList.map((item: any) => {
+      arr.push(Object.assign({}, item, { label: item.title, value: item.proposalId }))
     })
     return arr
   }, [proposalBaseList])
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
-    return res ? res.title : ''
+    return res ? res.proposalId : ''
   }, [editData, proposalBaseList])
 
   const toggleDrawer = useCallback(
@@ -153,7 +153,6 @@ export default function SidePanel({
     },
     [onDismiss]
   )
-  console.log(editData?.priority)
 
   const isSmDown = useBreakpoint('sm')
   const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
@@ -165,16 +164,16 @@ export default function SidePanel({
   const create = useCreateTask()
   const update = useUpdateTask()
   const { showModal } = useModal()
+
   const createCallback = useCallback(() => {
     if (!TeamSpacesInfo || !value) return
-    const proposalId = Number(proposal.split('.')[0])
 
     create(
       assignees,
       '',
       endTime,
       priority,
-      proposalId,
+      Number(proposal),
       '0',
       TeamSpacesInfo.teamSpacesId,
       currentStatus ? TaskStatus[currentStatus] : 'A_notStarted',
@@ -194,7 +193,7 @@ export default function SidePanel({
       '',
       endTime,
       PriorityType[priority],
-      editData?.proposalId,
+      Number(proposal),
       '0',
       editData.spacesId,
       TaskStatus[currentStatus],
@@ -206,7 +205,7 @@ export default function SidePanel({
       showModal(<MessageBox type="success">Update success</MessageBox>)
       console.log(res)
     })
-  }, [assignees, currentStatus, editData, endTime, onDismiss, priority, showModal, update, value])
+  }, [assignees, currentStatus, editData, endTime, onDismiss, priority, proposal, showModal, update, value])
 
   const getActions = useCallback(() => {
     if (editData) {
@@ -402,7 +401,9 @@ export default function SidePanel({
             height={isSmDown ? 40 : undefined}
             value={proposal}
             multiple={false}
-            onChange={(value: any) => setProposal(value)}
+            onChange={(value: any) => {
+              setProposal(value)
+            }}
           />
         </RowContent>
         {!value.trim() ? <Alert severity="error">Title required</Alert> : ''}

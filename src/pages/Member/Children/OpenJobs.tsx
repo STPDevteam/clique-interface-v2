@@ -1,9 +1,11 @@
 import { Box, Typography } from '@mui/material'
 import Button from 'components/Button/Button'
 import Input from 'components/Input'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import { useApplyMember } from 'hooks/useBackedDaoServer'
+import useModal from 'hooks/useModal'
 import { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -11,16 +13,18 @@ export default function OpenJobs() {
   const { account } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
   const { joinApply } = useApplyMember()
+  const { showModal } = useModal()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
 
   const applyCallback = useCallback(() => {
     if (!account) return
     joinApply('B_admin', curDaoChainId, daoAddress, inputValue).then(res => {
+      showModal(<MessageBox type="success">Apply success</MessageBox>)
       console.log(res)
       setInputValue('')
     })
-  }, [account, curDaoChainId, daoAddress, inputValue, joinApply])
+  }, [account, curDaoChainId, daoAddress, inputValue, joinApply, showModal])
 
   return (
     <Box gap={10} mt={10}>
@@ -54,6 +58,9 @@ export default function OpenJobs() {
             alignItems: 'center',
             mt: 10,
             gap: 10,
+            '& input': {
+              color: '#3F5170'
+            },
             '& button': {
               width: 141,
               height: 40

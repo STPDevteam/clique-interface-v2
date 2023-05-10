@@ -160,6 +160,9 @@ export const theme = {
     border: '1px solid',
     borderRadius: 8
   },
+  zIndex: {
+    modal: 99999
+  },
   spacing: (factor: number) => `${1 * factor}px`
   // gray: {
   //   main: '#333333',

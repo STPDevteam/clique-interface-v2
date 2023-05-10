@@ -153,6 +153,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
   fontSize: 14,
   listStyle: 'none',
   padding: 0,
+  height: 60,
   '&>*': {
     marginRight: 60,
     textDecoration: 'none',
@@ -300,7 +301,7 @@ export default function Index() {
   // const handleEdit = useCallback(() => {}, [])
 
   return (
-    <Box gap={10} padding={'40px 110px'}>
+    <Box gap={10} padding={'48px 110px'}>
       <Box
         sx={{
           display: 'flex',

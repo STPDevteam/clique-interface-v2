@@ -1,6 +1,7 @@
 import { ChainId } from 'constants/chain'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  applyReview,
   getJobsList,
   getSpaceId,
   createTask,
@@ -140,6 +141,14 @@ export function useUpdateTask() {
     },
     []
   )
+}
+
+export function useReviewApply() {
+  return useCallback((chainId: ChainId, daoAddress: string, isPass: boolean, jobsApplyId: number) => {
+    return applyReview(chainId, daoAddress, isPass, jobsApplyId)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
 }
 
 export interface ITaskItem {

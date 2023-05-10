@@ -271,7 +271,7 @@ export default function DragTaskPanel() {
         }}
       >
         {isJoined === 'C_member' ? (
-          <Tooltip title="Only administrators are allow to create tasks" arrow>
+          <Tooltip title="Only administrators are allowed to create tasks" arrow>
             <Box
               sx={{
                 width: 80,

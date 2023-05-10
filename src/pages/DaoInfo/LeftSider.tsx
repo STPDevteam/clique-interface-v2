@@ -1,5 +1,5 @@
 import { Box, Drawer, List, ListItemText, styled, Typography } from '@mui/material'
-import { NavLink, useLocation, useParams } from 'react-router-dom'
+import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
 import { ReactComponent as proposal } from 'assets/svg/proposal.svg'
 import { ReactComponent as treasury } from 'assets/svg/treasury.svg'
 import { ReactComponent as Idea } from 'assets/svg/Idea.svg'
@@ -7,6 +7,7 @@ import { ReactComponent as bounty } from 'assets/svg/bounty.svg'
 import { ReactComponent as member } from 'assets/svg/member.svg'
 import { ReactComponent as setting } from 'assets/svg/setting.svg'
 // import { ReactComponent as Add } from 'assets/svg/add.svg'
+import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import { routes } from 'constants/routes'
 import Image from 'components/Image'
 import robot from 'assets/images/robot.png'
@@ -18,10 +19,12 @@ import calendarIcon from 'assets/images/calendar.png'
 import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
 import { useCallback, useMemo } from 'react'
-import { useDaoInfo } from 'hooks/useDaoInfo'
+import { useDaoBaseInfo, useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
 import { DaoAvatars } from 'components/Avatars'
 import MyCollapse from 'components/Collapse'
+import PopperCard from 'components/PopperCard'
+import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -103,6 +106,45 @@ const StyledTeamMenu = styled(Box)({
   }
 })
 
+const Text = styled(Typography)(({ theme }) => ({
+  width: 64,
+  fontSize: 12,
+  fontWeight: 500,
+  marginTop: 6,
+  lineHeight: '20px',
+  textAlign: 'center',
+  color: theme.palette.text.secondary
+}))
+
+const Item = styled(Box)(({}) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyItems: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+  width: 150,
+  padding: '5px 5px 5px 10px',
+  gap: 10,
+  '&:hover': {
+    backgroundColor: '#0049C60D'
+  },
+  '& img': {
+    width: 24,
+    height: 24,
+    border: '1px solid #0049C60D',
+    borderRadius: '50%'
+  },
+  '& p': {
+    marginTop: 0,
+    textAlign: 'left',
+    fontSize: 14,
+    flex: 1
+  },
+  '& p:hover': {
+    color: '#0049C6'
+  }
+}))
+
 export interface LeftSiderMenu {
   title: string
   link?: string
@@ -111,17 +153,38 @@ export interface LeftSiderMenu {
   children?: LeftSiderMenu[]
 }
 
+export function DaoItem({
+  chainId,
+  daoAddress,
+  daoName
+}: {
+  chainId: ChainId | undefined
+  daoAddress: string
+  daoName: string
+}) {
+  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
+
+  return (
+    <Item>
+      <DaoAvatars size={24} src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.name || daoName} />
+      <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
+    </Item>
+  )
+}
+
 export default function LeftSider() {
   const { pathname } = useLocation()
+  const history = useHistory()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
-
+  const { result: myJoinedDaoList } = useMyJoinedDao()
   const makeRouteLink = useCallback(
     (route: string) => {
       return route.replace(':chainId', daoChainId).replace(':address', daoAddress)
     },
     [daoAddress, daoChainId]
   )
+  console.log(myJoinedDaoList)
 
   const menuList = useMemo(
     () => [
@@ -205,12 +268,47 @@ export default function LeftSider() {
           flexDirection={'row'}
           alignItems={'center'}
           gap={10}
+          width={'100%'}
           padding="16px 20px"
         >
-          <DaoAvatars size={30} src={daoInfo?.daoLogo} />
-          <Typography variant="h5" textAlign={'left'} sx={{ color: theme => theme.palette.text.secondary }}>
-            {daoInfo?.name || '-'}
-          </Typography>
+          <PopperCard
+            sx={{
+              marginTop: 13
+            }}
+            targetElement={
+              <Box
+                display={'grid'}
+                gridTemplateColumns={'auto auto 1fr'}
+                flexDirection={'row'}
+                width={'100%'}
+                gap={12}
+                sx={{
+                  cursor: 'pointer',
+                  '& svg': {
+                    marginLeft: 'auto'
+                  }
+                }}
+                alignItems={'center'}
+              >
+                <DaoAvatars size={30} src={daoInfo?.daoLogo} />
+                <Typography fontWeight={600} fontSize={16} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                  {daoInfo?.name || '-'}
+                </Typography>
+                <ArrowIcon />
+              </Box>
+            }
+          >
+            <>
+              {myJoinedDaoList.map(option => (
+                <Box
+                  key={option.daoAddress + option.chainId}
+                  onClick={() => history.push(`${routes._DaoInfo}/${option.chainId}/${option.daoAddress}`)}
+                >
+                  <DaoItem chainId={option.chainId} daoName={option.daoName} daoAddress={option.daoAddress} />
+                </Box>
+              ))}
+            </>
+          </PopperCard>
         </Box>
         <div />
         <List>

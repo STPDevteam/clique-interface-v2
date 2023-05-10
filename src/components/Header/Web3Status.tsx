@@ -13,6 +13,7 @@ import Button from 'components/Button/Button'
 import useBreakpoint from 'hooks/useBreakpoint'
 import Image from 'components/Image'
 import { ChainListMap } from 'constants/chain'
+import useModal from 'hooks/useModal'
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -31,11 +32,18 @@ function Web3StatusInner() {
   const hasPendingTransactions = !!pending.length
   const toggleWalletModal = useWalletModalToggle()
   const theme = useTheme()
+  const { hideModal } = useModal()
   const isDownSm = useBreakpoint()
 
   if (account && chainId) {
     return (
-      <Box sx={{ cursor: 'pointer' }} onClick={toggleWalletModal}>
+      <Box
+        sx={{ cursor: 'pointer' }}
+        onClick={() => {
+          hideModal()
+          toggleWalletModal()
+        }}
+      >
         <Box
           sx={{
             height: { xs: 36, sm: 50 },
@@ -83,14 +91,24 @@ function Web3StatusInner() {
         backgroundColor={theme.palette.error.main}
         width={isDownSm ? '128px' : '200px'}
         height={isDownSm ? '28px' : '50px'}
-        onClick={toggleWalletModal}
+        onClick={() => {
+          hideModal()
+          toggleWalletModal()
+        }}
       >
         {error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}
       </Button>
     )
   } else {
     return (
-      <Button width={isDownSm ? '128px' : '200px'} height={isDownSm ? '28px' : '50px'} onClick={toggleWalletModal}>
+      <Button
+        width={isDownSm ? '128px' : '200px'}
+        height={isDownSm ? '28px' : '50px'}
+        onClick={() => {
+          hideModal()
+          toggleWalletModal()
+        }}
+      >
         Connect Wallet
       </Button>
     )

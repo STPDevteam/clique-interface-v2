@@ -305,24 +305,24 @@ export function useLogin() {
   }
 }
 
-export function useJobsApplyList(daoAddress: string, chainId: number) {
+export interface JobsApplyListProp {
+  account: string
+  applyId: number
+  applyRole: string
+  applyTime: number
+  avatar: string
+  chainId: number
+  daoAddress: string
+  message: string
+  nickname: string
+}
+
+export function useJobsApplyList(daoAddress: string, chainId: number, rand: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
-  const [result, setResult] = useState<
-    {
-      account: string
-      applyId: number
-      applyRole: string
-      applyTime: number
-      avatar: string
-      chainId: number
-      daoAddress: string
-      message: string
-      nickname: string
-    }[]
-  >([])
+  const [result, setResult] = useState<JobsApplyListProp[]>([])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -342,17 +342,7 @@ export function useJobsApplyList(daoAddress: string, chainId: number) {
           return
         }
         setTotal(data.total)
-        const list: {
-          account: string
-          applyId: number
-          applyRole: string
-          applyTime: number
-          avatar: string
-          chainId: number
-          daoAddress: string
-          message: string
-          nickname: string
-        }[] = data.map((item: any) => ({
+        const list: JobsApplyListProp[] = data.map((item: any) => ({
           account: item.account,
           applyId: item.applyId,
           applyRole: item.applyRole,
@@ -371,7 +361,7 @@ export function useJobsApplyList(daoAddress: string, chainId: number) {
         console.error('useJobsApplyList', error)
       }
     })()
-  }, [chainId, currentPage, daoAddress])
+  }, [chainId, currentPage, daoAddress, rand])
 
   return useMemo(
     () => ({

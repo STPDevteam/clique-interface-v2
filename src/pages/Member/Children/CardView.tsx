@@ -7,14 +7,15 @@ import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
+import { JobsListProps } from 'hooks/useBackedDaoServer'
 
-const JobsType: any = {
+export const JobsType: any = {
   A_superAdmin: 'Super Admin',
   B_admin: 'Admin',
   C_member: 'Member'
 }
 
-export default function CardView({ result }: any) {
+export default function CardView({ result }: { result: JobsListProps[] }) {
   return (
     <Box
       sx={{
@@ -27,13 +28,13 @@ export default function CardView({ result }: any) {
         padding: '20px 0'
       }}
     >
-      {result.map((item: any) => (
-        <Box key={item}>
+      {result.map((item: JobsListProps) => (
+        <Box key={item.account + item.jobId}>
           <Card
             sx={{
               position: 'relative',
-              width: '100%',
-              minWidth: 220,
+              // width: '100%',
+              width: 220,
               height: 226,
               textAlign: 'center',
               border: '1px solid #d4d7e2',

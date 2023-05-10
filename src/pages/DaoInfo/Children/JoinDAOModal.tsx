@@ -35,13 +35,13 @@ export default function JoinDAOModal({
   }, [history])
 
   return (
-    <Modal maxWidth="608px" width="100%" customIsOpen={open} closeIcon customOnDismiss={handleCloseModal} BackdropClick>
+    <Modal maxWidth="482px" width="100%" customIsOpen={open} closeIcon customOnDismiss={handleCloseModal} BackdropClick>
       <Box
         display="grid"
-        gap="24px"
-        width="100%"
         padding="32px"
         textAlign={'center'}
+        width="100%"
+        height="480px"
         sx={{
           '& img': {
             margin: 'auto'
@@ -53,16 +53,30 @@ export default function JoinDAOModal({
           <Image width={83} src={cliqueIcon}></Image>
         </Box>
         <Image width={147} height={147} src={daoInfo?.daoLogo || ''}></Image>
-        <Typography variant="inherit" fontSize={24} fontWeight={600}>
+        <Typography variant="inherit" fontSize={24} fontWeight={600} color={'#3F5170'}>
           {daoInfo?.name}
         </Typography>
-        <Typography variant="inherit" fontSize={14} fontWeight={400} color="#80829F">
+        <Typography
+          variant="inherit"
+          sx={{
+            display: '-webkit-box',
+            WebkitBoxOrient: 'vertical',
+            WebkitLineClamp: 3,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+          height={66}
+          lineHeight={'21px'}
+          fontSize={14}
+          fontWeight={400}
+          color="#80829F"
+        >
           {daoInfo?.description}
         </Typography>
         <Typography variant="inherit">
           Member <span style={{ fontWeight: 600 }}>{membersInfo && formatMillion(membersInfo?.members)}</span>
         </Typography>
-        <Button onClick={onClick} disabled={disable}>
+        <Button onClick={onClick} disabled={disable} height="40px">
           {status}
         </Button>
       </Box>
