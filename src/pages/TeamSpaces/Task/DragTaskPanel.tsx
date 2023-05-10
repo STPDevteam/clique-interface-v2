@@ -11,21 +11,21 @@ import {
 } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import SidePanel from 'pages/Task/Children/SidePanel'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
-// import MoreVertIcon from '@mui/icons-material/MoreVert'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { ReactComponent as AddIcon } from 'assets/svg/newIcon.svg'
+import { ReactComponent as DelIcon } from 'assets/svg/del.svg'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
+import PopperCard from 'components/PopperCard'
 
 const reorder = (list: ITaskQuote[], startIndex: number, endIndex: number) => {
   const result = Array.from(list)
   const [removed] = result.splice(startIndex, 1)
   result.splice(endIndex, 0, removed)
-
   return result
 }
 
@@ -368,19 +368,53 @@ export default function DragTaskPanel() {
                             <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
                               {item.taskName}
                             </Typography>
-                            <Tooltip title="Delete" sx={{ cursor: 'pointer' }}>
-                              {/* <MoreVertIcon /> */}
-                              <DeleteIcon
-                                onClick={e => {
-                                  if (isJoined === 'C_member' || isJoined === 'noRole') return
-                                  const newState = [...taskList]
-                                  const del = newState[ind].splice(index, 1)
-                                  remove(del[0].spacesId, [del[0].taskId])
-                                  setTaskList(newState)
-                                  e.stopPropagation()
-                                }}
-                              />
-                            </Tooltip>
+                            <PopperCard
+                              width={'fit-content'}
+                              sx={{
+                                marginTop: 13
+                              }}
+                              targetElement={
+                                <Box
+                                  sx={{
+                                    width: 20,
+                                    height: 20,
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  <MoreVertIcon />
+                                </Box>
+                              }
+                            >
+                              <>
+                                <Box
+                                  sx={{
+                                    width: 168,
+                                    display: 'flex',
+                                    gap: 8,
+                                    padding: '10px',
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    '&:hover': {
+                                      cursor: 'pointer',
+                                      backgroundColor: '#005BC60F'
+                                    }
+                                  }}
+                                  onClick={e => {
+                                    if (isJoined === 'C_member') return
+                                    const newState = [...taskList]
+                                    const del = newState[ind].splice(index, 1)
+                                    remove(del[0].spacesId, [del[0].taskId])
+                                    setTaskList(newState)
+                                    e.stopPropagation()
+                                  }}
+                                >
+                                  <DelIcon />
+                                  <Typography color={'#3F5170'} fontSize={14} fontWeight={500}>
+                                    Delete
+                                  </Typography>
+                                </Box>
+                              </>
+                            </PopperCard>
                           </Box>
                           <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
                             {timeStampToFormat(item.deadline)}
@@ -423,7 +457,6 @@ export default function DragTaskPanel() {
     </Box>
   )
 }
-
 function TaskTypeBtn({ children, bgColor, number }: { children: string; bgColor: string; number: number }) {
   return (
     <Box
