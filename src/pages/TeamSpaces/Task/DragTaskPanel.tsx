@@ -388,7 +388,7 @@ export default function DragTaskPanel() {
                               <>
                                 <Box
                                   sx={{
-                                    width: 168,
+                                    width: 150,
                                     display: 'flex',
                                     gap: 8,
                                     padding: '10px',

@@ -272,8 +272,12 @@ export default function Header() {
           alignItems={'center'}
           justifyContent={'space-between'}
           sx={{
+            fontWeight: 500,
+            '& li a svg path': {
+              fill: '#0049C6'
+            },
             '& li a': {
-              color: '#0049c6',
+              color: '#3F5170',
               display: 'flex',
               alignItems: 'center',
               textDecoration: 'none'
@@ -285,8 +289,12 @@ export default function Header() {
               <HomeIcon fontSize="small" />
               Home
             </NavLink>
-            {makeBreadcrumbs.map(v => (
-              <Typography key={v} color="text.primary">
+            {makeBreadcrumbs.map((v, i) => (
+              <Typography
+                key={v}
+                color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
+                fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
+              >
                 {v}
               </Typography>
             ))}
