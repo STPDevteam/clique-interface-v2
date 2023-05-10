@@ -347,6 +347,10 @@ export default function DragTaskPanel() {
                             if (isJoined === 'C_member' || isJoined === 'noRole') return
                             showSidePanel(item)
                           }}
+                          onTouchEnd={() => {
+                            if (isJoined === 'C_member' || isJoined === 'noRole') return
+                            showSidePanel(item)
+                          }}
                           className={item.priority}
                           ref={provided.innerRef}
                           {...provided.draggableProps}

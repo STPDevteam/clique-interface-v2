@@ -1,12 +1,17 @@
 import { Box, Typography, styled, Divider, MenuList, MenuItem } from '@mui/material'
-import { ReactComponent as View } from 'assets/svg/view.svg'
-import { ReactComponent as Job } from 'assets/svg/job.svg'
-import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import { useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
+import DaoInfoAbout from 'pages/DaoInfo/Children/About'
+import Header from './AboutHeader'
+import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
+import { useDaoInfo } from 'hooks/useDaoInfo'
+import ComingSoon from 'pages/ComingSoon'
+import General from 'pages/DaoInfo/Children/Settings/General'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  width: 'fit-content',
+  maxWidth: '130px',
   margin: '16px 0 8px',
   padding: '0 14px 0 0',
   fontSize: 14,
@@ -31,45 +36,58 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   }
 }))
 
-export default function Member() {
+export default function AboutSetting() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const curDaoChainId = Number(daoChainId) as ChainId
-
-  console.log(curDaoChainId, daoAddress)
+  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
 
   const tabList = useMemo(() => {
     return [
       {
         label: 'General',
-        component: <View />
+        component: daoInfo ? (
+          <Box mt={20}>
+            <General daoInfo={daoInfo} daoChainId={curDaoChainId} />
+          </Box>
+        ) : null
       },
       {
         label: 'Token',
-        component: <Job />
+        component: <ComingSoon />
       },
       {
         label: 'Governance settings',
-        component: <Invite />
+        component: (
+          <Box mt={20}>
+            <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
+          </Box>
+        )
       },
       {
         label: 'Teamspaces',
-        component: <Job />
+        component: <ComingSoon />
       },
       {
         label: 'Member',
-        component: <Invite />
+        component: <ComingSoon />
       },
       {
         label: 'About',
-        component: <Job />
+        component: (
+          <>
+            <Header />
+            <DaoInfoAbout />
+          </>
+        )
       }
     ]
-  }, [])
+  }, [curDaoChainId, daoInfo])
   return (
     <Box
       sx={{
-        margin: '40px 110px'
+        margin: '40px 110px',
+        minWidth: 942
       }}
     >
       <Box
@@ -100,7 +118,6 @@ export default function Member() {
         sx={{
           gridTemplateColumns: { sm: '1fr 1fr 1fr 1fr 1fr 1fr', xs: 'unset' },
           display: 'grid'
-          // flexDirection: 'row',
         }}
       >
         {tabList.map(({ label }, index) => (

@@ -30,7 +30,14 @@ export default function PopperCard({
       }}
     >
       <Box width={width || '100%'}>
-        <Box onClick={handleClick}>{targetElement}</Box>
+        <Box
+          onClick={handleClick}
+          onTouchEnd={(e: any) => {
+            handleClick(e)
+          }}
+        >
+          {targetElement}
+        </Box>
         <Popper open={open} anchorEl={anchorEl} style={{ zIndex: 9999, borderColor: '#D4D7E2' }}>
           <Box
             onClick={() => setAnchorEl(null)}
