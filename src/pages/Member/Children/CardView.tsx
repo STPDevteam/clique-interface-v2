@@ -34,6 +34,10 @@ export default function CardView({ result }: { result: JobsListProps[] }) {
             sx={{
               position: 'relative',
               // width: '100%',
+              // height: '100%',
+              // aspectRatio: 'auto 220/226',
+              // minWidth: 220,
+              // minHeight: 226,
               width: 220,
               height: 226,
               textAlign: 'center',
