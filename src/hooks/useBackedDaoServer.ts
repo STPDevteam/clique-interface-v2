@@ -41,7 +41,7 @@ export function useMyJoinedDao() {
       }
       setLoading(true)
       try {
-        const res = await getMyJoinedDao(account)
+        const res = await getMyJoinedDao()
         setLoading(false)
         const data = res.data.data
         if (!data) {

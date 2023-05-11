@@ -6,25 +6,32 @@ import { timeStampToFormat } from 'utils/dao'
 import Select from 'components/Select/SearchSelect'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
-import React, { SetStateAction, useCallback, useMemo, useState } from 'react'
+import React, { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import assign from 'assets/images/assign.png'
 import select from 'assets/images/select.png'
 import dateIcon from 'assets/images/date.png'
 import proposalIcon from 'assets/images/proposal.png'
 import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { ProposalListBaseProp, useCreateTask, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
+import {
+  ProposalListBaseProp,
+  useCreateTask,
+  useGetTaskDetail,
+  useJobsList,
+  useUpdateTask
+} from 'hooks/useBackedTaskServer'
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
 import { shortenAddress } from 'utils'
+import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'row',
   alignItems: 'center',
-  margin: '60px 0 0',
+  margin: '80px 0 0',
   '& button': {
     border: '1px solid #0049c6'
   }
@@ -77,14 +84,14 @@ const TaskStatus: any = {
   'Not started': 'A_notStarted',
   'In progress': 'B_inProgress',
   Done: 'C_done',
-  'Not status': 'D_notStatus'
+  'No status': 'D_notStatus'
 }
 
 export const MapTaskStatus: any = {
   A_notStarted: 'Not started',
   B_inProgress: 'In progress',
   C_done: 'Done',
-  D_notStatus: 'Not status'
+  D_notStatus: 'No status'
 }
 
 // const PriorityType: any = {
@@ -99,7 +106,7 @@ export const MapPriorityType: any = {
   C_Low: 'Low'
 }
 
-const statusList = ['Not started', 'In progress', 'Done', 'Not status']
+const statusList = ['Not started', 'In progress', 'Done', 'No status']
 // const priorityList = ['High', 'Medium', 'Low']
 
 export default function SidePanel({
@@ -155,22 +162,28 @@ export default function SidePanel({
   )
 
   const isSmDown = useBreakpoint('sm')
+  const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
   const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
   const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
   const [proposal, setProposal] = useState(updateProposal ?? '')
   const [value, setValue] = useState(editData?.taskName ?? '')
   const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
+  const [content, setContent] = useState<any>(taskDetailData?.content ?? '')
   const create = useCreateTask()
   const update = useUpdateTask()
   const { showModal } = useModal()
+
+  useEffect(() => {
+    setContent(taskDetailData?.content)
+  }, [taskDetailData?.content])
 
   const createCallback = useCallback(() => {
     if (!TeamSpacesInfo || !value) return
 
     create(
       assignees,
-      '',
+      content,
       endTime,
       priority,
       Number(proposal),
@@ -184,14 +197,27 @@ export default function SidePanel({
         showModal(<MessageBox type="success">Create task success</MessageBox>)
       } else showModal(<MessageBox type="failure">Something wrong</MessageBox>)
     })
-  }, [TeamSpacesInfo, assignees, create, currentStatus, endTime, onDismiss, priority, proposal, showModal, value])
+  }, [
+    TeamSpacesInfo,
+    assignees,
+    content,
+    create,
+    currentStatus,
+    endTime,
+    onDismiss,
+    priority,
+    proposal,
+    showModal,
+    value
+  ])
 
   const updateCallback = useCallback(() => {
     if (!editData) return
     update(
       assignees,
-      '',
+      content,
       endTime,
+      false,
       priority,
       Number(proposal),
       '0',
@@ -205,7 +231,7 @@ export default function SidePanel({
       showModal(<MessageBox type="success">Update success</MessageBox>)
       console.log(res)
     })
-  }, [assignees, currentStatus, editData, endTime, onDismiss, priority, proposal, showModal, update, value])
+  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, showModal, update, value])
 
   const getActions = useCallback(() => {
     if (editData) {
@@ -243,7 +269,15 @@ export default function SidePanel({
         open={open}
         onClose={toggleDrawer}
       >
-        <Box sx={{ marginLeft: { sm: 20, xs: 0 }, marginTop: { sm: 20, xs: 10 } }}>
+        <Box
+          sx={{
+            marginLeft: { sm: 20, xs: 0 },
+            marginTop: { sm: 20, xs: 10 },
+            '& button': {
+              gap: 6
+            }
+          }}
+        >
           <Typography
             sx={{ cursor: 'pointer' }}
             fontWeight={600}
@@ -312,6 +346,7 @@ export default function SidePanel({
             onChange={(value: any) => setPriority(value)}
           /> */}
           <RadioGroup
+            sx={{ marginLeft: 10 }}
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
             name="row-radio-buttons-group"
@@ -323,13 +358,20 @@ export default function SidePanel({
               control={<Radio />}
               label="High"
               sx={{
-                '&::after': {
-                  content: "''",
-                  width: 4,
-                  height: 16,
-                  marginLeft: 4,
-                  backgroundColor: '#E46767'
+                marginRight: 10,
+                '& svg path': {
+                  fill: '#E46767'
+                },
+                '& .Mui-checked svg path': {
+                  fill: '#E46767'
                 }
+                // '&::after': {
+                //   content: "''",
+                //   width: 4,
+                //   height: 16,
+                //   marginLeft: 4,
+                //   backgroundColor: '#E46767'
+                // }
               }}
             />
             <FormControlLabel
@@ -337,13 +379,20 @@ export default function SidePanel({
               control={<Radio />}
               label="Medium"
               sx={{
-                '&::after': {
-                  content: "''",
-                  width: 4,
-                  height: 16,
-                  marginLeft: 4,
-                  backgroundColor: '#EFCC97'
+                marginRight: 10,
+                '& svg path': {
+                  fill: '#EFCC97'
+                },
+                '& .Mui-checked svg path': {
+                  fill: '#EFCC97'
                 }
+                // '&::after': {
+                //   content: "''",
+                //   width: 4,
+                //   height: 16,
+                //   marginLeft: 4,
+                //   backgroundColor: '#EFCC97'
+                // }
               }}
             />
             <FormControlLabel
@@ -351,13 +400,20 @@ export default function SidePanel({
               control={<Radio />}
               label="Low"
               sx={{
-                '&::after': {
-                  content: "''",
-                  width: 4,
-                  height: 16,
-                  marginLeft: 4,
-                  backgroundColor: '#CAE7ED'
+                marginRight: 10,
+                '& svg path': {
+                  fill: '#CAE7ED'
+                },
+                '& .Mui-checked svg path': {
+                  fill: '#CAE7ED'
                 }
+                // '&::after': {
+                //   content: "''",
+                //   width: 4,
+                //   height: 16,
+                //   marginLeft: 4,
+                //   backgroundColor: '#CAE7ED'
+                // }
               }}
             />
           </RadioGroup>
@@ -389,7 +445,7 @@ export default function SidePanel({
             {timeStampToFormat(new Date().getTime(), 'Y-MM-DD HH:mm')}
           </Typography>
         </RowContent>
-        <RowContent mt={10} mb={20}>
+        <RowContent mt={10} mb={10}>
           <Box className={'lContent'}>
             <Image src={proposalIcon}></Image>
             <Typography>Proposal</Typography>
@@ -405,6 +461,9 @@ export default function SidePanel({
               setProposal(value)
             }}
           />
+        </RowContent>
+        <RowContent>
+          <Editor content={content} setContent={setContent} />
         </RowContent>
         {!value.trim() ? <Alert severity="error">Title required</Alert> : ''}
         {/* <RowContent mt={10}>

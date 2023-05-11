@@ -19,10 +19,8 @@ export function commitErrorMsg(title: string, content: string, func: string, par
   })
 }
 
-export function getMyJoinedDao(account: string) {
-  return Axios.get('stpdao/v2/dao/left', {
-    account
-  })
+export function getMyJoinedDao() {
+  return Axios.get('stpdao/v2/jobs/left')
 }
 
 export function getHomeDaoList(
@@ -150,6 +148,7 @@ export function updateTask(
   assignAccount: string,
   content: string,
   deadline: number,
+  isDrag: boolean,
   priority: string,
   proposalId: number,
   reward: string,
@@ -163,6 +162,7 @@ export function updateTask(
     assignAccount,
     content,
     deadline,
+    isDrag,
     priority,
     proposalId,
     reward,
@@ -196,6 +196,10 @@ export function createTask(
     status,
     taskName
   })
+}
+
+export function getTaskDetail(taskId: number) {
+  return Axios.get(`stpdao/v2/task/detail/${taskId}`)
 }
 
 export function getMembersCount(daoAddress: string, chainId: number) {

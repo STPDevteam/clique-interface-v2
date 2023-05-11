@@ -9,7 +9,8 @@ import {
   updateTask,
   getProposalList,
   removeTask,
-  getMembersCount
+  getMembersCount,
+  getTaskDetail
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -46,6 +47,45 @@ export function useGetMembersInfo(daoAddress: string, chainId: ChainId) {
       }
     })()
   }, [chainId, daoAddress])
+
+  return {
+    result
+  }
+}
+
+export interface TaskDetailProps {
+  assignAccount: string
+  assignAvatar: string
+  assignNickname: string
+  content: string
+  deadline: number
+  priority: string
+  proposalId: number
+  reward: string
+  spacesId: number
+  status: string
+  taskId: number
+  taskName: string
+  weight: number
+}
+
+export function useGetTaskDetail(taskId: number) {
+  const [result, setResult] = useState<TaskDetailProps>()
+  useEffect(() => {
+    ;(async () => {
+      if (!taskId) return
+      try {
+        const res = await getTaskDetail(taskId)
+
+        if (res.data.data) {
+          setResult(res.data.data)
+        }
+      } catch (error) {
+        console.log(error)
+        setResult(undefined)
+      }
+    })()
+  }, [taskId])
 
   return {
     result
@@ -114,6 +154,7 @@ export function useUpdateTask() {
       assignAccount: string,
       content: string,
       deadline: number,
+      isDrag: boolean,
       priority: string,
       proposalId: number,
       reward: string,
@@ -127,6 +168,7 @@ export function useUpdateTask() {
         assignAccount,
         content,
         deadline,
+        isDrag,
         priority,
         proposalId,
         reward,
@@ -190,7 +232,7 @@ export function useGetTaskList(
         const res = await getTaskList((currentPage - 1) * pageSize, pageSize, spacesId, status, priority)
         setLoading(false)
         const data = res.data.data as any
-
+        console.log(data)
         if (!data) {
           setResult([])
           setTotal(0)
