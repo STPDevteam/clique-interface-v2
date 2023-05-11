@@ -5,9 +5,12 @@ import { ChainId } from 'constants/chain'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Header from './AboutHeader'
 import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
-import { useDaoInfo } from 'hooks/useDaoInfo'
+import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 // import ComingSoon from 'pages/ComingSoon'
 import General from 'pages/DaoInfo/Children/Settings/General'
+import { useActiveWeb3React } from 'hooks'
+import Admin from 'pages/DaoInfo/Children/Settings/Admin'
+import DaoContainer from 'components/DaoContainer'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
@@ -37,9 +40,11 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 
 export default function AboutSetting() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { account } = useActiveWeb3React()
   const [tabValue, setTabValue] = useState(0)
   const curDaoChainId = Number(daoChainId) as ChainId
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const tabList = useMemo(() => {
     return [
@@ -63,6 +68,14 @@ export default function AboutSetting() {
           </Box>
         )
       },
+      {
+        label: 'Admin',
+        component: (
+          <Box mt={20}>
+            <Admin />
+          </Box>
+        )
+      },
       // {
       //   label: 'Teamspaces',
       //   component: <ComingSoon />
@@ -82,56 +95,62 @@ export default function AboutSetting() {
       }
     ]
   }, [curDaoChainId, daoInfo])
+
+  const currentTabLinks = useMemo(() => {
+    const list =
+      daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN
+        ? tabList
+        : tabList.filter(i => i.label === 'About')
+
+    return list
+  }, [daoAdminLevel, tabList])
+
   return (
-    <Box
-      sx={{
-        margin: '40px 110px',
-        minWidth: 942
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-          '& button': {
-            width: 125,
-            height: 36,
-            borderRadius: '8px'
-          }
-        }}
-      >
+    <DaoContainer>
+      <Box>
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
-            mb: 20
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            '& button': {
+              width: 125,
+              height: 36,
+              borderRadius: '8px'
+            }
           }}
         >
-          <Typography fontFamily={'Inter'} fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
-            ⚙️ About & Setting
-          </Typography>
-        </Box>
-      </Box>
-      <MenuList
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          flexDirection: 'row'
-        }}
-      >
-        {tabList.map(({ label }, index) => (
-          <StyledMenuItem
-            key={label}
-            onClick={() => setTabValue(index)}
-            className={`${index === tabValue ? 'active' : ''}`}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center'
+            }}
           >
-            {label}
-          </StyledMenuItem>
-        ))}
-      </MenuList>
-      <Divider />
-      {tabList[tabValue]?.component}
-    </Box>
+            <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
+              ⚙️ About & Setting
+            </Typography>
+          </Box>
+        </Box>
+        <MenuList
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            flexDirection: 'row'
+          }}
+        >
+          {currentTabLinks.map(({ label }, index) => (
+            <StyledMenuItem
+              key={label}
+              onClick={() => setTabValue(index)}
+              className={`${index === tabValue ? 'active' : ''}`}
+            >
+              {label}
+            </StyledMenuItem>
+          ))}
+        </MenuList>
+        <Divider />
+        {currentTabLinks[tabValue]?.component}
+      </Box>
+    </DaoContainer>
   )
 }

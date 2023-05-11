@@ -257,7 +257,8 @@ export default function DragTaskPanel() {
   return (
     <Box
       sx={{
-        minWidth: 942,
+        minWidth: 800,
+        overflowX: 'auto',
         width: '100%',
         position: 'relative'
       }}

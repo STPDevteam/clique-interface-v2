@@ -53,6 +53,7 @@ const Task = lazy(() => import('./Task'))
 import ComingSoon from './ComingSoon'
 import Page from './RedirectPage'
 import AboutSetting from './AboutSetting'
+import DaoBounty from './daoBounty'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -129,7 +130,7 @@ export default function App() {
                           <Route path={routes.DaoMember} exact strict component={Member} />
                           <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
                           <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoBounty} exact strict component={ComingSoon} />
+                          <Route path={routes.DaoBounty} exact strict component={DaoBounty} />
                           <Route path={routes.DaoAboutSetting} exact strict component={AboutSetting} />
                           <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />

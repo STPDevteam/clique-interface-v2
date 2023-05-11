@@ -1,7 +1,7 @@
 // import { Close } from '@mui/icons-material'
 import Button from 'components/Button/Button'
 import Modal from '../../../components/Modal/index'
-import { Typography, Box } from '@mui/material'
+import { Typography, Box, Avatar } from '@mui/material'
 import cliqueIcon from 'assets/images/cliqueIcon.png'
 // import cereIcon from 'assets/images/cereIcon.png'
 import Image from 'components/Image'
@@ -53,7 +53,9 @@ export default function JoinDAOModal({
           <div />
           <Image width={83} src={cliqueIcon}></Image>
         </Box>
-        <Image width={147} height={147} src={daoInfo?.daoLogo || ''}></Image>
+        <Box display={'flex'} justifyContent={'center'}>
+          <Avatar sx={{ width: 147, height: 147 }} src={daoInfo?.daoLogo || ''}></Avatar>
+        </Box>
         <Typography variant="inherit" fontSize={24} fontWeight={600} color={'#3F5170'}>
           {daoInfo?.name}
         </Typography>

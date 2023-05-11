@@ -2,19 +2,15 @@ import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
-import { useCallback } from 'react'
-import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
-import { useMemberJoinDao } from 'hooks/useBackedDaoServer'
+import { useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
-import { BlackButton } from 'components/Button/Button'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
 import GitHubIcon from '@mui/icons-material/GitHub'
-import { useWalletModalToggle } from 'state/application/hooks'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import CategoryChips from 'pages/DaoInfo/CategoryChips'
@@ -44,18 +40,6 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledJoin = styled(Box)(({ theme }) => ({
-  '& button': {
-    borderRadius: '8px'
-  },
-  '& .joined': {
-    backgroundColor: theme.palette.text.disabled,
-    '&:hover': {
-      backgroundColor: theme.palette.text.disabled
-    }
-  }
-}))
-
 export default function Header() {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
@@ -66,19 +50,6 @@ export default function Header() {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-  const { isJoined, switchJoin } = useMemberJoinDao(backedDaoInfo?.joinSwitch || false, backedDaoInfo?.members || 0)
-  const walletModalToggle = useWalletModalToggle()
-
-  const toSwitchJoin = useCallback(
-    async (join: boolean) => {
-      if (!account) {
-        walletModalToggle()
-        return
-      }
-      switchJoin(join, curDaoChainId, daoAddress)
-    },
-    [account, curDaoChainId, daoAddress, switchJoin, walletModalToggle]
-  )
 
   return (
     <Box
@@ -102,19 +73,6 @@ export default function Header() {
                   <Typography variant="h5">{daoInfo?.name || '--'}</Typography>
                   {backedDaoInfo?.verified && <AuthIcon />}
                   <AdminTag level={daoAdminLevel} />
-                  <StyledJoin>
-                    <BlackButton
-                      width="79px"
-                      height="32px"
-                      className={isJoined ? 'joined' : ''}
-                      onClick={() => {
-                        if (daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN) return
-                        toSwitchJoin(!isJoined)
-                      }}
-                    >
-                      {isJoined ? 'Followed' : 'Follow'}
-                    </BlackButton>
-                  </StyledJoin>
                 </Stack>
               </Box>
               <Box display={'flex'} justifyContent="space-between" mb={6} flexWrap="wrap">

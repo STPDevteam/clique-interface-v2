@@ -11,6 +11,7 @@ import InviteUser from './Children/InviteUser'
 import { useIsJoined, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
+import DaoContainer from 'components/DaoContainer'
 // import OpenJobs from './Children/OpenJobs'
 
 const StyledTabs = styled('div')(({ theme }) => ({
@@ -102,76 +103,73 @@ export default function Member() {
           }
         ]
   return (
-    <Box
-      sx={{
-        margin: '48px 110px'
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexDirection: 'row',
-          '& button': {
-            width: 125,
-            height: 36,
-            borderRadius: '8px'
-          }
-        }}
-      >
+    <DaoContainer>
+      <Box>
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            mb: 20,
-            '& svg path': {
-              fill: '#0049C6'
-            },
-            '& p': {
-              fontWeight: 600,
-              fontSize: 30,
-              textAlign: 'left',
-              color: '#3f5170'
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            '& button': {
+              width: 125,
+              height: 36,
+              borderRadius: '8px'
             }
           }}
         >
-          <MemberIcon />
-          <Typography>Member</Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              mb: 20,
+              '& svg path': {
+                fill: '#0049C6'
+              },
+              '& p': {
+                fontWeight: 600,
+                fontSize: 30,
+                textAlign: 'left',
+                color: '#3f5170'
+              }
+            }}
+          >
+            <MemberIcon />
+            <Typography>Member</Typography>
+          </Box>
+          {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}
         </Box>
-        {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}
-      </Box>
-      <Typography
-        variant="h5"
-        fontWeight={400}
-        lineHeight={'20px'}
-        sx={{
-          width: '700px',
-          textAlign: 'left',
-          color: '#3f5170',
-          fontSize: 14
-        }}
-      >
-        Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications to
-        receive information about new openings.
-      </Typography>
-      <StyledTabs>
-        <Tabs value={tabValue}>
-          {tabList.map((item, idx) => (
-            <Tab
-              key={item.label + idx}
-              icon={item.icon}
-              iconPosition="start"
-              label={item.label}
-              onClick={() => setTabValue(idx)}
-              sx={{ gap: 10 }}
-              className={tabValue === idx ? 'active' : ''}
-            ></Tab>
-          ))}
-        </Tabs>
-      </StyledTabs>
-      <Divider />
-      {/* {tabList.length === 2 ? (
+        <Typography
+          variant="h5"
+          fontWeight={400}
+          lineHeight={'20px'}
+          sx={{
+            width: '700px',
+            textAlign: 'left',
+            color: '#3f5170',
+            fontSize: 14
+          }}
+        >
+          Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
+          to receive information about new openings.
+        </Typography>
+        <StyledTabs>
+          <Tabs value={tabValue}>
+            {tabList.map((item, idx) => (
+              <Tab
+                key={item.label + idx}
+                icon={item.icon}
+                iconPosition="start"
+                label={item.label}
+                onClick={() => setTabValue(idx)}
+                sx={{ gap: 10 }}
+                className={tabValue === idx ? 'active' : ''}
+              ></Tab>
+            ))}
+          </Tabs>
+        </StyledTabs>
+        <Divider />
+        {/* {tabList.length === 2 ? (
         tabValue === 0 ? (
           <CardView result={jobsList} />
         ) : (
@@ -189,15 +187,16 @@ export default function Member() {
       ) : (
         <InviteUser />
       )} */}
-      {tabList.length === 1 ? (
-        <CardView result={jobsList} />
-      ) : tabValue === 0 ? (
-        <CardView result={jobsList} />
-      ) : tabValue === 1 ? (
-        <InviteUser />
-      ) : (
-        ''
-      )}
-    </Box>
+        {tabList.length === 1 ? (
+          <CardView result={jobsList} />
+        ) : tabValue === 0 ? (
+          <CardView result={jobsList} />
+        ) : tabValue === 1 ? (
+          <InviteUser />
+        ) : (
+          ''
+        )}
+      </Box>
+    </DaoContainer>
   )
 }
