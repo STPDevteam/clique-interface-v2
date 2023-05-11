@@ -140,7 +140,7 @@ export default function DragTaskPanel() {
     setTaskList(taskAllTypeList)
   }, [taskAllTypeList])
 
-  console.log(taskList)
+  console.log(isJoined)
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
@@ -263,8 +263,7 @@ export default function DragTaskPanel() {
       sx={{
         minWidth: 800,
         overflowX: 'auto',
-        width: '100%',
-        position: 'relative'
+        width: '100%'
       }}
     >
       <Box
@@ -272,7 +271,7 @@ export default function DragTaskPanel() {
         sx={{
           position: 'absolute',
           right: 0,
-          top: '-50px'
+          top: '145px'
         }}
       >
         {isJoined === 'C_member' ? (

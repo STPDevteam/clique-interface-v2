@@ -302,7 +302,12 @@ export default function Index() {
 
   return (
     <DaoContainer>
-      <Stack spacing={10}>
+      <Stack
+        spacing={10}
+        sx={{
+          position: 'relative'
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
