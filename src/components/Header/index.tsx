@@ -287,7 +287,7 @@ export default function Header() {
           <Breadcrumbs aria-label="breadcrumb">
             <NavLink to="/">
               <HomeIcon fontSize="small" />
-              Home
+              DAOs
             </NavLink>
             {makeBreadcrumbs.map((v, i) => (
               <Typography
