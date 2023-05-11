@@ -59,6 +59,7 @@ export default function AiChat() {
         onClick={toggleDrawer}
         sx={{
           position: 'fixed',
+          zIndex: 999999,
           right: 30,
           bottom: 30
         }}

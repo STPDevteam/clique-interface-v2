@@ -203,9 +203,9 @@ export default function LeftSider() {
       //   route: makeRouteLink(routes.DaoIdea)
       // },
       {
-        text: 'Bounty',
+        text: 'Dao Rewards',
         icon: bounty,
-        route: makeRouteLink(routes.DaoBounty)
+        route: makeRouteLink(routes.DaoInfoActivity)
       },
       {
         text: 'Member',

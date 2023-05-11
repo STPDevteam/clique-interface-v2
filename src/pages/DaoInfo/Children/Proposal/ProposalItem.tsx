@@ -61,7 +61,7 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
           href={getEtherscanLink(daoChainId, proposalInfo?.creator || '', 'address')}
           target="_blank"
         >
-          <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
+          <Typography fontSize={12} fontWeight={600} mr={8} color={theme.palette.text.primary}>
             {proposalInfo?.creator && shortenAddress(proposalInfo.creator)}
           </Typography>
         </Link>
@@ -105,12 +105,12 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
           <Skeleton animation="wave" />
         </>
       )}
-      <RowCenter mt={16}>
+      <Box display={'flex'} justifyContent={'space-between'} mt={16}>
         <RowCenter>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           {proposalInfo ? (
             <>
-              <Typography color={theme.textColor.text1} fontSize={14}>
+              <Typography color={theme.textColor.text1} fontSize={12}>
                 {proposalInfo.targetTimeString}
               </Typography>
               <ShowProposalStatusTag status={proposalInfo.status} />
@@ -119,7 +119,7 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
             <Skeleton animation="wave" width={100} />
           )}
         </RowCenter>
-      </RowCenter>
+      </Box>
     </StyledCard>
   )
 }

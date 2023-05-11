@@ -4,7 +4,7 @@ import { ProposalStatus } from 'hooks/useProposalInfo'
 export const StyledChip = styled(Chip)(
   ({ bgColor, textColor, theme }: { theme?: any; bgColor: string; textColor: string }) => ({
     fontWeight: 600,
-    marginLeft: 16,
+    marginLeft: 10,
     backgroundColor: bgColor,
     color: textColor,
     height: 24,

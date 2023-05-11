@@ -252,7 +252,7 @@ export default function Header() {
       if (v === 'about_setting') {
         return 'About & Setting'
       }
-      return capitalizeFirstLetter(v)
+      return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
     return [daoInfo.name, ..._list]
   }, [curPath, daoInfo?.name])

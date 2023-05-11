@@ -26,6 +26,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import Editor from './Editor'
 import { routes } from 'constants/routes'
+import DaoContainer from 'components/DaoContainer'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -82,7 +83,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   }, [createProposalSign, daoInfo.token])
 
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)
+    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/proposal`)
   }, [daoChainId, daoInfo.daoAddress, history])
 
   const onCreateProposal = useCallback(() => {
@@ -244,107 +245,110 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   ])
 
   return (
-    <Box>
-      <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
-      <Typography variant="h6" mt={28}>
-        Create Proposal
-      </Typography>
-      <Box display="grid" mt={20} gridTemplateColumns={{ md: '1fr 1fr', xs: 'unset' }} gap="66px">
-        <Stack spacing={20}>
-          <Input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} label="Title" />
-          <Input
-            value={introduction}
-            onChange={e => setIntroduction(e.target.value)}
-            label="Introduction"
-            placeholder="Introduction"
-          />
-          <div>
-            <LabelText>Description</LabelText>
-            <Editor content={content} setContent={setContent} />
-          </div>
-        </Stack>
-        <Box>
-          <Stack paddingTop="30px" spacing={'20px'}>
-            <Box display={'grid'} gridTemplateColumns="70px 1fr" alignItems={'center'} gap="12px 24px">
-              <LabelText>Start Time</LabelText>
-              <DateTimePicker
-                value={startTime ? new Date(startTime * 1000) : null}
-                onValue={timestamp => {
-                  setStartTime(timestamp)
-                  if (!daoInfo.isCustomVotes) {
-                    setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
-                  }
-                }}
-              ></DateTimePicker>
-              <LabelText>End Time</LabelText>
-              <DateTimePicker
-                disabled={!daoInfo.isCustomVotes}
-                minDateTime={startTime ? new Date(startTime * 1000) : undefined}
-                value={endTime ? new Date(endTime * 1000) : null}
-                onValue={timestamp => setEndTime(timestamp)}
-              ></DateTimePicker>
-            </Box>
-
-            <Box>
-              <LabelText mb={6}>Voting Type</LabelText>
-
-              {daoInfo.votingType === VotingTypes.ANY ? (
-                <StyledButtonGroup variant="outlined">
-                  <MuiButton
-                    className={voteType === VotingTypes.SINGLE ? 'active' : ''}
-                    onClick={() => setVoteType(VotingTypes.SINGLE)}
-                  >
-                    Single-voting
-                  </MuiButton>
-                  <MuiButton
-                    className={voteType === VotingTypes.MULTI ? 'active' : ''}
-                    onClick={() => setVoteType(VotingTypes.MULTI)}
-                  >
-                    Multi-voting
-                  </MuiButton>
-                </StyledButtonGroup>
-              ) : (
-                <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
-              )}
-            </Box>
-
-            <VotingOptions option={voteOption} setOption={setVoteOption} />
-
-            <Box>
-              <RowCenter>
-                <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
-                <LabelText>
-                  {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
-                </LabelText>
-              </RowCenter>
-              <RowCenter>
-                <LabelText>Balance</LabelText>
-                <LabelText>
-                  {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
-                </LabelText>
-              </RowCenter>
-            </Box>
+    <DaoContainer>
+      <Box>
+        <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
+        <Typography variant="h6" mt={28}>
+          Create Proposal
+        </Typography>
+        <Box display="grid" mt={20} gridTemplateColumns={{ md: '1fr 1fr', xs: 'unset' }} gap="66px">
+          <Stack spacing={20}>
+            <Input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} label="Title" />
+            <Input
+              value={introduction}
+              onChange={e => setIntroduction(e.target.value)}
+              label="Introduction"
+              placeholder="Introduction"
+            />
+            <div>
+              <LabelText>Description</LabelText>
+              <Editor content={content} setContent={setContent} />
+            </div>
           </Stack>
+          <Box>
+            <Stack paddingTop="30px" spacing={'20px'}>
+              <Box display={'grid'} gridTemplateColumns="70px 1fr" alignItems={'center'} gap="12px 24px">
+                <LabelText>Start Time</LabelText>
+                <DateTimePicker
+                  value={startTime ? new Date(startTime * 1000) : null}
+                  onValue={timestamp => {
+                    setStartTime(timestamp)
+                    if (!daoInfo.isCustomVotes) {
+                      setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
+                    }
+                  }}
+                ></DateTimePicker>
+                <LabelText>End Time</LabelText>
+                <DateTimePicker
+                  disabled={!daoInfo.isCustomVotes}
+                  minDateTime={startTime ? new Date(startTime * 1000) : undefined}
+                  value={endTime ? new Date(endTime * 1000) : null}
+                  onValue={timestamp => setEndTime(timestamp)}
+                ></DateTimePicker>
+              </Box>
 
-          {paramsCheck.error ? (
-            <Alert severity="error" sx={{ marginTop: 20 }}>
-              {paramsCheck.error}
-            </Alert>
-          ) : (
-            <Alert severity="success" sx={{ marginTop: 20 }}>
-              You can now create a proposal
-            </Alert>
-          )}
+              <Box>
+                <LabelText mb={6}>Voting Type</LabelText>
 
-          <Stack spacing={60} direction="row" mt={50}>
-            <OutlineButton onClick={history.goBack}>Cancel</OutlineButton>
-            <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
-              Create
-            </BlackButton>
-          </Stack>
+                {daoInfo.votingType === VotingTypes.ANY ? (
+                  <StyledButtonGroup variant="outlined">
+                    <MuiButton
+                      className={voteType === VotingTypes.SINGLE ? 'active' : ''}
+                      onClick={() => setVoteType(VotingTypes.SINGLE)}
+                    >
+                      Single-voting
+                    </MuiButton>
+                    <MuiButton
+                      className={voteType === VotingTypes.MULTI ? 'active' : ''}
+                      onClick={() => setVoteType(VotingTypes.MULTI)}
+                    >
+                      Multi-voting
+                    </MuiButton>
+                  </StyledButtonGroup>
+                ) : (
+                  <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
+                )}
+              </Box>
+
+              <VotingOptions option={voteOption} setOption={setVoteOption} />
+
+              <Box>
+                <RowCenter>
+                  <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
+                  <LabelText>
+                    {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '}
+                    {daoInfo.token?.symbol}
+                  </LabelText>
+                </RowCenter>
+                <RowCenter>
+                  <LabelText>Balance</LabelText>
+                  <LabelText>
+                    {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
+                  </LabelText>
+                </RowCenter>
+              </Box>
+            </Stack>
+
+            {paramsCheck.error ? (
+              <Alert severity="error" sx={{ marginTop: 20 }}>
+                {paramsCheck.error}
+              </Alert>
+            ) : (
+              <Alert severity="success" sx={{ marginTop: 20 }}>
+                You can now create a proposal
+              </Alert>
+            )}
+
+            <Stack spacing={60} direction="row" mt={50}>
+              <OutlineButton onClick={history.goBack}>Cancel</OutlineButton>
+              <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
+                Create
+              </BlackButton>
+            </Stack>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </DaoContainer>
   )
 }
 

@@ -13,12 +13,8 @@ import { ModalProvider } from 'context/ModalContext'
 import { routes } from 'constants/routes'
 import Governance from 'pages/Governance/GovernanceContainer'
 import GovernanceHome from 'pages/Governance'
-import DaoInfoBase from 'pages/DaoInfo'
 import DaoInfoLayout from 'pages/DaoInfo/DaoInfoLayout'
 import ProposalList from 'pages/DaoInfo/Children/Proposal'
-import DaoInfoActivity from 'pages/DaoInfo/Children/Activity'
-import DaoInfoSettings from 'pages/DaoInfo/Children/Settings'
-import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
@@ -130,29 +126,23 @@ export default function App() {
                           <Route path={routes.DaoMember} exact strict component={Member} />
                           <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
                           <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoBounty} exact strict component={DaoBounty} />
+                          <Route path={routes.DaoInfoActivity} exact strict component={DaoBounty} />
                           <Route path={routes.DaoAboutSetting} exact strict component={AboutSetting} />
                           <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamTask} exact strict component={Task} />
                           <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamTrash} exact strict component={ComingSoon} />
-                          <DaoInfoBase>
-                            {/* <Route path={routes.DaoInfo} exact strict component={ProposalList} /> */}
-                            <Route path={routes.Proposal} exact strict component={ProposalList} />
-                            <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
-                            <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
-                            <Route path={routes.DaoInfoActivity} exact strict component={DaoInfoActivity} />
-                            {/* <Route path={routes.CreatePublicSale} exact strict component={CreatePublicSale} /> */}
-                            <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
-                            <Route path={routes.DaoInfoAbout} exact strict component={DaoInfoAbout} />
-                            <Route path={routes.DaoInfoSettings} exact strict component={DaoInfoSettings} />
-                            <Route
-                              exact
-                              path={routes.DaoInfo}
-                              render={() => <Redirect to={location.pathname + '/proposal'} />}
-                            />
-                          </DaoInfoBase>
+                          <Route path={routes.Proposal} exact strict component={ProposalList} />
+                          <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
+                          <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
+                          <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
+
+                          <Route
+                            exact
+                            path={routes.DaoInfo}
+                            render={() => <Redirect to={location.pathname + '/proposal'} />}
+                          />
                         </Switch>
                       </DaoInfoLayout>
                     )}

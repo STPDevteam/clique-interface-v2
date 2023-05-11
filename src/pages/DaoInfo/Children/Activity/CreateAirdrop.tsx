@@ -34,6 +34,7 @@ import TransacitonPendingModal from 'components/Modal/TransactionModals/Transact
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import useBreakpoint from 'hooks/useBreakpoint'
+import DaoContainer from 'components/DaoContainer'
 
 const createAirdropInputFieldList = [
   'Username For Twitter',
@@ -72,7 +73,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   const theme = useTheme()
   const { hideModal, showModal } = useModal()
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/active_info`)
+    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/dao_rewards`)
   }, [daoChainId, daoInfo.daoAddress, history])
   const { account, chainId, library } = useActiveWeb3React()
 
@@ -340,159 +341,161 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   ])
 
   return (
-    <Box>
-      <Back sx={{ margin: 0 }} text="All DAO Rewards" event={toList} />
-      <Box mt={20}>
-        <ContainerWrapper maxWidth={709}>
-          <Typography variant="h6">Create A DAO Rewards Event</Typography>
-          <Stack spacing={20} mt={20}>
-            <div>
-              <StyledText mb={10}>Event Title</StyledText>
-              <Input value={title} onChange={e => setTitle(e.target.value || '')} placeholder="Title" />
-            </div>
-            <div>
-              <StyledText mb={10}>Event Description And Rule</StyledText>
-              <Editor content={description} setContent={setDescription} />
-            </div>
+    <DaoContainer>
+      <Box>
+        <Back sx={{ margin: 0 }} text="All DAO Rewards" event={toList} />
+        <Box mt={20}>
+          <ContainerWrapper maxWidth={709}>
+            <Typography variant="h6">Create A DAO Rewards Event</Typography>
+            <Stack spacing={20} mt={20}>
+              <div>
+                <StyledText mb={10}>Event Title</StyledText>
+                <Input value={title} onChange={e => setTitle(e.target.value || '')} placeholder="Title" />
+              </div>
+              <div>
+                <StyledText mb={10}>Event Description And Rule</StyledText>
+                <Editor content={description} setContent={setDescription} />
+              </div>
 
-            <Box sx={{ mt: { xs: '65px !important', sm: 0 } }}>
-              <StyledText mt={30}>Collect Information For Users</StyledText>
-              <RowCenter>
-                <StyledText fontWeight={400} maxWidth="60%">
-                  Only Address Of Participating Users Are Collected By Default
-                </StyledText>
-                <StyledText>Required Field</StyledText>
-              </RowCenter>
-              <InputField fieldList={fieldList} onFieldList={list => setFieldList(list)} />
-            </Box>
+              <Box sx={{ mt: { xs: '65px !important', sm: 0 } }}>
+                <StyledText mt={30}>Collect Information For Users</StyledText>
+                <RowCenter>
+                  <StyledText fontWeight={400} maxWidth="60%">
+                    Only Address Of Participating Users Are Collected By Default
+                  </StyledText>
+                  <StyledText>Required Field</StyledText>
+                </RowCenter>
+                <InputField fieldList={fieldList} onFieldList={list => setFieldList(list)} />
+              </Box>
 
-            <Box>
-              <ChainSelect
-                label="Please Select Network"
-                chainList={ChainList}
-                selectedChain={network}
-                onChange={e => setNetwork(e)}
-              ></ChainSelect>
-            </Box>
+              <Box>
+                <ChainSelect
+                  label="Please Select Network"
+                  chainList={ChainList}
+                  selectedChain={network}
+                  onChange={e => setNetwork(e)}
+                ></ChainSelect>
+              </Box>
 
-            {isZero(airdropAddress) ? (
-              <Input
-                label="DAO Rewards token"
-                value={network ? Currency.get_ETH_TOKEN(network.id as ChainId)?.symbol || '' : ''}
-                readOnly
-                rightLabel={
-                  <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress('')}>
-                    Use Token
-                  </Link>
-                }
-              />
-            ) : (
-              <Input
-                value={airdropAddress}
-                errSet={() => setAirdropAddress('')}
-                onChange={e => setAirdropAddress(e.target.value || '')}
-                placeholder="0x"
-                label="Please Enter The Contract Address"
-                rightLabel={
-                  <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress(ZERO_ADDRESS)}>
-                    Use Native Token
-                  </Link>
-                }
-                type="address"
-              />
-            )}
+              {isZero(airdropAddress) ? (
+                <Input
+                  label="DAO Rewards token"
+                  value={network ? Currency.get_ETH_TOKEN(network.id as ChainId)?.symbol || '' : ''}
+                  readOnly
+                  rightLabel={
+                    <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress('')}>
+                      Use Token
+                    </Link>
+                  }
+                />
+              ) : (
+                <Input
+                  value={airdropAddress}
+                  errSet={() => setAirdropAddress('')}
+                  onChange={e => setAirdropAddress(e.target.value || '')}
+                  placeholder="0x"
+                  label="Please Enter The Contract Address"
+                  rightLabel={
+                    <Link underline="none" sx={{ cursor: 'pointer' }} onClick={() => setAirdropAddress(ZERO_ADDRESS)}>
+                      Use Native Token
+                    </Link>
+                  }
+                  type="address"
+                />
+              )}
 
-            <RowCenter flexWrap={'wrap'}>
-              <StyledText>
-                Token Name:{' '}
-                <span style={{ color: theme.palette.text.primary }}>
-                  {airdropCurrency?.name || '--'} ({airdropCurrency?.symbol || '--'})
-                </span>
-              </StyledText>
-              {airdropTokenSupply && (
+              <RowCenter flexWrap={'wrap'}>
                 <StyledText>
-                  Total Supply:{' '}
+                  Token Name:{' '}
                   <span style={{ color: theme.palette.text.primary }}>
-                    {airdropTokenSupply.toSignificant(6, { groupSeparator: ',' })}
+                    {airdropCurrency?.name || '--'} ({airdropCurrency?.symbol || '--'})
                   </span>
                 </StyledText>
-              )}
-            </RowCenter>
+                {airdropTokenSupply && (
+                  <StyledText>
+                    Total Supply:{' '}
+                    <span style={{ color: theme.palette.text.primary }}>
+                      {airdropTokenSupply.toSignificant(6, { groupSeparator: ',' })}
+                    </span>
+                  </StyledText>
+                )}
+              </RowCenter>
 
-            <InputNumerical
-              value={inputValue}
-              onChange={e => setInputValue(e.target.value)}
-              label="Total Amount For DAO Rewards"
-              balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
-              onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
-            />
+              <InputNumerical
+                value={inputValue}
+                onChange={e => setInputValue(e.target.value)}
+                label="Total Amount For DAO Rewards"
+                balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
+                onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
+              />
 
-            <Box
-              display={'grid'}
-              sx={{
-                gridTemplateColumns: { sm: '1fr 1fr 1fr 1fr', xs: '1fr' }
-              }}
-            >
-              <Box>
-                <StyledText>Event Start Time</StyledText>
-                <DateTimePicker
-                  inputWidth={isSmDown ? '100%' : undefined}
-                  value={eventStartTime ? new Date(eventStartTime * 1000) : null}
-                  onValue={timestamp => {
-                    setEventStartTime(timestamp)
-                  }}
-                ></DateTimePicker>
+              <Box
+                display={'grid'}
+                sx={{
+                  gridTemplateColumns: { sm: '1fr 1fr 1fr 1fr', xs: '1fr' }
+                }}
+              >
+                <Box>
+                  <StyledText>Event Start Time</StyledText>
+                  <DateTimePicker
+                    inputWidth={isSmDown ? '100%' : undefined}
+                    value={eventStartTime ? new Date(eventStartTime * 1000) : null}
+                    onValue={timestamp => {
+                      setEventStartTime(timestamp)
+                    }}
+                  ></DateTimePicker>
+                </Box>
+                <Box>
+                  <StyledText>Event End Time</StyledText>
+                  <DateTimePicker
+                    inputWidth={isSmDown ? '100%' : undefined}
+                    disabled={!eventStartTime}
+                    minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
+                    value={eventEndTime ? new Date(eventEndTime * 1000) : null}
+                    onValue={timestamp => setEventEndTime(timestamp)}
+                  ></DateTimePicker>
+                </Box>
+                <Box>
+                  <StyledText>DAO Rewards Start Time</StyledText>
+                  <DateTimePicker
+                    inputWidth={isSmDown ? '100%' : undefined}
+                    disabled={!eventEndTime}
+                    minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
+                    value={airdropStartTime ? new Date(airdropStartTime * 1000) : null}
+                    onValue={timestamp => setAirdropStartTime(timestamp)}
+                  ></DateTimePicker>
+                </Box>
+                <Box>
+                  <StyledText>DAO Rewards End Time</StyledText>
+                  <DateTimePicker
+                    inputWidth={isSmDown ? '100%' : undefined}
+                    disabled={!airdropStartTime}
+                    minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}
+                    value={airdropEndTime ? new Date(airdropEndTime * 1000) : null}
+                    onValue={timestamp => setAirdropEndTime(timestamp)}
+                  ></DateTimePicker>
+                </Box>
               </Box>
-              <Box>
-                <StyledText>Event End Time</StyledText>
-                <DateTimePicker
-                  inputWidth={isSmDown ? '100%' : undefined}
-                  disabled={!eventStartTime}
-                  minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
-                  value={eventEndTime ? new Date(eventEndTime * 1000) : null}
-                  onValue={timestamp => setEventEndTime(timestamp)}
-                ></DateTimePicker>
-              </Box>
-              <Box>
-                <StyledText>DAO Rewards Start Time</StyledText>
-                <DateTimePicker
-                  inputWidth={isSmDown ? '100%' : undefined}
-                  disabled={!eventEndTime}
-                  minDateTime={eventEndTime ? new Date(eventEndTime * 1000) : undefined}
-                  value={airdropStartTime ? new Date(airdropStartTime * 1000) : null}
-                  onValue={timestamp => setAirdropStartTime(timestamp)}
-                ></DateTimePicker>
-              </Box>
-              <Box>
-                <StyledText>DAO Rewards End Time</StyledText>
-                <DateTimePicker
-                  inputWidth={isSmDown ? '100%' : undefined}
-                  disabled={!airdropStartTime}
-                  minDateTime={airdropStartTime ? new Date(airdropStartTime * 1000) : undefined}
-                  value={airdropEndTime ? new Date(airdropEndTime * 1000) : null}
-                  onValue={timestamp => setAirdropEndTime(timestamp)}
-                ></DateTimePicker>
-              </Box>
+            </Stack>
+
+            {paramsCheck.error ? (
+              <Alert severity="error" sx={{ marginTop: 20 }}>
+                {paramsCheck.error}
+              </Alert>
+            ) : (
+              <Alert severity="success" sx={{ marginTop: 20 }}>
+                You can now create a DAO Rewards
+              </Alert>
+            )}
+
+            <Box display={'flex'} justifyContent="center" mt={40}>
+              <BlackButton width="166px" onClick={create} disabled={paramsCheck.disabled}>
+                Create
+              </BlackButton>
             </Box>
-          </Stack>
-
-          {paramsCheck.error ? (
-            <Alert severity="error" sx={{ marginTop: 20 }}>
-              {paramsCheck.error}
-            </Alert>
-          ) : (
-            <Alert severity="success" sx={{ marginTop: 20 }}>
-              You can now create a DAO Rewards
-            </Alert>
-          )}
-
-          <Box display={'flex'} justifyContent="center" mt={40}>
-            <BlackButton width="166px" onClick={create} disabled={paramsCheck.disabled}>
-              Create
-            </BlackButton>
-          </Box>
-        </ContainerWrapper>
+          </ContainerWrapper>
+        </Box>
       </Box>
-    </Box>
+    </DaoContainer>
   )
 }

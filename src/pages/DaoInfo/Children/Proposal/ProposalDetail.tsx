@@ -12,6 +12,7 @@ import VoteProgress from './detail/VoteProgress'
 import VoteInfo from './detail/Info'
 import { useProposalDetailInfo } from 'hooks/useProposalInfo'
 import { useActiveWeb3React } from 'hooks'
+import DaoContainer from 'components/DaoContainer'
 
 export default function ProposalDetail() {
   const { chainId: daoChainId, address: daoAddress, proposalId } = useParams<{
@@ -23,7 +24,9 @@ export default function ProposalDetail() {
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
 
   return daoInfo ? (
-    <DetailBox daoChainId={curDaoChainId} daoInfo={daoInfo} proposalId={Number(proposalId)} />
+    <DaoContainer>
+      <DetailBox daoChainId={curDaoChainId} daoInfo={daoInfo} proposalId={Number(proposalId)} />
+    </DaoContainer>
   ) : (
     <Loading />
   )
@@ -44,7 +47,7 @@ function DetailBox({
   const proposalDetailInfo = useProposalDetailInfo(daoInfo.daoAddress, daoChainId, proposalId, account || undefined)
 
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}`)
+    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/proposal`)
   }, [daoChainId, daoInfo.daoAddress, history])
 
   return proposalDetailInfo ? (
