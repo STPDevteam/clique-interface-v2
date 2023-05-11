@@ -222,7 +222,7 @@ const statusFilter = [
   { value: 'A_notStarted', label: 'Not started' },
   { value: 'B_inProgress', label: 'In progress' },
   { value: 'C_done', label: 'Done' },
-  { value: 'D_notStatus', label: 'Not status' }
+  { value: 'D_notStatus', label: 'No status' }
 ]
 
 const AllTaskTable = function({ priority, status }: { priority: string | undefined; status: string | undefined }) {

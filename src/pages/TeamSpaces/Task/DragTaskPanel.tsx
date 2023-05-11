@@ -10,7 +10,6 @@ import {
   useUpdateTask
 } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
-import SidePanel from 'pages/Task/Children/SidePanel'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -21,6 +20,7 @@ import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } 
 import { useParams } from 'react-router-dom'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import PopperCard from 'components/PopperCard'
+import TaskDetail from 'pages/Task/Children/TaskDetail'
 
 const reorder = (list: ITaskQuote[], startIndex: number, endIndex: number) => {
   const result = Array.from(list)
@@ -109,7 +109,7 @@ export default function DragTaskPanel() {
   const showSidePanel = useCallback(
     editData => {
       showModal(
-        <SidePanel
+        <TaskDetail
           open={true}
           onDismiss={() => {
             setRand(Math.random())
@@ -118,11 +118,13 @@ export default function DragTaskPanel() {
           proposalBaseList={result}
           TeamSpacesInfo={TeamSpacesInfo}
           editData={editData}
+          identity={isJoined || ''}
         />
       )
     },
-    [TeamSpacesInfo, hideModal, result, showModal]
+    [TeamSpacesInfo, hideModal, isJoined, result, showModal]
   )
+
   const taskAllTypeList = useMemo(() => {
     const _arr: ITaskItem[][] = []
     type.map((item, index) => {
@@ -169,6 +171,7 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].assignAccount,
           '',
           taskList[sInd][source.index].deadline,
+          true,
           taskList[sInd][source.index].priority,
           taskList[sInd][source.index].proposalId,
           taskList[sInd][source.index].reward,
@@ -208,6 +211,7 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].assignAccount,
           '',
           taskList[sInd][source.index].deadline,
+          true,
           taskList[sInd][source.index].priority,
           taskList[sInd][source.index].proposalId,
           taskList[sInd][source.index].reward,
@@ -345,11 +349,9 @@ export default function DragTaskPanel() {
                             }
                           }}
                           onClick={() => {
-                            if (isJoined === 'C_member' || isJoined === 'noRole') return
                             showSidePanel(item)
                           }}
                           onTouchEnd={() => {
-                            if (isJoined === 'C_member' || isJoined === 'noRole') return
                             showSidePanel(item)
                           }}
                           className={item.priority}
@@ -373,53 +375,57 @@ export default function DragTaskPanel() {
                             <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
                               {item.taskName}
                             </Typography>
-                            <PopperCard
-                              width={'fit-content'}
-                              sx={{
-                                marginTop: 13
-                              }}
-                              targetElement={
-                                <Box
-                                  sx={{
-                                    width: 20,
-                                    height: 20,
-                                    cursor: 'pointer'
-                                  }}
-                                >
-                                  <MoreVertIcon />
-                                </Box>
-                              }
-                            >
-                              <>
-                                <Box
-                                  sx={{
-                                    width: 150,
-                                    display: 'flex',
-                                    gap: 8,
-                                    padding: '10px',
-                                    alignItems: 'center',
-                                    flexDirection: 'row',
-                                    '&:hover': {
-                                      cursor: 'pointer',
-                                      backgroundColor: '#005BC60F'
-                                    }
-                                  }}
-                                  onClick={e => {
-                                    if (isJoined === 'C_member') return
-                                    const newState = [...taskList]
-                                    const del = newState[ind].splice(index, 1)
-                                    remove(del[0].spacesId, [del[0].taskId])
-                                    setTaskList(newState)
-                                    e.stopPropagation()
-                                  }}
-                                >
-                                  <DelIcon />
-                                  <Typography color={'#3F5170'} fontSize={14} fontWeight={500}>
-                                    Delete
-                                  </Typography>
-                                </Box>
-                              </>
-                            </PopperCard>
+                            {isJoined === 'C_member' ? (
+                              ''
+                            ) : (
+                              <PopperCard
+                                width={'fit-content'}
+                                sx={{
+                                  marginTop: 13
+                                }}
+                                targetElement={
+                                  <Box
+                                    sx={{
+                                      width: 20,
+                                      height: 20,
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    <MoreVertIcon />
+                                  </Box>
+                                }
+                              >
+                                <>
+                                  <Box
+                                    sx={{
+                                      width: 150,
+                                      display: 'flex',
+                                      gap: 8,
+                                      padding: '10px',
+                                      alignItems: 'center',
+                                      flexDirection: 'row',
+                                      '&:hover': {
+                                        cursor: 'pointer',
+                                        backgroundColor: '#005BC60F'
+                                      }
+                                    }}
+                                    onClick={e => {
+                                      if (isJoined === 'C_member') return
+                                      const newState = [...taskList]
+                                      const del = newState[ind].splice(index, 1)
+                                      remove(del[0].spacesId, [del[0].taskId])
+                                      setTaskList(newState)
+                                      e.stopPropagation()
+                                    }}
+                                  >
+                                    <DelIcon />
+                                    <Typography color={'#3F5170'} fontSize={14} fontWeight={500}>
+                                      Delete
+                                    </Typography>
+                                  </Box>
+                                </>
+                              </PopperCard>
+                            )}
                           </Box>
                           <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
                             {timeStampToFormat(item.deadline)}

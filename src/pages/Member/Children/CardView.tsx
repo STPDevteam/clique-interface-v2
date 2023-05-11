@@ -8,6 +8,8 @@ import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import { JobsListProps } from 'hooks/useBackedDaoServer'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 export const JobsType: any = {
   A_superAdmin: 'Super Admin',
@@ -16,6 +18,7 @@ export const JobsType: any = {
 }
 
 export default function CardView({ result }: { result: JobsListProps[] }) {
+  const history = useHistory()
   return (
     <Box
       sx={{
@@ -29,7 +32,7 @@ export default function CardView({ result }: { result: JobsListProps[] }) {
       }}
     >
       {result.map((item: JobsListProps) => (
-        <Box key={item.account + item.jobId}>
+        <Box key={item.account + item.jobId} onClick={() => history.push(routes._Profile + `/${item.account}`)}>
           <Card
             sx={{
               position: 'relative',
