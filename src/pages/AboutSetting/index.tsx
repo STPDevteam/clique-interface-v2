@@ -6,13 +6,12 @@ import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Header from './AboutHeader'
 import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
 import { useDaoInfo } from 'hooks/useDaoInfo'
-import ComingSoon from 'pages/ComingSoon'
+// import ComingSoon from 'pages/ComingSoon'
 import General from 'pages/DaoInfo/Children/Settings/General'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
-  maxWidth: '130px',
-  margin: '16px 0 8px',
+  margin: '16px 40px 8px 0',
   padding: '0 14px 0 0',
   fontSize: 14,
   fontWeight: 500,
@@ -52,10 +51,10 @@ export default function AboutSetting() {
           </Box>
         ) : null
       },
-      {
-        label: 'Token',
-        component: <ComingSoon />
-      },
+      // {
+      //   label: 'Token',
+      //   component: <ComingSoon />
+      // },
       {
         label: 'Governance settings',
         component: (
@@ -64,14 +63,14 @@ export default function AboutSetting() {
           </Box>
         )
       },
-      {
-        label: 'Teamspaces',
-        component: <ComingSoon />
-      },
-      {
-        label: 'Member',
-        component: <ComingSoon />
-      },
+      // {
+      //   label: 'Teamspaces',
+      //   component: <ComingSoon />
+      // },
+      // {
+      //   label: 'Member',
+      //   component: <ComingSoon />
+      // },
       {
         label: 'About',
         component: (
@@ -116,8 +115,9 @@ export default function AboutSetting() {
       </Box>
       <MenuList
         sx={{
-          gridTemplateColumns: { sm: '1fr 1fr 1fr 1fr 1fr 1fr', xs: 'unset' },
-          display: 'grid'
+          display: 'flex',
+          justifyContent: 'flex-start',
+          flexDirection: 'row'
         }}
       >
         {tabList.map(({ label }, index) => (
