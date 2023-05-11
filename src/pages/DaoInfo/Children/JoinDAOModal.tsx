@@ -11,6 +11,7 @@ import { useGetMembersInfo } from 'hooks/useBackedTaskServer'
 import { formatMillion } from 'utils/dao'
 import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 export default function JoinDAOModal({
   onClick,
@@ -28,10 +29,10 @@ export default function JoinDAOModal({
   status: string | undefined
 }) {
   const history = useHistory()
-  const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
-  const { result: membersInfo } = useGetMembersInfo(daoAddress, (daoChainId as unknown) as ChainId)
+  const daoInfo = useDaoInfo(daoAddress, daoChainId)
+  const { result: membersInfo } = useGetMembersInfo(daoAddress, daoChainId)
   const handleCloseModal = useCallback(() => {
-    history.goBack()
+    history.replace(routes.Governance)
   }, [history])
 
   return (

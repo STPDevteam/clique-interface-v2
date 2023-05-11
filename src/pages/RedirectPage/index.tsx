@@ -38,7 +38,7 @@ export default function Page() {
     setBtnDisabled(true)
     joinApply('C_member', curDaoChainId, daoAddress, '')
       .then(() => {
-        history.push(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+        history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
         setBtnDisabled(false)
       })
       .catch(() => setBtnDisabled(false))
@@ -62,7 +62,7 @@ export default function Page() {
       setOpen(true)
     } else {
       setOpen(false)
-      history.goBack()
+      return history.replace(routes.Proposal.replace(':chainId', daoChainId).replace(':address', daoAddress))
     }
   }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
 

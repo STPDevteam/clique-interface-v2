@@ -184,7 +184,6 @@ export default function LeftSider() {
     },
     [daoAddress, daoChainId]
   )
-  console.log(myJoinedDaoList)
 
   const menuList = useMemo(
     () => [
@@ -275,6 +274,7 @@ export default function LeftSider() {
             sx={{
               marginTop: 13
             }}
+            placement="bottom-end"
             targetElement={
               <Box
                 display={'grid'}

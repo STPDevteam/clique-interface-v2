@@ -7,6 +7,7 @@ export default function PopperCard({
   sx,
   targetElement,
   children,
+  placement,
   width
 }: {
   popperSx?: SxProps<Theme>
@@ -14,6 +15,7 @@ export default function PopperCard({
   targetElement: JSX.Element
   children: JSX.Element | string | number
   width?: string
+  placement?: 'bottom-end' | 'bottom'
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = !!anchorEl
@@ -38,7 +40,7 @@ export default function PopperCard({
         >
           {targetElement}
         </Box>
-        <Popper open={open} anchorEl={anchorEl} style={{ zIndex: 9999, borderColor: '#D4D7E2' }}>
+        <Popper open={open} placement={placement} anchorEl={anchorEl} style={{ zIndex: 9999, borderColor: '#D4D7E2' }}>
           <Box
             onClick={() => setAnchorEl(null)}
             sx={{
