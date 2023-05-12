@@ -41,11 +41,20 @@ const ColSentence = styled(Box)(() => ({
   }
 }))
 
+const EditContent = styled('div')({
+  '& img': {
+    maxWidth: '50%'
+  }
+})
+
 const RowContent = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'flex-start',
   flexDirection: 'row',
   alignItems: 'center',
+  '& img': {
+    maxWidth: '50%'
+  },
   '& .lContent': {
     minWidth: 160,
     display: 'flex',
@@ -450,7 +459,7 @@ export default function TaskDetail({
                 <Typography>Date Created</Typography>
               </Box>
               <Typography fontSize={16} marginLeft={14}>
-                {timeStampToFormat(new Date().getTime(), 'Y-MM-DD HH:mm')}
+                {timeStampToFormat(taskDetailData ? taskDetailData?.createTime * 1000 : 0, 'Y-MM-DD HH:mm')}
               </Typography>
             </RowContent>
             <RowContent mt={10} mb={10}>
@@ -471,7 +480,7 @@ export default function TaskDetail({
                 }}
               />
             </RowContent>
-            <RowContent>
+            <EditContent>
               {ReactHtmlParser(
                 filterXSS(taskDetailData?.content || '', {
                   onIgnoreTagAttr: function(_, name, value) {
@@ -482,7 +491,7 @@ export default function TaskDetail({
                   }
                 })
               )}
-            </RowContent>
+            </EditContent>
           </>
         ) : (
           <>
@@ -530,7 +539,6 @@ export default function TaskDetail({
               hideBorder={true}
               onChange={e => setValue(e.target.value)}
               placeholder="Untitled"
-              focused
               style={{ fontSize: 30, color: '#3F5170', fontWeight: 700 }}
             />
             <RowContent>

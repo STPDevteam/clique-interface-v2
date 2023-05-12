@@ -49,6 +49,15 @@ export default function AboutSetting() {
   const tabList = useMemo(() => {
     return [
       {
+        label: 'About',
+        component: (
+          <>
+            <Header />
+            <DaoInfoAbout />
+          </>
+        )
+      },
+      {
         label: 'General',
         component: daoInfo ? (
           <Box mt={20}>
@@ -75,7 +84,7 @@ export default function AboutSetting() {
             <Admin />
           </Box>
         )
-      },
+      }
       // {
       //   label: 'Teamspaces',
       //   component: <ComingSoon />
@@ -84,15 +93,6 @@ export default function AboutSetting() {
       //   label: 'Member',
       //   component: <ComingSoon />
       // },
-      {
-        label: 'About',
-        component: (
-          <>
-            <Header />
-            <DaoInfoAbout />
-          </>
-        )
-      }
     ]
   }, [curDaoChainId, daoInfo])
 

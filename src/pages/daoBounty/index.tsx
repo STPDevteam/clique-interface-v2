@@ -19,7 +19,7 @@ export default function DaoBounty() {
         >
           <BountyIcon />
           <Typography ml={10} fontWeight={600} fontSize={30}>
-            Dao Rewards
+            DAO Rewards
           </Typography>
         </Stack>
         <DaoInfoActivity />

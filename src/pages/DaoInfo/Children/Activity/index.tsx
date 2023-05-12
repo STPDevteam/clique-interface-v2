@@ -84,8 +84,8 @@ export default function Activity() {
                 onClick={() =>
                   history.push(
                     routes._DaoInfo +
-                      `/${curDaoChainId}/${daoAddress}/dao_rewards/${
-                        activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_dao_rewards'
+                      `/${curDaoChainId}/${daoAddress}/DAO_Rewards/${
+                        activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_DAO_Rewards'
                       }`
                   )
                 }
