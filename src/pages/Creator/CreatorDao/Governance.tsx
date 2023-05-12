@@ -159,7 +159,9 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
                 v =>
                   v.id !== ChainId.POLYGON_MANGO &&
                   v.id !== ChainId.COINBASE_TESTNET &&
-                  v.id !== ChainId.ZetaChain_TESTNET
+                  v.id !== ChainId.ZetaChain_TESTNET &&
+                  v.id !== ChainId.ZKSYNC_ERA &&
+                  v.id !== ChainId.ZKSYNC_ERA_TESTNET
               )}
               height={56}
               selectedChain={currentBaseChain}

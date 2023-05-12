@@ -103,6 +103,14 @@ const chains: ChainObject = {
     link: 'https://bscscan.com',
     builder: explorers.etherscan
   },
+  [ChainId.ZKSYNC_ERA]: {
+    link: 'https://explorer.zksync.io/',
+    builder: explorers.etherscan
+  },
+  [ChainId.ZKSYNC_ERA_TESTNET]: {
+    link: 'https://goerli.explorer.zksync.io/',
+    builder: explorers.etherscan
+  },
   [ChainId.KLAYTN_BAOBAB]: {
     link: 'https://baobab.scope.klaytn.com',
     builder: explorers.etherscan

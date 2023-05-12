@@ -21,6 +21,8 @@ export enum ChainId {
   KOVAN = 42,
   BSC = 56,
   BSCTEST = 97,
+  ZKSYNC_ERA_TESTNET = 280,
+  ZKSYNC_ERA = 324,
   KLAYTN_BAOBAB = 1001,
   POLYGON = 137,
   KLAYTN = 8217,
@@ -97,6 +99,22 @@ export const AllChainList = [
     name: 'Binance Testnet',
     id: ChainId.BSCTEST,
     hex: '0x61'
+  },
+  {
+    icon: <img width={32} height={32} src="https://zksync.io/favicon-32x32.png" />,
+    logo: 'https://zksync.io/favicon-32x32.png',
+    symbol: 'zkSync Era Testnet',
+    name: 'zkSync Era Testnet',
+    id: ChainId.ZKSYNC_ERA_TESTNET,
+    hex: '0x118'
+  },
+  {
+    icon: <img width={32} height={32} src="https://zksync.io/favicon-32x32.png" />,
+    logo: 'https://zksync.io/favicon-32x32.png',
+    symbol: 'zkSync Era',
+    name: 'zkSync Era',
+    id: ChainId.ZKSYNC_ERA,
+    hex: '0x144'
   },
   {
     icon: <KlaytnLogo />,
@@ -262,6 +280,28 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://data-seed-prebsc-1-s1.binance.org:8545/'],
     blockExplorerUrls: ['https://testnet.bscscan.com/']
+  },
+  [ChainId.ZKSYNC_ERA_TESTNET]: {
+    chainId: '0x118',
+    chainName: 'zkSync Era Testnet',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://zksync2-testnet.zksync.dev'],
+    blockExplorerUrls: ['https://goerli.explorer.zksync.io/']
+  },
+  [ChainId.ZKSYNC_ERA]: {
+    chainId: '0x144',
+    chainName: 'zkSync Era',
+    nativeCurrency: {
+      name: 'ETH',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://mainnet.era.zksync.io'],
+    blockExplorerUrls: ['https://explorer.zksync.io/']
   },
   [ChainId.KLAYTN_BAOBAB]: {
     chainId: '0x3e9',
