@@ -55,20 +55,23 @@ export default function AiChat() {
 
   return (
     <div>
-      <Fab
-        onClick={toggleDrawer}
-        sx={{
-          position: 'fixed',
-          zIndex: 999999,
-          right: 30,
-          bottom: 30
-        }}
-        color="primary"
-        aria-label="add"
-      >
-        AI
-      </Fab>
-
+      {!open ? (
+        <Fab
+          onClick={toggleDrawer}
+          sx={{
+            position: 'fixed',
+            zIndex: 999999,
+            right: 30,
+            bottom: 30
+          }}
+          color="primary"
+          aria-label="add"
+        >
+          AI
+        </Fab>
+      ) : (
+        ''
+      )}
       <Drawer anchor={'right'} open={open} onClose={toggleDrawer}>
         {account && userInfo?.loggedToken ? (
           <Box

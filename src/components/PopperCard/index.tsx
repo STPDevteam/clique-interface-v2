@@ -35,7 +35,7 @@ export default function PopperCard({
         width={width || '100%'}
         sx={{
           height: '100%',
-          '&.popperCon': {
+          '& .popperCon': {
             '&::webkit-scrollbar': {
               width: '0!important',
               display: 'none!important'
