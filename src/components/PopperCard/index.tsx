@@ -31,7 +31,18 @@ export default function PopperCard({
         setAnchorEl(null)
       }}
     >
-      <Box width={width || '100%'}>
+      <Box
+        width={width || '100%'}
+        sx={{
+          height: '100%',
+          '&.popperCon': {
+            '&::webkit-scrollbar': {
+              width: '0!important',
+              display: 'none!important'
+            }
+          }
+        }}
+      >
         <Box
           onClick={handleClick}
           onTouchEnd={(e: any) => {
@@ -40,7 +51,16 @@ export default function PopperCard({
         >
           {targetElement}
         </Box>
-        <Popper open={open} placement={placement} anchorEl={anchorEl} style={{ zIndex: 9999, borderColor: '#D4D7E2' }}>
+        <Popper
+          open={open}
+          placement={placement}
+          anchorEl={anchorEl}
+          className="popperCon"
+          style={{
+            zIndex: 9999,
+            borderColor: '#D4D7E2'
+          }}
+        >
           <Box
             onClick={() => setAnchorEl(null)}
             sx={{

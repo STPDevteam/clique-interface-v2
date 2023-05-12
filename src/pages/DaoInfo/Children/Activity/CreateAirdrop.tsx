@@ -73,7 +73,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   const theme = useTheme()
   const { hideModal, showModal } = useModal()
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/dao_rewards`)
+    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/DAO_Rewards`)
   }, [daoChainId, daoInfo.daoAddress, history])
   const { account, chainId, library } = useActiveWeb3React()
 

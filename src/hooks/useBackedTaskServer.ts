@@ -58,6 +58,7 @@ export interface TaskDetailProps {
   assignAvatar: string
   assignNickname: string
   content: string
+  createTime: number
   deadline: number
   priority: string
   proposalId: number

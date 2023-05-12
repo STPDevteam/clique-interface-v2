@@ -203,7 +203,7 @@ export default function LeftSider() {
       //   route: makeRouteLink(routes.DaoIdea)
       // },
       {
-        text: 'Dao Rewards',
+        text: 'DAO Rewards',
         icon: bounty,
         route: makeRouteLink(routes.DaoInfoActivity)
       },
@@ -272,7 +272,12 @@ export default function LeftSider() {
         >
           <PopperCard
             sx={{
-              marginTop: 13
+              marginTop: 13,
+              maxHeight: '50vh',
+              overflowY: 'auto',
+              '& ::webkit-scrollbar': {
+                display: 'none'
+              }
             }}
             placement="bottom-end"
             targetElement={
