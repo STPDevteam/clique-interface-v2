@@ -46,6 +46,9 @@ const RowContent = styled(Box)(() => ({
   justifyContent: 'flex-start',
   flexDirection: 'row',
   alignItems: 'center',
+  '& img': {
+    maxWidth: '100%'
+  },
   '& .lContent': {
     minWidth: 160,
     display: 'flex',
