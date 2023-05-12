@@ -253,6 +253,7 @@ export default function LeftSider() {
         sx={{
           width: 260,
           flexShrink: 0,
+          borderColor: '#D4D7E2',
           '& .MuiDrawer-paper': {
             width: 260,
             boxSizing: 'border-box'

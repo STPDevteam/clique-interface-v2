@@ -116,7 +116,13 @@ function DaoItem({
 
   return (
     <Item>
-      <DaoAvatars src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.name || daoName} />
+      <DaoAvatars
+        sx={{
+          border: '1px solid #D4D7E2'
+        }}
+        src={daoBaseInfo?.daoLogo}
+        alt={daoBaseInfo?.name || daoName}
+      />
       <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
     </Item>
   )
