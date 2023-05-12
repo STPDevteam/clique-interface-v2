@@ -41,6 +41,12 @@ const ColSentence = styled(Box)(() => ({
   }
 }))
 
+const EditContent = styled('div')({
+  '& img': {
+    maxWidth: '50%'
+  }
+})
+
 const RowContent = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'flex-start',
@@ -474,7 +480,7 @@ export default function TaskDetail({
                 }}
               />
             </RowContent>
-            <RowContent>
+            <EditContent>
               {ReactHtmlParser(
                 filterXSS(taskDetailData?.content || '', {
                   onIgnoreTagAttr: function(_, name, value) {
@@ -485,7 +491,7 @@ export default function TaskDetail({
                   }
                 })
               )}
-            </RowContent>
+            </EditContent>
           </>
         ) : (
           <>
