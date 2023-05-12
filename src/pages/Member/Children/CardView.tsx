@@ -35,6 +35,7 @@ export default function CardView({ result }: { result: JobsListProps[] }) {
         <Box key={item.account + item.jobId} onClick={() => history.push(routes._Profile + `/${item.account}`)}>
           <Card
             sx={{
+              cursor: 'pointer',
               position: 'relative',
               // width: '100%',
               // height: '100%',
