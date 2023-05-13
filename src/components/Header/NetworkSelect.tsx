@@ -15,6 +15,7 @@ export default function NetworkSelect() {
   return (
     <Box>
       <Select
+        noBold
         defaultValue={chainId}
         value={chainId}
         width={isDownSm ? 'max-content' : 'max-content'}
