@@ -35,51 +35,59 @@ export default function Proposal() {
   return (
     <DaoContainer>
       <Box>
-        <Stack
-          sx={{
-            'svg path': {
-              fill: 'rgba(0, 73, 198, 1)'
-            }
-          }}
-          direction={'row'}
-          alignItems={'center'}
-          mb={30}
-        >
-          <ProposalIcon />
-          <Typography ml={10} fontWeight={600} fontSize={30}>
-            Proposal
-          </Typography>
-        </Stack>
-        <Box display={'flex'} justifyContent="space-between" alignItems={'center'}>
-          <Button
-            width={isSmDown ? '146px' : '252px'}
-            fontSize={isSmDown ? 10 : 14}
-            height={isSmDown ? '40px' : '56px'}
-            borderRadius={isSmDown ? '8px' : undefined}
-            style={{ fontWeight: 700 }}
-            onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
-          >
-            + Create A Proposal
-          </Button>
-          <Select
-            noBold
-            placeholder=""
-            width={isSmDown ? 160 : 235}
-            height={isSmDown ? 40 : undefined}
-            value={currentProposalStatus}
-            onChange={e => setCurrentProposalStatus(e.target.value)}
-          >
-            {itemList.map(item => (
-              <MenuItem
-                key={item.value}
-                sx={{ fontWeight: 500, fontSize: 10 }}
-                value={item.value}
-                selected={currentProposalStatus && currentProposalStatus === item.value}
-              >
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
+        <Box mb={30} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
+          <Box>
+            <Stack
+              sx={{
+                'svg path': {
+                  fill: 'rgba(0, 73, 198, 1)'
+                }
+              }}
+              direction={'row'}
+              alignItems={'center'}
+            >
+              <ProposalIcon />
+              <Typography ml={10} fontWeight={600} fontSize={30}>
+                Proposal
+              </Typography>
+            </Stack>
+            <Typography variant="body1" mt={20}>
+              Core members can initiate a vote and get the number of votes through tasks. If the number of votes in
+              favor is greater than 50%, and the number of valid votes is not less than 2/3 of the total number of
+              votes, it will be viewed as passed.
+            </Typography>
+          </Box>
+          <Stack spacing={15} mt={5}>
+            <Button
+              width={isSmDown ? '146px' : '158px'}
+              fontSize={isSmDown ? 10 : 14}
+              height={isSmDown ? '30px' : '36px'}
+              borderRadius={isSmDown ? '8px' : undefined}
+              style={{ fontWeight: 700 }}
+              onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
+            >
+              + Create A Proposal
+            </Button>
+            <Select
+              noBold
+              placeholder=""
+              width={isSmDown ? 160 : 158}
+              height={isSmDown ? 32 : 32}
+              value={currentProposalStatus}
+              onChange={e => setCurrentProposalStatus(e.target.value)}
+            >
+              {itemList.map(item => (
+                <MenuItem
+                  key={item.value}
+                  sx={{ fontWeight: 500, fontSize: 10 }}
+                  value={item.value}
+                  selected={currentProposalStatus && currentProposalStatus === item.value}
+                >
+                  {item.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Stack>
         </Box>
         <Box mt={17} minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}

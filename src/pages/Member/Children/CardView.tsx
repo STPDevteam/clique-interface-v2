@@ -22,9 +22,7 @@ export default function CardView({ result }: { result: JobsListProps[] }) {
   return (
     <Box
       sx={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr 1fr',
-        justifyContent: 'flex-start',
+        display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 20,

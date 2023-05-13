@@ -182,7 +182,7 @@ export default function Input({
         <StyledInputBase
           ref={inputUserRef}
           sx={{
-            minHeight: height || 56,
+            minHeight: height || 40,
             '& input': {
               paddingRight: inputPaddingRight || '15px',
               fontWeight: 600

@@ -24,7 +24,7 @@ export default function SecondaryButton(props: Props) {
         ...style,
         width: width || '100%',
         fontSize: fontSize || 16,
-        height: height || 60,
+        height: height || 36,
         color: theme.palette.secondary.contrastText,
         border: `1px solid ${theme.palette.secondary.main}`,
         backgroundColor: theme.palette.secondary.main,

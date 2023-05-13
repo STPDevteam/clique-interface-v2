@@ -41,7 +41,7 @@ export default function Button(props: Props) {
       className={className}
       sx={{
         width: width || '100%',
-        height: height || 56,
+        height: height || 36,
         fontSize: fontSize || 14,
         fontWeight: 700,
         transition: '.3s',

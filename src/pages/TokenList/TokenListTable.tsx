@@ -1,6 +1,5 @@
 import { Box, Typography } from '@mui/material'
 import DelayLoading from 'components/DelayLoading'
-import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import Table from 'components/Table'
@@ -35,7 +34,6 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
         header={['Token', 'Network', 'Contact', 'Total Supply']}
         rows={tableList}
       ></Table>
-      {!loading && !tokenList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
       <DelayLoading loading={loading}>
         <Loading sx={{ marginTop: 30 }} />
       </DelayLoading>

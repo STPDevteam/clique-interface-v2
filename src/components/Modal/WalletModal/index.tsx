@@ -3,7 +3,7 @@ import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { isMobile } from 'react-device-detect'
-import { Typography, Box, Link } from '@mui/material'
+import { Typography, Box, Link, Stack } from '@mui/material'
 import MetamaskIcon from 'assets/walletIcon/metamask.png'
 import { fortmatic, injected, portis } from 'connectors'
 import { OVERLAY_READY } from 'connectors/Fortmatic'
@@ -256,7 +256,11 @@ export default function WalletModal({}: // pendingTransactions,
     }
     return (
       <>
-        {walletView === WALLET_VIEWS.ACCOUNT && <Typography variant="h6">Connect to a wallet</Typography>}
+        {walletView === WALLET_VIEWS.ACCOUNT && (
+          <Typography variant="h6" fontSize={18}>
+            Connect wallet
+          </Typography>
+        )}
 
         {walletView === WALLET_VIEWS.PENDING ? (
           <PendingView
@@ -277,8 +281,8 @@ export default function WalletModal({}: // pendingTransactions,
             </OutlineButton>
           </PendingView>
         ) : (
-          <Box display="grid" gap="10px" width="100%" justifyContent="center">
-            <Typography mb={6} width={360} textAlign="center" variant="body1" lineHeight={1.3}>
+          <Stack spacing={10}>
+            <Typography mb={6} width={400} textAlign="center" variant="body1" lineHeight={1.3}>
               By connecting a wallet, you acknowledge that you have read and understand the Clique{' '}
               <Link target={'_blank'} href="https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique">
                 Disclaimer
@@ -286,7 +290,7 @@ export default function WalletModal({}: // pendingTransactions,
               .
             </Typography>
             {getOptions()}
-          </Box>
+          </Stack>
         )}
       </>
     )

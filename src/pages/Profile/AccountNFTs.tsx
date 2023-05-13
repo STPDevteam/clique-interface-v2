@@ -14,15 +14,17 @@ import placeholderImage from 'assets/images/placeholder.png'
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   borderRadius: '16px',
   height: 24,
-  backgroundColor: '#F4F4F4',
+  opacity: 0.6,
   fontSize: 12,
   '& button': {
+    height: 24,
     color: '#9A9A9A',
     minWidth: '82px!important',
     fontWeight: 400,
     borderColor: theme.palette.text.primary
   },
   '& .active': {
+    opacity: 1,
     backgroundColor: '#fff',
     fontWeight: 500,
     color: theme.palette.text.primary
