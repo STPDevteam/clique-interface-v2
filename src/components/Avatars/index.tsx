@@ -16,7 +16,7 @@ export function DaoAvatars({
     <Avatar
       alt={alt}
       src={src?.replace(/^http\:/, 'https:')}
-      sx={{ width: size || undefined, height: size || undefined, backgroundColor: '#efefef', ...sx }}
+      sx={{ width: size || undefined, height: size || undefined, ...sx }}
     >
       <img src={defaultAvatar} style={{ width: '100%' }} />
     </Avatar>
