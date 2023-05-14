@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Grid } from '@mui/material'
 import Image from 'components/Image'
 import banner from 'assets/images/store_banner.png'
 import nftIcon from 'assets/images/nftIcon.png'
@@ -9,13 +9,19 @@ import createTokenIcon from 'assets/images/createTokenIcon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router-dom'
+import chainLogo0 from 'assets/images/chainLogo0.png'
+import chainLogo1 from 'assets/images/chainLogo1.png'
+import chainLogo2 from 'assets/images/chainLogo2.png'
+import chainLogo3 from 'assets/images/chainLogo3.png'
+import chainLogo4 from 'assets/images/chainLogo4.png'
+import chainLogo5 from 'assets/images/chainLogo5.png'
 
 const cardsData = [
   {
     title: 'Clique NFT Pass',
     icon: nftIcon,
     des: 'Clique NFT Pass is a NFT collection for Clique and STP users. Holders have the chance to participate ...',
-    supportChainsIcon: '',
+    supportChainsIcon: [chainLogo0],
     bgColor: 'linear-gradient(269.62deg, #EAF7FF 0.25%, #FEFFFF 99.64%)',
     link: ''
   },
@@ -39,17 +45,17 @@ const cardsData = [
     title: 'Create DAO',
     icon: createDaoIcon,
     des: 'Add a DAO on Clique',
-    supportChainsIcon: '',
+    supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #F5F1FF 27.66%, #FEFEFF 99.85%)',
-    route: ''
+    route: routes.CreatorDao
   },
   {
     title: 'Create Token',
     icon: createTokenIcon,
     des: 'You can use this function to create special tokens.',
-    supportChainsIcon: '',
+    supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #FFFEEC 27.66%, #FFFFF9 99.85%)',
-    route: routes.Creator
+    route: routes.CreatorToken
   },
   {
     title: 'SDK',
@@ -67,12 +73,15 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   return (
     <Box
       sx={{
-        width: 281,
         height: 264,
         border: '1px solid #d4d7e2',
         borderRadius: '10px',
-        cursor: 'pointer',
+        cursor: !link && !route ? 'no-drop' : 'pointer',
         '&:hover': {
+          border: '2px solid',
+          borderColor: '#97B7EF'
+        },
+        '&:hover .headerCon': {
           borderColor: '#97B7EF'
         },
         '& .headerCon': {
@@ -85,15 +94,13 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           alignItems: 'center',
           flexDirection: 'row',
           background: bgColor,
-          '&:hover': {
-            borderColor: '#97B7EF'
-          },
           '& img': {
             width: 48
           }
         }
       }}
       onClick={() => {
+        if (!route && !link) return
         route ? history.push(route) : window.open(link, '_blank')
       }}
     >
@@ -117,9 +124,17 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         ) : supportChainsIcon === '' ? (
           '-'
         ) : (
-          <Box>
+          <Box
+            mt={8}
+            sx={{
+              gap: 8,
+              display: 'flex',
+              justifyContent: 'flex-start',
+              flexDirection: 'row'
+            }}
+          >
             {supportChainsIcon.map((item: string, index: number) => (
-              <Image src={item} key={index} />
+              <Image src={item} width={24} key={index} />
             ))}
           </Box>
         )}
@@ -132,21 +147,28 @@ export default function Index() {
   return (
     <Box
       sx={{
-        padding: '44px 130px'
+        maxWidth: 1248,
+        padding: '44px 120px',
+        '& .top_banner': {
+          marginLeft: 18,
+          width: 'calc(100% - 18px)'
+        }
       }}
     >
-      <Image src={banner} width={'100%'} />
+      <Image className="top_banner" src={banner} />
       <Box
         mt={30}
         sx={{
+          width: '100%',
           display: 'flex',
           flexWrap: 'wrap',
-          gap: 25,
           flexDirection: 'row'
         }}
       >
         {cardsData.map((item, index) => (
-          <CardItem key={index} {...item} />
+          <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
+            <CardItem {...item} />
+          </Grid>
         ))}
       </Box>
     </Box>
