@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Badge, Box, Breadcrumbs, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
+import { AppBar, Box, Breadcrumbs, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
@@ -8,14 +8,13 @@ import { HideOnMobile } from 'theme/index'
 import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/svg/logo.svg'
-import { ReactComponent as NotificationIcon } from '../../assets/svg/notification_icon.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
-import { useActiveWeb3React } from 'hooks'
-import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
+import MySpace from './MySpace'
+import PopperMenu from './PopperMenu'
 
 interface TabContent {
   title: string
@@ -182,31 +181,6 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
     '&::-webkit-scrollbar': {
       display: 'none'
     }
-  }
-}))
-
-const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
-  cursor: 'pointer',
-  borderRadius: '50%',
-  width: '48px',
-  height: 48,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  transition: 'all 0.5s',
-  backgroundColor: theme.bgColor.bg1,
-  '&:hover': {
-    backgroundColor: theme.bgColor.bg2
-  },
-  '&.active': {
-    backgroundColor: theme.palette.primary.main,
-    '& svg path': {
-      stroke: theme.palette.common.white
-    }
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: 30,
-    width: 30
   }
 }))
 
@@ -418,27 +392,17 @@ function TabsBox() {
 }
 
 export function HeaderRight() {
-  const { account } = useActiveWeb3React()
-  const {
-    data: { unReadCount: notReadCount }
-  } = useNotificationListPaginationCallback()
-
   return (
     <Box
       display={{ sm: 'flex', xs: 'grid' }}
-      gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto' }}
+      gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto auto' }}
       alignItems="center"
-      gap={{ xs: '10px', sm: '24px' }}
+      gap={{ xs: '10px', sm: '10px' }}
     >
       <NetworkSelect />
-      {account && (
-        <NoticeMsg to={routes.Notification}>
-          <Badge badgeContent={notReadCount} color="success">
-            <NotificationIcon />
-          </Badge>
-        </NoticeMsg>
-      )}
+      <MySpace />
       <Web3Status />
+      <PopperMenu />
     </Box>
   )
 }

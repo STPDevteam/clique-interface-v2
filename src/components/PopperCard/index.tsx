@@ -15,7 +15,7 @@ export default function PopperCard({
   targetElement: JSX.Element
   children: JSX.Element | string | number
   width?: string
-  placement?: 'bottom-end' | 'bottom'
+  placement?: 'bottom-end' | 'bottom' | 'bottom-start'
 }) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = !!anchorEl

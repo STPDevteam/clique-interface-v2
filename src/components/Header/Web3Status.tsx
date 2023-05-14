@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { useTheme, Box, Typography } from '@mui/material'
+import { useTheme, Box, Typography, Badge, styled as muiStyled } from '@mui/material'
 import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -14,11 +14,40 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import Image from 'components/Image'
 import { ChainListMap } from 'constants/chain'
 import useModal from 'hooks/useModal'
+import { ReactComponent as NotificationIcon } from '../../assets/svg/notification_icon.svg'
+import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
+import { routes } from 'constants/routes'
+import { NavLink } from 'react-router-dom'
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
   return b.addedTime - a.addedTime
 }
+
+const NoticeMsg = muiStyled(NavLink)(({ theme }) => ({
+  cursor: 'pointer',
+  borderRadius: '50%',
+  width: 24,
+  height: 24,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'all 0.5s',
+  backgroundColor: theme.bgColor.bg1,
+  '&:hover': {
+    backgroundColor: theme.bgColor.bg2
+  },
+  '&.active': {
+    backgroundColor: theme.palette.primary.main,
+    '& svg path': {
+      stroke: theme.palette.common.white
+    }
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: 30,
+    width: 30
+  }
+}))
 
 function Web3StatusInner() {
   const { account, chainId, error } = useWeb3React()
@@ -34,6 +63,9 @@ function Web3StatusInner() {
   const theme = useTheme()
   const { hideModal } = useModal()
   const isDownSm = useBreakpoint()
+  const {
+    data: { unReadCount: notReadCount }
+  } = useNotificationListPaginationCallback()
 
   if (account && chainId) {
     return (
@@ -46,7 +78,7 @@ function Web3StatusInner() {
       >
         <Box
           sx={{
-            height: { xs: 36, sm: 50 },
+            height: { xs: 36, sm: 36 },
             width: { xs: 'auto', sm: 200 },
             padding: '0 15px',
             borderRadius: `${theme.shape.borderRadius}px`,
@@ -55,7 +87,7 @@ function Web3StatusInner() {
             justifyContent: 'center',
             alignItems: 'center',
             gap: '10px',
-            border: `2px solid ${theme.palette.primary.main}`
+            border: `1px solid #D4D7E2`
           }}
         >
           {/* <div /> */}
@@ -80,6 +112,17 @@ function Web3StatusInner() {
               >
                 {ENSName || shortenAddress(account, isDownSm ? 3 : 4)}
               </Typography>
+              {account && (
+                <NoticeMsg to={routes.Notification}>
+                  <Badge
+                    badgeContent={notReadCount}
+                    color="error"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  >
+                    <NotificationIcon />
+                  </Badge>
+                </NoticeMsg>
+              )}
             </>
           )}
         </Box>
@@ -89,8 +132,8 @@ function Web3StatusInner() {
     return (
       <Button
         backgroundColor={theme.palette.error.main}
-        width={isDownSm ? '128px' : '200px'}
-        height={isDownSm ? '28px' : '50px'}
+        width={isDownSm ? '128px' : '140px'}
+        height={isDownSm ? '28px' : '36px'}
         onClick={() => {
           hideModal()
           toggleWalletModal()
@@ -102,8 +145,8 @@ function Web3StatusInner() {
   } else {
     return (
       <Button
-        width={isDownSm ? '128px' : '200px'}
-        height={isDownSm ? '28px' : '50px'}
+        width={isDownSm ? '128px' : '140px'}
+        height={isDownSm ? '28px' : '36px'}
         onClick={() => {
           hideModal()
           toggleWalletModal()

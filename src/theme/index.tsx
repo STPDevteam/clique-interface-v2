@@ -88,10 +88,9 @@ export const theme = {
       dark: '#FFB7F5',
       contrastText: '#ffffff'
     },
-    // error: {
-    //   main: '#C60C00',
-    //   light: '#5f2120'
-    // },
+    error: {
+      main: '#E46767'
+    },
     warning: {
       main: '#FFCE73'
     },

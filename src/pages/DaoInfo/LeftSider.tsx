@@ -270,18 +270,16 @@ export default function LeftSider() {
           gap={10}
           width={'100%'}
           padding="16px 20px"
-          sx={{
-            '&::webkit-scrollbar': {
-              width: '0!important',
-              display: 'none!important'
-            }
-          }}
         >
           <PopperCard
             sx={{
               marginTop: 13,
               maxHeight: '50vh',
-              overflowY: 'auto'
+              overflowY: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '0!important',
+                display: 'none!important'
+              }
             }}
             placement="bottom-end"
             targetElement={
