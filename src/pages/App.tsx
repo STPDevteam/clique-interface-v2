@@ -50,6 +50,7 @@ import ComingSoon from './ComingSoon'
 import Page from './RedirectPage'
 import AboutSetting from './AboutSetting'
 import DaoBounty from './daoBounty'
+import DappStore from './TokenList/DappStore'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -147,6 +148,7 @@ export default function App() {
                       </DaoInfoLayout>
                     )}
                   />
+                  <Route strict path={routes.DappStore} component={DappStore} />
                   <Route
                     strict
                     path={routes.Governance}
