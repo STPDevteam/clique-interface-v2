@@ -40,12 +40,10 @@ export default function OutlineButton(props: Props) {
       sx={{
         width: width || '100%',
         border: theme =>
-          `${noBold ? 1 : 2}px solid ${
-            color ? color : primary ? theme.palette.primary.main : theme.palette.common.black
-          }`,
+          `${noBold ? 1 : 2}px solid ${color ? color : primary ? theme.palette.primary.main : '#D4D7E2'}`,
         fontSize: fontSize || 14,
         fontWeight: fontWeight || (noBold ? 500 : 700),
-        height: height || 56,
+        height: height || 32,
         color: color ? color : primary ? theme.palette.primary.main : theme.palette.common.black,
         borderRadius: borderRadius ?? 1,
         '&:hover': {

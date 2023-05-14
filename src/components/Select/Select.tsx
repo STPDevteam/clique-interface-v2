@@ -95,7 +95,7 @@ export default function Select(props: Props) {
           // backgroundColor: primary ? theme.palette.primary.main : theme.bgColor.bg1,
           backgroundColor: color ? 'transparent' : primary ? theme.palette.primary.main : 'transparent',
           width: width || '100%',
-          height: height || '56px',
+          height: height || '40px',
           padding: '0',
           fontWeight: noBold ? 400 : 600,
           border: `${noBold ? 1 : 2}px solid`,

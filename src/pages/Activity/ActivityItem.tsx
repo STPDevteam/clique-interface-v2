@@ -72,7 +72,7 @@ const StyledStatusBox = styled(Stack)(({ theme }) => ({
   height: 26,
   display: 'inline-flex',
   alignItems: 'center',
-  borderRadius: '14px',
+  borderRadius: '8px',
   background: theme.palette.common.white
 }))
 

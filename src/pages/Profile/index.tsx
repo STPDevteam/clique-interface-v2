@@ -43,8 +43,10 @@ import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   minHeight: 150,
-  background: theme.palette.common.white,
+  // background: theme.palette.common.white,
   boxShadow: theme.boxShadow.bs2,
+  background: 'linear-gradient(271.58deg, rgba(255, 255, 255, 0.85) 0%, #FFFFFF 53.36%, #FFFFFF 100.77%)',
+  backdropFilter: 'blur(60px)',
   padding: '26px 26px 48px 30px',
   [theme.breakpoints.down('sm')]: {
     padding: '20px',

@@ -1,6 +1,5 @@
 import React from 'react'
-import { styled } from '@mui/material'
-import OutlineButton from 'components/Button/OutlineButton'
+import { Button, styled } from '@mui/material'
 import { ExternalLink } from 'theme/components'
 import LogoText from 'components/LogoText'
 
@@ -37,17 +36,22 @@ export default function Option({
 }) {
   const content = (
     <>
-      <OutlineButton
+      <Button
         key={id}
-        width="360px"
-        onClick={onClick}
-        color={active ? 'transparent' : undefined}
+        variant="outlined"
+        fullWidth
+        onClick={onClick || undefined}
         disabled={!clickable || active}
-        noBold
-        style={{
+        sx={{
           border: '1px solid #D4D7E2',
           justifyContent: 'flex-start',
-          paddingLeft: '24px'
+          paddingLeft: '24px',
+          color: active ? '#fff' : '#3F5170',
+          '&:hover': {
+            borderColor: '#97B7EF',
+            color: '#0049C6',
+            boxShadow: '0px 2px 8px rgba(35, 38, 132, 0.15)'
+          }
         }}
       >
         {active ? (
@@ -55,8 +59,8 @@ export default function Option({
             <div />
           </GreenCircle>
         ) : null}
-        <LogoText logo={icon} text={header} size="40px" />
-      </OutlineButton>
+        <LogoText fontWeight={600} logo={icon} text={header} size="40px" />
+      </Button>
     </>
   )
   if (link) {

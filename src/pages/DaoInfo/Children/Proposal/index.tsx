@@ -35,49 +35,33 @@ export default function Proposal() {
   return (
     <DaoContainer>
       <Box>
-        <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'baseline'} width={'100%'}>
-          <Stack
-            sx={{
-              'svg path': {
-                fill: 'rgba(0, 73, 198, 1)'
-              }
-            }}
-            direction={'column'}
-            alignItems={'center'}
-            mb={30}
-          >
-            <Box
-              display={'flex'}
-              justifyContent={'flex-start'}
-              width={'100%'}
-              flexDirection={'row'}
+        <Box mb={30} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
+          <Box>
+            <Stack
+              sx={{
+                'svg path': {
+                  fill: 'rgba(0, 73, 198, 1)'
+                }
+              }}
+              direction={'row'}
               alignItems={'center'}
             >
               <ProposalIcon />
               <Typography ml={10} fontWeight={600} fontSize={30}>
                 Proposal
               </Typography>
-            </Box>
-            <Box mt={20}>
-              <Typography
-                maxWidth={700}
-                color={'#3F5170'}
-                fontSize={14}
-                fontWeight={500}
-                lineHeight={'20px'}
-                fontFamily={'Inter'}
-              >
-                Core members can initiate a vote and get the number of votes through tasks. If the number of votes in
-                favor is greater than 50%, and the number of valid votes is not less than 2/3 of the total number of
-                votes, it will be viewed as passed.
-              </Typography>
-            </Box>
-          </Stack>
-          <Box display={'flex'} justifyContent="flex-end" flexDirection={'column'} alignItems={'center'} gap={14}>
+            </Stack>
+            <Typography variant="body1" mt={20}>
+              Core members can initiate a vote and get the number of votes through tasks. If the number of votes in
+              favor is greater than 50%, and the number of valid votes is not less than 2/3 of the total number of
+              votes, it will be viewed as passed.
+            </Typography>
+          </Box>
+          <Stack spacing={15} mt={5}>
             <Button
               width={isSmDown ? '146px' : '158px'}
               fontSize={isSmDown ? 10 : 14}
-              height={isSmDown ? '40px' : '36px'}
+              height={isSmDown ? '30px' : '36px'}
               borderRadius={isSmDown ? '8px' : undefined}
               style={{ fontWeight: 700 }}
               onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
@@ -88,7 +72,7 @@ export default function Proposal() {
               noBold
               placeholder=""
               width={isSmDown ? 160 : 158}
-              height={isSmDown ? 40 : 36}
+              height={isSmDown ? 32 : 32}
               value={currentProposalStatus}
               onChange={e => setCurrentProposalStatus(e.target.value)}
             >
@@ -103,34 +87,32 @@ export default function Proposal() {
                 </MenuItem>
               ))}
             </Select>
-          </Box>
-        </Stack>
-        <Box>
-          <Box mt={17} minHeight={200}>
-            {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
-            <DelayLoading loading={loading}>
-              <Loading sx={{ marginTop: 30 }} />
-            </DelayLoading>
-            <Grid container rowSpacing={18} columnSpacing={isSmDown ? 0 : 34}>
-              {!loading &&
-                proposalBaseList.map(item => (
-                  <Grid item key={item.proposalId + item.startTime + item.endTime} lg={6} xs={12}>
-                    <ProposalItem {...item} />
-                  </Grid>
-                ))}
-            </Grid>
-          </Box>
-          <Box mt={20} display={'flex'} justifyContent="center">
-            <Pagination
-              count={page.totalPage}
-              page={page.currentPage}
-              onChange={(_, value) => page.setCurrentPage(value)}
-            />
-          </Box>
-          <Typography variant="body2" textAlign={'right'} sx={{ color: theme => theme.palette.text.secondary }}>
-            Notice: Newly created proposal will appear here in a few minutes.
-          </Typography>
+          </Stack>
         </Box>
+        <Box mt={17} minHeight={200}>
+          {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+          <DelayLoading loading={loading}>
+            <Loading sx={{ marginTop: 30 }} />
+          </DelayLoading>
+          <Grid container rowSpacing={18} columnSpacing={isSmDown ? 0 : 34}>
+            {!loading &&
+              proposalBaseList.map(item => (
+                <Grid item key={item.proposalId + item.startTime + item.endTime} lg={6} xs={12}>
+                  <ProposalItem {...item} />
+                </Grid>
+              ))}
+          </Grid>
+        </Box>
+        <Box mt={20} display={'flex'} justifyContent="center">
+          <Pagination
+            count={page.totalPage}
+            page={page.currentPage}
+            onChange={(_, value) => page.setCurrentPage(value)}
+          />
+        </Box>
+        <Typography variant="body2" textAlign={'right'} sx={{ color: theme => theme.palette.text.secondary }}>
+          Notice: Newly created proposal will appear here in a few minutes.
+        </Typography>
       </Box>
     </DaoContainer>
   )

@@ -174,6 +174,7 @@ export const override: any = {
   MuiCssBaseline: {
     styleOverrides: {
       body: {
+        color: '#3F5170',
         backgroundColor: theme.palette.background.default,
         fontSize: 16,
         overflow: 'auto!important',
@@ -204,8 +205,9 @@ export const override: any = {
   MuiButton: {
     styleOverrides: {
       root: {
+        height: 60,
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif!important',
-        color: theme.palette.primary.contrastText,
+        color: '#3F5170',
         fontWeight: 500,
         borderRadius: `${theme.shape.borderRadius}`,
         transition: '.3s',
@@ -291,31 +293,37 @@ export const override: any = {
       h1: {
         fontSize: 56,
         lineHeight: '64px',
+        color: '#1B1D21',
         fontWeight: 600
       },
       h2: {
         fontSize: 48,
+        color: '#1B1D21',
         lineHeight: '72px',
         fontWeight: 600
       },
       h3: {
         fontSize: 40,
+        color: '#1B1D21',
         lineHeight: '60px',
         fontWeight: 600
       },
       h4: {
         fontSize: 32,
+        color: '#1B1D21',
         lineHeight: '48px',
         letterSpacing: '-1px',
         fontWeight: 600
       },
       h5: {
         fontSize: 20,
+        color: '#1B1D21',
         lineHeight: '30px',
         fontWeight: 600
       },
       h6: {
         fontSize: 16,
+        color: '#1B1D21',
         lineHeight: '24px',
         fontWeight: 600
       },
