@@ -37,7 +37,10 @@ export default function NetworkSelect() {
               padding: '0 4px',
               border: '1px solid #D4D7E2',
               borderRadius: '8px',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              '&:hover': {
+                borderColor: '#97B7EF'
+              }
             }}
             alignItems={'center'}
           >

@@ -74,6 +74,9 @@ export default function MySpace() {
               border: '1px solid #D4D7E2',
               borderRadius: '8px',
               cursor: 'pointer',
+              '&:hover': {
+                borderColor: '#97B7EF'
+              },
               '& svg': {
                 marginLeft: 'auto'
               }

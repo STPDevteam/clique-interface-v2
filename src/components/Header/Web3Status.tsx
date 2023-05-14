@@ -87,7 +87,10 @@ function Web3StatusInner() {
             justifyContent: 'center',
             alignItems: 'center',
             gap: '10px',
-            border: `1px solid #D4D7E2`
+            border: `1px solid #D4D7E2`,
+            '&:hover': {
+              borderColor: '#97B7EF'
+            }
           }}
         >
           {/* <div /> */}
