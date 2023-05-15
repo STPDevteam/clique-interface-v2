@@ -1,8 +1,8 @@
 import { Box, Typography, Grid } from '@mui/material'
 import Image from 'components/Image'
 import banner from 'assets/images/store_banner.png'
-import nftIcon from 'assets/images/nftIcon.png'
-import swapIcon from 'assets/images/swapIcon.png'
+// import nftIcon from 'assets/images/nftIcon.png'
+// import swapIcon from 'assets/images/swapIcon.png'
 import rewardsIcon from 'assets/images/rewardsIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
@@ -17,22 +17,22 @@ import chainLogo4 from 'assets/images/chainLogo4.png'
 import chainLogo5 from 'assets/images/chainLogo5.png'
 
 const cardsData = [
-  {
-    title: 'Clique NFT Pass',
-    icon: nftIcon,
-    des: 'Clique NFT Pass is a NFT collection for Clique and STP users. Holders have the chance to participate ...',
-    supportChainsIcon: [chainLogo0],
-    bgColor: 'linear-gradient(269.62deg, #EAF7FF 0.25%, #FEFFFF 99.64%)',
-    link: ''
-  },
-  {
-    title: 'SWAP',
-    icon: swapIcon,
-    des: 'Flash exchange with limited time, low price and low gas fee.',
-    supportChainsIcon: 'all',
-    bgColor: 'linear-gradient(270.34deg, #FFF6DF 0.3%, #FFFDF9 99.74%)',
-    route: ''
-  },
+  // {
+  //   title: 'Clique NFT Pass',
+  //   icon: nftIcon,
+  //   des: 'Clique NFT Pass is a NFT collection for Clique and STP users. Holders have the chance to participate ...',
+  //   supportChainsIcon: [chainLogo0],
+  //   bgColor: 'linear-gradient(269.62deg, #EAF7FF 0.25%, #FEFFFF 99.64%)',
+  //   link: ''
+  // },
+  // {
+  //   title: 'SWAP',
+  //   icon: swapIcon,
+  //   des: 'Flash exchange with limited time, low price and low gas fee.',
+  //   supportChainsIcon: 'all',
+  //   bgColor: 'linear-gradient(270.34deg, #FFF6DF 0.3%, #FFFDF9 99.74%)',
+  //   route: ''
+  // },
   {
     title: 'DAO Rewards',
     icon: rewardsIcon,
@@ -147,7 +147,7 @@ export default function Index() {
   return (
     <Box
       sx={{
-        maxWidth: 1248,
+        // maxWidth: 1248,
         padding: '44px 120px',
         '& .top_banner': {
           marginLeft: 18,
