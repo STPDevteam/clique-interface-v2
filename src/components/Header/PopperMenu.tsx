@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import { ReactComponent as ShowDropDown } from 'assets/svg/moreMenuIcon.svg'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
-import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
+// import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
 import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as BugIcon } from 'assets/svg/bugIcon.svg'
 import PopperCard from 'components/PopperCard'
