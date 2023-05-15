@@ -3,24 +3,26 @@ import { isAddress } from 'utils'
 import { saveUserInfo, removeUserInfo, UserInfo } from './actions'
 
 export interface UserState {
-  [address: string]: UserInfo
+  account: {
+    [address: string]: UserInfo
+  }
 }
 
-export const initialState: UserState = {}
+export const initialState: UserState = { account: {} }
 
 export default createReducer(initialState, builder =>
   builder
     .addCase(removeUserInfo, state => {
       for (const curAccount in state) {
         if (Object.prototype.hasOwnProperty.call(state, curAccount)) {
-          if (isAddress(curAccount) && state[curAccount]) {
-            delete state[curAccount]
+          if (isAddress(curAccount) && state.account && state.account[curAccount]) {
+            delete state.account[curAccount]
           }
         }
       }
     })
     .addCase(saveUserInfo, (state, action) => {
       const { userInfo } = action.payload
-      state[userInfo.account] = userInfo
+      state.account[userInfo.account] = userInfo
     })
 )

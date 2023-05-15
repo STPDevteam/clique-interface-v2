@@ -8,11 +8,11 @@ import transactions from './transactions/reducer'
 import multicall from './multicall/reducer'
 import buildingGovernanceDao from './buildingGovDao/reducer'
 import pagination from './pagination/reducer'
-import userInfo from './userInfo/reducer'
+import localUserInfo from './userInfo/reducer'
 import chatHistory from './chatHistory/reducer'
 import createTokenData from './createToken/reducer'
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'buildingGovernanceDao', 'userInfo', 'createTokenData']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'buildingGovernanceDao', 'localUserInfo', 'createTokenData']
 
 const store = configureStore({
   reducer: {
@@ -22,7 +22,7 @@ const store = configureStore({
     multicall,
     pagination,
     buildingGovernanceDao,
-    userInfo,
+    localUserInfo,
     chatHistory,
     createTokenData
   },

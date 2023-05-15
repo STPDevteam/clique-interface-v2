@@ -10,9 +10,9 @@ import { useWeb3Instance } from 'hooks/useWeb3Instance'
 import { useLogin } from 'hooks/useBackedDaoServer'
 
 export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
-  const allUserInfo = store.getState().userInfo
+  const allUserInfo = store.getState().localUserInfo
   if (!allUserInfo || !account) return undefined
-  return allUserInfo[account]
+  return allUserInfo.account?.[account]
 }
 
 export function clearAllSignStoreSync() {
@@ -22,14 +22,14 @@ export function clearAllSignStoreSync() {
 }
 
 export function useUserInfo(): UserInfo | undefined {
-  const allUserInfo = useSelector((state: AppState) => state.userInfo)
+  const allUserInfo = useSelector((state: AppState) => state.localUserInfo)
   const { account } = useWeb3ReactCore()
 
   return useMemo(() => {
     if (!account) {
       return undefined
     }
-    return allUserInfo[account]
+    return allUserInfo.account?.[account]
   }, [account, allUserInfo])
 }
 
@@ -38,8 +38,8 @@ export function useLoginSignature() {
   const web3 = useWeb3Instance()
   const { account } = useActiveWeb3React()
   const address = store.getState().application.curAddress
-  const _account = store.getState().userInfo[address]?.account
-  const _signature = store.getState().userInfo[address]?.signature
+  const _account = store.getState().localUserInfo.account?.[address]?.account
+  const _signature = store.getState().localUserInfo.account?.[address]?.signature
   const dispatch = useDispatch()
 
   return useCallback(async () => {
