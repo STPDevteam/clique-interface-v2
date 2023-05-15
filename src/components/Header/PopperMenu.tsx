@@ -14,15 +14,15 @@ const menuList = [
     icon: <DaosIcon />,
     route: routes.Governance
   },
+  // {
+  //   title: 'Rewards',
+  //   icon: <RewardsIcon />,
+  //   route: routes.Activity
+  // },
   {
-    title: 'Rewards',
-    icon: <RewardsIcon />,
-    route: routes.Activity
-  },
-  {
-    title: 'SDK',
+    title: 'Dapp Store',
     icon: <SdkIcon />,
-    link: 'https://www.npmjs.com/package/@myclique/governance-sdk'
+    route: routes.DappStore
   },
   {
     title: 'Bug Bounty',
