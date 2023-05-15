@@ -1,4 +1,4 @@
-import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem, Stack } from '@mui/material'
+import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem, Stack, Tooltip } from '@mui/material'
 import Select from 'components/Select/Select'
 // import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
@@ -10,6 +10,7 @@ import { ReactComponent as Board } from 'assets/svg/board.svg'
 import { ReactComponent as ALlTask } from 'assets/svg/allTask.svg'
 import TeamSpacesTask from 'pages/TeamSpaces/Task'
 // import useBreakpoint from 'hooks/useBreakpoint'
+import owl from 'assets/images/owl.png'
 import {
   DataGrid,
   GridColDef,
@@ -101,7 +102,6 @@ const columns: GridColDef[] = [
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: 10,
             '& img': {
               width: 18,
               height: 18,
@@ -113,10 +113,14 @@ const columns: GridColDef[] = [
             }
           }}
         >
-          {params.row?.assignAvatar && <Image src={params.row?.assignAvatar}></Image>}
-          <Typography noWrap textAlign={'left'}>
-            {params.row?.assignNickname}
-          </Typography>
+          <Tooltip title={params.row?.assignAccount} arrow>
+            <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
+              <Image src={params.row?.assignAvatar || owl}></Image>
+              <Typography noWrap textAlign={'left'}>
+                {params.row?.assignNickname || 'Unnamed'}
+              </Typography>
+            </Box>
+          </Tooltip>
         </Box>
       )
     }
