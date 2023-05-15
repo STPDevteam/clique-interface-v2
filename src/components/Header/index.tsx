@@ -15,7 +15,7 @@ import { useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
-import { useActiveWeb3React } from 'hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 interface TabContent {
   title: string
@@ -393,7 +393,7 @@ function TabsBox() {
 }
 
 export function HeaderRight() {
-  const { account } = useActiveWeb3React()
+  const userInfo = useUserInfo()
   return (
     <Box
       display={{ sm: 'flex', xs: 'grid' }}
@@ -402,7 +402,7 @@ export function HeaderRight() {
       gap={{ xs: '10px', sm: '10px' }}
     >
       <NetworkSelect />
-      {account && <MySpace />}
+      {userInfo?.loggedToken && <MySpace />}
       <Web3Status />
       <PopperMenu />
     </Box>
