@@ -23,6 +23,7 @@ import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
 
 export function useMyJoinedDao() {
+  const userInfo = useUserInfo()
   const { account } = useActiveWeb3React()
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<
@@ -35,7 +36,7 @@ export function useMyJoinedDao() {
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!account || !userInfo?.loggedToken) {
         setResult([])
         return
       }
@@ -65,7 +66,7 @@ export function useMyJoinedDao() {
         console.error('useMyJoinedDao', error)
       }
     })()
-  }, [account])
+  }, [account, userInfo?.loggedToken])
 
   return {
     loading: loading,
