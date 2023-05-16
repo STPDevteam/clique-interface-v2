@@ -292,7 +292,7 @@ export function CreateGovernanceModal() {
                       {buildingDaoData.description.length}/200
                     </Typography>
                   }
-                  rows="4"
+                  rows="6"
                   multiline
                   placeholder="Describe your DAO to new and existing members"
                   value={buildingDaoData.description}

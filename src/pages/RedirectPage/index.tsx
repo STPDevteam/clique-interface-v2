@@ -24,7 +24,7 @@ export default function Page() {
   const userSignature = useUserInfo()
   const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
 
-  console.log(isJoined)
+  console.log(userSignature)
 
   const joinDAOCallback = useCallback(() => {
     if (!account) {

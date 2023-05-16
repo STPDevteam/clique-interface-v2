@@ -31,7 +31,7 @@ interface Tab extends TabContent {
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
   { title: 'DAOs', route: routes.Governance },
-  { title: 'Dapp Store', route: routes.DappStore }
+  { title: 'Tools', route: routes.DappStore }
   // { title: 'DAO Rewards', route: routes.Activity },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },

@@ -13,11 +13,9 @@ export const initialState: UserState = { account: {} }
 export default createReducer(initialState, builder =>
   builder
     .addCase(removeUserInfo, state => {
-      for (const curAccount in state) {
-        if (Object.prototype.hasOwnProperty.call(state, curAccount)) {
-          if (isAddress(curAccount) && state.account && state.account[curAccount]) {
-            delete state.account[curAccount]
-          }
+      for (const curAccount in state.account) {
+        if (isAddress(curAccount) && state.account && state.account[curAccount]) {
+          delete state.account[curAccount]
         }
       }
     })
