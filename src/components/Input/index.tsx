@@ -4,6 +4,7 @@ import { inputBaseClasses } from '@mui/material/InputBase'
 import InputLabel from './InputLabel'
 import { isURL } from 'utils/dao'
 import { escapeRegExp, isAddress, isEmail } from 'utils'
+import theme from 'theme'
 
 export interface InputProps {
   placeholder?: string
@@ -130,6 +131,7 @@ export default function Input({
   >) {
   const [hideFormatWrapper, setHideFormatWrapper] = useState(false)
   const showFormatWrapperValue = useMemo(() => showFormatWrapper && showFormatWrapper(), [showFormatWrapper])
+  const [showErrorMsg, setErrorMsg] = useState(false)
   const inputUserRef = useRef()
 
   const enforcer = useCallback(
@@ -147,7 +149,9 @@ export default function Input({
   const handleChange = useCallback(
     event => {
       // replace commas with periods
+      setErrorMsg(false)
       if (event.target.value && maxLength && event.target.value.length > maxLength) {
+        setErrorMsg(true)
         return
       }
       const formatted = enforcer(event.target.value)
@@ -166,6 +170,9 @@ export default function Input({
         {label ? <InputLabel>{label}</InputLabel> : <div />}
         {rightLabel && <InputLabel>{rightLabel}</InputLabel>}
       </Box>
+      {showErrorMsg && (
+        <Typography color={theme.palette.error.main}>*The number of characters exceeds the limit</Typography>
+      )}
       <Box position={'relative'}>
         {showFormatWrapper && !hideFormatWrapper && (
           <StyledInputWrapper

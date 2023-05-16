@@ -10,5 +10,5 @@ export interface UserInfo {
   loggedToken: string
 }
 
-export const removeUserInfo = createAction('userInfo/removeUserInfo')
-export const saveUserInfo = createAction<{ userInfo: UserInfo }>('userInfo/saveUserInfo')
+export const removeUserInfo = createAction('localUserInfo/removeUserInfo')
+export const saveUserInfo = createAction<{ userInfo: UserInfo }>('localUserInfo/saveUserInfo')

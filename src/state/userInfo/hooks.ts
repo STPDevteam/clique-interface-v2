@@ -17,7 +17,7 @@ export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
 
 export function clearAllSignStoreSync() {
   store.dispatch({
-    type: 'userInfo/removeUserInfo'
+    type: 'localUserInfo/removeUserInfo'
   })
 }
 
