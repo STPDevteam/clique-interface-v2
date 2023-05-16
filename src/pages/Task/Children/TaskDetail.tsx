@@ -12,6 +12,7 @@ import select from 'assets/images/select.png'
 import dateIcon from 'assets/images/date.png'
 import proposalIcon from 'assets/images/proposal.png'
 import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
+import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import ReactHtmlParser from 'react-html-parser'
 import {
@@ -28,6 +29,7 @@ import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { ReactComponent as ViewDtailIcon } from 'assets/svg/viewDetailIcon.svg'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { escapeAttrValue } from 'xss'
+import useCopyClipboard from 'hooks/useCopyClipboard'
 // import SidePanel from './SidePanel'
 
 const ColSentence = styled(Box)(() => ({
@@ -177,6 +179,7 @@ export default function TaskDetail({
   )
 
   const isSmDown = useBreakpoint('sm')
+  const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
   const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
@@ -189,9 +192,9 @@ export default function TaskDetail({
   const { showModal } = useModal()
   const create = useCreateTask()
   const update = useUpdateTask()
-  console.log('isEdit', isEdit)
-  console.log('identity', identity)
-
+  const link = useMemo(() => {
+    return window.location.toString()
+  }, [])
   useEffect(() => {
     setContent(taskDetailData?.content)
   }, [taskDetailData?.content])
@@ -310,22 +313,48 @@ export default function TaskDetail({
                 <ArrowBackIcon style={{ marginRight: 10 }}></ArrowBackIcon>
                 Back
               </Typography>
-              {isEdit && identity !== 'C_member' ? (
-                <ConfirmButton
-                  width="127px"
-                  height="25px"
-                  color="#ffffff"
-                  onClick={(e: any) => {
-                    setIsEdit(false)
-                    e.stopPropagation()
+              <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
+                <Box
+                  onClick={() => setCopied(link)}
+                  sx={{
+                    width: 'fit-contet',
+                    height: 'auto',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    gap: 10,
+                    '& svg ': {
+                      width: 14
+                    },
+                    '& svg path': {
+                      fill: '#97B7EF'
+                    }
                   }}
                 >
-                  <ViewDtailIcon />
-                  <Typography>Edit Details</Typography>
-                </ConfirmButton>
-              ) : (
-                ''
-              )}
+                  <Invite />
+                  <Typography maxWidth={'100%'} fontWeight={500} fontSize={14} color={'#3F5170'}>
+                    {isCopied ? 'Copied Link' : 'Share'}
+                  </Typography>
+                </Box>
+                {isEdit && identity !== 'C_member' ? (
+                  <ConfirmButton
+                    width="127px"
+                    height="25px"
+                    color="#ffffff"
+                    onClick={(e: any) => {
+                      setIsEdit(false)
+                      e.stopPropagation()
+                    }}
+                  >
+                    <ViewDtailIcon />
+                    <Typography>Edit Details</Typography>
+                  </ConfirmButton>
+                ) : (
+                  ''
+                )}
+              </Box>
             </Box>
             <Input
               disabled
@@ -516,22 +545,48 @@ export default function TaskDetail({
                 <ArrowBackIcon style={{ marginRight: 10 }}></ArrowBackIcon>
                 Back
               </Typography>
-              {isEdit === true ? (
-                <ConfirmButton
-                  width="127px"
-                  height="25px"
-                  color="#ffffff"
-                  onClick={(e: any) => {
-                    setIsEdit(false)
-                    e.stopPropagation()
+              <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
+                <Box
+                  onClick={() => setCopied(link)}
+                  sx={{
+                    width: 'fit-contet',
+                    height: 'auto',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    gap: 10,
+                    '& svg ': {
+                      width: 14
+                    },
+                    '& svg path': {
+                      fill: '#97B7EF'
+                    }
                   }}
                 >
-                  <ViewDtailIcon />
-                  <Typography>Edit Details</Typography>
-                </ConfirmButton>
-              ) : (
-                ''
-              )}
+                  <Invite />
+                  <Typography maxWidth={'100%'} fontWeight={500} fontSize={14} color={'#3F5170'}>
+                    {isCopied ? 'Copied Link' : 'Share'}
+                  </Typography>
+                </Box>
+                {isEdit === true ? (
+                  <ConfirmButton
+                    width="127px"
+                    height="25px"
+                    color="#ffffff"
+                    onClick={(e: any) => {
+                      setIsEdit(false)
+                      e.stopPropagation()
+                    }}
+                  >
+                    <ViewDtailIcon />
+                    <Typography>Edit Details</Typography>
+                  </ConfirmButton>
+                ) : (
+                  ''
+                )}
+              </Box>
             </Box>
             <Input
               className="title"

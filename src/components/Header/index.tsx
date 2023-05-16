@@ -1,11 +1,11 @@
 import { useState, useCallback, useMemo } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
-import { AppBar, Box, Breadcrumbs, MenuItem, Typography, styled as muiStyled, styled } from '@mui/material'
+import { NavLink, useHistory, useLocation } from 'react-router-dom'
+import { AppBar, Box, Breadcrumbs, Typography, styled as muiStyled, styled } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
 import { HideOnMobile } from 'theme/index'
-import PlainSelect from 'components/Select/PlainSelect'
+// import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/svg/logo.svg'
 import { routes } from 'constants/routes'
@@ -16,6 +16,14 @@ import { ChainId } from 'constants/chain'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
 import { useUserInfo } from 'state/userInfo/hooks'
+import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
+import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
+import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
+import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
+import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
+import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+
+import PopperCard from 'components/PopperCard'
 
 interface TabContent {
   title: string
@@ -31,26 +39,93 @@ interface Tab extends TabContent {
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
   { title: 'DAOs', route: routes.Governance },
-  { title: 'Tools', route: routes.DappStore }
+  {
+    title: 'Tools',
+    route: routes.DappStore,
+    subTab: [
+      {
+        title: 'Tools',
+        route: routes.DappStore,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <HomeSvg />
+            <Typography color={'#3F5170'}>Tools</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Create DAO',
+        route: routes.CreatorDao,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <DaosIcon />
+            <Typography color={'#3F5170'}>Create DAO</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'DAO Rewards',
+        route: routes.Activity,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <RewardsIcon />
+            <Typography color={'#3F5170'}>DAO Rewards</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Create Token',
+        route: routes.CreatorToken,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <TokenIcon />
+            <Typography color={'#3F5170'}>Create Token</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'SDK',
+        link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
+        titleContent: (
+          <Box
+            display={'flex'}
+            flexDirection={'row'}
+            sx={{
+              '&:hover svg path': {
+                fill: '#0049C6'
+              }
+            }}
+          >
+            <SdkIcon />
+            <Typography color={'#3F5170'} flex={1}>
+              SDK
+            </Typography>
+          </Box>
+        )
+      }
+    ]
+  },
   // { title: 'DAO Rewards', route: routes.Activity },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
   // { title: 'Creator', route: routes.Creator },
   // { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
-  // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
+  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
-const navLinkSX = ({ theme }: any) => ({
-  textDecoration: 'none',
-  fontSize: 14,
-  color: theme.palette.text.primary,
-  opacity: 0.5,
-  '&:hover': {
-    opacity: 1
-  }
-})
+// const navLinkSX = () => ({
+//   textDecoration: 'none',
+//   fontSize: 14,
+//   color: '#3F5170',
+//   '&:hover p': {
+//     color: '#0049C6'
+//   },
+//   '&:hover svg path': {
+//     fill: '#0049C6'
+//   }
+// })
 
-const StyledNavLink = styled(NavLink)(navLinkSX)
+// const StyledNavLink = styled(NavLink)(navLinkSX)
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'fixed',
@@ -78,6 +153,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     marginRight: 30,
     fontWeight: 600,
     paddingBottom: '30px',
+    paddingTop: '30px',
     borderBottom: '4px solid transparent',
     '&.active': {
       color: theme.palette.primary.main,
@@ -165,6 +241,7 @@ const MainLogo = styled(NavLink)(({ theme }) => ({
 
 const LinksWrapper = muiStyled('div')(({ theme }) => ({
   margin: '0 80px',
+  display: 'flex',
   [theme.breakpoints.down('lg')]: {
     margin: '0 30px'
   },
@@ -304,6 +381,7 @@ export default function Header() {
 
 function TabsBox() {
   const { pathname } = useLocation()
+  const history = useHistory()
 
   return (
     <LinksWrapper>
@@ -311,22 +389,86 @@ function TabsBox() {
         subTab ? (
           <Box
             sx={{
+              color: '#3F5170',
               marginRight: {
                 xs: 15,
                 lg: 48
               },
               height: 'auto',
               paddingBottom: '30px',
-              borderBottom: '2px solid transparent',
               borderColor: theme =>
                 subTab.some(tab => tab.route && pathname.includes(tab.route))
                   ? theme.palette.text.primary
                   : 'transparnet',
-              display: 'inline'
+              display: 'flex'
             }}
             key={title + idx}
           >
-            <PlainSelect
+            <PopperCard
+              sx={{
+                marginTop: 13,
+                maxHeight: '50vh',
+                overflowY: 'auto',
+                '&::-webkit-scrollbar': {
+                  display: 'none'
+                }
+              }}
+              placement="bottom-start"
+              targetElement={
+                <Box
+                  flexDirection={'row'}
+                  display={'flex'}
+                  sx={{
+                    paddingTop: 30,
+                    fontSize: 14,
+                    color: '#808189',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    gap: 10,
+                    '& svg:hover path': {
+                      fill: '#0049C6'
+                    },
+                    '& svg:hover rect': {
+                      stroke: '#97B7EF'
+                    }
+                  }}
+                  alignItems={'center'}
+                >
+                  {title}
+                  <ArrowIcon />
+                </Box>
+              }
+            >
+              <>
+                {subTab.map(option => (
+                  <Box
+                    sx={{
+                      width: 150,
+                      height: 40,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: '#0049C60D',
+                        colorr: '#0049C6'
+                      },
+                      '&:hover svg path': {
+                        fill: '#0049C6'
+                      },
+                      '&:hover p': {
+                        color: '#0049C6'
+                      }
+                    }}
+                    key={option.title}
+                    onClick={() => (option.route ? history.push(option.route) : window.open(option.link, '_blank'))}
+                  >
+                    {option.titleContent ?? option.title}
+                  </Box>
+                ))}
+              </>
+            </PopperCard>
+            {/* <PlainSelect
               key={title + idx}
               placeholder={title}
               autoFocus={false}
@@ -345,10 +487,12 @@ function TabsBox() {
                     <ExternalLink
                       href={sub.link}
                       className={'link'}
-                      color="#00000050"
                       sx={{
-                        '&:hover': {
-                          color: '#232323!important'
+                        '& p': {
+                          color: '#3F5170'
+                        },
+                        '&:hover p': {
+                          color: '#0049C6'
                         }
                       }}
                     >
@@ -361,7 +505,7 @@ function TabsBox() {
                   </MenuItem>
                 )
               )}
-            </PlainSelect>
+            </PlainSelect> */}
           </Box>
         ) : link ? (
           <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
@@ -393,6 +537,7 @@ function TabsBox() {
 }
 
 export function HeaderRight() {
+  const { pathname } = useLocation()
   const userInfo = useUserInfo()
   return (
     <Box
@@ -404,7 +549,7 @@ export function HeaderRight() {
       <NetworkSelect />
       {userInfo?.loggedToken && <MySpace />}
       <Web3Status />
-      <PopperMenu />
+      {pathname === routes.DappStore || pathname === routes.Governance ? '' : <PopperMenu />}
     </Box>
   )
 }
