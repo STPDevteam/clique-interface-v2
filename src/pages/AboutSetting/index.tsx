@@ -70,7 +70,7 @@ export default function AboutSetting() {
       //   component: <ComingSoon />
       // },
       {
-        label: 'Governance settings',
+        label: 'Governance Settings',
         component: (
           <Box mt={20}>
             <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
