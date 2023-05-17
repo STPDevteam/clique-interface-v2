@@ -1,6 +1,6 @@
 export const routes = {
   Governance: '/daos',
-  DappStore: '/dapp_store',
+  DappStore: '/tools',
   Page: '/page/:chainId/:address',
 
   _DaoInfo: '/governance/daoInfo',

@@ -20,7 +20,7 @@ const menuList = [
   //   route: routes.Activity
   // },
   {
-    title: 'Dapp Store',
+    title: 'Tools',
     icon: <SdkIcon />,
     route: routes.DappStore
   },
