@@ -392,7 +392,7 @@ function TabsBox() {
               color: '#3F5170',
               marginRight: {
                 xs: 15,
-                lg: 48
+                lg: 24
               },
               height: 'auto',
               paddingBottom: '30px',
