@@ -18,6 +18,7 @@ const StyledCard = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   boxShadow: theme.boxShadow.bs2,
   transition: 'all 0.5s',
+  color: '#3f5170',
   '&:hover': {
     border: `2px solid ${theme.palette.primary.main}`,
     padding: '22px'
@@ -106,7 +107,7 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
         </>
       )}
       <Box display={'flex'} justifyContent={'space-between'} mt={16}>
-        <RowCenter>{!isSmDown && Creator}</RowCenter>
+        <RowCenter sx={{ color: '#3f5170' }}>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           {proposalInfo ? (
             <>

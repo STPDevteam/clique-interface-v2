@@ -409,6 +409,7 @@ function TabsBox() {
                 marginTop: 13,
                 maxHeight: '50vh',
                 overflowY: 'auto',
+                padding: '6px 20px',
                 '&::-webkit-scrollbar': {
                   display: 'none'
                 }
@@ -455,6 +456,9 @@ function TabsBox() {
                       },
                       '&:hover svg path': {
                         fill: '#0049C6'
+                      },
+                      '& p': {
+                        marginLeft: 8
                       },
                       '&:hover p': {
                         color: '#0049C6'

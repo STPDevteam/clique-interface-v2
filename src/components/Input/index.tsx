@@ -215,7 +215,7 @@ export default function Input({
               '&::placeholder': {
                 fontSize: placeholderSize ? placeholderSize : smallPlaceholder ? 12 : placeholderSize,
                 color: theme => (error ? theme.palette.error.main : ''),
-                fontWeight: 600
+                fontWeight: 400
                 // textOverflow: 'ellipsis',
                 // whiteSpace: 'nowrap',
                 // overflow: 'hidden'

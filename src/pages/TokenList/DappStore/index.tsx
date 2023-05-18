@@ -105,7 +105,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
       }}
     >
       <Box className="headerCon">
-        <Typography fontSize={14} lineHeight={'20px'} color={'#3F5170'} fontWeight={700}>
+        <Typography fontSize={18} lineHeight={'20px'} color={'#3F5170'} fontWeight={700}>
           {title}
         </Typography>
         <Image src={icon} />
@@ -120,9 +120,13 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           Support Chains
         </Typography>
         {supportChainsIcon === 'all' ? (
-          'All Chain'
+          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+            All Chain
+          </Typography>
         ) : supportChainsIcon === '' ? (
-          '-'
+          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+            -
+          </Typography>
         ) : (
           <Box
             mt={8}

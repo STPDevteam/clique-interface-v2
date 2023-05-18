@@ -79,7 +79,7 @@ export default function Proposal() {
               {itemList.map(item => (
                 <MenuItem
                   key={item.value}
-                  sx={{ fontWeight: 500, fontSize: 10 }}
+                  sx={{ fontWeight: 500, fontSize: 10, color: '#3f5170' }}
                   value={item.value}
                   selected={currentProposalStatus && currentProposalStatus === item.value}
                 >
