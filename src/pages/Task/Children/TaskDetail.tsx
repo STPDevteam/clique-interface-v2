@@ -130,7 +130,8 @@ export default function TaskDetail({
   proposalBaseList,
   TeamSpacesInfo,
   editData,
-  identity
+  identity,
+  initStatus
 }: {
   open: boolean
   onDismiss: () => void
@@ -138,7 +139,13 @@ export default function TaskDetail({
   TeamSpacesInfo: any
   editData: ITaskQuote
   identity: string
+  initStatus: string
 }) {
+  const preStatus = useMemo(() => {
+    const status = MapTaskStatus[editData?.status] ? MapTaskStatus[editData?.status] : initStatus
+    return status
+  }, [editData, initStatus])
+
   const { result: jobsList } = useJobsList('C_member', TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
   const assigneeList = useMemo(() => {
     if (!jobsList) return []
@@ -182,7 +189,7 @@ export default function TaskDetail({
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
-  const [currentStatus, setCurrentStatus] = useState(MapTaskStatus[editData?.status] ?? '')
+  const [currentStatus, setCurrentStatus] = useState(preStatus ?? '')
   const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
   const [proposal, setProposal] = useState(updateProposal ?? '')

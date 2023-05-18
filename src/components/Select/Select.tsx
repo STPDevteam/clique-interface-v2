@@ -106,7 +106,7 @@ export default function Select(props: Props) {
             height: '100%',
             padding: '0 50px 0 20px !important',
             display: 'flex',
-            color: color ? color : 'unset',
+            color: color ? color : '#3f5170',
             alignItems: 'center',
             '&:hover': {
               color: 'white'
@@ -123,7 +123,7 @@ export default function Select(props: Props) {
             zIndex: 999,
             color: theme.palette.text.secondary,
             fontSize: 16,
-            fontWeight: '600!important'
+            fontWeight: '400!important'
           },
           '& .MuiSelect-icon': {
             display: disabled ? 'none' : 'block',

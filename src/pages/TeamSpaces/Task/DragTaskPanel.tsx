@@ -12,15 +12,81 @@ import {
 import useModal from 'hooks/useModal'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
+// import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { ReactComponent as AddIcon } from 'assets/svg/newIcon.svg'
 import { ReactComponent as DelIcon } from 'assets/svg/del.svg'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
-import PopperCard from 'components/PopperCard'
+// import PopperCard from 'components/PopperCard'
 import TaskDetail from 'pages/Task/Children/TaskDetail'
+
+function ContextMenu({
+  children,
+  isJoined,
+  taskList,
+  ind,
+  index,
+  remove,
+  isShow
+}: {
+  children?: React.ReactNode
+  isJoined: string | undefined
+  ind: number
+  index: number
+  remove: (arg0: number, arg1: number[]) => void
+  taskList: ITaskQuote[][]
+  isShow: boolean
+}) {
+  const [hideMenu, setHideMenu] = useState(false)
+  return (
+    <Box sx={{ position: 'relative' }}>
+      <Box>{children}</Box>
+      {isShow && !hideMenu && isJoined !== 'C_member' && (
+        <Box
+          sx={{
+            position: 'absolute',
+            zIndex: 9999,
+            top: 0,
+            left: 150,
+            width: 150,
+            padding: 10,
+            backgroundColor: '#fff',
+            border: '1px solid #D4D7E2',
+            borderRadius: '8px'
+          }}
+        >
+          <Box
+            sx={{
+              height: 44,
+              display: 'flex',
+              gap: 8,
+              alignItems: 'center',
+              flexDirection: 'row',
+              '&:hover': {
+                cursor: 'pointer',
+                backgroundColor: '#005BC60F'
+              }
+            }}
+            onClick={() => {
+              if (isJoined === 'C_member') return
+              const newState = [...taskList]
+              const del = newState[ind].splice(index, 1)
+              remove(del[0].spacesId, [del[0].taskId])
+              setHideMenu(true)
+            }}
+          >
+            <DelIcon />
+            <Typography color={'#3F5170'} fontSize={14} fontWeight={500}>
+              Delete
+            </Typography>
+          </Box>
+        </Box>
+      )}
+    </Box>
+  )
+}
 
 const reorder = (list: ITaskQuote[], startIndex: number, endIndex: number) => {
   const result = Array.from(list)
@@ -90,7 +156,7 @@ const taskTypeList = [
   { title: 'Not started', color: '#80829F' },
   { title: 'In progress', color: '#2C9EF0' },
   { title: 'Done', color: '#21C331' },
-  { title: 'No Status', color: '#97B7EF' }
+  { title: 'No status', color: '#97B7EF' }
 ]
 
 export default function DragTaskPanel() {
@@ -107,7 +173,7 @@ export default function DragTaskPanel() {
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
 
   const showSidePanel = useCallback(
-    editData => {
+    (editData, initStatus) => {
       showModal(
         <TaskDetail
           open={true}
@@ -115,6 +181,7 @@ export default function DragTaskPanel() {
             setRand(Math.random())
             hideModal()
           }}
+          initStatus={initStatus}
           proposalBaseList={result}
           TeamSpacesInfo={TeamSpacesInfo}
           editData={editData}
@@ -135,12 +202,27 @@ export default function DragTaskPanel() {
     return _arr
   }, [taskTypeListRes, type])
 
+  const [showMenuId, setShowMenuId] = useState<number>()
   const [taskList, setTaskList] = useState<ITaskQuote[][]>([])
+  const [showMenu, setShowMenu] = useState(
+    taskTypeListRes.map(item => ({
+      [item.taskId]: false
+    }))
+  )
+
+  console.log('show', showMenu)
+
+  useEffect(() => {
+    setShowMenu(
+      taskTypeListRes.map(item => ({
+        [item.taskId]: false
+      }))
+    )
+  }, [taskTypeListRes])
+
   useEffect(() => {
     setTaskList(taskAllTypeList)
   }, [taskAllTypeList])
-
-  console.log(isJoined)
 
   const onDragEnd = useCallback(
     (result: DropResult) => {
@@ -258,6 +340,35 @@ export default function DragTaskPanel() {
     [taskList]
   )
 
+  const handleContextMenu = useCallback(
+    (e, el, index) => {
+      e.preventDefault()
+      const _arr: any = []
+      taskTypeListRes.map(item => {
+        _arr.push(Object.assign({}, {}, { [item.taskId]: item.taskId === el[index].taskId }))
+      })
+      setShowMenu(_arr)
+      setShowMenuId(el[index].taskId)
+    },
+    [taskTypeListRes]
+  )
+
+  useEffect(() => {
+    const hideMenu = () => {
+      setShowMenu(
+        taskTypeListRes.map(item => ({
+          [item.taskId]: false
+        }))
+      )
+      setShowMenuId(undefined)
+    }
+    document.addEventListener('click', hideMenu)
+
+    return () => {
+      document.removeEventListener('click', hideMenu)
+    }
+  }, [taskTypeListRes])
+
   return (
     <Box
       sx={{
@@ -308,7 +419,7 @@ export default function DragTaskPanel() {
               cursor: 'pointer'
             }}
             onClick={() => {
-              showSidePanel(undefined)
+              showSidePanel(undefined, undefined)
             }}
           >
             <AddIcon />
@@ -328,136 +439,191 @@ export default function DragTaskPanel() {
                     {curTaskTypeList[ind].title}
                   </TaskTypeBtn>
                   {el.map((item, index) => (
-                    <Draggable
-                      key={item.taskId}
-                      draggableId={item.taskId.toString()}
-                      index={index}
-                      isDragDisabled={isJoined === 'C_member' || isJoined === 'noRole'}
-                    >
-                      {(provided, snapshot) => (
-                        <Box
-                          sx={{
-                            '&.B_Medium': {
-                              borderTop: '5px solid #EFCC97!important'
-                            },
-                            '&.A_High': {
-                              borderTop: '5px solid #E46767!important'
-                            },
-                            '&.C_Low': {
-                              borderTop: '5px solid #CAE7ED!important'
-                            }
-                          }}
-                          onClick={() => {
-                            showSidePanel(item)
-                          }}
-                          onTouchEnd={() => {
-                            showSidePanel(item)
-                          }}
-                          className={item.priority}
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                    <Box key={item.taskId} onContextMenu={e => handleContextMenu(e, el, index)}>
+                      <ContextMenu
+                        ind={ind}
+                        index={index}
+                        remove={remove}
+                        isJoined={isJoined}
+                        taskList={taskList}
+                        isShow={item.taskId === showMenuId}
+                      >
+                        <Draggable
+                          draggableId={item.taskId.toString()}
+                          index={index}
+                          isDragDisabled={isJoined === 'C_member' || isJoined === 'noRole'}
                         >
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              '& p': {
-                                width: 140,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }
-                            }}
-                          >
-                            <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
-                              {item.taskName}
-                            </Typography>
-                            {isJoined === 'C_member' ? (
-                              ''
-                            ) : (
-                              <PopperCard
-                                width={'fit-content'}
-                                sx={{
-                                  marginTop: 13
-                                }}
-                                targetElement={
-                                  <Box
-                                    sx={{
-                                      width: 20,
-                                      height: 20,
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    <MoreVertIcon />
-                                  </Box>
+                          {(provided, snapshot) => (
+                            <Box
+                              sx={{
+                                '&.B_Medium': {
+                                  borderTop: '5px solid #EFCC97!important'
+                                },
+                                '&.A_High': {
+                                  borderTop: '5px solid #E46767!important'
+                                },
+                                '&.C_Low': {
+                                  borderTop: '5px solid #CAE7ED!important'
                                 }
+                              }}
+                              onClick={() => {
+                                showSidePanel(item, undefined)
+                              }}
+                              onTouchEnd={() => {
+                                showSidePanel(item, undefined)
+                              }}
+                              className={item.priority}
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                            >
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center',
+                                  '& p': {
+                                    width: 140,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }
+                                }}
                               >
-                                <>
-                                  <Box
-                                    sx={{
-                                      width: 150,
-                                      display: 'flex',
-                                      gap: 8,
-                                      padding: '10px',
-                                      alignItems: 'center',
-                                      flexDirection: 'row',
-                                      '&:hover': {
-                                        cursor: 'pointer',
-                                        backgroundColor: '#005BC60F'
-                                      }
-                                    }}
-                                    onClick={e => {
-                                      if (isJoined === 'C_member') return
-                                      const newState = [...taskList]
-                                      const del = newState[ind].splice(index, 1)
-                                      remove(del[0].spacesId, [del[0].taskId])
-                                      setTaskList(newState)
-                                      e.stopPropagation()
-                                    }}
-                                  >
-                                    <DelIcon />
-                                    <Typography color={'#3F5170'} fontSize={14} fontWeight={500}>
-                                      Delete
-                                    </Typography>
-                                  </Box>
-                                </>
-                              </PopperCard>
-                            )}
-                          </Box>
-                          <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
-                            {timeStampToFormat(item.deadline)}
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              justifyContent: 'flex-start',
-                              alignItems: 'center',
-                              gap: 10,
-                              '& img': {
-                                width: 18,
-                                height: 18,
-                                border: '1px solid #D4DCE2',
-                                borderRadius: '50%'
-                              },
-                              '& p': {
-                                width: 140,
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }
-                            }}
-                          >
-                            {item.assignAvatar && <Image src={item.assignAvatar}></Image>}
-                            <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
-                              {item.assignNickname}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      )}
-                    </Draggable>
+                                <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
+                                  {item.taskName}
+                                </Typography>
+                                {/* {isJoined === 'C_member' ? (
+                                ''
+                              ) : (
+                                <PopperCard
+                                  width={'fit-content'}
+                                  sx={{
+                                    marginTop: 13
+                                  }}
+                                  targetElement={
+                                    <Box
+                                      sx={{
+                                        width: 20,
+                                        height: 20,
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      <MoreVertIcon />
+                                    </Box>
+                                  }
+                                >
+                                  <>
+                                    <Box
+                                      sx={{
+                                        width: 150,
+                                        display: 'flex',
+                                        gap: 8,
+                                        padding: '10px',
+                                        alignItems: 'center',
+                                        flexDirection: 'row',
+                                        '&:hover': {
+                                          cursor: 'pointer',
+                                          backgroundColor: '#005BC60F'
+                                        }
+                                      }}
+                                      onClick={e => {
+                                        if (isJoined === 'C_member') return
+                                        const newState = [...taskList]
+                                        const del = newState[ind].splice(index, 1)
+                                        remove(del[0].spacesId, [del[0].taskId])
+                                        setTaskList(newState)
+                                        e.stopPropagation()
+                                      }}
+                                    >
+                                      <DelIcon />
+                                      <Typography color={'#3F5170'} fontSize={14} fontWeight={500}>
+                                        Delete
+                                      </Typography>
+                                    </Box>
+                                  </>
+                                </PopperCard>
+                              )} */}
+                              </Box>
+                              <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
+                                {timeStampToFormat(item.deadline)}
+                              </Typography>
+                              <Box
+                                sx={{
+                                  display: 'flex',
+                                  justifyContent: 'flex-start',
+                                  alignItems: 'center',
+                                  gap: 10,
+                                  '& img': {
+                                    width: 18,
+                                    height: 18,
+                                    border: '1px solid #D4DCE2',
+                                    borderRadius: '50%'
+                                  },
+                                  '& p': {
+                                    width: 140,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis'
+                                  }
+                                }}
+                              >
+                                {item.assignAvatar && <Image src={item.assignAvatar}></Image>}
+                                <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
+                                  {item.assignNickname}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          )}
+                        </Draggable>
+                      </ContextMenu>
+                    </Box>
                   ))}
                   {provided.placeholder}
+                  {isJoined === 'C_member' ? (
+                    <Tooltip title="Only administrators are allowed to create tasks" arrow>
+                      <Box
+                        sx={{
+                          width: 84,
+                          height: 36,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#B5B7CF',
+                          gap: 8,
+                          margin: '0 auto',
+                          cursor: 'pointer',
+                          '& svg circle': {
+                            fill: '#B5B7CF'
+                          }
+                        }}
+                      >
+                        <AddIcon />
+                        <Typography fontWeight={400}>Add New</Typography>
+                      </Box>
+                    </Tooltip>
+                  ) : (
+                    <Box
+                      width={'84px'}
+                      height={'36px'}
+                      sx={{
+                        color: '#97B7EF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        margin: '0 auto',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        showSidePanel(undefined, curTaskTypeList[ind].title)
+                      }}
+                    >
+                      <AddIcon />
+                      <Typography fontWeight={400} width={'fit-content'}>
+                        Add New
+                      </Typography>
+                    </Box>
+                  )}
                 </div>
               )}
             </Droppable>

@@ -142,7 +142,7 @@ export default function Member() {
         <Typography
           variant="h5"
           fontWeight={400}
-          lineHeight={'20px'}
+          lineHeight={'24px'}
           sx={{
             width: '700px',
             textAlign: 'left',

@@ -28,6 +28,7 @@ export const StyledItem = styled(Stack)(({ theme }) => ({
 }))
 
 const StyledTitle = styled(Typography)(({}) => ({
+  color: '#80829F',
   fontSize: 16,
   marginBottom: 20
 }))
@@ -65,7 +66,7 @@ export default function About() {
       >
         <Stack spacing={isSmDown ? 10 : 16}>
           <StyledText>Network</StyledText>
-          <StyledText fontWeight={600} fontSize={16}>
+          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
             {daoInfo ? ChainListMap[daoInfo.daoTokenChainId]?.name : '--'}
           </StyledText>
         </Stack>
@@ -81,7 +82,7 @@ export default function About() {
                 underline="hover"
                 target="_blank"
               >
-                <StyledText fontWeight={600} fontSize={16}>
+                <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
                   <ShowDaoToken token={daoInfo?.token} />
                 </StyledText>
               </MuiLink>
@@ -90,7 +91,7 @@ export default function About() {
         </Stack>
         <Stack spacing={isSmDown ? 10 : 16}>
           <StyledText>Price</StyledText>
-          <StyledText fontWeight={600} fontSize={16}>
+          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
             --
           </StyledText>
         </Stack>
@@ -99,6 +100,7 @@ export default function About() {
           <StyledText
             fontSize={12}
             sx={{
+              color: '#3F5170',
               wordBreak: 'break-all'
             }}
           >
@@ -117,19 +119,23 @@ export default function About() {
       >
         <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Min. Holding For Proposal</StyledText>
-          <StyledText fontWeight={600} fontSize={16}>{`${daoInfo?.proposalThreshold?.toSignificant(6, {
+          <StyledText
+            fontWeight={600}
+            fontSize={16}
+            sx={{ color: '#3F5170' }}
+          >{`${daoInfo?.proposalThreshold?.toSignificant(6, {
             groupSeparator: ','
           })} ${daoInfo?.token?.symbol || '-'}`}</StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Min. Votes For Proposal Execution</StyledText>
-          <StyledText fontWeight={600} fontSize={16}>
+          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
             {daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes
           </StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Default Voting Period</StyledText>
-          <StyledText fontWeight={600} fontSize={16}>
+          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
             {votingPeriodDate
               ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
               : '--'}
@@ -137,7 +143,7 @@ export default function About() {
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
           <StyledText>Voting Types Allowed</StyledText>
-          <StyledText fontWeight={600} fontSize={16}>
+          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
             {daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}
           </StyledText>
         </Stack>

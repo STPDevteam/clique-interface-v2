@@ -105,7 +105,7 @@ export const theme = {
       paper: '#FFFFFF'
     },
     text: {
-      primary: '#1B1D21',
+      primary: '#3f5170',
       secondary: '#808191',
       disabled: '#b4b2b2'
     },
@@ -292,37 +292,37 @@ export const override: any = {
       h1: {
         fontSize: 56,
         lineHeight: '64px',
-        color: '#1B1D21',
+        color: '#3f5170',
         fontWeight: 600
       },
       h2: {
         fontSize: 48,
-        color: '#1B1D21',
+        color: '#3f5170',
         lineHeight: '72px',
         fontWeight: 600
       },
       h3: {
         fontSize: 40,
-        color: '#1B1D21',
+        color: '#3f5170',
         lineHeight: '60px',
         fontWeight: 600
       },
       h4: {
         fontSize: 32,
-        color: '#1B1D21',
+        color: '#3f5170',
         lineHeight: '48px',
         letterSpacing: '-1px',
         fontWeight: 600
       },
       h5: {
         fontSize: 20,
-        color: '#1B1D21',
+        color: '#3f5170',
         lineHeight: '30px',
         fontWeight: 600
       },
       h6: {
         fontSize: 16,
-        color: '#1B1D21',
+        color: '#3f5170',
         lineHeight: '24px',
         fontWeight: 600
       },
