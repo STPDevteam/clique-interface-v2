@@ -342,7 +342,14 @@ export default function Profile() {
                   {profileInfo?.following || 0} Following
                 </Typography>
               </Stack>
-              <Typography mt={10} fontSize={14} fontWeight={600}>
+              <Typography
+                mt={10}
+                fontSize={14}
+                sx={{
+                  wordBreak: 'break-word'
+                }}
+                fontWeight={600}
+              >
                 {profileInfo?.introduction || ''}
               </Typography>
             </Box>
