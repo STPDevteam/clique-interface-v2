@@ -9,12 +9,6 @@ import { signMessage } from '../../constants'
 import { useWeb3Instance } from 'hooks/useWeb3Instance'
 import { useLogin } from 'hooks/useBackedDaoServer'
 
-export function getCurrentUserInfoSync(account?: string): UserInfo | undefined {
-  const allUserInfo = store.getState().localUserInfo
-  if (!allUserInfo || !account) return undefined
-  return allUserInfo.account?.[account]
-}
-
 export function clearAllSignStoreSync() {
   store.dispatch({
     type: 'localUserInfo/removeUserInfo'
@@ -26,10 +20,10 @@ export function useUserInfo(): UserInfo | undefined {
   const { account } = useWeb3ReactCore()
 
   return useMemo(() => {
-    if (!account) {
+    if (!account || account.toLowerCase() !== allUserInfo.addressInfo?.account.toLowerCase()) {
       return undefined
     }
-    return allUserInfo.account?.[account]
+    return allUserInfo.addressInfo
   }, [account, allUserInfo])
 }
 
@@ -37,24 +31,15 @@ export function useLoginSignature() {
   const login = useLogin()
   const web3 = useWeb3Instance()
   const { account } = useActiveWeb3React()
-  const address = store.getState().application.curAddress
-  const _account = store.getState().localUserInfo.account?.[address]?.account
-  const _signature = store.getState().localUserInfo.account?.[address]?.signature
   const dispatch = useDispatch()
 
   return useCallback(async () => {
     if (!account || !web3) return
 
-    if (_account) {
-      const res = await login.login(_account, _signature)
-      dispatch(saveUserInfo({ userInfo: { account: _account, signature: _signature, loggedToken: res } }))
-      return
-    } else {
-      return web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
-        const res = await login.login(account, signStr)
-        dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res } }))
-        return signStr
-      })
-    }
-  }, [account, web3, _account, login, _signature, dispatch])
+    return web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
+      const res = await login.login(account, signStr)
+      dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res } }))
+      return signStr
+    })
+  }, [account, web3, login, dispatch])
 }

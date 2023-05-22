@@ -9,8 +9,7 @@ const axiosInstance = axios.create({
 })
 
 function MakeHeaders() {
-  const address = store.getState().application.curAddress
-  const _token = store.getState().localUserInfo.account?.[address]?.loggedToken
+  const _token = store.getState().localUserInfo.addressInfo?.loggedToken
 
   return {
     headers: {
