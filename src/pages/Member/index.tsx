@@ -76,32 +76,33 @@ export default function Member() {
   // const { result: applyList } = useJobsApplyList(daoAddress, Number(daoChainId), rand)
   const { result: jobsList } = useJobsList('', daoAddress, Number(daoChainId))
 
-  const tabList =
-    isJoined && (isJoined === 'C_member' || isJoined === 'noRole')
-      ? [
-          {
-            label: 'Card View',
-            icon: <View />
-          }
-          // {
-          //   label: 'Open Jobs',
-          //   icon: <Job />
-          // }
-        ]
-      : [
-          {
-            label: 'Card View',
-            icon: <View />
-          },
-          // {
-          //   label: 'Job Application',
-          //   icon: <Job />
-          // },
-          {
-            label: 'Invite User',
-            icon: <Invite />
-          }
-        ]
+  const tabList = !isJoined
+    ? []
+    : isJoined === 'C_member' || isJoined === 'noRole'
+    ? [
+        {
+          label: 'Card View',
+          icon: <View />
+        }
+        // {
+        //   label: 'Open Jobs',
+        //   icon: <Job />
+        // }
+      ]
+    : [
+        {
+          label: 'Card View',
+          icon: <View />
+        },
+        // {
+        //   label: 'Job Application',
+        //   icon: <Job />
+        // },
+        {
+          label: 'Invite User',
+          icon: <Invite />
+        }
+      ]
   return (
     <DaoContainer>
       <Box>
