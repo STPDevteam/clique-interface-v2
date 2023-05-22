@@ -38,18 +38,18 @@ interface Tab extends TabContent {
 
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
-  { title: 'DAOs', route: routes.Governance },
+  { title: 'Explore DAOs', route: routes.Governance },
   {
     title: 'Tools',
     route: routes.DappStore,
     subTab: [
       {
-        title: 'Tools',
-        route: routes.DappStore,
+        title: 'DAO Rewards',
+        route: routes.Activity,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <HomeSvg />
-            <Typography color={'#3F5170'}>Tools</Typography>
+            <RewardsIcon />
+            <Typography color={'#3F5170'}>DAO Rewards</Typography>
           </Box>
         )
       },
@@ -60,16 +60,6 @@ export const Tabs: Tab[] = [
           <Box display={'flex'} flexDirection={'row'}>
             <DaosIcon />
             <Typography color={'#3F5170'}>Create DAO</Typography>
-          </Box>
-        )
-      },
-      {
-        title: 'DAO Rewards',
-        route: routes.Activity,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <RewardsIcon />
-            <Typography color={'#3F5170'}>DAO Rewards</Typography>
           </Box>
         )
       },
@@ -100,6 +90,16 @@ export const Tabs: Tab[] = [
             <Typography color={'#3F5170'} flex={1}>
               SDK
             </Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Tools',
+        route: routes.DappStore,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <HomeSvg />
+            <Typography color={'#3F5170'}>Tools</Typography>
           </Box>
         )
       }

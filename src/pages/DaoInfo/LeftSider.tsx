@@ -1,6 +1,7 @@
 import { Box, Drawer, List, ListItemText, styled, Typography } from '@mui/material'
 import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
 import { ReactComponent as proposal } from 'assets/svg/proposal.svg'
+import { ReactComponent as workspace } from 'assets/svg/workspace.svg'
 // import { ReactComponent as treasury } from 'assets/svg/treasury.svg'
 // import { ReactComponent as Idea } from 'assets/svg/Idea.svg'
 import { ReactComponent as bounty } from 'assets/svg/bounty.svg'
@@ -9,12 +10,12 @@ import { ReactComponent as setting } from 'assets/svg/setting.svg'
 // import { ReactComponent as Add } from 'assets/svg/add.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import { routes } from 'constants/routes'
-import Image from 'components/Image'
-import robot from 'assets/images/robot.png'
+// import Image from 'components/Image'
+// import robot from 'assets/images/robot.png'
 // import ele from 'assets/images/ele.png'
 // import trash from 'assets/images/trash.png'
 // import meetingIcon from 'assets/images/meeting.png'
-import taskIcon from 'assets/images/task.png'
+// import taskIcon from 'assets/images/task.png'
 // import calendarIcon from 'assets/images/calendar.png'
 // import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
@@ -22,7 +23,7 @@ import { useCallback, useMemo } from 'react'
 import { useDaoBaseInfo, useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
 import { DaoAvatars } from 'components/Avatars'
-import MyCollapse from 'components/Collapse'
+// import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 
@@ -89,22 +90,22 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledTeamMenu = styled(Box)({
-  paddingLeft: 30,
-  display: 'flex',
-  justifyContent: 'flex-start',
-  flexDirection: 'row',
-  alignItems: 'center',
-  gap: 10,
-  color: '#3f5170',
-  cursor: 'pointer',
-  '& img': {
-    width: 14
-  },
-  '& svg path': {
-    fill: '#d4d7e2'
-  }
-})
+// const StyledTeamMenu = styled(Box)({
+//   paddingLeft: 30,
+//   display: 'flex',
+//   justifyContent: 'flex-start',
+//   flexDirection: 'row',
+//   alignItems: 'center',
+//   gap: 10,
+//   color: '#3f5170',
+//   cursor: 'pointer',
+//   '& img': {
+//     width: 14
+//   },
+//   '& svg path': {
+//     fill: '#d4d7e2'
+//   }
+// })
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -192,6 +193,11 @@ export default function LeftSider() {
         icon: proposal,
         route: makeRouteLink(routes.Proposal)
       },
+      {
+        text: 'Workspace',
+        icon: workspace,
+        route: makeRouteLink(routes.DaoTeamTask)
+      },
       // {
       //   text: 'Treasury',
       //   icon: treasury,
@@ -221,31 +227,31 @@ export default function LeftSider() {
     [makeRouteLink]
   )
 
-  const teamspacesList: LeftSiderMenu[] = useMemo(
-    () => [
-      {
-        title: 'Genernal',
-        icon: robot,
-        defaultOpen: true,
-        children: [
-          // {
-          //   title: 'Meetings',
-          //   link: makeRouteLink(routes.DaoTeamMeetings),
-          //   icon: meetingIcon
-          // },
-          // { title: 'Docs', link: makeRouteLink(routes.DaoTeamDocs), icon: docsIcon },
-          { title: 'Task', link: makeRouteLink(routes.DaoTeamTask), icon: taskIcon }
-          // { title: 'Calendar', link: makeRouteLink(routes.DaoTeamCalendar), icon: calendarIcon }
-        ]
-      }
-      // {
-      //   title: 'Game',
-      //   icon: ele,
-      //   children: []
-      // }
-    ],
-    [makeRouteLink]
-  )
+  // const teamspacesList: LeftSiderMenu[] = useMemo(
+  //   () => [
+  //     {
+  //       title: 'Genernal',
+  //       icon: robot,
+  //       defaultOpen: true,
+  //       children: [
+  //         // {
+  //         //   title: 'Meetings',
+  //         //   link: makeRouteLink(routes.DaoTeamMeetings),
+  //         //   icon: meetingIcon
+  //         // },
+  //         // { title: 'Docs', link: makeRouteLink(routes.DaoTeamDocs), icon: docsIcon },
+  //         { title: 'Task', link: makeRouteLink(routes.DaoTeamTask), icon: taskIcon }
+  //         // { title: 'Calendar', link: makeRouteLink(routes.DaoTeamCalendar), icon: calendarIcon }
+  //       ]
+  //     }
+  //     // {
+  //     //   title: 'Game',
+  //     //   icon: ele,
+  //     //   children: []
+  //     // }
+  //   ],
+  //   [makeRouteLink]
+  // )
 
   return (
     <StyledAppBar>
@@ -269,7 +275,7 @@ export default function LeftSider() {
           alignItems={'center'}
           gap={10}
           width={'100%'}
-          padding="16px 20px"
+          padding="16px 20px 5px"
         >
           <PopperCard
             sx={{
@@ -297,7 +303,7 @@ export default function LeftSider() {
                 }}
                 alignItems={'center'}
               >
-                <DaoAvatars size={30} src={daoInfo?.daoLogo} />
+                <DaoAvatars size={50} src={daoInfo?.daoLogo} />
                 <Typography fontWeight={600} fontSize={16} textAlign={'left'} sx={{ color: '#3F5170' }}>
                   {daoInfo?.name || '-'}
                 </Typography>
@@ -339,11 +345,11 @@ export default function LeftSider() {
             </NavLink>
           ))}
         </List>
-        <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'}>
+        {/* <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'}>
           <Typography variant="h5" textAlign={'left'} fontSize={16} sx={{ color: '#3F5170', padding: '6px 24px 16px' }}>
             Teamspaces
           </Typography>
-        </Box>
+        </Box> */}
         <Box
           gap={10}
           sx={{
@@ -356,7 +362,7 @@ export default function LeftSider() {
             }
           }}
         >
-          {teamspacesList.map((item, idx) => (
+          {/* {teamspacesList.map((item, idx) => (
             <Box key={idx}>
               <MyCollapse
                 hiddenArrow
@@ -408,7 +414,7 @@ export default function LeftSider() {
                 ))}
               </MyCollapse>
             </Box>
-          ))}
+          ))} */}
           {/* <List
             disablePadding
             style={{ marginRight: 0 }}

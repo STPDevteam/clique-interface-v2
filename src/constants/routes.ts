@@ -20,7 +20,7 @@ export const routes = {
   DaoAboutSetting: '/governance/daoInfo/:chainId/:address/about_setting',
   DaoTeamMeetings: '/governance/daoInfo/:chainId/:address/teamspaces/general/meetings',
   DaoTeamDocs: '/governance/daoInfo/:chainId/:address/teamspaces/general/docs',
-  DaoTeamTask: '/governance/daoInfo/:chainId/:address/teamspaces/general/task',
+  DaoTeamTask: '/governance/daoInfo/:chainId/:address/teamspaces/general/workspace',
   DaoTeamCalendar: '/governance/daoInfo/:chainId/:address/teamspaces/general/calendar',
   DaoTeamTrash: '/governance/daoInfo/:chainId/:address/teamspaces/general/trash',
 

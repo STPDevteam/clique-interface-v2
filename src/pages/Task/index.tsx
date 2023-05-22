@@ -3,7 +3,7 @@ import Select from 'components/Select/Select'
 // import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
 import { useCallback, useState } from 'react'
-import TaskIcon from 'assets/images/task.png'
+import TaskIcon from 'assets/images/workspace.png'
 // import EditIcon from 'assets/images/edit.png'
 import Image from 'components/Image'
 import { ReactComponent as Board } from 'assets/svg/board.svg'
@@ -333,8 +333,8 @@ export default function Index() {
               }
             }}
           >
-            <Image src={TaskIcon}></Image>
-            <Typography>Task</Typography>
+            <Image width={30} src={TaskIcon}></Image>
+            <Typography>Workspace</Typography>
           </Box>
           {/* {tabValue === 1 ? (
           <Button
@@ -354,7 +354,7 @@ export default function Index() {
           ''
         )} */}
         </Box>
-        <Typography maxWidth={740}>
+        <Typography maxWidth={740} sx={{ marginTop: '0!important' }}>
           Use this template to track your personal tasks. Click{' '}
           <span style={{ color: '#0049C6', fontWeight: 700 }}>+ New</span> to create a new task directly on this board.
           Click an existing task to add additional context or subtasks.
