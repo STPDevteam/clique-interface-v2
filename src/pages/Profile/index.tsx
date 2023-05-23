@@ -152,28 +152,6 @@ export default function Profile() {
                     {profileInfo?.nickname || 'unnamed'}
                   </Typography>
                   <Box
-                    display={'flex'}
-                    alignItems="center"
-                    sx={{
-                      width: 'fit-content',
-                      borderRadius: '30px',
-                      padding: '4px 4px 2px 16px',
-                      backgroundColor: '#F2F2F2'
-                    }}
-                  >
-                    <Link
-                      fontSize={13}
-                      href={getEtherscanLink(chainId || 1, currentAccount || '', 'address')}
-                      fontWeight={600}
-                      target="_blank"
-                      underline="none"
-                      mr={6}
-                    >
-                      {currentAccount ? shortenAddress(currentAccount) : ''}
-                    </Link>
-                    <Copy toCopy={currentAccount || ''} />
-                  </Box>
-                  <Box
                     fontSize={0}
                     display={'grid'}
                     gridTemplateColumns="auto auto auto auto"
@@ -253,12 +231,12 @@ export default function Profile() {
                 </Box>
                 {isSelf ? (
                   <RowCenter mt={{ xs: 10 }}>
+                    <div></div>
                     <OutlineButton
                       noBold
                       disabled={loading}
                       width="75px"
                       height={'24px'}
-                      style={{ marginRight: 10 }}
                       onClick={async () => {
                         if (!userSignature) {
                           await loginSignature()
@@ -269,19 +247,6 @@ export default function Profile() {
                       }}
                     >
                       Edit
-                    </OutlineButton>
-                    <OutlineButton
-                      disabled={connector !== injected || connector === walletlink}
-                      noBold
-                      style={{
-                        borderColor: '#C60C00',
-                        color: '#C60C00'
-                      }}
-                      width="100px"
-                      height={'24px'}
-                      onClick={deactivate}
-                    >
-                      Disconnect
                     </OutlineButton>
                   </RowCenter>
                 ) : (
@@ -313,6 +278,29 @@ export default function Profile() {
                   </Box>
                 )}
               </Box>
+              <Box
+                mt={12}
+                display={'flex'}
+                alignItems="center"
+                sx={{
+                  width: 'fit-content',
+                  borderRadius: '30px',
+                  padding: '4px 4px 2px 16px',
+                  backgroundColor: '#F2F2F2'
+                }}
+              >
+                <Link
+                  fontSize={13}
+                  href={getEtherscanLink(chainId || 1, currentAccount || '', 'address')}
+                  fontWeight={600}
+                  target="_blank"
+                  underline="none"
+                  mr={6}
+                >
+                  {currentAccount ? shortenAddress(currentAccount) : ''}
+                </Link>
+                <Copy toCopy={currentAccount || ''} />
+              </Box>
               <Stack mt={10} direction={'row'} alignItems="center" spacing={isSmDown ? 10 : 20}>
                 <Typography
                   fontWeight={600}
@@ -342,9 +330,46 @@ export default function Profile() {
                   {profileInfo?.following || 0} Following
                 </Typography>
               </Stack>
-              <Typography mt={10} fontSize={14} fontWeight={600}>
-                {profileInfo?.introduction || ''}
-              </Typography>
+              <Stack
+                mt={10}
+                direction={'row'}
+                alignItems="center"
+                justifyContent={'space-between'}
+                spacing={isSmDown ? 10 : 20}
+              >
+                <Box>
+                  <Typography mt={10} fontSize={14} fontWeight={600}>
+                    {profileInfo?.introduction || ''}
+                  </Typography>
+                  <Box
+                    display={'flex'}
+                    alignItems="center"
+                    sx={{
+                      color: '#97B7EF',
+                      cursor: 'pointer',
+                      width: 'fit-content',
+                      borderRadius: '30px',
+                      padding: '1px 14px',
+                      backgroundColor: '#005BC60F'
+                    }}
+                  >
+                    + Add
+                  </Box>
+                </Box>
+                <OutlineButton
+                  disabled={connector !== injected || connector === walletlink}
+                  noBold
+                  style={{
+                    borderColor: '#C60C00',
+                    color: '#C60C00'
+                  }}
+                  width="100px"
+                  height={'36px'}
+                  onClick={deactivate}
+                >
+                  Disconnect
+                </OutlineButton>
+              </Stack>
             </Box>
           </Box>
         </StyledHeader>

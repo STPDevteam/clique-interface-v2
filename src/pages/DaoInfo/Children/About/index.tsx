@@ -17,7 +17,7 @@ import { getEtherscanLink } from 'utils'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
-  border: `1px solid ${theme.bgColor.bg2}`,
+  border: `1px solid #D4D7E2`,
   padding: '30px 38px',
   borderRadius: theme.borderRadius.default,
   boxShadow: theme.boxShadow.bs1,
@@ -175,7 +175,7 @@ export default function About() {
                     {address}
                   </StyledText>
                 </Link>
-                <div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
                   <AdminTagListBlock chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
                 </div>
               </>

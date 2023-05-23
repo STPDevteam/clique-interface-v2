@@ -4,8 +4,10 @@ import axios from 'axios'
 import { useState } from 'react'
 import { serverUploadImage } from '../../constants'
 import Image from '../Image'
+// import Button from 'components/Button/Button'
 
 const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }) => ({
+  gap: 40,
   '& input': {
     width: 0,
     height: 0,
@@ -13,7 +15,7 @@ const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }
   },
   '.upload': {
     cursor: 'pointer',
-    margin: 'auto',
+    // margin: 'auto',
     width: size,
     height: size,
     border: `1px solid ${theme.bgColor.bg2}`,
@@ -81,6 +83,12 @@ export default function Index({
 }) {
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [errorMsg, setErrorMsg] = useState('Upload failed')
+  // const theme = useTheme()
+
+  // const handleClick = useCallback(() => {
+  //   const el = document.getElementById('upload')
+  //   el && el.click()
+  // }, [])
   return (
     <StyledUpload
       sx={sx}
@@ -134,6 +142,14 @@ export default function Index({
           </svg>
         )}
       </label>
+      {/* <Box display={'flex'} flexDirection={'column'} gap={25}>
+        <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={400} maxWidth={150}>
+          File types supported: JPG, PNG, GIF.
+        </Typography>
+        <Button onClick={handleClick} width="125px" height="40px">
+          + Upload
+        </Button>
+      </Box> */}
       <Snackbar
         open={openSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
