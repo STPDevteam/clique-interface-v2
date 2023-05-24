@@ -1,4 +1,4 @@
-import { Stack, styled, Typography, Link as MuiLink } from '@mui/material'
+import { Stack, styled, Typography, Link as MuiLink, useTheme } from '@mui/material'
 import { Box } from '@mui/system'
 import EmptyData from 'components/EmptyData'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
@@ -15,6 +15,8 @@ import { Link, useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
 import { getEtherscanLink } from 'utils'
 import { getVotingNumberByTimestamp } from 'utils/dao'
+import Image from 'components/Image'
+import avatar from 'assets/images/avatar.png'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
@@ -46,7 +48,7 @@ export default function About() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const isSmDown = useBreakpoint('sm')
-
+  const theme = useTheme()
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
   const { result: daoAdminList, loading: daoAdminLoading } = useBackedDaoAdmins(daoAddress, curDaoChainId)
   const votingPeriodDate = useMemo(
@@ -150,21 +152,41 @@ export default function About() {
       </StyledItem>
 
       <StyledTitle variant="h5">Admin</StyledTitle>
-      <StyledItem>
+      <Box
+        sx={{
+          border: `1px solid #D4D7E2`,
+          padding: '18px 33px 24px 24px',
+          borderRadius: theme.borderRadius.default,
+          boxShadow: theme.boxShadow.bs1,
+          marginBottom: 30
+        }}
+      >
         {daoAdminLoading ? (
           <Loading />
         ) : (
-          <Box
-            display={'grid'}
-            sx={{
-              gridTemplateColumns: { sm: '1fr 1fr', xs: '1fr 80px' }
-            }}
-            alignItems={'center'}
-            gap="10px 20px"
-          >
+          <>
             {daoAdminList?.map(address => (
-              <>
-                <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${address}`}>
+              <Box
+                key={address}
+                display={'grid'}
+                sx={{
+                  borderBottom: '1px solid #fff',
+                  gridTemplateColumns: { sm: '1fr 1fr', xs: '1fr 80px' }
+                }}
+                alignItems={'center'}
+                gap="10px 20px"
+              >
+                <Link
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 10,
+                    alignItems: 'center'
+                  }}
+                  to={routes._Profile + `/${address}`}
+                >
+                  <Image width={24} src={avatar} />
                   <StyledText
                     fontWeight={600}
                     key={address}
@@ -178,12 +200,12 @@ export default function About() {
                 <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
                   <AdminTagListBlock chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
                 </div>
-              </>
+              </Box>
             ))}
-          </Box>
+          </>
         )}
         {!daoAdminLoading && !daoAdminList?.length && <EmptyData />}
-      </StyledItem>
+      </Box>
     </div>
   )
 }

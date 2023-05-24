@@ -96,7 +96,18 @@ export default function UpdateProfileModal({
           Edit Profile
         </Typography>
         <Stack spacing={16}>
-          <Box padding="12px">
+          <Box
+            padding="12px"
+            display={'flex'}
+            justifyContent={'center'}
+            flexDirection={'column'}
+            gap={10}
+            sx={{
+              '&>div': {
+                margin: '0 auto'
+              }
+            }}
+          >
             <UploadImage value={avatar || ''} size={124} onChange={val => setAvatar(val)} />
             <Typography fontSize={12} textAlign={'center'} color={theme.textColor.text1}>
               {'Supports JPG, PNG, and size <2MB.'}

@@ -39,6 +39,7 @@ import Loading from 'components/Loading'
 import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import { ReactComponent as EditIcon } from 'assets/svg/edit.svg'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -230,9 +231,20 @@ export default function Profile() {
                   </Box>
                 </Box>
                 {isSelf ? (
-                  <RowCenter mt={{ xs: 10 }}>
+                  <RowCenter
+                    mt={{ xs: 10 }}
+                    sx={{
+                      '& svg': {
+                        marginRight: 5
+                      },
+                      '&:hover svg path': {
+                        fill: theme.palette.primary.main
+                      }
+                    }}
+                  >
                     <div></div>
                     <OutlineButton
+                      style={{ border: 'none' }}
                       noBold
                       disabled={loading}
                       width="75px"
@@ -246,6 +258,7 @@ export default function Profile() {
                         }
                       }}
                     >
+                      <EditIcon />
                       Edit
                     </OutlineButton>
                   </RowCenter>
@@ -350,6 +363,7 @@ export default function Profile() {
                       width: 'fit-content',
                       borderRadius: '30px',
                       padding: '1px 14px',
+                      fontSize: 13,
                       backgroundColor: '#005BC60F'
                     }}
                   >
