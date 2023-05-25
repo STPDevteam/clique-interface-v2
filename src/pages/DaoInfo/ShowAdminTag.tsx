@@ -1,4 +1,4 @@
-import { Stack, useTheme } from '@mui/material'
+import { Stack } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoAdminLevelList } from 'hooks/useDaoInfo'
@@ -38,10 +38,10 @@ export function AdminTagListBlock({
 }
 
 export default function ShowAdminTag({ level }: { level?: DaoAdminLevelProp }) {
-  const theme = useTheme()
+  // const theme = useTheme()
   return level === DaoAdminLevelProp.SUPER_ADMIN ? (
     <StyledChip label="Super Admin" />
   ) : level === DaoAdminLevelProp.ADMIN ? (
-    <StyledChip label="Admin" bgColor={theme.bgColor.bg6} />
+    <StyledChip label="Admin" bgColor="#97B7EF" />
   ) : null
 }

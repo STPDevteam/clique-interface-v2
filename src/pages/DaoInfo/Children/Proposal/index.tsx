@@ -47,11 +47,18 @@ export default function Proposal() {
               alignItems={'center'}
             >
               <ProposalIcon />
-              <Typography ml={10} fontWeight={600} fontSize={30}>
+              <Typography
+                sx={{
+                  ml: '6px',
+                  fontWeight: '600',
+                  fontSize: '30px',
+                  lineHeight: '20px'
+                }}
+              >
                 Proposal
               </Typography>
             </Stack>
-            <Typography variant="body1" mt={20}>
+            <Typography variant="body1" lineHeight="20px" mt={12}>
               Core members can initiate a vote and get the number of votes through tasks. If the number of votes in
               favor is greater than 50%, and the number of valid votes is not less than 2/3 of the total number of
               votes, it will be viewed as passed.
@@ -71,15 +78,16 @@ export default function Proposal() {
             <Select
               noBold
               placeholder=""
+              style={{ fontWeight: 500 }}
               width={isSmDown ? 160 : 158}
-              height={isSmDown ? 32 : 32}
+              height={isSmDown ? 36 : 36}
               value={currentProposalStatus}
               onChange={e => setCurrentProposalStatus(e.target.value)}
             >
               {itemList.map(item => (
                 <MenuItem
                   key={item.value}
-                  sx={{ fontWeight: 500, fontSize: 10, color: '#3f5170' }}
+                  sx={{ fontWeight: 500, fontSize: 10, color: '#3F5170' }}
                   value={item.value}
                   selected={currentProposalStatus && currentProposalStatus === item.value}
                 >

@@ -107,10 +107,11 @@ export default function Select(props: Props) {
             padding: '0 50px 0 20px !important',
             display: 'flex',
             color: color ? color : '#3f5170',
-            alignItems: 'center',
-            '&:hover': {
-              color: 'white'
-            }
+            fontFamily: 'Inter',
+            alignItems: 'center'
+            // '&:hover': {
+            //   color: 'white'
+            // }
           },
           '& span': {
             fontWeight: '600!important'
@@ -132,6 +133,9 @@ export default function Select(props: Props) {
           '&:hover': {
             color: disabled ? theme.palette.text.primary : theme.palette.common.white,
             backgroundColor: disabled ? theme.palette.background.paper : theme.palette.primary.main,
+            '& .MuiSelect-select': {
+              color: 'white'
+            },
             '& .MuiSelect-icon': {
               color: disabled ? theme.palette.text.primary : theme.palette.common.white
             }

@@ -122,7 +122,6 @@ export default function Member() {
               display: 'flex',
               alignItems: 'center',
               gap: 10,
-              mb: 20,
               '& svg path': {
                 fill: '#0049C6'
               },
@@ -141,13 +140,14 @@ export default function Member() {
         </Box>
         <Typography
           variant="h5"
-          fontWeight={400}
-          lineHeight={'24px'}
+          fontWeight={500}
+          lineHeight={'20px'}
           sx={{
             width: '700px',
             textAlign: 'left',
             color: '#3f5170',
-            fontSize: 14
+            fontSize: 14,
+            mt: 20
           }}
         >
           Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
