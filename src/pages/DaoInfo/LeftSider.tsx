@@ -304,7 +304,15 @@ export default function LeftSider() {
                 alignItems={'center'}
               >
                 <DaoAvatars size={50} src={daoInfo?.daoLogo} />
-                <Typography fontWeight={600} fontSize={16} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '16px',
+                    lineHeight: '20px',
+                    color: '#3F5170',
+                    textAlign: 'left'
+                  }}
+                >
                   {daoInfo?.name || '-'}
                 </Typography>
                 <ArrowIcon />

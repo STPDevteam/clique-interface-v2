@@ -131,9 +131,26 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
               <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24}>
                 {item.nickname}
               </Typography>
-              <Typography noWrap maxWidth={'100%'} color="#0049c6" fontSize={13}>
-                {shortenAddress(item.account, 3)}
-              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center'
+                }}
+              >
+                <Typography
+                  sx={{
+                    background: '#F8FBFF',
+                    borderRadius: '30px',
+                    width: 140,
+                    height: 28,
+                    color: '#0049c6',
+                    fontSize: 13
+                  }}
+                  noWrap
+                >
+                  {shortenAddress(item.account, 3)}
+                </Typography>
+              </Box>
               <Box
                 sx={{
                   display: 'flex',
