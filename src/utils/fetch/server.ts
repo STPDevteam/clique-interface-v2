@@ -137,6 +137,15 @@ export function jobsApply(applyRole: string, chainId: number, daoAddress: string
   })
 }
 
+export function changeAdminRole(chainId: number, changeTo: string, daoAddress: string, jobId: number) {
+  return Axios.post('stpdao/v2/jobs/alter', {
+    chainId,
+    changeTo,
+    daoAddress,
+    jobId
+  })
+}
+
 export function removeTask(spacesId: number, taskId: number[]) {
   return Axios.post('stpdao/v2/task/remove', {
     spacesId,

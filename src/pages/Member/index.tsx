@@ -188,9 +188,9 @@ export default function Member() {
         <InviteUser />
       )} */}
         {tabList.length === 1 ? (
-          <CardView result={jobsList} />
+          <CardView result={jobsList} role={isJoined} />
         ) : tabValue === 0 ? (
-          <CardView result={jobsList} />
+          <CardView result={jobsList} role={isJoined} />
         ) : tabValue === 1 ? (
           <InviteUser />
         ) : (

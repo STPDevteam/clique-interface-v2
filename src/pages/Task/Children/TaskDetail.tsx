@@ -321,43 +321,45 @@ export default function TaskDetail({
                 Back
               </Typography>
               <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
-                <Box
-                  onClick={() => setCopied(link)}
-                  sx={{
-                    width: 'fit-contet',
-                    height: 'auto',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    gap: 10,
-                    '& svg ': {
-                      width: 14
-                    },
-                    '& svg path': {
-                      fill: '#97B7EF'
-                    }
-                  }}
-                >
-                  <Invite />
-                  <Typography maxWidth={'100%'} fontWeight={500} fontSize={14} color={'#3F5170'}>
-                    {isCopied ? 'Copied Link' : 'Share'}
-                  </Typography>
-                </Box>
                 {isEdit && identity !== 'C_member' ? (
-                  <ConfirmButton
-                    width="127px"
-                    height="25px"
-                    color="#ffffff"
-                    onClick={(e: any) => {
-                      setIsEdit(false)
-                      e.stopPropagation()
-                    }}
-                  >
-                    <ViewDtailIcon />
-                    <Typography>Edit Details</Typography>
-                  </ConfirmButton>
+                  <>
+                    <Box
+                      onClick={() => setCopied(link)}
+                      sx={{
+                        width: 'fit-contet',
+                        height: 'auto',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        gap: 10,
+                        '& svg ': {
+                          width: 14
+                        },
+                        '& svg path': {
+                          fill: '#97B7EF'
+                        }
+                      }}
+                    >
+                      <Invite />
+                      <Typography maxWidth={'100%'} fontWeight={500} fontSize={14} color={'#3F5170'}>
+                        {isCopied ? 'Copied Link' : 'Share'}
+                      </Typography>
+                    </Box>
+                    <ConfirmButton
+                      width="127px"
+                      height="25px"
+                      color="#ffffff"
+                      onClick={(e: any) => {
+                        setIsEdit(false)
+                        e.stopPropagation()
+                      }}
+                    >
+                      <ViewDtailIcon />
+                      <Typography>Edit Details</Typography>
+                    </ConfirmButton>
+                  </>
                 ) : (
                   ''
                 )}
@@ -553,7 +555,7 @@ export default function TaskDetail({
                 Back
               </Typography>
               <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
-                <Box
+                {/* <Box
                   onClick={() => setCopied(link)}
                   sx={{
                     width: 'fit-contet',
@@ -576,7 +578,7 @@ export default function TaskDetail({
                   <Typography maxWidth={'100%'} fontWeight={500} fontSize={14} color={'#3F5170'}>
                     {isCopied ? 'Copied Link' : 'Share'}
                   </Typography>
-                </Box>
+                </Box> */}
                 {isEdit === true ? (
                   <ConfirmButton
                     width="127px"

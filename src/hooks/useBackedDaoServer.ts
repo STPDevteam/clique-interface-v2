@@ -17,7 +17,8 @@ import {
   Login,
   checkIsJoin,
   getJobsList,
-  getApplyList
+  getApplyList,
+  changeAdminRole
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -277,6 +278,35 @@ export function useApplyMember() {
   return {
     loading,
     joinApply
+  }
+}
+
+export function useChangeAdminRole() {
+  const [loading, setLoading] = useState(false)
+  const { account } = useActiveWeb3React()
+
+  const changeRole = useCallback(
+    async (chainId: ChainId, daoAddress: string, jobId: number) => {
+      if (!account) {
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await changeAdminRole(chainId, 'C_member', daoAddress, jobId)
+        if (res.data.data) {
+          setLoading(false)
+        }
+      } catch (error) {
+        console.log(error)
+        setLoading(false)
+      }
+    },
+    [account]
+  )
+
+  return {
+    loading,
+    changeRole
   }
 }
 

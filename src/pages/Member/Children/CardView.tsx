@@ -7,9 +7,12 @@ import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
-import { JobsListProps } from 'hooks/useBackedDaoServer'
-import { useHistory } from 'react-router-dom'
+import { JobsListProps, useChangeAdminRole } from 'hooks/useBackedDaoServer'
+import { useHistory, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { useCallback, useState } from 'react'
+import { ChainId } from 'constants/chain'
+import { useActiveWeb3React } from 'hooks'
 
 export const JobsType: any = {
   A_superAdmin: 'Super Admin',
@@ -17,8 +20,23 @@ export const JobsType: any = {
   C_member: 'Member'
 }
 
-export default function CardView({ result }: { result: JobsListProps[] }) {
+export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
   const history = useHistory()
+  const { account } = useActiveWeb3React()
+  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const curDaoChainId = Number(daoChainId) as ChainId
+  const [hoverIndex, setHoverIndex] = useState<any>(null)
+  const { changeRole } = useChangeAdminRole()
+
+  console.log(account)
+
+  const onRemove = useCallback(
+    async (e: any, id) => {
+      changeRole(curDaoChainId, daoAddress, id)
+      e.stopPropagation()
+    },
+    [changeRole, curDaoChainId, daoAddress]
+  )
   return (
     <Box
       sx={{
@@ -29,8 +47,17 @@ export default function CardView({ result }: { result: JobsListProps[] }) {
         padding: '20px 0'
       }}
     >
-      {result.map((item: JobsListProps) => (
-        <Box key={item.account + item.jobId} onClick={() => history.push(routes._Profile + `/${item.account}`)}>
+      {result.map((item: JobsListProps, index) => (
+        <Box
+          key={item.account + item.jobId}
+          onMouseEnter={() => {
+            setHoverIndex(index)
+          }}
+          onMouseLeave={() => {
+            setHoverIndex(null)
+          }}
+          onClick={() => history.push(routes._Profile + `/${item.account}`)}
+        >
           <Card
             sx={{
               cursor: 'pointer',
@@ -126,6 +153,30 @@ export default function CardView({ result }: { result: JobsListProps[] }) {
                 {JobsType[item.jobs] || 'unnamed'}
               </Button>
             </Box>
+            {hoverIndex === index &&
+              role === 'A_superAdmin' &&
+              account &&
+              account.toLowerCase() !== item.account.toLowerCase() && (
+                <Box
+                  sx={{
+                    borderRadius: '4px',
+                    zIndex: 99,
+                    position: 'absolute',
+                    top: 0,
+                    right: 0
+                  }}
+                >
+                  <Button
+                    width="98px"
+                    height="22px"
+                    borderRadius="30px"
+                    fontSize={13}
+                    onClick={e => onRemove(e, item.jobId)}
+                  >
+                    Remove
+                  </Button>
+                </Box>
+              )}
           </Card>
         </Box>
       ))}

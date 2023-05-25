@@ -603,14 +603,16 @@ export default function DragTaskPanel() {
                     </Tooltip>
                   ) : (
                     <Box
-                      width={'84px'}
-                      height={'36px'}
+                      width={'100%'}
+                      height={'44px'}
                       sx={{
                         color: '#97B7EF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: 8,
+                        borderRadius: '8px',
+                        backgroundColor: '#F1F7FF',
                         margin: '0 auto',
                         cursor: 'pointer'
                       }}
