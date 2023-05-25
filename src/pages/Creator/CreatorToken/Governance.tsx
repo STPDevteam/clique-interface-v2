@@ -39,7 +39,7 @@ export const StyledDelButton = styled('button')(({ theme }) => ({
   border: `2px solid ${theme.palette.text.primary}`,
   borderRadius: '8px',
   width: 54,
-  height: 54,
+  height: 44,
   cursor: 'pointer',
   position: 'relative',
   background: theme.palette.common.white,
@@ -335,6 +335,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
               />
 
               <DateTimePicker
+                height={44}
                 value={item.lockDate ? new Date(item.lockDate * 1000) : null}
                 onValue={timestamp => updateTokenDistributionKeyData(index, 'lockDate', timestamp)}
               />

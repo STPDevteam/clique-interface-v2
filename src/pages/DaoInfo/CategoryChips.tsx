@@ -4,17 +4,20 @@ import { useMemo } from 'react'
 export const StyledChip = styled(Chip, {
   shouldForwardProp: () => true
 })<{ bgColor?: string }>(({ theme, bgColor }) => ({
-  fontWeight: 600,
-  backgroundColor: bgColor || theme.palette.primary.dark,
+  fontFamily: 'Inter',
+  lineHeight: '20px',
+  fontWeight: 500,
+  backgroundColor: bgColor || '#0049C6',
   color: theme.palette.common.white,
-  height: 24,
-  fontSize: 12,
+  height: 20,
+  width: 98,
+  fontSize: 13,
   '& span': {
-    padding: '3px 10px'
+    padding: '1px 9px'
   },
   [theme.breakpoints.down('sm')]: {
     '& span': {
-      padding: '2px 6px'
+      padding: '1px 6px'
     }
   }
 }))
