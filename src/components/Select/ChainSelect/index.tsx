@@ -52,6 +52,7 @@ export default function ChainSelect({
     <div style={{ width }}>
       {label && <InputLabel>{label}</InputLabel>}
       <Select
+        noBold
         defaultValue={selectedChain?.symbol}
         value={selectedChain?.symbol ?? ''}
         disabled={disabled}

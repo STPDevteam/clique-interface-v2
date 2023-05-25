@@ -39,7 +39,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     fontSize: 16,
     color: theme.palette.text.primary,
     fontWeight: 600,
-    backgroundColor: theme.bgColor.bg4,
+    backgroundColor: theme.palette.background.paper,
     padding: '5px 0 5px 20px',
     borderRadius: 8
     // border: `1px solid`
@@ -72,7 +72,7 @@ const StyledInputWrapper = styled(Box)(({ theme }) => ({
   fontSize: 16,
   color: theme.palette.text.primary,
   fontWeight: 600,
-  backgroundColor: theme.bgColor.bg4,
+  backgroundColor: theme.palette.background.paper,
   paddingLeft: 20,
   borderRadius: 8,
   border: '1px solid #D4D7E2',

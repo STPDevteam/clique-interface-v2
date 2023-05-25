@@ -166,7 +166,18 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
         ></UploadImage>
       </Box>
       <Wrapper>
-        <Stack spacing={20}>
+        <Stack
+          spacing={20}
+          sx={{
+            '& .MuiInputBase-input': {
+              height: '40!important',
+              padding: '0 15px 0 0!important'
+            },
+            '& .MuiSelect-select.MuiInputBase-input': {
+              paddingLeft: '20px!important'
+            }
+          }}
+        >
           <Input
             value={description}
             onChange={e => setDescription(e.target.value || '')}
@@ -215,7 +226,8 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             flexDirection: 'column',
             justifyContent: 'space-between',
             '& .MuiInputBase-input': {
-              padding: '4px 15px 4px 0!important'
+              height: '40!important',
+              padding: '0 15px 0 0!important'
             }
           }}
         >

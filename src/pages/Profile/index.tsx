@@ -40,6 +40,7 @@ import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { ReactComponent as EditIcon } from 'assets/svg/edit.svg'
+import bg from 'assets/images/blur-bg.png'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -48,7 +49,7 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   boxShadow: theme.boxShadow.bs2,
   background: 'linear-gradient(271.58deg, rgba(255, 255, 255, 0.85) 0%, #FFFFFF 53.36%, #FFFFFF 100.77%)',
   backdropFilter: 'blur(60px)',
-  padding: '26px 26px 48px 30px',
+  padding: '26px 26px 30px 30px',
   [theme.breakpoints.down('sm')]: {
     padding: '20px',
     minHeight: 150
@@ -121,10 +122,13 @@ export default function Profile() {
     <Box
       paddingBottom={40}
       sx={{
-        padding: { sm: '0 0 40px 0', xs: '0 16px 20px' }
+        padding: { sm: '44px 0 40px 0', xs: '0 16px 20px' },
+        background: `url(${bg})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100% 320px'
       }}
     >
-      <ContainerWrapper maxWidth={1248} margin={isSmDown ? '0 auto 24px' : '24px auto 40px'}>
+      <ContainerWrapper maxWidth={1248} margin={isSmDown ? '0 auto 24px' : '0 auto 40px'}>
         <StyledHeader>
           <Box display={'flex'}>
             <Avatar

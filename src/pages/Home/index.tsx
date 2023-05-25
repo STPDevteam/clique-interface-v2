@@ -37,7 +37,7 @@ const ColSentence = styled(Box)(() => ({
   }
 }))
 
-function DaoItem({
+export function DaoItem({
   daoAddress,
   chainId,
   daoName,
