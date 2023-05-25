@@ -128,7 +128,7 @@ export default function Profile() {
         backgroundSize: '100% 320px'
       }}
     >
-      <ContainerWrapper maxWidth={1248} margin={isSmDown ? '0 auto 24px' : '0 auto 40px'}>
+      <ContainerWrapper maxWidth={1200} margin={isSmDown ? '0 auto 24px' : '0 auto 40px'}>
         <StyledHeader>
           <Box display={'flex'}>
             <Avatar
@@ -397,7 +397,7 @@ export default function Profile() {
 
         {isSelf && <MyTokens account={currentAccount || ''} />}
 
-        <MyDaos adminDao={profileInfo?.adminDao} memberDao={profileInfo?.memberDao} />
+        <MyDaos adminDao={profileInfo?.adminDao} />
 
         {isSelf && <MyRecords account={currentAccount || ''} />}
       </Box>

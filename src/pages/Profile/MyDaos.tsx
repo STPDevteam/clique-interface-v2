@@ -1,11 +1,9 @@
 import { Box, Typography } from '@mui/material'
-import { HomeListProp, useHomeDaoList } from 'hooks/useBackedDaoServer'
-import { UserProfileDaoProp } from 'hooks/useBackedProfileServer'
+import { UserProfileAdminProps } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Image from 'components/Image'
 import { useHistory } from 'react-router-dom'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { routes } from 'constants/routes'
 import tag from 'assets/images/tag.png'
 import fans from 'assets/images/fans.png'
@@ -33,18 +31,31 @@ import msg from 'assets/images/msg.png'
 
 export function DaoItem({
   daoAddress,
+  accountLevel,
   chainId,
-  daoName,
   daoLogo,
-  members,
-  verified,
+  daoName,
+  description,
+  handle,
   activeProposals,
-  proposals,
-  joinSwitch
-}: HomeListProp) {
+  totalProposals,
+  isApprove,
+  members
+}: {
+  daoAddress: string
+  accountLevel: string
+  chainId: number
+  daoLogo: string
+  daoName: string
+  description: string
+  handle: string
+  activeProposals: number
+  totalProposals: number
+  isApprove: boolean
+  members: number
+}) {
   const history = useHistory()
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
-  console.log(verified, joinSwitch)
+  console.log(accountLevel, isApprove)
 
   return (
     <Box
@@ -52,10 +63,10 @@ export function DaoItem({
       height={218}
       sx={{
         width: '25%',
-        padding: '16px 10px 10px',
+        padding: 23,
         border: '1px solid #d4d7e2',
         borderRadius: '10px',
-        marginRight: 10,
+        marginRight: 7,
         cursor: 'pointer',
         '&:hover': {
           border: `2px solid #0049C6`
@@ -97,15 +108,15 @@ export function DaoItem({
             </p>
             <Image src={tag} width={16}></Image>
           </Box>
-          <div style={{ fontSize: 14, textAlign: 'left' }}>@{daoBaseInfo?.handle}</div>
+          <div style={{ fontSize: 14, textAlign: 'left' }}>@{handle}</div>
         </Box>
       </Box>
-      <Typography className="des">{daoBaseInfo?.description}</Typography>
+      <Typography className="des">{description}</Typography>
       <Box
         display={'flex'}
         justifyContent={'space-between'}
         sx={{
-          marginTop: 26,
+          marginTop: 20,
           '& .wrapper': {
             display: 'flex',
             flexDirection: 'row',
@@ -127,7 +138,7 @@ export function DaoItem({
         </Box>
         <Box className="wrapper">
           <Image src={comment} alt=""></Image>
-          <p>{proposals}</p>
+          <p>{totalProposals}</p>
         </Box>
         <Box className="wrapper">
           <Image src={msg} alt=""></Image>
@@ -138,17 +149,11 @@ export function DaoItem({
   )
 }
 
-export default function MyDaos({
-  adminDao,
-  memberDao
-}: {
-  adminDao: UserProfileDaoProp[] | undefined
-  memberDao: UserProfileDaoProp[] | undefined
-}) {
+export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[] | undefined }) {
   // const theme = useTheme()
-  const { result: homeDaoList } = useHomeDaoList()
   const isSmDown = useBreakpoint()
-  if ((!adminDao || !adminDao.length) && (!memberDao || !memberDao.length)) {
+
+  if (!adminDao || !adminDao.length) {
     return null
   }
   return (
@@ -219,7 +224,7 @@ export default function MyDaos({
           }
         }}
       >
-        {homeDaoList?.map(item => (
+        {adminDao?.map(item => (
           <DaoItem {...item} key={item.chainId} />
         ))}
       </Box>
