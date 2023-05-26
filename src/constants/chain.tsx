@@ -366,7 +366,7 @@ export const SUPPORTED_NETWORKS: {
       symbol: 'ETH',
       decimals: 18
     },
-    rpcUrls: ['https://goerli.base.org'],
+    rpcUrls: ['https://base-goerli.public.blastapi.io'],
     blockExplorerUrls: ['https://goerli.basescan.org']
   },
   [ChainId.ZetaChain_TESTNET]: {
