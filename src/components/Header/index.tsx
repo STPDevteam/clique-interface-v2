@@ -339,7 +339,7 @@ export default function Header() {
         >
           <Breadcrumbs aria-label="breadcrumb">
             <NavLink to="/">
-              <HomeIcon fontSize="small" />
+              <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
               DAOs
             </NavLink>
             {makeBreadcrumbs.map((v, i) => (

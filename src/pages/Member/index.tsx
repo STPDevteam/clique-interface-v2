@@ -147,7 +147,7 @@ export default function Member() {
             textAlign: 'left',
             color: '#3f5170',
             fontSize: 14,
-            mt: 20
+            mt: 15
           }}
         >
           Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
