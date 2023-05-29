@@ -378,20 +378,23 @@ export default function Profile() {
                     + Add
                   </Box> */}
                 </Box>
-
-                <OutlineButton
-                  disabled={connector !== injected || connector === walletlink}
-                  noBold
-                  style={{
-                    borderColor: '#C60C00',
-                    color: '#C60C00'
-                  }}
-                  width="100px"
-                  height={'36px'}
-                  onClick={deactivate}
-                >
-                  Disconnect
-                </OutlineButton>
+                {isSelf ? (
+                  <OutlineButton
+                    disabled={connector !== injected || connector === walletlink}
+                    noBold
+                    style={{
+                      borderColor: '#C60C00',
+                      color: '#C60C00'
+                    }}
+                    width="100px"
+                    height={'36px'}
+                    onClick={deactivate}
+                  >
+                    Disconnect
+                  </OutlineButton>
+                ) : (
+                  <></>
+                )}
               </Stack>
             </Box>
           </Box>
