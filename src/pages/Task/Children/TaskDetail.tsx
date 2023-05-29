@@ -34,7 +34,7 @@ import useCopyClipboard from 'hooks/useCopyClipboard'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
-  justifyContent: 'center',
+  justifyContent: 'flex-end',
   flexDirection: 'row',
   alignItems: 'center',
   margin: '20px 0 0',
@@ -283,11 +283,12 @@ export default function TaskDetail({
         sx={{
           width: '100%',
           '& .MuiDrawer-paper': {
-            padding: 20,
+            padding: '20px 20px 20px 40px',
             width: '40vw'
           },
           '& .title': {
-            margin: '10px 0'
+            margin: '10px 0',
+            paddingLeft: 0
           },
           '& .Mui-focused, & .MuiInputBase-root': {
             border: 'none!important'
@@ -303,7 +304,6 @@ export default function TaskDetail({
               display={'flex'}
               justifyContent={'space-between'}
               sx={{
-                marginLeft: { sm: 20, xs: 0 },
                 marginTop: { sm: 20, xs: 10 },
                 '& button': {
                   gap: 6
@@ -537,7 +537,6 @@ export default function TaskDetail({
               display={'flex'}
               justifyContent={'space-between'}
               sx={{
-                marginLeft: { sm: 20, xs: 0 },
                 marginTop: { sm: 20, xs: 10 },
                 '& button': {
                   gap: 6
