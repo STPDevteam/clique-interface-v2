@@ -100,8 +100,11 @@ export default function Proposal() {
         <Box mt={17} minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
-            <Loading sx={{ marginTop: 30 }} />
+            <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Loading sx={{ marginTop: 30 }} />
+            </Box>
           </DelayLoading>
+
           <Grid container rowSpacing={18} columnSpacing={isSmDown ? 0 : 34}>
             {!loading &&
               proposalBaseList.map(item => (

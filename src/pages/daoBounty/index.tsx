@@ -17,7 +17,7 @@ export default function DaoBounty() {
           alignItems={'center'}
           mb={10}
         >
-          <BountyIcon />
+          <BountyIcon width={38} height={38} />
           <Typography ml={10} fontWeight={600} fontSize={30}>
             DAO Rewards
           </Typography>

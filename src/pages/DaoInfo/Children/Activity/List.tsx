@@ -27,7 +27,9 @@ export function AirdropList({
       <Box minHeight={150}>
         {!loading && !result.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
         <DelayLoading loading={loading}>
-          <Loading sx={{ marginTop: 30 }} />
+          <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Loading sx={{ marginTop: 30 }} />
+          </Box>
         </DelayLoading>
         <Stack spacing={24}>
           {result.map(item => (

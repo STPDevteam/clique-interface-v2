@@ -134,7 +134,7 @@ export default function Member() {
               }
             }}
           >
-            <MemberIcon />
+            <MemberIcon width={38} height={38} />
             <Typography>Member</Typography>
           </Box>
           {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}

@@ -133,7 +133,11 @@ export default function AccountNFTs({ account }: { account: string }) {
       </Box>
       <Box mt={20}>
         {!accountNFTsList.length && !loading && <EmptyData />}
-        {loading && <Loading />}
+        {loading && (
+          <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Loading />
+          </Box>
+        )}
       </Box>
 
       {viewAll && page.totalPage > 1 && (

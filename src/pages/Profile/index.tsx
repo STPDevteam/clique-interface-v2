@@ -275,11 +275,14 @@ export default function Profile() {
                     {isFollowed ? (
                       <Button
                         onClick={() => toggleFollow(false)}
-                        backgroundColor={theme.palette.text.disabled}
                         width={isSmDown ? '100px' : '200px'}
                         height={isSmDown ? '30px' : '44px'}
+                        backgroundColor="transparent"
+                        style={{ border: '1px solid #0049C6' }}
+                        color="#0049C6"
+                        hoverbg="#1976D20A "
                       >
-                        Following
+                        - Unfollowed
                       </Button>
                     ) : (
                       <BlackButton
