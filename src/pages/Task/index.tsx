@@ -186,7 +186,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
       fill: '#0049c6'
     },
     '&.active': {
-      fontWeight: 600
+      fontWeight: 700
     },
     '&.active svg path': {
       fill: '#0049c6'

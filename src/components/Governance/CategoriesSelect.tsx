@@ -24,6 +24,7 @@ export default function CategoriesSelect({
   return (
     <Select
       multiple
+      noBold
       style={style}
       placeholder="Categories"
       label="*Categories (Multi-select)"

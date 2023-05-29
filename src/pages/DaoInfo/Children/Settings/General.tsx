@@ -16,11 +16,11 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 import { removeEmoji } from 'utils'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
-import { StyledItem } from '../About'
+// import { StyledItem } from '../About'
 
-const Wrapper = styled(StyledItem)(({ theme }) => ({
+const Wrapper = styled(Box)(({ theme }) => ({
   display: 'grid',
-  gridTemplateColumns: '296fr 564fr',
+  gridTemplateColumns: '1fr 1fr',
   gap: 24,
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
@@ -157,20 +157,32 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
 
   return (
     <Box>
+      <Box>
+        <UploadImage
+          onChange={val => setDaoImage(val)}
+          value={daoImage}
+          sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', flexBasis: '124px', mb: 30 }}
+          size={124}
+        ></UploadImage>
+      </Box>
       <Wrapper>
-        <Stack spacing={20}>
-          <UploadImage
-            onChange={val => setDaoImage(val)}
-            value={daoImage}
-            sx={{ margin: '0 auto', flexBasis: '124px' }}
-            size={124}
-          />
+        <Stack
+          spacing={20}
+          sx={{
+            '& .MuiInputBase-input': {
+              height: '40!important',
+              padding: '0 15px 0 0!important'
+            },
+            '& .MuiSelect-select.MuiInputBase-input': {
+              paddingLeft: '20px!important'
+            }
+          }}
+        >
           <Input
             value={description}
             onChange={e => setDescription(e.target.value || '')}
             type="textarea"
             label="*Description"
-            rows="10"
             maxLength={200}
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
@@ -180,9 +192,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             multiline
             placeholder="Describe your DAO to new and existing members"
           />
-          <CategoriesSelect style={{ maxWidth: '296px' }} value={category} onChange={val => setCategory(val)} />
-        </Stack>
-        <Box display={'grid'}>
+          <CategoriesSelect style={{ height: '42px!important' }} value={category} onChange={val => setCategory(val)} />
           <Input
             label="*DAO Name"
             maxLength={30}
@@ -208,6 +218,19 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             }
             value={daoInfo.handle}
           />
+        </Stack>
+        <Box
+          display={'grid'}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            '& .MuiInputBase-input': {
+              height: '40!important',
+              padding: '0 15px 0 0!important'
+            }
+          }}
+        >
           <Input
             label="Twitter Handle"
             placeholder="https://twitter.com/"

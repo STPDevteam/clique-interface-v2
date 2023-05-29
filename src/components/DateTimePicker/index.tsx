@@ -11,7 +11,8 @@ export default function DateTimePicker({
   disabled,
   inputWidth,
   minDateTime,
-  label
+  label,
+  height
 }: {
   value: Date | null
   onValue: (timestamp: number | undefined) => void
@@ -19,6 +20,7 @@ export default function DateTimePicker({
   minDateTime?: Date
   inputWidth?: string
   label?: string
+  height?: number
 }) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -51,7 +53,7 @@ export default function DateTimePicker({
                   display: 'none'
                 },
                 '& input': {
-                  height: 56,
+                  height: height ? height : 56,
                   boxSizing: 'border-box',
                   backgroundColor: theme => theme.bgColor.bg4,
                   borderRadius: '14px',

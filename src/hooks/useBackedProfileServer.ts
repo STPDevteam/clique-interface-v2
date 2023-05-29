@@ -20,6 +20,20 @@ export interface UserProfileDaoProp {
   daoName: string
 }
 
+export interface UserProfileAdminProps {
+  accountLevel: string
+  chainId: number
+  daoAddress: string
+  daoName: string
+  daoLogo: string
+  description: string
+  handle: string
+  activeProposals: number
+  totalProposals: number
+  isApprove: boolean
+  members: number
+}
+
 export interface UserProfileProp {
   account: string
   accountLogo: string
@@ -34,7 +48,7 @@ export interface UserProfileProp {
   followers: number
   following: number
   twitter: string
-  adminDao: UserProfileDaoProp[]
+  adminDao: UserProfileAdminProps[]
   memberDao: UserProfileDaoProp[]
 }
 
@@ -53,12 +67,11 @@ export function useUserProfileInfo(account: string | undefined, refresh?: number
         const res = await userProfile(account)
         setLoading(false)
         const data = res.data.data
-
-        data.memberDao = data.memberDao.map((item: any) => ({ ...item, accountLevel: DaoAdminLevelProp.NORMAL }))
-        data.adminDao = data.adminDao.map((item: any) => ({
-          ...item,
-          accountLevel: item.accountLevel === 'superAdmin' ? DaoAdminLevelProp.SUPER_ADMIN : DaoAdminLevelProp.ADMIN
-        }))
+        // data.memberDao = data.memberDao.map((item: any) => ({ ...item, accountLevel: DaoAdminLevelProp.NORMAL }))
+        // data.adminDao = data.adminDao.map((item: any) => ({
+        //   ...item,
+        //   accountLevel: item.accountLevel === 'A_superAdmin' ? DaoAdminLevelProp.SUPER_ADMIN : DaoAdminLevelProp.ADMIN
+        // }))
 
         setResult(data)
       } catch (error) {

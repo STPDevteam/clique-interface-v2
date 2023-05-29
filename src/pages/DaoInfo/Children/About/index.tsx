@@ -1,4 +1,4 @@
-import { Stack, styled, Typography, Link as MuiLink } from '@mui/material'
+import { Stack, styled, Typography, Link as MuiLink, useTheme } from '@mui/material'
 import { Box } from '@mui/system'
 import EmptyData from 'components/EmptyData'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
@@ -15,10 +15,12 @@ import { Link, useParams } from 'react-router-dom'
 import { VotingTypesName } from 'state/buildingGovDao/actions'
 import { getEtherscanLink } from 'utils'
 import { getVotingNumberByTimestamp } from 'utils/dao'
+import Image from 'components/Image'
+import avatar from 'assets/images/avatar.png'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
-  border: `1px solid ${theme.bgColor.bg2}`,
-  padding: '30px 38px',
+  border: `1px solid #D4D7E2`,
+  padding: '24px 47px 26px 24px',
   borderRadius: theme.borderRadius.default,
   boxShadow: theme.boxShadow.bs1,
   marginBottom: 30,
@@ -28,17 +30,38 @@ export const StyledItem = styled(Stack)(({ theme }) => ({
 }))
 
 const StyledTitle = styled(Typography)(({}) => ({
+  fontFamily: 'Poppins',
+  fontWeight: 600,
+  fontSize: '14px',
+  lineHeight: '21px',
   color: '#80829F',
-  fontSize: 16,
-  marginBottom: 20
+  marginBottom: 14
+}))
+const ContentTitle = styled(Typography)(() => ({
+  fontFamily: 'Inter',
+  fontWeight: 500,
+  fontSize: '13px',
+  lineHeight: '16px',
+  color: '#B5B7CF'
 }))
 
 const StyledText = styled(Typography)(
-  ({ fontSize, theme, fontWeight }: { fontSize?: number; theme?: any; fontWeight?: number }) => ({
-    fontSize: fontSize || 14,
-    fontWeight: fontWeight || 500,
-    lineHeight: '16px',
-    color: theme.palette.text.secondary
+  ({
+    fontSize,
+    theme,
+    fontWeight,
+    color
+  }: {
+    fontSize?: number
+    theme?: any
+    fontWeight?: number
+    color?: string
+  }) => ({
+    fontSize: fontSize || 16,
+    fontWeight: fontWeight || 600,
+    fontFamily: 'Inter',
+    lineHeight: '20px',
+    color: color || theme.palette.text.primary
   })
 )
 
@@ -46,7 +69,7 @@ export default function About() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const isSmDown = useBreakpoint('sm')
-
+  const theme = useTheme()
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
   const { result: daoAdminList, loading: daoAdminLoading } = useBackedDaoAdmins(daoAddress, curDaoChainId)
   const votingPeriodDate = useMemo(
@@ -56,7 +79,7 @@ export default function About() {
 
   return (
     <div>
-      <StyledTitle variant="h5">Token Information</StyledTitle>
+      <StyledTitle variant="h5">Token info</StyledTitle>
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
         gap={isSmDown ? 20 : 10}
@@ -64,17 +87,15 @@ export default function About() {
           justifyContent: { sm: 'space-between', xs: 'unset' }
         }}
       >
-        <Stack spacing={isSmDown ? 10 : 16}>
-          <StyledText>Network</StyledText>
-          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
-            {daoInfo ? ChainListMap[daoInfo.daoTokenChainId]?.name : '--'}
-          </StyledText>
+        <Stack spacing={isSmDown ? 10 : 12}>
+          <ContentTitle>Network</ContentTitle>
+          <StyledText>{daoInfo ? ChainListMap[daoInfo.daoTokenChainId]?.name : '--'}</StyledText>
         </Stack>
-        <Stack spacing={isSmDown ? 10 : 16}>
-          <StyledText>Token</StyledText>
+        <Stack spacing={isSmDown ? 10 : 12}>
+          <ContentTitle>Token</ContentTitle>
           <StyledText>
             <Stack direction={'row'} alignItems="center">
-              <CurrencyLogo currency={daoInfo?.token || undefined} size="22px" style={{ marginRight: '5px' }} />
+              <CurrencyLogo currency={daoInfo?.token || undefined} size="24px" style={{ marginRight: '5px' }} />
               <MuiLink
                 href={
                   daoInfo ? getEtherscanLink(daoInfo.daoTokenChainId, daoInfo.daoTokenAddress, 'address') : undefined
@@ -82,25 +103,22 @@ export default function About() {
                 underline="hover"
                 target="_blank"
               >
-                <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
+                <StyledText>
                   <ShowDaoToken token={daoInfo?.token} />
                 </StyledText>
               </MuiLink>
             </Stack>
           </StyledText>
         </Stack>
-        <Stack spacing={isSmDown ? 10 : 16}>
-          <StyledText>Price</StyledText>
-          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
-            --
-          </StyledText>
+        <Stack spacing={isSmDown ? 10 : 12}>
+          <ContentTitle>Price</ContentTitle>
+          <StyledText>--</StyledText>
         </Stack>
-        <Stack spacing={isSmDown ? 10 : 16}>
-          <StyledText>Token Contracts Address</StyledText>
+        <Stack spacing={isSmDown ? 10 : 12}>
+          <ContentTitle>Token Contracts Address</ContentTitle>
           <StyledText
             fontSize={12}
             sx={{
-              color: '#3F5170',
               wordBreak: 'break-all'
             }}
           >
@@ -109,7 +127,7 @@ export default function About() {
         </Stack>
       </StyledItem>
 
-      <StyledTitle variant="h5">Governance Settings</StyledTitle>
+      <StyledTitle variant="h5">Governance settings</StyledTitle>
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
         gap={isSmDown ? 20 : 10}
@@ -118,56 +136,69 @@ export default function About() {
         }}
       >
         <Stack spacing={isSmDown ? 16 : 10}>
-          <StyledText>Min. Holding For Proposal</StyledText>
-          <StyledText
-            fontWeight={600}
-            fontSize={16}
-            sx={{ color: '#3F5170' }}
-          >{`${daoInfo?.proposalThreshold?.toSignificant(6, {
+          <ContentTitle>Min. holding for proposal</ContentTitle>
+          <StyledText>{`${daoInfo?.proposalThreshold?.toSignificant(6, {
             groupSeparator: ','
           })} ${daoInfo?.token?.symbol || '-'}`}</StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
-          <StyledText>Min. Votes For Proposal Execution</StyledText>
-          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
-            {daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes
-          </StyledText>
+          <ContentTitle>Min. votes for proposal execution</ContentTitle>
+          <StyledText>{daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes</StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
-          <StyledText>Default Voting Period</StyledText>
-          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
+          <ContentTitle>Default voting period</ContentTitle>
+          <StyledText>
             {votingPeriodDate
               ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
               : '--'}
           </StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
-          <StyledText>Voting Types Allowed</StyledText>
-          <StyledText fontWeight={600} fontSize={16} sx={{ color: '#3F5170' }}>
-            {daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}
-          </StyledText>
+          <ContentTitle>Voting types allowed</ContentTitle>
+          <StyledText>{daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}</StyledText>
         </Stack>
       </StyledItem>
 
-      <StyledTitle variant="h5">Admin</StyledTitle>
-      <StyledItem>
+      <StyledTitle variant="h5">Member</StyledTitle>
+      <Box
+        sx={{
+          border: `1px solid #D4D7E2`,
+          borderRadius: theme.borderRadius.default,
+          boxShadow: theme.boxShadow.bs1,
+          marginBottom: 30
+        }}
+      >
         {daoAdminLoading ? (
           <Loading />
         ) : (
-          <Box
-            display={'grid'}
-            sx={{
-              gridTemplateColumns: { sm: '1fr 1fr', xs: '1fr 80px' }
-            }}
-            alignItems={'center'}
-            gap="10px 20px"
-          >
-            {daoAdminList?.map(address => (
-              <>
-                <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${address}`}>
+          <>
+            {daoAdminList?.map((address, index) => (
+              <Box
+                key={address}
+                display={'grid'}
+                sx={{
+                  padding: '18px 33px 18px 24px',
+                  borderTop: index > 0 ? '1px solid #D4D7E2' : '',
+                  gridTemplateColumns: { sm: '1fr 1fr', xs: '1fr 80px' }
+                }}
+                alignItems={'center'}
+                gap="10px 20px"
+              >
+                <Link
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 8,
+                    alignItems: 'center'
+                  }}
+                  to={routes._Profile + `/${address}`}
+                >
+                  <Image width={24} src={avatar} />
                   <StyledText
-                    fontWeight={600}
                     key={address}
+                    fontSize={14}
+                    color="#80829F"
                     sx={{
                       wordBreak: 'break-all'
                     }}
@@ -175,15 +206,15 @@ export default function About() {
                     {address}
                   </StyledText>
                 </Link>
-                <div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', flexDirection: 'row' }}>
                   <AdminTagListBlock chainId={curDaoChainId} daoAddress={daoAddress} account={address} />
                 </div>
-              </>
+              </Box>
             ))}
-          </Box>
+          </>
         )}
         {!daoAdminLoading && !daoAdminList?.length && <EmptyData />}
-      </StyledItem>
+      </Box>
     </div>
   )
 }

@@ -1,42 +1,159 @@
-import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
-import { DaoAvatars } from 'components/Avatars'
-import { routes } from 'constants/routes'
-import { UserProfileDaoProp } from 'hooks/useBackedProfileServer'
+import { Box, Typography } from '@mui/material'
+import { UserProfileAdminProps } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
-import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
-import { useHistory } from 'react-router'
+import Image from 'components/Image'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
+import tag from 'assets/images/tag.png'
+import fans from 'assets/images/fans.png'
+import comment from 'assets/images/comment.png'
+import msg from 'assets/images/msg.png'
+// const StyledBox = styled(Box)(({ theme }) => ({
+//   padding: '28px 40px',
+//   display: 'flex',
+//   alignItems: 'center',
+//   overflowX: 'auto',
+//   border: `1px solid ${theme.bgColor.bg2}`,
+//   boxShadow: theme.boxShadow.bs1,
+//   borderRadius: theme.borderRadius.default,
+//   '&::-webkit-scrollbar': {
+//     display: 'none'
+//   },
+//   [theme.breakpoints.down('sm')]: {
+//     display: 'grid',
+//     gridGap: '15px',
+//     padding: '20px',
+//     gridTemplateColumns: '1fr 2fr',
+//     alignItems: 'flex-start'
+//   }
+// }))
 
-const StyledBox = styled(Box)(({ theme }) => ({
-  padding: '28px 40px',
-  display: 'flex',
-  alignItems: 'center',
-  overflowX: 'auto',
-  border: `1px solid ${theme.bgColor.bg2}`,
-  boxShadow: theme.boxShadow.bs1,
-  borderRadius: theme.borderRadius.default,
-  '&::-webkit-scrollbar': {
-    display: 'none'
-  },
-  [theme.breakpoints.down('sm')]: {
-    display: 'grid',
-    gridGap: '15px',
-    padding: '20px',
-    gridTemplateColumns: '1fr 2fr',
-    alignItems: 'flex-start'
-  }
-}))
-
-export default function MyDaos({
-  adminDao,
-  memberDao
+export function DaoItem({
+  daoAddress,
+  accountLevel,
+  chainId,
+  daoLogo,
+  daoName,
+  description,
+  handle,
+  activeProposals,
+  totalProposals,
+  isApprove,
+  members
 }: {
-  adminDao: UserProfileDaoProp[] | undefined
-  memberDao: UserProfileDaoProp[] | undefined
+  daoAddress: string
+  accountLevel: string
+  chainId: number
+  daoLogo: string
+  daoName: string
+  description: string
+  handle: string
+  activeProposals: number
+  totalProposals: number
+  isApprove: boolean
+  members: number
 }) {
-  const theme = useTheme()
+  const history = useHistory()
+  console.log(accountLevel, isApprove)
+
+  return (
+    <Box
+      minWidth={281}
+      height={218}
+      sx={{
+        width: '25%',
+        padding: 23,
+        border: '1px solid #d4d7e2',
+        borderRadius: '10px',
+        marginRight: 7,
+        cursor: 'pointer',
+        '&:hover': {
+          border: `2px solid #0049C6`
+        },
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        },
+        '& .des': {
+          display: '-webkit-box',
+          fontSize: 14,
+          width: '247px',
+          height: '76px',
+          textAlign: 'left',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          WebkitBoxOrient: 'vertical',
+          WebkitLineClamp: 3
+        }
+      }}
+      onClick={() => {
+        history.push(routes._DaoInfo + `/${chainId}/${daoAddress}/proposal`)
+      }}
+    >
+      <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'} gap={10}>
+        <Image src={daoLogo} width={48} height={48}></Image>
+        <Box display={'flex'} flexDirection={'column'} justifyContent={'flex-start'}>
+          <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
+            <p
+              style={{
+                fontSize: 20,
+                margin: 0,
+                fontWeight: 700,
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+              }}
+            >
+              {daoName}
+            </p>
+            <Image src={tag} width={16}></Image>
+          </Box>
+          <div style={{ fontSize: 14, textAlign: 'left' }}>@{handle}</div>
+        </Box>
+      </Box>
+      <Typography className="des">{description}</Typography>
+      <Box
+        display={'flex'}
+        justifyContent={'space-between'}
+        sx={{
+          marginTop: 20,
+          '& .wrapper': {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+            '& img': {
+              width: '30px',
+              height: '30px'
+            },
+            '& p': {
+              margin: 0
+            }
+          }
+        }}
+      >
+        <Box className="wrapper">
+          <Image src={fans} alt=""></Image>
+          <p>{members}</p>
+        </Box>
+        <Box className="wrapper">
+          <Image src={comment} alt=""></Image>
+          <p>{totalProposals}</p>
+        </Box>
+        <Box className="wrapper">
+          <Image src={msg} alt=""></Image>
+          <p>{activeProposals}</p>
+        </Box>
+      </Box>
+    </Box>
+  )
+}
+
+export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[] | undefined }) {
+  // const theme = useTheme()
   const isSmDown = useBreakpoint()
-  if ((!adminDao || !adminDao.length) && (!memberDao || !memberDao.length)) {
+
+  if (!adminDao || !adminDao.length) {
     return null
   }
   return (
@@ -48,7 +165,7 @@ export default function MyDaos({
       <Typography variant="h6" fontSize={16} fontWeight={600}>
         DAOs
       </Typography>
-      <StyledBox mt={25}>
+      {/* <StyledBox mt={25}>
         {adminDao && !!adminDao.length && (
           <Box>
             <Typography textAlign={isSmDown ? 'center' : undefined} mb={10} variant="h6" fontSize={14} fontWeight={500}>
@@ -64,7 +181,7 @@ export default function MyDaos({
               }}
             >
               {adminDao.map((item, index) => (
-                <DaoBlock key={index} info={item} />
+                <DaoBlock key={index} />
               ))}
             </Stack>
           </Box>
@@ -89,41 +206,28 @@ export default function MyDaos({
               }}
             >
               {memberDao.map((item, index) => (
-                <DaoBlock key={index} info={item} />
+                <DaoBlock key={index} />
               ))}
             </Stack>
           </Box>
         )}
-      </StyledBox>
-    </ContainerWrapper>
-  )
-}
-
-function DaoBlock({ info }: { info: UserProfileDaoProp }) {
-  const history = useHistory()
-  return (
-    <Box>
+      </StyledBox> */}
       <Box
-        sx={{ position: 'relative', cursor: 'pointer' }}
-        onClick={() => history.push(routes._DaoInfo + `/${info.chainId}/${info.daoAddress}`)}
+        mt={20}
+        sx={{
+          display: 'flex',
+          justifyContent: 'flex-start',
+          flexDirection: 'row',
+          overflowX: 'scroll',
+          '&::-webkit-scrollbar': {
+            display: 'none'
+          }
+        }}
       >
-        <DaoAvatars size={64} src={info.daoLogo} />
-        <Box
-          sx={{
-            position: 'absolute',
-            width: 92,
-            bottom: -8,
-            left: -14,
-            display: 'flex',
-            justifyContent: 'center'
-          }}
-        >
-          <ShowAdminTag level={info.accountLevel} />
-        </Box>
+        {adminDao?.map(item => (
+          <DaoItem {...item} key={item.chainId} />
+        ))}
       </Box>
-      <Typography maxWidth={64} noWrap fontSize={12} mt={12} textAlign="center">
-        {info.daoName}
-      </Typography>
-    </Box>
+    </ContainerWrapper>
   )
 }

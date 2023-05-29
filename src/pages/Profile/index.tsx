@@ -39,6 +39,8 @@ import Loading from 'components/Loading'
 import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import { ReactComponent as EditIcon } from 'assets/svg/edit.svg'
+import bg from 'assets/images/blur-bg.png'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -47,7 +49,7 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   boxShadow: theme.boxShadow.bs2,
   background: 'linear-gradient(271.58deg, rgba(255, 255, 255, 0.85) 0%, #FFFFFF 53.36%, #FFFFFF 100.77%)',
   backdropFilter: 'blur(60px)',
-  padding: '26px 26px 48px 30px',
+  padding: '26px 26px 30px 30px',
   [theme.breakpoints.down('sm')]: {
     padding: '20px',
     minHeight: 150
@@ -120,10 +122,13 @@ export default function Profile() {
     <Box
       paddingBottom={40}
       sx={{
-        padding: { sm: '0 0 40px 0', xs: '0 16px 20px' }
+        padding: { sm: '44px 0 40px 0', xs: '0 16px 20px' },
+        background: `url(${bg})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100% 320px'
       }}
     >
-      <ContainerWrapper maxWidth={1248} margin={isSmDown ? '0 auto 24px' : '24px auto 40px'}>
+      <ContainerWrapper maxWidth={1200} margin={isSmDown ? '0 auto 24px' : '0 auto 40px'}>
         <StyledHeader>
           <Box display={'flex'}>
             <Avatar
@@ -151,28 +156,6 @@ export default function Profile() {
                   <Typography variant="h5" noWrap>
                     {profileInfo?.nickname || 'unnamed'}
                   </Typography>
-                  <Box
-                    display={'flex'}
-                    alignItems="center"
-                    sx={{
-                      width: 'fit-content',
-                      borderRadius: '30px',
-                      padding: '4px 4px 2px 16px',
-                      backgroundColor: '#F2F2F2'
-                    }}
-                  >
-                    <Link
-                      fontSize={13}
-                      href={getEtherscanLink(chainId || 1, currentAccount || '', 'address')}
-                      fontWeight={600}
-                      target="_blank"
-                      underline="none"
-                      mr={6}
-                    >
-                      {currentAccount ? shortenAddress(currentAccount) : ''}
-                    </Link>
-                    <Copy toCopy={currentAccount || ''} />
-                  </Box>
                   <Box
                     fontSize={0}
                     display={'grid'}
@@ -252,13 +235,24 @@ export default function Profile() {
                   </Box>
                 </Box>
                 {isSelf ? (
-                  <RowCenter mt={{ xs: 10 }}>
+                  <RowCenter
+                    mt={{ xs: 10 }}
+                    sx={{
+                      '& svg': {
+                        marginRight: 5
+                      },
+                      '&:hover svg path': {
+                        fill: theme.palette.primary.main
+                      }
+                    }}
+                  >
+                    <div></div>
                     <OutlineButton
+                      style={{ border: 'none' }}
                       noBold
                       disabled={loading}
                       width="75px"
                       height={'24px'}
-                      style={{ marginRight: 10 }}
                       onClick={async () => {
                         if (!userSignature) {
                           await loginSignature()
@@ -268,20 +262,8 @@ export default function Profile() {
                         }
                       }}
                     >
+                      <EditIcon />
                       Edit
-                    </OutlineButton>
-                    <OutlineButton
-                      disabled={connector !== injected || connector === walletlink}
-                      noBold
-                      style={{
-                        borderColor: '#C60C00',
-                        color: '#C60C00'
-                      }}
-                      width="100px"
-                      height={'24px'}
-                      onClick={deactivate}
-                    >
-                      Disconnect
                     </OutlineButton>
                   </RowCenter>
                 ) : (
@@ -313,6 +295,29 @@ export default function Profile() {
                   </Box>
                 )}
               </Box>
+              <Box
+                mt={12}
+                display={'flex'}
+                alignItems="center"
+                sx={{
+                  width: 'fit-content',
+                  borderRadius: '30px',
+                  padding: '4px 4px 2px 16px',
+                  backgroundColor: '#F2F2F2'
+                }}
+              >
+                <Link
+                  fontSize={13}
+                  href={getEtherscanLink(chainId || 1, currentAccount || '', 'address')}
+                  fontWeight={600}
+                  target="_blank"
+                  underline="none"
+                  mr={6}
+                >
+                  {currentAccount ? shortenAddress(currentAccount) : ''}
+                </Link>
+                <Copy toCopy={currentAccount || ''} />
+              </Box>
               <Stack mt={10} direction={'row'} alignItems="center" spacing={isSmDown ? 10 : 20}>
                 <Typography
                   fontWeight={600}
@@ -342,16 +347,47 @@ export default function Profile() {
                   {profileInfo?.following || 0} Following
                 </Typography>
               </Stack>
-              <Typography
+              <Stack
                 mt={10}
-                fontSize={14}
-                sx={{
-                  wordBreak: 'break-word'
-                }}
-                fontWeight={600}
+                direction={'row'}
+                alignItems="center"
+                justifyContent={'space-between'}
+                spacing={isSmDown ? 10 : 20}
               >
-                {profileInfo?.introduction || ''}
-              </Typography>
+                <Box>
+                  <Typography mt={10} fontSize={14} fontWeight={600}>
+                    {profileInfo?.introduction || ''}
+                  </Typography>
+                  <Box
+                    display={'flex'}
+                    alignItems="center"
+                    sx={{
+                      color: '#97B7EF',
+                      cursor: 'pointer',
+                      width: 'fit-content',
+                      borderRadius: '30px',
+                      padding: '1px 14px',
+                      fontSize: 13,
+                      backgroundColor: '#005BC60F'
+                    }}
+                  >
+                    + Add
+                  </Box>
+                </Box>
+                <OutlineButton
+                  disabled={connector !== injected || connector === walletlink}
+                  noBold
+                  style={{
+                    borderColor: '#C60C00',
+                    color: '#C60C00'
+                  }}
+                  width="100px"
+                  height={'36px'}
+                  onClick={deactivate}
+                >
+                  Disconnect
+                </OutlineButton>
+              </Stack>
             </Box>
           </Box>
         </StyledHeader>
@@ -361,7 +397,7 @@ export default function Profile() {
 
         {isSelf && <MyTokens account={currentAccount || ''} />}
 
-        <MyDaos adminDao={profileInfo?.adminDao} memberDao={profileInfo?.memberDao} />
+        <MyDaos adminDao={profileInfo?.adminDao} />
 
         {isSelf && <MyRecords account={currentAccount || ''} />}
       </Box>

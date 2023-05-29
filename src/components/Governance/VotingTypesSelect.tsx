@@ -18,7 +18,7 @@ export default function VotingTypesSelect({
   width?: number
 }) {
   return (
-    <Select placeholder="" label="*Voting Types" width={width || 163} value={value} onChange={onChange}>
+    <Select noBold placeholder="" label="*Voting Types" width={width || 163} value={value} onChange={onChange}>
       {itemList.map(item => (
         <MenuItem key={item.value} sx={{ fontWeight: 500 }} value={item.value} selected={value === item.value}>
           {item.label}

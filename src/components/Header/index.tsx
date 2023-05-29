@@ -150,7 +150,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     fontSize: 14,
     lineHeight: '20px',
     color: theme.palette.text.secondary,
-    marginRight: 30,
+    marginRight: 60,
     fontWeight: 600,
     paddingBottom: '30px',
     paddingTop: '30px',
@@ -339,7 +339,7 @@ export default function Header() {
         >
           <Breadcrumbs aria-label="breadcrumb">
             <NavLink to="/">
-              <HomeIcon fontSize="small" />
+              <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
               DAOs
             </NavLink>
             {makeBreadcrumbs.map((v, i) => (
@@ -392,7 +392,7 @@ function TabsBox() {
               color: '#3F5170',
               marginRight: {
                 xs: 15,
-                lg: 24
+                lg: 50
               },
               height: 'auto',
               paddingBottom: '30px',

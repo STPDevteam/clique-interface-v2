@@ -213,6 +213,7 @@ function AdminBlock({
               {isTransferring ? 'Transferring' : 'Transfer'}
             </BlackButton>
             <OutlineButton
+              noBold
               disabled={isRemoving}
               width="92px"
               height="24px"
