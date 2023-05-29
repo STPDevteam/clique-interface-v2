@@ -33,6 +33,7 @@ export const routes = {
 
   Creator: '/creator',
   CreatorDao: '/creator/dao',
+  CreateDao: '/create/dao',
   CreatorToken: '/creator/token',
 
   Notification: '/notification',
