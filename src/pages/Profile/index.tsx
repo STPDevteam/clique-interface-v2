@@ -135,7 +135,11 @@ export default function Profile() {
               src={profileInfo?.accountLogo}
               sx={{ width: { xs: 64, sm: 100 }, height: { xs: 64, sm: 100 }, marginRight: isSmDown ? 8 : 24 }}
             />
-            <Box width={'100%'}>
+            <Box
+              sx={{
+                width: 'calc(100% - 100px)'
+              }}
+            >
               <Box
                 sx={{
                   display: { sm: 'grid', xs: 'flex' },
@@ -354,11 +358,11 @@ export default function Profile() {
                 justifyContent={'space-between'}
                 spacing={isSmDown ? 10 : 20}
               >
-                <Box>
+                <Box sx={{ width: '60%', maxWidth: '700px', wordWrap: 'break-word' }}>
                   <Typography mt={10} fontSize={14} fontWeight={600}>
                     {profileInfo?.introduction || ''}
                   </Typography>
-                  <Box
+                  {/* <Box
                     display={'flex'}
                     alignItems="center"
                     sx={{
@@ -372,8 +376,9 @@ export default function Profile() {
                     }}
                   >
                     + Add
-                  </Box>
+                  </Box> */}
                 </Box>
+
                 <OutlineButton
                   disabled={connector !== injected || connector === walletlink}
                   noBold

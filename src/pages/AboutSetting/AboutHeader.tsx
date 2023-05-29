@@ -63,8 +63,8 @@ export default function Header() {
               <DaoAvatars size={isSmDown ? 60 : 100} src={daoInfo?.daoLogo} />
             </Box>
             <Box sx={{ ml: 35, height: 142 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography variant="h5" sx={{ font: '600 24px/29px "Inter" ', mr: 8 }}>
+              <Box sx={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <Typography variant="h5" sx={{ font: '600 24px/29px "Inter" ' }}>
                   {daoInfo?.name || '--'}
                 </Typography>
                 {backedDaoInfo?.verified && <AuthIcon />}

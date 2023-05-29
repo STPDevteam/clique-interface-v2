@@ -69,9 +69,9 @@ export function BlackButton({ style, ...props }: Props) {
     <Button
       {...props}
       style={{
-        backgroundColor: theme.palette.text.primary,
+        background: theme.palette.primary.main,
         '&:hover': {
-          background: theme.palette.primary.main
+          background: theme.palette.primary.dark
         },
         '&:disabled': {
           backgroundColor: theme.palette.text.disabled

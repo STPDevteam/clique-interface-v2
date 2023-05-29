@@ -78,7 +78,7 @@ export default function Proposal() {
             <Select
               noBold
               placeholder=""
-              style={{ fontWeight: 500 }}
+              style={{ fontWeight: 500, fontSize: 14 }}
               width={isSmDown ? 160 : 158}
               height={isSmDown ? 36 : 36}
               value={currentProposalStatus}
@@ -87,7 +87,7 @@ export default function Proposal() {
               {itemList.map(item => (
                 <MenuItem
                   key={item.value}
-                  sx={{ fontWeight: 500, fontSize: 10, color: '#3F5170' }}
+                  sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                   value={item.value}
                   selected={currentProposalStatus && currentProposalStatus === item.value}
                 >

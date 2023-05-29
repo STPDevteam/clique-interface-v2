@@ -172,7 +172,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
       color: '#0049c6'
     }
   },
-  '& .css-1jxw4rn-MuiTabs-indicator': {
+  '& .MuiTabs-indicator': {
     width: '0!important'
   },
   '& button': {
