@@ -217,6 +217,7 @@ function AdminBlock({
               disabled={isRemoving}
               width="92px"
               height="24px"
+              color={'#c60c00'}
               onClick={() => (isNeedSwitch ? switchNetwork() : removeDaoAdminCallback(account))}
             >
               {isRemoving ? 'Removing' : 'Remove'}

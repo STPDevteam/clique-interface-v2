@@ -378,7 +378,6 @@ export default function DragTaskPanel() {
       }}
     >
       <Box
-        mb={30}
         sx={{
           position: 'absolute',
           right: 0,
@@ -429,7 +428,7 @@ export default function DragTaskPanel() {
           </Box>
         )}
       </Box>
-      <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid} mt={14}>
+      <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid} mt={4}>
         <DragDropContext onDragEnd={onDragEnd}>
           {taskList.map((el, ind) => (
             <Droppable key={ind} droppableId={`${ind}`}>

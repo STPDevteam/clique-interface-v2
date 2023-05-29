@@ -135,7 +135,11 @@ export default function Profile() {
               src={profileInfo?.accountLogo}
               sx={{ width: { xs: 64, sm: 100 }, height: { xs: 64, sm: 100 }, marginRight: isSmDown ? 8 : 24 }}
             />
-            <Box width={'100%'}>
+            <Box
+              sx={{
+                width: 'calc(100% - 100px)'
+              }}
+            >
               <Box
                 sx={{
                   display: { sm: 'grid', xs: 'flex' },
@@ -271,11 +275,14 @@ export default function Profile() {
                     {isFollowed ? (
                       <Button
                         onClick={() => toggleFollow(false)}
-                        backgroundColor={theme.palette.text.disabled}
                         width={isSmDown ? '100px' : '200px'}
                         height={isSmDown ? '30px' : '44px'}
+                        backgroundColor="transparent"
+                        style={{ border: '1px solid #0049C6' }}
+                        color="#0049C6"
+                        hoverbg="#1976D20A "
                       >
-                        Following
+                        - Unfollowed
                       </Button>
                     ) : (
                       <BlackButton
@@ -354,11 +361,11 @@ export default function Profile() {
                 justifyContent={'space-between'}
                 spacing={isSmDown ? 10 : 20}
               >
-                <Box>
+                <Box sx={{ width: '60%', maxWidth: '700px', wordWrap: 'break-word' }}>
                   <Typography mt={10} fontSize={14} fontWeight={600}>
                     {profileInfo?.introduction || ''}
                   </Typography>
-                  <Box
+                  {/* <Box
                     display={'flex'}
                     alignItems="center"
                     sx={{
@@ -372,21 +379,25 @@ export default function Profile() {
                     }}
                   >
                     + Add
-                  </Box>
+                  </Box> */}
                 </Box>
-                <OutlineButton
-                  disabled={connector !== injected || connector === walletlink}
-                  noBold
-                  style={{
-                    borderColor: '#C60C00',
-                    color: '#C60C00'
-                  }}
-                  width="100px"
-                  height={'36px'}
-                  onClick={deactivate}
-                >
-                  Disconnect
-                </OutlineButton>
+                {isSelf ? (
+                  <OutlineButton
+                    disabled={connector !== injected || connector === walletlink}
+                    noBold
+                    style={{
+                      borderColor: '#C60C00',
+                      color: '#C60C00'
+                    }}
+                    width="100px"
+                    height={'36px'}
+                    onClick={deactivate}
+                  >
+                    Disconnect
+                  </OutlineButton>
+                ) : (
+                  <></>
+                )}
               </Stack>
             </Box>
           </Box>

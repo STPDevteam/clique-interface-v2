@@ -26,7 +26,9 @@ export default function Home() {
         <Box minHeight={316}>
           {!loading && !homeDaoList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
-            <Loading sx={{ marginTop: 30 }} />
+            <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Loading sx={{ marginTop: 30 }} />
+            </Box>
           </DelayLoading>
           <Grid
             spacing={isSmDown ? 16 : 18}

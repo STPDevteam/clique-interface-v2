@@ -16,6 +16,7 @@ interface Props {
   style?: React.CSSProperties & SxProps<Theme>
   active?: boolean
   disableRipple?: boolean
+  hoverbg?: string
 }
 
 export default function Button(props: Props) {
@@ -30,7 +31,8 @@ export default function Button(props: Props) {
     color,
     disableRipple,
     className,
-    borderRadius
+    borderRadius,
+    hoverbg
   } = props
   const theme = useTheme()
   return (
@@ -49,7 +51,7 @@ export default function Button(props: Props) {
         backgroundColor: backgroundColor || theme.palette.primary.main,
         color: color || theme.palette.primary.contrastText,
         '&:hover': {
-          backgroundColor: theme.palette.primary.dark
+          backgroundColor: !!hoverbg ? hoverbg : theme.palette.primary.dark
         },
         '&:disabled': {
           backgroundColor: theme.palette.primary.light,
@@ -69,9 +71,9 @@ export function BlackButton({ style, ...props }: Props) {
     <Button
       {...props}
       style={{
-        backgroundColor: theme.palette.text.primary,
+        background: theme.palette.primary.main,
         '&:hover': {
-          background: theme.palette.primary.main
+          background: theme.palette.primary.dark
         },
         '&:disabled': {
           backgroundColor: theme.palette.text.disabled

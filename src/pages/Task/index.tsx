@@ -172,7 +172,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
       color: '#0049c6'
     }
   },
-  '& .css-1jxw4rn-MuiTabs-indicator': {
+  '& .MuiTabs-indicator': {
     width: '0!important'
   },
   '& button': {
@@ -333,7 +333,7 @@ export default function Index() {
               }
             }}
           >
-            <Image width={30} src={TaskIcon}></Image>
+            <Image width={38} src={TaskIcon}></Image>
             <Typography>Workspace</Typography>
           </Box>
           {/* {tabValue === 1 ? (

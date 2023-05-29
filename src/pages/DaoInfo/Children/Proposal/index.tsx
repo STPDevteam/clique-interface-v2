@@ -78,7 +78,7 @@ export default function Proposal() {
             <Select
               noBold
               placeholder=""
-              style={{ fontWeight: 500 }}
+              style={{ fontWeight: 500, fontSize: 14 }}
               width={isSmDown ? 160 : 158}
               height={isSmDown ? 36 : 36}
               value={currentProposalStatus}
@@ -87,7 +87,7 @@ export default function Proposal() {
               {itemList.map(item => (
                 <MenuItem
                   key={item.value}
-                  sx={{ fontWeight: 500, fontSize: 10, color: '#3F5170' }}
+                  sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                   value={item.value}
                   selected={currentProposalStatus && currentProposalStatus === item.value}
                 >
@@ -100,8 +100,11 @@ export default function Proposal() {
         <Box mt={17} minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
-            <Loading sx={{ marginTop: 30 }} />
+            <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Loading sx={{ marginTop: 30 }} />
+            </Box>
           </DelayLoading>
+
           <Grid container rowSpacing={18} columnSpacing={isSmDown ? 0 : 34}>
             {!loading &&
               proposalBaseList.map(item => (

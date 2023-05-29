@@ -12,7 +12,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
 
 const StyledCard = styled(Box)(({ theme }) => ({
-  padding: '24px',
+  padding: '19px 24px',
   cursor: 'pointer',
   border: `1px solid ${theme.bgColor.bg2}`,
   borderRadius: theme.borderRadius.default,
