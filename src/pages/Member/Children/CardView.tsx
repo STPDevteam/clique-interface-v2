@@ -28,8 +28,6 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
   const [hoverIndex, setHoverIndex] = useState<any>(null)
   const { changeRole } = useChangeAdminRole()
 
-  console.log(account)
-
   const onRemove = useCallback(
     async (e: any, id) => {
       changeRole(curDaoChainId, daoAddress, id)
