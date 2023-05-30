@@ -12,7 +12,15 @@ const guestList = [
   { value: 'superAdmin', label: 'Super Admin' }
 ]
 
-export default function AddJobsModal({ onClose, onClick }: { onClose: () => void; onClick: () => void }) {
+export default function AddJobsModal({
+  onClose,
+  onClick,
+  isEdit
+}: {
+  onClose: () => void
+  onClick: () => void
+  isEdit?: boolean
+}) {
   const [title, setTitle] = useState('')
   const [des, setDes] = useState('')
   const [currentStatus, setCurrentStatus] = useState()
@@ -31,7 +39,7 @@ export default function AddJobsModal({ onClose, onClick }: { onClose: () => void
             fontWeight: 500
           }}
         >
-          Add job
+          {isEdit ? 'Edit job' : 'Add job'}
         </Box>
         <Input value={title} onChange={e => setTitle(e.target.value)} label="Title" />
         <Input value={des} multiline rows={6} label="Job description" onChange={e => setDes(e.target.value)} />
@@ -59,12 +67,25 @@ export default function AddJobsModal({ onClose, onClick }: { onClose: () => void
           ))}
         </Select>
         <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'}>
-          <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
-            Close
-          </OutlineButton>
-          <Button onClick={onClick} width="125px" height="40px">
-            Add
-          </Button>
+          {isEdit ? (
+            <>
+              <OutlineButton onClick={onClose} noBold color="#E46767" width={'125px'} height="40px">
+                Delete
+              </OutlineButton>
+              <Button onClick={onClick} width="125px" height="40px">
+                Save
+              </Button>
+            </>
+          ) : (
+            <>
+              <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
+                Close
+              </OutlineButton>
+              <Button onClick={onClick} width="125px" height="40px">
+                Add
+              </Button>
+            </>
+          )}
         </Stack>
       </Box>
     </Modal>
