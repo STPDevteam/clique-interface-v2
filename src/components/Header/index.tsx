@@ -24,6 +24,7 @@ import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 
 import PopperCard from 'components/PopperCard'
+import LoginModal from './LoginModal'
 
 interface TabContent {
   title: string
@@ -359,6 +360,7 @@ export default function Header() {
   }
   return (
     <>
+      <LoginModal />
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
       <Filler />
       <StyledMobileAppBar>

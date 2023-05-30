@@ -44,6 +44,10 @@ export function useVoteModalToggle(): () => void {
   return useToggleModal(ApplicationModal.VOTE)
 }
 
+export function useSignLoginModalToggle(): () => void {
+  return useToggleModal(ApplicationModal.SIGN_LOGIN)
+}
+
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
   const dispatch = useDispatch()

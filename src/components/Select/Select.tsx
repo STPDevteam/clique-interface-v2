@@ -37,6 +37,7 @@ interface Props {
 
 const StyledInputLabel = styled(MuiInputLabel)(({ theme }) => ({
   // opacity: 0.6,
+  textAlign: 'left',
   fontSize: 12,
   fontWeight: 500,
   color: theme.palette.text.secondary,
@@ -49,7 +50,7 @@ const StyledSelect = styled(MuiSelect)(({ theme }) => ({
   position: 'relative',
   padding: '10px',
   '& .MuiSelect-icon': {
-    color: theme.palette.primary.contrastText,
+    color: '#D4D7E2',
     right: '10px'
   },
   '&.Mui-focused': {
