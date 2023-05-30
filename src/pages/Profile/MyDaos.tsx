@@ -96,6 +96,7 @@ export function DaoItem({
           <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
             <p
               style={{
+                width: 154,
                 fontSize: 20,
                 margin: 0,
                 fontWeight: 700,
