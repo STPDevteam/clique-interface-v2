@@ -8,6 +8,8 @@ import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 // import ComingSoon from 'pages/ComingSoon'
 import General from 'pages/DaoInfo/Children/Settings/General'
+import NewGeneral from 'pages/DaoInfo/Children/Settings/NewGeneral'
+
 import { useActiveWeb3React } from 'hooks'
 import Admin from 'pages/DaoInfo/Children/Settings/Admin'
 import DaoContainer from 'components/DaoContainer'
@@ -62,6 +64,14 @@ export default function AboutSetting() {
         component: daoInfo ? (
           <Box mt={20}>
             <General daoInfo={daoInfo} daoChainId={curDaoChainId} />
+          </Box>
+        ) : null
+      },
+      {
+        label: 'NewGeneral',
+        component: daoInfo ? (
+          <Box mt={20}>
+            <NewGeneral daoInfo={daoInfo} daoChainId={curDaoChainId} />
           </Box>
         ) : null
       },

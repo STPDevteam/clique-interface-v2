@@ -15,6 +15,7 @@ import AdminTag from '../DaoInfo/ShowAdminTag'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
+import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -22,8 +23,7 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   background: theme.palette.common.white,
   padding: '20px 0',
   display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center'
+  justifyContent: 'space-between'
 }))
 
 export default function Header() {
@@ -137,19 +137,23 @@ export default function Header() {
               </Box>
             </Box>
           </Box>
-          {/* (<Button
-            variant="contained"
+          <Typography
             sx={{
-              width: '95px',
-              height: '36px',
-              background: '#0049C6',
-              borderRadius: '8px',
-              color: '#fff',
-              font: '700 14px/20px "Inter"'
+              height: 20,
+              fontWeight: 500,
+              fontSize: '13px',
+              lineHeight: '20px',
+              color: '#E46767',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              cursor: 'pointer',
+              userSelect: 'none'
             }}
           >
-            + Follow
-          </Button>) */}
+            <QuitIcon />
+            Quit DAO
+          </Typography>
         </StyledHeader>
       </ContainerWrapper>
     </Box>

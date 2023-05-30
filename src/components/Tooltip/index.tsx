@@ -8,15 +8,14 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#F8FBFF',
     color: '#97B7EF',
-    width: 299,
+    width: 300,
     fontFamily: 'Inter',
     fontWeight: 500,
     fontSize: '12px',
     lineHeight: '16px',
     borderRadius: '6px',
     border: ' 1px solid #97B7EF',
-    padding: '8px 12px',
-    boxSizing: 'border-box'
+    padding: '8px  8px 8px 12px'
   }
 }))
 

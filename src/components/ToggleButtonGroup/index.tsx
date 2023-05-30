@@ -1,42 +1,45 @@
 import { useState } from 'react'
-import { ToggleButtonGroup, ToggleButton } from '@mui/material'
+import { ToggleButtonGroup, ToggleButton, styled } from '@mui/material'
 
-interface ListItem {
-  label: string
-  value: string
-}
+// interface ListItem {
+//   label: string
+//   value: string
+// }
+
+const CustomToggleButton = styled(ToggleButton)(() => ({
+  textTransform: 'none',
+  padding: '0',
+  boxSizing: 'border-box',
+  height: '18px',
+  fontFamily: 'Inter',
+  fontWeight: 500,
+  fontSize: '12px',
+  lineHeight: '20px'
+}))
+
 export default function ToggleButtn({
   Props,
-  setToggleValue
+  setToggleValue,
+  itemWidth
 }: {
-  Props: ListItem[]
+  Props: { label: string; value: string }[]
   setToggleValue: (value: string) => void
+  itemWidth?: number
 }) {
   const UnselectedStyle = {
-    padding: '0',
-    width: '100px',
-    height: '18px',
-    fontFamily: 'Inter',
-    fontWeight: 500,
-    fontSize: '12px',
+    width: itemWidth || '100px',
     color: '#80829F',
-    lineHeight: '20px',
-    border: 'none',
-    borderRadius: '48px'
+    borderRadius: '48px',
+    border: 'none'
   }
+
   const SelectedStyle = {
-    padding: '0',
     boxSizing: 'border-box',
-    width: '100px',
-    height: '18px',
+    width: itemWidth || '100px',
     background: '#0049C6',
     color: '#fff',
     border: '1px solid #97B7EF',
-    borderRadius: '48px',
-    fontFamily: 'Inter',
-    fontWeight: 500,
-    fontSize: '12px',
-    lineHeight: '20px'
+    borderRadius: '48px'
   }
 
   const [alignment, setAlignment] = useState(Props[0].value)
@@ -60,9 +63,13 @@ export default function ToggleButtn({
         onChange={handleChange}
       >
         {Props.map((v, index) => (
-          <ToggleButton key={index} value={v.label} style={alignment == v.value ? SelectedStyle : UnselectedStyle}>
+          <CustomToggleButton
+            key={index}
+            value={v.value}
+            style={alignment == v.value ? SelectedStyle : UnselectedStyle}
+          >
             {v.value}
-          </ToggleButton>
+          </CustomToggleButton>
         ))}
       </ToggleButtonGroup>
     </>

@@ -1,8 +1,21 @@
-import { Stack, styled, Typography, Link as MuiLink, useTheme } from '@mui/material'
+import {
+  Stack,
+  styled,
+  Typography,
+  Link as MuiLink,
+  useTheme,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
+} from '@mui/material'
 import { Box } from '@mui/system'
 import EmptyData from 'components/EmptyData'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import Loading from 'components/Loading'
+import Tooltip from 'components/Tooltip'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
@@ -17,6 +30,7 @@ import { getEtherscanLink } from 'utils'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
+import { shortenAddress } from 'utils'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
@@ -27,6 +41,13 @@ export const StyledItem = styled(Stack)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     padding: '20px'
   }
+}))
+
+const Title = styled(Typography)(() => ({
+  fontWeight: 500,
+  fontSize: '14px',
+  lineHeight: '20px',
+  color: '#B5B7CF'
 }))
 
 const StyledTitle = styled(Typography)(({}) => ({
@@ -79,6 +100,37 @@ export default function About() {
 
   return (
     <div>
+      <Title sx={{ mb: 18 }}>Governance</Title>
+      <BasicTable />
+      <StyledItem
+        direction={isSmDown ? 'column' : 'row'}
+        gap={isSmDown ? 20 : 10}
+        sx={{
+          mt: 20,
+          justifyContent: { sm: 'space-between', xs: 'unset' }
+        }}
+      >
+        <Stack spacing={isSmDown ? 16 : 10}>
+          <ContentTitle sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            Threshold
+            <Tooltip value={'Minimum Votes Needed For Proposal To Execute '} />
+          </ContentTitle>
+          <StyledText>{daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes</StyledText>
+        </Stack>
+        <Stack spacing={isSmDown ? 16 : 10}>
+          <ContentTitle>Voting Period</ContentTitle>
+          <StyledText>
+            {votingPeriodDate
+              ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
+              : '--'}
+          </StyledText>
+        </Stack>
+        <Stack spacing={isSmDown ? 16 : 10}>
+          <ContentTitle>Voting Types</ContentTitle>
+          <StyledText>{daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}</StyledText>
+        </Stack>
+      </StyledItem>
+
       <StyledTitle variant="h5">Token info</StyledTitle>
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
@@ -216,5 +268,73 @@ export default function About() {
         {!daoAdminLoading && !daoAdminList?.length && <EmptyData />}
       </Box>
     </div>
+  )
+}
+
+const TableContentTitle = styled(TableCell)(() => ({
+  fontFamily: 'Inter',
+  fontStyle: 'normal',
+  fontWeight: 500,
+  fontSize: '13px',
+  lineHeight: ' 16px',
+  color: '#B5B7CF',
+  padding: '7px 0'
+}))
+const TableContentText = styled(TableCell)(() => ({
+  height: 60,
+  padding: 0,
+  fontFamily: 'Inter',
+  fontStyle: 'normal',
+  fontWeight: 600,
+  fontSize: '14px',
+  lineHeight: ' 20px',
+  color: '#3F5170'
+}))
+
+function BasicTable() {
+  const rows = [
+    {
+      token: 'Loot (LOOT)',
+      network: 'Ethereum',
+      address: '0xF2da7b9CDb35Dc7c8e875DE0241b02376825CF86',
+      requir: '111',
+      weight: '1STP=1 Votes'
+    },
+    {
+      token: 'Loot (LOOT)',
+      network: 'Ethereum',
+      address: '0xF2da7b9CDb35Dc7c8e875DE0241b02376825CF86',
+      requir: '111',
+      weight: '1STP=1 Votes'
+    }
+  ]
+  return (
+    <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px' }}>
+      <Table sx={{ minWidth: 650 }}>
+        <TableHead>
+          <TableRow>
+            <TableContentTitle sx={{ pl: 30 }}>Token</TableContentTitle>
+            <TableContentTitle>Network</TableContentTitle>
+            <TableContentTitle>Token contract address</TableContentTitle>
+            <TableContentTitle>Requirement</TableContentTitle>
+            <TableContentTitle>Voting weight</TableContentTitle>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map(row => (
+            <TableRow key={row.token} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+              <TableContentText sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <CurrencyLogo size="32px" />
+                {row.token}
+              </TableContentText>
+              <TableContentText>{row.network}</TableContentText>
+              <TableContentText>{shortenAddress(row.address, 3)}</TableContentText>
+              <TableContentText>{row.requir}</TableContentText>
+              <TableContentText>{row.weight}</TableContentText>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   )
 }
