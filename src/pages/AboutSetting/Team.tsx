@@ -28,19 +28,19 @@ const memberList = [
   {
     address: '0x5ef8651589B8F672C4D2bC1543840725D61Eb846',
     logo: '',
-    name: '',
+    name: 'Allen',
     chainId: 97
   },
   {
     address: '0x5ef8651589B8F672C4D2bC1543840725D61Eb846',
     logo: '',
-    name: '',
+    name: 'Lay',
     chainId: 97
   },
   {
     address: '0x5ef8651589B8F672C4D2bC1543840725D61Eb846',
     logo: '',
-    name: '',
+    name: 'Jorden',
     chainId: 97
   }
 ]
@@ -61,9 +61,11 @@ export default function Team() {
 
   const tableList = useMemo(() => {
     return memberList.map(({ address, chainId, name, logo }) => [
-      <Box key={address + chainId} display={'flex'}>
-        <Image width={18} src={logo || avatar} />
-        <Typography>{name}</Typography>
+      <Box key={address + chainId} display={'flex'} alignItems={'center'} gap={10}>
+        <Image width={18} height={18} src={logo || avatar} />
+        <Typography color={'#3F5170'} fontWeight={500} fontSize={14}>
+          {name}
+        </Typography>
       </Box>,
       <Box key={address + chainId} display={'flex'}>
         <Typography>{address}</Typography>
