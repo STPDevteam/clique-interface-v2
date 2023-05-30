@@ -18,7 +18,7 @@ export default function AddMemberModal({ onClose, onClick }: { onClose: () => vo
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
-      <Box display="grid" textAlign={'center'} width="100%" height="480px">
+      <Box display="grid" textAlign={'center'} width="100%" height="340px">
         <Box
           display="flex"
           justifyContent="space-between"
@@ -35,7 +35,7 @@ export default function AddMemberModal({ onClose, onClick }: { onClose: () => vo
         <Input value={address} onChange={e => setAddress(e.target.value)} label="Wallet address" />
         <Select
           placeholder=""
-          width={'100%'}
+          width={'420px'}
           height={40}
           noBold
           label="Guests"

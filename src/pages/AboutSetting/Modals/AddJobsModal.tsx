@@ -37,7 +37,7 @@ export default function AddJobsModal({ onClose, onClick }: { onClose: () => void
         <Input value={des} multiline rows={6} label="Job description" onChange={e => setDes(e.target.value)} />
         <Select
           placeholder=""
-          width={'100%'}
+          width={'420px'}
           height={40}
           noBold
           label="Guests"
