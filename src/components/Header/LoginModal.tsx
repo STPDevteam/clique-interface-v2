@@ -49,11 +49,21 @@ export default function LoginModal() {
   }, [connector, deactivate, toggleSignLoginModal])
 
   return (
-    <Modal customIsOpen={walletModalOpen && !userInfo?.loggedToken} customOnDismiss={cancel} maxWidth="480px">
+    <Modal customIsOpen={walletModalOpen && !userInfo?.loggedToken} closeIcon customOnDismiss={cancel} maxWidth="480px">
       <Box width={'100%'} padding="48px" display="flex" flexDirection="column" alignItems="center" gap={20}>
         <Image src={logo}></Image>
         <Typography variant="h4">Welcome to Myclique</Typography>
-        <Box width={'100%'} display={'grid'} gridTemplateColumns={'1fr 1fr'} gap="20px">
+        <Box
+          width={'100%'}
+          display={'grid'}
+          gridTemplateColumns={'1fr 1fr'}
+          gap="20px"
+          sx={{
+            '& button': {
+              height: 40
+            }
+          }}
+        >
           <Button variant="outlined" onClick={cancel}>
             Cancel
           </Button>
