@@ -321,8 +321,8 @@ function BasicTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.token} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+          {rows.map((row, index) => (
+            <TableRow key={row.token + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableContentText sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
                 <CurrencyLogo size="32px" />
                 {row.token}

@@ -5,6 +5,7 @@ import { ChainId } from 'constants/chain'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Header from './AboutHeader'
 import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
+import Governance from 'pages/DaoInfo/Children/Settings/Governance'
 import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 // import ComingSoon from 'pages/ComingSoon'
 import General from 'pages/DaoInfo/Children/Settings/General'
@@ -87,6 +88,14 @@ export default function AboutSetting() {
             <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
           </Box>
         )
+      },
+      {
+        label: 'Governance',
+        component: daoInfo ? (
+          <Box mt={14}>
+            <Governance daoInfo={daoInfo} daoChainId={curDaoChainId} />
+          </Box>
+        ) : null
       },
       {
         label: 'Team',

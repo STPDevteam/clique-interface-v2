@@ -1,4 +1,4 @@
-import { Tooltip, styled, TooltipProps, tooltipClasses } from '@mui/material'
+import { Tooltip, styled, TooltipProps, tooltipClasses, Box } from '@mui/material'
 
 import { ReactComponent as TooltipIcon } from 'assets/svg/tooltip.svg'
 
@@ -25,9 +25,18 @@ export default function VariableWidth({ value }: { value: string }) {
       <HtmlTooltip
         placement="top-start"
         title={value}
-        sx={{ '& .css-1fkcro2-MuiTooltip-tooltip': { margin: '0 0 5px 0 !important' } }}
+        sx={{
+          '& .css-1fkcro2-MuiTooltip-tooltip': { margin: '0 0 5px 0 !important' },
+          '&:hover': { cursor: 'pointer' }
+        }}
       >
-        <TooltipIcon />
+        <Box
+          sx={{
+            '&:hover': { cursor: 'pointer' }
+          }}
+        >
+          <TooltipIcon />
+        </Box>
       </HtmlTooltip>
     </>
   )
