@@ -43,6 +43,9 @@ export const Axios = {
   },
   post<T = any>(url: string, data: { [key: string]: any }, params = {}): AxiosPromise<ResponseType<T>> {
     return axiosInstance.post(url, data, Object.assign(MakeHeaders(), { params }))
+  },
+  delete<T = any>(url: string, parmas = {}): AxiosPromise<ResponseType<T>> {
+    return axiosInstance.delete(url, Object.assign(MakeHeaders(), { parmas }))
   }
 }
 

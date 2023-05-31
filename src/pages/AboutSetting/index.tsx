@@ -11,6 +11,7 @@ import General from 'pages/DaoInfo/Children/Settings/General'
 import { useActiveWeb3React } from 'hooks'
 import Admin from 'pages/DaoInfo/Children/Settings/Admin'
 import DaoContainer from 'components/DaoContainer'
+import Team from './Team'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
@@ -74,6 +75,14 @@ export default function AboutSetting() {
         component: (
           <Box mt={20}>
             <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
+          </Box>
+        )
+      },
+      {
+        label: 'Team',
+        component: (
+          <Box mt={20}>
+            <Team />
           </Box>
         )
       },

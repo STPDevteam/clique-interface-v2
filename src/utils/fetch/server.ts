@@ -128,12 +128,17 @@ export function getTaskList(
   })
 }
 
-export function jobsApply(applyRole: string, chainId: number, daoAddress: string, message: string) {
+export function jobsApply(jobPublishId: number, message: string) {
   return Axios.post('stpdao/v2/jobs/apply', {
-    applyRole,
-    chainId,
-    daoAddress,
+    jobPublishId,
     message
+  })
+}
+
+export function joinDAO(chainId: number, daoAddress: string) {
+  return Axios.post('stpdao/v2/jobs/join/member', {
+    chainId,
+    daoAddress
   })
 }
 
@@ -640,4 +645,30 @@ export function sendAiChat(content: string[]) {
   return Axios.post('stpdao/v2/ai', {
     content
   })
+}
+
+export function createNewJob(access: string, chainId: number, daoAddress: string, jobBio: string, title: string) {
+  return Axios.post('stpdao/v2/jobs/publish', {
+    access,
+    chainId,
+    daoAddress,
+    jobBio,
+    title
+  })
+}
+
+export function updateNewJob(jobBio: string, jobPublishId: number, title: string) {
+  return Axios.post('stpdao/v2/jobs/publish/edit', {
+    jobBio,
+    jobPublishId,
+    title
+  })
+}
+
+export function deleteJob(publishId: number) {
+  return Axios.delete(`stpdao/v2/jobs/publish/${publishId}`)
+}
+
+export function publishList(chainId: number, daoAddress: string) {
+  return Axios.get('stpdao/v2/jobs/publish/list', { chainId, daoAddress })
 }

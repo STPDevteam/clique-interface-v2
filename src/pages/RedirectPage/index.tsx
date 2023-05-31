@@ -4,7 +4,7 @@ import JoinDAOModal from '../DaoInfo/Children/JoinDAOModal'
 import { useActiveWeb3React } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { useApplyMember, useIsJoined } from 'hooks/useBackedDaoServer'
+import { useIsJoined, useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
@@ -18,7 +18,7 @@ export default function Page() {
   const { account } = useActiveWeb3React()
   const [status, setStatus] = useState<string | undefined>()
   const [btnDisabled, setBtnDisabled] = useState(false)
-  const { joinApply } = useApplyMember()
+  const joinDAO = useJoinDAO()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const userSignature = useUserInfo()
@@ -36,7 +36,7 @@ export default function Page() {
       return
     }
     setBtnDisabled(true)
-    joinApply('C_member', curDaoChainId, daoAddress, '')
+    joinDAO(curDaoChainId, daoAddress)
       .then(() => {
         history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
         setBtnDisabled(false)
@@ -48,7 +48,7 @@ export default function Page() {
     daoAddress,
     daoChainId,
     history,
-    joinApply,
+    joinDAO,
     loginSignature,
     toggleWalletModal,
     userSignature
