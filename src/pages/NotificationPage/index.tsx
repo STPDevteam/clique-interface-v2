@@ -19,6 +19,8 @@ import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from 'hooks'
+import Image from 'components/Image'
+import NotiIcon from 'assets/images/notiIcon.png'
 // import PushManagementModal from './PushManagementModal'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
@@ -227,7 +229,8 @@ export default function NotificationPage() {
       <ContainerWrapper maxWidth={1150}>
         <RowCenter>
           <RowCenter>
-            <Typography mr={10} variant="h6">
+            <Image width={38} src={NotiIcon} />
+            <Typography mr={10} color={'#3F5170'} fontSize={30} fontWeight={600}>
               Notifications
             </Typography>
             {/* <OutlineButton height={24} width={140} noBold onClick={() => history.push(routes.PushList)}>
@@ -241,9 +244,10 @@ export default function NotificationPage() {
               </OutlineButton>
             </Badge> */}
             <OutlineButton
-              height={24}
-              width={140}
+              height={36}
+              width={150}
               noBold
+              color="#0049C6"
               onClick={() => {
                 if (unReadCount) {
                   toBackedReadAll().then(() => {
