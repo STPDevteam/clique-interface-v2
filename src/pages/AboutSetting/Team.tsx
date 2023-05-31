@@ -54,7 +54,7 @@ export default function Team() {
       >
         <Image width={18} height={18} src={avatar || Avatar} />
         <Typography textAlign={'left'} width={'100%'} color={'#3F5170'} fontWeight={500} fontSize={14} noWrap>
-          {nickname}
+          {nickname || 'unnamed'}
         </Typography>
       </Box>,
       <Box key={account + chainId} display={'flex'} justifyContent={'flex-start'}>
@@ -85,7 +85,7 @@ export default function Team() {
   return (
     <Box
       sx={{
-        padding: isSmDown ? '20px 16px' : 20,
+        padding: isSmDown ? '20px 16px' : '0 0 20px',
         borderRadius: '8px',
         '& table': {
           border: '1px solid #D4D7E2',

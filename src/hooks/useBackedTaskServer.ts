@@ -163,6 +163,7 @@ interface PublishItemProp {
   jobBio: string
   jobPublishId: number
   title: string
+  message?: string
 }
 
 export function useGetPublishJobList(chainId: number, daoAddress: string) {
@@ -184,7 +185,6 @@ export function useGetPublishJobList(chainId: number, daoAddress: string) {
         const res = await publishList(chainId, daoAddress)
         setLoading(false)
         const data = res.data.data as any
-        console.log(data)
         if (!data) {
           setResult([])
           setTotal(0)

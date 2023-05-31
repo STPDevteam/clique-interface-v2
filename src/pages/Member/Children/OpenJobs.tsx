@@ -17,7 +17,7 @@ export default function OpenJobs() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress)
-  const [input] = useState<string[]>(Array(jobList.length).fill(''))
+  const [input, setInput] = useState(Array(jobList.length).fill(''))
 
   const applyCallback = useCallback(
     (index: number, publishId: number) => {
@@ -25,14 +25,17 @@ export default function OpenJobs() {
       joinApply(publishId, input[index]).then(res => {
         showModal(<MessageBox type="success">Apply success</MessageBox>)
         console.log(res)
-        input[index] = ''
       })
     },
     [account, input, joinApply, showModal]
   )
 
   const handleInputChange = (index: number, value: string) => {
-    input[index] = value
+    setInput(prevState => {
+      const updateValues = [...prevState]
+      updateValues[index] = value
+      return updateValues
+    })
   }
 
   return (
