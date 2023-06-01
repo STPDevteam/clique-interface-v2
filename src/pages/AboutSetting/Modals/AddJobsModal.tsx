@@ -69,12 +69,13 @@ export default function AddJobsModal({
       .then(res => {
         console.log(res)
         showModal(<MessageBox type="success">Delete success</MessageBox>)
+        onDimiss()
       })
       .catch(err => {
         showModal(<MessageBox type="error">Delete error</MessageBox>)
         console.log(err)
       })
-  }, [deleteFn, publishId, showModal])
+  }, [deleteFn, onDimiss, publishId, showModal])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">

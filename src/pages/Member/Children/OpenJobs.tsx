@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom'
 
 export default function OpenJobs() {
   const { account } = useActiveWeb3React()
-  const { joinApply } = useApplyMember()
+  const joinApply = useApplyMember()
   const { showModal } = useModal()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
@@ -23,12 +23,13 @@ export default function OpenJobs() {
     (index: number, publishId: number) => {
       if (!account) return
       joinApply(publishId, input[index]).then((res: any) => {
-        if (res.code === 400) {
-          showModal(<MessageBox type="error">res.msg</MessageBox>)
+        console.log(res)
+
+        if (res.data.code === 400) {
+          showModal(<MessageBox type="error">{res.data.msg}</MessageBox>)
         } else {
           showModal(<MessageBox type="success">Apply success</MessageBox>)
         }
-        console.log(res)
       })
     },
     [account, input, joinApply, showModal]

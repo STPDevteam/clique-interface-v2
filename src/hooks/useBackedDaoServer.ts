@@ -254,32 +254,11 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
 }
 
 export function useApplyMember() {
-  const [loading, setLoading] = useState(false)
-  const { account } = useActiveWeb3React()
-
-  const joinApply = useCallback(
-    async (jobPublishId: number, message: string) => {
-      if (!account) {
-        return
-      }
-      setLoading(true)
-      try {
-        const res = await jobsApply(jobPublishId, message)
-        if (res.data.data) {
-          setLoading(false)
-        }
-      } catch (error) {
-        console.log(error)
-        setLoading(false)
-      }
-    },
-    [account]
-  )
-
-  return {
-    loading,
-    joinApply
-  }
+  return useCallback(async (jobPublishId: number, message: string) => {
+    return jobsApply(jobPublishId, message)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
 }
 
 export function useJoinDAO() {
