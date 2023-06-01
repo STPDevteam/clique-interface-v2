@@ -7,6 +7,7 @@ import Image from 'components/Image'
 import EthIcon from 'assets/svg/eth_logo.svg'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
+import useModal from 'hooks/useModal'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -30,6 +31,7 @@ const InputStyle = styled(Input)(() => ({
   height: 40
 }))
 export default function AddTokenModal() {
+  const { hideModal } = useModal()
   const ListItem = [
     { label: 'Anyone', value: 'Anyone' },
     { label: 'Holding token or NFT', value: 'Holding token or NFT' }
@@ -107,7 +109,6 @@ export default function AddTokenModal() {
           />
           <Box
             sx={{
-              padding: '10px 20px',
               height: 40,
               width: '100%',
               display: 'flex',
@@ -115,14 +116,33 @@ export default function AddTokenModal() {
               borderRadius: '8px'
             }}
           >
-            <ContentTitleStyle>Voting Weight</ContentTitleStyle>
-            <Box sx={{ ml: 25, width: 0, border: ' 1px solid #D4D7E2' }}></Box>
+            <Box sx={{ display: 'flex', padding: '10px 0 10px 20px' }}>
+              <ContentTitleStyle sx={{ whiteSpace: 'nowrap' }}>Voting Weight</ContentTitleStyle>
+              <Box sx={{ ml: 25, width: 0, border: ' 1px solid #D4D7E2' }}></Box>
+              <Typography variant="body1" sx={{ ml: 50, whiteSpace: 'nowrap', color: '#B5B7CF', lineHeight: '16px' }}>
+                1 STPT =
+              </Typography>
+            </Box>
+            <InputStyle
+              sx={{ border: 'none !important', background: 'transparent !important' }}
+              endAdornment={
+                <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                  Votes
+                </Typography>
+              }
+              value={'0'}
+            />
           </Box>
           <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
-            <OutlineButton width={125} height={40}>
+            <OutlineButton
+              style={{ border: '1px solid #0049C6', color: '#0049C6' }}
+              width={125}
+              height={40}
+              onClick={hideModal}
+            >
               Close
             </OutlineButton>
-            <Button width="125px" height="40px">
+            <Button width="125px" height="40px" onClick={hideModal}>
               Add
             </Button>
           </Box>

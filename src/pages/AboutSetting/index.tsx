@@ -10,6 +10,7 @@ import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInf
 // import ComingSoon from 'pages/ComingSoon'
 import General from 'pages/DaoInfo/Children/Settings/General'
 import NewGeneral from 'pages/DaoInfo/Children/Settings/NewGeneral'
+import Workspace from 'pages/DaoInfo/Children/Settings/Workspace'
 
 import { useActiveWeb3React } from 'hooks'
 import Admin from 'pages/DaoInfo/Children/Settings/Admin'
@@ -77,10 +78,6 @@ export default function AboutSetting() {
           </Box>
         ) : null
       },
-      // {
-      //   label: 'Token',
-      //   component: <ComingSoon />
-      // },
       {
         label: 'Governance Settings',
         component: (
@@ -94,6 +91,14 @@ export default function AboutSetting() {
         component: daoInfo ? (
           <Box mt={14}>
             <Governance daoInfo={daoInfo} daoChainId={curDaoChainId} />
+          </Box>
+        ) : null
+      },
+      {
+        label: 'Workspace',
+        component: daoInfo ? (
+          <Box mt={20}>
+            <Workspace daoInfo={daoInfo} daoChainId={curDaoChainId} />
           </Box>
         ) : null
       },
