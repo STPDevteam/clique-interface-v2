@@ -540,6 +540,8 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
       youtobe: string
     }[]
   >([])
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
 
   useEffect(() => {
     setCurrentPage(1)
@@ -551,7 +553,6 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
       setLoading(true)
       try {
         const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
-
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -592,6 +593,57 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
       }
     })()
   }, [chainId, currentPage, daoAddress, exceptLevel, refresh])
+
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1) {
+        toTimeRefresh()
+        return
+      }
+      try {
+        const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: {
+          account: string
+          avatar: string
+          chainId: ChainId
+          daoAddress: string
+          discord: string
+          jobId: number
+          nickname: string
+          opensea: string
+          twitter: string
+          youtobe: string
+        }[] = data.map((item: any) => ({
+          account: item.account,
+          avatar: item.avatar,
+          chainId: item.chainId,
+          daoAddress: item.daoAddress,
+          discord: item.discord,
+          jobId: item.jobId,
+          nickname: item.nickname,
+          opensea: item.opensea,
+          twitter: item.twitter,
+          youtobe: item.youtobe
+        }))
+        setResult(list)
+        toTimeRefresh()
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        toTimeRefresh()
+        console.error('useJobsList', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
 
   return useMemo(
     () => ({

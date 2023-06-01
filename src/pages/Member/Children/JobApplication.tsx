@@ -81,9 +81,21 @@ export default function JobApplication({
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {timeStampToFormat(item.applyTime)}
       </Typography>,
-      <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {item.message}
-      </Typography>,
+      <Box key={item.message} width={'100%'}>
+        <Typography
+          noWrap
+          sx={{
+            width: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+          fontWeight={400}
+          fontSize={12}
+          color={'#80829F'}
+        >
+          {item.message}
+        </Typography>
+      </Box>,
       <Box
         key={item.message}
         sx={{
@@ -127,7 +139,13 @@ export default function JobApplication({
   }, [opTypeCallback, result])
 
   return (
-    <Box sx={{}}>
+    <Box
+      sx={{
+        '& table tbody tr td:nth-of-type(4)': {
+          maxWidth: '173px !important'
+        }
+      }}
+    >
       <Table
         firstAlign="left"
         variant="outlined"

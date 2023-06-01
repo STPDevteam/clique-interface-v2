@@ -1,6 +1,6 @@
 import Button from 'components/Button/Button'
 import Modal from '../../../components/Modal/index'
-import { Box, Stack, MenuItem } from '@mui/material'
+import { Box, Stack, MenuItem, Alert } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
 import { useCallback, useState } from 'react'
@@ -93,8 +93,15 @@ export default function AddJobsModal({
         >
           {isEdit ? 'Edit job' : 'Add job'}
         </Box>
-        <Input value={title} onChange={e => setTitle(e.target.value)} label="Title" />
-        <Input value={des} multiline rows={6} label="Job description" onChange={e => setDes(e.target.value)} />
+        <Input value={title} maxLength={200} onChange={e => setTitle(e.target.value)} label="Title" />
+        <Input
+          value={des}
+          maxLength={200}
+          multiline
+          rows={6}
+          label="Job description"
+          onChange={e => setDes(e.target.value)}
+        />
         <Select
           placeholder=""
           width={'422px'}
@@ -118,13 +125,20 @@ export default function AddJobsModal({
             </MenuItem>
           ))}
         </Select>
+        {!title.trim() ? (
+          <Alert severity="error">Title required</Alert>
+        ) : !des ? (
+          <Alert severity="error">Description required</Alert>
+        ) : (
+          ''
+        )}
         <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={10}>
           {isEdit ? (
             <>
               <OutlineButton onClick={onDelete} noBold color="#E46767" width={'125px'} height="40px">
                 Delete
               </OutlineButton>
-              <Button onClick={onUpdateClick} width="125px" height="40px">
+              <Button onClick={onUpdateClick} width="125px" height="40px" disabled={!title || !des}>
                 Save
               </Button>
             </>
@@ -133,7 +147,7 @@ export default function AddJobsModal({
               <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
                 Close
               </OutlineButton>
-              <Button onClick={onCreateClick} width="125px" height="40px">
+              <Button onClick={onCreateClick} width="125px" height="40px" disabled={!title || !des}>
                 Add
               </Button>
             </>

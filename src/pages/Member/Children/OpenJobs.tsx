@@ -23,8 +23,6 @@ export default function OpenJobs() {
     (index: number, publishId: number) => {
       if (!account) return
       joinApply(publishId, input[index]).then((res: any) => {
-        console.log(res)
-
         if (res.data.code === 400) {
           showModal(<MessageBox type="error">{res.data.msg}</MessageBox>)
         } else {
