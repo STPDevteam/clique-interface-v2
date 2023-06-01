@@ -37,11 +37,11 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   '& button': {
-    borderWidth: '2px',
+    borderWidth: '1px',
     color: theme.palette.text.primary,
     fontWeight: 600,
     '&:hover': {
-      borderWidth: '2px'
+      borderWidth: '1px'
     },
     '&.active': {
       backgroundColor: theme.palette.primary.main,
