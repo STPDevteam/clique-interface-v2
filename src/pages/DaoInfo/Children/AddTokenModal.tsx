@@ -3,14 +3,29 @@ import { Box, Typography, styled, MenuItem } from '@mui/material'
 import UploadImage from 'components/UploadImage'
 import Select from 'components/Select/Select'
 import Input from 'components/Input'
-// import OutlineButton from 'components/Button/OutlineButton'
+import Image from 'components/Image'
+import EthIcon from 'assets/svg/eth_logo.svg'
+import OutlineButton from 'components/Button/OutlineButton'
+import Button from 'components/Button/Button'
 
-const ContentStyle = styled(Typography)(() => ({
+const BodyBoxStyle = styled(Box)(() => ({
+  padding: '13px 28px'
+}))
+
+const ContentTitleStyle = styled(Typography)(() => ({
   fontweight: 500,
   fontSize: 14,
   lineHeight: '20px',
   color: '#80829F'
 }))
+
+const ContentStyle = styled(Typography)(() => ({
+  fontWeight: 700,
+  fontSize: 16,
+  lineHeight: '16px',
+  color: '#3F5170'
+}))
+
 const InputStyle = styled(Input)(() => ({
   height: 40
 }))
@@ -20,20 +35,8 @@ export default function AddTokenModal() {
     { label: 'Holding token or NFT', value: 'Holding token or NFT' }
   ]
   return (
-    <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
-      <Box
-        display="flex"
-        textAlign={'center'}
-        width="100%"
-        height="480px"
-        flexDirection={'column'}
-        sx={{
-          '& p': {
-            textAlign: 'left',
-            width: '100%'
-          }
-        }}
-      >
+    <Modal maxWidth="480px" width="100%" closeIcon>
+      <BodyBoxStyle>
         <Typography
           sx={{
             fontWeight: 500,
@@ -44,13 +47,14 @@ export default function AddTokenModal() {
         >
           Add Governanve Token
         </Typography>
-        <Box sx={{ display: 'flex', mt: 27, gap: 40 }}>
+
+        <Box sx={{ mt: 27, display: 'flex', justifyContent: 'space-between' }}>
           <Box>
-            <ContentStyle sx={{ mb: 5 }}>Token logo</ContentStyle>
+            <ContentTitleStyle sx={{ mb: 5 }}>Token logo</ContentTitleStyle>
             <UploadImage onChange={val => console.log(val)} size={124}></UploadImage>
           </Box>
           <Box sx={{ maxWidth: '253px', width: '100%' }}>
-            <ContentStyle sx={{ mb: 10 }}>Network</ContentStyle>
+            <ContentTitleStyle sx={{ mb: 10 }}>Network</ContentTitleStyle>
             <Select
               noBold
               style={{ fontWeight: 500, fontSize: 14 }}
@@ -68,11 +72,62 @@ export default function AddTokenModal() {
                 </MenuItem>
               ))}
             </Select>
-            <ContentStyle sx={{ mt: 10, mb: 10 }}>Token Contract Address</ContentStyle>
+            <ContentTitleStyle sx={{ mt: 10, mb: 10 }}>Token Contract Address</ContentTitleStyle>
             <InputStyle placeholderSize="14px" placeholder={'Address'} value={''} />
           </Box>
         </Box>
-      </Box>
+        <Box sx={{ mt: 25, display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
+          <Box>
+            <ContentTitleStyle sx={{ mb: 20 }}>Token name </ContentTitleStyle>
+            <ContentStyle>Ethereum</ContentStyle>
+          </Box>
+          <Box>
+            <ContentTitleStyle sx={{ mb: 14 }}>Symbol </ContentTitleStyle>
+            <Image width={28} height={28} src={EthIcon} alt="logo" />
+          </Box>
+          <Box>
+            <ContentTitleStyle sx={{ mb: 20 }}>Total supply</ContentTitleStyle>
+            <ContentStyle>2,000 ETH</ContentStyle>
+          </Box>
+        </Box>
+        <ContentTitleStyle sx={{ mt: 14 }}>Requirement</ContentTitleStyle>
+        <Box sx={{ mt: 4, display: 'grid', flexDirection: 'column', gap: 8 }}>
+          <Typography variant="body1" color={'#B5B7CF'} lineHeight={'20px'}>
+            Minimum Tokens Needed To Create Proposal
+          </Typography>
+          <InputStyle
+            placeholderSize="14px"
+            placeholder={'--'}
+            endAdornment={
+              <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                STPT
+              </Typography>
+            }
+            value={''}
+          />
+          <Box
+            sx={{
+              padding: '10px 20px',
+              height: 40,
+              width: '100%',
+              display: 'flex',
+              border: '1px solid #D4D7E2',
+              borderRadius: '8px'
+            }}
+          >
+            <ContentTitleStyle>Voting Weight</ContentTitleStyle>
+            <Box sx={{ ml: 25, width: 0, border: ' 1px solid #D4D7E2' }}></Box>
+          </Box>
+          <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
+            <OutlineButton width={125} height={40}>
+              Close
+            </OutlineButton>
+            <Button width="125px" height="40px">
+              Add
+            </Button>
+          </Box>
+        </Box>
+      </BodyBoxStyle>
     </Modal>
   )
 }
