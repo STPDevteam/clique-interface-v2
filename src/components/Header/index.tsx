@@ -343,13 +343,14 @@ export default function Header() {
               DAOs
             </NavLink>
             {makeBreadcrumbs.map((v, i) => (
-              <Typography
-                key={v}
-                color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
-                fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
-              >
-                {v}
-              </Typography>
+              <NavLink to={v} key={v}>
+                <Typography
+                  color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
+                  fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
+                >
+                  {v}
+                </Typography>
+              </NavLink>
             ))}
           </Breadcrumbs>
           <HeaderRight />
