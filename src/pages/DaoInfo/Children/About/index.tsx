@@ -22,7 +22,7 @@ export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
   padding: '24px 47px 26px 24px',
   borderRadius: theme.borderRadius.default,
-  boxShadow: theme.boxShadow.bs1,
+  // boxShadow: theme.boxShadow.bs1,
   marginBottom: 30,
   [theme.breakpoints.down('sm')]: {
     padding: '20px'
@@ -164,7 +164,7 @@ export default function About() {
         sx={{
           border: `1px solid #D4D7E2`,
           borderRadius: theme.borderRadius.default,
-          boxShadow: theme.boxShadow.bs1,
+          // boxShadow: theme.boxShadow.bs1,
           marginBottom: 30
         }}
       >
