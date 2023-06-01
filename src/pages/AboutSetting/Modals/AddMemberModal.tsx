@@ -8,20 +8,38 @@ import Select from 'components/Select/Select'
 import { useSetDaoAdminCallback } from 'hooks/useGovernanceDaoCallback'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
+import { useActiveWeb3React } from 'hooks'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 const guestList = [{ value: 'B_admin', label: 'Admin' }]
 
-export default function AddMemberModal({ onClose, daoAddress }: { onClose: () => void; daoAddress: string }) {
+export default function AddMemberModal({
+  onClose,
+  daoAddress,
+  curDaoChainId
+}: {
+  onClose: () => void
+  daoAddress: string
+  curDaoChainId: number
+}) {
+  const { chainId, library, account } = useActiveWeb3React()
   const { showModal, hideModal } = useModal()
   const [address, setAddress] = useState('')
   const [currentStatus, setCurrentStatus] = useState<string>('B_admin')
   const setDaoAdminCallback = useSetDaoAdminCallback(daoAddress)
+  const [btnDisable, setBtnDisable] = useState(false)
+
+  const switchNetwork = useCallback(() => {
+    triggerSwitchChain(library, curDaoChainId, account || '')
+  }, [account, curDaoChainId, library])
 
   const createNewMember = useCallback(() => {
+    setBtnDisable(true)
     setDaoAdminCallback(address, true)
       .then(() => {
         hideModal()
         setAddress('')
+        setBtnDisable(false)
       })
       .catch((err: any) => {
         hideModal()
@@ -81,7 +99,12 @@ export default function AddMemberModal({ onClose, daoAddress }: { onClose: () =>
           <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
             Close
           </OutlineButton>
-          <Button onClick={createNewMember} width="125px" height="40px">
+          <Button
+            onClick={curDaoChainId === chainId ? createNewMember : switchNetwork}
+            width="125px"
+            height="40px"
+            disabled={btnDisable}
+          >
             Add
           </Button>
         </Stack>

@@ -34,8 +34,8 @@ export default function Team() {
   const { result: memberList } = useJobsList('A_superAdmin', daoAddress, curDaoChainId, rand)
 
   const addMemberCB = useCallback(() => {
-    showModal(<AddMemberModal onClose={hideModal} daoAddress={daoAddress} />)
-  }, [daoAddress, hideModal, showModal])
+    showModal(<AddMemberModal onClose={hideModal} daoAddress={daoAddress} curDaoChainId={curDaoChainId} />)
+  }, [curDaoChainId, daoAddress, hideModal, showModal])
 
   const addJobsCB = useCallback(() => {
     showModal(
