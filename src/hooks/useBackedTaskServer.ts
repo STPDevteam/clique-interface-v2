@@ -166,7 +166,7 @@ interface PublishItemProp {
   message?: string
 }
 
-export function useGetPublishJobList(chainId: number, daoAddress: string) {
+export function useGetPublishJobList(chainId: number, daoAddress: string, refresh?: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -207,7 +207,7 @@ export function useGetPublishJobList(chainId: number, daoAddress: string) {
         console.error('useGetPublishList', error)
       }
     })()
-  }, [currentPage, chainId, daoAddress])
+  }, [currentPage, chainId, daoAddress, refresh])
 
   return useMemo(
     () => ({
@@ -521,7 +521,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
   }
 }
 
-export function useJobsList(exceptLevel: string, daoAddress: string, chainId: number) {
+export function useJobsList(exceptLevel: string, daoAddress: string, chainId: number, refresh?: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -591,7 +591,7 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
         console.error('useJobsList', error)
       }
     })()
-  }, [chainId, currentPage, daoAddress, exceptLevel])
+  }, [chainId, currentPage, daoAddress, exceptLevel, refresh])
 
   return useMemo(
     () => ({

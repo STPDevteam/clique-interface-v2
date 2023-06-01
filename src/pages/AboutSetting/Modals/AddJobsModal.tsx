@@ -17,7 +17,8 @@ export default function AddJobsModal({
   chainId,
   daoAddress,
   originTitle,
-  originContent
+  originContent,
+  onDimiss
 }: {
   isEdit: boolean
   publishId?: number
@@ -25,6 +26,7 @@ export default function AddJobsModal({
   daoAddress: string
   originContent?: string
   originTitle?: string
+  onDimiss: () => void
 }) {
   const [title, setTitle] = useState(originTitle ?? '')
   const [des, setDes] = useState(originContent ?? '')
@@ -39,12 +41,13 @@ export default function AddJobsModal({
       .then(res => {
         console.log(res)
         showModal(<MessageBox type="success">Add success</MessageBox>)
+        onDimiss()
       })
       .catch(err => {
         console.log(err)
         showModal(<MessageBox type="error">Update error</MessageBox>)
       })
-  }, [chainId, create, currentStatus, daoAddress, des, showModal, title])
+  }, [chainId, create, currentStatus, daoAddress, des, onDimiss, showModal, title])
 
   const onUpdateClick = useCallback(() => {
     if (!publishId) return
@@ -52,12 +55,13 @@ export default function AddJobsModal({
       .then(res => {
         showModal(<MessageBox type="success">Update success</MessageBox>)
         console.log(res)
+        onDimiss()
       })
       .catch(err => {
         console.log(err)
         showModal(<MessageBox type="error">Update error</MessageBox>)
       })
-  }, [des, publishId, showModal, title, update])
+  }, [des, onDimiss, publishId, showModal, title, update])
 
   const onDelete = useCallback(() => {
     if (!publishId) return

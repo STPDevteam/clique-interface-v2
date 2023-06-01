@@ -30,11 +30,13 @@ const MemberCard = styled(Box)({
 export default function MemberAuthorityAssignmentModal({
   chainId,
   daoAddress,
-  id
+  id,
+  onDimiss
 }: {
   chainId: number
   daoAddress: string
   id: number
+  onDimiss: () => void
 }) {
   const { showModal, hideModal } = useModal()
   const { changeRole } = useChangeAdminRole()
@@ -45,14 +47,15 @@ export default function MemberAuthorityAssignmentModal({
         console.log(res)
         hideModal()
         showModal(<MessageBox type="success">Modify success</MessageBox>)
+        onDimiss()
       })
       .catch(err => console.log(err))
-  }, [chainId, changeRole, daoAddress, hideModal, id, showModal])
+  }, [chainId, changeRole, daoAddress, hideModal, id, onDimiss, showModal])
 
   return (
     <Modal maxWidth="371px" width="100%" padding="10px 0">
-      <Box display="flex" textAlign={'center'} width="100%" height="390px" flexDirection={'column'}>
-        <MemberCard className={'BannedClass'}>
+      <Box display="flex" textAlign={'center'} width="100%" height="190px" flexDirection={'column'}>
+        {/* <MemberCard className={'BannedClass'}>
           <Typography fontSize={16}>Owner</Typography>
           <Typography fontSize={14} color={'#80829F'}>
             DAO owner Seed role
@@ -63,7 +66,7 @@ export default function MemberAuthorityAssignmentModal({
           <Typography fontSize={14} color={'#80829F'}>
             Super administrator can edit workspace settings and invite new members.
           </Typography>
-        </MemberCard>
+        </MemberCard> */}
         <MemberCard className={'BannedClass'}>
           <Typography fontSize={16}>Admin</Typography>
           <Typography fontSize={14} color={'#80829F'}>

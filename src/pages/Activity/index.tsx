@@ -113,6 +113,7 @@ export default function Activity() {
           </StyledButtonGroup> */}
             <Select
               placeholder=""
+              noBold
               width={isSmDown ? '175px' : '235px'}
               height={isSmDown ? '40px' : '48px'}
               value={search.status}

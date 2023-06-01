@@ -29,6 +29,7 @@ export default function JobDetailModal({
         publishId={publishId}
         chainId={chainId}
         daoAddress={daoAddress}
+        onDimiss={() => {}}
       />
     )
   }, [chainId, content, daoAddress, hideModal, publishId, showModal, title])

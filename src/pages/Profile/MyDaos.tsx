@@ -109,7 +109,18 @@ export function DaoItem({
             </p>
             <Image src={tag} width={16}></Image>
           </Box>
-          <div style={{ fontSize: 14, textAlign: 'left' }}>@{handle}</div>
+          <div
+            style={{
+              width: 180,
+              fontSize: 14,
+              textAlign: 'left',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden'
+            }}
+          >
+            @{handle}
+          </div>
         </Box>
       </Box>
       <Typography className="des">{description}</Typography>

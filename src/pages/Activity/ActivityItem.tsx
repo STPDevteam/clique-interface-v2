@@ -60,6 +60,7 @@ const StyledText = styled(Typography)(
 const StyledBoldText = styled(StyledText)(({ theme }) => ({
   fontWeight: 600,
   fontSize: 16,
+  lineHeight: '20px',
   [theme.breakpoints.down('sm')]: {
     fontSize: 12
   }

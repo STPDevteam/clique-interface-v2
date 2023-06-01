@@ -1,7 +1,7 @@
 import { Box, Typography, styled } from '@mui/material'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ReactComponent as AddIcon } from 'assets/svg/newIcon.svg'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import useModal from 'hooks/useModal'
 import AddJobsModal from './Modals/AddJobsModal'
 import JobDetailModal from './Modals/JobDetailModal'
@@ -25,18 +25,27 @@ const TopText = styled(Box)({
 
 export default function Team() {
   const isSmDown = useBreakpoint('sm')
+  const [rand, setRand] = useState(Math.random())
+  const [randNum, setRandNum] = useState(Math.random())
   const { showModal, hideModal } = useModal()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress)
-  const { result: memberList } = useJobsList('A_superAdmin', daoAddress, curDaoChainId)
+  const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress, randNum)
+  const { result: memberList } = useJobsList('A_superAdmin', daoAddress, curDaoChainId, rand)
 
   const addMemberCB = useCallback(() => {
     showModal(<AddMemberModal onClose={hideModal} daoAddress={daoAddress} />)
   }, [daoAddress, hideModal, showModal])
 
   const addJobsCB = useCallback(() => {
-    showModal(<AddJobsModal isEdit={false} chainId={curDaoChainId} daoAddress={daoAddress} />)
+    showModal(
+      <AddJobsModal
+        isEdit={false}
+        chainId={curDaoChainId}
+        daoAddress={daoAddress}
+        onDimiss={() => setRandNum(Math.random())}
+      />
+    )
   }, [curDaoChainId, daoAddress, showModal])
 
   const tableList = useMemo(() => {
@@ -71,7 +80,14 @@ export default function Team() {
           }
         }}
         onClick={() => {
-          showModal(<MemberAuthorityAssignmentModal chainId={curDaoChainId} daoAddress={daoAddress} id={jobId} />)
+          showModal(
+            <MemberAuthorityAssignmentModal
+              chainId={curDaoChainId}
+              daoAddress={daoAddress}
+              id={jobId}
+              onDimiss={() => setRand(Math.random())}
+            />
+          )
         }}
       >
         <Typography width={130} textAlign={'left'}>
@@ -142,7 +158,7 @@ export default function Team() {
       </TopText>
       <Box
         mt={14}
-        mb={30}
+        mb={20}
         sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -151,7 +167,7 @@ export default function Team() {
         }}
       >
         {jobList.map((item, index) => (
-          <JobCard key={item.title + index} {...item} />
+          <JobCard key={item.title + index} {...item} onDimiss={() => setRandNum(Math.random())} />
         ))}
       </Box>
       <Table
@@ -202,7 +218,8 @@ function JobCard({
   chainId,
   daoAddress,
   jobBio,
-  jobPublishId
+  jobPublishId,
+  onDimiss
 }: {
   title: string
   access: string
@@ -210,6 +227,7 @@ function JobCard({
   daoAddress: string
   jobBio: string
   jobPublishId: number
+  onDimiss: () => void
 }) {
   console.log(access)
   const { showModal, hideModal } = useModal()
@@ -224,9 +242,10 @@ function JobCard({
         publishId={jobPublishId}
         chainId={chainId}
         daoAddress={daoAddress}
+        onDimiss={onDimiss}
       />
     )
-  }, [chainId, daoAddress, hideModal, jobBio, jobPublishId, showModal, title])
+  }, [chainId, daoAddress, hideModal, jobBio, jobPublishId, onDimiss, showModal, title])
 
   const detailIconClick = useCallback(() => {
     showModal(
@@ -257,7 +276,16 @@ function JobCard({
       }}
     >
       <Box flexDirection={'row'} alignItems={'center'} display={'flex'} justifyContent={'space-between'}>
-        <Typography fontSize={16} fontWeight={700}>
+        <Typography
+          fontSize={16}
+          fontWeight={700}
+          sx={{
+            whiteSpace: 'nowrap',
+            width: '100%',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden'
+          }}
+        >
           {title}
         </Typography>
         <Box
@@ -276,8 +304,22 @@ function JobCard({
           <Image width={16} height={16} src={DetailIcon} onClick={detailIconClick} />
         </Box>
       </Box>
-      <Box mt={20} height={80}>
-        <Typography fontWeight={500} fontSize={16}>
+      <Box
+        mt={20}
+        sx={{
+          '& p': {
+            width: '413px',
+            height: '80px',
+            wordWrap: 'break-word',
+            display: '-webkit-box',
+            overflow: 'hidden',
+            WebkitBoxOrient: 'vertical',
+            textOverflow: 'ellipsis',
+            WebkitLineClamp: 5
+          }
+        }}
+      >
+        <Typography fontWeight={500} fontSize={16} width={'100%'}>
           {jobBio}
         </Typography>
       </Box>

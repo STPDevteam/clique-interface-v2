@@ -15,7 +15,7 @@ import Team from './Team'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
-  margin: '16px 40px 8px 0',
+  margin: '6px 40px 8px 0',
   padding: '0 14px 0 0',
   fontSize: 14,
   fontWeight: 500,
