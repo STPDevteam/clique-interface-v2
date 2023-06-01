@@ -11,6 +11,7 @@ import { useActiveWeb3React } from 'hooks'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { JobsType } from './CardView'
+import avatar from 'assets/images/avatar.png'
 // import Button from 'components/Button/Button'
 
 export default function JobApplication({
@@ -71,7 +72,7 @@ export default function JobApplication({
           }
         }}
       >
-        <Image src={item.avatar}></Image>
+        <Image src={item.avatar || avatar}></Image>
         {item.nickname}
       </Box>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
@@ -90,6 +91,7 @@ export default function JobApplication({
           display: 'flex',
           alignItems: 'center',
           flexDirection: 'row',
+          justifyContent: 'center',
           '& p': {
             cursor: 'pointer'
           }

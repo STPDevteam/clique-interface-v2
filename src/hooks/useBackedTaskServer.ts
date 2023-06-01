@@ -10,7 +10,11 @@ import {
   getProposalList,
   removeTask,
   getMembersCount,
-  getTaskDetail
+  getTaskDetail,
+  createNewJob,
+  deleteJob,
+  publishList,
+  updateNewJob
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -126,6 +130,99 @@ export function useRemoveTask() {
       .then(res => res)
       .catch(err => console.log(err))
   }, [])
+}
+
+export function useCreateNewJob() {
+  return useCallback((access: string, chainId: number, daoAddress: string, jobBio: string, title: string) => {
+    return createNewJob(access, chainId, daoAddress, jobBio, title)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
+}
+
+export function useDeleteJob() {
+  return useCallback((publishId: number) => {
+    return deleteJob(publishId)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
+}
+
+export function useUpdateNewJob() {
+  return useCallback((jobBio: string, publishId: number, title: string) => {
+    return updateNewJob(jobBio, publishId, title)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
+}
+
+interface PublishItemProp {
+  access: string
+  chainId: number
+  daoAddress: string
+  jobBio: string
+  jobPublishId: number
+  title: string
+  message?: string
+}
+
+export function useGetPublishJobList(chainId: number, daoAddress: string) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 8
+  const [result, setResult] = useState<PublishItemProp[]>([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await publishList(chainId, daoAddress)
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: PublishItemProp[] = data.map((item: any) => ({
+          access: item.access,
+          chainId: item.chainId,
+          daoAddress: item.daoAddress,
+          jobBio: item.jobBio,
+          jobPublishId: item.jobPublishId,
+          title: item.title
+        }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useGetPublishList', error)
+      }
+    })()
+  }, [currentPage, chainId, daoAddress])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }
 
 export function useCreateTask() {

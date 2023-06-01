@@ -13,6 +13,8 @@ import { useMemo } from 'react'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '19px 24px',
+  width: 460,
+  height: 150,
   cursor: 'pointer',
   border: `1px solid ${theme.bgColor.bg2}`,
   borderRadius: theme.borderRadius.default,
@@ -20,13 +22,13 @@ const StyledCard = styled(Box)(({ theme }) => ({
   transition: 'all 0.5s',
   color: '#3f5170',
   '&:hover': {
-    border: `2px solid ${theme.palette.primary.main}`,
+    border: `1px solid #97B7EF`,
     padding: '22px'
   },
   '& .content': {
     fontSize: 14,
     height: 48,
-    marginTop: 16,
+    marginTop: 6,
     overflow: 'hidden',
     color: theme.palette.text.secondary,
     textOverflow: 'ellipsis',
@@ -106,7 +108,7 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
           <Skeleton animation="wave" />
         </>
       )}
-      <Box display={'flex'} justifyContent={'space-between'} mt={16}>
+      <Box display={'flex'} justifyContent={'space-between'} mt={6}>
         <RowCenter sx={{ color: '#3f5170' }}>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           {proposalInfo ? (
@@ -152,7 +154,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
     >
       {isSmDown && <Box>{Creator}</Box>}
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
-        <Typography variant="h5" noWrap>
+        <Typography variant="h5" noWrap fontSize={'18px!important'}>
           {proposalInfo.title}
         </Typography>
         <KeyboardArrowRightIcon />
@@ -160,7 +162,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
       <Typography className="content" variant="body1">
         {proposalInfo.contentV1}
       </Typography>
-      <RowCenter mt={16}>
+      <RowCenter mt={6}>
         <RowCenter>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
           <>
