@@ -1,3 +1,4 @@
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import Modal from '../../../components/Modal/index'
 import { Box, Typography, styled } from '@mui/material'
 import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
@@ -35,7 +36,7 @@ export default function MemberAuthorityAssignmentModal({
   daoAddress: string
   id: number
 }) {
-  const { hideModal } = useModal()
+  const { showModal, hideModal } = useModal()
   const { changeRole } = useChangeAdminRole()
 
   const clickMember = useCallback(() => {
@@ -43,9 +44,10 @@ export default function MemberAuthorityAssignmentModal({
       .then(res => {
         console.log(res)
         hideModal()
+        showModal(<MessageBox type="success">Modify success</MessageBox>)
       })
       .catch(err => console.log(err))
-  }, [chainId, changeRole, daoAddress, hideModal, id])
+  }, [chainId, changeRole, daoAddress, hideModal, id, showModal])
 
   return (
     <Modal maxWidth="371px" width="100%" padding="10px 0">
