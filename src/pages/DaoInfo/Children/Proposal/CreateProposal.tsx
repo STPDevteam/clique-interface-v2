@@ -340,7 +340,9 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
             )}
 
             <Stack spacing={60} direction="row" mt={50}>
-              <OutlineButton onClick={history.goBack}>Cancel</OutlineButton>
+              <OutlineButton onClick={history.goBack} height="36px">
+                Cancel
+              </OutlineButton>
               <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
                 Create
               </BlackButton>
