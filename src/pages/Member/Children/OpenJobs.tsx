@@ -22,8 +22,12 @@ export default function OpenJobs() {
   const applyCallback = useCallback(
     (index: number, publishId: number) => {
       if (!account) return
-      joinApply(publishId, input[index]).then(res => {
-        showModal(<MessageBox type="success">Apply success</MessageBox>)
+      joinApply(publishId, input[index]).then((res: any) => {
+        if (res.code === 400) {
+          showModal(<MessageBox type="error">res.msg</MessageBox>)
+        } else {
+          showModal(<MessageBox type="success">Apply success</MessageBox>)
+        }
         console.log(res)
       })
     },
