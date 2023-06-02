@@ -24,24 +24,30 @@ export default function Page() {
   const userSignature = useUserInfo()
   const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
 
-  console.log(userSignature)
-
   const joinDAOCallback = useCallback(() => {
+    setBtnDisabled(true)
     if (!account) {
       toggleWalletModal()
+      setBtnDisabled(false)
       return
     }
     if (!userSignature) {
-      loginSignature()
-      return
-    }
-    setBtnDisabled(true)
-    joinDAO(curDaoChainId, daoAddress)
-      .then(() => {
-        history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
-        setBtnDisabled(false)
+      loginSignature().then(() => {
+        joinDAO(curDaoChainId, daoAddress)
+          .then(() => {
+            history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+            setBtnDisabled(false)
+          })
+          .catch(() => setBtnDisabled(false))
       })
-      .catch(() => setBtnDisabled(false))
+    } else {
+      joinDAO(curDaoChainId, daoAddress)
+        .then(() => {
+          history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+          setBtnDisabled(false)
+        })
+        .catch(() => setBtnDisabled(false))
+    }
   }, [
     account,
     curDaoChainId,
@@ -56,15 +62,16 @@ export default function Page() {
 
   useEffect(() => {
     if (!account) setStatus('Connect Wallet')
-    else if (!userSignature) setStatus('Sign In')
-    else if (isJoined === '' || isJoined === undefined) setStatus('Join DAO')
+    else if (!userSignature) {
+      setStatus('Join DAO')
+    } else if (isJoined === '' || isJoined === undefined) setStatus('Join DAO')
     if (!account || !userSignature || isJoined === '' || isJoined === undefined) {
       setOpen(true)
     } else {
       setOpen(false)
       return history.replace(routes.Proposal.replace(':chainId', daoChainId).replace(':address', daoAddress))
     }
-  }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
+  }, [account, daoAddress, daoChainId, history, isJoined, loginSignature, userSignature])
 
   return (
     <Box

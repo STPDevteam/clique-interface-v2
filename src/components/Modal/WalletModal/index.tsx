@@ -112,6 +112,7 @@ export default function WalletModal({}: // pendingTransactions,
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map(key => {
       const option = SUPPORTED_WALLETS[key]
+
       // check for mobile options
       if (isMobile) {
         //disable portis on mobile for now
