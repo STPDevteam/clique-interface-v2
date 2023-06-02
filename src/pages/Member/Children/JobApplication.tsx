@@ -73,7 +73,7 @@ export default function JobApplication({
         }}
       >
         <Image src={item.avatar || avatar}></Image>
-        {item.nickname}
+        {item.nickname || 'unnamed'}
       </Box>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {JobsType[item.applyRole]}
@@ -93,7 +93,7 @@ export default function JobApplication({
           fontSize={12}
           color={'#80829F'}
         >
-          {item.message}
+          {item.message || '--'}
         </Typography>
       </Box>,
       <Box

@@ -15,12 +15,12 @@ import Team from './Team'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
-  margin: '6px 40px 8px 0',
+  margin: '22px 40px 8px 0',
   padding: '0 14px 0 0',
   fontSize: 14,
   fontWeight: 500,
   color: theme.palette.text.secondary,
-  lineHeight: '26px',
+  lineHeight: '14px',
   position: 'relative',
   '&.active': {
     color: '#0049C6',
@@ -33,6 +33,9 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
       left: 0,
       backgroundColor: theme.palette.text.primary
     }
+  },
+  '& ,MuiMenuItem-root:hover': {
+    backgroundColor: 'unset !important'
   },
   [theme.breakpoints.down('sm')]: {
     margin: '0'
