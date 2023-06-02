@@ -32,14 +32,19 @@ export default function Page() {
       return
     }
     if (!userSignature) {
-      loginSignature().then(() => {
-        joinDAO(curDaoChainId, daoAddress)
-          .then(() => {
-            history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
-            setBtnDisabled(false)
-          })
-          .catch(() => setBtnDisabled(false))
-      })
+      loginSignature()
+        .then(() => {
+          joinDAO(curDaoChainId, daoAddress)
+            .then(() => {
+              history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+              setBtnDisabled(false)
+            })
+            .catch(() => setBtnDisabled(false))
+        })
+        .catch(err => {
+          console.log(err)
+          setBtnDisabled(false)
+        })
     } else {
       joinDAO(curDaoChainId, daoAddress)
         .then(() => {
