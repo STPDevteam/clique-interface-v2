@@ -139,6 +139,7 @@ export default function Header() {
           </Box>
           <Typography
             sx={{
+              mt: 10,
               height: 20,
               fontWeight: 500,
               fontSize: '13px',

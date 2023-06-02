@@ -115,7 +115,7 @@ function ProposalV3Item() {
         Provide lunch with love for children in mountains areas Provide lunch with love for children in mountains areas
       </Typography>
       <RowCenter sx={{ mt: 10 }}>
-        <Box sx={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+        <Box sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Image height={20} width={20} src={avatar} />
           <Typography variant="body1" sx={{ lineHeight: '20px' }}>
             UserName

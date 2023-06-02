@@ -2,7 +2,6 @@ import {
   Box,
   Typography,
   styled,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -16,7 +15,6 @@ import Button from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
-import Select from 'components/Select/Select'
 import AddTokenModal from '../AddTokenModal'
 import { DaoInfoProp } from 'hooks/useDaoInfo'
 import useModal from 'hooks/useModal'
@@ -85,51 +83,42 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             color: '#B5B7CF'
           }}
         >
-          Governance
+          Governance setting
         </Typography>
         <Box>
-          <InputTitleStyle sx={{ mb: 10 }}>Token</InputTitleStyle>
-          <Select
-            noBold
-            placeholder=""
-            style={{ fontWeight: 500, fontSize: 14 }}
-            height={40}
-            value={PeriodList[0].value}
-            // onChange={e => setCurrentProposalStatus(e.target.value)}
-          >
-            {PeriodList.map(item => (
-              <MenuItem
-                key={item.value}
-                sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                value={item.value}
-              >
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-        <GridLayoutff>
-          <InputStyle label="Threshold" placeholderSize="14px" placeholder="Threshold" value={''} />
-          <InputStyle label="Requirement" placeholderSize="14px" placeholder="Requirement" value={''} />
-        </GridLayoutff>
-        <GridLayoutff>
-          <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
-            <Row sx={{ justifyContent: 'space-between' }}>
-              <InputTitleStyle>Voting period</InputTitleStyle>
-              <ToggleButtonGroup Props={PeriodList} setToggleValue={setPeriodValue} />
+          <InputTitleStyle mb={8}>Threshold</InputTitleStyle>
+          <GridLayoutff>
+            <Row sx={{ gap: 10, flexDirection: 'column' }}>
+              <InputTitleStyle lineHeight="20px">Voting period</InputTitleStyle>
+              <InputStyle
+                placeholderSize="14px"
+                placeholder={PeriodValue}
+                endAdornment={
+                  <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                    Votes
+                  </Typography>
+                }
+                value={''}
+              />
             </Row>
-            <InputStyle
-              placeholderSize="14px"
-              placeholder={PeriodValue}
-              endAdornment={
-                <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                  Hours
-                </Typography>
-              }
-              value={''}
-            />
-          </Row>
-        </GridLayoutff>
+            <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
+              <Row sx={{ justifyContent: 'space-between' }}>
+                <InputTitleStyle>Voting period</InputTitleStyle>
+                <ToggleButtonGroup Props={PeriodList} setToggleValue={setPeriodValue} />
+              </Row>
+              <InputStyle
+                placeholderSize="14px"
+                placeholder={PeriodValue}
+                endAdornment={
+                  <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                    Hours
+                  </Typography>
+                }
+                value={''}
+              />
+            </Row>
+          </GridLayoutff>
+        </Box>
         <GridLayoutff>
           <Box>
             <Row sx={{ maxWidth: 463, justifyContent: 'space-between', mb: 10 }}>
@@ -194,6 +183,7 @@ const TextButtonStyle = styled(Typography)(() => ({
 }))
 
 function BasicTable() {
+  const { showModal } = useModal()
   const rows = [
     {
       token: 'Loot (LOOT)',
@@ -230,7 +220,13 @@ function BasicTable() {
               <TableContentStyle>{row.weight}</TableContentStyle>
               <TableContentStyle sx={{ width: 200 }}>
                 <Box sx={{ display: 'flex', gap: 20, alignItems: 'center' }}>
-                  <TextButtonStyle>Edit</TextButtonStyle>
+                  <TextButtonStyle
+                    onClick={() => {
+                      showModal(<AddTokenModal />)
+                    }}
+                  >
+                    Edit
+                  </TextButtonStyle>
                   <Box
                     sx={{
                       width: 0,

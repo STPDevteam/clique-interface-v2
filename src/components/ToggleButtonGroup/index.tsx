@@ -9,8 +9,6 @@ import { ToggleButtonGroup, ToggleButton, styled } from '@mui/material'
 const CustomToggleButton = styled(ToggleButton)(() => ({
   textTransform: 'none',
   padding: '0',
-  boxSizing: 'border-box',
-  height: '18px',
   fontFamily: 'Inter',
   fontWeight: 500,
   fontSize: '12px',
@@ -52,7 +50,6 @@ export default function ToggleButtn({
     <>
       <ToggleButtonGroup
         sx={{
-          boxSizing: 'border-box',
           height: '20px',
           border: ' 1px solid #D4D7E2',
           borderRadius: ' 48px',
