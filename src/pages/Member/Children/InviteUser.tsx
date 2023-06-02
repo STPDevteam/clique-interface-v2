@@ -40,24 +40,31 @@ export default function InviteUser() {
             whiteSpace: 'nowrap',
             textOverflow: 'ellipsis',
             overflow: 'hidden',
-            padding: '10px 0 10px 10px'
+            padding: '9px 0 9px 10px'
           },
           '& button': {
             gap: 10,
-            width: 160,
-            height: 36,
-            marginRight: 10,
+            width: 127,
+            height: 25,
+            marginRight: 7,
             border: '1px solid #97b7ef',
-            borderRadius: '8px',
+            borderRadius: '4px',
+            backgroundColor: '#fff',
             '&:hover': {
               borderColor: '#97b7ef'
+            },
+            '& svg': {
+              width: 13.82,
+              height: 13.82
             },
             '& svg path': {
               fill: '#97b7ef'
             },
             '& p': {
-              fontWeight: 500,
+              fontFamily: 'Inter',
+              fontWeight: 600,
               fontSize: 14,
+              lineHeight: '17px',
               color: '#97b7ef'
             }
           }
