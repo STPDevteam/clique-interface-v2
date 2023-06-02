@@ -163,7 +163,7 @@ export default function Member() {
                 iconPosition="start"
                 label={item.label}
                 onClick={() => setTabValue(idx)}
-                sx={{ gap: 10 }}
+                sx={{ gap: 10, marginRight: 50 }}
                 className={tabValue === idx ? 'active' : ''}
               ></Tab>
             ))}

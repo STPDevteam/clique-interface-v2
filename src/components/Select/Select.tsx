@@ -39,6 +39,7 @@ const StyledInputLabel = styled(MuiInputLabel)(({ theme }) => ({
   // opacity: 0.6,
   textAlign: 'left',
   fontSize: 12,
+  textAlign: 'left',
   fontWeight: 500,
   color: theme.palette.text.secondary,
   marginBottom: '8px'

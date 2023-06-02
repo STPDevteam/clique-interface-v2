@@ -5,14 +5,34 @@ import useModal from 'hooks/useModal'
 import { useCallback } from 'react'
 import AddJobsModal from './AddJobsModal'
 
-export default function JobDetailModal({ title, requirements }: { title: string; requirements: string[] }) {
+export default function JobDetailModal({
+  title,
+  content,
+  publishId,
+  chainId,
+  daoAddress
+}: {
+  title: string
+  content: string
+  chainId: number
+  publishId: number
+  daoAddress: string
+}) {
   const { showModal, hideModal } = useModal()
-  const deleteClick = useCallback(() => {}, [])
-  const updateClick = useCallback(() => {}, [])
   const editClick = useCallback(() => {
     hideModal()
-    showModal(<AddJobsModal isEdit={true} onClose={deleteClick} onClick={updateClick} />)
-  }, [deleteClick, hideModal, showModal, updateClick])
+    showModal(
+      <AddJobsModal
+        isEdit={true}
+        originTitle={title}
+        originContent={content}
+        publishId={publishId}
+        chainId={chainId}
+        daoAddress={daoAddress}
+        onDimiss={() => {}}
+      />
+    )
+  }, [chainId, content, daoAddress, hideModal, publishId, showModal, title])
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
       <Box
@@ -74,21 +94,10 @@ export default function JobDetailModal({ title, requirements }: { title: string;
         >
           Job description
         </Typography>
-        <Box
-          mt={20}
-          height={80}
-          sx={{
-            textAlign: 'left',
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'column'
-          }}
-        >
-          {requirements.map((item, index) => (
-            <Typography key={item + index} fontWeight={500} fontSize={16}>
-              {index + 1}.{item}
-            </Typography>
-          ))}
+        <Box mt={20} height={80}>
+          <Typography fontWeight={500} fontSize={16}>
+            {content}
+          </Typography>
         </Box>
         <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={186}>
           <div></div>

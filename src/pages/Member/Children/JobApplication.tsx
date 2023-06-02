@@ -11,6 +11,7 @@ import { useActiveWeb3React } from 'hooks'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { JobsType } from './CardView'
+import avatar from 'assets/images/avatar.png'
 // import Button from 'components/Button/Button'
 
 export default function JobApplication({
@@ -71,7 +72,7 @@ export default function JobApplication({
           }
         }}
       >
-        <Image src={item.avatar}></Image>
+        <Image src={item.avatar || avatar}></Image>
         {item.nickname}
       </Box>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
@@ -80,9 +81,21 @@ export default function JobApplication({
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {timeStampToFormat(item.applyTime)}
       </Typography>,
-      <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {item.message}
-      </Typography>,
+      <Box key={item.message} width={'100%'}>
+        <Typography
+          noWrap
+          sx={{
+            width: '100%',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+          fontWeight={400}
+          fontSize={12}
+          color={'#80829F'}
+        >
+          {item.message}
+        </Typography>
+      </Box>,
       <Box
         key={item.message}
         sx={{
@@ -90,6 +103,7 @@ export default function JobApplication({
           display: 'flex',
           alignItems: 'center',
           flexDirection: 'row',
+          justifyContent: 'center',
           '& p': {
             cursor: 'pointer'
           }
@@ -125,7 +139,13 @@ export default function JobApplication({
   }, [opTypeCallback, result])
 
   return (
-    <Box sx={{}}>
+    <Box
+      sx={{
+        '& table tbody tr td:nth-of-type(4)': {
+          maxWidth: '173px !important'
+        }
+      }}
+    >
       <Table
         firstAlign="left"
         variant="outlined"

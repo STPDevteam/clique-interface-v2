@@ -42,29 +42,37 @@ export default function MyRecords({ account }: { account: string }) {
           Only Visible To Yourself
         </Typography>
       </Box>
-      <StyledBox mt={25}>
-        <Box>
-          {!loading && !list.length && <EmptyData>No data</EmptyData>}
-          <DelayLoading loading={loading}>
-            <Loading sx={{ marginTop: 30 }} />
-          </DelayLoading>
+      {!loading && !list.length && (
+        <Box mt={25}>
+          <EmptyData></EmptyData>
         </Box>
-        {!loading && (
-          <Stack spacing={19} width="100%">
-            {list.map((item, index) => (
-              <RecordItem key={index} item={item} />
-            ))}
-          </Stack>
-        )}
+      )}
+      {list.length ? (
+        <StyledBox mt={25}>
+          <Box>
+            <DelayLoading loading={loading}>
+              <Loading sx={{ marginTop: 30 }} />
+            </DelayLoading>
+          </Box>
+          {!loading && (
+            <Stack spacing={19} width="100%">
+              {list.map((item, index) => (
+                <RecordItem key={index} item={item} />
+              ))}
+            </Stack>
+          )}
 
-        <Box mt={40} display={'flex'} justifyContent="center">
-          <Pagination
-            count={page.totalPage}
-            page={page.currentPage}
-            onChange={(_, value) => page.setCurrentPage(value)}
-          />
-        </Box>
-      </StyledBox>
+          <Box mt={40} display={'flex'} justifyContent="center">
+            <Pagination
+              count={page.totalPage}
+              page={page.currentPage}
+              onChange={(_, value) => page.setCurrentPage(value)}
+            />
+          </Box>
+        </StyledBox>
+      ) : (
+        ''
+      )}
     </ContainerWrapper>
   )
 }

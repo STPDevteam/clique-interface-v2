@@ -306,6 +306,9 @@ export default function LeftSider() {
                 <DaoAvatars size={50} src={daoInfo?.daoLogo} />
                 <Typography
                   sx={{
+                    width: 134,
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
                     fontWeight: 600,
                     fontSize: '16px',
                     lineHeight: '20px',

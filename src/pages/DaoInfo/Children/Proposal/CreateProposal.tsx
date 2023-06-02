@@ -37,11 +37,11 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   '& button': {
-    borderWidth: '2px',
+    borderWidth: '1px',
     color: theme.palette.text.primary,
     fontWeight: 600,
     '&:hover': {
-      borderWidth: '2px'
+      borderWidth: '1px'
     },
     '&.active': {
       backgroundColor: theme.palette.primary.main,
@@ -340,7 +340,9 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
             )}
 
             <Stack spacing={60} direction="row" mt={50}>
-              <OutlineButton onClick={history.goBack}>Cancel</OutlineButton>
+              <OutlineButton onClick={history.goBack} height="36px">
+                Cancel
+              </OutlineButton>
               <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
                 Create
               </BlackButton>

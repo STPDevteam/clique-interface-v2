@@ -18,7 +18,8 @@ import {
   checkIsJoin,
   getJobsList,
   getApplyList,
-  changeAdminRole
+  changeAdminRole,
+  joinDAO
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -253,32 +254,19 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
 }
 
 export function useApplyMember() {
-  const [loading, setLoading] = useState(false)
-  const { account } = useActiveWeb3React()
+  return useCallback(async (jobPublishId: number, message: string) => {
+    return jobsApply(jobPublishId, message)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
+}
 
-  const joinApply = useCallback(
-    async (role: string, chainId: ChainId, daoAddress: string, message: string) => {
-      if (!account) {
-        return
-      }
-      setLoading(true)
-      try {
-        const res = await jobsApply(role, chainId, daoAddress, message)
-        if (res.data.data) {
-          setLoading(false)
-        }
-      } catch (error) {
-        console.log(error)
-        setLoading(false)
-      }
-    },
-    [account]
-  )
-
-  return {
-    loading,
-    joinApply
-  }
+export function useJoinDAO() {
+  return useCallback(async (chainId: number, daoAddress: string) => {
+    return joinDAO(chainId, daoAddress)
+      .then(res => res)
+      .catch(err => console.log(err))
+  }, [])
 }
 
 export function useChangeAdminRole() {

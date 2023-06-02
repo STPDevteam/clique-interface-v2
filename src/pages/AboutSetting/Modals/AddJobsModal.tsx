@@ -1,29 +1,81 @@
 import Button from 'components/Button/Button'
 import Modal from '../../../components/Modal/index'
-import { Box, Stack, MenuItem } from '@mui/material'
+import { Box, Stack, MenuItem, Alert } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Select from 'components/Select/Select'
+import { useCreateNewJob, useDeleteJob, useUpdateNewJob } from 'hooks/useBackedTaskServer'
+import useModal from 'hooks/useModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 
-const guestList = [
-  { value: undefined, label: 'Member' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'superAdmin', label: 'Super Admin' }
-]
+const guestList = [{ value: 'B_admin', label: 'Admin' }]
 
 export default function AddJobsModal({
-  onClose,
-  onClick,
-  isEdit
+  isEdit,
+  publishId,
+  chainId,
+  daoAddress,
+  originTitle,
+  originContent,
+  onDimiss
 }: {
-  onClose: () => void
-  onClick: () => void
-  isEdit?: boolean
+  isEdit: boolean
+  publishId?: number
+  chainId: number
+  daoAddress: string
+  originContent?: string
+  originTitle?: string
+  onDimiss: () => void
 }) {
-  const [title, setTitle] = useState('')
-  const [des, setDes] = useState('')
-  const [currentStatus, setCurrentStatus] = useState()
+  const [title, setTitle] = useState(originTitle ?? '')
+  const [des, setDes] = useState(originContent ?? '')
+  const [currentStatus, setCurrentStatus] = useState('B_admin')
+  const { showModal, hideModal } = useModal()
+  const create = useCreateNewJob()
+  const deleteFn = useDeleteJob()
+  const update = useUpdateNewJob()
+
+  const onCreateClick = useCallback(() => {
+    create(currentStatus, chainId, daoAddress, des, title)
+      .then(res => {
+        console.log(res)
+        showModal(<MessageBox type="success">Add success</MessageBox>)
+        onDimiss()
+      })
+      .catch(err => {
+        console.log(err)
+        showModal(<MessageBox type="error">Update error</MessageBox>)
+      })
+  }, [chainId, create, currentStatus, daoAddress, des, onDimiss, showModal, title])
+
+  const onUpdateClick = useCallback(() => {
+    if (!publishId) return
+    update(des, publishId, title)
+      .then(res => {
+        showModal(<MessageBox type="success">Update success</MessageBox>)
+        console.log(res)
+        onDimiss()
+      })
+      .catch(err => {
+        console.log(err)
+        showModal(<MessageBox type="error">Update error</MessageBox>)
+      })
+  }, [des, onDimiss, publishId, showModal, title, update])
+
+  const onDelete = useCallback(() => {
+    if (!publishId) return
+    deleteFn(publishId)
+      .then(res => {
+        console.log(res)
+        showModal(<MessageBox type="success">Delete success</MessageBox>)
+        onDimiss()
+      })
+      .catch(err => {
+        showModal(<MessageBox type="error">Delete error</MessageBox>)
+        console.log(err)
+      })
+  }, [deleteFn, onDimiss, publishId, showModal])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
@@ -41,11 +93,18 @@ export default function AddJobsModal({
         >
           {isEdit ? 'Edit job' : 'Add job'}
         </Box>
-        <Input value={title} onChange={e => setTitle(e.target.value)} label="Title" />
-        <Input value={des} multiline rows={6} label="Job description" onChange={e => setDes(e.target.value)} />
+        <Input value={title} maxLength={200} onChange={e => setTitle(e.target.value)} label="Title" />
+        <Input
+          value={des}
+          maxLength={200}
+          multiline
+          rows={6}
+          label="Job description"
+          onChange={e => setDes(e.target.value)}
+        />
         <Select
           placeholder=""
-          width={'420px'}
+          width={'422px'}
           height={40}
           noBold
           label="Guests"
@@ -60,28 +119,35 @@ export default function AddJobsModal({
               key={item.value}
               sx={{ fontWeight: 500, fontSize: 10 }}
               value={item.value}
-              selected={currentStatus && currentStatus === item.value}
+              selected={currentStatus === item.value}
             >
               {item.label}
             </MenuItem>
           ))}
         </Select>
-        <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'}>
+        {!title.trim() ? (
+          <Alert severity="error">Title required</Alert>
+        ) : !des ? (
+          <Alert severity="error">Description required</Alert>
+        ) : (
+          ''
+        )}
+        <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={10}>
           {isEdit ? (
             <>
-              <OutlineButton onClick={onClose} noBold color="#E46767" width={'125px'} height="40px">
+              <OutlineButton onClick={onDelete} noBold color="#E46767" width={'125px'} height="40px">
                 Delete
               </OutlineButton>
-              <Button onClick={onClick} width="125px" height="40px">
+              <Button onClick={onUpdateClick} width="125px" height="40px" disabled={!title || !des}>
                 Save
               </Button>
             </>
           ) : (
             <>
-              <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
+              <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
                 Close
               </OutlineButton>
-              <Button onClick={onClick} width="125px" height="40px">
+              <Button onClick={onCreateClick} width="125px" height="40px" disabled={!title || !des}>
                 Add
               </Button>
             </>

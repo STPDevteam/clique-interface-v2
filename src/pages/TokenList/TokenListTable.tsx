@@ -8,6 +8,7 @@ import { useMemo } from 'react'
 import ChainText from 'components/LogoText/ChainText'
 import { ShowTokenSupply, ShowCopyTokenAddress, ShowTokenInfo } from 'components/ShowTokenInfo'
 import { ChainId } from 'constants/chain'
+import EmptyData from 'components/EmptyData'
 
 export default function TokenListTable({ chainId, account }: { chainId?: ChainId | null; account?: string }) {
   const { loading, result: tokenList, page } = useTokenList(account || '', chainId || '')
@@ -26,24 +27,34 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
     ])
   }, [loading, tokenList])
 
+  console.log(tableList)
+
   return (
     <>
-      <Table
-        firstAlign="left"
-        variant="outlined"
-        header={['Token', 'Network', 'Contact', 'Total Supply']}
-        rows={tableList}
-      ></Table>
-      <DelayLoading loading={loading}>
-        <Loading sx={{ marginTop: 30 }} />
-      </DelayLoading>
-      <Box mt={40} display={'flex'} justifyContent="center">
-        <Pagination
-          count={page.totalPage}
-          page={page.currentPage}
-          onChange={(_, value) => page.setCurrentPage(value)}
-        />
-      </Box>
+      {tableList.length !== 0 ? (
+        <>
+          <Table
+            firstAlign="left"
+            variant="outlined"
+            header={['Token', 'Network', 'Contact', 'Total Supply']}
+            rows={tableList}
+          ></Table>
+          <DelayLoading loading={loading}>
+            <Loading sx={{ marginTop: 30 }} />
+          </DelayLoading>
+          <Box mt={40} display={'flex'} justifyContent="center">
+            <Pagination
+              count={page.totalPage}
+              page={page.currentPage}
+              onChange={(_, value) => page.setCurrentPage(value)}
+            />
+          </Box>
+        </>
+      ) : (
+        <Box mt={-25}>
+          <EmptyData>No Data</EmptyData>
+        </Box>
+      )}
     </>
   )
 }

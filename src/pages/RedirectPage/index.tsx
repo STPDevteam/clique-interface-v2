@@ -4,7 +4,7 @@ import JoinDAOModal from '../DaoInfo/Children/JoinDAOModal'
 import { useActiveWeb3React } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { useApplyMember, useIsJoined } from 'hooks/useBackedDaoServer'
+import { useIsJoined, useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
@@ -18,37 +18,43 @@ export default function Page() {
   const { account } = useActiveWeb3React()
   const [status, setStatus] = useState<string | undefined>()
   const [btnDisabled, setBtnDisabled] = useState(false)
-  const { joinApply } = useApplyMember()
+  const joinDAO = useJoinDAO()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const userSignature = useUserInfo()
   const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
 
-  console.log(userSignature)
-
   const joinDAOCallback = useCallback(() => {
+    setBtnDisabled(true)
     if (!account) {
       toggleWalletModal()
+      setBtnDisabled(false)
       return
     }
     if (!userSignature) {
-      loginSignature()
-      return
-    }
-    setBtnDisabled(true)
-    joinApply('C_member', curDaoChainId, daoAddress, '')
-      .then(() => {
-        history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
-        setBtnDisabled(false)
+      loginSignature().then(() => {
+        joinDAO(curDaoChainId, daoAddress)
+          .then(() => {
+            history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+            setBtnDisabled(false)
+          })
+          .catch(() => setBtnDisabled(false))
       })
-      .catch(() => setBtnDisabled(false))
+    } else {
+      joinDAO(curDaoChainId, daoAddress)
+        .then(() => {
+          history.replace(routes._DaoInfo + '/' + daoChainId + '/' + daoAddress + '/proposal')
+          setBtnDisabled(false)
+        })
+        .catch(() => setBtnDisabled(false))
+    }
   }, [
     account,
     curDaoChainId,
     daoAddress,
     daoChainId,
     history,
-    joinApply,
+    joinDAO,
     loginSignature,
     toggleWalletModal,
     userSignature
@@ -56,15 +62,16 @@ export default function Page() {
 
   useEffect(() => {
     if (!account) setStatus('Connect Wallet')
-    else if (!userSignature) setStatus('Sign In')
-    else if (isJoined === '' || isJoined === undefined) setStatus('Join DAO')
+    else if (!userSignature) {
+      setStatus('Join DAO')
+    } else if (isJoined === '' || isJoined === undefined) setStatus('Join DAO')
     if (!account || !userSignature || isJoined === '' || isJoined === undefined) {
       setOpen(true)
     } else {
       setOpen(false)
       return history.replace(routes.Proposal.replace(':chainId', daoChainId).replace(':address', daoAddress))
     }
-  }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
+  }, [account, daoAddress, daoChainId, history, isJoined, loginSignature, userSignature])
 
   return (
     <Box

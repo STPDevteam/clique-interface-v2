@@ -7,7 +7,6 @@ import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
-import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
@@ -73,14 +72,14 @@ export default function Info({
         </Typography>
         <Box display={'grid'} gridTemplateColumns="86px 1fr" rowGap={15} alignItems={'center'}>
           <LeftText>Proposer</LeftText>
-          <RowCenter>
+          <Box display={'flex'} flexDirection={'column'}>
             <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.creator}`}>
               <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
                 {shortenAddress(proposalInfo.creator, isSmDown ? 3 : 4)}
               </Typography>
             </Link>
             <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
-          </RowCenter>
+          </Box>
 
           <LeftText>Start Time</LeftText>
           <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>

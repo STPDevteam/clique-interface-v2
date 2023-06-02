@@ -17,10 +17,10 @@ import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
-import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
-import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
+// import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
+// import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
 import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
-import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
+// import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 
 import PopperCard from 'components/PopperCard'
@@ -40,20 +40,22 @@ interface Tab extends TabContent {
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
   { title: 'Explore DAOs', route: routes.Governance },
+  { title: 'DAO Rewards', route: routes.Activity },
+  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
   {
-    title: 'Tools',
-    route: routes.DappStore,
+    title: 'Creater',
+    route: '',
     subTab: [
-      {
-        title: 'DAO Rewards',
-        route: routes.Activity,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <RewardsIcon />
-            <Typography color={'#3F5170'}>DAO Rewards</Typography>
-          </Box>
-        )
-      },
+      // {
+      //   title: 'DAO Rewards',
+      //   route: routes.Activity,
+      //   titleContent: (
+      //     <Box display={'flex'} flexDirection={'row'}>
+      //       <RewardsIcon />
+      //       <Typography color={'#3F5170'}>DAO Rewards</Typography>
+      //     </Box>
+      //   )
+      // },
       {
         title: 'Create DAO',
         route: routes.CreatorDao,
@@ -73,44 +75,42 @@ export const Tabs: Tab[] = [
             <Typography color={'#3F5170'}>Create Token</Typography>
           </Box>
         )
-      },
-      {
-        title: 'SDK',
-        link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
-        titleContent: (
-          <Box
-            display={'flex'}
-            flexDirection={'row'}
-            sx={{
-              '&:hover svg path': {
-                fill: '#0049C6'
-              }
-            }}
-          >
-            <SdkIcon />
-            <Typography color={'#3F5170'} flex={1}>
-              SDK
-            </Typography>
-          </Box>
-        )
-      },
-      {
-        title: 'Tools',
-        route: routes.DappStore,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <HomeSvg />
-            <Typography color={'#3F5170'}>Tools</Typography>
-          </Box>
-        )
       }
+      // {
+      //   title: 'SDK',
+      //   link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
+      //   titleContent: (
+      //     <Box
+      //       display={'flex'}
+      //       flexDirection={'row'}
+      //       sx={{
+      //         '&:hover svg path': {
+      //           fill: '#0049C6'
+      //         }
+      //       }}
+      //     >
+      //       <SdkIcon />
+      //       <Typography color={'#3F5170'} flex={1}>
+      //         SDK
+      //       </Typography>
+      //     </Box>
+      //   )
+      // },
+      // {
+      //   title: 'Tools',
+      //   route: routes.DappStore,
+      //   titleContent: (
+      //     <Box display={'flex'} flexDirection={'row'}>
+      //       <HomeSvg />
+      //       <Typography color={'#3F5170'}>Tools</Typography>
+      //     </Box>
+      //   )
+      // }
     ]
   },
-  // { title: 'DAO Rewards', route: routes.Activity },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
-  // { title: 'Creator', route: routes.Creator },
-  // { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
+  { title: 'Tools', route: routes.DappStore },
   { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 

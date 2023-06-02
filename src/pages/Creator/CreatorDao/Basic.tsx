@@ -120,10 +120,10 @@ export default function Basic({ next }: { next: () => void }) {
             type="textarea"
             label="*Description"
             rows="10"
-            maxLength={200}
+            maxLength={1000}
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
-                {buildingDaoData.description.length}/200
+                {buildingDaoData.description.length}/1000
               </Typography>
             }
             multiline

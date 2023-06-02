@@ -97,6 +97,7 @@ export default function Proposal() {
             </Select>
           </Stack>
         </Box>
+        {/* <Box>ashdjkasjk</Box> */}
         <Box minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
@@ -105,15 +106,16 @@ export default function Proposal() {
             </Box>
           </DelayLoading>
 
-          <Grid container rowSpacing={18} columnSpacing={isSmDown ? 0 : 34}>
+          <Grid container justifyContent={'space-between'} width={'100%'}>
             {!loading &&
               proposalBaseList.map(item => (
-                <Grid item key={item.proposalId + item.startTime + item.endTime} lg={6} xs={12}>
+                <Box key={item.proposalId + item.startTime + item.endTime} mb={20}>
                   <ProposalItem {...item} />
-                </Grid>
+                </Box>
               ))}
           </Grid>
         </Box>
+
         <Box mt={20} display={'flex'} justifyContent="center">
           <Pagination
             count={page.totalPage}
