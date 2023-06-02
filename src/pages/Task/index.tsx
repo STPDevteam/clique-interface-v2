@@ -22,8 +22,8 @@ import { useGetTaskList, useSpacesInfo } from 'hooks/useBackedTaskServer'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
-import { MapPriorityType, MapTaskStatus } from './Children/SidePanel'
 import DaoContainer from 'components/DaoContainer'
+import { MapPriorityType, MapTaskStatus } from './Children/TaskDetail'
 
 const StatusWrapper = styled(Box)(() => ({
   width: 100,
