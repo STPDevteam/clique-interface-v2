@@ -35,7 +35,7 @@ export default function Proposal() {
   return (
     <DaoContainer>
       <Box>
-        <Box mb={30} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
+        <Box mb={20} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
           <Box>
             <Stack
               sx={{
@@ -79,8 +79,8 @@ export default function Proposal() {
               noBold
               placeholder=""
               style={{ fontWeight: 500, fontSize: 14 }}
-              width={isSmDown ? 160 : 158}
-              height={isSmDown ? 36 : 36}
+              // width={isSmDown ? 160 : 158}
+              height={isSmDown ? '30px' : '36px'}
               value={currentProposalStatus}
               onChange={e => setCurrentProposalStatus(e.target.value)}
             >
@@ -97,7 +97,7 @@ export default function Proposal() {
             </Select>
           </Stack>
         </Box>
-        <Box mt={17} minHeight={200}>
+        <Box minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
             <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

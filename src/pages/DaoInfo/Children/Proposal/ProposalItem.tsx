@@ -10,6 +10,9 @@ import { routes } from 'constants/routes'
 import { myCliqueV1Domain } from '../../../../constants'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
+import Image from 'components/Image'
+import avatar from 'assets/images/avatar.png'
+import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '19px 24px',
@@ -38,6 +41,12 @@ const StyledCard = styled(Box)(({ theme }) => ({
   }
 }))
 
+const AdminIcon = styled(adminIcon)(() => ({
+  'path:first-child': {
+    fill: '#97B7EF'
+  }
+}))
+
 export const RowCenter = styled(Box)({
   display: 'flex',
   justifyContent: 'space-between',
@@ -45,7 +54,115 @@ export const RowCenter = styled(Box)({
 })
 
 export default function ProposalItem(props: ProposalListBaseProp) {
-  return props.version === 'v1' ? <ProposalV1Item {...props} /> : <ProposalV2Item {...props} />
+  return props.version === 'v1' ? (
+    <ProposalV1Item {...props} />
+  ) : true ? (
+    <ProposalV2Item {...props} />
+  ) : (
+    <ProposalV3Item />
+  )
+}
+
+function ProposalV3Item() {
+  return (
+    <StyledCard>
+      <RowCenter>
+        <Box sx={{ display: 'flex', gap: 12 }}>
+          <Typography
+            sx={{
+              fontFamily: 'Poppins',
+              fontWeight: 600,
+              fontSize: '14px',
+              lineHeight: '16px',
+              color: '#97B7EF'
+            }}
+          >
+            SIP 001
+          </Typography>
+          <Box
+            sx={{
+              width: 0,
+              height: 14,
+              border: ' 1px solid #D4D7E2'
+            }}
+          ></Box>
+          <Typography variant="body1" sx={{ lineHeight: '18px', color: '#97B7EF' }}>
+            4 days left
+          </Typography>
+        </Box>
+        <Typography
+          variant="caption"
+          sx={{
+            height: 20,
+            width: 70,
+            borderRadius: '18px',
+            background: '#21C431',
+            color: '#fff',
+            textAlign: 'center'
+          }}
+        >
+          Open
+        </Typography>
+      </RowCenter>
+      <Typography
+        className="content"
+        variant="h6"
+        sx={{ mt: '13px  !important', fontSize: '18px !important', color: '#3F5170 !important' }}
+      >
+        Provide lunch with love for children in mountains areas Provide lunch with love for children in mountains areas
+        Provide lunch with love for children in mountains areas Provide lunch with love for children in mountains areas
+      </Typography>
+      <RowCenter sx={{ mt: 10 }}>
+        <Box sx={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          <Image height={20} width={20} src={avatar} />
+          <Typography variant="body1" sx={{ lineHeight: '20px' }}>
+            UserName
+          </Typography>
+          <AdminIcon
+            sx={{
+              'path:first-child': {
+                fill: '#0049C6'
+              }
+            }}
+          />
+        </Box>
+
+        {false ? (
+          <Typography sx={{ fontWeight: 800, color: '#0049C6' }} variant="h5">
+            2,320,927,142 Votes
+          </Typography>
+        ) : (
+          <Box
+            sx={{
+              width: 100,
+              height: 30,
+              background: '#21C431',
+              borderRadius: '6px',
+              padding: 2
+            }}
+          >
+            <Typography
+              sx={{
+                height: '100%',
+                fontWeight: 700,
+                fontSize: 17,
+                lineHeight: '20px',
+                border: ' 1px solid #FFFFFF',
+                borderRadius: '5px',
+                background: '#21C431',
+                color: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              PASSED
+            </Typography>
+          </Box>
+        )}
+      </RowCenter>
+    </StyledCard>
+  )
 }
 
 function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
