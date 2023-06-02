@@ -1,7 +1,7 @@
 import { Box, Typography, styled } from '@mui/material'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ReactComponent as AddIcon } from 'assets/svg/newIcon.svg'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import useModal from 'hooks/useModal'
 import AddJobsModal from './Modals/AddJobsModal'
 import JobDetailModal from './Modals/JobDetailModal'
@@ -32,6 +32,16 @@ export default function Team() {
   const curDaoChainId = Number(daoChainId) as ChainId
   const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress, randNum)
   const { result: memberList } = useJobsList('A_superAdmin', daoAddress, curDaoChainId, rand)
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      console.log('run')
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
 
   const addMemberCB = useCallback(() => {
     showModal(<AddMemberModal onClose={hideModal} daoAddress={daoAddress} curDaoChainId={curDaoChainId} />)
@@ -309,7 +319,7 @@ function JobCard({
         sx={{
           '& p': {
             width: '413px',
-            height: '80px',
+            height: '82px',
             wordWrap: 'break-word',
             display: '-webkit-box',
             overflow: 'hidden',

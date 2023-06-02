@@ -53,13 +53,39 @@ export default function OpenJobs() {
             textAlign: 'left',
             border: '1px solid #d4d7e2',
             padding: '16px 20px',
-            borderRadius: '8px'
+            borderRadius: '8px',
+            '& p': {
+              width: 742
+            }
           }}
         >
-          <Typography fontWeight={600} fontSize={20} color={'#3F5170'} mb={10}>
+          <Typography
+            fontWeight={600}
+            fontSize={20}
+            color={'#3F5170'}
+            mb={10}
+            noWrap
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}
+          >
             {item.title}
           </Typography>
-          <Typography fontWeight={400} fontSize={13} color={'#3F5170'} height={72}>
+          <Typography
+            fontWeight={400}
+            fontSize={13}
+            color={'#3F5170'}
+            height={72}
+            sx={{
+              wordBreak: 'break-word',
+              display: '-webkit-box',
+              overflow: 'hidden',
+              WebkitBoxOrient: 'vertical',
+              textOverflow: 'ellipsis',
+              WebkitLineClamp: 3
+            }}
+          >
             {item.jobBio}
           </Typography>
           <Box

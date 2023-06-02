@@ -79,7 +79,7 @@ export default function Activity() {
               <BlackButton
                 width={isSmDown ? '146px' : '252px'}
                 fontSize={isSmDown ? 10 : 14}
-                height={isSmDown ? '40px' : '56px'}
+                height={isSmDown ? '40px' : '36px'}
                 borderRadius={isSmDown ? '8px' : undefined}
                 onClick={() =>
                   history.push(
@@ -95,7 +95,7 @@ export default function Activity() {
             ) : (
               <Box
                 width={isSmDown ? '146px' : '252px'}
-                height={isSmDown ? '40px' : '56px'}
+                height={isSmDown ? '40px' : '36px'}
                 display={'flex'}
                 alignItems="center"
                 justifyContent={'center'}
