@@ -150,7 +150,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     fontSize: 14,
     lineHeight: '20px',
     color: theme.palette.text.secondary,
-    marginRight: 60,
+    marginRight: 30,
     fontWeight: 600,
     paddingBottom: '30px',
     paddingTop: '30px',
@@ -240,7 +240,7 @@ const MainLogo = styled(NavLink)(({ theme }) => ({
 }))
 
 const LinksWrapper = muiStyled('div')(({ theme }) => ({
-  margin: '0 80px',
+  margin: '0 40px',
   display: 'flex',
   [theme.breakpoints.down('lg')]: {
     margin: '0 30px'
@@ -392,7 +392,7 @@ function TabsBox() {
               color: '#3F5170',
               marginRight: {
                 xs: 15,
-                lg: 50
+                lg: 30
               },
               height: 'auto',
               paddingBottom: '30px',
