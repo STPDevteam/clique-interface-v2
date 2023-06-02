@@ -10,6 +10,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
 import { useActiveWeb3React } from 'hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import { isAddress } from 'ethers/lib/utils'
 
 const guestList = [{ value: 'B_admin', label: 'Admin' }]
 
@@ -103,7 +104,7 @@ export default function AddMemberModal({
             onClick={curDaoChainId === chainId ? createNewMember : switchNetwork}
             width="125px"
             height="40px"
-            disabled={btnDisable}
+            disabled={btnDisable || !isAddress(address)}
           >
             Add
           </Button>
