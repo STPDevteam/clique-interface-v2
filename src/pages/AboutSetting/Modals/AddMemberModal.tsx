@@ -96,7 +96,7 @@ export default function AddMemberModal({
             </MenuItem>
           ))}
         </Select>
-        {!isAddress(address) && address.trim() && <Alert severity="error">Wrong address</Alert>}
+        <Box height={48}>{!isAddress(address) && address.trim() && <Alert severity="error">Wrong address</Alert>}</Box>
         <Stack
           gridTemplateColumns={'1fr 1fr'}
           justifyContent={'space-between'}
