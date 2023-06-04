@@ -4,7 +4,7 @@ import { inputBaseClasses } from '@mui/material/InputBase'
 import InputLabel from './InputLabel'
 import { isURL } from 'utils/dao'
 import { escapeRegExp, isAddress, isEmail } from 'utils'
-import theme from 'theme'
+// import theme from 'theme'
 
 export interface InputProps {
   placeholder?: string
@@ -131,7 +131,7 @@ export default function Input({
   >) {
   const [hideFormatWrapper, setHideFormatWrapper] = useState(false)
   const showFormatWrapperValue = useMemo(() => showFormatWrapper && showFormatWrapper(), [showFormatWrapper])
-  const [showErrorMsg, setErrorMsg] = useState(false)
+  // const [showErrorMsg, setErrorMsg] = useState(false)
   const inputUserRef = useRef()
 
   const enforcer = useCallback(
@@ -149,9 +149,9 @@ export default function Input({
   const handleChange = useCallback(
     event => {
       // replace commas with periods
-      setErrorMsg(false)
+      // setErrorMsg(false)
       if (event.target.value && maxLength && event.target.value.length > maxLength) {
-        setErrorMsg(true)
+        // setErrorMsg(true)
         return
       }
       const formatted = enforcer(event.target.value)
@@ -170,9 +170,9 @@ export default function Input({
         {label ? <InputLabel>{label}</InputLabel> : <div />}
         {rightLabel && <InputLabel>{rightLabel}</InputLabel>}
       </Box>
-      {showErrorMsg && (
+      {/* {showErrorMsg && (
         <Typography color={theme.palette.error.main}>*The number of characters exceeds the limit</Typography>
-      )}
+      )} */}
       <Box position={'relative'}>
         {showFormatWrapper && !hideFormatWrapper && (
           <StyledInputWrapper
@@ -213,7 +213,7 @@ export default function Input({
             },
             [`& .${inputBaseClasses.input}`]: {
               '&::placeholder': {
-                fontSize: placeholderSize ? placeholderSize : smallPlaceholder ? 12 : placeholderSize,
+                fontSize: placeholderSize ? placeholderSize : smallPlaceholder ? 14 : placeholderSize,
                 color: theme => (error ? theme.palette.error.main : ''),
                 fontWeight: 400
                 // textOverflow: 'ellipsis',
@@ -259,14 +259,18 @@ export default function Input({
           }
           endAdornment={
             endAdornment && (
-              <span style={{ paddingRight: 15, alignSelf: multiline ? 'flex-end' : 'center' }}>{endAdornment}</span>
+              <span
+                style={{ paddingRight: 15, fontSize: '14px!important', alignSelf: multiline ? 'flex-end' : 'center' }}
+              >
+                {endAdornment}
+              </span>
             )
           }
           {...rest}
         />
       </Box>
       {subStr && (
-        <Typography fontSize={12} mt={12} sx={{ opacity: 0.5 }}>
+        <Typography fontSize={14} mt={12} sx={{ opacity: 0.5 }}>
           {subStr}
         </Typography>
       )}
