@@ -19,7 +19,8 @@ import {
   getJobsList,
   getApplyList,
   changeAdminRole,
-  joinDAO
+  joinDAO,
+  updateDaoGeneral
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -767,5 +768,32 @@ export function useJoinDaoMembersLogs(chainId: number, daoAddress: string) {
       result
     }),
     [currentPage, loading, total, result]
+  )
+}
+
+export function useUpdateDaoGeneral() {
+  return useCallback(
+    (
+      bio: string,
+      category: string[],
+      daoId: number,
+      daoLogo: string,
+      daoName: string,
+      discord: string,
+      github: string,
+      join: {
+        chainId: number
+        holdAmount: string
+        tokenAddress: string
+        tokenType: string
+      },
+      twitter: string,
+      website: string
+    ) => {
+      return updateDaoGeneral(bio, category, daoId, daoLogo, daoName, discord, github, join, twitter, website)
+        .then(res => res)
+        .catch(err => console.log(err))
+    },
+    []
   )
 }

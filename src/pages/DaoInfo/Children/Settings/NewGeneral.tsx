@@ -58,11 +58,7 @@ const validationSchema = yup.object({
     .trim()
     .required('Please enter your Organization Name')
     .max(20, 'Allow only no more than 20 letters'),
-  handle: yup
-    .string()
-    .trim()
-    .required('Please enter your Organize Username')
-    .max(20, 'Allow only no more than 20 letters'),
+  handle: yup.string().trim(),
   description: yup
     .string()
     .trim()
@@ -129,7 +125,20 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
   }
 
   const handleSubmit = (values: any) => {
-    console.log(values, adminSetInfoCallback)
+    adminSetInfoCallback(
+      values.name,
+      values.category,
+      values.description,
+      values.twitter,
+      values.github,
+      values.discord,
+      values.daoLogo,
+      values.website
+    )
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => console.log(err))
   }
 
   return (
@@ -215,7 +224,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
                     value={values.name}
                   />
                 </FormItem>
-                <FormItem name="handle" required>
+                <FormItem name="handle">
                   <Box>
                     <Typography
                       sx={{
@@ -233,6 +242,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
                       <Tooltip value="Organize username must be between 4-20 characters and contain letters, numbers and underscores only." />
                     </Typography>
                     <Input
+                      readOnly
                       endAdornment={
                         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
                           {values.handle.length}/20
