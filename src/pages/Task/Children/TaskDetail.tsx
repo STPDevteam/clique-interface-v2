@@ -1,4 +1,4 @@
-import { Alert, Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel } from '@mui/material'
+import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel } from '@mui/material'
 import ConfirmButton from 'components/Button/Button'
 import SaveButton from 'components/Button/OutlineButton'
 import Image from 'components/Image'
@@ -30,7 +30,6 @@ import { ReactComponent as ViewDtailIcon } from 'assets/svg/viewDetailIcon.svg'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { escapeAttrValue } from 'xss'
 import useCopyClipboard from 'hooks/useCopyClipboard'
-// import SidePanel from './SidePanel'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -207,8 +206,7 @@ export default function TaskDetail({
   }, [taskDetailData?.content])
 
   const createCallback = useCallback(() => {
-    if (!TeamSpacesInfo || !value) return
-
+    if (!TeamSpacesInfo) return
     create(
       assignees,
       content,
@@ -264,18 +262,18 @@ export default function TaskDetail({
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton disabled={!value.trim()} width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
+        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton disabled={!value.trim()} width="140px" height="36px" color="#ffffff" onClick={createCallback}>
+        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback, value])
+  }, [createCallback, editData, updateCallback])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -749,13 +747,6 @@ export default function TaskDetail({
             >
               <Editor content={content} setContent={setContent} />
             </RowContent>
-            {!value.trim() ? (
-              <Alert severity="error" style={{ marginTop: 20 }}>
-                Title required
-              </Alert>
-            ) : (
-              ''
-            )}
             <ColSentence>{getActions()}</ColSentence>
           </>
         )}

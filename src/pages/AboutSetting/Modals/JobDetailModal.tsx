@@ -80,6 +80,12 @@ export default function JobDetailModal({
           fontSize={16}
           lineHeight={'16px'}
           fontFamily={'Inter'}
+          sx={{
+            whiteSpace: 'nowrap',
+            width: '100%',
+            textOverflow: 'ellipsis',
+            overflow: 'hidden'
+          }}
         >
           {title}
         </Typography>
@@ -94,12 +100,25 @@ export default function JobDetailModal({
         >
           Job description
         </Typography>
-        <Box mt={20} height={80}>
-          <Typography fontWeight={500} fontSize={16}>
+        <Box mt={20}>
+          <Typography
+            fontWeight={500}
+            fontSize={16}
+            sx={{
+              width: '413px',
+              height: '118px',
+              wordWrap: 'break-word',
+              display: '-webkit-box',
+              overflow: 'hidden',
+              WebkitBoxOrient: 'vertical',
+              textOverflow: 'ellipsis',
+              WebkitLineClamp: 5
+            }}
+          >
             {content}
           </Typography>
         </Box>
-        <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={186}>
+        <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={146}>
           <div></div>
           <OutlineButton onClick={editClick} noBold color="#0049C6" width={'125px'} height="40px">
             Edit

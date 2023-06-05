@@ -1,6 +1,6 @@
 import Button from 'components/Button/Button'
 import Modal from '../../../components/Modal/index'
-import { Box, Stack, MenuItem } from '@mui/material'
+import { Box, Stack, MenuItem, Alert } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
 import { useCallback, useState } from 'react'
@@ -96,7 +96,13 @@ export default function AddMemberModal({
             </MenuItem>
           ))}
         </Select>
-        <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={224}>
+        <Box height={48}>{!isAddress(address) && address.trim() && <Alert severity="error">Wrong address</Alert>}</Box>
+        <Stack
+          gridTemplateColumns={'1fr 1fr'}
+          justifyContent={'space-between'}
+          flexDirection={'row'}
+          mt={!isAddress(address) ? 176 : 224}
+        >
           <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
             Close
           </OutlineButton>

@@ -16,6 +16,8 @@ import { ChainId } from 'constants/chain'
 import { useGetPublishJobList, useJobsList } from 'hooks/useBackedTaskServer'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MemberAuthorityAssignmentModal from './Modals/MemberAuthorityAssignmentModal'
+import { useActiveWeb3React } from 'hooks'
+import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
 
 const TopText = styled(Box)({
   display: 'flex',
@@ -28,10 +30,12 @@ export default function Team() {
   const [rand, setRand] = useState(Math.random())
   const [randNum, setRandNum] = useState(Math.random())
   const { showModal, hideModal } = useModal()
+  const { account } = useActiveWeb3React()
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
   const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress, randNum)
   const { result: memberList } = useJobsList('A_superAdmin', daoAddress, curDaoChainId, rand)
+  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -162,7 +166,11 @@ export default function Team() {
           Jobs
         </Typography>
         <Box display={'flex'} gap={35} flexDirection={'row'}>
-          <BlueButton actionText="Add Members" onClick={addMemberCB} />
+          {daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN ? (
+            <BlueButton actionText="Add Members" onClick={addMemberCB} />
+          ) : (
+            <></>
+          )}
           <BlueButton actionText="Add Jobs" onClick={addJobsCB} />
         </Box>
       </TopText>
