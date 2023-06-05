@@ -2,8 +2,7 @@ import { Box, Stack, styled, Typography, useTheme, Checkbox, MenuItem } from '@m
 import { BlackButton } from 'components/Button/Button'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Input from 'components/Input'
-import UploadImage from 'components/UploadImage'
-import Button from 'components/Button/Button'
+import UpImgButton from 'components/UploadImage/UpImgButton'
 import { DaoInfoProp } from 'hooks/useDaoInfo'
 import { ChainId } from 'constants/chain'
 import { Dots } from 'theme/components'
@@ -25,7 +24,7 @@ import { useState } from 'react'
 const Wrapper = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
-  gap: 24,
+  gap: 16,
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
     padding: '20px'
@@ -62,17 +61,8 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
             }
           }}
         >
-          <Box sx={{ display: 'flex', gap: 42, mt: 20, mb: 10 }}>
-            <UploadImage onChange={val => console.log(val)} size={124}></UploadImage>
-            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
-              <Typography sx={{ width: '150px', lineHeight: '17px', fontWeight: 400, color: '#80829F' }}>
-                File types supported: JPG, PNG, GIF.
-              </Typography>
-              <Button width="125px" height="40px" style={{ marginTop: 25 }}>
-                + Upload
-              </Button>
-            </Box>
-          </Box>
+          <UpImgButton onChange={val => console.log(val)} size={124}></UpImgButton>
+
           <Input
             label="Introduction"
             placeholderSize="14px"

@@ -2,9 +2,9 @@ import { Box, styled, Typography, useTheme } from '@mui/material'
 import { ReactComponent as AddIcon } from 'assets/svg/add_icon.svg'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import { routes } from 'constants/routes'
-import useModal from 'hooks/useModal'
+// import useModal from 'hooks/useModal'
 import { useHistory } from 'react-router-dom'
-import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
+// import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
 import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 import { ChainId } from 'constants/chain'
@@ -80,7 +80,7 @@ const Item = styled(Box)(({ theme }) => ({
 
 export default function LeftSider() {
   const theme = useTheme()
-  const { showModal } = useModal()
+  // const { showModal } = useModal()
   const history = useHistory()
   const { result: myJoinedDaoList } = useMyJoinedDao()
 
@@ -114,7 +114,7 @@ export default function LeftSider() {
             Search
           </Text>
         </Item>
-        <Item onClick={() => showModal(<CreateGovernanceModal />)}>
+        <Item onClick={() => history.push(routes.CreateDao)}>
           <div className="action">
             <AddIcon width={16}></AddIcon>
           </div>

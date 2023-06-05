@@ -672,3 +672,7 @@ export function deleteJob(publishId: number) {
 export function publishList(chainId: number, daoAddress: string) {
   return Axios.get('stpdao/v2/jobs/publish/list', { chainId, daoAddress })
 }
+
+export function createDao(jobBio: string, cateGory: string[], daoLogo: string, daoName: string, hanDle: string) {
+  return Axios.post('/stpdao/v3/dao/create', { jobBio, cateGory, daoLogo, daoName, hanDle })
+}
