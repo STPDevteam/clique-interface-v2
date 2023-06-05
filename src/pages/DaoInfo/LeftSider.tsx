@@ -347,6 +347,7 @@ export default function LeftSider() {
                 justifyContent: 'flex-start',
                 flexDirection: 'row',
                 gap: 10,
+                outline: 'none',
                 marginRight: 0,
                 paddingLeft: 20
               }}

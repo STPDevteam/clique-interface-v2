@@ -302,13 +302,13 @@ export function useLogin() {
   // const { account } = useActiveWeb3React()
   // const [loading, setLoading] = useState(false)
   const [loginToken, setLoginToken] = useState('')
-  const login = useCallback(async (account: string, signature: string) => {
+  const login = useCallback(async (account: string, message: string, signature: string) => {
     if (!account) {
       return
     }
     // setLoading(true)
     try {
-      const res = await Login(account, signature)
+      const res = await Login(account, message, signature)
       if (res.data.data) {
         setLoginToken(res.data.data)
         // setLoading(false)

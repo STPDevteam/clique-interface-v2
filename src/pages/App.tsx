@@ -53,6 +53,8 @@ import Page from './RedirectPage'
 import AboutSetting from './AboutSetting'
 import DaoBounty from './daoBounty'
 import DappStore from './TokenList/DappStore'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -114,6 +116,7 @@ export default function App() {
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
+            <ToastContainer />
             <BodyWrapper id="body">
               <Popups />
               <Polling />

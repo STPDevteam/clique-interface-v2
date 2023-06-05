@@ -27,6 +27,7 @@ export default function ChainSelect({
   active?: boolean
   empty?: boolean
   placeholder?: string
+  value?: number
 }) {
   const handleChange = useCallback(
     e => {

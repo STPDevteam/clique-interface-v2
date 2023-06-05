@@ -130,7 +130,7 @@ export const theme = {
   },
   bgColor: {
     bg1: '#F7F7F7',
-    bg2: '#E4E4E4',
+    bg2: '#D4D7E2',
     bg3: '#6C5DD3',
     bg4: '#FBFCFC',
     bg5: '#F0F3F6',
@@ -281,6 +281,11 @@ export const override: any = {
           color: theme.palette.secondary.dark
         }
       }
+    }
+  },
+  MuiSelect: {
+    styleOverrides: {
+      root: {}
     }
   },
   MuiTypography: {

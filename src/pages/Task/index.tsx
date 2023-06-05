@@ -22,8 +22,8 @@ import { useGetTaskList, useSpacesInfo } from 'hooks/useBackedTaskServer'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
-import { MapPriorityType, MapTaskStatus } from './Children/SidePanel'
 import DaoContainer from 'components/DaoContainer'
+import { MapPriorityType, MapTaskStatus } from './Children/TaskDetail'
 
 const StatusWrapper = styled(Box)(() => ({
   width: 100,
@@ -264,7 +264,8 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
   return (
     <Box
       sx={{
-        maxWidth: '942px',
+        minWidth: 800,
+        width: '100%',
         textAlign: 'center',
         margin: '20px auto 40px',
         '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {

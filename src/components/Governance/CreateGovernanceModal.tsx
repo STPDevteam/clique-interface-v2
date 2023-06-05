@@ -376,6 +376,7 @@ export function CreateGovernanceModal() {
 
               <Box mt={20} display="flex" justifyContent={{ sm: 'center', xs: 'space-evenly' }} gap="40px">
                 <OutlineButton
+                  noBold
                   width={isSmDown ? '130px' : '166px'}
                   height={36}
                   onClick={() => setStep(CreateGovernanceStep.BASE_INFO)}

@@ -78,7 +78,7 @@ export default function Member() {
 
   const tabList = !isJoined
     ? []
-    : isJoined && (isJoined === 'C_member' || isJoined === 'noRole')
+    : isJoined && isJoined !== 'A_superAdmin'
     ? [
         {
           label: 'Card View',
