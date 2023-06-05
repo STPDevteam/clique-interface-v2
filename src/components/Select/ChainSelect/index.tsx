@@ -15,7 +15,8 @@ export default function ChainSelect({
   height,
   active,
   empty,
-  placeholder
+  placeholder,
+  value
 }: {
   label?: string
   disabled?: boolean
@@ -27,7 +28,9 @@ export default function ChainSelect({
   active?: boolean
   empty?: boolean
   placeholder?: string
+  value?: number
 }) {
+  console.log(value)
   const handleChange = useCallback(
     e => {
       const chain = chainList.find(chain => chain.symbol === e.target.value && chain.id) ?? null

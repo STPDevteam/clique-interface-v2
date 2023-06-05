@@ -153,7 +153,7 @@ export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
-export const signMessage = 'Welcome come Clique'
+export const signMessage = 'Welcome to Clique'
 export const myCliqueV1Domain = 'https://v1.myclique.io/'
 
 enum ENV {

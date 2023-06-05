@@ -1,15 +1,15 @@
-import { Box, Stack, styled, Typography, useTheme, Checkbox, MenuItem } from '@mui/material'
+import { Box, Stack, styled, Typography, useTheme, Checkbox } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Input from 'components/Input'
 import UploadImage from 'components/UploadImage'
 // import Button from 'components/Button/Button'
+import NumericalInput from 'components/Input/InputNumerical'
 import { DaoInfoProp } from 'hooks/useDaoInfo'
-import { ChainId } from 'constants/chain'
 import Tooltip from 'components/Tooltip'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
-import Select from 'components/Select/Select'
-import { useState } from 'react'
+import ChainSelect from 'components/Select/ChainSelect'
+import { useState, ReactNode } from 'react'
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
 import { useAdminSetInfoCallback } from 'hooks/useGovernanceDaoCallback'
@@ -17,6 +17,7 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import FormItem from 'components/FormItem'
 import { FormType } from './type'
 import { formCheckValid } from 'utils'
+import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 
 // import { useActiveWeb3React } from 'hooks'
 // import useModal from 'hooks/useModal'
@@ -30,7 +31,6 @@ import { formCheckValid } from 'utils'
 
 export const sxInputStyle = {
   '& .MuiInputBase-root': {
-    backgroundColor: '#F6F6F3',
     '& fieldset': {
       border: 'none'
     }
@@ -88,11 +88,19 @@ const validationSchema = yup.object({
   instagram: yup
     .string()
     .trim()
-    .url('Please enter a valid URL')
+    .url('Please enter a valid URL'),
+  daoTokenAddress: yup.string().trim(),
+  daoTokenChainId: yup.number(),
+  baseChain: yup.object({
+    icon: yup.mixed<ReactNode>(),
+    link: yup.string(),
+    selectedIcon: yup.mixed<ReactNode>()
+  })
 })
 
 export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
-  console.log(daoChainId)
+  // const currentBaseChain = useMemo(() => (daoChainId ? ChainListMap[daoChainId] || null : null), [daoChainId])
+  const [currentBaseChain, setCurrentBaseChain] = useState<any>(ChainListMap[daoChainId])
   const ListItem = [
     { label: 'Anyone', value: 'Anyone' },
     { label: 'Holding token or NFT', value: 'Holding token or NFT' }
@@ -115,8 +123,9 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
     github: daoInfo.github || '',
     discord: daoInfo.discord || '',
     handle: daoInfo.handle || '',
+    baseChain: currentBaseChain || null,
     daoTokenAddress: daoInfo.daoTokenAddress || '',
-    daoTokenChainId: daoInfo.daoTokenChainId || 0
+    daoTokenChainId: currentBaseChain?.id || 0
   }
 
   const handleSubmit = (values: any) => {
@@ -279,30 +288,39 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
                       mb: 10
                     }}
                   >
-                    Token preview
+                    Network
                   </Typography>
-                  <Select
-                    noBold
-                    placeholder=""
-                    style={{ fontWeight: 500, fontSize: 14 }}
-                    height={40}
-                    value={ListItem[0].value}
-                    // onChange={e => setCurrentProposalStatus(e.target.value)}
-                  >
-                    {ListItem.map(item => (
-                      <MenuItem
-                        key={item.value}
-                        sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                        value={item.value}
-                      >
-                        {item.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <FormItem name="daoTokenChainId" fieldType="custom">
+                    <ChainSelect
+                      chainList={ChainList.filter(
+                        v =>
+                          v.id !== ChainId.POLYGON_MANGO &&
+                          v.id !== ChainId.COINBASE_TESTNET &&
+                          v.id !== ChainId.ZetaChain_TESTNET &&
+                          v.id !== ChainId.ZKSYNC_ERA &&
+                          v.id !== ChainId.ZKSYNC_ERA_TESTNET
+                      )}
+                      height={40}
+                      selectedChain={currentBaseChain}
+                      onChange={(e: any) => {
+                        setCurrentBaseChain(e)
+                        setFieldValue('daoTokenChainId', e?.id)
+                      }}
+                      value={values.daoTokenChainId}
+                    />
+                  </FormItem>
                 </Box>
-
-                <InputStyle label="Token Contract Address" placeholderSize="14px" placeholder="0x..." value={''} />
-                <InputStyle label="Number" placeholderSize="14px" placeholder="0" value={''} />
+                <FormItem name="daoTokenAddress">
+                  <InputStyle
+                    label="Token Contract Address"
+                    placeholderSize="14px"
+                    placeholder="0x..."
+                    value={values.daoTokenAddress}
+                  />
+                </FormItem>
+                <FormItem>
+                  <NumericalInput label="Number" placeholderSize="14px" placeholder="0" value={''} />
+                </FormItem>
                 <Box>
                   <Typography
                     sx={{
