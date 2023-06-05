@@ -306,7 +306,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
                         setCurrentBaseChain(e)
                         setFieldValue('daoTokenChainId', e?.id)
                       }}
-                      value={values.daoTokenChainId}
                     />
                   </FormItem>
                 </Box>
