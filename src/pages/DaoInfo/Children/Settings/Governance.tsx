@@ -89,7 +89,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp;
           <InputTitleStyle mb={8}>Threshold</InputTitleStyle>
           <GridLayoutff>
             <Row sx={{ gap: 10, flexDirection: 'column' }}>
-              <InputTitleStyle lineHeight="20px">Voting period</InputTitleStyle>
+              <InputTitleStyle style={{ lineHeight: '20px' }}>Voting period</InputTitleStyle>
               <InputStyle
                 placeholderSize="14px"
                 placeholder={PeriodValue}

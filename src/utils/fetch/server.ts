@@ -704,3 +704,7 @@ export function updateDaoGeneral(
     website
   })
 }
+
+export function createDao(jobBio: string, cateGory: string[], daoLogo: string, daoName: string, hanDle: string) {
+  return Axios.post('/stpdao/v3/dao/create', { jobBio, cateGory, daoLogo, daoName, hanDle })
+}

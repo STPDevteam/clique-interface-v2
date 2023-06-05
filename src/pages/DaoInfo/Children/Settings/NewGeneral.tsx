@@ -2,6 +2,7 @@ import { Box, Stack, styled, Typography, useTheme, Checkbox } from '@mui/materia
 import { LoadingButton } from '@mui/lab'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Input from 'components/Input'
+// import UpImgButton from 'components/UploadImage/UpImgButton'
 import UploadImage from 'components/UploadImage'
 // import Button from 'components/Button/Button'
 import NumericalInput from 'components/Input/InputNumerical'
@@ -40,7 +41,7 @@ export const sxInputStyle = {
 const Wrapper = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
-  gap: 24,
+  gap: 16,
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
     padding: '20px'
