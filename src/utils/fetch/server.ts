@@ -41,9 +41,10 @@ export function getHomeDaoList(
   })
 }
 
-export function Login(account: string, signature: string) {
-  return Axios.post('stpdao/v2/account/jwt/signIn', {
+export function Login(account: string, message: string, signature: string) {
+  return Axios.post('stpdao/v3/user/signIn', {
     account,
+    message,
     signature
   })
 }

@@ -160,21 +160,13 @@ export default function Index() {
       }}
     >
       <Image className="top_banner" src={banner} />
-      <Box
-        mt={30}
-        sx={{
-          width: '100%',
-          display: 'flex',
-          flexWrap: 'wrap',
-          flexDirection: 'row'
-        }}
-      >
+      <Grid mt={30} container>
         {cardsData.map((item, index) => (
           <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
             <CardItem {...item} />
           </Grid>
         ))}
-      </Box>
+      </Grid>
     </Box>
   )
 }
