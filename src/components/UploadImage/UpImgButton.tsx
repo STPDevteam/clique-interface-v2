@@ -1,10 +1,10 @@
 import { styled, Box, Theme, Snackbar, Alert, Typography } from '@mui/material'
 import { SxProps } from '@mui/system'
-import axios from 'axios'
 import { useState, useCallback } from 'react'
 import { serverUploadImage } from '../../constants'
 import Image from '../Image'
 import Button from 'components/Button/Button'
+import { Axios } from 'utils/axios'
 
 const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }) => ({
   gap: 42,
@@ -47,15 +47,11 @@ async function save(
   const params = new FormData()
   params.append('file', file)
   try {
-    const res = await axios.post(serverUploadImage, params, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    const res = await Axios.post(serverUploadImage, params)
     if (!res.data.data) {
       throw res
     }
-    const data = res.data.data.path as string
+    const data = res.data.data as string
     return {
       data: data,
       result: true

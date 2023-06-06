@@ -22,15 +22,16 @@ const InputStyle = styled(Input)(() => ({
 }))
 
 export default function Index() {
-  const [imgLogo, setimgLogo] = useState('http://devapiv2.myclique.io/static/1665558531929085683.png')
-  const [daoName, setdaoName] = useState('asdas')
-  const [userName, setUserName] = useState('asdasd')
-  const [Introduction, setIntroduction] = useState('asdasd')
-  const [selectType, setSelectType] = useState('Social')
+  const [imgLogo, setimgLogo] = useState('')
+  const [daoName, setdaoName] = useState('')
+  const [userName, setUserName] = useState('')
+  const [Introduction, setIntroduction] = useState('')
+  const [selectType, setSelectType] = useState('')
 
   const CreateDaofn = useCallback(async () => {
     try {
       const res = await createDao(Introduction, selectType.split(','), imgLogo, daoName, userName)
+      console.log(Introduction, 89)
       console.log(res, 9)
     } catch (error) {
       console.log('Error occurred while creating DAO:', error)

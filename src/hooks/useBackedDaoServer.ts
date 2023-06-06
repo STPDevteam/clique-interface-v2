@@ -8,7 +8,8 @@ import {
   getDaoAdmins,
   getDaoInfo,
   getHomeDaoList,
-  getHomeOverview,
+  getDaoList,
+  // getHomeOverview,
   getJoinDaoMembersLogs,
   getMyJoinedDao,
   getTokenList,
@@ -90,6 +91,17 @@ export interface HomeListProp {
   members: number
   verified: boolean
   joinSwitch: boolean
+}
+export interface ListProp {
+  daoId: number
+  daoName: string
+  daoLogo: string
+  hanDle: string
+  iodBio: string
+  memberCount: number
+  proposalCount: number
+  activityProposalCount: number
+  approve: boolean
 }
 
 export function useHomeDaoList() {
@@ -183,6 +195,136 @@ export function useHomeDaoList() {
         }
         setTotal(data.total)
         const list: HomeListProp[] = data.list.map((item: any) => ({
+          daoName: item.daoName,
+          daoLogo: item.daoLogo,
+          daoAddress: item.daoAddress,
+          chainId: item.chainId,
+          proposals: item.totalProposals,
+          activeProposals: item.activeProposals,
+          soonProposals: item.soonProposals,
+          members: item.members,
+          verified: item.approve,
+          joinSwitch: item.joinSwitch
+        }))
+        setResult(list)
+        toTimeRefresh()
+      } catch (error) {
+        toTimeRefresh()
+        console.error('useHomeDao', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
+
+  return {
+    loading: loading,
+    page: {
+      setCurrentPage,
+      currentPage,
+      total,
+      totalPage: Math.ceil(total / pageSize),
+      pageSize
+    },
+    search: {
+      keyword,
+      setKeyword,
+      category,
+      setCategory
+    },
+    result
+  }
+}
+
+export function useDaoList() {
+  const {
+    data: { keyword, category, currentPage },
+    setKeyword,
+    setCategory,
+    setCurrentPage
+  } = useHomeListPaginationCallback()
+
+  const [firstLoadData, setFirstLoadData] = useState(true)
+  const { account } = useActiveWeb3React()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 8
+  const [result, setResult] = useState<ListProp[]>([])
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+
+  useEffect(() => {
+    if (firstLoadData) {
+      setFirstLoadData(false)
+      return
+    }
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyword, category])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getDaoList(
+          {
+            category,
+            keyword
+          },
+          (currentPage - 1) * pageSize,
+          pageSize
+        )
+
+        setLoading(false)
+        const data = res.data.data as any
+
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: ListProp[] = data.map((item: any) => ({
+          daoId: item.daoId,
+          daoName: item.daoName,
+          daoLogo: item.daoLogo,
+          hanDle: item.handle,
+          iodBio: item.bio,
+          memberCount: item.memberCount,
+          proposalCount: item.proposalCount,
+          activityProposalCount: item.activityProposalCount,
+          approve: item.approve
+        }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useHomeDao', error)
+      }
+    })()
+  }, [account, category, currentPage, keyword])
+
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1) {
+        toTimeRefresh()
+        return
+      }
+      try {
+        const res = await getDaoList(
+          {
+            category,
+            keyword
+          },
+          (currentPage - 1) * pageSize,
+          pageSize
+        )
+        const data = res.data.data as any
+        if (!data) {
+          return
+        }
+        setTotal(data.total)
+        const list: ListProp[] = data.list.map((item: any) => ({
           daoName: item.daoName,
           daoLogo: item.daoLogo,
           daoAddress: item.daoAddress,
@@ -539,7 +681,7 @@ export function useBackedDaoInfo(daoAddress: string, chainId: ChainId) {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getDaoInfo(account || undefined, daoAddress, chainId)
+        const res = await getDaoInfo(chainId)
         setLoading(false)
         const data = res.data.data
 
@@ -687,10 +829,10 @@ export function useDaoHandleQuery(handle: string) {
 }
 
 export interface HomeOverviewProp {
-  totalProposal: number
-  totalApproveDao: number
-  totalDao: number
-  totalAccount: number
+  totalProposal: string
+  totalApproveDao: string
+  totalDao: string
+  totalAccount: string
 }
 
 export function useHomeOverview(): HomeOverviewProp | undefined {
@@ -699,8 +841,10 @@ export function useHomeOverview(): HomeOverviewProp | undefined {
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await getHomeOverview()
-        const data = res.data.data as any
+        // const res = await getHomeOverview()
+        // const data = res.data.data as any
+        const data = { totalDao: 99, totalAccount: 999, totalProposal: 9999 }
+
         if (!data) {
           setOverview(undefined)
           return

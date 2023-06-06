@@ -4,8 +4,8 @@ export const routes = {
   Page: '/page/:chainId/:address',
 
   _DaoInfo: '/governance/daoInfo',
-  DaoInfo: '/governance/daoInfo/:chainId/:address',
-  Proposal: '/governance/daoInfo/:chainId/:address/proposal',
+  DaoInfo: '/governance/daoInfo/:daoId',
+  Proposal: '/governance/daoInfo/:daoId/proposal',
   CreateProposal: '/governance/daoInfo/:chainId/:address/proposal/create',
   ProposalDetail: '/governance/daoInfo/:chainId/:address/proposal/detail/:proposalId',
   DaoInfoActivity: '/governance/daoInfo/:chainId/:address/DAO_Rewards',

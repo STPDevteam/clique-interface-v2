@@ -18,9 +18,12 @@ import { ReactComponent as Tw } from 'assets/svg/tw.svg'
 import { ReactComponent as Wechat } from 'assets/svg/wechat.svg'
 import { ReactComponent as Email } from 'assets/svg/email.svg'
 import { useHomeTopList } from 'hooks/useBackedHomeServer'
-import { useHomeDaoList } from 'hooks/useBackedDaoServer'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
-import { HomeListProp } from 'hooks/useBackedDaoServer'
+// import { useHomeDaoList } from 'hooks/useBackedDaoServer'
+import { useDaoList } from 'hooks/useBackedDaoServer'
+// import { useDaoBaseInfo } from 'hooks/useDaoInfo'
+// import { HomeListProp } from 'hooks/useBackedDaoServer'
+import { ListProp } from 'hooks/useBackedDaoServer'
+
 import { routes } from 'constants/routes'
 
 const ColSentence = styled(Box)(() => ({
@@ -38,20 +41,17 @@ const ColSentence = styled(Box)(() => ({
 }))
 
 export function DaoItem({
-  daoAddress,
-  chainId,
+  daoId,
   daoName,
   daoLogo,
-  members,
-  verified,
-  activeProposals,
-  proposals,
-  joinSwitch
-}: HomeListProp) {
+  hanDle,
+  iodBio,
+  memberCount,
+  proposalCount,
+  activityProposalCount,
+  approve
+}: ListProp) {
   const history = useHistory()
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
-  console.log(verified, joinSwitch)
-
   return (
     <Box
       minWidth={281}
@@ -82,7 +82,7 @@ export function DaoItem({
         }
       }}
       onClick={() => {
-        history.push(routes._DaoInfo + `/${chainId}/${daoAddress}/proposal`)
+        history.push(routes._DaoInfo + `/${daoId}/proposal`)
       }}
     >
       <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'} gap={10}>
@@ -100,13 +100,14 @@ export function DaoItem({
               }}
             >
               {daoName}
+              {approve}
             </p>
             <Image src={tag} width={16}></Image>
           </Box>
-          <div style={{ fontSize: 14, textAlign: 'left' }}>@{daoBaseInfo?.handle}</div>
+          <div style={{ fontSize: 14, textAlign: 'left' }}>@{hanDle}</div>
         </Box>
       </Box>
-      <Typography className="des">{daoBaseInfo?.description}</Typography>
+      <Typography className="des">{iodBio}</Typography>
       <Box
         display={'flex'}
         justifyContent={'space-between'}
@@ -125,15 +126,15 @@ export function DaoItem({
       >
         <Box className="wrapper">
           <Image src={fans} alt=""></Image>
-          <p>{members}</p>
+          <p>{memberCount}</p>
         </Box>
         <Box className="wrapper">
           <Image src={comment} alt=""></Image>
-          <p>{proposals}</p>
+          <p>{proposalCount}</p>
         </Box>
         <Box className="wrapper">
           <Image src={msg} alt=""></Image>
-          <p>{activeProposals}</p>
+          <p>{activityProposalCount}</p>
         </Box>
       </Box>
     </Box>
@@ -143,7 +144,7 @@ export function DaoItem({
 export default function Home() {
   const history = useHistory()
   const { result } = useHomeTopList()
-  const { result: homeDaoList } = useHomeDaoList()
+  const { result: homeDaoList } = useDaoList()
   const showAll = useCallback(() => {
     history.push('/daos')
   }, [history])
@@ -204,7 +205,7 @@ export default function Home() {
         }}
       >
         {homeDaoList?.map(item => (
-          <DaoItem {...item} key={item.chainId} />
+          <DaoItem {...item} key={item.daoId} />
         ))}
       </Box>
       <ColSentence>

@@ -34,10 +34,27 @@ export function getHomeDaoList(
   if (category.trim()) {
     req.category = category === CategoriesTypeProp.ALL ? '' : category
   }
-  return Axios.get('stpdao/v2/dao/list', {
+  return Axios.get('stpdao/v3/dao/list', {
     ...req,
     offset,
     count
+  })
+}
+
+export function getDaoList(
+  { keyword, category }: { keyword: string; category: string },
+  offset: number,
+  limit: number
+) {
+  const req: any = {}
+  if (keyword.trim()) req.keyword = keyword.trim()
+  if (category.trim()) {
+    req.category = category === CategoriesTypeProp.ALL ? '' : category
+  }
+  return Axios.get('stpdao/v3/dao/list', {
+    ...req,
+    offset,
+    limit
   })
 }
 
@@ -224,12 +241,16 @@ export function getMembersCount(daoAddress: string, chainId: number) {
   })
 }
 
-export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
-  return Axios.get('stpdao/v2/dao/info', {
-    account: account || '',
-    daoAddress,
-    chainId
-  })
+// export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
+//   return Axios.get('stpdao/v2/dao/info', {
+//     account: account || '',
+//     daoAddress,
+//     chainId
+//   })
+// }
+
+export function getDaoInfo(daoId: number) {
+  return Axios.get('stpdao/v3/dao/info/' + { daoId })
 }
 
 export function getDaoAdmins(daoAddress: string, chainId: number) {
@@ -709,6 +730,6 @@ export function getV3DaoInfo(daoId: number) {
   return Axios.get(`/stpdao/v3/dao/info/${daoId}`)
 }
 
-export function createDao(jobBio: string, cateGory: string[], daoLogo: string, daoName: string, hanDle: string) {
-  return Axios.post('/stpdao/v3/dao/create', { jobBio, cateGory, daoLogo, daoName, hanDle })
+export function createDao(bio: string, category: string[], daoLogo: string, daoName: string, handle: string) {
+  return Axios.post('/stpdao/v3/dao/create', { bio, category, daoLogo, daoName, handle })
 }

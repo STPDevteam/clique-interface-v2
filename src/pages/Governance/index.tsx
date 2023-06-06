@@ -2,7 +2,8 @@ import SearchPanel from './SearchPanel'
 import { Grid, Box, Typography } from '@mui/material'
 import DaoItem from './DaoItem'
 import Pagination from 'components/Pagination'
-import { useHomeDaoList } from 'hooks/useBackedDaoServer'
+// import { useHomeDaoList } from 'hooks/useBackedDaoServer'
+import { useDaoList } from 'hooks/useBackedDaoServer'
 import HomeTabs from './HomeTabs'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
@@ -11,11 +12,11 @@ import useBreakpoint from 'hooks/useBreakpoint'
 
 export default function Home() {
   const {
-    result: homeDaoList,
+    result: list,
     page,
     loading,
     search: { keyword, setKeyword, category, setCategory }
-  } = useHomeDaoList()
+  } = useDaoList()
   const isSmDown = useBreakpoint('sm')
 
   return (
@@ -24,7 +25,7 @@ export default function Home() {
       <Box sx={{ mt: { sm: 12, xs: -24 } }}>
         <HomeTabs value={category} changeTab={val => setCategory(val)} />
         <Box minHeight={316}>
-          {!loading && !homeDaoList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+          {!loading && !list.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
             <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Loading sx={{ marginTop: 30 }} />
@@ -39,14 +40,13 @@ export default function Home() {
             }}
           >
             {!loading &&
-              homeDaoList.map(item => (
-                <Grid key={item.daoAddress + item.chainId} item lg={3} md={4} sm={6} xs={12}>
+              list.map(item => (
+                <Grid key={item.daoId} item lg={3} md={4} sm={6} xs={12}>
                   <DaoItem {...item} />
                 </Grid>
               ))}
           </Grid>
         </Box>
-
         <Box mt={20} display={'flex'} justifyContent="center">
           <Pagination
             count={page.totalPage}
