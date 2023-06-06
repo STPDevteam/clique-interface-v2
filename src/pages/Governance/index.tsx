@@ -3,7 +3,7 @@ import { Grid, Box, Typography } from '@mui/material'
 import DaoItem from './DaoItem'
 import Pagination from 'components/Pagination'
 // import { useHomeDaoList } from 'hooks/useBackedDaoServer'
-import { useDaoList } from 'hooks/useBackedDaoServer'
+import { useHomeDaoList } from 'hooks/useBackedDaoServer'
 import HomeTabs from './HomeTabs'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
@@ -16,7 +16,7 @@ export default function Home() {
     page,
     loading,
     search: { keyword, setKeyword, category, setCategory }
-  } = useDaoList()
+  } = useHomeDaoList()
   const isSmDown = useBreakpoint('sm')
 
   return (

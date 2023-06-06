@@ -42,15 +42,43 @@ export function getHomeDaoList(
 }
 
 export function getDaoList(
-  { keyword, category }: { keyword: string; category: string },
+  { keyword, categoryId }: { keyword: string; categoryId: string },
   offset: number,
   limit: number
 ) {
   const req: any = {}
+
   if (keyword.trim()) req.keyword = keyword.trim()
-  if (category.trim()) {
-    req.category = category === CategoriesTypeProp.ALL ? '' : category
+  // if (categoryId.trim()) {
+  //   req.category = categoryId === CategoriesTypeProp.ALL ? '' : categoryId
+  // }
+  switch (categoryId.trim()) {
+    case CategoriesTypeProp.Social:
+      req.categoryId = '1'
+      break
+    case CategoriesTypeProp.Protocol:
+      req.categoryId = '2'
+      break
+    case CategoriesTypeProp.NFT:
+      req.categoryId = '3'
+      break
+    case CategoriesTypeProp.Metaverse:
+      req.categoryId = '4'
+      break
+    case CategoriesTypeProp.Gaming:
+      req.categoryId = '5'
+      break
+    // case CategoriesTypeProp.Dapp:
+    //   req.category = '6'
+    //   break
+    case CategoriesTypeProp.Other:
+      req.categoryId = '7'
+      break
+    default:
+      req.categoryId = ''
+      break
   }
+
   return Axios.get('stpdao/v3/dao/list', {
     ...req,
     offset,

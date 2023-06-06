@@ -7,7 +7,7 @@ import {
   daoHandleQuery,
   getDaoAdmins,
   getDaoInfo,
-  getHomeDaoList,
+  // getHomeDaoList,
   getDaoList,
   // getHomeOverview,
   getJoinDaoMembersLogs,
@@ -80,18 +80,18 @@ export function useMyJoinedDao() {
   }
 }
 
-export interface HomeListProp {
-  daoName: string
-  daoLogo: string
-  daoAddress: string
-  chainId: ChainId
-  proposals: number
-  activeProposals: number
-  soonProposals: number
-  members: number
-  verified: boolean
-  joinSwitch: boolean
-}
+// export interface HomeListProp {
+//   daoName: string
+//   daoLogo: string
+//   daoAddress: string
+//   chainId: ChainId
+//   proposals: number
+//   activeProposals: number
+//   soonProposals: number
+//   members: number
+//   verified: boolean
+//   joinSwitch: boolean
+// }
 export interface ListProp {
   daoId: number
   daoName: string
@@ -104,138 +104,138 @@ export interface ListProp {
   approve: boolean
 }
 
+// export function useHomeDaoList() {
+//   const {
+//     data: { keyword, category, currentPage },
+//     setKeyword,
+//     setCategory,
+//     setCurrentPage
+//   } = useHomeListPaginationCallback()
+
+//   const [firstLoadData, setFirstLoadData] = useState(true)
+//   const { account } = useActiveWeb3React()
+//   const [loading, setLoading] = useState<boolean>(false)
+//   const [total, setTotal] = useState<number>(0)
+//   const pageSize = 8
+//   const [result, setResult] = useState<HomeListProp[]>([])
+//   const [timeRefresh, setTimeRefresh] = useState(-1)
+//   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+
+//   useEffect(() => {
+//     if (firstLoadData) {
+//       setFirstLoadData(false)
+//       return
+//     }
+//     setCurrentPage(1)
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [keyword, category])
+
+//   useEffect(() => {
+//     ;(async () => {
+//       setLoading(true)
+//       try {
+//         const res = await getHomeDaoList(
+//           {
+//             account: account || '',
+//             category,
+//             keyword
+//           },
+//           (currentPage - 1) * pageSize,
+//           pageSize
+//         )
+//         setLoading(false)
+//         const data = res.data.data as any
+//         if (!data) {
+//           setResult([])
+//           setTotal(0)
+//           return
+//         }
+//         setTotal(data.total)
+//         const list: HomeListProp[] = data.list.map((item: any) => ({
+//           daoName: item.daoName,
+//           daoLogo: item.daoLogo,
+//           daoAddress: item.daoAddress,
+//           chainId: item.chainId,
+//           proposals: item.totalProposals,
+//           activeProposals: item.activeProposals,
+//           soonProposals: item.soonProposals,
+//           members: item.members,
+//           verified: item.approve,
+//           joinSwitch: item.joinSwitch
+//         }))
+//         setResult(list)
+//       } catch (error) {
+//         setResult([])
+//         setTotal(0)
+//         setLoading(false)
+//         console.error('useHomeDao', error)
+//       }
+//     })()
+//   }, [account, category, currentPage, keyword])
+
+//   useEffect(() => {
+//     ;(async () => {
+//       if (timeRefresh === -1) {
+//         toTimeRefresh()
+//         return
+//       }
+//       try {
+//         const res = await getHomeDaoList(
+//           {
+//             account: account || '',
+//             category,
+//             keyword
+//           },
+//           (currentPage - 1) * pageSize,
+//           pageSize
+//         )
+//         const data = res.data.data as any
+//         if (!data) {
+//           return
+//         }
+//         setTotal(data.total)
+//         const list: HomeListProp[] = data.list.map((item: any) => ({
+//           daoName: item.daoName,
+//           daoLogo: item.daoLogo,
+//           daoAddress: item.daoAddress,
+//           chainId: item.chainId,
+//           proposals: item.totalProposals,
+//           activeProposals: item.activeProposals,
+//           soonProposals: item.soonProposals,
+//           members: item.members,
+//           verified: item.approve,
+//           joinSwitch: item.joinSwitch
+//         }))
+//         setResult(list)
+//         toTimeRefresh()
+//       } catch (error) {
+//         toTimeRefresh()
+//         console.error('useHomeDao', error)
+//       }
+//     })()
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [timeRefresh])
+
+//   return {
+//     loading: loading,
+//     page: {
+//       setCurrentPage,
+//       currentPage,
+//       total,
+//       totalPage: Math.ceil(total / pageSize),
+//       pageSize
+//     },
+//     search: {
+//       keyword,
+//       setKeyword,
+//       category,
+//       setCategory
+//     },
+//     result
+//   }
+// }
+
 export function useHomeDaoList() {
-  const {
-    data: { keyword, category, currentPage },
-    setKeyword,
-    setCategory,
-    setCurrentPage
-  } = useHomeListPaginationCallback()
-
-  const [firstLoadData, setFirstLoadData] = useState(true)
-  const { account } = useActiveWeb3React()
-  const [loading, setLoading] = useState<boolean>(false)
-  const [total, setTotal] = useState<number>(0)
-  const pageSize = 8
-  const [result, setResult] = useState<HomeListProp[]>([])
-  const [timeRefresh, setTimeRefresh] = useState(-1)
-  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
-
-  useEffect(() => {
-    if (firstLoadData) {
-      setFirstLoadData(false)
-      return
-    }
-    setCurrentPage(1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyword, category])
-
-  useEffect(() => {
-    ;(async () => {
-      setLoading(true)
-      try {
-        const res = await getHomeDaoList(
-          {
-            account: account || '',
-            category,
-            keyword
-          },
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
-        setLoading(false)
-        const data = res.data.data as any
-        if (!data) {
-          setResult([])
-          setTotal(0)
-          return
-        }
-        setTotal(data.total)
-        const list: HomeListProp[] = data.list.map((item: any) => ({
-          daoName: item.daoName,
-          daoLogo: item.daoLogo,
-          daoAddress: item.daoAddress,
-          chainId: item.chainId,
-          proposals: item.totalProposals,
-          activeProposals: item.activeProposals,
-          soonProposals: item.soonProposals,
-          members: item.members,
-          verified: item.approve,
-          joinSwitch: item.joinSwitch
-        }))
-        setResult(list)
-      } catch (error) {
-        setResult([])
-        setTotal(0)
-        setLoading(false)
-        console.error('useHomeDao', error)
-      }
-    })()
-  }, [account, category, currentPage, keyword])
-
-  useEffect(() => {
-    ;(async () => {
-      if (timeRefresh === -1) {
-        toTimeRefresh()
-        return
-      }
-      try {
-        const res = await getHomeDaoList(
-          {
-            account: account || '',
-            category,
-            keyword
-          },
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
-        const data = res.data.data as any
-        if (!data) {
-          return
-        }
-        setTotal(data.total)
-        const list: HomeListProp[] = data.list.map((item: any) => ({
-          daoName: item.daoName,
-          daoLogo: item.daoLogo,
-          daoAddress: item.daoAddress,
-          chainId: item.chainId,
-          proposals: item.totalProposals,
-          activeProposals: item.activeProposals,
-          soonProposals: item.soonProposals,
-          members: item.members,
-          verified: item.approve,
-          joinSwitch: item.joinSwitch
-        }))
-        setResult(list)
-        toTimeRefresh()
-      } catch (error) {
-        toTimeRefresh()
-        console.error('useHomeDao', error)
-      }
-    })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeRefresh])
-
-  return {
-    loading: loading,
-    page: {
-      setCurrentPage,
-      currentPage,
-      total,
-      totalPage: Math.ceil(total / pageSize),
-      pageSize
-    },
-    search: {
-      keyword,
-      setKeyword,
-      category,
-      setCategory
-    },
-    result
-  }
-}
-
-export function useDaoList() {
   const {
     data: { keyword, category, currentPage },
     setKeyword,
@@ -267,7 +267,7 @@ export function useDaoList() {
       try {
         const res = await getDaoList(
           {
-            category,
+            categoryId: category,
             keyword
           },
           (currentPage - 1) * pageSize,
@@ -276,14 +276,13 @@ export function useDaoList() {
 
         setLoading(false)
         const data = res.data.data as any
-
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
-        setTotal(data.total)
-        const list: ListProp[] = data.map((item: any) => ({
+        setTotal(res?.data.total)
+        const homeDaoList: ListProp[] = data.map((item: any) => ({
           daoId: item.daoId,
           daoName: item.daoName,
           daoLogo: item.daoLogo,
@@ -294,7 +293,8 @@ export function useDaoList() {
           activityProposalCount: item.activityProposalCount,
           approve: item.approve
         }))
-        setResult(list)
+
+        setResult(homeDaoList)
       } catch (error) {
         setResult([])
         setTotal(0)
@@ -313,30 +313,30 @@ export function useDaoList() {
       try {
         const res = await getDaoList(
           {
-            category,
+            categoryId: category,
             keyword
           },
           (currentPage - 1) * pageSize,
           pageSize
         )
+
         const data = res.data.data as any
         if (!data) {
           return
         }
-        setTotal(data.total)
-        const list: ListProp[] = data.list.map((item: any) => ({
+        setTotal(res?.data.total)
+        const homeDaoList: ListProp[] = data.map((item: any) => ({
+          daoId: item.daoId,
           daoName: item.daoName,
           daoLogo: item.daoLogo,
-          daoAddress: item.daoAddress,
-          chainId: item.chainId,
-          proposals: item.totalProposals,
-          activeProposals: item.activeProposals,
-          soonProposals: item.soonProposals,
-          members: item.members,
-          verified: item.approve,
-          joinSwitch: item.joinSwitch
+          hanDle: item.handle,
+          iodBio: item.bio,
+          memberCount: item.memberCount,
+          proposalCount: item.proposalCount,
+          activityProposalCount: item.activityProposalCount,
+          approve: item.approve
         }))
-        setResult(list)
+        setResult(homeDaoList)
         toTimeRefresh()
       } catch (error) {
         toTimeRefresh()

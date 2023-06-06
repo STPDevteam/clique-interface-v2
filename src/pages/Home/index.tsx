@@ -18,8 +18,7 @@ import { ReactComponent as Tw } from 'assets/svg/tw.svg'
 import { ReactComponent as Wechat } from 'assets/svg/wechat.svg'
 import { ReactComponent as Email } from 'assets/svg/email.svg'
 import { useHomeTopList } from 'hooks/useBackedHomeServer'
-// import { useHomeDaoList } from 'hooks/useBackedDaoServer'
-import { useDaoList } from 'hooks/useBackedDaoServer'
+import { useHomeDaoList } from 'hooks/useBackedDaoServer'
 // import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 // import { HomeListProp } from 'hooks/useBackedDaoServer'
 import { ListProp } from 'hooks/useBackedDaoServer'
@@ -144,7 +143,7 @@ export function DaoItem({
 export default function Home() {
   const history = useHistory()
   const { result } = useHomeTopList()
-  const { result: homeDaoList } = useDaoList()
+  const { result: homeDaoList } = useHomeDaoList()
   const showAll = useCallback(() => {
     history.push('/daos')
   }, [history])
