@@ -705,6 +705,10 @@ export function updateDaoGeneral(
   })
 }
 
+export function getV3DaoInfo(daoId: number) {
+  return Axios.get(`/stpdao/v3/dao/info/${daoId}`)
+}
+
 export function createDao(jobBio: string, cateGory: string[], daoLogo: string, daoName: string, hanDle: string) {
   return Axios.post('/stpdao/v3/dao/create', { jobBio, cateGory, daoLogo, daoName, hanDle })
 }

@@ -13,7 +13,7 @@ import { routes } from 'constants/routes'
 export default function Page() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
   const history = useHistory()
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const curDaoChainId = Number(daoChainId) as ChainId
   const { account } = useActiveWeb3React()
   const [status, setStatus] = useState<string | undefined>()
@@ -71,7 +71,6 @@ export default function Page() {
       setStatus('Join DAO')
     } else if (isJoined === '' || isJoined === undefined) setStatus('Join DAO')
     if (!account || !userSignature || isJoined === '' || isJoined === undefined) {
-      setOpen(true)
     } else {
       setOpen(false)
       return history.replace(routes.Proposal.replace(':chainId', daoChainId).replace(':address', daoAddress))

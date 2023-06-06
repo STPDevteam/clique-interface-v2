@@ -20,10 +20,12 @@ import {
   getApplyList,
   changeAdminRole,
   joinDAO,
-  updateDaoGeneral
+  updateDaoGeneral,
+  getV3DaoInfo
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
+import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 
 export function useMyJoinedDao() {
   const userInfo = useUserInfo()
@@ -796,4 +798,55 @@ export function useUpdateDaoGeneral() {
     },
     []
   )
+}
+
+export interface DaoInfoProps {
+  bio: string
+  daoCanCreateProposal: true
+  daoId: number
+  daoLogo: string
+  daoName: string
+  discord: string
+  github: string
+  governance: [
+    {
+      chainId: number
+      createRequire: string
+      decimals: number
+      symbol: string
+      tokenAddress: string
+      tokenLogo: string
+      tokenName: string
+      tokenType: string
+      voteTokenId: number
+      weight: number
+    }
+  ]
+  proposalThreshold: 'string'
+  twitter: 'string'
+  votingPeriod: 0
+  votingType: 0
+  website: 'string'
+}
+
+export function useGetDaoInfo(daoId: number) {
+  const [result, setResult] = useState<CreateDaoDataProp>()
+  useEffect(() => {
+    ;(async () => {
+      try {
+        if (!daoId) return
+        const res = await getV3DaoInfo(daoId)
+        const data = res.data.data as CreateDaoDataProp
+        if (!data) {
+          setResult(undefined)
+          return
+        }
+        setResult(data)
+      } catch (error) {
+        setResult(undefined)
+        console.error('useGetDaoInfo', error)
+      }
+    })()
+  }, [daoId])
+  return result
 }

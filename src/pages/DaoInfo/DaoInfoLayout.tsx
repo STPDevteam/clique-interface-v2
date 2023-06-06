@@ -17,7 +17,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
 
   useEffect(() => {
     if (!account || !userSignature || isJoined === '') {
-      history.replace('/page/' + daoChainId + '/' + daoAddress)
+      // history.replace('/page/' + daoChainId + '/' + daoAddress)
     }
   }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
 

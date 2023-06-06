@@ -55,6 +55,7 @@ import DaoBounty from './daoBounty'
 import DappStore from './TokenList/DappStore'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import DaoInfoUpdater from '../state/buildingGovDao/updater'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -128,6 +129,7 @@ export default function App() {
                     path={routes.DaoInfo}
                     render={() => (
                       <DaoInfoLayout>
+                        <DaoInfoUpdater />
                         <Switch>
                           <Route path={routes.DaoMember} exact strict component={Member} />
                           <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
