@@ -91,7 +91,8 @@ export default function Index() {
             <Box
               sx={{
                 height: 'calc(100vh - 80px)',
-                width: '700px'
+                width: '700px',
+                display: 'flex'
               }}
             >
               <img
@@ -100,7 +101,8 @@ export default function Index() {
                 style={{
                   height: '100%',
                   width: '700px',
-                  objectFit: 'cover'
+                  objectFit: 'cover',
+                  flexGrow: 1
                 }}
               />
             </Box>
