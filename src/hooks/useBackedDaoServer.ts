@@ -804,21 +804,9 @@ export function useTokenList(account: string, chainId: number | string) {
 }
 
 export function useDaoHandleQuery() {
-  const [available, setAvailable] = useState<boolean>(false)
-
-  const queryHandleCallback: any = useCallback(async (handle: string) => {
-    if (!handle.trim() || handle.trim().length < 4 || handle.trim().length > 20) {
-      console.log(handle, 1111)
-      setAvailable(false)
-      return
-    }
-    const res = await daoHandleQuery(handle.trim())
-    console.log(res, 99, handle)
-    const data = res.data.data
-    setAvailable(data || false)
+  return useCallback(async (handle: string) => {
+    return daoHandleQuery(handle.trim())
   }, [])
-
-  return { available, queryHandleCallback }
 }
 
 export interface HomeOverviewProp {

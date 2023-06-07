@@ -17,6 +17,8 @@ import { formCheckValid } from 'utils'
 import * as yup from 'yup'
 import { FormType } from 'pages/DaoInfo/Children/Settings/type'
 import { toast } from 'react-toastify'
+import { useState } from 'react'
+
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
   fontSize: '14px',
@@ -30,7 +32,7 @@ const InputStyle = styled(Input)(() => ({
 }))
 
 export default function Index() {
-  const validationSchema = yup.object({
+  const validationSchema = yup.object().shape({
     daoLogo: yup.string().required('Please upload your Dao picture'),
     daoName: yup
       .string()
@@ -47,14 +49,10 @@ export default function Index() {
     handle: yup
       .string()
       .trim()
-
       .required('Please enter your Organization Name')
-      .max(20, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
       .min(4, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
-      .when('daoHandleAvailable', {
-        is: true,
-        then: yup.string().required('Please enter your Organization Name')
-      }),
+      .max(20, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
+      .test('validate', 'Your Organization Username is invaild', () => daoHandleAvailable),
     Introduction: yup
       .string()
       .required('Please enter your Organization Introduction')
@@ -62,8 +60,16 @@ export default function Index() {
     category: yup.string().required(formCheckValid('category', FormType.Select))
   })
 
-  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery()
-  const initialValues = { Introduction: '', category: '', daoLogo: '', daoName: '', handle: '', daoHandleAvailable }
+  const queryHandleCallback = useDaoHandleQuery()
+  const [daoHandleAvailable, setDaoHanleAvailable] = useState(false)
+
+  const initialValues = {
+    Introduction: '',
+    category: '',
+    daoLogo: '',
+    daoName: '',
+    handle: ''
+  }
 
   const handleSubmit = async (values: any) => {
     const data = {
@@ -76,11 +82,10 @@ export default function Index() {
 
     const res = await createDao(data.bio, data.category, data.daoLogo, data.daoName, data.handle)
     if (res.data.code !== 200) {
-      toast.error('Network error')
+      toast.error(res.data.msg)
       return
     }
     toast.success('Create success')
-    console.log(res, 9)
   }
   return (
     <Formik
@@ -136,7 +141,6 @@ export default function Index() {
               </FormItem>
               <Box sx={{ mt: 30, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
                 <TitleStyle>Organization Name</TitleStyle>
-
                 <FormItem name="daoName" required>
                   <InputStyle
                     style={{ borderColor: errors.daoName && touched.daoName ? '#E46767' : '#D4D7E2' }}
@@ -154,23 +158,29 @@ export default function Index() {
                 <FormItem
                   name="handle"
                   required
-                  onBlur={() => {
-                    // setFieldValue('handle', '1')
-
-                    queryHandleCallback(values.handle)
-                    console.log('value=>', values.handle)
+                  onError={() => setDaoHanleAvailable(false)}
+                  onBlur={(e: any) => {
+                    const handle = e.target.value
+                    if ((handle.trim() && handle.trim().length < 4) || handle.trim().length > 20) {
+                      return
+                    }
+                    queryHandleCallback(handle.trim())
+                      .then(res => {
+                        if (!res.data.data) {
+                          setDaoHanleAvailable(false)
+                          return
+                        }
+                        setDaoHanleAvailable(res.data.data)
+                      })
+                      .catch(err => {
+                        console.log(err)
+                        setDaoHanleAvailable(false)
+                      })
                   }}
                 >
                   <Input
                     style={{ borderColor: errors.handle && touched.handle ? '#E46767' : '#D4D7E2' }}
                     value={values.handle}
-                    // onChange={e => {
-                    //   setFieldValue('handle', e.target.value)
-                    // }}
-                    // onUserBlur={e => {
-                    //   queryHandleCallback(e.target.value)
-                    //   console.log('value=>', e.target.value)
-                    // }}
                     placeholder="Enter organize userName"
                   />
                 </FormItem>

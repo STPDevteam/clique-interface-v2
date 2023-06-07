@@ -26,10 +26,10 @@ export default function Basic({ next }: { next: () => void }) {
   const { chainId, account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
-  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.handle)
+  const queryHandleCallback = useDaoHandleQuery()
 
   useEffect(() => {
-    queryHandleCallback(account || undefined, chainId || undefined)
+    queryHandleCallback(account ?? '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, chainId])
 
@@ -78,12 +78,12 @@ export default function Basic({ next }: { next: () => void }) {
         )
       }
     }
-    if (daoHandleAvailable !== true) {
-      return {
-        disabled: true,
-        error: 'DAO Handle on Clique unavailable'
-      }
-    }
+    // if (daoHandleAvailable !== true) {
+    //   return {
+    //     disabled: true,
+    //     error: 'DAO Handle on Clique unavailable'
+    //   }
+    // }
     return {
       disabled: false,
       handler: next
@@ -95,7 +95,6 @@ export default function Basic({ next }: { next: () => void }) {
     buildingDaoData.daoLogo,
     buildingDaoData.daoName,
     buildingDaoData.handle,
-    daoHandleAvailable,
     next,
     toggleWalletModal
   ])
@@ -153,8 +152,8 @@ export default function Basic({ next }: { next: () => void }) {
             maxLength={30}
             userPattern={'^[0-9a-z_]*$'}
             placeholder="Lowercase characters, numbers, underscores"
-            error={daoHandleAvailable === false}
-            onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
+            // error={daoHandleAvailable === false}
+            onBlur={() => queryHandleCallback(account ?? '')}
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
                 {buildingDaoData.handle.length}/30

@@ -49,10 +49,10 @@ export function CreateGovernanceModal() {
   const [step, setStep] = useState<CreateGovernanceStep>(CreateGovernanceStep.BASE_INFO)
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
-  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.handle)
+  const queryHandleCallback = useDaoHandleQuery()
 
   useEffect(() => {
-    queryHandleCallback(account || undefined, chainId || undefined)
+    queryHandleCallback(account ?? '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -120,12 +120,12 @@ export function CreateGovernanceModal() {
         )
       }
     }
-    if (daoHandleAvailable !== true) {
-      return {
-        disabled: true,
-        error: 'DAO Handle on Clique unavailable'
-      }
-    }
+    // if (daoHandleAvailable !== true) {
+    //   return {
+    //     disabled: true,
+    //     error: 'DAO Handle on Clique unavailable'
+    //   }
+    // }
     return {
       disabled: false,
       handler: () => setStep(CreateGovernanceStep.CONFIG)
@@ -137,7 +137,6 @@ export function CreateGovernanceModal() {
     buildingDaoData.daoLogo,
     buildingDaoData.daoName,
     buildingDaoData.handle,
-    daoHandleAvailable,
     toggleWalletModal
   ])
 
@@ -271,8 +270,8 @@ export function CreateGovernanceModal() {
                   placeholder="Lowercase characters, numbers, underscores"
                   userPattern={'^[0-9a-z_]*$'}
                   maxLength={30}
-                  error={daoHandleAvailable === false}
-                  onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
+                  // error={daoHandleAvailable === false}
+                  onBlur={() => queryHandleCallback(account ?? '')}
                   endAdornment={
                     <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
                       {buildingDaoData.handle.length}/30
