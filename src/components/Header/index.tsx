@@ -11,8 +11,6 @@ import logo from '../../assets/svg/logo.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
-import { useDaoInfo } from 'hooks/useDaoInfo'
-import { ChainId } from 'constants/chain'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -25,6 +23,8 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 
 import PopperCard from 'components/PopperCard'
 import LoginModal from './LoginModal'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 
 interface TabContent {
   title: string
@@ -291,15 +291,17 @@ export default function Header() {
   }, [])
 
   const { pathname } = useLocation()
-  const [daoChainId, daoAddress] = useMemo(() => {
+  const daoId = useMemo(() => {
     const path = pathname.split('/')
-    return [path[3], path[4]]
+    return path[3]
   }, [pathname])
-  const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
+  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  console.log(daoId)
 
-  const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\/0x[\da-zA-Z]+\//, ''), [pathname])
+  const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
+
   const makeBreadcrumbs = useMemo(() => {
-    if (!daoInfo?.name) {
+    if (!daoInfo?.daoName) {
       return []
     }
     const _list = curPath.split('/').map(v => {
@@ -308,8 +310,8 @@ export default function Header() {
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
-    return [daoInfo.name, ..._list]
-  }, [curPath, daoInfo?.name])
+    return [daoInfo.daoName, ..._list]
+  }, [curPath, daoInfo?.daoName])
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 

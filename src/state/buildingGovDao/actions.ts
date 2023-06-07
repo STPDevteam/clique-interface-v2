@@ -23,21 +23,36 @@ export enum CategoriesTypeProp {
 }
 
 export interface CreateDaoDataProp {
+  bio: string
+  daoCanCreateProposal: boolean
   daoName: string
   daoHandle: string
-  description: string
-  daoImage: string
-  githubLink: string
-  websiteLink: string
-  twitterLink: string
-  discordLink: string
-  baseChainId: number | undefined
-  tokenAddress: string
-  createProposalMinimum: string
-  executeMinimum: string
-  defaultVotingPeriod: number
-  votingTypes: VotingTypes | undefined
-  category: string
+  daoLogo: string
+  github: string
+  website: string
+  twitter: string
+  discord: string
+  // category: '',
+  daoId: number
+  governance: [
+    {
+      chainId: number
+      createRequire: string
+      decimals: number
+      symbol: string
+      tokenAddress: string
+      tokenLogo: string
+      tokenName: string
+      tokenType: string
+      voteTokenId: number
+      weight: number
+    }
+  ]
+  proposalThreshold: ''
+  // createProposalMinimum: '',
+  // executeMinimum: '',
+  votingPeriod: 0
+  votingTypes: VotingTypes.ANY
 }
 
 export const updateCreateDaoData = createAction<{ createDaoData: CreateDaoDataProp }>('buildingDao/updateCreateDaoData')
