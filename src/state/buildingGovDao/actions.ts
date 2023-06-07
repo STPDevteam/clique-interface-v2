@@ -32,8 +32,10 @@ export interface CreateDaoDataProp {
   website: string
   twitter: string
   discord: string
-  category: string[]
+  category: string
   daoId: number
+  chainID: number
+  tokenAddr: string
   governance: [
     {
       chainId: number
@@ -48,7 +50,9 @@ export interface CreateDaoDataProp {
       weight: number
     }
   ]
-  proposalThreshold: ''
+  createProposalMinimum: string
+  executeMinimum: string
+  proposalThreshold: string
   votingPeriod: 0
   votingTypes: VotingTypes.ANY
 }

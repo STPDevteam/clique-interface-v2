@@ -16,8 +16,10 @@ const initialDaoDataState: BuildingDaoData = {
     website: '',
     twitter: '',
     discord: '',
-    category: [''],
+    category: '',
     daoId: 0,
+    chainID: 0,
+    tokenAddr: '',
     governance: [
       {
         chainId: 0,
@@ -33,6 +35,8 @@ const initialDaoDataState: BuildingDaoData = {
       }
     ],
     proposalThreshold: '',
+    createProposalMinimum: '',
+    executeMinimum: '',
     votingPeriod: 0,
     votingTypes: VotingTypes.ANY
   }

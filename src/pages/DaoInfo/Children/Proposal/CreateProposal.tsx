@@ -8,25 +8,22 @@ import OutlineButton from 'components/Button/OutlineButton'
 import Button, { BlackButton } from 'components/Button/Button'
 import { useHistory, useParams } from 'react-router'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
-import { DaoInfoProp, useDaoInfo } from 'hooks/useDaoInfo'
-import { ChainId, ChainListMap } from 'constants/chain'
+import { CreateDaoDataProp, VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
+import { ChainListMap } from 'constants/chain'
 // import Loading from 'components/Loading'
 import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useCreateProposalCallback } from 'hooks/useProposalCallback'
-import { useProposalSign } from 'hooks/useProposalInfo'
-import { TokenAmount } from 'constants/token'
+import { Token, TokenAmount } from 'constants/token'
 import JSBI from 'jsbi'
-import useModal from 'hooks/useModal'
-import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import Editor from './Editor'
 import { routes } from 'constants/routes'
 import DaoContainer from 'components/DaoContainer'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { toast } from 'react-toastify'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -51,20 +48,15 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 }))
 
 export default function CreateProposal() {
-  const { chainId: daoChainId, address: daoAddress } = useParams<{ chainId: string; address: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
 
-  return daoInfo ? (
-    <CreateForm daoChainId={curDaoChainId} daoInfo={daoInfo} />
-  ) : (
-    <CreateForm daoChainId={0} daoInfo={1} />
-  )
+  return daoInfo ? <CreateForm daoId={Number(daoId)} daoInfo={daoInfo} /> : <CreateForm daoId={0} daoInfo={daoInfo} />
 }
 
-function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
+function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
   const history = useHistory()
-  const { showModal, hideModal } = useModal()
+  const createProposalSign = '0'
   const { chainId, account, library } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const [title, setTitle] = useState('')
@@ -72,78 +64,50 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   const [introduction, setIntroduction] = useState('')
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
-  const [voteType, setVoteType] = useState<VotingTypes>(
-    daoInfo.votingType !== VotingTypes.MULTI ? VotingTypes.SINGLE : VotingTypes.MULTI
-  )
+  const [voteType, setVoteType] = useState<VotingTypes>(daoInfo.votingTypes)
   const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
-  const createProposalCallback = useCreateProposalCallback(daoInfo.daoAddress)
-  const createProposalSign = useProposalSign(daoInfo.daoAddress, daoChainId)
+  const createProposalCallback = useCreateProposalCallback()
 
   const myBalance = useMemo(() => {
-    if (!daoInfo.token || !createProposalSign) {
+    if (!daoInfo.governance[0].tokenAddress || !createProposalSign) {
       return undefined
     }
-    return new TokenAmount(daoInfo.token, JSBI.BigInt(createProposalSign?.balance || '0'))
-  }, [createProposalSign, daoInfo.token])
+    const _token = new Token(
+      daoInfo.governance[0].chainId,
+      daoInfo.governance[0].tokenAddress,
+      daoInfo.governance[0].decimals,
+      daoInfo.governance[0].symbol
+    )
+    return new TokenAmount(_token, JSBI.BigInt(createProposalSign || '0'))
+  }, [daoInfo.governance])
 
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/proposal`)
-  }, [daoChainId, daoInfo.daoAddress, history])
+    history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+  }, [daoId, history])
 
   const onCreateProposal = useCallback(() => {
-    if (
-      !createProposalSign ||
-      account?.toLowerCase() !== createProposalSign.account?.toLowerCase() ||
-      !startTime ||
-      !endTime
-    )
-      return
-    showModal(<TransacitonPendingModal />)
+    if (!startTime || !endTime) return
     createProposalCallback(
-      title,
-      introduction,
       content,
-      startTime,
+      daoId,
       endTime,
-      voteType,
+      introduction,
       voteOption.filter(i => i),
-      {
-        chainId: createProposalSign.tokenChainId,
-        balance: createProposalSign.balance,
-        tokenAddress: createProposalSign.tokenAddress,
-        signType: 0,
-        deadline: createProposalSign.deadline
-      },
-      createProposalSign.signature
+      startTime,
+      title,
+      [0],
+      voteType
     )
-      .then(hash => {
-        hideModal()
-        showModal(<TransactionSubmittedModal hideFunc={toList} hash={hash} />)
+      .then(res => {
+        console.log(res)
+        toast.success('create proposal success')
+        toList()
       })
       .catch((err: any) => {
-        hideModal()
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
+        toast.error('network error')
+        console.log(err)
       })
-  }, [
-    createProposalSign,
-    account,
-    introduction,
-    startTime,
-    endTime,
-    showModal,
-    createProposalCallback,
-    title,
-    content,
-    voteType,
-    voteOption,
-    hideModal,
-    toList
-  ])
+  }, [startTime, endTime, createProposalCallback, content, daoId, introduction, voteOption, title, voteType, toList])
 
   const paramsCheck: {
     disabled: boolean
@@ -207,7 +171,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
         )
       }
     }
-    if (daoChainId !== chainId) {
+    if (daoInfo.chainID !== chainId) {
       return {
         disabled: true,
         error: (
@@ -215,11 +179,11 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
             You need{' '}
             <Link
               sx={{ cursor: 'pointer' }}
-              onClick={() => daoChainId && triggerSwitchChain(library, daoChainId, account)}
+              onClick={() => daoInfo.chainID && triggerSwitchChain(library, daoInfo.chainID, account)}
             >
               switch
             </Link>{' '}
-            to {ChainListMap[daoChainId].name}
+            to {ChainListMap[daoInfo.chainID].name}
           </>
         )
       }
@@ -236,7 +200,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   }, [
     account,
     chainId,
-    daoChainId,
+    daoInfo.chainID,
     daoInfo.proposalThreshold,
     endTime,
     library,
@@ -277,14 +241,14 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
                   value={startTime ? new Date(startTime * 1000) : null}
                   onValue={timestamp => {
                     setStartTime(timestamp)
-                    if (!daoInfo.isCustomVotes) {
+                    if (!daoInfo.votingPeriod) {
                       setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
                     }
                   }}
                 ></DateTimePicker>
                 <LabelText>End Time</LabelText>
                 <DateTimePicker
-                  disabled={!daoInfo.isCustomVotes}
+                  disabled={!daoInfo.votingPeriod}
                   minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                   value={endTime ? new Date(endTime * 1000) : null}
                   onValue={timestamp => setEndTime(timestamp)}
@@ -294,7 +258,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
               <Box>
                 <LabelText mb={6}>Voting Type</LabelText>
 
-                {daoInfo.votingType === VotingTypes.ANY ? (
+                {daoInfo.votingTypes === VotingTypes.ANY ? (
                   <StyledButtonGroup variant="outlined">
                     <MuiButton
                       className={voteType === VotingTypes.SINGLE ? 'active' : ''}
@@ -310,7 +274,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
                     </MuiButton>
                   </StyledButtonGroup>
                 ) : (
-                  <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
+                  <Button height="36px">{VotingTypesName[daoInfo.votingTypes]}</Button>
                 )}
               </Box>
 
@@ -320,14 +284,14 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
                 <RowCenter>
                   <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
                   <LabelText>
-                    {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '}
-                    {daoInfo.token?.symbol}
+                    {/* {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '} */}
+                    {/* {daoInfo.token?.symbol} */}
                   </LabelText>
                 </RowCenter>
                 <RowCenter>
                   <LabelText>Balance</LabelText>
                   <LabelText>
-                    {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
+                    {/* {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol} */}
                   </LabelText>
                 </RowCenter>
               </Box>

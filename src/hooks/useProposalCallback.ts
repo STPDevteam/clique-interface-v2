@@ -5,89 +5,31 @@ import { useActiveWeb3React } from '.'
 import { useGovernanceDaoContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
-import { commitErrorMsg, saveProposalContent } from 'utils/fetch/server'
+import { commitErrorMsg, createProposal } from 'utils/fetch/server'
 
 export enum SignType {
   CREATE_PROPOSAL,
   VOTE
 }
 
-export function useCreateProposalCallback(daoAddress: string) {
-  const addTransaction = useTransactionAdder()
-  const contract = useGovernanceDaoContract(daoAddress)
-  const { account } = useActiveWeb3React()
-  const gasPriceInfoCallback = useGasPriceInfo()
-
+export function useCreateProposalCallback() {
   return useCallback(
     async (
-      title: string,
-      introduction: string,
       content: string,
-      startTime: number,
+      daoId: number,
       endTime: number,
-      votingType: number,
+      introduction: string,
       options: string[],
-      extra: {
-        chainId: number
-        tokenAddress: string
-        balance: string
-        signType: number
-        deadline: number
-      },
-      signature: string
+      startTime: number,
+      title: string,
+      voteTokenId: number[],
+      voteType: number
     ) => {
-      if (!account) throw new Error('none account')
-      if (!contract) throw new Error('none contract')
-
-      let contentTag = ''
-      if (content.trim()) {
-        try {
-          const contentRes = await saveProposalContent(content.trim())
-          contentTag = contentRes.data.data.uuid
-        } catch (error) {
-          throw new Error('Upload failed, please try again.')
-        }
-      }
-
-      const args = [
-        [title, introduction, contentTag, startTime, endTime, votingType],
-        options,
-        [extra.chainId, extra.tokenAddress, extra.balance, extra.signType, extra.deadline],
-        signature
-      ]
-
-      const method = 'createProposal'
-      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
-
-      return contract[method](...args, {
-        gasPrice,
-        gasLimit,
-        from: account
-      })
-        .then((response: TransactionResponse) => {
-          addTransaction(response, {
-            summary: `Create a proposal`
-          })
-          return response.hash
-        })
-        .catch((err: any) => {
-          if (err.code !== 4001) {
-            commitErrorMsg(
-              'useCreateProposalCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
-              method,
-              JSON.stringify(args)
-            )
-            ReactGA.event({
-              category: `catch-${method}`,
-              action: `${err?.error?.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
-              label: JSON.stringify(args)
-            })
-          }
-          throw err
-        })
+      return createProposal(content, daoId, endTime, introduction, options, startTime, title, voteTokenId, voteType)
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
     },
-    [account, contract, gasPriceInfoCallback, addTransaction]
+    []
   )
 }
 

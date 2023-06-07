@@ -10,7 +10,6 @@ import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
 import { useIsJoined, useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
 import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
 
@@ -68,13 +67,13 @@ const StyledTabs = styled('div')(({ theme }) => ({
 
 export default function Member() {
   const [rand, setRand] = useState(Math.random())
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { address: daoAddress, daoId: daoId } = useParams<{ address: string; daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
-  const curDaoChainId = Number(daoChainId) as ChainId
+  const curDaoId = Number(daoId)
   useCallback(() => {}, [])
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
-  const { result: applyList } = useJobsApplyList(daoAddress, Number(daoChainId), rand)
-  const { result: jobsList } = useJobsList('', daoAddress, Number(daoChainId))
+  const { isJoined } = useIsJoined(curDaoId)
+  const { result: applyList } = useJobsApplyList(daoAddress, curDaoId, rand)
+  const { result: jobsList } = useJobsList('', daoAddress, curDaoId)
 
   const tabList = !isJoined
     ? []
@@ -181,7 +180,7 @@ export default function Member() {
         ) : tabValue === 1 ? (
           <JobApplication
             result={applyList}
-            daoChainId={curDaoChainId}
+            daoChainId={curDaoId}
             daoAddress={daoAddress}
             reFetch={() => setRand(Math.random())}
           />

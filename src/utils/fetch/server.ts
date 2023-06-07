@@ -757,3 +757,27 @@ export function getV3DaoInfo(daoId: number) {
 export function createDao(bio: string, category: string[], daoLogo: string, daoName: string, handle: string) {
   return Axios.post('/stpdao/v3/dao/create', { bio, category, daoLogo, daoName, handle })
 }
+
+export function createProposal(
+  content: string,
+  daoId: number,
+  endTime: number,
+  introduction: string,
+  options: string[],
+  startTime: number,
+  title: string,
+  voteTokenId: number[],
+  voteType: number
+) {
+  return Axios.post('stpdao/v3/proposal/create', {
+    content,
+    daoId,
+    endTime,
+    introduction,
+    options,
+    startTime,
+    title,
+    voteTokenId,
+    voteType
+  })
+}
