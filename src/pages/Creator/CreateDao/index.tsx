@@ -88,7 +88,8 @@ export default function Index() {
             <Box
               sx={{
                 height: 'calc(100vh - 80px)',
-                width: '700px',
+                width: '600px',
+                minWidth: 600,
                 display: 'flex'
               }}
             >
@@ -97,7 +98,7 @@ export default function Index() {
                 alt=""
                 style={{
                   height: '100%',
-                  width: '700px',
+                  width: '100%',
                   objectFit: 'cover',
                   flexGrow: 1
                 }}
@@ -156,7 +157,7 @@ export default function Index() {
                 </FormItem>
               </Box>
               <Box sx={{ mt: 16, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
-                <TitleStyle>Introduction{values.Introduction} </TitleStyle>
+                <TitleStyle>Introduction </TitleStyle>
                 <FormItem name="Introduction" required>
                   <InputStyle
                     style={{ borderColor: errors.Introduction && touched.Introduction ? '#E46767' : '#D4D7E2' }}

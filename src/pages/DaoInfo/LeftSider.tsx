@@ -20,12 +20,12 @@ import { routes } from 'constants/routes'
 // import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
 import { useCallback, useMemo } from 'react'
-import { useDaoBaseInfo, useDaoInfo } from 'hooks/useDaoInfo'
-import { ChainId } from 'constants/chain'
 import { DaoAvatars } from 'components/Avatars'
 // import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -154,21 +154,13 @@ export interface LeftSiderMenu {
   children?: LeftSiderMenu[]
 }
 
-export function DaoItem({
-  chainId,
-  daoAddress,
-  daoName
-}: {
-  chainId: ChainId | undefined
-  daoAddress: string
-  daoName: string
-}) {
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
+export function DaoItem() {
+  const daoBaseInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
 
   return (
     <Item>
-      <DaoAvatars size={24} src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.name || daoName} />
-      <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
+      <DaoAvatars size={24} src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.daoName || '-'} />
+      <Text noWrap>{daoBaseInfo?.daoName || '-'}</Text>
     </Item>
   )
 }
@@ -176,14 +168,14 @@ export function DaoItem({
 export default function LeftSider() {
   const { pathname } = useLocation()
   const history = useHistory()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const makeRouteLink = useCallback(
     (route: string) => {
-      return route.replace(':chainId', daoChainId).replace(':address', daoAddress)
+      return route.replace(':daoId', daoId)
     },
-    [daoAddress, daoChainId]
+    [daoId]
   )
 
   const menuList = useMemo(
@@ -316,7 +308,7 @@ export default function LeftSider() {
                     textAlign: 'left'
                   }}
                 >
-                  {daoInfo?.name || '-'}
+                  {daoInfo?.daoName || '-'}
                 </Typography>
                 <ArrowIcon />
               </Box>
@@ -326,9 +318,9 @@ export default function LeftSider() {
               {myJoinedDaoList.map(option => (
                 <Box
                   key={option.daoAddress + option.chainId}
-                  onClick={() => history.push(`${routes._DaoInfo}/${option.chainId}/${option.daoAddress}`)}
+                  onClick={() => history.push(`${routes._DaoInfo}/${option.chainId}`)}
                 >
-                  <DaoItem chainId={option.chainId} daoName={option.daoName} daoAddress={option.daoAddress} />
+                  <DaoItem />
                 </Box>
               ))}
             </>

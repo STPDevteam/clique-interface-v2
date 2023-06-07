@@ -7,20 +7,35 @@ interface BuildingDaoData {
 
 const initialDaoDataState: BuildingDaoData = {
   createDaoData: {
+    bio: '',
+    daoCanCreateProposal: true,
     daoName: '',
     daoHandle: '',
-    description: '',
-    daoImage: '',
-    githubLink: '',
-    websiteLink: '',
-    twitterLink: '',
-    discordLink: '',
-    category: '',
-    baseChainId: undefined,
-    tokenAddress: '',
-    createProposalMinimum: '',
-    executeMinimum: '',
-    defaultVotingPeriod: 86400 * 3,
+    daoLogo: '',
+    github: '',
+    website: '',
+    twitter: '',
+    discord: '',
+    // category: '',
+    daoId: 0,
+    governance: [
+      {
+        chainId: 0,
+        createRequire: '',
+        decimals: 0,
+        symbol: '',
+        tokenAddress: '',
+        tokenLogo: '',
+        tokenName: '',
+        tokenType: '',
+        voteTokenId: 0,
+        weight: 0
+      }
+    ],
+    proposalThreshold: '',
+    // createProposalMinimum: '',
+    // executeMinimum: '',
+    votingPeriod: 0,
     votingTypes: VotingTypes.ANY
   }
 }
