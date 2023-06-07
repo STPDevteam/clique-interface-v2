@@ -71,7 +71,7 @@ export function getDaoList(
     //   req.category = '6'
     //   break
     case CategoriesTypeProp.Other:
-      req.categoryId = '7'
+      req.categoryId = '6'
       break
     default:
       req.categoryId = ''

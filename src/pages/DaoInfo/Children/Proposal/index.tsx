@@ -1,36 +1,36 @@
-import { Box, Grid, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import Button from 'components/Button/Button'
-import Select from 'components/Select/Select'
-import { ProposalStatus } from 'hooks/useProposalInfo'
-import ProposalItem from './ProposalItem'
+// import Select from 'components/Select/Select' MenuItem Grid
+// import { ProposalStatus } from 'hooks/useProposalInfo'
+// import ProposalItem from './ProposalItem'
 import { useHistory, useParams } from 'react-router'
 import { routes } from 'constants/routes'
-import { useProposalBaseList } from 'hooks/useBackedProposalServer'
-import DelayLoading from 'components/DelayLoading'
-import EmptyData from 'components/EmptyData'
-import Loading from 'components/Loading'
-import Pagination from 'components/Pagination'
+// import { useProposalBaseList } from 'hooks/useBackedProposalServer'
+// import DelayLoading from 'components/DelayLoading'
+// import EmptyData from 'components/EmptyData'
+// import Loading from 'components/Loading'
+// import Pagination from 'components/Pagination'
 import useBreakpoint from 'hooks/useBreakpoint'
 import DaoContainer from 'components/DaoContainer'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 
-const itemList = [
-  { value: undefined, label: 'All Proposals' },
-  { value: ProposalStatus.SOON, label: 'Soon' },
-  { value: ProposalStatus.OPEN, label: 'Active' },
-  { value: ProposalStatus.CLOSED, label: 'Closed' }
-]
+// const itemList = [
+//   { value: undefined, label: 'All Proposals' },
+//   { value: ProposalStatus.SOON, label: 'Soon' },
+//   { value: ProposalStatus.OPEN, label: 'Active' },
+//   { value: ProposalStatus.CLOSED, label: 'Closed' }
+// ]
 
 export default function Proposal() {
   const history = useHistory()
-  const params = useParams<{ chainId: string; address: string }>()
+  const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
-  const {
-    search: { status: currentProposalStatus, setStatus: setCurrentProposalStatus },
-    loading,
-    result: proposalBaseList,
-    page
-  } = useProposalBaseList(Number(params.chainId), params.address)
+  // const {
+  //   search: { status: currentProposalStatus, setStatus: setCurrentProposalStatus },
+  //   loading,
+  //   result: proposalBaseList,
+  //   page
+  // } = useProposalBaseList(Number(0), '')
 
   return (
     <DaoContainer>
@@ -71,11 +71,11 @@ export default function Proposal() {
               height={isSmDown ? '30px' : '36px'}
               borderRadius={isSmDown ? '8px' : undefined}
               style={{ fontWeight: 700 }}
-              onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
+              onClick={() => history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)}
             >
               + Create A Proposal
             </Button>
-            <Select
+            {/* <Select
               noBold
               placeholder=""
               style={{ fontWeight: 500, fontSize: 14 }}
@@ -94,11 +94,11 @@ export default function Proposal() {
                   {item.label}
                 </MenuItem>
               ))}
-            </Select>
+            </Select> */}
           </Stack>
         </Box>
         {/* <Box>ashdjkasjk</Box> */}
-        <Box minHeight={200}>
+        {/* <Box minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
             <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -114,15 +114,15 @@ export default function Proposal() {
                 </Box>
               ))}
           </Grid>
-        </Box>
-
+        </Box> */}
+        {/* 
         <Box mt={20} display={'flex'} justifyContent="center">
           <Pagination
             count={page.totalPage}
             page={page.currentPage}
             onChange={(_, value) => page.setCurrentPage(value)}
           />
-        </Box>
+        </Box> */}
         <Typography variant="body2" textAlign={'right'} sx={{ color: theme => theme.palette.text.secondary }}>
           Notice: Newly created proposal will appear here in a few minutes.
         </Typography>

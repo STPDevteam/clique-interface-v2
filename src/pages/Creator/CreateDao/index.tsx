@@ -30,9 +30,6 @@ const InputStyle = styled(Input)(() => ({
 }))
 
 export default function Index() {
-  // useCallback(async () => {
-
-  // }, [])
   const initialValues = { Introduction: '', category: '', daoLogo: '', daoName: '', handle: '' }
   const validationSchema = yup.object({
     daoLogo: yup.string().required('Please upload your Dao picture'),
