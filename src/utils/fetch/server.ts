@@ -595,11 +595,9 @@ export function getAccountSendRecordList(account: string, offset: number, count:
   })
 }
 
-export function daoHandleQuery(handle: string, account: string, chainId: number) {
-  return Axios.get('stpdao/v2/sign/query/handle', {
-    handle,
-    account,
-    chainId
+export function daoHandleQuery(handle: string) {
+  return Axios.get('stpdao/v3/dao/handle/check', {
+    handle
   })
 }
 

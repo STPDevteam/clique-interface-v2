@@ -10,7 +10,7 @@ import Input from 'components/Input'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Back from 'components/Back'
 import { createDao } from 'utils/fetch/server'
-// import { useCallback } from 'react'
+import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 import FormItem from 'components/FormItem'
 import { Form, Formik } from 'formik'
 import { formCheckValid } from 'utils'
@@ -30,7 +30,6 @@ const InputStyle = styled(Input)(() => ({
 }))
 
 export default function Index() {
-  const initialValues = { Introduction: '', category: '', daoLogo: '', daoName: '', handle: '' }
   const validationSchema = yup.object({
     daoLogo: yup.string().required('Please upload your Dao picture'),
     daoName: yup
@@ -48,15 +47,23 @@ export default function Index() {
     handle: yup
       .string()
       .trim()
+
       .required('Please enter your Organization Name')
       .max(20, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
-      .min(4, 'Allow only a minimum of 4 letters and a maximum of 20 letters.'),
+      .min(4, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
+      .when('daoHandleAvailable', {
+        is: true,
+        then: yup.string().required('Please enter your Organization Name')
+      }),
     Introduction: yup
       .string()
       .required('Please enter your Organization Introduction')
       .trim(),
     category: yup.string().required(formCheckValid('category', FormType.Select))
   })
+
+  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery()
+  const initialValues = { Introduction: '', category: '', daoLogo: '', daoName: '', handle: '', daoHandleAvailable }
 
   const handleSubmit = async (values: any) => {
     const data = {
@@ -123,7 +130,6 @@ export default function Index() {
                     value={values.daoLogo}
                     onChange={val => {
                       setFieldValue('daoLogo', val)
-                      console.log(val, 123)
                     }}
                   />
                 </Box>
@@ -145,13 +151,26 @@ export default function Index() {
                 <Typography variant="body2" sx={{ lineHeight: '20px', fontSize: 14, mt: 8 }}>
                   Organize username must be between 4-20 characters and contain letters, numbers and underscores only.
                 </Typography>
-                <FormItem name="handle" required>
-                  <InputStyle
+                <FormItem
+                  name="handle"
+                  required
+                  onBlur={() => {
+                    // setFieldValue('handle', '1')
+
+                    queryHandleCallback(values.handle)
+                    console.log('value=>', values.handle)
+                  }}
+                >
+                  <Input
                     style={{ borderColor: errors.handle && touched.handle ? '#E46767' : '#D4D7E2' }}
                     value={values.handle}
-                    onChange={e => {
-                      setFieldValue('handle', e.target.value)
-                    }}
+                    // onChange={e => {
+                    //   setFieldValue('handle', e.target.value)
+                    // }}
+                    // onUserBlur={e => {
+                    //   queryHandleCallback(e.target.value)
+                    //   console.log('value=>', e.target.value)
+                    // }}
                     placeholder="Enter organize userName"
                   />
                 </FormItem>
