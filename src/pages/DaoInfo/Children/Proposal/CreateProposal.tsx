@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
 import { DaoInfoProp, useDaoInfo } from 'hooks/useDaoInfo'
 import { ChainId, ChainListMap } from 'constants/chain'
-import Loading from 'components/Loading'
+// import Loading from 'components/Loading'
 import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -55,7 +55,11 @@ export default function CreateProposal() {
   const curDaoChainId = Number(daoChainId) as ChainId
   const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
 
-  return daoInfo ? <CreateForm daoChainId={curDaoChainId} daoInfo={daoInfo} /> : <Loading />
+  return daoInfo ? (
+    <CreateForm daoChainId={curDaoChainId} daoInfo={daoInfo} />
+  ) : (
+    <CreateForm daoChainId={0} daoInfo={1} />
+  )
 }
 
 function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
