@@ -347,6 +347,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                     Start Time
                   </LabelText>
                   <DateTimePicker
+                    label=" "
                     value={startTime ? new Date(startTime * 1000) : null}
                     onValue={timestamp => {
                       setStartTime(timestamp)
@@ -370,6 +371,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                     End Time
                   </LabelText>
                   <DateTimePicker
+                    label=" "
                     disabled={!daoInfo.votingPeriod}
                     minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                     value={endTime ? new Date(endTime * 1000) : null}
@@ -485,69 +487,47 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
 
           <InputBoxstyle>
             <Typography variant="body1" className="headetitle">
-              Options 1
+              Options 2
             </Typography>
             <Input
               className="inputStyle"
-              value={option[0]}
-              onChange={e => updateVoteOption(0, e.target.value)}
-              placeholder="Approve"
+              value={option[1]}
+              onChange={e => updateVoteOption(1, e.target.value)}
+              placeholder="Disapprove"
             />
             <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
           </InputBoxstyle>
-
-          <InputBoxstyle>
-            <Typography variant="body1" className="headetitle">
-              Options 1
-            </Typography>
-            <Input
-              className="inputStyle"
-              value={option[0]}
-              onChange={e => updateVoteOption(0, e.target.value)}
-              placeholder="Approve"
-            />
-            <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
-          </InputBoxstyle>
+          {option.map(
+            (_, index) =>
+              index > 1 && (
+                <InputBoxstyle>
+                  <Typography variant="body1" className="headetitle">
+                    Options {index + 1}
+                  </Typography>
+                  <Input
+                    className="inputStyle"
+                    value={option[index]}
+                    onChange={e => updateVoteOption(index, e.target.value)}
+                    placeholder="Option"
+                  />
+                  <StyledDelButton
+                    sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }}
+                    onClick={() => removeVoteOption(index)}
+                  />
+                </InputBoxstyle>
+              )
+          )}
           <Box>
             <LabelText
               onClick={addVoteOption}
-              sx={{ display: 'flex', gap: 8, cursor: 'pointer', color: theme => theme.palette.primary.main }}
+              sx={{ display: 'flex', gap: 8, cursor: 'pointer', color: '#97B7EF', fontSize: 14 }}
             >
               <AddCircleOutlineIcon sx={{ width: 16 }} />
-              Add A Option
+              Add Option
             </LabelText>
           </Box>
         </Box>
       </Box>
-      <RowCenter>
-        <LabelText>Voting Options</LabelText>
-        <LabelText
-          display={'flex'}
-          alignItems="center"
-          onClick={addVoteOption}
-          sx={{ cursor: 'pointer', color: theme => theme.palette.primary.main }}
-        >
-          <AddCircleOutlineIcon sx={{ width: 16 }} />
-          Add A Option
-        </LabelText>
-      </RowCenter>
-      <Stack spacing={8} mt={16}>
-        <Input value={option[0]} onChange={e => updateVoteOption(0, e.target.value)} placeholder="Approve" />
-        <Input value={option[1]} onChange={e => updateVoteOption(1, e.target.value)} placeholder="Disapprove" />
-        {option.map(
-          (_, index) =>
-            index > 1 && (
-              <Box display={'grid'} gap="24px" gridTemplateColumns={'1fr 54px'} key={index}>
-                <Input
-                  value={option[index]}
-                  onChange={e => updateVoteOption(index, e.target.value)}
-                  placeholder="Option"
-                />
-                <StyledDelButton onClick={() => removeVoteOption(index)} />
-              </Box>
-            )
-        )}
-      </Stack>
     </div>
   )
 }
