@@ -1,4 +1,4 @@
-import { Alert, Box, Button as MuiButton, ButtonGroup, Link, Stack, styled, Typography } from '@mui/material'
+import { Alert, Box, Button as MuiButton, ButtonGroup, Link, Stack, styled, Typography, Checkbox } from '@mui/material'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
 import { RowCenter } from './ProposalItem'
@@ -24,6 +24,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { toast } from 'react-toastify'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
+import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -47,6 +48,59 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.common.white
     }
+  }
+}))
+{
+  /* <Box
+sx={{
+  width: 365,
+  height: 40,
+  display: 'grid',
+  alignItems: 'center',
+  gridTemplateColumns: '150px 1fr',
+  border: '1px solid #D4D7E2',
+  borderRadius: '8px',
+  '& .MuiInputBase-input': {
+    padding: 0,
+    height: 40,
+    background: 'transparent'
+  }
+}}
+>
+<LabelText
+  sx={{
+    margin: 0,
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: '20px',
+    borderRight: '1px solid #D4D7E2',
+    gap: 8,
+    pl: 14
+  }}
+> */
+}
+
+const DateSelectStyle = styled(Box)(() => ({
+  width: 365,
+  height: 40,
+  display: 'grid',
+  alignItems: 'center',
+  gridTemplateColumns: '150px 1fr',
+  border: '1px solid #D4D7E2',
+  borderRadius: '8px',
+  '& .MuiInputBase-input': {
+    padding: 0,
+    height: 40,
+    background: 'transparent'
+  },
+  '& .timelabel': {
+    paddingLeft: 14,
+    margin: 0,
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: '20px',
+    borderRight: '1px solid #D4D7E2',
+    gap: 8
   }
 }))
 
@@ -253,9 +307,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
           </div>
         </Stack>
         <Box mt={70}>
+          <Box sx={{ mb: 20 }}>
+            <LabelText>Voting Token</LabelText>
+            <CheckBoxs />
+          </Box>
           <Stack spacing={'20px'}>
-            <Stack flexDirection={'row'} gridTemplateColumns={'137px 1fr'} alignItems={'center'}>
-              <LabelText mb={6} width={137} textAlign={'left'}>
+            <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
+              <LabelText mb={6} width={150} textAlign={'left'}>
                 Voting Type
               </LabelText>
               {daoInfo.votingTypes === VotingTypes.ANY ? (
@@ -278,24 +336,47 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
               )}
             </Stack>
             <VotingOptions option={voteOption} setOption={setVoteOption} />
-            <Box display={'grid'} gridTemplateColumns="78px 1fr" alignItems={'center'} gap="12px 24px">
-              <LabelText>Start Time</LabelText>
-              <DateTimePicker
-                value={startTime ? new Date(startTime * 1000) : null}
-                onValue={timestamp => {
-                  setStartTime(timestamp)
-                  if (!daoInfo.votingPeriod) {
-                    setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
-                  }
-                }}
-              ></DateTimePicker>
-              <LabelText>End Time</LabelText>
-              <DateTimePicker
-                disabled={!daoInfo.votingPeriod}
-                minDateTime={startTime ? new Date(startTime * 1000) : undefined}
-                value={endTime ? new Date(endTime * 1000) : null}
-                onValue={timestamp => setEndTime(timestamp)}
-              ></DateTimePicker>
+            <Box display={'grid'} gridTemplateColumns="150px 1fr" alignItems={'center'}>
+              <Typography variant="body1" lineHeight={'16px'} color={'#80829F'}>
+                Voting period
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <DateSelectStyle>
+                  <LabelText className="timelabel">
+                    <TimeIcon />
+                    Start Time
+                  </LabelText>
+                  <DateTimePicker
+                    value={startTime ? new Date(startTime * 1000) : null}
+                    onValue={timestamp => {
+                      setStartTime(timestamp)
+                      if (!daoInfo.votingPeriod) {
+                        setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
+                      }
+                    }}
+                  ></DateTimePicker>
+                </DateSelectStyle>
+                <Box
+                  sx={{
+                    width: 0,
+                    height: 10,
+                    border: '1px solid #D4D7E2',
+                    transform: 'rotate(90deg)'
+                  }}
+                />
+                <DateSelectStyle>
+                  <LabelText className="timelabel">
+                    <TimeIcon />
+                    End Time
+                  </LabelText>
+                  <DateTimePicker
+                    disabled={!daoInfo.votingPeriod}
+                    minDateTime={startTime ? new Date(startTime * 1000) : undefined}
+                    value={endTime ? new Date(endTime * 1000) : null}
+                    onValue={timestamp => setEndTime(timestamp)}
+                  ></DateTimePicker>
+                </DateSelectStyle>
+              </Box>
             </Box>
             <Box>
               <RowCenter>
@@ -359,8 +440,85 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
     setOption([...option, ''])
   }, [option, setOption])
 
+  const InputBoxstyle = styled(Box)(() => ({
+    boxSizing: 'border-box',
+    height: 40,
+    background: ' #FFFFFF',
+    border: '1px solid #D4D7E2',
+    borderRadius: ' 8px',
+    display: 'flex',
+    alignItems: 'center',
+    '& .headetitle': {
+      width: '114px',
+      height: 40,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#97B7EF',
+      borderRadius: '8px',
+      color: '#fff'
+    },
+    '& .inputStyle': {
+      height: 36,
+      border: 'none',
+      background: 'transparent !important'
+    }
+  }))
+
   return (
     <div>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr' }}>
+        <LabelText sx={{ margin: 0, height: 40, display: 'flex', alignItems: 'center' }}>Voting Options</LabelText>
+        <Box sx={{ display: 'grid', gap: 14, flexDirection: 'column' }}>
+          <InputBoxstyle>
+            <Typography variant="body1" className="headetitle">
+              Options 1
+            </Typography>
+            <Input
+              className="inputStyle"
+              value={option[0]}
+              onChange={e => updateVoteOption(0, e.target.value)}
+              placeholder="Approve"
+            />
+            <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
+          </InputBoxstyle>
+
+          <InputBoxstyle>
+            <Typography variant="body1" className="headetitle">
+              Options 1
+            </Typography>
+            <Input
+              className="inputStyle"
+              value={option[0]}
+              onChange={e => updateVoteOption(0, e.target.value)}
+              placeholder="Approve"
+            />
+            <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
+          </InputBoxstyle>
+
+          <InputBoxstyle>
+            <Typography variant="body1" className="headetitle">
+              Options 1
+            </Typography>
+            <Input
+              className="inputStyle"
+              value={option[0]}
+              onChange={e => updateVoteOption(0, e.target.value)}
+              placeholder="Approve"
+            />
+            <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
+          </InputBoxstyle>
+          <Box>
+            <LabelText
+              onClick={addVoteOption}
+              sx={{ display: 'flex', gap: 8, cursor: 'pointer', color: theme => theme.palette.primary.main }}
+            >
+              <AddCircleOutlineIcon sx={{ width: 16 }} />
+              Add A Option
+            </LabelText>
+          </Box>
+        </Box>
+      </Box>
       <RowCenter>
         <LabelText>Voting Options</LabelText>
         <LabelText
@@ -391,5 +549,73 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
         )}
       </Stack>
     </div>
+  )
+}
+
+const CreadStyle = styled(Box)(({}) => ({
+  boxSizing: 'border-box',
+  width: 227,
+  height: 86,
+  // background: '#FAFAFA',
+  // border: ' 1px solid #D4D7E2',
+  borderRadius: '8px',
+  display: 'grid',
+  gridTemplateColumns: '58px 1fr'
+}))
+
+function CheckBoxs() {
+  const checkeList = [
+    {
+      id: 1,
+      title: 'STP Network (STPT)',
+      content: '1 STPT = 10 Votes'
+    },
+    { id: 2, title: 'Gitcoin (GTC)', content: '1 GTC = 1 Votes' },
+    { id: 3, title: 'LOOT (LOOT)', content: '1 LOOT = 1 Votes' },
+    { id: 4, title: 'XXXcoin', link: true, content: 'Set voting weight for this token >' }
+  ]
+  const [checkedValues, setCheckedValues] = useState<number[]>([])
+
+  const handleCheckboxChange = (event: any, id: number) => {
+    const isChecked = event.target.checked
+
+    if (isChecked) {
+      setCheckedValues([...checkedValues, id])
+    } else {
+      setCheckedValues(checkedValues.filter(value => value !== id))
+    }
+  }
+
+  return (
+    <>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
+        {checkeList.map((item: any, index: number) => (
+          <CreadStyle
+            sx={{
+              background: !checkedValues.includes(item.id) ? '#FAFAFA' : '#F8FBFF',
+              border: !checkedValues.includes(item.id) ? ' 1px solid #D4D7E2' : '1px solid #97B7EF'
+            }}
+            key={index}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Checkbox
+                sx={{ borderRadius: '50%', color: '#D9D9D9' }}
+                checked={checkedValues.includes(item.id)}
+                onChange={event => handleCheckboxChange(event, item.id)}
+              />
+            </Box>
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <Typography variant="body1" lineHeight="16px">
+                {item.title}
+              </Typography>
+              <Typography marginTop={item?.link ? 4 : 14} variant="body1" lineHeight="16px" color={'#80829F'}>
+                {item?.link ? <Link sx={{ cursor: 'pointer' }}> {item.content}</Link> : item.content}
+              </Typography>
+            </Box>
+          </CreadStyle>
+        ))}
+      </Box>
+    </>
   )
 }
