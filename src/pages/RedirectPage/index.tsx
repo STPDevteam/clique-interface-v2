@@ -22,7 +22,7 @@ export default function Page() {
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const userSignature = useUserInfo()
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
+  const { isJoined } = useIsJoined(curDaoChainId)
 
   const joinDAOCallback = useCallback(() => {
     setBtnDisabled(true)

@@ -169,7 +169,7 @@ export default function DragTaskPanel() {
   const curDaoChainId = Number(daoChainId) as ChainId
   const update = useUpdateTask()
   const remove = useRemoveTask()
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
+  const { isJoined } = useIsJoined(curDaoChainId)
   const { result } = useTaskProposalList(curDaoChainId, daoAddress)
   const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)

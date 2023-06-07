@@ -16,7 +16,7 @@ export function useCreateDaoCallback() {
   const { account, chainId } = useActiveWeb3React()
   const gasPriceInfoCallback = useGasPriceInfo()
   const { buildingDaoData: data, removeBuildingDaoData } = useBuildingDaoDataCallback()
-  const token = useToken(data.tokenAddress, data.baseChainId)
+  const token = useToken(data.tokenAddr, data.chainID)
 
   return useCallback(async () => {
     if (!account) throw new Error('none account')
@@ -26,7 +26,7 @@ export function useCreateDaoCallback() {
 
     let daoHandleSign: any = {}
     try {
-      const daoHandleSignRes = await daoHandleMakeSign(data.daoHandle.trim(), account, chainId)
+      const daoHandleSignRes = await daoHandleMakeSign(data.handle.trim(), account, chainId)
       if (!daoHandleSignRes.data.data?.signature) {
         throw new Error('Handle is used, please change the DAO Handle on Clique.')
       }
@@ -38,20 +38,20 @@ export function useCreateDaoCallback() {
     const args = [
       [
         data.daoName.trim(),
-        data.daoHandle.trim(),
+        data.handle.trim(),
         data.category.trim(),
-        data.description.trim(),
-        data.twitterLink.trim(),
-        data.githubLink.trim(),
-        data.discordLink.trim(),
-        data.daoImage.trim(),
-        data.websiteLink.trim()
+        data.bio.trim(),
+        data.twitter.trim(),
+        data.github.trim(),
+        data.discord.trim(),
+        data.daoLogo.trim(),
+        data.website.trim()
       ],
-      [data.baseChainId, data.tokenAddress],
+      [data.chainID, data.tokenAddr],
       [
         amountAddDecimals(data.createProposalMinimum, token.decimals),
         amountAddDecimals(data.executeMinimum, token.decimals),
-        data.defaultVotingPeriod,
+        data.votingPeriod,
         data.votingTypes
       ],
       daoHandleSign.lockBlockNum,

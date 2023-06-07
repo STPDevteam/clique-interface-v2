@@ -26,7 +26,7 @@ export default function Basic({ next }: { next: () => void }) {
   const { chainId, account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const { buildingDaoData, updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
-  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.daoHandle)
+  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.handle)
 
   useEffect(() => {
     queryHandleCallback(account || undefined, chainId || undefined)
@@ -40,19 +40,19 @@ export default function Basic({ next }: { next: () => void }) {
         error: 'Dao name required'
       }
     }
-    if (!buildingDaoData.daoImage) {
+    if (!buildingDaoData.daoLogo) {
       return {
         disabled: true,
         error: 'Dao logo required'
       }
     }
-    if (!buildingDaoData.daoHandle.trim()) {
+    if (!buildingDaoData.handle.trim()) {
       return {
         disabled: true,
         error: 'DAO Handle on Clique required'
       }
     }
-    if (!buildingDaoData.description.trim()) {
+    if (!buildingDaoData.bio.trim()) {
       return {
         disabled: true,
         error: 'Description required'
@@ -90,11 +90,11 @@ export default function Basic({ next }: { next: () => void }) {
     }
   }, [
     account,
+    buildingDaoData.bio,
     buildingDaoData.category,
-    buildingDaoData.daoHandle,
-    buildingDaoData.daoImage,
+    buildingDaoData.daoLogo,
     buildingDaoData.daoName,
-    buildingDaoData.description,
+    buildingDaoData.handle,
     daoHandleAvailable,
     next,
     toggleWalletModal
@@ -109,21 +109,21 @@ export default function Basic({ next }: { next: () => void }) {
       <Wrapper>
         <Stack spacing={20}>
           <UploadImage
-            onChange={val => updateBuildingDaoKeyData('daoImage', val)}
-            value={buildingDaoData.daoImage}
+            onChange={val => updateBuildingDaoKeyData('daoLogo', val)}
+            value={buildingDaoData.daoLogo}
             sx={{ margin: '0 auto', flexBasis: '124px' }}
             size={124}
           />
           <Input
-            value={buildingDaoData.description}
-            onChange={e => updateBuildingDaoKeyData('description', e.target.value || '')}
+            value={buildingDaoData.bio}
+            onChange={e => updateBuildingDaoKeyData('bio', e.target.value || '')}
             type="textarea"
             label="*Description"
             rows="10"
             maxLength={1000}
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
-                {buildingDaoData.description.length}/1000
+                {buildingDaoData.bio.length}/1000
               </Typography>
             }
             multiline
@@ -157,43 +157,43 @@ export default function Basic({ next }: { next: () => void }) {
             onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
             endAdornment={
               <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
-                {buildingDaoData.daoHandle.length}/30
+                {buildingDaoData.handle.length}/30
               </Typography>
             }
-            value={buildingDaoData.daoHandle}
-            onChange={e => updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || '').replace(' ', ''))}
+            value={buildingDaoData.handle}
+            onChange={e => updateBuildingDaoKeyData('handle', removeEmoji(e.target.value || '').replace(' ', ''))}
           />
           <Input
             label="Twitter Handle"
             placeholder="https://twitter.com/"
             type="url"
-            errSet={() => updateBuildingDaoKeyData('twitterLink', '')}
-            value={buildingDaoData.twitterLink}
-            onChange={e => updateBuildingDaoKeyData('twitterLink', e.target.value || '')}
+            errSet={() => updateBuildingDaoKeyData('twitter', '')}
+            value={buildingDaoData.twitter}
+            onChange={e => updateBuildingDaoKeyData('twitter', e.target.value || '')}
           />
           <Input
             label="Github"
             placeholder="https://github.com/"
             type="url"
-            errSet={() => updateBuildingDaoKeyData('githubLink', '')}
-            value={buildingDaoData.githubLink}
-            onChange={e => updateBuildingDaoKeyData('githubLink', e.target.value || '')}
+            errSet={() => updateBuildingDaoKeyData('github', '')}
+            value={buildingDaoData.github}
+            onChange={e => updateBuildingDaoKeyData('github', e.target.value || '')}
           />
           <Input
             label="Discord Server Link"
             type="url"
-            errSet={() => updateBuildingDaoKeyData('discordLink', '')}
+            errSet={() => updateBuildingDaoKeyData('discord', '')}
             placeholder="https://discord.com"
-            value={buildingDaoData.discordLink}
-            onChange={e => updateBuildingDaoKeyData('discordLink', e.target.value || '')}
+            value={buildingDaoData.discord}
+            onChange={e => updateBuildingDaoKeyData('discord', e.target.value || '')}
           />
           <Input
             label="Website Link"
             placeholder="https://xxxx.com"
             type="url"
-            errSet={() => updateBuildingDaoKeyData('websiteLink', '')}
-            value={buildingDaoData.websiteLink}
-            onChange={e => updateBuildingDaoKeyData('websiteLink', e.target.value || '')}
+            errSet={() => updateBuildingDaoKeyData('website', '')}
+            value={buildingDaoData.website}
+            onChange={e => updateBuildingDaoKeyData('website', e.target.value || '')}
           />
         </Box>
       </Wrapper>
