@@ -1,5 +1,4 @@
 import { Alert, Box, Button as MuiButton, ButtonGroup, Link, Stack, styled, Typography } from '@mui/material'
-import Back from 'components/Back'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
 import { RowCenter } from './ProposalItem'
@@ -24,16 +23,20 @@ import DaoContainer from 'components/DaoContainer'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { toast } from 'react-toastify'
+import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  fontSize: 12
+  fontSize: 14,
+  marginBottom: 6
 }))
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
+  width: 431,
   '& button': {
+    height: 36,
     borderWidth: '1px',
     color: theme.palette.text.primary,
     fontWeight: 600,
@@ -61,15 +64,22 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   const toggleWalletModal = useWalletModalToggle()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [introduction, setIntroduction] = useState('')
+  // const [introduction, setIntroduction] = useState('')
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
-  const [voteType, setVoteType] = useState<VotingTypes>(daoInfo.votingTypes)
+  const [voteType, setVoteType] = useState<VotingTypes>(
+    daoInfo.votingTypes === VotingTypes.ANY
+      ? VotingTypes.SINGLE
+      : daoInfo.votingTypes === VotingTypes.MULTI
+      ? VotingTypes.MULTI
+      : VotingTypes.SINGLE
+  )
   const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
   const createProposalCallback = useCreateProposalCallback()
+  console.log(daoInfo)
 
   const myBalance = useMemo(() => {
-    if (!daoInfo.governance[0].tokenAddress || !createProposalSign) {
+    if (!daoInfo.tokenAddr || !createProposalSign) {
       return undefined
     }
     const _token = new Token(
@@ -79,7 +89,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       daoInfo.governance[0].symbol
     )
     return new TokenAmount(_token, JSBI.BigInt(createProposalSign || '0'))
-  }, [daoInfo.governance])
+  }, [daoInfo.governance, daoInfo.tokenAddr])
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoId}/proposal`)
@@ -91,7 +101,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       content,
       daoId,
       endTime,
-      introduction,
+      '',
       voteOption.filter(i => i),
       startTime,
       title,
@@ -107,14 +117,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
         toast.error('network error')
         console.log(err)
       })
-  }, [startTime, endTime, createProposalCallback, content, daoId, introduction, voteOption, title, voteType, toList])
+  }, [startTime, endTime, createProposalCallback, content, daoId, voteOption, title, voteType, toList])
 
   const paramsCheck: {
     disabled: boolean
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    // const currentTime = currentTimeStamp()
     if (!title) {
       return {
         disabled: true,
@@ -127,12 +136,6 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
         error: 'Start time required'
       }
     }
-    // if (startTime < currentTime) {
-    //   return {
-    //     disabled: true,
-    //     error: 'The start time must be later than the current time'
-    //   }
-    // }
     if (!endTime) {
       return {
         disabled: true,
@@ -215,107 +218,118 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   return (
     <DaoContainer>
       <Box>
-        <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
-        <Typography variant="h6" mt={28}>
-          Create Proposal
-        </Typography>
-        <Box display="grid" mt={20} gridTemplateColumns={{ md: '1fr 1fr', xs: 'unset' }} gap="66px">
-          <Stack spacing={20}>
-            <Input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} label="Title" />
-            <Input
+        <Stack
+          sx={{
+            'svg path': {
+              fill: 'rgba(0, 73, 198, 1)'
+            }
+          }}
+          direction={'row'}
+          alignItems={'center'}
+        >
+          <ProposalIcon />
+          <Typography
+            sx={{
+              ml: '6px',
+              fontWeight: '600',
+              fontSize: '30px',
+              lineHeight: '20px'
+            }}
+          >
+            Create Proposal
+          </Typography>
+        </Stack>
+        <Stack spacing={20} mt={40}>
+          <Input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} label="Title" />
+          {/* <Input
               value={introduction}
               onChange={e => setIntroduction(e.target.value)}
               label="Introduction"
               placeholder="Introduction"
-            />
-            <div>
-              <LabelText>Description</LabelText>
-              <Editor content={content} setContent={setContent} />
-            </div>
+            /> */}
+          <div>
+            <LabelText>Description</LabelText>
+            <Editor content={content} setContent={setContent} />
+          </div>
+        </Stack>
+        <Box mt={70}>
+          <Stack spacing={'20px'}>
+            <Stack flexDirection={'row'} gridTemplateColumns={'137px 1fr'} alignItems={'center'}>
+              <LabelText mb={6} width={137} textAlign={'left'}>
+                Voting Type
+              </LabelText>
+              {daoInfo.votingTypes === VotingTypes.ANY ? (
+                <StyledButtonGroup variant="outlined">
+                  <MuiButton
+                    className={voteType === VotingTypes.SINGLE ? 'active' : ''}
+                    onClick={() => setVoteType(VotingTypes.SINGLE)}
+                  >
+                    Single-voting
+                  </MuiButton>
+                  <MuiButton
+                    className={voteType === VotingTypes.MULTI ? 'active' : ''}
+                    onClick={() => setVoteType(VotingTypes.MULTI)}
+                  >
+                    Multi-voting
+                  </MuiButton>
+                </StyledButtonGroup>
+              ) : (
+                <Button height="36px">{VotingTypesName[daoInfo.votingTypes]}</Button>
+              )}
+            </Stack>
+            <VotingOptions option={voteOption} setOption={setVoteOption} />
+            <Box display={'grid'} gridTemplateColumns="78px 1fr" alignItems={'center'} gap="12px 24px">
+              <LabelText>Start Time</LabelText>
+              <DateTimePicker
+                value={startTime ? new Date(startTime * 1000) : null}
+                onValue={timestamp => {
+                  setStartTime(timestamp)
+                  if (!daoInfo.votingPeriod) {
+                    setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
+                  }
+                }}
+              ></DateTimePicker>
+              <LabelText>End Time</LabelText>
+              <DateTimePicker
+                disabled={!daoInfo.votingPeriod}
+                minDateTime={startTime ? new Date(startTime * 1000) : undefined}
+                value={endTime ? new Date(endTime * 1000) : null}
+                onValue={timestamp => setEndTime(timestamp)}
+              ></DateTimePicker>
+            </Box>
+            <Box>
+              <RowCenter>
+                <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
+                <LabelText>
+                  {/* {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '} */}
+                  {/* {daoInfo.token?.symbol} */}
+                </LabelText>
+              </RowCenter>
+              <RowCenter>
+                <LabelText>Balance</LabelText>
+                <LabelText>
+                  {/* {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol} */}
+                </LabelText>
+              </RowCenter>
+            </Box>
           </Stack>
-          <Box>
-            <Stack paddingTop="30px" spacing={'20px'}>
-              <Box display={'grid'} gridTemplateColumns="70px 1fr" alignItems={'center'} gap="12px 24px">
-                <LabelText>Start Time</LabelText>
-                <DateTimePicker
-                  value={startTime ? new Date(startTime * 1000) : null}
-                  onValue={timestamp => {
-                    setStartTime(timestamp)
-                    if (!daoInfo.votingPeriod) {
-                      setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
-                    }
-                  }}
-                ></DateTimePicker>
-                <LabelText>End Time</LabelText>
-                <DateTimePicker
-                  disabled={!daoInfo.votingPeriod}
-                  minDateTime={startTime ? new Date(startTime * 1000) : undefined}
-                  value={endTime ? new Date(endTime * 1000) : null}
-                  onValue={timestamp => setEndTime(timestamp)}
-                ></DateTimePicker>
-              </Box>
-
-              <Box>
-                <LabelText mb={6}>Voting Type</LabelText>
-
-                {daoInfo.votingTypes === VotingTypes.ANY ? (
-                  <StyledButtonGroup variant="outlined">
-                    <MuiButton
-                      className={voteType === VotingTypes.SINGLE ? 'active' : ''}
-                      onClick={() => setVoteType(VotingTypes.SINGLE)}
-                    >
-                      Single-voting
-                    </MuiButton>
-                    <MuiButton
-                      className={voteType === VotingTypes.MULTI ? 'active' : ''}
-                      onClick={() => setVoteType(VotingTypes.MULTI)}
-                    >
-                      Multi-voting
-                    </MuiButton>
-                  </StyledButtonGroup>
-                ) : (
-                  <Button height="36px">{VotingTypesName[daoInfo.votingTypes]}</Button>
-                )}
-              </Box>
-
-              <VotingOptions option={voteOption} setOption={setVoteOption} />
-
-              <Box>
-                <RowCenter>
-                  <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
-                  <LabelText>
-                    {/* {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '} */}
-                    {/* {daoInfo.token?.symbol} */}
-                  </LabelText>
-                </RowCenter>
-                <RowCenter>
-                  <LabelText>Balance</LabelText>
-                  <LabelText>
-                    {/* {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol} */}
-                  </LabelText>
-                </RowCenter>
-              </Box>
-            </Stack>
-
-            {paramsCheck.error ? (
-              <Alert severity="error" sx={{ marginTop: 20 }}>
-                {paramsCheck.error}
-              </Alert>
-            ) : (
-              <Alert severity="success" sx={{ marginTop: 20 }}>
-                You can now create a proposal
-              </Alert>
-            )}
-
-            <Stack spacing={60} direction="row" mt={50}>
-              <OutlineButton onClick={history.goBack} height="36px">
-                Cancel
-              </OutlineButton>
-              <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
-                Create
-              </BlackButton>
-            </Stack>
-          </Box>
+          {paramsCheck.error ? (
+            <Alert severity="error" sx={{ marginTop: 20 }}>
+              {paramsCheck.error}
+            </Alert>
+          ) : (
+            <Alert severity="success" sx={{ marginTop: 20 }}>
+              You can now create a proposal
+            </Alert>
+          )}
+          <Stack direction="row" mt={50} mb={20} justifyContent={'space-between'}>
+            <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
+              Back
+            </OutlineButton>
+            <BlackButton width="200px" height="40px" disabled={paramsCheck.disabled} onClick={onCreateProposal}>
+              Publish
+            </BlackButton>
+          </Stack>
         </Box>
       </Box>
     </DaoContainer>
