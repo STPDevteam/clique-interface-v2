@@ -44,7 +44,7 @@ const StyledCard = styled(Box)(({ theme }) => ({
 }))
 
 const AdminIcon = styled(adminIcon)(() => ({
-  'path:first-child': {
+  'path:first-of-type': {
     fill: '#97B7EF'
   }
 }))
@@ -122,7 +122,7 @@ function ProposalV3Item() {
           </Typography>
           <AdminIcon
             sx={{
-              'path:first-child': {
+              'path:first-of-type': {
                 fill: '#0049C6'
               }
             }}

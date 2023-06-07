@@ -1,7 +1,6 @@
 import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
-import { ChainId } from 'constants/chain'
 
 export function getHomeContributorsList(offset: number, count: number) {
   return Axios.get('stpdao/v2/account/top/list', {
@@ -94,11 +93,8 @@ export function Login(account: string, message: string, signature: string) {
   })
 }
 
-export function checkIsJoin(chainId: ChainId, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/identity', {
-    chainId,
-    daoAddress
-  })
+export function checkIsJoin(daoId: number) {
+  return Axios.get(`stpdao/v3/user/identity/${daoId}`)
 }
 
 export function switchJoinDao(

@@ -160,7 +160,7 @@ export default function Select(props: Props) {
               '& li:hover': {
                 backgroundColor: '#F8FBFF'
               },
-              '& li:first-child': {},
+              '& li:first-of-type': {},
               '& .MuiMenuItem-root': {
                 display: 'flex',
                 justifyContent: 'space-between',

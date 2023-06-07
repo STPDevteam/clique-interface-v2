@@ -10,13 +10,13 @@ const initialDaoDataState: BuildingDaoData = {
     bio: '',
     daoCanCreateProposal: true,
     daoName: '',
-    daoHandle: '',
+    handle: '',
     daoLogo: '',
     github: '',
     website: '',
     twitter: '',
     discord: '',
-    // category: '',
+    category: [''],
     daoId: 0,
     governance: [
       {
@@ -33,8 +33,6 @@ const initialDaoDataState: BuildingDaoData = {
       }
     ],
     proposalThreshold: '',
-    // createProposalMinimum: '',
-    // executeMinimum: '',
     votingPeriod: 0,
     votingTypes: VotingTypes.ANY
   }

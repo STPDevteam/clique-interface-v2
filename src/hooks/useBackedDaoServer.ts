@@ -365,7 +365,7 @@ export function useHomeDaoList() {
   }
 }
 
-export function useIsJoined(chainId: ChainId, daoAddress: string) {
+export function useIsJoined(daoId: number) {
   const [loading, setLoading] = useState(false)
   const [isJoined, setIsJoined] = useState<string>()
   const userInfo = useUserInfo()
@@ -378,7 +378,7 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
       }
       setLoading(true)
       try {
-        const res = await checkIsJoin(chainId, daoAddress)
+        const res = await checkIsJoin(daoId)
         if (res.data.code === 200) {
           setLoading(false)
           setIsJoined(res.data.data)
@@ -390,7 +390,7 @@ export function useIsJoined(chainId: ChainId, daoAddress: string) {
         setIsJoined('')
       }
     })()
-  }, [chainId, daoAddress, userInfo])
+  }, [daoId, userInfo])
 
   return {
     loading,

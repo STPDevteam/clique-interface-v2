@@ -26,13 +26,13 @@ export interface CreateDaoDataProp {
   bio: string
   daoCanCreateProposal: boolean
   daoName: string
-  daoHandle: string
+  handle: string
   daoLogo: string
   github: string
   website: string
   twitter: string
   discord: string
-  // category: '',
+  category: string[]
   daoId: number
   governance: [
     {
@@ -49,8 +49,6 @@ export interface CreateDaoDataProp {
     }
   ]
   proposalThreshold: ''
-  // createProposalMinimum: '',
-  // executeMinimum: '',
   votingPeriod: 0
   votingTypes: VotingTypes.ANY
 }

@@ -64,7 +64,7 @@ const StyledTextNumber = styled(Box)(() => ({
   justifyContent: 'space-between',
   '& .item': {
     display: 'flex',
-    '&>*:first-child': {
+    '&>*:first-of-type': {
       marginRight: 16
     }
   }

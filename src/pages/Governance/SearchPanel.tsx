@@ -68,7 +68,7 @@ export default function SearchPanel({
         sx={{
           justifyContent: { xs: 'center', md: 'start', lg: 'center' },
           '&>:last-child': { border: 'none', paddingRight: 0 },
-          '&>:first-child': { paddingLeft: 0 }
+          '&>:first-of-type': { paddingLeft: 0 }
         }}
         alignItems="center"
       >

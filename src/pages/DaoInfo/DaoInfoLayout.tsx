@@ -5,21 +5,18 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import { useEffect } from 'react'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { useHistory, useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
 
 export default function DaoInfoLayout({ children }: { children: any }) {
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { daoId: daoId } = useParams<{ daoId: string }>()
   const { account } = useActiveWeb3React()
-  const curDaoChainId = Number(daoChainId) as ChainId
   const history = useHistory()
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
+  const { isJoined } = useIsJoined(Number(daoId))
   const userSignature = useUserInfo()
 
   useEffect(() => {
     if (!account || !userSignature || isJoined === '') {
-      // history.replace('/page/' + daoChainId + '/' + daoAddress)
     }
-  }, [account, daoAddress, daoChainId, history, isJoined, userSignature])
+  }, [account, history, isJoined, userSignature])
 
   return (
     <Box
