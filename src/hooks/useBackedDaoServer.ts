@@ -367,13 +367,13 @@ export function useHomeDaoList() {
 
 export function useIsJoined(daoId: number) {
   const [loading, setLoading] = useState(false)
-  const [isJoined, setIsJoined] = useState<string>()
+  const [isJoined, setIsJoined] = useState<{ isJoin: boolean; job: string }>()
   const userInfo = useUserInfo()
 
   useEffect(() => {
     ;(async () => {
       if (!userInfo?.loggedToken) {
-        setIsJoined('')
+        setIsJoined({ isJoin: false, job: '' })
         return
       }
       setLoading(true)
@@ -387,10 +387,10 @@ export function useIsJoined(daoId: number) {
         throw new Error()
       } catch (error) {
         setLoading(false)
-        setIsJoined('')
+        setIsJoined({ isJoin: false, job: '' })
       }
     })()
-  }, [daoId, userInfo])
+  }, [daoId, userInfo?.loggedToken])
 
   return {
     loading,

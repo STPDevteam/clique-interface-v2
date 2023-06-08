@@ -20,20 +20,7 @@ const initialDaoDataState: BuildingDaoData = {
     daoId: 0,
     chainID: 0,
     tokenAddr: '',
-    governance: [
-      {
-        chainId: 0,
-        createRequire: '',
-        decimals: 0,
-        symbol: '',
-        tokenAddress: '',
-        tokenLogo: '',
-        tokenName: '',
-        tokenType: '',
-        voteTokenId: 0,
-        weight: 0
-      }
-    ],
+    governance: [],
     proposalThreshold: '',
     createProposalMinimum: '',
     executeMinimum: '',

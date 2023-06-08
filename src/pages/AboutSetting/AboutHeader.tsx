@@ -4,18 +4,17 @@ import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
-import { useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
-import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
+import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
-import { useActiveWeb3React } from 'hooks'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
+import { AppState } from 'state'
+import { useSelector } from 'react-redux'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -28,15 +27,13 @@ const StyledHeader = styled(Box)(({ theme }) => ({
 
 export default function Header() {
   const isSmDown = useBreakpoint('sm')
-  const { account } = useActiveWeb3React()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
-  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoAdminLevel = useIsJoined(Number(curDaoId))
+  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
 
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
   const categoryList = useMemo(() => {
     if (!daoInfo?.category) return []
+    if (daoInfo.category.length === 1) return [daoInfo.category]
     return daoInfo.category.split(',')
   }, [daoInfo?.category])
 
@@ -65,11 +62,11 @@ export default function Header() {
             <Box sx={{ ml: 35, height: 142 }}>
               <Box sx={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <Typography variant="h5" sx={{ font: '600 24px/29px "Inter" ' }}>
-                  {daoInfo?.name || '--'}
+                  {daoInfo?.daoName || '--'}
                 </Typography>
-                {backedDaoInfo?.verified && <AuthIcon />}
-
-                <AdminTag level={daoAdminLevel} />
+                {daoInfo && <AuthIcon />}
+                {/* {daoInfo?.verified && <AuthIcon />} */}
+                <AdminTag level={daoAdminLevel.isJoined?.job} />
               </Box>
               <Typography sx={{ mt: 6, font: ' 500 14px/17px "Inter"', color: '#97B7EF' }}>
                 @{daoInfo?.handle}

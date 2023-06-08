@@ -93,9 +93,11 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
 }
 
 export enum DaoAdminLevelProp {
-  SUPER_ADMIN,
-  ADMIN,
-  NORMAL
+  OWNER = 'owner',
+  SUPER_ADMIN = 'superAdmin',
+  ADMIN = 'admin',
+  VISITOR = 'visitor',
+  NOROLE = 'noRole'
 }
 
 export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account?: string) {
@@ -113,7 +115,7 @@ export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account
     if (adminsRes) {
       return DaoAdminLevelProp.ADMIN
     }
-    return DaoAdminLevelProp.NORMAL
+    return DaoAdminLevelProp.NOROLE
   }, [ownerRes, adminsRes, account])
 }
 

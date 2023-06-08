@@ -12,13 +12,12 @@ import {
   MenuItem,
   Link
 } from '@mui/material'
-import { DaoInfoProp } from 'hooks/useDaoInfo'
 import AddIcon from 'assets/images/add.png'
 import { ChainId } from 'constants/chain'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import Select from 'components/Select/Select'
-export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
+export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: ChainId }) {
   return (
     <Box>
       <Tablee />

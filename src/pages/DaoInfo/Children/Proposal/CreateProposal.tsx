@@ -536,8 +536,6 @@ const CreadStyle = styled(Box)(({}) => ({
   boxSizing: 'border-box',
   width: 227,
   height: 86,
-  // background: '#FAFAFA',
-  // border: ' 1px solid #D4D7E2',
   borderRadius: '8px',
   display: 'grid',
   gridTemplateColumns: '58px 1fr'

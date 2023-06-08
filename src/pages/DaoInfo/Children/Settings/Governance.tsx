@@ -16,11 +16,11 @@ import OutlineButton from 'components/Button/OutlineButton'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import AddTokenModal from '../AddTokenModal'
-import { DaoInfoProp } from 'hooks/useDaoInfo'
 import useModal from 'hooks/useModal'
 import { ChainId } from 'constants/chain'
 import { Dots } from 'theme/components'
 import { useState } from 'react'
+import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -42,7 +42,7 @@ const Row = styled(Box)(() => ({
   display: 'flex'
 }))
 
-export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
+export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: ChainId }) {
   const { showModal } = useModal()
   const PeriodList = [
     { label: 'Fix time', value: 'Fix time' },

@@ -6,7 +6,6 @@ import Input from 'components/Input'
 import UploadImage from 'components/UploadImage'
 // import Button from 'components/Button/Button'
 import NumericalInput from 'components/Input/InputNumerical'
-import { DaoInfoProp } from 'hooks/useDaoInfo'
 import Tooltip from 'components/Tooltip'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import ChainSelect from 'components/Select/ChainSelect'
@@ -19,6 +18,7 @@ import FormItem from 'components/FormItem'
 import { FormType } from './type'
 import { formCheckValid } from 'utils'
 import { ChainId, ChainList, ChainListMap } from 'constants/chain'
+import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 
 // import { useActiveWeb3React } from 'hooks'
 // import useModal from 'hooks/useModal'
@@ -95,7 +95,7 @@ const validationSchema = yup.object({
   })
 })
 
-export default function General({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
+export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
   // const currentBaseChain = useMemo(() => (daoChainId ? ChainListMap[daoChainId] || null : null), [daoChainId])
   const [currentBaseChain, setCurrentBaseChain] = useState<any>(ChainListMap[daoChainId])
   const ListItem = [

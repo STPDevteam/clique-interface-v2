@@ -22,6 +22,18 @@ export enum CategoriesTypeProp {
   Other = 'Other'
 }
 
+type govList = Array<{
+  chainId: number
+  createRequire: string
+  decimals: number
+  symbol: string
+  tokenAddress: string
+  tokenLogo: string
+  tokenName: string
+  tokenType: string
+  voteTokenId: number
+  weight: number
+}>
 export interface CreateDaoDataProp {
   bio: string
   daoCanCreateProposal: boolean
@@ -36,20 +48,7 @@ export interface CreateDaoDataProp {
   daoId: number
   chainID: number
   tokenAddr: string
-  governance: [
-    {
-      chainId: number
-      createRequire: string
-      decimals: number
-      symbol: string
-      tokenAddress: string
-      tokenLogo: string
-      tokenName: string
-      tokenType: string
-      voteTokenId: number
-      weight: number
-    }
-  ]
+  governance: govList
   createProposalMinimum: string
   executeMinimum: string
   proposalThreshold: string

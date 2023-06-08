@@ -5,10 +5,9 @@ import VotingTypesSelect from 'components/Governance/VotingTypesSelect'
 import InputNumerical from 'components/Input/InputNumerical'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
-import { DaoInfoProp } from 'hooks/useDaoInfo'
 import { useAdminSetGovernanceCallback } from 'hooks/useGovernanceDaoCallback'
 import { useCallback, useMemo, useState } from 'react'
-import { VotingTypes } from 'state/buildingGovDao/actions'
+import { CreateDaoDataProp, VotingTypes } from 'state/buildingGovDao/actions'
 import { amountAddDecimals, toFormatGroup } from 'utils/dao'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { StyledItem } from '../About'
@@ -24,7 +23,7 @@ export default function GovernanceSetting({
   daoInfo,
   daoChainId
 }: {
-  daoInfo: DaoInfoProp | undefined
+  daoInfo: CreateDaoDataProp | undefined
   daoChainId: ChainId
 }) {
   return daoInfo?.proposalThreshold && daoInfo?.votingThreshold ? (
