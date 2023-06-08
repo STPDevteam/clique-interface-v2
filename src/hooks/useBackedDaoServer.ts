@@ -663,7 +663,7 @@ export function useDaoHandleQuery(handle: string) {
 
   const queryHandleCallback = useCallback(
     async (account: string | undefined, chainId: number | undefined) => {
-      if (!handle.trim() || !account || !chainId) {
+      if (!handle?.trim() || !account || !chainId) {
         setAvailable(undefined)
         return
       }

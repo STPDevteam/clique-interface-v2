@@ -15,12 +15,17 @@ export function clearAllSignStoreSync() {
   })
 }
 
-export function useUserInfo(): UserInfo | undefined {
+export function useUserInfo(): UserInfo | undefined | null {
   const allUserInfo = useSelector((state: AppState) => state.localUserInfo)
   const { account } = useWeb3ReactCore()
 
   return useMemo(() => {
-    if (!account || account.toLowerCase() !== allUserInfo.addressInfo?.account.toLowerCase()) {
+    if (
+      !account ||
+      !allUserInfo.addressInfo ||
+      !allUserInfo.addressInfo.account ||
+      allUserInfo.addressInfo.account.toLowerCase() !== account.toLowerCase()
+    ) {
       return undefined
     }
     return allUserInfo.addressInfo
