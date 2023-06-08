@@ -65,6 +65,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
               // aspectRatio: 'auto 220/226',
               // minWidth: 220,
               // minHeight: 226,
+              boxShadow: 'none',
               width: 220,
               height: 226,
               textAlign: 'center',

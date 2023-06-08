@@ -264,7 +264,8 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
   return (
     <Box
       sx={{
-        maxWidth: '942px',
+        minWidth: 800,
+        width: '100%',
         textAlign: 'center',
         margin: '20px auto 40px',
         '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {

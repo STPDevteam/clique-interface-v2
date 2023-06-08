@@ -10,8 +10,7 @@ import { useUpdateNotificationUnReadCount } from 'hooks/useBackedNotificationSer
 import { useUserLocation } from './hooks'
 import { useLogin } from 'hooks/useBackedDaoServer'
 import { useWeb3Instance } from 'hooks/useWeb3Instance'
-// import { saveUserInfo } from 'state/userInfo/actions'
-// import { signMessage } from '../../constants'
+import { saveUserInfo } from 'state/userInfo/actions'
 
 export default function Updater(): null {
   // add NotificationUnRead
@@ -20,7 +19,6 @@ export default function Updater(): null {
   const login = useLogin()
   const { library, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch()
-
   const windowVisible = useIsWindowVisible()
 
   const [state, setState] = useState<{ chainId: number | undefined; blockNumber: number | null }>({
@@ -83,12 +81,21 @@ export default function Updater(): null {
   useEffect(() => {
     ;(async () => {
       if (!account || !web3 || !web3.eth.personal.sign) return
-      // web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
-      //   dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: '' } }))
-      // })
       dispatch(setCurAddress(account))
     })()
   }, [account, dispatch, login, web3])
+
+  useEffect(() => {
+    ;(async () => {
+      if (windowVisible) {
+        const data = localStorage.getItem('localUserInfo')
+        if (data !== 'undefined' && data) {
+          console.log('before', JSON.parse(data), windowVisible)
+          dispatch(saveUserInfo({ userInfo: JSON.parse(data) }))
+        }
+      }
+    })()
+  }, [dispatch, windowVisible])
 
   return null
 }
