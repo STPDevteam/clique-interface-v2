@@ -4,8 +4,15 @@ import { saveUserInfo, removeUserInfo, UserInfo } from './actions'
 export interface UserState {
   addressInfo: UserInfo | null
 }
-const data =
-  localStorage.getItem('localUserInfo') === 'undefined' ? null : JSON.parse(localStorage.getItem('localUserInfo') ?? '')
+
+let data
+if (localStorage.getItem('localUserInfo')) {
+  data =
+    localStorage.getItem('localUserInfo') === 'undefined'
+      ? null
+      : JSON.parse(localStorage.getItem('localUserInfo') ?? '')
+}
+
 export const initialState: UserState = {
   addressInfo: data
 }
