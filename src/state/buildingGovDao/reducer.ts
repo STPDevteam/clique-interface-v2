@@ -37,7 +37,7 @@ const initialDaoDataState: BuildingDaoData = {
     createProposalMinimum: '',
     executeMinimum: '',
     votingPeriod: 0,
-    votingTypes: VotingTypes.ANY
+    votingType: VotingTypes.ANY
   }
 }
 

@@ -119,7 +119,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         error: 'Categories required'
       }
     }
-    if (buildingDaoData.votingTypes === undefined) {
+    if (buildingDaoData.votingType === undefined) {
       return {
         disabled: true,
         error: 'Voting types required'
@@ -220,8 +220,8 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           />
           <VotingTypesSelect
             width={296}
-            value={buildingDaoData.votingTypes}
-            onChange={e => updateBuildingDaoKeyData('votingTypes', e.target.value)}
+            value={buildingDaoData.votingType}
+            onChange={e => updateBuildingDaoKeyData('votingType', e.target.value)}
           />
         </Box>
       </CreatorBox>

@@ -1,19 +1,17 @@
 import { Alert, Box, Button as MuiButton, ButtonGroup, Link, Stack, styled, Typography, Checkbox } from '@mui/material'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
-import { RowCenter } from './ProposalItem'
+// import { RowCenter } from './ProposalItem'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button, { BlackButton } from 'components/Button/Button'
 import { useHistory, useParams } from 'react-router'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { CreateDaoDataProp, VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
-import { ChainListMap } from 'constants/chain'
+import { CreateDaoDataProp, VotingTypes, VotingTypesName, govList } from 'state/buildingGovDao/actions'
 // import Loading from 'components/Loading'
 import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useCreateProposalCallback } from 'hooks/useProposalCallback'
 import { Token, TokenAmount } from 'constants/token'
 import JSBI from 'jsbi'
@@ -50,35 +48,6 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
     }
   }
 }))
-{
-  /* <Box
-sx={{
-  width: 365,
-  height: 40,
-  display: 'grid',
-  alignItems: 'center',
-  gridTemplateColumns: '150px 1fr',
-  border: '1px solid #D4D7E2',
-  borderRadius: '8px',
-  '& .MuiInputBase-input': {
-    padding: 0,
-    height: 40,
-    background: 'transparent'
-  }
-}}
->
-<LabelText
-  sx={{
-    margin: 0,
-    display: 'flex',
-    alignItems: 'center',
-    lineHeight: '20px',
-    borderRight: '1px solid #D4D7E2',
-    gap: 8,
-    pl: 14
-  }}
-> */
-}
 
 const DateSelectStyle = styled(Box)(() => ({
   width: 365,
@@ -107,14 +76,13 @@ const DateSelectStyle = styled(Box)(() => ({
 export default function CreateProposal() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
-
   return daoInfo ? <CreateForm daoId={Number(daoId)} daoInfo={daoInfo} /> : <CreateForm daoId={0} daoInfo={daoInfo} />
 }
 
 function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
   const history = useHistory()
   const createProposalSign = '0'
-  const { chainId, account, library } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -122,9 +90,9 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   const [startTime, setStartTime] = useState<number>()
   const [endTime, setEndTime] = useState<number>()
   const [voteType, setVoteType] = useState<VotingTypes>(
-    daoInfo.votingTypes === VotingTypes.ANY
+    daoInfo.votingType === VotingTypes.ANY
       ? VotingTypes.SINGLE
-      : daoInfo.votingTypes === VotingTypes.MULTI
+      : daoInfo.votingType === VotingTypes.MULTI
       ? VotingTypes.MULTI
       : VotingTypes.SINGLE
   )
@@ -228,23 +196,6 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
         )
       }
     }
-    if (daoInfo.chainID !== chainId) {
-      return {
-        disabled: true,
-        error: (
-          <>
-            You need{' '}
-            <Link
-              sx={{ cursor: 'pointer' }}
-              onClick={() => daoInfo.chainID && triggerSwitchChain(library, daoInfo.chainID, account)}
-            >
-              switch
-            </Link>{' '}
-            to {ChainListMap[daoInfo.chainID].name}
-          </>
-        )
-      }
-    }
     if (!myBalance || !daoInfo.proposalThreshold || myBalance.lessThan(daoInfo.proposalThreshold)) {
       return {
         disabled: true,
@@ -256,11 +207,8 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     }
   }, [
     account,
-    chainId,
-    daoInfo.chainID,
     daoInfo.proposalThreshold,
     endTime,
-    library,
     myBalance,
     startTime,
     title,
@@ -309,14 +257,14 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
         <Box mt={70}>
           <Box sx={{ mb: 20 }}>
             <LabelText>Voting Token</LabelText>
-            <CheckBoxs />
+            <CheckBoxs list={daoInfo.governance} />
           </Box>
           <Stack spacing={'20px'}>
             <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
               <LabelText mb={6} width={150} textAlign={'left'}>
                 Voting Type
               </LabelText>
-              {daoInfo.votingTypes === VotingTypes.ANY ? (
+              {daoInfo.votingType === VotingTypes.ANY ? (
                 <StyledButtonGroup variant="outlined">
                   <MuiButton
                     className={voteType === VotingTypes.SINGLE ? 'active' : ''}
@@ -332,7 +280,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   </MuiButton>
                 </StyledButtonGroup>
               ) : (
-                <Button height="36px">{VotingTypesName[daoInfo.votingTypes]}</Button>
+                <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
               )}
             </Stack>
             <VotingOptions option={voteOption} setOption={setVoteOption} />
@@ -372,7 +320,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   </LabelText>
                   <DateTimePicker
                     label=" "
-                    disabled={!daoInfo.votingPeriod}
+                    disabled={daoInfo.votingPeriod !== 0}
                     minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                     value={endTime ? new Date(endTime * 1000) : null}
                     onValue={timestamp => setEndTime(timestamp)}
@@ -381,19 +329,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
               </Box>
             </Box>
             <Box>
-              <RowCenter>
-                <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
-                <LabelText>
-                  {/* {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '} */}
-                  {/* {daoInfo.token?.symbol} */}
-                </LabelText>
-              </RowCenter>
-              <RowCenter>
-                <LabelText>Balance</LabelText>
-                <LabelText>
-                  {/* {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol} */}
-                </LabelText>
-              </RowCenter>
+              {/* <RowCenter> */}
+              {/* <LabelText>Minimum Tokens Needed To Create Proposal</LabelText> */}
+              {/* <LabelText> */}
+              {/* {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '} */}
+              {/* {daoInfo.token?.symbol} */}
+              {/* </LabelText> */}
+              {/* </RowCenter> */}
             </Box>
           </Stack>
           {paramsCheck.error ? (
@@ -484,7 +426,6 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
             />
             <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
           </InputBoxstyle>
-
           <InputBoxstyle>
             <Typography variant="body1" className="headetitle">
               Options 2
@@ -541,22 +482,11 @@ const CreadStyle = styled(Box)(({}) => ({
   gridTemplateColumns: '58px 1fr'
 }))
 
-function CheckBoxs() {
-  const checkeList = [
-    {
-      id: 1,
-      title: 'STP Network (STPT)',
-      content: '1 STPT = 10 Votes'
-    },
-    { id: 2, title: 'Gitcoin (GTC)', content: '1 GTC = 1 Votes' },
-    { id: 3, title: 'LOOT (LOOT)', content: '1 LOOT = 1 Votes' },
-    { id: 4, title: 'XXXcoin', link: true, content: 'Set voting weight for this token >' }
-  ]
+function CheckBoxs({ list }: { list: govList[] }) {
   const [checkedValues, setCheckedValues] = useState<number[]>([])
 
   const handleCheckboxChange = (event: any, id: number) => {
     const isChecked = event.target.checked
-
     if (isChecked) {
       setCheckedValues([...checkedValues, id])
     } else {
@@ -567,28 +497,27 @@ function CheckBoxs() {
   return (
     <>
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
-        {checkeList.map((item: any, index: number) => (
+        {list.map((item: govList, index: number) => (
           <CreadStyle
             sx={{
-              background: !checkedValues.includes(item.id) ? '#FAFAFA' : '#F8FBFF',
-              border: !checkedValues.includes(item.id) ? ' 1px solid #D4D7E2' : '1px solid #97B7EF'
+              background: !checkedValues.includes(item.voteTokenId) ? '#FAFAFA' : '#F8FBFF',
+              border: !checkedValues.includes(item.voteTokenId) ? ' 1px solid #D4D7E2' : '1px solid #97B7EF'
             }}
             key={index}
           >
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
               <Checkbox
                 sx={{ borderRadius: '50%', color: '#D9D9D9' }}
-                checked={checkedValues.includes(item.id)}
-                onChange={event => handleCheckboxChange(event, item.id)}
+                checked={checkedValues.includes(item.voteTokenId)}
+                onChange={event => handleCheckboxChange(event, item.voteTokenId)}
               />
             </Box>
-
             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               <Typography variant="body1" lineHeight="16px">
-                {item.title}
+                `${item.tokenName}(${item.symbol})`
               </Typography>
-              <Typography marginTop={item?.link ? 4 : 14} variant="body1" lineHeight="16px" color={'#80829F'}>
-                {item?.link ? <Link sx={{ cursor: 'pointer' }}> {item.content}</Link> : item.content}
+              <Typography marginTop={14} variant="body1" lineHeight="16px" color={'#80829F'}>
+                1{item.symbol} = {item.weight}Votes
               </Typography>
             </Box>
           </CreadStyle>

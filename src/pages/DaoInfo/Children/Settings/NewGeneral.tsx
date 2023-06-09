@@ -8,7 +8,7 @@ import NumericalInput from 'components/Input/InputNumerical'
 import Tooltip from 'components/Tooltip'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import ChainSelect from 'components/Select/ChainSelect'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
 import FormItem from 'components/FormItem'
@@ -79,11 +79,15 @@ const validationSchema = yup.object({
     .url('Please enter a valid URL'),
   tokenContractAddr: yup.string().trim(),
   holdAmount: yup.string().trim(),
-  tokenChainId: yup.number()
+  tokenChain: yup.object({
+    icon: yup.mixed<ReactNode>(),
+    link: yup.string(),
+    selectedIcon: yup.mixed<ReactNode>()
+  })
 })
 
 export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
-  const [currentBaseChain] = useState<any>(ChainListMap[daoInfo.join.chainId ?? 0])
+  const [currentBaseChain, setCurrentBaseChain] = useState<any>(ChainListMap[daoInfo.join.chainId ?? 0])
   const [curTokenAddr, setCurTokenAddr] = useState(daoInfo.join.tokenAddress ?? '')
   const [loading, setLoading] = useState(false)
   const ListItem = [
@@ -105,7 +109,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
     handle: daoInfo.handle,
     holdAmount: daoInfo.join.holdAmount || '',
     tokenContractAddr: daoInfo.join.tokenAddress || '',
-    tokenChainId: currentBaseChain?.id || 0
+    tokenChain: currentBaseChain || 0
   }
 
   const handleSubmit = (values: any) => {
@@ -310,7 +314,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   >
                     Network
                   </Typography>
-                  <FormItem name="tokenChainId">
+                  <FormItem>
                     <ChainSelect
                       chainList={ChainList.filter(
                         v =>
@@ -323,9 +327,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                       height={40}
                       selectedChain={currentBaseChain}
                       onChange={(e: any) => {
-                        console.log('clear', e)
-                        // setCurrentBaseChain(e)
-                        // setFieldValue('tokenChainId', e.id)
+                        setCurrentBaseChain(e)
                       }}
                     />
                   </FormItem>

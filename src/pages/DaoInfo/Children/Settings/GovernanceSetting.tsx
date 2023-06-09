@@ -31,7 +31,7 @@ export default function GovernanceSetting({
       votingThreshold={daoInfo.proposalThreshold}
       proposalThreshold={daoInfo.proposalThreshold}
       votingPeriod={daoInfo.votingPeriod}
-      votingType={daoInfo.votingTypes}
+      votingType={daoInfo.votingType}
       daoChainId={daoChainId}
       daoAddress={daoInfo.tokenAddr}
       decimals={daoInfo.governance[0]?.decimals || 18}

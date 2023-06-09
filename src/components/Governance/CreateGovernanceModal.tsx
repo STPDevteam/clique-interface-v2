@@ -192,7 +192,7 @@ export function CreateGovernanceModal() {
     //     error: 'Default voting period required'
     //   }
     // }
-    if (buildingDaoData.votingTypes === undefined) {
+    if (buildingDaoData.votingType === undefined) {
       return {
         disabled: true,
         error: 'Voting types required'
@@ -363,8 +363,8 @@ export function CreateGovernanceModal() {
                 onUpdate={num => updateBuildingDaoKeyData('votingPeriod', num)}
               />
               <VotingTypesSelect
-                value={buildingDaoData.votingTypes}
-                onChange={e => updateBuildingDaoKeyData('votingTypes', e.target.value)}
+                value={buildingDaoData.votingType}
+                onChange={e => updateBuildingDaoKeyData('votingType', e.target.value)}
               />
 
               {nextBuildHandler.error ? (

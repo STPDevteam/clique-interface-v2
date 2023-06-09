@@ -52,7 +52,7 @@ export function useCreateDaoCallback() {
         amountAddDecimals(data.createProposalMinimum, token.decimals),
         amountAddDecimals(data.executeMinimum, token.decimals),
         data.votingPeriod,
-        data.votingTypes
+        data.votingType
       ],
       daoHandleSign.lockBlockNum,
       daoHandleSign.signature

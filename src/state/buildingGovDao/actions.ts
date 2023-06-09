@@ -22,7 +22,7 @@ export enum CategoriesTypeProp {
   Other = 'Other'
 }
 
-type govList = Array<{
+export type govList = {
   chainId: number
   createRequire: string
   decimals: number
@@ -33,7 +33,7 @@ type govList = Array<{
   tokenType: string
   voteTokenId: number
   weight: number
-}>
+}
 
 export interface CreateDaoDataProp {
   approve: boolean
@@ -50,7 +50,7 @@ export interface CreateDaoDataProp {
   daoId: number
   chainID: number
   tokenAddr: string
-  governance: govList
+  governance: govList[]
   join: {
     chainId: number | undefined
     decimals: number | undefined
@@ -66,7 +66,7 @@ export interface CreateDaoDataProp {
   executeMinimum: string
   proposalThreshold: string
   votingPeriod: 0
-  votingTypes: VotingTypes.ANY
+  votingType: VotingTypes.ANY
 }
 
 export const updateCreateDaoData = createAction<{ createDaoData: CreateDaoDataProp }>('buildingDao/updateCreateDaoData')
