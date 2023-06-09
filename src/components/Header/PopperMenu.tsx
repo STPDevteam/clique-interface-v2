@@ -1,24 +1,29 @@
 import { Box, Typography } from '@mui/material'
 import { ReactComponent as ShowDropDown } from 'assets/svg/moreMenuIcon.svg'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
-// import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
+import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
 import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as BugIcon } from 'assets/svg/bugIcon.svg'
+import { ReactComponent as LearnMoreIcon } from 'assets/svg/learnMore.svg'
+import { ReactComponent as ScopeIcon } from 'assets/svg/scope.svg'
+import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import PopperCard from 'components/PopperCard'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router-dom'
 
 const menuList = [
   {
-    title: 'DAOs',
-    icon: <DaosIcon />,
+    title: 'Explore DAOs',
+    icon: <ScopeIcon />,
     route: routes.Governance
   },
-  // {
-  //   title: 'Rewards',
-  //   icon: <RewardsIcon />,
-  //   route: routes.Activity
-  // },
+  { title: 'Create DAO', icon: <DaosIcon />, route: routes.CreatorDao },
+  {
+    title: 'Dao Rewards',
+    icon: <RewardsIcon />,
+    route: routes.Activity
+  },
+  { title: 'Create Token', icon: <TokenIcon />, route: routes.CreatorToken },
   {
     title: 'Tools',
     icon: <SdkIcon />,
@@ -28,6 +33,11 @@ const menuList = [
     title: 'Bug Bounty',
     icon: <BugIcon />,
     link: 'https://immunefi.com/bounty/stp/'
+  },
+  {
+    title: 'Learn More',
+    icon: <LearnMoreIcon />,
+    link: 'https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique'
   }
 ]
 
@@ -93,7 +103,7 @@ export default function PopperMenu() {
               onClick={() => (option.route ? history.push(option.route) : window.open(option.link, '_blank'))}
             >
               {option.icon}
-              <Typography fontWeight={500} fontSize={14}>
+              <Typography fontWeight={500} fontSize={14} ml={6}>
                 {option.title}
               </Typography>
             </Box>
