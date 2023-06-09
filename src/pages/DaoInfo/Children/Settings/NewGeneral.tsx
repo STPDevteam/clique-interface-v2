@@ -1,34 +1,25 @@
-import { Box, Stack, styled, Typography, useTheme, Checkbox } from '@mui/material'
+import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Input from 'components/Input'
-// import UpImgButton from 'components/UploadImage/UpImgButton'
+import Image from 'components/Image'
 import UploadImage from 'components/UploadImage'
-// import Button from 'components/Button/Button'
 import NumericalInput from 'components/Input/InputNumerical'
 import Tooltip from 'components/Tooltip'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import ChainSelect from 'components/Select/ChainSelect'
-import { useState, ReactNode } from 'react'
+import { useState } from 'react'
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
-import { useAdminSetInfoCallback } from 'hooks/useGovernanceDaoCallback'
-import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import FormItem from 'components/FormItem'
 import { FormType } from './type'
-import { formCheckValid } from 'utils'
+import { formCheckValid, isAddress } from 'utils'
 import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
-
-// import { useActiveWeb3React } from 'hooks'
-// import useModal from 'hooks/useModal'
-// import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-// import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-// import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-// import { useCallback, useMemo, useState } from 'react'
-// import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
-// import { removeEmoji } from 'utils'
-// import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import { useTokenByChain } from 'state/wallet/hooks'
+import { toast } from 'react-toastify'
+import { useUpdateDaoGeneral } from 'hooks/useBackedDaoServer'
+import tokenLogo from 'assets/images/tokenLogo.png'
 
 export const sxInputStyle = {
   '& .MuiInputBase-root': {
@@ -86,61 +77,78 @@ const validationSchema = yup.object({
     .string()
     .trim()
     .url('Please enter a valid URL'),
-  daoTokenAddress: yup.string().trim(),
-  daoTokenChainId: yup.number(),
-  baseChain: yup.object({
-    icon: yup.mixed<ReactNode>(),
-    link: yup.string(),
-    selectedIcon: yup.mixed<ReactNode>()
-  })
+  tokenContractAddr: yup.string().trim(),
+  holdAmount: yup.string().trim(),
+  tokenChainId: yup.number()
 })
 
 export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
-  // const currentBaseChain = useMemo(() => (daoChainId ? ChainListMap[daoChainId] || null : null), [daoChainId])
-  const [currentBaseChain, setCurrentBaseChain] = useState<any>(ChainListMap[daoChainId])
+  const [currentBaseChain] = useState<any>(ChainListMap[daoInfo.join.chainId ?? 0])
+  const [curTokenAddr, setCurTokenAddr] = useState(daoInfo.join.tokenAddress ?? '')
+  const [loading, setLoading] = useState(false)
   const ListItem = [
     { label: 'Anyone', value: 'Anyone' },
     { label: 'Holding token or NFT', value: 'Holding token or NFT' }
   ]
-  const [checked, setChecked] = useState(false)
-  const checkedChange = (event: any) => {
-    setChecked(event.target.checked)
-  }
   const [ToggleValue, setToggleValue] = useState('Anyone')
   const theme = useTheme()
-  const { claimSubmitted: isSaving } = useUserHasSubmittedClaim(`${daoInfo.daoAddress}_UpdateGeneralSetting`)
-  const adminSetInfoCallback = useAdminSetInfoCallback(daoInfo.daoAddress)
+  const updateDaoGeneral = useUpdateDaoGeneral()
   const initialValues = {
     daoLogo: daoInfo.daoLogo || '',
-    name: daoInfo.name || '',
-    description: daoInfo.description || '',
-    category: daoInfo.category || '',
+    name: daoInfo.daoName || '',
+    description: daoInfo.bio || '',
+    category: daoInfo.category.join(',') || '',
     twitter: daoInfo.twitter || '',
     website: daoInfo.website || '',
     github: daoInfo.github || '',
     discord: daoInfo.discord || '',
-    handle: daoInfo.handle || '',
-    baseChain: currentBaseChain || null,
-    daoTokenAddress: daoInfo.daoTokenAddress || '',
-    daoTokenChainId: currentBaseChain?.id || 0
+    handle: daoInfo.handle,
+    holdAmount: daoInfo.join.holdAmount || '',
+    tokenContractAddr: daoInfo.join.tokenAddress || '',
+    tokenChainId: currentBaseChain?.id || 0
   }
 
   const handleSubmit = (values: any) => {
-    adminSetInfoCallback(
-      values.name,
-      values.category,
+    console.log(values)
+    setLoading(true)
+    updateDaoGeneral(
       values.description,
-      values.twitter,
-      values.github,
-      values.discord,
+      values.category.split(','),
+      daoChainId,
       values.daoLogo,
+      values.name,
+      values.discord,
+      values.github,
+      {
+        chainId: govToken?.token.chainId,
+        decimals: govToken?.token.decimals,
+        holdAmount: values.holdAmount,
+        symbol: govToken?.token.symbol,
+        tokenAddress: govToken?.token.address,
+        tokenLogo: govToken?.token.logo,
+        tokenName: govToken?.token.name,
+        tokenType: 'erc20',
+        totalSupply: govToken?.totalSupply.raw.toString()
+      },
+      values.twitter,
       values.website
     )
-      .then(res => {
-        console.log(res)
+      .then((res: any) => {
+        setLoading(false)
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'Network error')
+          return
+        }
+        toast.success('Update success')
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        setLoading(false)
+      })
   }
+
+  const govToken = useTokenByChain(isAddress(curTokenAddr) ? curTokenAddr : undefined, currentBaseChain?.id)
+  console.log('token', govToken)
 
   return (
     <Formik
@@ -192,7 +200,9 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   <CategoriesSelect
                     style={{ height: '42px!important' }}
                     value={values.category}
-                    onChange={val => setFieldValue('category', val)}
+                    onChange={val => {
+                      setFieldValue('category', val)
+                    }}
                   />
                 </FormItem>
                 <FormItem sx={sxInputStyle} name="twitter">
@@ -204,7 +214,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  // justifyContent: 'space-between',
                   gap: 20,
                   '& .MuiInputBase-input': {
                     height: '40!important',
@@ -253,13 +262,13 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     />
                   </Box>
                 </FormItem>
-                <FormItem>
+                <FormItem name="github">
                   <Input label="Github" placeholderSize="14px" placeholder="e.c. bitcoin" value={values.github} />
                 </FormItem>
-                <FormItem>
+                <FormItem name="discord">
                   <Input label="Discord" placeholderSize="14px" placeholder="e.c. bitcoin" value={values.discord} />
                 </FormItem>
-                <FormItem>
+                <FormItem name="website">
                   <Input label="Website" value={values.website} />
                 </FormItem>
               </Box>
@@ -301,7 +310,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   >
                     Network
                   </Typography>
-                  <FormItem name="daoTokenChainId" fieldType="custom">
+                  <FormItem name="tokenChainId">
                     <ChainSelect
                       chainList={ChainList.filter(
                         v =>
@@ -314,22 +323,26 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                       height={40}
                       selectedChain={currentBaseChain}
                       onChange={(e: any) => {
-                        setCurrentBaseChain(e)
-                        setFieldValue('daoTokenChainId', e?.id)
+                        console.log('clear', e)
+                        // setCurrentBaseChain(e)
+                        // setFieldValue('tokenChainId', e.id)
                       }}
                     />
                   </FormItem>
                 </Box>
-                <FormItem name="daoTokenAddress">
+                <FormItem name="tokenContractAddr" fieldType="custom">
                   <InputStyle
                     label="Token Contract Address"
                     placeholderSize="14px"
                     placeholder="0x..."
-                    value={values.daoTokenAddress}
+                    value={curTokenAddr}
+                    onChange={(e: any) => {
+                      setCurTokenAddr(e.target.value)
+                    }}
                   />
                 </FormItem>
-                <FormItem>
-                  <NumericalInput label="Number" placeholderSize="14px" placeholder="0" value={''} />
+                <FormItem name="holdAmount">
+                  <NumericalInput label="Number" placeholderSize="14px" placeholder="0" value={values.holdAmount} />
                 </FormItem>
                 <Box>
                   <Typography
@@ -342,30 +355,36 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   >
                     Token preview
                   </Typography>
-
-                  <Typography
+                  <Box
                     sx={{
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '20px',
-                      color: '#3F5170',
-                      mt: 10
+                      '& p': {
+                        fontWeight: 500,
+                        fontSize: '14px',
+                        lineHeight: '20px',
+                        color: '#3F5170'
+                      },
+                      mt: 14,
+                      gap: 10,
+                      height: 40,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center'
                     }}
                   >
-                    <Checkbox
-                      sx={{ borderRadius: '50%', color: '#D9D9D9' }}
-                      checked={checked}
-                      onChange={checkedChange}
-                    />{' '}
-                    STP Network (STPT)
-                  </Typography>
+                    {govToken?.token && (
+                      <>
+                        <Image width={20} src={govToken?.token.logo || tokenLogo} />
+                        <Typography>{`${govToken?.token.name}(${govToken?.token.symbol})`}</Typography>
+                      </>
+                    )}
+                  </Box>
                 </Box>
               </Box>
             )}
 
             <Box mt={30} display="flex" justifyContent={'flex-end'}>
               <LoadingButton
-                loading={isSaving}
+                loading={loading}
                 loadingPosition="start"
                 startIcon={<></>}
                 variant="contained"

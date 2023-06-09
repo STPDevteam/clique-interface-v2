@@ -190,6 +190,7 @@ export default function Input({
           ref={inputUserRef}
           sx={{
             minHeight: height || 40,
+            height: height || 40,
             '& input': {
               paddingRight: inputPaddingRight || '15px',
               fontWeight: 600

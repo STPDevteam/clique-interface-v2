@@ -187,7 +187,7 @@ export default function DragTaskPanel() {
           proposalBaseList={result}
           TeamSpacesInfo={TeamSpacesInfo}
           editData={editData}
-          identity={isJoined || ''}
+          identity={isJoined?.job || ''}
         />
       )
     },
@@ -386,7 +386,7 @@ export default function DragTaskPanel() {
           top: '145px'
         }}
       >
-        {isJoined === 'C_member' ? (
+        {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
           <Tooltip title="Only administrators are allowed to create tasks" arrow>
             <Box
               sx={{
@@ -445,14 +445,14 @@ export default function DragTaskPanel() {
                         ind={ind}
                         index={index}
                         remove={remove}
-                        isJoined={isJoined}
+                        isJoined={isJoined?.job}
                         taskList={taskList}
                         isShow={item.taskId === showMenuId}
                       >
                         <Draggable
                           draggableId={item.taskId.toString()}
                           index={index}
-                          isDragDisabled={isJoined === 'C_member' || isJoined === 'noRole'}
+                          isDragDisabled={isJoined?.job === 'visitor' || isJoined?.job === 'noRole'}
                         >
                           {(provided, snapshot) => (
                             <Box
@@ -580,7 +580,7 @@ export default function DragTaskPanel() {
                     </Box>
                   ))}
                   {provided.placeholder}
-                  {isJoined === 'C_member' ? (
+                  {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
                     <Tooltip title="Only administrators are allowed to create tasks" arrow>
                       <Box
                         sx={{

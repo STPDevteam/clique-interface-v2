@@ -22,7 +22,9 @@ import {
   changeAdminRole,
   joinDAO,
   updateDaoGeneral,
-  getV3DaoInfo
+  getV3DaoInfo,
+  updateGovernance,
+  VoteWeightProp
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -909,10 +911,15 @@ export function useUpdateDaoGeneral() {
       discord: string,
       github: string,
       join: {
-        chainId: number
+        chainId: number | undefined
+        decimals: number | undefined
         holdAmount: string
-        tokenAddress: string
+        symbol: string | undefined
+        tokenAddress: string | undefined
+        tokenLogo: string | undefined
+        tokenName: string | undefined
         tokenType: string
+        totalSupply: string | undefined
       },
       twitter: string,
       website: string
@@ -920,6 +927,17 @@ export function useUpdateDaoGeneral() {
       return updateDaoGeneral(bio, category, daoId, daoLogo, daoName, discord, github, join, twitter, website)
         .then(res => res)
         .catch(err => console.log(err))
+    },
+    []
+  )
+}
+
+export function useUpdateGovernance() {
+  return useCallback(
+    (daoId: number, proposalThreshold: string, votingPeriod: number, votingType: number, weight: VoteWeightProp[]) => {
+      return updateGovernance(daoId, proposalThreshold, votingPeriod, votingType, weight)
+        .then(res => res)
+        .catch(err => err)
     },
     []
   )

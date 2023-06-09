@@ -17,6 +17,7 @@ import { ChainId } from 'constants/chain'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import Select from 'components/Select/Select'
+import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: ChainId }) {
   return (
     <Box>

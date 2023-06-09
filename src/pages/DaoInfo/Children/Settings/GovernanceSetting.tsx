@@ -26,15 +26,15 @@ export default function GovernanceSetting({
   daoInfo: CreateDaoDataProp | undefined
   daoChainId: ChainId
 }) {
-  return daoInfo?.proposalThreshold && daoInfo?.votingThreshold ? (
+  return daoInfo?.proposalThreshold && daoInfo?.proposalThreshold ? (
     <Update
-      votingThreshold={daoInfo.votingThreshold.toSignificant()}
-      proposalThreshold={daoInfo.proposalThreshold.toSignificant()}
+      votingThreshold={daoInfo.proposalThreshold}
+      proposalThreshold={daoInfo.proposalThreshold}
       votingPeriod={daoInfo.votingPeriod}
-      votingType={daoInfo.votingType}
+      votingType={daoInfo.votingTypes}
       daoChainId={daoChainId}
-      daoAddress={daoInfo.daoAddress}
-      decimals={daoInfo.token?.decimals || 18}
+      daoAddress={daoInfo.tokenAddr}
+      decimals={daoInfo.governance[0]?.decimals || 18}
     />
   ) : null
 }
@@ -61,11 +61,10 @@ function Update({
   const [defaultVotingPeriod, setDefaultVotingPeriod] = useState(votingPeriod)
   const [defaultVotingTypes, setDefaultVotingTypes] = useState(votingType)
   const { chainId, account, library } = useActiveWeb3React()
-
   const { claimSubmitted: isSaving } = useUserHasSubmittedClaim(`${daoAddress}_UpdateGovernanceSetting`)
   const adminSetGovernanceCallback = useAdminSetGovernanceCallback(daoAddress)
-
   const { showModal, hideModal } = useModal()
+
   const onAdminSetGovernanceCallback = useCallback(() => {
     showModal(<TransacitonPendingModal />)
     adminSetGovernanceCallback(

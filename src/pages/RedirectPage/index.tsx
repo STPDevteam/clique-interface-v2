@@ -69,8 +69,8 @@ export default function Page() {
     if (!account) setStatus('Connect Wallet')
     else if (!userSignature) {
       setStatus('Join DAO')
-    } else if (isJoined === '' || isJoined === undefined) setStatus('Join DAO')
-    if (!account || !userSignature || isJoined === '' || isJoined === undefined) {
+    } else if (isJoined?.job === '' || isJoined === undefined) setStatus('Join DAO')
+    if (!account || !userSignature || isJoined?.job === '' || isJoined === undefined) {
     } else {
       setOpen(false)
       return history.replace(routes.Proposal.replace(':chainId', daoChainId).replace(':address', daoAddress))

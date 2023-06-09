@@ -20,7 +20,9 @@ export default function CategoriesSelect({
   onChange?: (val: string) => void
   style?: React.CSSProperties | SxProps<Theme>
 }) {
-  const currentValues = useMemo(() => value?.split(',') || [], [value])
+  const currentValues = useMemo(() => {
+    return value?.split(',') || []
+  }, [value])
   return (
     <Select
       multiple

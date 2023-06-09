@@ -296,7 +296,7 @@ export function CreateGovernanceModal() {
                   onChange={e => updateBuildingDaoKeyData('bio', e.target.value || '')}
                 />
                 <CategoriesSelect
-                  value={buildingDaoData.category}
+                  value={buildingDaoData.category.join(',')}
                   onChange={val => updateBuildingDaoKeyData('category', val)}
                 />
 

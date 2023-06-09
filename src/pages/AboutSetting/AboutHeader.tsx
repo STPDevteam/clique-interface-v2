@@ -33,8 +33,7 @@ export default function Header() {
 
   const categoryList = useMemo(() => {
     if (!daoInfo?.category) return []
-    if (daoInfo.category.length === 1) return [daoInfo.category]
-    return daoInfo.category.split(',')
+    return daoInfo.category
   }, [daoInfo?.category])
 
   return (
@@ -64,8 +63,7 @@ export default function Header() {
                 <Typography variant="h5" sx={{ font: '600 24px/29px "Inter" ' }}>
                   {daoInfo?.daoName || '--'}
                 </Typography>
-                {daoInfo && <AuthIcon />}
-                {/* {daoInfo?.verified && <AuthIcon />} */}
+                {daoInfo?.approve && <AuthIcon />}
                 <AdminTag level={daoAdminLevel.isJoined?.job} />
               </Box>
               <Typography sx={{ mt: 6, font: ' 500 14px/17px "Inter"', color: '#97B7EF' }}>

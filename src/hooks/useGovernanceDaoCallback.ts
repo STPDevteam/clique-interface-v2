@@ -39,7 +39,7 @@ export function useCreateDaoCallback() {
       [
         data.daoName.trim(),
         data.handle.trim(),
-        data.category.trim(),
+        data.category,
         data.bio.trim(),
         data.twitter.trim(),
         data.github.trim(),

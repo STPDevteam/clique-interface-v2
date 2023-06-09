@@ -7,6 +7,7 @@ interface BuildingDaoData {
 
 const initialDaoDataState: BuildingDaoData = {
   createDaoData: {
+    approve: true,
     bio: '',
     daoCanCreateProposal: true,
     daoName: '',
@@ -16,11 +17,22 @@ const initialDaoDataState: BuildingDaoData = {
     website: '',
     twitter: '',
     discord: '',
-    category: '',
+    category: [],
     daoId: 0,
     chainID: 0,
     tokenAddr: '',
     governance: [],
+    join: {
+      chainId: 0,
+      decimals: 0,
+      holdAmount: '',
+      symbol: '',
+      tokenAddress: '',
+      tokenLogo: '',
+      tokenName: '',
+      tokenType: '',
+      totalSupply: ''
+    },
     proposalThreshold: '',
     createProposalMinimum: '',
     executeMinimum: '',

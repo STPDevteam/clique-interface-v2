@@ -726,10 +726,15 @@ export function updateDaoGeneral(
   discord: string,
   github: string,
   join: {
-    chainId: number
+    chainId: number | undefined
+    decimals: number | undefined
     holdAmount: string
-    tokenAddress: string
+    symbol: string | undefined
+    tokenAddress: string | undefined
+    tokenLogo: string | undefined
+    tokenName: string | undefined
     tokenType: string
+    totalSupply: string | undefined
   },
   twitter: string,
   website: string
@@ -746,6 +751,22 @@ export function updateDaoGeneral(
     twitter,
     website
   })
+}
+
+export type VoteWeightProp = {
+  createRequire: string
+  voteTokenId: number
+  votesWeight: number
+}
+
+export function updateGovernance(
+  daoId: number,
+  proposalThreshold: string,
+  votingPeriod: number,
+  votingType: number,
+  weight: VoteWeightProp[]
+) {
+  return Axios.post('stpdao/v3/dao/setting/governance', { daoId, proposalThreshold, votingPeriod, votingType, weight })
 }
 
 export function getV3DaoInfo(daoId: number) {

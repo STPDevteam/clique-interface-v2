@@ -65,7 +65,7 @@ export default function ToggleButtn({
             value={v.value}
             style={alignment == v.value ? SelectedStyle : UnselectedStyle}
           >
-            {v.value}
+            {v.label}
           </CustomToggleButton>
         ))}
       </ToggleButtonGroup>

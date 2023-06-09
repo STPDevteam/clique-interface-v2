@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Header from './AboutHeader'
-import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
+// import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
 import Governance from 'pages/DaoInfo/Children/Settings/Governance'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 // import ComingSoon from 'pages/ComingSoon'
@@ -79,19 +79,19 @@ export default function AboutSetting() {
           </Box>
         ) : null
       },
-      {
-        label: 'Governance Settings',
-        component: (
-          <Box mt={20}>
-            <GovernanceSetting daoInfo={daoInfo} daoChainId={Number(curDaoId)} />
-          </Box>
-        )
-      },
+      // {
+      //   label: 'Governance Settings',
+      //   component: (
+      //     <Box mt={20}>
+      //       <GovernanceSetting daoInfo={daoInfo} daoChainId={Number(curDaoId)} />
+      //     </Box>
+      //   )
+      // },
       {
         label: 'Governance',
         component: daoInfo ? (
           <Box mt={14}>
-            <Governance daoInfo={daoInfo} daoChainId={Number(curDaoId)} />
+            <Governance daoInfo={daoInfo} daoId={Number(curDaoId)} />
           </Box>
         ) : null
       },

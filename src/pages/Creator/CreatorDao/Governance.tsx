@@ -113,7 +113,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
     //     error: 'Default voting period required'
     //   }
     // }
-    if (!buildingDaoData.category.trim()) {
+    if (!buildingDaoData.category) {
       return {
         disabled: true,
         error: 'Categories required'

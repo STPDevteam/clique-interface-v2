@@ -14,7 +14,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
   const userSignature = useUserInfo()
 
   useEffect(() => {
-    if (!account || !userSignature || isJoined === '') {
+    if (!account || !userSignature || !isJoined) {
     }
   }, [account, history, isJoined, userSignature])
 

@@ -77,7 +77,7 @@ export default function Member() {
 
   const tabList = !isJoined
     ? []
-    : isJoined && isJoined !== 'A_superAdmin'
+    : isJoined && isJoined.job !== 'A_superAdmin'
     ? [
         {
           label: 'Card View',
@@ -171,12 +171,12 @@ export default function Member() {
         <Divider />
         {tabList.length === 2 ? (
           tabValue === 0 ? (
-            <CardView result={jobsList} role={isJoined} />
+            <CardView result={jobsList} role={isJoined?.job} />
           ) : (
             <OpenJobs />
           )
         ) : tabValue === 0 ? (
-          <CardView result={jobsList} role={isJoined} />
+          <CardView result={jobsList} role={isJoined?.job} />
         ) : tabValue === 1 ? (
           <JobApplication
             result={applyList}

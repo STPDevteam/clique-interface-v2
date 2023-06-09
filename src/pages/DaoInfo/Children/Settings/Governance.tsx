@@ -17,10 +17,12 @@ import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import AddTokenModal from '../AddTokenModal'
 import useModal from 'hooks/useModal'
-import { ChainId } from 'constants/chain'
 import { Dots } from 'theme/components'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
+import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -42,19 +44,43 @@ const Row = styled(Box)(() => ({
   display: 'flex'
 }))
 
-export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: ChainId }) {
+export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
   const { showModal } = useModal()
+  const [loading, setLoading] = useState(false)
+  const [fixTime, setFixtime] = useState('')
   const PeriodList = [
-    { label: 'Fix time', value: 'Fix time' },
+    { label: 'Fix time', value: 'Fixtime' },
     { label: 'Customization', value: 'Customization' }
   ]
   const TypesList = [
-    { label: 'Any', value: 'Any' },
-    { label: 'Single-voting', value: 'Single-voting' },
-    { label: 'Multi-voting', value: 'Multi-voting' }
+    { label: 'Any', value: '0' },
+    { label: 'Single-voting', value: '1' },
+    { label: 'Multi-voting', value: '2' }
   ]
   const [PeriodValue, setPeriodValue] = useState(PeriodList[0].value)
   const [TypesValue, setTypesValue] = useState(TypesList[0].value)
+  const history = useHistory()
+  const weight = useMemo(
+    () => [
+      { createRequire: '1000', voteTokenId: 0, votesWeight: 100 },
+      { createRequire: '1000', voteTokenId: 0, votesWeight: 100 }
+    ],
+    []
+  )
+  console.log(daoInfo, PeriodValue)
+
+  const cb = useUpdateGovernance()
+
+  const updateGovernance = useCallback(() => {
+    setLoading(true)
+    cb(Number(daoId), '', 0, Number(TypesValue), weight)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [TypesValue, cb, daoId, weight])
 
   return (
     <Box>
@@ -67,7 +93,10 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
         >
           Add Governance Token
         </Button>
-        <OutlineButton style={{ maxWidth: 184, height: 36, color: '#3F5170', border: '1px solid #3F5170' }}>
+        <OutlineButton
+          style={{ maxWidth: 184, height: 36, color: '#3F5170', border: '1px solid #3F5170' }}
+          onClick={() => history.push(routes.CreatorToken)}
+        >
           Create new token
         </OutlineButton>
       </Row>
@@ -89,10 +118,12 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
           <InputTitleStyle mb={8}>Threshold</InputTitleStyle>
           <GridLayoutff>
             <Row sx={{ gap: 10, flexDirection: 'column' }}>
-              <InputTitleStyle style={{ lineHeight: '20px' }}>Voting period</InputTitleStyle>
+              <InputTitleStyle style={{ lineHeight: '20px' }}>
+                Minimum Votes Needed For Proposal To Execute
+              </InputTitleStyle>
               <InputStyle
                 placeholderSize="14px"
-                placeholder={PeriodValue}
+                placeholder={'0'}
                 endAdornment={
                   <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
                     Votes
@@ -106,16 +137,26 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                 <InputTitleStyle>Voting period</InputTitleStyle>
                 <ToggleButtonGroup Props={PeriodList} setToggleValue={setPeriodValue} />
               </Row>
-              <InputStyle
-                placeholderSize="14px"
-                placeholder={PeriodValue}
-                endAdornment={
-                  <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                    Hours
-                  </Typography>
-                }
-                value={''}
-              />
+              {PeriodValue === 'Fixtime' ? (
+                <InputStyle
+                  placeholderSize="14px"
+                  placeholder={'0'}
+                  endAdornment={
+                    <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                      Hours
+                    </Typography>
+                  }
+                  value={fixTime}
+                  onChange={e => setFixtime(e.target.value)}
+                />
+              ) : (
+                <InputStyle
+                  placeholderSize="14px"
+                  placeholder="Customize the voting time when creating a proposal"
+                  value={fixTime}
+                  onChange={e => setFixtime(e.target.value)}
+                />
+              )}
             </Row>
           </GridLayoutff>
         </Box>
@@ -125,18 +166,13 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
               <InputTitleStyle>Voting Types</InputTitleStyle>
               <ToggleButtonGroup Props={TypesList} setToggleValue={setTypesValue} />
             </Row>
-            <Typography>{TypesValue}</Typography>
           </Box>
         </GridLayoutff>
       </Box>
 
       <Box mt={30} display="flex" justifyContent={'flex-end'}>
-        <BlackButton
-          width="270px"
-          height="40px"
-          onClick={() => console.log(daoChainId, daoInfo, PeriodValue, TypesValue)}
-        >
-          {false ? (
+        <BlackButton width="270px" height="40px" onClick={updateGovernance}>
+          {loading ? (
             <>
               Saving
               <Dots />
@@ -219,7 +255,7 @@ function BasicTable() {
               <TableContentStyle>{row.requir}</TableContentStyle>
               <TableContentStyle>{row.weight}</TableContentStyle>
               <TableContentStyle sx={{ width: 200 }}>
-                <Box sx={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
                   <TextButtonStyle
                     onClick={() => {
                       showModal(<AddTokenModal />)

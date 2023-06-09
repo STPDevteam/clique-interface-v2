@@ -34,7 +34,9 @@ type govList = Array<{
   voteTokenId: number
   weight: number
 }>
+
 export interface CreateDaoDataProp {
+  approve: boolean
   bio: string
   daoCanCreateProposal: boolean
   daoName: string
@@ -44,11 +46,22 @@ export interface CreateDaoDataProp {
   website: string
   twitter: string
   discord: string
-  category: string
+  category: string[]
   daoId: number
   chainID: number
   tokenAddr: string
   governance: govList
+  join: {
+    chainId: number | undefined
+    decimals: number | undefined
+    holdAmount: string | undefined
+    symbol: string | undefined
+    tokenAddress: string | undefined
+    tokenLogo: string | undefined
+    tokenName: string | undefined
+    tokenType: string
+    totalSupply: string | undefined
+  }
   createProposalMinimum: string
   executeMinimum: string
   proposalThreshold: string

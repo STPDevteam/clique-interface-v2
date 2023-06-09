@@ -58,7 +58,7 @@ export default function Basic({ next }: { next: () => void }) {
         error: 'Description required'
       }
     }
-    if (!buildingDaoData.category.trim()) {
+    if (!buildingDaoData.category) {
       return {
         disabled: true,
         error: 'Categories required'
@@ -130,7 +130,7 @@ export default function Basic({ next }: { next: () => void }) {
           />
           <CategoriesSelect
             style={{ maxWidth: '296px' }}
-            value={buildingDaoData.category}
+            value={buildingDaoData.category.join(',')}
             onChange={val => updateBuildingDaoKeyData('category', val)}
           />
         </Stack>
