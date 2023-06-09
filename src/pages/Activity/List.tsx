@@ -35,7 +35,7 @@ function ItemWrapper({
     <Stack spacing={24}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
         <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
-          <DaoAvatars size={isSmDown ? 40 : 64} src={daoBaseInfo?.daoLogo} alt={''} />
+          <DaoAvatars size={isSmDown ? 40 : 24} src={daoBaseInfo?.daoLogo} alt={''} />
         </Link>
         <RowCenter flexWrap={'wrap'}>
           <Typography variant="h6" mr={10}>
@@ -57,8 +57,8 @@ function ItemWrapper({
               : undefined
           }
           primary
-          borderRadius="30px"
-          height={40}
+          borderRadius="12px"
+          height={24}
           width="154px"
         >
           {activityTypeText[type]}
@@ -91,7 +91,7 @@ export default function List({
         <DelayLoading loading={loading}>
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
-        <Stack mt={40} spacing={40}>
+        <Stack spacing={40}>
           {result.map(item => (
             <ItemWrapper
               daoAddress={item.daoAddress}

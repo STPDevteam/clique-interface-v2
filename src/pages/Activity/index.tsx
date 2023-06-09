@@ -7,6 +7,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 // import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import List from './List'
+import SoulboundList from './SoulboundList'
 import BannerImg from 'assets/images/activity_banner.jpg'
 import BannerMobileImg from 'assets/images/activity_banner_mobile.jpeg'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -97,7 +98,7 @@ export default function Activity() {
         }}
       >
         <ContainerWrapper maxWidth={1150}>
-          <RowCenter>
+          <RowCenter sx={{ mb: 30 }}>
             <TabStyle value={tabValue}>
               {tabList.map((item, idx) => (
                 <Tab
@@ -150,7 +151,15 @@ export default function Activity() {
               </Select>
             </Box>
           </RowCenter>
-          <List loading={loading} page={page} result={result} />
+          {tabValue === 0 ? (
+            <>
+              <List loading={loading} page={page} result={result} />
+            </>
+          ) : (
+            <>
+              <SoulboundList />
+            </>
+          )}
         </ContainerWrapper>
       </Box>
     </div>
