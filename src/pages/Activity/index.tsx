@@ -38,17 +38,19 @@ const TabStyle = styled(Tabs)(() => ({
     fontSize: 18,
     lineHeight: '22px',
     color: '#3F5170',
-    textTransform: 'none'
+    textTransform: 'none',
+    padding: 0
   },
   '& .MuiTabs-indicator': {
     height: 4,
     background: '#0049C6',
-    borderRadius: '2px'
+    borderRadius: '2px',
+    margin: 'auto'
   },
   '& .active': {
     fontWeight: 700,
     fontSize: 18,
-    lineHeight: '22px   ',
+    lineHeight: '22px',
     color: '#0049C6'
   }
 }))
@@ -129,7 +131,7 @@ export default function Activity() {
                     {item.label}
                   </MenuItem>
                 ))}
-              </Select>{' '}
+              </Select>
               <Select
                 placeholder=""
                 noBold

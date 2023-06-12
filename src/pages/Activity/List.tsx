@@ -32,7 +32,7 @@ function ItemWrapper({
   const isSmDown = useBreakpoint('sm')
   const daoBaseInfo = useDaoBaseInfo(daoAddress, daoChainId)
   return (
-    <Stack spacing={24}>
+    <Stack spacing={10}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
         <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
           <DaoAvatars size={isSmDown ? 40 : 24} src={daoBaseInfo?.daoLogo} alt={''} />

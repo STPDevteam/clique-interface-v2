@@ -672,3 +672,37 @@ export function deleteJob(publishId: number) {
 export function publishList(chainId: number, daoAddress: string) {
   return Axios.get('stpdao/v2/jobs/publish/list', { chainId, daoAddress })
 }
+
+export function createSbt(
+  chainId: number,
+  daoAddress: string,
+  endTime: number,
+  fileUrl: string,
+  introduction: string,
+  itemName: string,
+  startTime: number,
+  tokenChainId: number,
+  totalSupply: number,
+  way: string,
+  whitelist?: string[]
+) {
+  return Axios.post('/stpdao/v2/sbt/create', {
+    chainId,
+    daoAddress,
+    endTime,
+    fileUrl,
+    introduction,
+    itemName,
+    startTime,
+    tokenChainId,
+    totalSupply,
+    way,
+    whitelist
+  })
+}
+
+export function getmemberDaoList(exceptLevel: string) {
+  return Axios.get('stpdao/v2/jobs/left', {
+    exceptLevel
+  })
+}

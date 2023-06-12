@@ -3,12 +3,15 @@ import soulboundBgimg from 'assets/images/soulbound_bg.png'
 import { ReactComponent as CalendarIcon } from 'assets/svg/calendar_icon.svg'
 import Input from 'components/Input'
 import UploadFile from 'components/UploadFile'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Select from 'components/Select/Select'
 import DateTimePicker from 'components/DateTimePicker'
 import BlackButton from 'components/Button/Button'
 import Button from 'components/Button/Button'
 import Back from 'components/Back'
+import Image from 'components/Image'
+import { ChainList, ChainId } from 'constants/chain'
+import { useMemberDaoList } from 'hooks/useBackedSbtServer'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontSize: 14,
@@ -71,7 +74,7 @@ const UploadBoxStyle = styled(Box)(() => ({
 
 export default function Index() {
   const theme = useTheme()
-  const [inputvalue, setinputvalue] = useState('')
+  // const [inputvalue, setinputvalue] = useState('')
   const eligibilityList = [
     { id: 1, value: 'Anyone', label: 'Anyone' },
     { id: 2, value: 'DAO Members', label: 'DAO Members' },
@@ -80,6 +83,50 @@ export default function Index() {
   const [eligibilityValue, seteligibilityValue] = useState(eligibilityList[0].label)
   const [eventStartTime, setEventStartTime] = useState<number>()
   const [eventEndTime, setEventEndTime] = useState<number>()
+  const [fileValue, setfileValue] = useState('')
+  const { result: daoList } = useMemberDaoList('C_member')
+  const daoMemberList = useMemo(() => {
+    if (!daoList) return []
+    return daoList
+  }, [daoList])
+  const [daoValue, setdaoValue] = useState('')
+  const [chainValue, setchainValue] = useState()
+  const [itemName, setitemName] = useState('')
+  const [Introduction, setIntroduction] = useState('')
+  const [totalSupply, settotalSupply] = useState('')
+  const [daoAddress, setdaoAddress] = useState('')
+  const [chainId, setchainId] = useState<ChainId>()
+  const way = '123'
+  // const CreateSbtProp = {
+  //   chainId: chainId,
+  //   daoAddress: daoAddress,
+  //   endTime: eventEndTime,
+  //   fileUrl: fileValue,
+  //   introduction: Introduction,
+  //   itemName: itemName,
+  //   startTime: eventStartTime,
+  //   tokenChainId: chainValue,
+  //   totalSupply: totalSupply,
+  //   way: '123'
+  // }
+  const SubmitCreate = () => {
+    // const { result } = useCreateSbtCallback(
+
+    // )
+    console.log(
+      chainId,
+      daoAddress,
+      eventEndTime,
+      fileValue,
+      Introduction,
+      itemName,
+      eventStartTime,
+      chainValue,
+      totalSupply,
+      way,
+      9999
+    )
+  }
   return (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
       <Box
@@ -107,41 +154,90 @@ export default function Index() {
         <Typography variant="body1" fontWeight={'400'} fontSize={16}>
           The SBT only represents a status symbol, cannot be transferred, and has no financial attributes.
         </Typography>
-        <Box sx={{ mt: 20, display: 'grid', flexDirection: 'column', gap: 10 }}>
+        <Box
+          sx={{
+            mt: 20,
+            display: 'grid',
+            flexDirection: 'column',
+            gap: 10
+          }}
+        >
           <InputTitleStyle>Select a DAO</InputTitleStyle>
           <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
-          <Input value={''} />
+          <Select
+            placeholder="select Dao"
+            noBold
+            value={daoValue}
+            onChange={e => {
+              setdaoValue(e.target.value)
+              setdaoAddress(e.target.value.daoAddress)
+              setchainId(e.target.value.chainId)
+            }}
+          >
+            {daoMemberList.map((item: any, index: any) => (
+              <MenuItem
+                key={index}
+                sx={{
+                  fontWeight: 500,
+                  fontSize: '14px !important'
+                }}
+                value={item}
+              >
+                <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
+                  <Image
+                    style={{ height: 20, width: 20, backgroundColor: '#f5f5', borderRadius: '50%' }}
+                    src={item.daoLogo}
+                  />
+                  {item.daoName}
+                </Box>
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
         <Box sx={{ mt: 15, display: 'grid', flexDirection: 'column', gap: 10 }}>
-          <Select label="Blockchain" value={eligibilityValue} onChange={e => seteligibilityValue(e.target.value)}>
-            {eligibilityList.map(item => (
+          <Select
+            placeholder="select Chain"
+            noBold
+            label="Blockchain"
+            value={chainValue}
+            onChange={e => setchainValue(e.target.value)}
+          >
+            {ChainList.map(item => (
               <MenuItem
                 key={item.id}
                 sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                value={item.value}
+                value={item.id}
               >
-                {item.label}
+                {item.name}
               </MenuItem>
             ))}
           </Select>
         </Box>
         <Box sx={{ mt: 20, mb: 20 }}>
-          <UploadFile size={150} />
+          <UploadFile
+            size={150}
+            value={fileValue}
+            onChange={e => {
+              console.log(e, 999)
+              setfileValue(e)
+            }}
+          />
         </Box>
         <Box sx={{ display: 'grid', flexDirection: 'column', gap: 15 }}>
           <Input
-            value={''}
+            value={itemName}
             label="Item Name"
             placeholder="Write a description"
+            onChange={e => setitemName(e.target.value)}
             maxLength={50}
             endAdornment={
               <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
-                0/50
+                {itemName.length}/50
               </Typography>
             }
           />
           <Input
-            value={inputvalue}
+            value={Introduction}
             rows={5}
             multiline
             label="Introduction (Optional)"
@@ -149,20 +245,31 @@ export default function Index() {
             maxLength={2000}
             endAdornment={
               <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
-                {inputvalue.length}/2000
+                {Introduction.length}/2000
               </Typography>
             }
             onChange={e => {
-              setinputvalue(e.target.value)
+              setIntroduction(e.target.value)
             }}
           />
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
             <Input value={''} label="Organization Name" placeholder="Enter name" />
             <Input value={''} label="Organization Username" placeholder="Enter handle name" />
           </Box>
-          <Input value={''} label="Total supply" placeholder="Enter Total" />
+          <Input
+            value={totalSupply}
+            //  type="number"
+            // inputMode="numeric"
+
+            onChange={e => {
+              settotalSupply(e.target.value)
+            }}
+            label="Total supply"
+            placeholder="Enter Total"
+          />
           <Box>
             <Select
+              noBold
               label="Set Token Eligibility"
               value={eligibilityValue}
               onChange={e => seteligibilityValue(e.target.value)}
@@ -210,7 +317,7 @@ export default function Index() {
                 value={eventStartTime ? new Date(eventStartTime * 1000) : null}
                 onValue={timestamp => setEventStartTime(timestamp)}
               />
-              <ContentHintStyle>--</ContentHintStyle>
+              <ContentHintStyle style={{ whiteSpace: 'nowrap' }}>--</ContentHintStyle>
               <DateTimePicker
                 label={'End time'}
                 minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
@@ -221,7 +328,9 @@ export default function Index() {
           </Box>
         </Box>
         <Box sx={{ display: 'flex', mt: 40, justifyContent: 'flex-end' }}>
-          <BlackButton style={{ width: 270, height: 40 }}>Create Now</BlackButton>
+          <BlackButton onClick={SubmitCreate} style={{ width: 270, height: 40 }}>
+            Create Now
+          </BlackButton>
         </Box>
       </ContentBoxStyle>
     </Box>

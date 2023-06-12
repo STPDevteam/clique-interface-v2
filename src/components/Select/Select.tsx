@@ -13,7 +13,6 @@ import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
 // import SelectedHoverIcon from 'assets/componentsIcon/selected_hover_icon.svg'
 import CheckboxMulIcon from '../../assets/componentsIcon/checkbox.svg'
 import SelectedMulIcon from '../../assets/componentsIcon/checkbox_checked.svg'
-
 import React, { useMemo, useState } from 'react'
 import { SxProps } from '@mui/system'
 interface Props {
@@ -98,7 +97,7 @@ export default function Select(props: Props) {
           width: width || '100%',
           height: height || '40px',
           padding: '0',
-          fontWeight: noBold ? 400 : 600,
+          fontWeight: noBold ? 500 : 600,
           border: `${noBold ? 1 : 2}px solid`,
           borderColor: color ? color : '#D4D7E2',
           '& .MuiSelect-select': {
