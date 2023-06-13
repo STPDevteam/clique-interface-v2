@@ -910,17 +910,19 @@ export function useUpdateDaoGeneral() {
       daoName: string,
       discord: string,
       github: string,
-      join: {
-        chainId: number | undefined
-        decimals: number | undefined
-        holdAmount: string
-        symbol: string | undefined
-        tokenAddress: string | undefined
-        tokenLogo: string | undefined
-        tokenName: string | undefined
-        tokenType: string
-        totalSupply: string | undefined
-      },
+      join:
+        | {
+            chainId: number
+            decimals: number
+            holdAmount: string
+            symbol: string
+            tokenAddress: string
+            tokenLogo: string
+            tokenName: string
+            tokenType: string
+            totalSupply: string
+          }
+        | undefined,
       twitter: string,
       website: string
     ) => {

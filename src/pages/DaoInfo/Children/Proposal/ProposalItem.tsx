@@ -266,7 +266,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
   return (
     <StyledCard
       onClick={() =>
-        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.daoAddressV1}/${proposalInfo.proposalId}`)
+        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.v1V2DaoAddress}/${proposalInfo.proposalId}`)
       }
     >
       {isSmDown && <Box>{Creator}</Box>}

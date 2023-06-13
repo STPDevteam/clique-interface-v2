@@ -315,19 +315,11 @@ export function getProposalContent(uuid: string) {
   })
 }
 
-export function getProposalList(
-  chainId: number | string,
-  daoAddress: string,
-  status: number | undefined,
-  offset: number,
-  count: number
-) {
-  return Axios.get('stpdao/v2/proposal/list', {
-    chainId,
-    daoAddress,
+export function getProposalList(daoId: number | string, status: number | undefined, offset: number, limit: number) {
+  return Axios.get(`stpdao/v3/proposal/list/${daoId}`, {
     status: status || '',
     offset,
-    count
+    limit
   })
 }
 
@@ -725,17 +717,19 @@ export function updateDaoGeneral(
   daoName: string,
   discord: string,
   github: string,
-  join: {
-    chainId: number | undefined
-    decimals: number | undefined
-    holdAmount: string
-    symbol: string | undefined
-    tokenAddress: string | undefined
-    tokenLogo: string | undefined
-    tokenName: string | undefined
-    tokenType: string
-    totalSupply: string | undefined
-  },
+  join:
+    | {
+        chainId: number
+        decimals: number
+        holdAmount: string
+        symbol: string
+        tokenAddress: string
+        tokenLogo: string
+        tokenName: string
+        tokenType: string
+        totalSupply: string
+      }
+    | undefined,
   twitter: string,
   website: string
 ) {

@@ -4,7 +4,6 @@ import { inputBaseClasses } from '@mui/material/InputBase'
 import InputLabel from './InputLabel'
 import { isURL } from 'utils/dao'
 import { escapeRegExp, isAddress, isEmail } from 'utils'
-// import theme from 'theme'
 
 export interface InputProps {
   placeholder?: string

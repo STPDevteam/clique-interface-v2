@@ -2,7 +2,7 @@ import { useModalOpen, useSignLoginModalToggle } from 'state/application/hooks'
 import Modal from '../Modal'
 import { ApplicationModal } from 'state/application/actions'
 import { Box, Button, Typography } from '@mui/material'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 // import { setInjectedConnected } from 'utils/isInjectedConnectedPrev'
 import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from 'hooks'
@@ -11,24 +11,31 @@ import logo from '../../assets/svg/logo.svg'
 import Image from 'components/Image'
 
 export default function LoginModal() {
+  const [btnDisable, setBtnDisable] = useState(false)
   const { connector, deactivate } = useWeb3React()
   const { account } = useActiveWeb3React()
   const walletModalOpen = useModalOpen(ApplicationModal.SIGN_LOGIN)
   const toggleSignLoginModal = useSignLoginModalToggle()
   const login = useLoginSignature()
-
   const userInfo = useUserInfo()
 
   const closeModal = useCallback(() => {
     if (userInfo?.loggedToken && walletModalOpen) {
       toggleSignLoginModal()
+      setBtnDisable(false)
+      return
     }
+    setBtnDisable(true)
   }, [toggleSignLoginModal, userInfo?.loggedToken, walletModalOpen])
 
   const openModal = useCallback(() => {
+    //TODO while account !== previous account
     if (!userInfo?.loggedToken && !walletModalOpen && account) {
       toggleSignLoginModal()
+      setBtnDisable(false)
+      return
     }
+    setBtnDisable(false)
   }, [account, toggleSignLoginModal, userInfo?.loggedToken, walletModalOpen])
 
   useEffect(() => {
@@ -67,7 +74,7 @@ export default function LoginModal() {
           <Button variant="outlined" onClick={cancel}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={login}>
+          <Button variant="contained" color="primary" onClick={login} disabled={btnDisable}>
             Accept and sign
           </Button>
         </Box>

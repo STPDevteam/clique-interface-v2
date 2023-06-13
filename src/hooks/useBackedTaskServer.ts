@@ -460,7 +460,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
       }
       setLoading(true)
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalList(daoChainId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -489,7 +489,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
       }
 
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalList(daoChainId, status, (currentPage - 1) * pageSize, pageSize)
         const data = res.data.data as any
         if (!data) {
           return

@@ -2,24 +2,25 @@ import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Input from 'components/Input'
-import Image from 'components/Image'
-import UploadImage from 'components/UploadImage'
-import NumericalInput from 'components/Input/InputNumerical'
+// import Image from 'components/Image'
+import UpImgButton from 'components/UploadImage/UpImgButton'
+// import NumericalInput from 'components/Input/InputNumerical'
 import Tooltip from 'components/Tooltip'
-import ToggleButtonGroup from 'components/ToggleButtonGroup'
-import ChainSelect from 'components/Select/ChainSelect'
+// import ToggleButtonGroup from 'components/ToggleButtonGroup'
+// import ChainSelect from 'components/Select/ChainSelect'
 import { ReactNode, useState } from 'react'
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
 import FormItem from 'components/FormItem'
 import { FormType } from './type'
-import { formCheckValid, isAddress } from 'utils'
-import { ChainId, ChainList, ChainListMap } from 'constants/chain'
+import { formCheckValid } from 'utils'
+// import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
-import { useTokenByChain } from 'state/wallet/hooks'
 import { toast } from 'react-toastify'
 import { useUpdateDaoGeneral } from 'hooks/useBackedDaoServer'
-import tokenLogo from 'assets/images/tokenLogo.png'
+// import tokenLogo from 'assets/images/tokenLogo.png'
+// import { useTokenByChain } from 'state/wallet/hooks'
+// import { Token, TokenAmount } from 'constants/token'
 
 export const sxInputStyle = {
   '& .MuiInputBase-root': {
@@ -39,62 +40,64 @@ const Wrapper = styled(Box)(({ theme }) => ({
   }
 }))
 
-const InputStyle = styled(Input)(() => ({
-  height: 40
-}))
-
-const validationSchema = yup.object({
-  daoLogo: yup.string().required('Please upload your Dao picture'),
-  name: yup
-    .string()
-    .trim()
-    .required('Please enter your Organization Name')
-    .max(20, 'Allow only no more than 20 letters'),
-  handle: yup.string().trim(),
-  description: yup
-    .string()
-    .trim()
-    .required(formCheckValid('description', FormType.Input))
-    .max(200, `*The number of characters exceeds the limit`),
-  category: yup.string().required(formCheckValid('category', FormType.Select)),
-  website: yup
-    .string()
-    .trim()
-    .url('Please enter a valid URL'),
-  twitter: yup
-    .string()
-    .trim()
-    .url('Please enter a valid URL'),
-  github: yup
-    .string()
-    .trim()
-    .url('Please enter a valid URL'),
-  discord: yup
-    .string()
-    .trim()
-    .url('Please enter a valid URL'),
-  instagram: yup
-    .string()
-    .trim()
-    .url('Please enter a valid URL'),
-  tokenContractAddr: yup.string().trim(),
-  holdAmount: yup.string().trim(),
-  tokenChain: yup.object({
-    icon: yup.mixed<ReactNode>(),
-    link: yup.string(),
-    selectedIcon: yup.mixed<ReactNode>()
-  })
-})
+// const InputStyle = styled(Input)(() => ({
+//   height: 40
+// }))
 
 export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
-  const [currentBaseChain, setCurrentBaseChain] = useState<any>(ChainListMap[daoInfo.join.chainId ?? 0])
-  const [curTokenAddr, setCurTokenAddr] = useState(daoInfo.join.tokenAddress ?? '')
   const [loading, setLoading] = useState(false)
-  const ListItem = [
-    { label: 'Anyone', value: 'Anyone' },
-    { label: 'Holding token or NFT', value: 'Holding token or NFT' }
-  ]
-  const [ToggleValue, setToggleValue] = useState('Anyone')
+  // const [ToggleValue, setToggleValue] = useState('Anyone')
+  const schema = yup.object().shape({
+    daoLogo: yup.string().required('Please upload your Dao picture'),
+    name: yup
+      .string()
+      .trim()
+      .required('Please enter your Organization Name')
+      .max(20, 'Allow only no more than 20 letters'),
+    handle: yup.string().trim(),
+    description: yup
+      .string()
+      .trim()
+      .required(formCheckValid('description', FormType.Input))
+      .max(200, `*The number of characters exceeds the limit`),
+    category: yup.string().required(formCheckValid('category', FormType.Select)),
+    website: yup
+      .string()
+      .trim()
+      .url('Please enter a valid URL'),
+    twitter: yup
+      .string()
+      .trim()
+      .url('Please enter a valid URL'),
+    github: yup
+      .string()
+      .trim()
+      .url('Please enter a valid URL'),
+    discord: yup
+      .string()
+      .trim()
+      .url('Please enter a valid URL'),
+    instagram: yup
+      .string()
+      .trim()
+      .url('Please enter a valid URL'),
+    tokenContractAddr: yup.string().matches(/^0x[a-fA-F0-9]{40}$/, 'Invalid token contract address'),
+    holdAmount: yup.string().when('ToggleValue', {
+      is: 'Anyone',
+      then: yup.string(),
+      otherwise: yup.string().required('amount can not be empty')
+    }),
+    tokenChain: yup.object({
+      icon: yup.mixed<ReactNode>(),
+      link: yup.string(),
+      selectedIcon: yup.mixed<ReactNode>()
+    })
+  })
+  // const ListItem = [
+  //   { label: 'Anyone', value: 'Anyone' },
+  //   { label: 'Holding token or NFT', value: 'Holding token or NFT' }
+  // ]
+  // const childStateRef = useRef<{ token: Token; totalSupply: TokenAmount } | undefined | null>(null)
   const theme = useTheme()
   const updateDaoGeneral = useUpdateDaoGeneral()
   const initialValues = {
@@ -108,13 +111,12 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
     discord: daoInfo.discord || '',
     handle: daoInfo.handle,
     holdAmount: daoInfo.join.holdAmount || '',
-    tokenContractAddr: daoInfo.join.tokenAddress || '',
-    tokenChain: currentBaseChain || 0
+    tokenContractAddr: daoInfo.join.tokenAddress || ''
   }
 
   const handleSubmit = (values: any) => {
-    console.log(values)
     setLoading(true)
+    console.log(values)
     updateDaoGeneral(
       values.description,
       values.category.split(','),
@@ -123,17 +125,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
       values.name,
       values.discord,
       values.github,
-      {
-        chainId: govToken?.token.chainId,
-        decimals: govToken?.token.decimals,
-        holdAmount: values.holdAmount,
-        symbol: govToken?.token.symbol,
-        tokenAddress: govToken?.token.address,
-        tokenLogo: govToken?.token.logo,
-        tokenName: govToken?.token.name,
-        tokenType: 'erc20',
-        totalSupply: govToken?.totalSupply.raw.toString()
-      },
+      undefined,
       values.twitter,
       values.website
     )
@@ -151,17 +143,9 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
       })
   }
 
-  const govToken = useTokenByChain(isAddress(curTokenAddr) ? curTokenAddr : undefined, currentBaseChain?.id)
-  console.log('token', govToken)
-
   return (
-    <Formik
-      validationSchema={validationSchema}
-      initialValues={initialValues}
-      onSubmit={handleSubmit}
-      enableReinitialize
-    >
-      {({ values, setFieldValue }) => {
+    <Formik validationSchema={schema} initialValues={initialValues} onSubmit={handleSubmit} enableReinitialize>
+      {({ values, setFieldValue, errors }) => {
         return (
           <Box component={Form} noValidate>
             <Wrapper>
@@ -179,18 +163,16 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
               >
                 <FormItem name="daoLogo" required>
                   <Box sx={{ display: 'flex', gap: 42, mt: 20, mb: 10 }}>
-                    <UploadImage
-                      onChange={val => setFieldValue('daoLogo', val)}
-                      size={124}
-                      showUploadBtn={true}
-                      value={daoInfo.daoLogo}
-                    />
+                    <UpImgButton onChange={val => setFieldValue('daoLogo', val)} size={124} value={values.daoLogo} />
                   </Box>
                 </FormItem>
                 <FormItem sx={sxInputStyle} name="description" required>
                   <Input
                     label="Introduction"
                     placeholderSize="14px"
+                    style={{
+                      borderColor: errors.description ? '#e46767' : '#D4D7E2'
+                    }}
                     endAdornment={
                       <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
                         {values.description.length}/200
@@ -210,7 +192,13 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   />
                 </FormItem>
                 <FormItem sx={sxInputStyle} name="twitter">
-                  <Input label="Twitter" value={values.twitter} />
+                  <Input
+                    label="Twitter"
+                    value={values.twitter}
+                    style={{
+                      borderColor: errors.description ? '#e46767' : '#D4D7E2'
+                    }}
+                  />
                 </FormItem>
               </Stack>
               <Box
@@ -222,6 +210,9 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   '& .MuiInputBase-input': {
                     height: '40!important',
                     padding: '0 15px 0 0!important'
+                  },
+                  '& .MuiBox-root .MuiFormLabel-root': {
+                    marginBottom: 7
                   }
                 }}
               >
@@ -267,17 +258,39 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                   </Box>
                 </FormItem>
                 <FormItem name="github">
-                  <Input label="Github" placeholderSize="14px" placeholder="e.c. bitcoin" value={values.github} />
+                  <Input
+                    style={{
+                      borderColor: errors.github ? '#e46767' : '#D4D7E2'
+                    }}
+                    label="Github"
+                    placeholderSize="14px"
+                    placeholder="e.c. bitcoin"
+                    value={values.github}
+                  />
                 </FormItem>
                 <FormItem name="discord">
-                  <Input label="Discord" placeholderSize="14px" placeholder="e.c. bitcoin" value={values.discord} />
+                  <Input
+                    style={{
+                      borderColor: errors.discord ? '#e46767' : '#D4D7E2'
+                    }}
+                    label="Discord"
+                    placeholderSize="14px"
+                    placeholder="e.c. bitcoin"
+                    value={values.discord}
+                  />
                 </FormItem>
                 <FormItem name="website">
-                  <Input label="Website" value={values.website} />
+                  <Input
+                    style={{
+                      borderColor: errors.website ? '#e46767' : '#D4D7E2'
+                    }}
+                    label="Website"
+                    value={values.website}
+                  />
                 </FormItem>
               </Box>
             </Wrapper>
-            <Box sx={{ mt: 20, display: 'flex', gap: 38, alignItems: 'center' }}>
+            {/* <Box sx={{ mt: 20, display: 'flex', gap: 38, alignItems: 'center' }}>
               <Typography
                 sx={{
                   fontWeight: 500,
@@ -290,104 +303,15 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
               </Typography>
               <ToggleButtonGroup itemWidth={150} Props={ListItem} setToggleValue={setToggleValue} />
             </Box>
-
-            {ToggleValue == 'Anyone' ? (
+            {ToggleValue === 'Anyone' ? (
               ''
             ) : (
-              <Box
-                sx={{
-                  mt: 20,
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                  gap: 16
-                }}
-              >
-                <Box>
-                  <Typography
-                    sx={{
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '16px',
-                      color: '#80829F',
-                      mb: 10
-                    }}
-                  >
-                    Network
-                  </Typography>
-                  <FormItem>
-                    <ChainSelect
-                      chainList={ChainList.filter(
-                        v =>
-                          v.id !== ChainId.POLYGON_MANGO &&
-                          v.id !== ChainId.COINBASE_TESTNET &&
-                          v.id !== ChainId.ZetaChain_TESTNET &&
-                          v.id !== ChainId.ZKSYNC_ERA &&
-                          v.id !== ChainId.ZKSYNC_ERA_TESTNET
-                      )}
-                      height={40}
-                      selectedChain={currentBaseChain}
-                      onChange={(e: any) => {
-                        setCurrentBaseChain(e)
-                      }}
-                    />
-                  </FormItem>
-                </Box>
-                <FormItem name="tokenContractAddr" fieldType="custom">
-                  <InputStyle
-                    label="Token Contract Address"
-                    placeholderSize="14px"
-                    placeholder="0x..."
-                    value={curTokenAddr}
-                    onChange={(e: any) => {
-                      setCurTokenAddr(e.target.value)
-                    }}
-                  />
-                </FormItem>
-                <FormItem name="holdAmount">
-                  <NumericalInput label="Number" placeholderSize="14px" placeholder="0" value={values.holdAmount} />
-                </FormItem>
-                <Box>
-                  <Typography
-                    sx={{
-                      fontWeight: 500,
-                      fontSize: '14px',
-                      lineHeight: '16px',
-                      color: '#80829F'
-                    }}
-                  >
-                    Token preview
-                  </Typography>
-                  <Box
-                    sx={{
-                      '& p': {
-                        fontWeight: 500,
-                        fontSize: '14px',
-                        lineHeight: '20px',
-                        color: '#3F5170'
-                      },
-                      mt: 14,
-                      gap: 10,
-                      height: 40,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center'
-                    }}
-                  >
-                    {govToken?.token && (
-                      <>
-                        <Image width={20} src={govToken?.token.logo || tokenLogo} />
-                        <Typography>{`${govToken?.token.name}(${govToken?.token.symbol})`}</Typography>
-                      </>
-                    )}
-                  </Box>
-                </Box>
-              </Box>
-            )}
-
+              <TokenContainer values={values} daoInfo={daoInfo} errors={errors} shareChildRef={childStateRef} />
+            )} */}
             <Box mt={30} display="flex" justifyContent={'flex-end'}>
               <LoadingButton
                 loading={loading}
-                loadingPosition="start"
+                loadingPosition="center"
                 startIcon={<></>}
                 variant="contained"
                 color="primary"
@@ -403,3 +327,125 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
     </Formik>
   )
 }
+
+// function TokenContainer({
+//   daoInfo,
+//   values,
+//   errors,
+//   shareChildRef
+// }: {
+//   daoInfo: CreateDaoDataProp
+//   values: any
+//   errors: any
+//   shareChildRef: any
+// }) {
+//   const [currentBaseChain, setCurrentBaseChain] = useState<any>(ChainListMap[daoInfo.join.chainId ?? 0])
+//   const govToken = useTokenByChain(
+//     isAddress(values.tokenContractAddr) ? values.tokenContractAddr : undefined,
+//     currentBaseChain?.id
+//   )
+//   useEffect(() => {
+//     shareChildRef.current = govToken
+//   }, [govToken, shareChildRef])
+
+//   return (
+//     <>
+//       <Box
+//         sx={{
+//           mt: 20,
+//           display: 'grid',
+//           gridTemplateColumns: '1fr 1fr 1fr 1fr',
+//           gap: 16
+//         }}
+//       >
+//         <Box>
+//           <Typography
+//             sx={{
+//               fontWeight: 500,
+//               fontSize: '14px',
+//               lineHeight: '16px',
+//               color: '#80829F',
+//               mb: 10
+//             }}
+//           >
+//             Network
+//           </Typography>
+//           <FormItem>
+//             <ChainSelect
+//               chainList={ChainList.filter(
+//                 v =>
+//                   v.id !== ChainId.POLYGON_MANGO &&
+//                   v.id !== ChainId.COINBASE_TESTNET &&
+//                   v.id !== ChainId.ZetaChain_TESTNET &&
+//                   v.id !== ChainId.ZKSYNC_ERA &&
+//                   v.id !== ChainId.ZKSYNC_ERA_TESTNET
+//               )}
+//               height={40}
+//               selectedChain={currentBaseChain}
+//               onChange={(e: any) => {
+//                 setCurrentBaseChain(e)
+//               }}
+//             />
+//           </FormItem>
+//         </Box>
+//         <FormItem name="tokenContractAddr">
+//           <InputStyle
+//             label="Token Contract Address"
+//             placeholderSize="14px"
+//             placeholder="0x..."
+//             value={values.tokenContractAddr}
+//             sx={{
+//               borderColor: errors.tokenContractAddr ? '#e46767 !important' : '#D4D7E2'
+//             }}
+//           />
+//         </FormItem>
+//         <FormItem name="holdAmount">
+//           <NumericalInput
+//             style={{
+//               borderColor: errors.holdAmount ? '#e46767' : '#D4D7E2'
+//             }}
+//             label="Number"
+//             placeholderSize="14px"
+//             placeholder="0"
+//             value={values.holdAmount}
+//           />
+//         </FormItem>
+//         <Box>
+//           <Typography
+//             sx={{
+//               fontWeight: 500,
+//               fontSize: '14px',
+//               lineHeight: '16px',
+//               color: '#80829F'
+//             }}
+//           >
+//             Token preview
+//           </Typography>
+//           <Box
+//             sx={{
+//               '& p': {
+//                 fontWeight: 500,
+//                 fontSize: '14px',
+//                 lineHeight: '20px',
+//                 color: '#3F5170'
+//               },
+//               mt: 14,
+//               gap: 10,
+//               height: 40,
+//               display: 'flex',
+//               flexDirection: 'row',
+//               alignItems: 'center'
+//             }}
+//           >
+//             {govToken?.token && (
+//               <>
+//                 <Image width={20} src={govToken?.token.logo || tokenLogo} />
+//                 <Typography>{`${govToken?.token.name}(${govToken?.token.symbol})`}</Typography>
+//               </>
+//             )}
+//           </Box>
+//         </Box>
+//       </Box>
+//     </>
+//   )
+// }

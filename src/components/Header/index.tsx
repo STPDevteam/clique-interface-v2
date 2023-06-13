@@ -22,7 +22,6 @@ import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 
 import PopperCard from 'components/PopperCard'
-import LoginModal from './LoginModal'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 
@@ -362,7 +361,6 @@ export default function Header() {
   }
   return (
     <>
-      <LoginModal />
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
       <Filler />
       <StyledMobileAppBar>

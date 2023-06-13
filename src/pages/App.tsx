@@ -56,6 +56,7 @@ import DappStore from './TokenList/DappStore'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
+import LoginModal from 'components/Header/LoginModal'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -112,6 +113,7 @@ export default function App() {
     <Suspense fallback={null}>
       <ModalProvider>
         <AppWrapper id="app">
+          <LoginModal />
           <Route component={GoogleAnalyticsReporter} />
           <Route path={routes.Page} component={Page} />
           <ContentWrapper>

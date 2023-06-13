@@ -8,7 +8,7 @@ export type IFormItemType = 'custom' | 'text'
 export type IFormItemProps = {
   label?: React.ReactNode
   name?: string
-  children: React.ReactNode
+  children: JSX.Element
   tips?: React.ReactNode
   fieldType?: IFormItemType
   startAdornment?: React.ReactNode

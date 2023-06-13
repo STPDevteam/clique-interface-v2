@@ -8,7 +8,7 @@ import { ProposalStatus } from './useProposalInfo'
 export interface ProposalListBaseProp {
   daoChainId: ChainId
   daoAddress: string
-  daoAddressV1: string
+  v1V2DaoAddress: string
   proposalId: number
   title: string
   contentV1: string
@@ -20,7 +20,16 @@ export interface ProposalListBaseProp {
   targetTimeString: string
 }
 
-function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
+function makeLIstData(
+  daoChainId: ChainId,
+  proposalId: number,
+  title: string,
+  proposer: string,
+  startTime: number,
+  endTime: number,
+  v1V2DaoAddress: string,
+  list: any
+): ProposalListBaseProp[] {
   const now = currentTimeStamp()
   return list.map((item: any) => {
     const startTime = item.startTime
@@ -45,26 +54,24 @@ function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
     }
 
     return {
-      proposalId: item.proposalId,
+      proposalId,
       daoChainId,
       version: item.version,
-      title: item.title,
-      daoAddress: item.daoAddress,
-      daoAddressV1: item.daoAddressV1,
+      title,
+      v1V2DaoAddress,
       contentV1: item.contentV1.replace(/^\[markdown\]/, ''),
-      startTime: item.startTime,
-      endTime: item.endTime,
-      proposer: item.proposer,
+      startTime: startTime,
+      endTime: endTime,
+      proposer,
       status: _status,
       targetTimeString
     }
   })
 }
 
-export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
+export function useProposalBaseList(daoId: number) {
   const [status, setStatus] = useState<ProposalStatus>()
   const [currentPage, setCurrentPage] = useState(1)
-
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -84,23 +91,34 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
+      if (!daoId) {
         setResult([])
         setTotal(0)
         return
       }
       setLoading(true)
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalList(daoId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
+        console.log('list', data)
+
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBaseProp[] = makeLIstData(
+          data.data.v1V2ChainId,
+          data.proposalId,
+          data.title,
+          data.proposer,
+          data.startTime,
+          data.endTime,
+          data.v1V2DaoAddress,
+          data.list
+        )
         setResult(list)
       } catch (error) {
         setResult([])
@@ -109,11 +127,11 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
         console.error('getProposalList', error)
       }
     })()
-  }, [status, currentPage, daoAddress, daoChainId])
+  }, [status, currentPage, daoId])
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
+      if (!daoId) {
         setResult([])
         setTotal(0)
         return
@@ -123,14 +141,22 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
         return
       }
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
-        const data = res.data.data as any
-
+        const res = await getProposalList(daoId, status, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
         if (!data) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBaseProp[] = makeLIstData(
+          data.data.v1V2ChainId,
+          data.proposalId,
+          data.title,
+          data.proposer,
+          data.startTime,
+          data.endTime,
+          data.v1V2DaoAddress,
+          data.list
+        )
         setResult(list)
         toTimeRefresh()
       } catch (error) {
