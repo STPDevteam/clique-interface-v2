@@ -11,17 +11,17 @@ import Button from 'components/Button/Button'
 import Back from 'components/Back'
 import Image from 'components/Image'
 import { ChainList, ChainId } from 'constants/chain'
-import { useMemberDaoList } from 'hooks/useBackedSbtServer'
+import { useMemberDaoList, useCreateSbtCallback } from 'hooks/useBackedSbtServer'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontSize: 14,
   lineHeight: '16px',
-  color: ' #80829F'
+  color: '#80829F'
 }))
 const ContentHintStyle = styled(Typography)(() => ({
   fontSize: 14,
   lineHeight: '16px',
-  color: ' #B5B7CF'
+  color: '#B5B7CF'
 }))
 const ContentBoxStyle = styled(Box)(() => ({
   padding: '30px 120px 70px 70px'
@@ -74,13 +74,14 @@ const UploadBoxStyle = styled(Box)(() => ({
 
 export default function Index() {
   const theme = useTheme()
-  // const [inputvalue, setinputvalue] = useState('')
   const eligibilityList = [
-    { id: 1, value: 'Anyone', label: 'Anyone' },
-    { id: 2, value: 'DAO Members', label: 'DAO Members' },
-    { id: 3, value: 'Upload Addresses', label: 'Upload Addresses' }
+    { id: 1, value: 'anyone', label: 'Anyone' },
+    { id: 2, value: 'joined', label: 'DAO Members' },
+    { id: 3, value: 'whitelist', label: 'Upload Addresses' }
   ]
-  const [eligibilityValue, seteligibilityValue] = useState(eligibilityList[0].label)
+  const [whitelistBoole, setwhitelistBoole] = useState<boolean>(false)
+  const [whitelistValue, setwhitelistValue] = useState<string[]>([])
+  const [eligibilityValue, seteligibilityValue] = useState(eligibilityList[0].value)
   const [eventStartTime, setEventStartTime] = useState<number>()
   const [eventEndTime, setEventEndTime] = useState<number>()
   const [fileValue, setfileValue] = useState('')
@@ -90,42 +91,35 @@ export default function Index() {
     return daoList
   }, [daoList])
   const [daoValue, setdaoValue] = useState('')
-  const [chainValue, setchainValue] = useState()
+  const [symbolValue, setsymbolValue] = useState('')
+  const [chainValue, setchainValue] = useState<number>(ChainList[0].id)
   const [itemName, setitemName] = useState('')
   const [Introduction, setIntroduction] = useState('')
-  const [totalSupply, settotalSupply] = useState('')
+  const [totalSupply, settotalSupply] = useState<string>('')
   const [daoAddress, setdaoAddress] = useState('')
   const [chainId, setchainId] = useState<ChainId>()
-  const way = '123'
-  // const CreateSbtProp = {
-  //   chainId: chainId,
-  //   daoAddress: daoAddress,
-  //   endTime: eventEndTime,
-  //   fileUrl: fileValue,
-  //   introduction: Introduction,
-  //   itemName: itemName,
-  //   startTime: eventStartTime,
-  //   tokenChainId: chainValue,
-  //   totalSupply: totalSupply,
-  //   way: '123'
-  // }
-  const SubmitCreate = () => {
-    // const { result } = useCreateSbtCallback(
+  const CreateSbtCallback = useCreateSbtCallback(
+    chainId,
+    daoAddress,
+    eventEndTime,
+    fileValue,
+    Introduction,
+    itemName,
+    eventStartTime,
+    chainValue,
+    parseFloat(totalSupply),
+    eligibilityValue,
+    symbolValue
+  )
 
-    // )
-    console.log(
-      chainId,
-      daoAddress,
-      eventEndTime,
-      fileValue,
-      Introduction,
-      itemName,
-      eventStartTime,
-      chainValue,
-      totalSupply,
-      way,
-      9999
-    )
+  const SubmitCreate = () => {
+    CreateSbtCallback()
+      .then((res: any) => {
+        console.log(res)
+      })
+      .catch((err: any) => {
+        console.log(err)
+      })
   }
   return (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
@@ -252,15 +246,19 @@ export default function Index() {
               setIntroduction(e.target.value)
             }}
           />
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-            <Input value={''} label="Organization Name" placeholder="Enter name" />
-            <Input value={''} label="Organization Username" placeholder="Enter handle name" />
-          </Box>
+
+          <Input
+            value={symbolValue}
+            onChange={e => {
+              setsymbolValue(e.target.value)
+            }}
+            label="symbol"
+            placeholder="Enter Symbol"
+          />
+
           <Input
             value={totalSupply}
-            //  type="number"
-            // inputMode="numeric"
-
+            type="number"
             onChange={e => {
               settotalSupply(e.target.value)
             }}
@@ -272,7 +270,14 @@ export default function Index() {
               noBold
               label="Set Token Eligibility"
               value={eligibilityValue}
-              onChange={e => seteligibilityValue(e.target.value)}
+              onChange={e => {
+                seteligibilityValue(e.target.value)
+                if (e.target.value === 'whitelist') {
+                  setwhitelistBoole(true)
+                } else {
+                  setwhitelistBoole(false)
+                }
+              }}
             >
               {eligibilityList.map(item => (
                 <MenuItem
@@ -284,28 +289,34 @@ export default function Index() {
                 </MenuItem>
               ))}
             </Select>
-            {eligibilityValue == 'Upload Addresses' ? (
+            {whitelistBoole && (
               <>
                 <UploadBoxStyle>
-                  {/* <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <Typography variant="body1" lineHeight="20px" color="#0049C6">
-                      Filename001
-                    </Typography>
-                    <Typography variant="body1" lineHeight="20px">
-                      Total 1311 addresses
-                    </Typography>
-                  </Box>
-                  <UploadButtonStyle >
-                    Re-upload
-                  </UploadButtonStyle> */}
-
-                  <Typography variant="body1" lineHeight={'20px'}>
-                    Download this <Link sx={{ cursor: 'pointer' }}>Reference template.</Link>
-                  </Typography>
-                  <UploadButtonStyle>Upload File</UploadButtonStyle>
+                  {whitelistValue.length > 0 ? (
+                    <>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        <Typography variant="body1" lineHeight="20px" color="#0049C6">
+                          Filename001
+                        </Typography>
+                        <Typography variant="body1" lineHeight="20px">
+                          Total {whitelistValue.length} addresses
+                        </Typography>
+                      </Box>
+                      <UploadButtonStyle onClick={() => console.log(whitelistValue)}>Re-upload</UploadButtonStyle>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="body1" lineHeight={'20px'}>
+                        Download this <Link sx={{ cursor: 'pointer' }}>Reference template.</Link>
+                      </Typography>
+                      <UploadButtonStyle onClick={() => setwhitelistValue(['1', '3', '4'])}>
+                        Upload File
+                      </UploadButtonStyle>
+                    </>
+                  )}
                 </UploadBoxStyle>
               </>
-            ) : null}
+            )}
           </Box>
           <Box sx={{ display: 'grid', flexDirection: 'column', gap: 10 }}>
             <InputTitleStyle>Claimable Period</InputTitleStyle>

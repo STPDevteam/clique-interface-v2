@@ -5,6 +5,7 @@ import ENS_ABI from '../constants/abis/ens-registrar.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import DAO_FACTORY_ABI from '../constants/abis/daoFactory.json'
+import CREATE_SBT_ABI from '../constants/abis/sbt.json'
 import AIRDROP_ABI from '../constants/abis/airdrop.json'
 import PUBLICSALE_ABI from '../constants/abis/publicsale.json'
 import GOVERNANCE_DAO_ABI from '../constants/abis/governanceDao.json'
@@ -15,7 +16,7 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { ChainId } from '../constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
-import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS } from '../constants'
+import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS, CREATE_SBT } from '../constants'
 import { useUserLocation } from 'state/application/hooks'
 
 // returns null on errors
@@ -138,6 +139,16 @@ export function usePublicSaleContract(queryChainId?: ChainId): Contract | null {
   return useContract(
     queryChainId || chainId ? PUBLICSALE_ADDRESS[(queryChainId || chainId) as ChainId] : undefined,
     PUBLICSALE_ABI,
+    true,
+    queryChainId
+  )
+}
+export function useCreateSbtContract(queryChainId?: ChainId): Contract | null {
+  const { chainId } = useActiveWeb3React()
+
+  return useContract(
+    queryChainId || chainId ? CREATE_SBT[(queryChainId || chainId) as ChainId] : undefined,
+    CREATE_SBT_ABI,
     true,
     queryChainId
   )

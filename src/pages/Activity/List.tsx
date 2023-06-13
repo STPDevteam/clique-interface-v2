@@ -100,7 +100,7 @@ export default function List({
               publishTime={item.publishTime}
               type={ActivityType.AIRDROP}
             >
-              {item.types === ActivityType.AIRDROP ? <AirdropItem item={item} /> : <PublicSaleItem />}
+              {item.types !== ActivityType.AIRDROP ? <AirdropItem item={item} /> : <PublicSaleItem />}
             </ItemWrapper>
           ))}
         </Stack>
