@@ -30,13 +30,18 @@ export default function LoginModal() {
 
   const openModal = useCallback(() => {
     //TODO while account !== previous account
-    if (!userInfo?.loggedToken && !walletModalOpen && account) {
+    if (
+      !userInfo?.loggedToken &&
+      !walletModalOpen &&
+      account &&
+      userInfo?.account.toLocaleLowerCase() !== account.toLocaleLowerCase()
+    ) {
       toggleSignLoginModal()
       setBtnDisable(false)
       return
     }
     setBtnDisable(false)
-  }, [account, toggleSignLoginModal, userInfo?.loggedToken, walletModalOpen])
+  }, [account, toggleSignLoginModal, userInfo?.account, userInfo?.loggedToken, walletModalOpen])
 
   useEffect(() => {
     closeModal()
@@ -56,7 +61,16 @@ export default function LoginModal() {
   }, [connector, deactivate, toggleSignLoginModal])
 
   return (
-    <Modal customIsOpen={walletModalOpen && !userInfo?.loggedToken} closeIcon customOnDismiss={cancel} maxWidth="480px">
+    <Modal
+      customIsOpen={
+        walletModalOpen &&
+        !userInfo?.loggedToken &&
+        userInfo?.account.toLocaleLowerCase() !== account?.toLocaleLowerCase()
+      }
+      closeIcon
+      customOnDismiss={cancel}
+      maxWidth="480px"
+    >
       <Box width={'100%'} padding="48px" display="flex" flexDirection="column" alignItems="center" gap={20}>
         <Image src={logo}></Image>
         <Typography variant="h4">Welcome to Myclique</Typography>
