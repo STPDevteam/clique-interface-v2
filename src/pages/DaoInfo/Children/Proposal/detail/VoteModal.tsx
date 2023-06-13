@@ -2,22 +2,14 @@ import { Alert, Box, Link, Slider, Stack, styled, Typography, useTheme } from '@
 import { BlackButton } from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import Modal from 'components/Modal'
-import { ChainId, ChainListMap } from 'constants/chain'
-import { TokenAmount } from 'constants/token'
-import { useDaoInfo } from 'hooks/useDaoInfo'
+import { CurrencyAmount, Token, TokenAmount } from 'constants/token'
 import { SignType, useProposalVoteCallback } from 'hooks/useProposalCallback'
-import {
-  ProposalDetailProp,
-  ProposalOptionProp,
-  ProposalSignProp,
-  ProposalStatus,
-  useProposalSign
-} from 'hooks/useProposalInfo'
+import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import JSBI from 'jsbi'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
-import { VotingTypes } from 'state/buildingGovDao/actions'
+import { govList, VotingTypes } from 'state/buildingGovDao/actions'
 import { RowCenter } from '../ProposalItem'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
@@ -25,9 +17,12 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { Dots } from 'theme/components'
 import { getAmountForPer } from 'utils/dao'
+import { AppState } from 'state'
+import { useSelector } from 'react-redux'
+import { useCurrencyBalance } from 'state/wallet/hooks'
+import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -42,32 +37,33 @@ const Text = styled(Typography)(({ theme, color }: { color?: string; theme?: any
 
 export default function VoteModal({
   proposalInfo,
-  daoChainId,
-  daoAddress,
   voteFor
 }: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
+  proposalInfo: useProposalDetailInfoProps
   voteFor: number[]
 }) {
-  const daoInfo = useDaoInfo(daoAddress, daoChainId)
-  const voteProposalSign = useProposalSign(daoAddress, daoChainId, SignType.VOTE, proposalInfo.proposalId)
+  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { account } = useActiveWeb3React()
 
-  const myVotes = useMemo(() => {
-    if (!daoInfo?.token || !voteProposalSign) {
+  const myVotesToken = useMemo(() => {
+    if (!daoInfo?.governance[0] || !daoInfo.governance[0].createRequire) {
       return undefined
     }
-    return new TokenAmount(daoInfo.token, JSBI.BigInt(voteProposalSign?.balance || '0'))
-  }, [voteProposalSign, daoInfo?.token])
+    const _token = new Token(
+      daoInfo.governance[0].chainId,
+      daoInfo.governance[0].tokenAddress,
+      daoInfo.governance[0].decimals,
+      daoInfo.governance[0].symbol
+    )
+    return _token
+  }, [daoInfo.governance])
+  const myVotes = useCurrencyBalance(account || undefined, myVotesToken)
 
-  return !voteProposalSign || myVotes === undefined ? null : (
+  return !daoInfo.governance[0].createRequire || myVotes === undefined ? null : (
     <VoteModalFunc
       myVotes={myVotes}
-      voteProposalSign={voteProposalSign}
+      voteProposalSign={daoInfo.governance[0]}
       proposalInfo={proposalInfo}
-      daoChainId={daoChainId}
-      daoAddress={daoAddress}
       voteFor={voteFor}
     />
   )
@@ -75,35 +71,31 @@ export default function VoteModal({
 
 function VoteModalFunc({
   proposalInfo,
-  daoChainId,
-  daoAddress,
   voteFor,
   myVotes,
   voteProposalSign
 }: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
+  proposalInfo: useProposalDetailInfoProps
   voteFor: number[]
-  voteProposalSign: ProposalSignProp
-  myVotes: TokenAmount
+  voteProposalSign: govList
+  myVotes: TokenAmount | CurrencyAmount
 }) {
   const theme = useTheme()
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
-  const { account, library, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
-  const proposalVoteCallback = useProposalVoteCallback(daoAddress)
+  const proposalVoteCallback = useProposalVoteCallback('')
   // const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(
   //   `${daoAddress}_${account}_proposalVote_${proposalInfo.proposalId}`
   // )
   // lock account
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_proposalVote`)
 
-  const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>({})
+  const [chooseOption, setChooseOption] = useState<{ [x in number]: CurrencyAmount | TokenAmount | undefined }>({})
   useEffect(() => {
     const _val: {
-      [x: number]: TokenAmount | undefined
+      [x: number]: CurrencyAmount | TokenAmount | undefined
     } = {}
     for (const index of voteFor) {
       _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : chooseOption[index]
@@ -143,12 +135,11 @@ function VoteModalFunc({
       Object.keys(validChooseOptions).map(item => Number(item)),
       Object.values(validChooseOptions).map(item => item?.raw.toString() || '0'),
       {
-        chainId: voteProposalSign.tokenChainId,
+        chainId: voteProposalSign.chainId,
         tokenAddress: voteProposalSign.tokenAddress,
-        balance: voteProposalSign.balance,
+        balance: '100',
         signType: SignType.VOTE
-      },
-      voteProposalSign.signature
+      }
     )
       .then(hash => {
         hideModal()
@@ -170,13 +161,13 @@ function VoteModalFunc({
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    if (proposalInfo.status !== ProposalStatus.OPEN) {
+    if (proposalInfo.status !== 'Active') {
       return {
         disabled: true,
         error: 'Proposal voting is not opened'
       }
     }
-    if (proposalInfo.myVoteInfo?.length) {
+    if (proposalInfo.alreadyVoted) {
       return {
         disabled: true,
         error: 'You have already voted'
@@ -196,23 +187,7 @@ function VoteModalFunc({
         )
       }
     }
-    if (daoChainId !== chainId) {
-      return {
-        disabled: true,
-        error: (
-          <>
-            You need{' '}
-            <Link
-              sx={{ cursor: 'pointer' }}
-              onClick={() => daoChainId && triggerSwitchChain(library, daoChainId, account)}
-            >
-              switch
-            </Link>{' '}
-            to {ChainListMap[daoChainId].name}
-          </>
-        )
-      }
-    }
+
     if (!myVotes || !myVotes.greaterThan(JSBI.BigInt(0))) {
       return {
         disabled: true,
@@ -233,12 +208,9 @@ function VoteModalFunc({
     }
   }, [
     account,
-    chainId,
-    daoChainId,
-    library,
     myVotes,
     onProposalVoteCallback,
-    proposalInfo.myVoteInfo?.length,
+    proposalInfo.alreadyVoted,
     proposalInfo.status,
     toggleWalletModal,
     validChooseOptions
@@ -267,15 +239,16 @@ function VoteModalFunc({
                   padding: '10px 15px'
                 }}
               >
-                <Text color={theme.palette.text.primary}>{proposalInfo.proposalOptions[voteFor[0]]?.name}</Text>
+                <Text color={theme.palette.text.primary}>{proposalInfo.options[voteFor[0]]?.optionContent}</Text>
               </Box>
             </div>
           </Stack>
         ) : (
           <MultiVote
             totalVotes={myVotes}
-            options={proposalInfo.proposalOptions}
+            options={proposalInfo.options}
             chooseOption={chooseOption}
+            voteProposalSign={voteProposalSign}
             chooseOptionCallback={chooseOptionCallback}
           />
         )}
@@ -316,11 +289,13 @@ function MultiVote({
   totalVotes,
   options,
   chooseOption,
+  voteProposalSign,
   chooseOptionCallback
 }: {
-  totalVotes: TokenAmount | undefined
+  totalVotes: CurrencyAmount | TokenAmount | undefined
   options: ProposalOptionProp[]
-  chooseOption: { [x in number]: TokenAmount | undefined }
+  chooseOption: { [x in number]: CurrencyAmount | TokenAmount | undefined }
+  voteProposalSign: govList
   chooseOptionCallback: (index: number, amount: TokenAmount) => void
 }) {
   const theme = useTheme()
@@ -329,7 +304,7 @@ function MultiVote({
   const { account } = useActiveWeb3React()
 
   const optionIds = useMemo(() => Object.keys(chooseOption).map(i => Number(i)), [chooseOption])
-  const token = useMemo(() => options?.[0]?.amount.token, [options])
+  const token = new Token(voteProposalSign.chainId, voteProposalSign.tokenAddress, voteProposalSign.decimals)
 
   const perArrCallback = useCallback(
     (index: number, value: number) => {
@@ -362,7 +337,7 @@ function MultiVote({
           {options.map((item, index) =>
             optionIds.includes(index) ? (
               <Box key={index}>
-                <Text>{item.name}</Text>
+                <Text>{item.optionContent}</Text>
                 <Box display={'grid'} gridTemplateColumns="1.6fr 1fr" justifyItems={'end'} alignItems="center">
                   <Slider
                     value={Number(perArr[index])}

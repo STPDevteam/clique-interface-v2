@@ -2,10 +2,10 @@ import { Box, Link, Skeleton, styled, Typography, useTheme } from '@mui/material
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
-import { useProposalDetailInfo } from 'hooks/useProposalInfo'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import ShowProposalStatusTag from './ShowProposalStatusTag'
-import { useHistory } from 'react-router-dom'
+import { ShowProposalStatusV3Tag } from './ShowProposalStatusTag'
+import { useHistory, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { myCliqueV1Domain } from '../../../../constants'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -27,6 +27,9 @@ const StyledCard = styled(Box)(({ theme }) => ({
   '&:hover': {
     border: `1px solid #97B7EF`,
     padding: '22px'
+  },
+  '&:hover .AdminIcon path': {
+    fill: '#0049C6'
   },
   '& .content': {
     fontSize: 14,
@@ -58,18 +61,22 @@ export const RowCenter = styled(Box)({
 export default function ProposalItem(props: ProposalListBaseProp) {
   return props.version === 'v1' ? (
     <ProposalV1Item {...props} />
-  ) : true ? (
+  ) : props.version === 'v2' ? (
     <ProposalV2Item {...props} />
   ) : (
-    <ProposalV3Item />
+    <ProposalV3Item {...props} />
   )
 }
 
-function ProposalV3Item() {
+function ProposalV3Item(props: ProposalListBaseProp) {
+  const history = useHistory()
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const curDaoId = Number(daoId)
+
   return (
-    <StyledCard>
+    <StyledCard onClick={() => history.push(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
       <RowCenter>
-        <Box sx={{ display: 'flex', gap: 12 }}>
+        <Box sx={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <Typography
             sx={{
               fontFamily: 'Poppins',
@@ -79,7 +86,7 @@ function ProposalV3Item() {
               color: '#97B7EF'
             }}
           >
-            SIP 001
+            {props.proposalSIP}
           </Typography>
           <Box
             sx={{
@@ -89,49 +96,30 @@ function ProposalV3Item() {
             }}
           ></Box>
           <Typography variant="body1" sx={{ lineHeight: '18px', color: '#97B7EF' }}>
-            4 days left
+            {props.targetTimeString}
           </Typography>
         </Box>
-        <Typography
-          variant="caption"
-          sx={{
-            height: 20,
-            width: 70,
-            borderRadius: '18px',
-            background: '#21C431',
-            color: '#fff',
-            textAlign: 'center'
-          }}
-        >
-          Open
-        </Typography>
+        <ShowProposalStatusV3Tag status={props.status} />
       </RowCenter>
       <Typography
         className="content"
         variant="h6"
         sx={{ mt: '13px  !important', fontSize: '18px !important', color: '#3F5170 !important' }}
       >
-        Provide lunch with love for children in mountains areas Provide lunch with love for children in mountains areas
-        Provide lunch with love for children in mountains areas Provide lunch with love for children in mountains areas
+        {props.title}
       </Typography>
       <RowCenter sx={{ mt: 10 }}>
         <Box sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Image height={20} width={20} src={avatar} />
+          <Image height={20} width={20} src={props.proposer?.avatar || avatar} />
           <Typography variant="body1" sx={{ lineHeight: '20px' }}>
-            UserName
+            {props.proposer?.nickname || 'unnamed'}
           </Typography>
-          <AdminIcon
-            sx={{
-              'path:first-of-type': {
-                fill: '#0049C6'
-              }
-            }}
-          />
+          <AdminIcon className="AdminIcon" />
         </Box>
 
         {false ? (
           <Typography sx={{ fontWeight: 800, color: '#0049C6' }} variant="h5">
-            2,320,927,142 Votes
+            {props.votes} Votes
           </Typography>
         ) : (
           <Box
@@ -167,45 +155,45 @@ function ProposalV3Item() {
   )
 }
 
-function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBaseProp) {
+function ProposalV2Item(props: ProposalListBaseProp) {
   const theme = useTheme()
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
-  const proposalInfo = useProposalDetailInfo(daoAddress, daoChainId, proposalId)
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const curDaoId = Number(daoId)
+  console.log(props)
 
   const Creator = useMemo(() => {
-    return proposalInfo ? (
+    return props && props.daoChainId ? (
       <>
         <Link
           underline="hover"
-          href={getEtherscanLink(daoChainId, proposalInfo?.creator || '', 'address')}
+          href={getEtherscanLink(props.daoChainId, props.proposer.account || '', 'address')}
           target="_blank"
         >
           <Typography fontSize={12} fontWeight={600} mr={8} color={theme.palette.text.primary}>
-            {proposalInfo?.creator && shortenAddress(proposalInfo.creator)}
+            {props.proposer.account && shortenAddress(props.proposer.account)}
           </Typography>
         </Link>
-        <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
+        <AdminTagBlock daoAddress={props.daoAddress} chainId={props.daoChainId} account={props.proposer.account} />
       </>
     ) : (
       <Skeleton animation="wave" width={100} />
     )
-  }, [daoAddress, daoChainId, proposalInfo, theme.palette.text.primary])
+  }, [props, theme.palette.text.primary])
 
   return (
-    <StyledCard
-      onClick={() => history.push(routes._DaoInfo + `/${daoChainId}/${daoAddress}/proposal/detail/${proposalId}`)}
-    >
+    <StyledCard onClick={() => history.push(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
       {isSmDown && (
         <Box mb={8} display={'flex'} alignItems="center">
           {Creator}
         </Box>
       )}
       <Box display={'grid'} gridTemplateColumns="1fr 20px" gap={'10px'} alignItems="center">
-        {proposalInfo ? (
+        {props ? (
           <>
             <Typography variant="h5" noWrap>
-              {proposalInfo.title}
+              {props.title}
             </Typography>
             <KeyboardArrowRightIcon />
           </>
@@ -215,9 +203,9 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
           </>
         )}
       </Box>
-      {proposalInfo ? (
+      {props ? (
         <Typography className="content" variant="body1">
-          {proposalInfo.introduction}
+          {props.introduction}
         </Typography>
       ) : (
         <>
@@ -228,12 +216,12 @@ function ProposalV2Item({ daoChainId, daoAddress, proposalId }: ProposalListBase
       <Box display={'flex'} justifyContent={'space-between'} mt={6}>
         <RowCenter sx={{ color: '#3f5170' }}>{!isSmDown && Creator}</RowCenter>
         <RowCenter>
-          {proposalInfo ? (
+          {props ? (
             <>
               <Typography color={theme.textColor.text1} fontSize={12}>
-                {proposalInfo.targetTimeString}
+                {props.targetTimeString}
               </Typography>
-              <ShowProposalStatusTag status={proposalInfo.status} />
+              <ShowProposalStatusTag status={props.status} />
             </>
           ) : (
             <Skeleton animation="wave" width={100} />
@@ -252,11 +240,11 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
     () => (
       <Link
         underline="hover"
-        href={getEtherscanLink(proposalInfo.daoChainId, proposalInfo.proposer, 'address')}
+        href={getEtherscanLink(proposalInfo.daoChainId, proposalInfo.proposer.account, 'address')}
         target="_blank"
       >
         <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
-          {proposalInfo?.proposer && shortenAddress(proposalInfo.proposer)}
+          {proposalInfo?.proposer && shortenAddress(proposalInfo.proposer.account)}
         </Typography>
       </Link>
     ),

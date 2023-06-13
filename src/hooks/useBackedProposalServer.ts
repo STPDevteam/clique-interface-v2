@@ -1,21 +1,30 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
-import { getProposalList, getProposalSnapshot, getProposalVotesList } from '../utils/fetch/server'
+import { getProposalDetail, getProposalList, getProposalSnapshot, getProposalVotesList } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
+import { useActiveWeb3React } from 'hooks'
+import { govList } from 'state/buildingGovDao/actions'
 
 export interface ProposalListBaseProp {
   daoChainId: ChainId
   daoAddress: string
   v1V2DaoAddress: string
   proposalId: number
+  proposalSIP: number
+  introduction: string
+  votes: number
   title: string
   contentV1: string
   startTime: number
   endTime: number
-  proposer: string
-  version: 'v1' | 'v2'
+  proposer: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  version: 'v1' | 'v2' | 'v3'
   status: ProposalStatus
   targetTimeString: string
 }
@@ -46,13 +55,16 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
 
     return {
       proposalId: item.proposalId,
+      proposalSIP: item.proposalSIP,
       v1V2ChainId: item.v1V2ChainId,
       version: item.version,
       title: item.title,
+      votes: item.votes,
       v1V2DaoAddress: item.v1V2DaoAddress,
       startTime: startTime,
       endTime: endTime,
       proposer: item.proposer,
+      introduction: item.introduction,
       status: _status,
       targetTimeString
     }
@@ -152,6 +164,69 @@ export function useProposalBaseList(daoId: number) {
       setStatus
     },
     result
+  }
+}
+
+export interface ProposalDetailInfoOptionProps {
+  optionContent: string
+  optionId: number
+  optionIndex: number
+  votes: number
+}
+export interface useProposalDetailInfoProps {
+  alreadyVoted: number
+  content: string
+  endTime: number
+  introduction: string
+  options: ProposalDetailInfoOptionProps[]
+  proposalId: number
+  proposalSIP: number
+  proposer: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  startTime: number
+  status: string
+  title: string
+  useVoteBase: govList[]
+  votingType: number
+  yourVotes: number
+}
+
+export function useProposalDetailsInfo(proposalId: number) {
+  const { account } = useActiveWeb3React()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [result, setResult] = useState<useProposalDetailInfoProps>()
+
+  useEffect(() => {
+    ;(async () => {
+      if (!account || !proposalId) {
+        setResult(undefined)
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await getProposalDetail(proposalId)
+        setLoading(false)
+        const data = res.data.data
+        setResult(data)
+      } catch (error) {
+        setResult(undefined)
+        setLoading(false)
+        console.error('useGetProposalDetail', error)
+      }
+    })()
+  }, [account, proposalId])
+
+  const ret = useMemo(() => {
+    if (!result) return undefined
+    return result
+  }, [result])
+
+  return {
+    loading,
+    result: ret
   }
 }
 

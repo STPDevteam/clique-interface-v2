@@ -794,3 +794,7 @@ export function createProposal(
     voteType
   })
 }
+
+export function getProposalDetail(proposalId: number) {
+  return Axios.get(`stpdao/v3/proposal/info/${proposalId}`)
+}

@@ -462,7 +462,7 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
           {option.map(
             (_, index) =>
               index > 1 && (
-                <InputBoxstyle>
+                <InputBoxstyle key={index}>
                   <Typography variant="body1" className="headetitle">
                     Options {index + 1}
                   </Typography>

@@ -98,18 +98,12 @@ export function useProposalVoteCallback(daoAddress: string) {
         tokenAddress: string
         balance: string
         signType: number
-      },
-      signature: string
+      }
     ) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
 
-      const args = [
-        index,
-        amount,
-        [extra.chainId, extra.tokenAddress, extra.balance, extra.signType, proposalId],
-        signature
-      ]
+      const args = [index, amount, [extra.chainId, extra.tokenAddress, extra.balance, extra.signType, proposalId]]
 
       const method = 'vote'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)

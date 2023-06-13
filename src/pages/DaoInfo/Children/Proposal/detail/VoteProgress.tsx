@@ -5,17 +5,18 @@ import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
-import { TokenAmount } from 'constants/token'
+import { Token, TokenAmount } from 'constants/token'
 import { useProposalVoteList } from 'hooks/useBackedProposalServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import JSBI from 'jsbi'
 import { useMemo } from 'react'
 import { useHistory } from 'react-router'
 import { shortenAddress } from 'utils'
 import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
 
 const StyledItem = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -39,21 +40,17 @@ const StyledListText = styled(Typography)({
 
 export default function VoteProgress({
   proposalOptions,
-  daoAddress,
-  daoChainId,
   proposalId
 }: {
   proposalOptions: ProposalOptionProp[]
-  daoAddress: string
-  daoChainId: ChainId
   proposalId: number
 }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   const allVotes = useMemo(() => {
-    let ret = new TokenAmount(proposalOptions[0].amount.token, JSBI.BigInt(0))
-    for (const { amount } of proposalOptions) {
-      ret = ret.add(amount)
+    let ret = 0
+    for (const { votes } of proposalOptions) {
+      ret = ret + votes
     }
     return ret
   }, [proposalOptions])
@@ -67,27 +64,19 @@ export default function VoteProgress({
         </Typography>
         <Typography
           onClick={() =>
-            showModal(
-              <VoteListModal
-                allVotes={allVotes}
-                daoChainId={daoChainId}
-                daoAddress={daoAddress}
-                proposalId={proposalId}
-                proposalOptions={proposalOptions}
-              />
-            )
+            showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} proposalOptions={proposalOptions} />)
           }
           variant="body1"
           sx={{ cursor: 'pointer' }}
           color={theme.palette.primary.main}
         >
-          View All Votes ({allVotes.toSignificant(6, { groupSeparator: ',' })})
+          View All Votes ({allVotes})
         </Typography>
       </RowCenter>
       <Stack mt={16} spacing={10}>
         {proposalOptions.map((item, index) => (
           <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
-            <Typography mb={5}>{item.name}</Typography>
+            <Typography mb={5}>{item.optionContent}</Typography>
             <Box
               display={'grid'}
               sx={{
@@ -96,9 +85,9 @@ export default function VoteProgress({
               columnGap="24px"
               rowGap={'5px'}
             >
-              <SimpleProgress width="100%" per={Math.floor(item.per * 100)} />
+              <SimpleProgress width="100%" per={Math.floor(item.votes * 100)} />
               <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={600}>
-                {(item.per * 100).toFixed(1)}%({item.amount.toSignificant(6, { groupSeparator: ',' })} Votes)
+                {(item.votes * 100).toFixed(1)}%({allVotes} Votes)
               </Typography>
             </Box>
           </StyledItem>
@@ -109,25 +98,25 @@ export default function VoteProgress({
 }
 
 function VoteListModal({
-  daoAddress,
-  daoChainId,
   proposalId,
   allVotes,
   proposalOptions
 }: {
-  daoAddress: string
-  daoChainId: ChainId
   proposalId: number
-  allVotes: TokenAmount
+  allVotes: number
   proposalOptions: ProposalOptionProp[]
 }) {
   const { hideModal } = useModal()
-  const { result: proposalVoteList, page } = useProposalVoteList(daoChainId, daoAddress, proposalId)
-  const token = useMemo(() => proposalOptions[0].amount.token, [proposalOptions])
+  const chainId = 0 as ChainId
+  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { result: proposalVoteList, page } = useProposalVoteList(chainId, '', proposalId)
+  const token = useMemo(() => {
+    return new Token(daoInfo.governance[0].chainId, daoInfo.governance[0].tokenAddress, daoInfo.governance[0].decimals)
+  }, [daoInfo.governance])
   const showList = useMemo(() => {
     if (!token) return []
     return proposalVoteList.map(item => ({
-      optionName: proposalOptions[item.optionIndex].name,
+      optionName: proposalOptions[item.optionIndex].optionContent,
       voter: item.voter,
       amount: new TokenAmount(token, item.amount)
     }))
@@ -139,7 +128,7 @@ function VoteListModal({
       <StyledBody>
         <Stack spacing={19}>
           <Typography variant="h6" fontWeight={500}>
-            Votes ({allVotes.toSignificant(6, { groupSeparator: ',' })})
+            Votes ({allVotes})
           </Typography>
           <Box
             display={'grid'}

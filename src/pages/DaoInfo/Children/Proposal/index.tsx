@@ -31,6 +31,7 @@ export default function Proposal() {
     result: proposalBaseList,
     page
   } = useProposalBaseList(Number(params.daoId))
+  console.log(proposalBaseList)
 
   return (
     <DaoContainer>
