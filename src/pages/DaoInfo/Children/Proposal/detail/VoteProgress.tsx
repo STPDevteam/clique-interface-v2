@@ -101,10 +101,11 @@ export default function VoteProgress({
                 <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
                   <Typography mb={5}>{item.optionContent}</Typography>
                   <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
-                    {(item.votes * 100).toFixed(1)}%({allVotes && formatNumberWithCommas(allVotes)} Votes)
+                    {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%({formatNumberWithCommas(item.votes)}{' '}
+                    Votes)
                   </Typography>
                 </Box>
-                <SimpleProgress width="100%" per={Math.floor(item.votes * 100)} />
+                {allVotes && <SimpleProgress width="100%" per={Math.floor((item.votes / allVotes) * 100)} />}
               </Box>
               {/* <BlackButton
                 height="36px"

@@ -434,7 +434,7 @@ function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
 }
 
 export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
-  const [status, setStatus] = useState<ProposalStatus>()
+  const [status, setStatus] = useState<string>()
   const [currentPage, setCurrentPage] = useState(1)
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)

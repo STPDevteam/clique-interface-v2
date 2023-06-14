@@ -1,7 +1,6 @@
 import { Box, Stack, Typography, MenuItem, Grid } from '@mui/material'
 import Button from 'components/Button/Button'
 import Select from 'components/Select/Select'
-import { ProposalStatus } from 'hooks/useProposalInfo'
 import ProposalItem from './ProposalItem'
 import { useHistory, useParams } from 'react-router'
 import { routes } from 'constants/routes'
@@ -16,9 +15,9 @@ import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 
 const itemList = [
   { value: undefined, label: 'All Proposals' },
-  { value: ProposalStatus.SOON, label: 'Soon' },
-  { value: ProposalStatus.OPEN, label: 'Active' },
-  { value: ProposalStatus.CLOSED, label: 'Closed' }
+  { value: 'Soon', label: 'Soon' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Closed', label: 'Closed' }
 ]
 
 export default function Proposal() {
@@ -31,7 +30,7 @@ export default function Proposal() {
     result: proposalBaseList,
     page
   } = useProposalBaseList(Number(params.daoId))
-  console.log(proposalBaseList)
+  console.log(proposalBaseList, currentProposalStatus)
 
   return (
     <DaoContainer>
@@ -90,7 +89,7 @@ export default function Proposal() {
                   key={item.value}
                   sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                   value={item.value}
-                  selected={currentProposalStatus && currentProposalStatus === item.value}
+                  selected={currentProposalStatus === item.value}
                 >
                   {item.label}
                 </MenuItem>

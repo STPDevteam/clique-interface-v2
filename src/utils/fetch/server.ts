@@ -316,7 +316,7 @@ export function getProposalContent(uuid: string) {
   })
 }
 
-export function getProposalList(daoId: number | string, status: number | undefined, offset: number, limit: number) {
+export function getProposalList(daoId: number | string, status: string | undefined, offset: number, limit: number) {
   return Axios.get(`stpdao/v3/proposal/list/${daoId}`, {
     status: status || '',
     offset,
