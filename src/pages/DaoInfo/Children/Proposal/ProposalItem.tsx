@@ -116,7 +116,6 @@ function ProposalV3Item(props: ProposalListBaseProp) {
           </Typography>
           <AdminIcon className="AdminIcon" />
         </Box>
-
         {false ? (
           <Typography sx={{ fontWeight: 800, color: '#0049C6' }} variant="h5">
             {props.votes} Votes
@@ -164,18 +163,18 @@ function ProposalV2Item(props: ProposalListBaseProp) {
   console.log(props)
 
   const Creator = useMemo(() => {
-    return props && props.daoChainId ? (
+    return props && props.v1V2ChainId ? (
       <>
         <Link
           underline="hover"
-          href={getEtherscanLink(props.daoChainId, props.proposer.account || '', 'address')}
+          href={getEtherscanLink(props.v1V2ChainId, props.proposer.account || '', 'address')}
           target="_blank"
         >
           <Typography fontSize={12} fontWeight={600} mr={8} color={theme.palette.text.primary}>
             {props.proposer.account && shortenAddress(props.proposer.account)}
           </Typography>
         </Link>
-        <AdminTagBlock daoAddress={props.daoAddress} chainId={props.daoChainId} account={props.proposer.account} />
+        <AdminTagBlock daoAddress={props.daoAddress} chainId={props.v1V2ChainId} account={props.proposer.account} />
       </>
     ) : (
       <Skeleton animation="wave" width={100} />
@@ -240,7 +239,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
     () => (
       <Link
         underline="hover"
-        href={getEtherscanLink(proposalInfo.daoChainId, proposalInfo.proposer.account, 'address')}
+        href={getEtherscanLink(proposalInfo.v1V2ChainId, proposalInfo.proposer.account, 'address')}
         target="_blank"
       >
         <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
@@ -248,7 +247,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
         </Typography>
       </Link>
     ),
-    [proposalInfo.daoChainId, proposalInfo.proposer, theme.palette.text.primary]
+    [proposalInfo.v1V2ChainId, proposalInfo.proposer, theme.palette.text.primary]
   )
 
   return (

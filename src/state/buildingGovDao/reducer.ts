@@ -1,8 +1,19 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { updateCreateDaoData, removeCreateDaoData, CreateDaoDataProp, VotingTypes } from './actions'
+import {
+  updateCreateDaoData,
+  removeCreateDaoData,
+  CreateDaoDataProp,
+  VotingTypes,
+  CreateDaoListDataProp,
+  updateDaoListData,
+  MyJoinDaoDataProp,
+  updateMyJoinDaoData
+} from './actions'
 
 interface BuildingDaoData {
   createDaoData: CreateDaoDataProp
+  myJoinDaoData: MyJoinDaoDataProp
+  createDaoListData: CreateDaoListDataProp[]
 }
 
 const initialDaoDataState: BuildingDaoData = {
@@ -38,7 +49,17 @@ const initialDaoDataState: BuildingDaoData = {
     executeMinimum: '',
     votingPeriod: 0,
     votingType: VotingTypes.ANY
-  }
+  },
+  myJoinDaoData: {
+    isJoin: false,
+    job: ''
+  },
+  createDaoListData: [
+    {
+      name: '',
+      logo: ''
+    }
+  ]
 }
 
 export default createReducer(initialDaoDataState, builder =>
@@ -50,6 +71,18 @@ export default createReducer(initialDaoDataState, builder =>
       state.createDaoData = {
         ...state.createDaoData,
         ...payload.createDaoData
+      }
+    })
+    .addCase(updateMyJoinDaoData, (state, { payload }) => {
+      state.myJoinDaoData = {
+        ...state.myJoinDaoData,
+        ...payload.myJoinDaoData
+      }
+    })
+    .addCase(updateDaoListData, (state, { payload }) => {
+      state.createDaoListData = {
+        ...state.createDaoListData,
+        ...payload.createDaoListData
       }
     })
 )

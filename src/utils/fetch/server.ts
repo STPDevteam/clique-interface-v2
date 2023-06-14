@@ -1,6 +1,7 @@
 import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
+import { VoteParamsProp } from 'hooks/useBackedProposalServer'
 
 export function getHomeContributorsList(offset: number, count: number) {
   return Axios.get('stpdao/v2/account/top/list', {
@@ -797,4 +798,8 @@ export function createProposal(
 
 export function getProposalDetail(proposalId: number) {
   return Axios.get(`stpdao/v3/proposal/info/${proposalId}`)
+}
+
+export function toVote(voteParams: VoteParamsProp[]) {
+  return Axios.post('stpdao/v3/vote/voting', voteParams)
 }

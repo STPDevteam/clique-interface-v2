@@ -35,6 +35,15 @@ export type govList = {
   weight: number
 }
 
+export interface CreateDaoListDataProp {
+  name: string
+  logo: string
+}
+
+export interface MyJoinDaoDataProp {
+  isJoin: boolean
+  job: string
+}
 export interface CreateDaoDataProp {
   approve: boolean
   bio: string
@@ -70,4 +79,8 @@ export interface CreateDaoDataProp {
 }
 
 export const updateCreateDaoData = createAction<{ createDaoData: CreateDaoDataProp }>('buildingDao/updateCreateDaoData')
+export const updateDaoListData = createAction<{ createDaoListData: CreateDaoListDataProp[] }>(
+  'buildingDao/updateDaoListData'
+)
+export const updateMyJoinDaoData = createAction<{ myJoinDaoData: MyJoinDaoDataProp }>('buildingDao/updateMyJoinDaoData')
 export const removeCreateDaoData = createAction('buildingDao/removeCreateDaoData')

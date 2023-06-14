@@ -12,7 +12,7 @@ import localUserInfo from './userInfo/reducer'
 import chatHistory from './chatHistory/reducer'
 import createTokenData from './createToken/reducer'
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'buildingGovernanceDao', 'localUserInfo', 'createTokenData']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'localUserInfo', 'createTokenData']
 
 const store = configureStore({
   reducer: {

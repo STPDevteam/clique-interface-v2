@@ -1,4 +1,4 @@
-import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Link, Stack, styled, Typography } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
@@ -6,22 +6,26 @@ import { SimpleProgress } from 'components/Progress'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { Token, TokenAmount } from 'constants/token'
-import { useProposalVoteList } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps, useProposalVoteList } from 'hooks/useBackedProposalServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
-import { shortenAddress } from 'utils'
+import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
+import { BlackButton } from 'components/Button/Button'
+import { useVoteModalToggle } from 'state/application/hooks'
+import { VotingTypes } from 'state/buildingGovDao/actions'
+import VoteModal from './VoteModal'
 
-const StyledItem = styled(Box)(({ theme }) => ({
-  border: `1px solid ${theme.bgColor.bg2}`,
-  borderRadius: '12px',
-  padding: '12px 32px 15px'
+const StyledItem = styled(Box)(({}) => ({
+  borderRadius: '8px',
+  backgroundColor: '#F8FBFF',
+  padding: '21px 30px'
 }))
 
 const StyledBody = styled(Box)(({ theme }) => ({
@@ -40,59 +44,91 @@ const StyledListText = styled(Typography)({
 
 export default function VoteProgress({
   proposalOptions,
-  proposalId
+  proposalId,
+  proposalInfo,
+  proposalDetailInfo
 }: {
   proposalOptions: ProposalOptionProp[]
   proposalId: number
+  proposalInfo: useProposalDetailInfoProps
+  proposalDetailInfo?: useProposalDetailInfoProps
 }) {
-  const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const allVotes = useMemo(() => {
-    let ret = 0
-    for (const { votes } of proposalOptions) {
-      ret = ret + votes
-    }
-    return ret
-  }, [proposalOptions])
   const { showModal } = useModal()
+  const [optionIdx, setOptionIdx] = useState(0)
+  const voteModalToggle = useVoteModalToggle()
+  console.log(proposalDetailInfo)
+  const allVotes = proposalDetailInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
+  console.log(proposalOptions, allVotes)
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
       <RowCenter flexWrap={'wrap'}>
-        <Typography variant="h6" fontWeight={500}>
-          Current Results
+        <Typography fontSize={14} color={'#80829F'} fontWeight={500}>
+          {proposalInfo.votingType === VotingTypes.SINGLE ? 'single-vote' : 'multi-vote'}
         </Typography>
         <Typography
           onClick={() =>
-            showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} proposalOptions={proposalOptions} />)
+            showModal(
+              <VoteListModal
+                allVotes={proposalDetailInfo?.yourVotes}
+                proposalId={proposalId}
+                proposalOptions={proposalOptions}
+              />
+            )
           }
           variant="body1"
           sx={{ cursor: 'pointer' }}
-          color={theme.palette.primary.main}
+          color={'#80829F'}
         >
-          View All Votes ({allVotes})
+          View all votes ({allVotes && formatNumberWithCommas(allVotes)})
         </Typography>
       </RowCenter>
       <Stack mt={16} spacing={10}>
         {proposalOptions.map((item, index) => (
           <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
-            <Typography mb={5}>{item.optionContent}</Typography>
             <Box
               display={'grid'}
               sx={{
-                gridTemplateColumns: { sm: '1fr 180px', xs: '1fr' }
+                gridTemplateColumns: { sm: '1fr 125px', xs: '1fr' }
               }}
+              justifyContent={'space-between'}
+              alignItems={'center'}
               columnGap="24px"
               rowGap={'5px'}
             >
-              <SimpleProgress width="100%" per={Math.floor(item.votes * 100)} />
-              <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={600}>
-                {(item.votes * 100).toFixed(1)}%({allVotes} Votes)
-              </Typography>
+              <Box display={'grid'}>
+                <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
+                  <Typography mb={5}>{item.optionContent}</Typography>
+                  <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
+                    {(item.votes * 100).toFixed(1)}%({allVotes && formatNumberWithCommas(allVotes)} Votes)
+                  </Typography>
+                </Box>
+                <SimpleProgress width="100%" per={Math.floor(item.votes * 100)} />
+              </Box>
+              {/* <BlackButton
+                height="36px"
+                disabled={proposalInfo.yourVotes === 0 || proposalInfo.status === 'Soon'}
+                onClick={voteModalToggle}
+                width="125px"
+              >
+                Vote
+              </BlackButton> */}
+              <BlackButton
+                height="36px"
+                onClick={() => {
+                  setOptionIdx(index)
+                  voteModalToggle()
+                }}
+                width="125px"
+              >
+                Vote
+              </BlackButton>
             </Box>
           </StyledItem>
         ))}
       </Stack>
+      <VoteModal proposalInfo={proposalInfo} proposalOptions={optionIdx} />
     </VoteWrapper>
   )
 }
@@ -103,7 +139,7 @@ function VoteListModal({
   proposalOptions
 }: {
   proposalId: number
-  allVotes: number
+  allVotes: number | undefined
   proposalOptions: ProposalOptionProp[]
 }) {
   const { hideModal } = useModal()
@@ -128,7 +164,7 @@ function VoteListModal({
       <StyledBody>
         <Stack spacing={19}>
           <Typography variant="h6" fontWeight={500}>
-            Votes ({allVotes})
+            Votes ({(allVotes && formatNumberWithCommas(allVotes)) || '--'})
           </Typography>
           <Box
             display={'grid'}

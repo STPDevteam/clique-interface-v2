@@ -278,3 +278,10 @@ export const formCheckValid = (label: string, type: FormType, text?: string | ''
   }
   return text
 }
+
+export const formatNumberWithCommas = (number: number) => {
+  if (typeof number !== 'number') {
+    return ''
+  }
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}

@@ -59,10 +59,21 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
   return (
     <VoteWrapper>
       <Box>
-        <Typography variant="h6" mb={19} fontWeight={500}>
+        <Typography fontSize={14} fontWeight={600} color={'#80829F'}>
           Details
         </Typography>
-        <Box display={'grid'} gridTemplateColumns="86px 1fr" rowGap={15} alignItems={'center'}>
+        <Box
+          mt={12}
+          sx={{
+            borderTop: '1px solid #D4D7E2'
+          }}
+          mb={13}
+          padding={'13px 0'}
+          display={'grid'}
+          gridTemplateColumns="86px 1fr"
+          rowGap={10}
+          alignItems={'center'}
+        >
           <LeftText>Proposer</LeftText>
           <Box display={'flex'} flexDirection={'column'}>
             <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
@@ -100,7 +111,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
         {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
           <Box mt={15}>
             <BlackButton
-              height="44px"
+              height="40px"
               width="160px"
               disabled={isCancel}
               onClick={chainId !== daoChainId ? switchNetwork : onCancelProposalCallback}

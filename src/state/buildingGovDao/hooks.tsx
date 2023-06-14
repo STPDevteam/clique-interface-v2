@@ -1,9 +1,48 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
-import { updateCreateDaoData, removeCreateDaoData, CreateDaoDataProp } from './actions'
+import {
+  updateCreateDaoData,
+  removeCreateDaoData,
+  CreateDaoDataProp,
+  MyJoinDaoDataProp,
+  updateMyJoinDaoData,
+  CreateDaoListDataProp,
+  updateDaoListData
+} from './actions'
 
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
+
+export function useMyDaoDataCallback() {
+  // const daoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
+
+  const dispatch = useDispatch<AppDispatch>()
+  const updateJoinDaoDataCb = useCallback(
+    (myJoinDaoData: MyJoinDaoDataProp) => {
+      //api returns here
+      dispatch(updateMyJoinDaoData({ myJoinDaoData }))
+    },
+    [dispatch]
+  )
+
+  return {
+    updateJoinDaoDataCb
+  }
+}
+
+export function useMyDaoListDataCallback() {
+  const dispatch = useDispatch<AppDispatch>()
+  const updateJoinDaoListDataCb = useCallback(
+    (createDaoListData: CreateDaoListDataProp[]) => {
+      dispatch(updateDaoListData({ createDaoListData }))
+    },
+    [dispatch]
+  )
+
+  return {
+    updateJoinDaoListDataCb
+  }
+}
 
 export function useBuildingDaoDataCallback() {
   const buildingDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)

@@ -1,14 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
-import { getProposalDetail, getProposalList, getProposalSnapshot, getProposalVotesList } from '../utils/fetch/server'
+import {
+  getProposalDetail,
+  getProposalList,
+  getProposalSnapshot,
+  getProposalVotesList,
+  toVote
+} from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { useActiveWeb3React } from 'hooks'
 import { govList } from 'state/buildingGovDao/actions'
 
 export interface ProposalListBaseProp {
-  daoChainId: ChainId
+  v1V2ChainId: ChainId
   daoAddress: string
   v1V2DaoAddress: string
   proposalId: number
@@ -194,6 +200,19 @@ export interface useProposalDetailInfoProps {
   yourVotes: number
 }
 
+export interface VoteParamsProp {
+  optionId: number
+  votes: number
+}
+
+export function useProposalVoteCallback() {
+  return useCallback(async (voteParams: VoteParamsProp[]) => {
+    return toVote(voteParams)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
 export function useProposalDetailsInfo(proposalId: number) {
   const { account } = useActiveWeb3React()
   const [loading, setLoading] = useState<boolean>(false)
@@ -209,7 +228,7 @@ export function useProposalDetailsInfo(proposalId: number) {
       try {
         const res = await getProposalDetail(proposalId)
         setLoading(false)
-        const data = res.data.data
+        const data = res.data.data as any
         setResult(data)
       } catch (error) {
         setResult(undefined)
