@@ -12,7 +12,7 @@ import BannerImg from 'assets/images/activity_banner.jpg'
 import BannerMobileImg from 'assets/images/activity_banner_mobile.jpeg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useState } from 'react'
-
+import { ChainList } from 'constants/chain'
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
 //   gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -72,6 +72,7 @@ export default function Activity() {
   const { search, loading, result, page } = useActivityList()
   const isSmDown = useBreakpoint('sm')
   const [tabValue, setTabValue] = useState(0)
+  const [SwitchChainValue, setSwitchChainValue] = useState<number>(ChainList[0].id)
 
   return (
     <div>
@@ -118,17 +119,18 @@ export default function Activity() {
                 noBold
                 width={isSmDown ? '175px' : '270px'}
                 height={isSmDown ? '36px' : '40px'}
-                value={search.status}
-                onChange={e => search.setStatus(e.target.value)}
+                value={SwitchChainValue}
+                onChange={e => {
+                  setSwitchChainValue(e.target.value)
+                }}
               >
-                {statusItemList.map((item, index) => (
+                {ChainList.map(item => (
                   <MenuItem
-                    key={index}
-                    sx={{ fontWeight: 500 }}
-                    value={item.value}
-                    selected={search.status && search.status === item.value}
+                    key={item.id}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.id}
                   >
-                    {item.label}
+                    {item.name}
                   </MenuItem>
                 ))}
               </Select>

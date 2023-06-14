@@ -60,12 +60,16 @@ export function useCreateSbtCallback(
       return null
     }
 
-    const args = [result.id, itemName, symbol, fileUrl, result.signature]
+    const args = [result.SBTId, itemName, symbol, result.tokenURI, result.signature]
     const method = 'createSBT'
-    console.log(args)
-    return contract[method](...args).then((res: TransactionResponse) => {
-      console.log('contract=>', res)
-    })
+    console.log('args=>', args)
+    return contract[method](...args)
+      .then((res: TransactionResponse) => {
+        console.log('contract=>', res)
+      })
+      .catch((error: any) => {
+        console.log(error)
+      })
   }, [
     contract,
     symbol,
@@ -103,3 +107,25 @@ export function useMemberDaoList(exceptLevel: string) {
     result
   }
 }
+// export function useSbtList(chainId: ChainId, status?: string) {
+//   const offset = 1
+//   const limit = 8
+//   const [result, setResult] = useState<any>()
+//   useEffect(() => {
+//     ;(async () => {
+//       try {
+//         const res = await getSbtList(offset, limit, chainId, status)
+//         if (res.data.data) {
+//           setResult(res.data.data)
+//         }
+//       } catch (error) {
+//         console.log(error)
+//         setResult(null)
+//       }
+//     })()
+//   }, [offset, limit, chainId, status])
+
+//   return {
+//     result
+//   }
+// }

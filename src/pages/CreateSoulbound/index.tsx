@@ -1,17 +1,21 @@
-import { styled, Typography, Box, useTheme, MenuItem, Link } from '@mui/material'
+import { Alert, styled, Typography, Box, useTheme, MenuItem, Link } from '@mui/material'
 import soulboundBgimg from 'assets/images/soulbound_bg.png'
 import { ReactComponent as CalendarIcon } from 'assets/svg/calendar_icon.svg'
 import Input from 'components/Input'
 import UploadFile from 'components/UploadFile'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import Select from 'components/Select/Select'
 import DateTimePicker from 'components/DateTimePicker'
-import BlackButton from 'components/Button/Button'
+import { BlackButton } from 'components/Button/Button'
 import Button from 'components/Button/Button'
 import Back from 'components/Back'
 import Image from 'components/Image'
-import { ChainList, ChainId } from 'constants/chain'
+import { ChainList, ChainId, ChainListMap } from 'constants/chain'
 import { useMemberDaoList, useCreateSbtCallback } from 'hooks/useBackedSbtServer'
+import useModal from 'hooks/useModal'
+import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import { useActiveWeb3React } from 'hooks'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontSize: 14,
@@ -73,6 +77,7 @@ const UploadBoxStyle = styled(Box)(() => ({
 }))
 
 export default function Index() {
+  const { library, account, chainId } = useActiveWeb3React()
   const theme = useTheme()
   const eligibilityList = [
     { id: 1, value: 'anyone', label: 'Anyone' },
@@ -82,45 +87,123 @@ export default function Index() {
   const [whitelistBoole, setwhitelistBoole] = useState<boolean>(false)
   const [whitelistValue, setwhitelistValue] = useState<string[]>([])
   const [eligibilityValue, seteligibilityValue] = useState(eligibilityList[0].value)
+
   const [eventStartTime, setEventStartTime] = useState<number>()
   const [eventEndTime, setEventEndTime] = useState<number>()
   const [fileValue, setfileValue] = useState('')
   const { result: daoList } = useMemberDaoList('C_member')
   const daoMemberList = useMemo(() => {
-    if (!daoList) return []
+    if (!daoList) return
     return daoList
   }, [daoList])
   const [daoValue, setdaoValue] = useState('')
   const [symbolValue, setsymbolValue] = useState('')
-  const [chainValue, setchainValue] = useState<number>(ChainList[0].id)
   const [itemName, setitemName] = useState('')
   const [Introduction, setIntroduction] = useState('')
   const [totalSupply, settotalSupply] = useState<string>('')
   const [daoAddress, setdaoAddress] = useState('')
-  const [chainId, setchainId] = useState<ChainId>()
+  const [daoChainId, setdaoChainId] = useState<ChainId>()
   const CreateSbtCallback = useCreateSbtCallback(
-    chainId,
+    daoChainId,
     daoAddress,
     eventEndTime,
     fileValue,
     Introduction,
     itemName,
     eventStartTime,
-    chainValue,
+    chainId,
     parseFloat(totalSupply),
     eligibilityValue,
     symbolValue
   )
+  const { showModal, hideModal } = useModal()
 
-  const SubmitCreate = () => {
+  const SubmitCreate = useCallback(() => {
+    showModal(<TransacitonPendingModal />)
     CreateSbtCallback()
-      .then((res: any) => {
-        console.log(res)
+      .then(hash => {
+        hideModal()
+        console.log(hash)
       })
       .catch((err: any) => {
-        console.log(err)
+        hideModal()
+        console.error(err)
       })
-  }
+  }, [CreateSbtCallback, hideModal, showModal])
+
+  const nextHandler = useMemo(() => {
+    if (!daoValue) {
+      return {
+        disabled: true,
+        error: 'Dao required'
+      }
+    }
+    if (!chainId) {
+      return {
+        disabled: true,
+        error: 'Blockchain required'
+      }
+    }
+    if (!fileValue) {
+      return {
+        disabled: true,
+        error: 'File required'
+      }
+    }
+    if (!itemName.trim()) {
+      return {
+        disabled: true,
+        error: 'Item Name required'
+      }
+    }
+    if (!Introduction.trim()) {
+      return {
+        disabled: true,
+        error: 'Introduction required'
+      }
+    }
+    if (!symbolValue.trim()) {
+      return {
+        disabled: true,
+        error: 'Symbol required'
+      }
+    }
+    if (!totalSupply.trim()) {
+      return {
+        disabled: true,
+        error: 'Total supply required'
+      }
+    }
+    if (!eligibilityValue) {
+      return {
+        disabled: true,
+        error: 'Token Eligibility required'
+      }
+    }
+    if (!eventEndTime || !eventStartTime) {
+      return {
+        disabled: true,
+        error: 'Claimable Period required'
+      }
+    }
+    return {
+      disabled: false,
+      handler: SubmitCreate
+    }
+  }, [
+    daoValue,
+    chainId,
+    fileValue,
+    itemName,
+    Introduction,
+    symbolValue,
+    totalSupply,
+    eligibilityValue,
+    eventEndTime,
+    eventStartTime,
+    SubmitCreate
+  ])
+
   return (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
       <Box
@@ -165,27 +248,28 @@ export default function Index() {
             onChange={e => {
               setdaoValue(e.target.value)
               setdaoAddress(e.target.value.daoAddress)
-              setchainId(e.target.value.chainId)
+              setdaoChainId(e.target.value.chainId)
             }}
           >
-            {daoMemberList.map((item: any, index: any) => (
-              <MenuItem
-                key={index}
-                sx={{
-                  fontWeight: 500,
-                  fontSize: '14px !important'
-                }}
-                value={item}
-              >
-                <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
-                  <Image
-                    style={{ height: 20, width: 20, backgroundColor: '#f5f5', borderRadius: '50%' }}
-                    src={item.daoLogo}
-                  />
-                  {item.daoName}
-                </Box>
-              </MenuItem>
-            ))}
+            {daoMemberList &&
+              daoMemberList.map((item: any, index: any) => (
+                <MenuItem
+                  key={index}
+                  sx={{
+                    fontWeight: 500,
+                    fontSize: '14px !important'
+                  }}
+                  value={item}
+                >
+                  <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
+                    <Image
+                      style={{ height: 20, width: 20, backgroundColor: '#f5f5', borderRadius: '50%' }}
+                      src={item.daoLogo}
+                    />
+                    {item.daoName}
+                  </Box>
+                </MenuItem>
+              ))}
           </Select>
         </Box>
         <Box sx={{ mt: 15, display: 'grid', flexDirection: 'column', gap: 10 }}>
@@ -193,8 +277,10 @@ export default function Index() {
             placeholder="select Chain"
             noBold
             label="Blockchain"
-            value={chainValue}
-            onChange={e => setchainValue(e.target.value)}
+            value={chainId || undefined}
+            onChange={e => {
+              account && triggerSwitchChain(library, e.target.value, account)
+            }}
           >
             {ChainList.map(item => (
               <MenuItem
@@ -212,12 +298,11 @@ export default function Index() {
             size={150}
             value={fileValue}
             onChange={e => {
-              console.log(e, 999)
               setfileValue(e)
             }}
           />
         </Box>
-        <Box sx={{ display: 'grid', flexDirection: 'column', gap: 15 }}>
+        <Box sx={{ display: 'grid', flexDirection: 'column', gap: 15, mb: 20 }}>
           <Input
             value={itemName}
             label="Item Name"
@@ -338,8 +423,13 @@ export default function Index() {
             </DateBoxStyle>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', mt: 40, justifyContent: 'flex-end' }}>
-          <BlackButton onClick={SubmitCreate} style={{ width: 270, height: 40 }}>
+        {nextHandler.error ? (
+          <Alert severity="error">{nextHandler.error}</Alert>
+        ) : (
+          <Alert severity="info">You will create a SBT in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
+        )}
+        <Box sx={{ display: 'flex', mt: 20, justifyContent: 'flex-end' }}>
+          <BlackButton disabled={nextHandler.disabled} onClick={nextHandler.handler} style={{ width: 270, height: 40 }}>
             Create Now
           </BlackButton>
         </Box>

@@ -706,3 +706,12 @@ export function getmemberDaoList(exceptLevel: string) {
     exceptLevel
   })
 }
+
+// export function getSbtList(offset: number, limit: number, chainId: ChainId, status?: string) {
+//   return Axios.get('stpdao/v2/sbt/list', {
+//     offset,
+//     limit,
+//     chainId,
+//     status
+//   })
+// }
