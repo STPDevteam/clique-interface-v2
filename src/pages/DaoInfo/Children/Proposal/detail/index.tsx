@@ -1,8 +1,8 @@
-import { Box, Typography, styled, useTheme } from '@mui/material'
+import { Box, Typography, styled } from '@mui/material'
 import ShowProposalStatusTag from '../ShowProposalStatusTag'
-import ReactHtmlParser from 'react-html-parser'
+// import ReactHtmlParser from 'react-html-parser'
 import 'react-quill/dist/quill.snow.css'
-import { escapeAttrValue, filterXSS } from 'xss'
+// import { escapeAttrValue, filterXSS } from 'xss'
 import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
@@ -28,7 +28,7 @@ function createTimeStampStr(startTime: number, endTime: number, status: string) 
 }
 
 export default function Index({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
-  const theme = useTheme()
+  // const theme = useTheme()
   return (
     <Box>
       <Box sx={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -54,7 +54,9 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
           {createTimeStampStr(proposalInfo.startTime, proposalInfo.endTime, proposalInfo.status)}
         </Typography>
       </Box>
-      <Typography variant="h5">{proposalInfo.title}</Typography>
+      <Typography fontSize={30} fontWeight={600} lineHeight={'20px'} mt={16}>
+        {proposalInfo.title}
+      </Typography>
       <Box display={'flex'} mt={15}>
         <Box sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Image height={20} width={20} src={proposalInfo.proposer?.avatar || avatar} />
@@ -65,7 +67,7 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
         </Box>
         <ShowProposalStatusTag status={proposalInfo.status} />
       </Box>
-      <Box
+      {/* <Box
         mt={15}
         sx={{
           '& img': { maxWidth: '50%' },
@@ -90,7 +92,7 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
             })
           )}
         </div>
-      </Box>
+      </Box> */}
     </Box>
   )
 }

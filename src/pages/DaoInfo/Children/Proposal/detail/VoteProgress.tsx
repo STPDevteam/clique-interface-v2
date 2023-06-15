@@ -3,14 +3,12 @@ import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
-import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
-import { Token, TokenAmount } from 'constants/token'
 import { useProposalDetailInfoProps, useProposalVoteList } from 'hooks/useBackedProposalServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { RowCenter } from '../ProposalItem'
@@ -43,11 +41,13 @@ const StyledListText = styled(Typography)({
 })
 
 export default function VoteProgress({
+  refresh,
   proposalOptions,
   proposalId,
   proposalInfo,
   proposalDetailInfo
 }: {
+  refresh: Dispatch<SetStateAction<number>>
   proposalOptions: ProposalOptionProp[]
   proposalId: number
   proposalInfo: useProposalDetailInfoProps
@@ -55,11 +55,9 @@ export default function VoteProgress({
 }) {
   const isSmDown = useBreakpoint('sm')
   const { showModal } = useModal()
-  const [optionIdx, setOptionIdx] = useState(0)
+  const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
-  console.log(proposalDetailInfo)
   const allVotes = proposalDetailInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  console.log(proposalOptions, allVotes)
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -69,13 +67,7 @@ export default function VoteProgress({
         </Typography>
         <Typography
           onClick={() =>
-            showModal(
-              <VoteListModal
-                allVotes={proposalDetailInfo?.yourVotes}
-                proposalId={proposalId}
-                proposalOptions={proposalOptions}
-              />
-            )
+            showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} proposalOptions={proposalOptions} />)
           }
           variant="body1"
           sx={{ cursor: 'pointer' }}
@@ -118,7 +110,7 @@ export default function VoteProgress({
               <BlackButton
                 height="36px"
                 onClick={() => {
-                  setOptionIdx(index)
+                  setOptionId(proposalOptions[index].optionId)
                   voteModalToggle()
                 }}
                 width="125px"
@@ -129,7 +121,7 @@ export default function VoteProgress({
           </StyledItem>
         ))}
       </Stack>
-      <VoteModal proposalInfo={proposalInfo} proposalOptions={optionIdx} />
+      <VoteModal refresh={refresh} proposalInfo={proposalInfo} proposalOptions={optionId} />
     </VoteWrapper>
   )
 }
@@ -144,20 +136,9 @@ function VoteListModal({
   proposalOptions: ProposalOptionProp[]
 }) {
   const { hideModal } = useModal()
-  const chainId = 0 as ChainId
   const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
-  const { result: proposalVoteList, page } = useProposalVoteList(chainId, '', proposalId)
-  const token = useMemo(() => {
-    return new Token(daoInfo.governance[0].chainId, daoInfo.governance[0].tokenAddress, daoInfo.governance[0].decimals)
-  }, [daoInfo.governance])
-  const showList = useMemo(() => {
-    if (!token) return []
-    return proposalVoteList.map(item => ({
-      optionName: proposalOptions[item.optionIndex].optionContent,
-      voter: item.voter,
-      amount: new TokenAmount(token, item.amount)
-    }))
-  }, [proposalOptions, proposalVoteList, token])
+  const { result: proposalVoteList, page } = useProposalVoteList(proposalId)
+  console.log(daoInfo, proposalOptions)
   const history = useHistory()
 
   return (
@@ -174,7 +155,7 @@ function VoteListModal({
             alignItems={'center'}
             justifyContent="center"
           >
-            {showList.map(item => (
+            {proposalVoteList.map(item => (
               <>
                 {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
                 <Link
@@ -188,12 +169,14 @@ function VoteListModal({
                 >
                   <StyledListText>{shortenAddress(item.voter)}</StyledListText>
                 </Link>
-                <StyledListText noWrap>{item.optionName}</StyledListText>
-                <StyledListText>{item.amount.toSignificant(6, { groupSeparator: ',' })}</StyledListText>
+                <StyledListText noWrap align="center">
+                  {item.optionContent}
+                </StyledListText>
+                <StyledListText align="right">{formatNumberWithCommas(item.votes)}</StyledListText>
               </>
             ))}
           </Box>
-          {!showList.length && <EmptyData />}
+          {!proposalVoteList.length && <EmptyData />}
           <Box display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}

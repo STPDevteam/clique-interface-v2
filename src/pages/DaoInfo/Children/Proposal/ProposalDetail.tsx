@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import Back from 'components/Back'
 import Loading from 'components/Loading'
 import { routes } from 'constants/routes'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import DetailContent from './detail'
 // import DetailVote from './detail/Vote'
@@ -34,7 +34,8 @@ export default function ProposalDetail() {
 
 function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
   const history = useHistory()
-  const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId)
+  const [rand, setRand] = useState(Math.random())
+  const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoId}/proposal`)
@@ -53,10 +54,11 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
           </Grid> */}
         </Grid>
       </Box>
-      <Box mt={40}>
+      <Box mt={20}>
         <Grid container spacing={20}>
           <Grid item md={12} xs={12}>
             <VoteProgress
+              refresh={setRand}
               proposalOptions={proposalDetailInfo.options}
               proposalId={proposalId}
               proposalInfo={proposalDetailInfo}

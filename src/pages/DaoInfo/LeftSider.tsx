@@ -1,31 +1,33 @@
 import { Box, Drawer, List, ListItemText, styled, Typography } from '@mui/material'
 import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
-import { ReactComponent as proposal } from 'assets/svg/proposal.svg'
-import { ReactComponent as workspace } from 'assets/svg/workspace.svg'
+import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
+import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
 // import { ReactComponent as treasury } from 'assets/svg/treasury.svg'
 // import { ReactComponent as Idea } from 'assets/svg/Idea.svg'
-import { ReactComponent as bounty } from 'assets/svg/bounty.svg'
-import { ReactComponent as member } from 'assets/svg/member.svg'
-import { ReactComponent as setting } from 'assets/svg/setting.svg'
+import { ReactComponent as Bounty } from 'assets/svg/bounty.svg'
+import { ReactComponent as Member } from 'assets/svg/member.svg'
+import { ReactComponent as Setting } from 'assets/svg/setting.svg'
 // import { ReactComponent as Add } from 'assets/svg/add.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import { routes } from 'constants/routes'
-// import Image from 'components/Image'
+import Image from 'components/Image'
 // import robot from 'assets/images/robot.png'
 // import ele from 'assets/images/ele.png'
 // import trash from 'assets/images/trash.png'
 // import meetingIcon from 'assets/images/meeting.png'
-// import taskIcon from 'assets/images/task.png'
+import taskIcon from 'assets/images/task.png'
 // import calendarIcon from 'assets/images/calendar.png'
 // import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
 import { useCallback, useMemo } from 'react'
 import { DaoAvatars } from 'components/Avatars'
-// import MyCollapse from 'components/Collapse'
+import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { useGetLeftTaskList } from 'hooks/useBackedTaskServer'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -39,7 +41,12 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   '& .menuLink:hover svg path': {
     fill: 'rgba(0, 73, 198, 1)'
   },
+  '& .menuLink svg': {
+    width: 30,
+    height: 30
+  },
   '& .menuLink': {
+    width: '100%',
     textDecoration: 'none',
     fontSize: 14,
     lineHeight: '20px',
@@ -67,6 +74,10 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   },
   '.activemenuLink svg path': {
     fill: 'rgba(0, 73, 198, 1)'
+  },
+  '.activemenuLink svg': {
+    width: 30,
+    height: 30
   },
   '& .collapse': {
     textDecoration: 'none',
@@ -149,7 +160,9 @@ const Item = styled(Box)(({}) => ({
 export interface LeftSiderMenu {
   title: string
   link?: string
-  icon: string
+  icon?: ReactJSXElement
+  route?: string
+  logo?: string
   defaultOpen?: boolean
   children?: LeftSiderMenu[]
 }
@@ -171,6 +184,7 @@ export default function LeftSider() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
   const { result: myJoinedDaoList } = useMyJoinedDao()
+  const { result: taskList } = useGetLeftTaskList(Number(daoId))
   const makeRouteLink = useCallback(
     (route: string) => {
       return route.replace(':daoId', daoId)
@@ -178,72 +192,65 @@ export default function LeftSider() {
     [daoId]
   )
 
-  const menuList = useMemo(
+  console.log(taskList)
+
+  // const menuList = useMemo(
+  //   () => [
+  //     {
+  //       text: 'Proposal',
+  //       icon: proposal,
+  //       route: makeRouteLink(routes.Proposal)
+  //     },
+  //     {
+  //       text: 'Workspace',
+  //       icon: workspace,
+  //       route: makeRouteLink(routes.DaoTeamTask)
+  //     },
+  //     {
+  //       text: 'DAO Rewards',
+  //       icon: bounty,
+  //       route: makeRouteLink(routes.DaoInfoActivity)
+  //     },
+  //     {
+  //       text: 'Member',
+  //       icon: member,
+  //       route: makeRouteLink(routes.DaoMember)
+  //     },
+  //     {
+  //       text: 'About & Settings',
+  //       icon: setting,
+  //       route: makeRouteLink(routes.DaoAboutSetting)
+  //     }
+  //   ],
+  //   [makeRouteLink]
+  // )
+
+  const teamspacesList: LeftSiderMenu[] = useMemo(
     () => [
       {
-        text: 'Proposal',
-        icon: proposal,
-        route: makeRouteLink(routes.Proposal)
+        title: 'Proposal',
+        icon: <Proposal />,
+        route: makeRouteLink(routes.Proposal),
+        defaultOpen: false
       },
       {
-        text: 'Workspace',
-        icon: workspace,
-        route: makeRouteLink(routes.DaoTeamTask)
+        title: 'Workspace',
+        icon: <Workspace />,
+        defaultOpen: false,
+        route: makeRouteLink(routes.DaoTeamTask),
+        children: [{ title: 'Task', link: makeRouteLink(routes.DaoTeamTask), logo: taskIcon }]
       },
-      // {
-      //   text: 'Treasury',
-      //   icon: treasury,
-      //   route: makeRouteLink(routes.DaoTreasury)
-      // },
-      // {
-      //   text: 'Idea',
-      //   icon: Idea,
-      //   route: makeRouteLink(routes.DaoIdea)
-      // },
+      { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
+      { title: 'Member', icon: <Member />, defaultOpen: false, route: makeRouteLink(routes.DaoMember) },
       {
-        text: 'DAO Rewards',
-        icon: bounty,
-        route: makeRouteLink(routes.DaoInfoActivity)
-      },
-      {
-        text: 'Member',
-        icon: member,
-        route: makeRouteLink(routes.DaoMember)
-      },
-      {
-        text: 'About & Settings',
-        icon: setting,
+        title: 'About & Settings',
+        icon: <Setting />,
+        defaultOpen: false,
         route: makeRouteLink(routes.DaoAboutSetting)
       }
     ],
     [makeRouteLink]
   )
-
-  // const teamspacesList: LeftSiderMenu[] = useMemo(
-  //   () => [
-  //     {
-  //       title: 'Genernal',
-  //       icon: robot,
-  //       defaultOpen: true,
-  //       children: [
-  //         // {
-  //         //   title: 'Meetings',
-  //         //   link: makeRouteLink(routes.DaoTeamMeetings),
-  //         //   icon: meetingIcon
-  //         // },
-  //         // { title: 'Docs', link: makeRouteLink(routes.DaoTeamDocs), icon: docsIcon },
-  //         { title: 'Task', link: makeRouteLink(routes.DaoTeamTask), icon: taskIcon }
-  //         // { title: 'Calendar', link: makeRouteLink(routes.DaoTeamCalendar), icon: calendarIcon }
-  //       ]
-  //     }
-  //     // {
-  //     //   title: 'Game',
-  //     //   icon: ele,
-  //     //   children: []
-  //     // }
-  //   ],
-  //   [makeRouteLink]
-  // )
 
   return (
     <StyledAppBar>
@@ -327,7 +334,7 @@ export default function LeftSider() {
           </PopperCard>
         </Box>
         <div />
-        <List>
+        {/* <List>
           {menuList.map((item, idx) => (
             <NavLink
               key={item.text + idx}
@@ -348,7 +355,7 @@ export default function LeftSider() {
               <ListItemText primary={item.text} />
             </NavLink>
           ))}
-        </List>
+        </List> */}
         {/* <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'}>
           <Typography variant="h5" textAlign={'left'} fontSize={16} sx={{ color: '#3F5170', padding: '6px 24px 16px' }}>
             Teamspaces
@@ -356,6 +363,7 @@ export default function LeftSider() {
         </Box> */}
         <Box
           gap={10}
+          mt={8}
           sx={{
             '& li a': {
               paddingLeft: 80
@@ -366,17 +374,36 @@ export default function LeftSider() {
             }
           }}
         >
-          {/* {teamspacesList.map((item, idx) => (
-            <Box key={idx}>
+          {teamspacesList.map((item, idx) => (
+            <Box key={idx} minHeight={50}>
               <MyCollapse
                 hiddenArrow
                 bodyPl={0}
                 defaultOpen={item.defaultOpen}
+                height={50}
                 title={
-                  <StyledTeamMenu>
-                    <Image src={item.icon}></Image>
-                    <p>{item.title}</p>
-                  </StyledTeamMenu>
+                  // <StyledTeamMenu>
+                  //   <Image src={item.icon}></Image>
+                  //   <p>{item.title}</p>
+                  // </StyledTeamMenu>
+                  <NavLink
+                    key={item.title + idx}
+                    id={`${item.route}-nav-link`}
+                    to={item.route ?? '#'}
+                    className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'flex-start',
+                      flexDirection: 'row',
+                      gap: 10,
+                      outline: 'none',
+                      marginRight: 0,
+                      paddingLeft: 20
+                    }}
+                  >
+                    {item.icon}
+                    <ListItemText primary={item.title} />
+                  </NavLink>
                 }
               >
                 {item?.children?.map((item, idx1) => (
@@ -411,14 +438,14 @@ export default function LeftSider() {
                     }}
                   >
                     <NavLink to={item.link || ''}>
-                      <Image src={item.icon}></Image>
+                      <Image src={item.logo || ''}></Image>
                       <p>{item.title}</p>
                     </NavLink>
                   </List>
                 ))}
               </MyCollapse>
             </Box>
-          ))} */}
+          ))}
           {/* <List
             disablePadding
             style={{ marginRight: 0 }}

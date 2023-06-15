@@ -2,8 +2,6 @@ import { Alert, Box, Link, Stack, styled, Typography, useTheme } from '@mui/mate
 import { BlackButton } from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import Modal from 'components/Modal'
-import { CurrencyAmount, Token, TokenAmount } from 'constants/token'
-import JSBI from 'jsbi'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
@@ -14,10 +12,10 @@ import { useActiveWeb3React } from 'hooks'
 import { Dots } from 'theme/components'
 import { AppState } from 'state'
 import { useSelector } from 'react-redux'
-import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useProposalDetailInfoProps, useProposalVoteCallback } from 'hooks/useBackedProposalServer'
 import { toast } from 'react-toastify'
 import NumericalInput from 'components/Input/InputNumerical'
+import { formatNumberWithCommas } from 'utils'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -31,32 +29,20 @@ const Text = styled(Typography)(({ color }: { color?: string }) => ({
 }))
 
 export default function VoteModal({
+  refresh,
   proposalInfo,
   proposalOptions
 }: {
   proposalInfo: useProposalDetailInfoProps
   proposalOptions: number
+  refresh: Dispatch<SetStateAction<number>>
 }) {
   const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
-  const { account } = useActiveWeb3React()
 
-  const myVotesToken = useMemo(() => {
-    if (!daoInfo?.governance[0] || !daoInfo.governance[0].createRequire) {
-      return undefined
-    }
-    const _token = new Token(
-      daoInfo.governance[0].chainId,
-      daoInfo.governance[0].tokenAddress,
-      daoInfo.governance[0].decimals,
-      daoInfo.governance[0].symbol
-    )
-    return _token
-  }, [daoInfo.governance])
-  const myVotes = useCurrencyBalance(account || undefined, myVotesToken)
-
-  return !daoInfo.governance[0].createRequire || myVotes === undefined ? null : (
+  return !daoInfo.governance[0] || !proposalInfo ? null : (
     <VoteModalFunc
-      myVotes={myVotes}
+      refresh={refresh}
+      myVotes={proposalInfo.yourVotes}
       voteProposalSign={daoInfo.governance[0]}
       proposalInfo={proposalInfo}
       proposalOptions={proposalOptions}
@@ -65,14 +51,16 @@ export default function VoteModal({
 }
 
 function VoteModalFunc({
+  refresh,
   proposalInfo,
   myVotes,
   voteProposalSign,
   proposalOptions
 }: {
+  refresh: Dispatch<SetStateAction<number>>
   proposalInfo: useProposalDetailInfoProps
   voteProposalSign: govList
-  myVotes: TokenAmount | CurrencyAmount
+  myVotes: number
   proposalOptions: number
 }) {
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
@@ -91,20 +79,23 @@ function VoteModalFunc({
     proposalVoteCallback([
       {
         optionId: proposalOptions,
-        votes: proposalInfo.votingType === VotingTypes.SINGLE ? Number(myVotes.toSignificant()) : Number(injectVotes)
+        votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
       }
     ])
       .then(res => {
-        if (res.data !== 200) {
+        if (res.data.code !== 200) {
           toast.error('vote error')
           return
         }
+        refresh(Math.random())
+        setInjectVotes('')
+        voteModalToggle()
         toast.success('Vote success')
       })
       .catch(err => {
         toast.error(err.msg || 'network error')
       })
-  }, [injectVotes, myVotes, proposalInfo.votingType, proposalOptions, proposalVoteCallback])
+  }, [injectVotes, myVotes, proposalInfo.votingType, proposalOptions, proposalVoteCallback, refresh, voteModalToggle])
 
   const voteBtn: {
     disabled: boolean
@@ -117,7 +108,7 @@ function VoteModalFunc({
         error: 'Proposal voting is not opened'
       }
     }
-    if (proposalInfo.alreadyVoted) {
+    if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1) {
       return {
         disabled: true,
         error: 'You have already voted'
@@ -143,7 +134,7 @@ function VoteModalFunc({
         )
       }
     }
-    if (!myVotes || !myVotes.greaterThan(JSBI.BigInt(0))) {
+    if (!myVotes || myVotes <= 0 || myVotes < Number(injectVotes)) {
       return {
         disabled: true,
         error: 'Insufficient votes'
@@ -177,7 +168,7 @@ function VoteModalFunc({
                 Your votes
               </Typography>
               <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
-                {myVotes?.toSignificant(6, { groupSeparator: ',' }) || '--'}
+                {(myVotes && formatNumberWithCommas(myVotes)) || '--'}
               </Typography>
             </Box>
           </Stack>
@@ -236,14 +227,13 @@ function MultiVote({
   FatherVotes,
   setFatherVotes
 }: {
-  totalVotes: CurrencyAmount | TokenAmount | undefined
+  totalVotes: number | undefined
   voteProposalSign: govList
   FatherVotes: string
   setFatherVotes: Dispatch<SetStateAction<string>>
 }) {
   const theme = useTheme()
-  const token = new Token(voteProposalSign.chainId, voteProposalSign.tokenAddress, voteProposalSign.decimals)
-  console.log('🚀 ~ file: VoteModal.tsx:240 ~ token:', token)
+  console.log(voteProposalSign)
 
   return (
     <Stack spacing={19} mt={19}>
@@ -257,7 +247,7 @@ function MultiVote({
           />
           <Typography> / </Typography>
           <Typography color={theme.palette.text.primary}>
-            {totalVotes?.toSignificant(6, { groupSeparator: ',' }) || '--'}
+            {(totalVotes && formatNumberWithCommas(totalVotes)) || '--'}
           </Typography>
         </Box>
       </RowCenter>

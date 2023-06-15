@@ -1,14 +1,6 @@
 // import AddButton from 'components/Button/Button'
 import { Box, Tooltip, Typography } from '@mui/material'
-import { ChainId } from 'constants/chain'
-import {
-  ITaskItem,
-  useGetTaskList,
-  useRemoveTask,
-  useSpacesInfo,
-  useTaskProposalList,
-  useUpdateTask
-} from 'hooks/useBackedTaskServer'
+import { ITaskItem, useGetTaskList, useRemoveTask, useSpacesInfo, useUpdateTask } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
@@ -21,6 +13,9 @@ import { useParams } from 'react-router-dom'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 // import PopperCard from 'components/PopperCard'
 import TaskDetail from 'pages/Task/Children/TaskDetail'
+import { toast } from 'react-toastify'
+import { useProposalBaseList } from 'hooks/useBackedProposalServer'
+import { ChainId } from 'constants/chain'
 
 function ContextMenu({
   children,
@@ -165,13 +160,14 @@ export default function DragTaskPanel() {
   const [rand, setRand] = useState(Math.random())
   const { showModal, hideModal } = useModal()
   const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoId = Number(curDaoId)
+  const taskId = 0 as ChainId
   const update = useUpdateTask()
   const remove = useRemoveTask()
-  const { isJoined } = useIsJoined(curDaoChainId)
-  const { result } = useTaskProposalList(curDaoChainId, daoAddress)
-  const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
+  const { isJoined } = useIsJoined(daoId)
+  const { result } = useProposalBaseList(daoId)
+  const { result: TeamSpacesInfo } = useSpacesInfo(taskId, '')
   const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
 
   const showSidePanel = useCallback(
@@ -265,7 +261,12 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].taskName,
           taskList[sInd][source.index].weight
         )
-          .then(res => {
+          .then((res: any) => {
+            if (res.code !== 200) {
+              toast.error(res.msg || 'network error')
+              return
+            }
+            toast.success('update success')
             setRand(Math.random())
             console.log(res)
           })
@@ -305,7 +306,12 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].taskName,
           taskList[sInd][source.index].weight
         )
-          .then(res => {
+          .then((res: any) => {
+            if (res.code !== 200) {
+              toast.error(res.msg || 'network error')
+              return
+            }
+            toast.success('update success')
             setRand(Math.random())
             console.log(res)
           })

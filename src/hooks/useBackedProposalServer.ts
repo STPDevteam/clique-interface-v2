@@ -213,7 +213,7 @@ export function useProposalVoteCallback() {
   }, [])
 }
 
-export function useProposalDetailsInfo(proposalId: number) {
+export function useProposalDetailsInfo(proposalId: number, refresh: number) {
   const { account } = useActiveWeb3React()
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<useProposalDetailInfoProps>()
@@ -236,7 +236,7 @@ export function useProposalDetailsInfo(proposalId: number) {
         console.error('useGetProposalDetail', error)
       }
     })()
-  }, [account, proposalId])
+  }, [account, proposalId, refresh])
 
   const ret = useMemo(() => {
     if (!result) return undefined
@@ -270,42 +270,32 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(daoChainId: ChainId, daoAddress: string, proposalId: number) {
+export function useProposalVoteList(proposalId: number) {
   const [currentPage, setCurrentPage] = useState(1)
-
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<{ optionIndex: number; voter: string; amount: string }[]>([])
+  const [result, setResult] = useState<{ optionContent: string; voter: string; votes: number }[]>([])
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
-        setResult([])
-        setTotal(0)
-        return
-      }
+      if (!proposalId) return
       setLoading(true)
       try {
-        const res = await getProposalVotesList(
-          daoChainId,
-          daoAddress,
-          proposalId,
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
+        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
+        console.log('🚀 ~ file: useBackedProposalServer.ts:288 ~ ; ~ data:', data)
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list = data.list.map((item: any) => ({
-          optionIndex: item.optionIndex,
+        const list = data.data.map((item: any) => ({
+          optionContent: item.optionContent,
           voter: item.voter,
-          amount: item.amount
+          votes: item.votes
         }))
         setResult(list)
       } catch (error) {
@@ -315,7 +305,7 @@ export function useProposalVoteList(daoChainId: ChainId, daoAddress: string, pro
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [currentPage, daoAddress, daoChainId, proposalId])
+  }, [currentPage, proposalId])
 
   return {
     loading: loading,

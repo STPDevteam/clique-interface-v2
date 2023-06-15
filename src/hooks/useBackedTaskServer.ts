@@ -14,7 +14,8 @@ import {
   createNewJob,
   deleteJob,
   publishList,
-  updateNewJob
+  updateNewJob,
+  leftSpacesList
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -164,6 +165,79 @@ interface PublishItemProp {
   jobPublishId: number
   title: string
   message?: string
+}
+
+export interface LeftTaskDataProps {
+  access: string
+  bio: string
+  creator: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  daoId: number
+  lastEditBy: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  lastEditTime: number
+  spacesId: number
+  title: string
+  types: string
+}
+
+export function useGetLeftTaskList(daoId: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 20
+  const [result, setResult] = useState<LeftTaskDataProps[]>([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!daoId) return
+      setLoading(true)
+      try {
+        const res = await leftSpacesList(daoId)
+        setLoading(false)
+        const data = res.data.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: LeftTaskDataProps[] = data.list
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useGetSpacesList', error)
+      }
+    })()
+  }, [currentPage, daoId])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
 }
 
 export function useGetPublishJobList(chainId: number, daoAddress: string, refresh?: number) {
@@ -377,7 +451,7 @@ export function useGetTaskList(
   )
 }
 
-export interface ProposalListBaseProp {
+export interface ProposalListBasev2Prop {
   daoChainId: ChainId
   daoAddress: string
   daoAddressV1: string
@@ -392,7 +466,7 @@ export interface ProposalListBaseProp {
   targetTimeString: string
 }
 
-function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
+function makeLIstData(daoChainId: ChainId, list: any): ProposalListBasev2Prop[] {
   const now = currentTimeStamp()
   return list.map((item: any) => {
     const startTime = item.startTime
@@ -440,7 +514,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 20
-  const [result, setResult] = useState<ProposalListBaseProp[]>([])
+  const [result, setResult] = useState<ProposalListBasev2Prop[]>([])
 
   useEffect(() => {
     if (firstLoadData) {
@@ -469,7 +543,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBasev2Prop[] = makeLIstData(daoChainId, data.list)
         setResult(list)
       } catch (error) {
         setResult([])
@@ -495,7 +569,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBasev2Prop[] = makeLIstData(daoChainId, data.list)
         setResult(list)
       } catch (error) {
         console.error('getProposalList', error)

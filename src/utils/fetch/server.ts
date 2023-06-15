@@ -162,7 +162,7 @@ export function getTaskList(
   status: string | undefined,
   priority: string | undefined
 ) {
-  return Axios.get('stpdao/v2/task/list', {
+  return Axios.get('stpdao/v3/task/list', {
     offset,
     count,
     spacesId,
@@ -195,7 +195,7 @@ export function changeAdminRole(chainId: number, changeTo: string, daoAddress: s
 }
 
 export function removeTask(spacesId: number, taskId: number[]) {
-  return Axios.post('stpdao/v2/task/remove', {
+  return Axios.post('stpdao/v3/task/remove', {
     spacesId,
     taskId
   })
@@ -215,7 +215,7 @@ export function updateTask(
   taskName: string,
   weight: number
 ) {
-  return Axios.post('stpdao/v2/task/update', {
+  return Axios.post('stpdao/v3/task/update', {
     assignAccount,
     content,
     deadline,
@@ -242,7 +242,7 @@ export function createTask(
   status: string,
   taskName: string
 ) {
-  return Axios.post('stpdao/v2/task/create', {
+  return Axios.post('stpdao/v3/task/create', {
     assignAccount,
     content,
     deadline,
@@ -256,7 +256,7 @@ export function createTask(
 }
 
 export function getTaskDetail(taskId: number) {
-  return Axios.get(`stpdao/v2/task/detail/${taskId}`)
+  return Axios.get(`stpdao/v3/task/detail/${taskId}`)
 }
 
 export function getMembersCount(daoAddress: string, chainId: number) {
@@ -332,19 +332,11 @@ export function getProposalSnapshot(chainId: number, daoAddress: string, proposa
   })
 }
 
-export function getProposalVotesList(
-  chainId: number | string,
-  daoAddress: string,
-  proposalId: number,
-  offset: number,
-  count: number
-) {
-  return Axios.get('stpdao/v2/votes/list', {
-    chainId,
-    daoAddress,
+export function getProposalVotesList(proposalId: number, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/vote/list', {
     proposalId,
     offset,
-    count
+    limit
   })
 }
 
@@ -708,6 +700,10 @@ export function deleteJob(publishId: number) {
 
 export function publishList(chainId: number, daoAddress: string) {
   return Axios.get('stpdao/v2/jobs/publish/list', { chainId, daoAddress })
+}
+
+export function leftSpacesList(daoId: number) {
+  return Axios.get(`stpdao/v3/spaces/list/${daoId}`)
 }
 
 export function updateDaoGeneral(

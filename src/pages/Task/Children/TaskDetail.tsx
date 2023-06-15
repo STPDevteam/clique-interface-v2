@@ -15,21 +15,15 @@ import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import ReactHtmlParser from 'react-html-parser'
-import {
-  ProposalListBaseProp,
-  useCreateTask,
-  useGetTaskDetail,
-  useJobsList,
-  useUpdateTask
-} from 'hooks/useBackedTaskServer'
+import { useCreateTask, useGetTaskDetail, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
-import useModal from 'hooks/useModal'
 import { shortenAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { ReactComponent as ViewDtailIcon } from 'assets/svg/viewDetailIcon.svg'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { escapeAttrValue } from 'xss'
 import useCopyClipboard from 'hooks/useCopyClipboard'
+import { toast } from 'react-toastify'
+import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -195,7 +189,6 @@ export default function TaskDetail({
   const [value, setValue] = useState(editData?.taskName ?? '')
   const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
   const [content, setContent] = useState<any>(taskDetailData?.content ?? '')
-  const { showModal } = useModal()
   const create = useCreateTask()
   const update = useUpdateTask()
   const link = useMemo(() => {
@@ -220,22 +213,10 @@ export default function TaskDetail({
     ).then((res: any) => {
       if (res.data.code === 200) {
         onDismiss()
-        showModal(<MessageBox type="success">Create task success</MessageBox>)
-      } else showModal(<MessageBox type="failure">Something wrong</MessageBox>)
+        toast.success('Create task success')
+      } else toast.error('network error')
     })
-  }, [
-    TeamSpacesInfo,
-    assignees,
-    content,
-    create,
-    currentStatus,
-    endTime,
-    onDismiss,
-    priority,
-    proposal,
-    showModal,
-    value
-  ])
+  }, [TeamSpacesInfo, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
 
   const updateCallback = useCallback(() => {
     if (!editData) return
@@ -252,12 +233,15 @@ export default function TaskDetail({
       editData.taskId,
       value,
       editData.weight
-    ).then(res => {
+    ).then((res: any) => {
       onDismiss()
-      showModal(<MessageBox type="success">Update success</MessageBox>)
-      console.log(res)
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      toast.success('Update success')
     })
-  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, showModal, update, value])
+  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, update, value])
 
   const getActions = useCallback(() => {
     if (editData) {

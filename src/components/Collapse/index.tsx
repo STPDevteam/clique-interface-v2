@@ -8,13 +8,15 @@ export default function Index({
   title,
   defaultOpen,
   hiddenArrow,
-  bodyPl
+  bodyPl,
+  height
 }: {
   children: any
   title: string | JSX.Element
   defaultOpen?: boolean
   hiddenArrow?: boolean
   bodyPl?: number
+  height?: number
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen || false)
   const theme = useTheme()
@@ -22,7 +24,7 @@ export default function Index({
     <Box>
       <Box
         sx={{
-          height: 40,
+          height: height ? height : 40,
           display: 'flex',
           alignItems: 'center',
           gap: '5px',
@@ -31,7 +33,7 @@ export default function Index({
         onClick={() => setIsOpen(!isOpen)}
       >
         {!hiddenArrow ? isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon /> : null}
-        <Typography fontSize={13} fontWeight={600} variant="body1" color={theme.palette.text.primary}>
+        <Typography width={'100%'} fontSize={13} fontWeight={600} variant="body1" color={theme.palette.text.primary}>
           {title}
         </Typography>
       </Box>
