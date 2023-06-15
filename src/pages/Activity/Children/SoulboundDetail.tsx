@@ -6,6 +6,9 @@ import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import Image from 'components/Image'
 import EllipsisIcon from 'assets/images/ellipsis_icon.png'
 import Back from 'components/Back'
+import { useSbtDetail } from 'hooks/useBackedSbtServer'
+import { useParams } from 'react-router-dom'
+
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   height: 800,
   maxWidth: maxWidth ? maxWidth : 600,
@@ -62,6 +65,10 @@ const OwnersStyle = styled(Box)(() => ({
 }))
 
 export default function SoulboundDetail() {
+  const { sbtId } = useParams<{ sbtId: string }>()
+
+  const { result } = useSbtDetail(sbtId)
+  console.log(result, 90)
   return (
     <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
       <Back />
@@ -166,3 +173,14 @@ export default function SoulboundDetail() {
     </ContainerWrapper>
   )
 }
+// function formatTimestamp(timestamp: any) {
+//   const date = new Date(timestamp * 1000)
+
+//   const year = date.getFullYear()
+//   const month = String(date.getMonth() + 1).padStart(2, '0')
+//   const day = String(date.getDate()).padStart(2, '0')
+//   const hours = String(date.getHours()).padStart(2, '0')
+//   const minutes = String(date.getMinutes()).padStart(2, '0')
+
+//   return `${month}/${day}/${year} ${hours}:${minutes}`
+// }

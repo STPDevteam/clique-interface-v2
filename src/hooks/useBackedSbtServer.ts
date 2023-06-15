@@ -1,90 +1,111 @@
 import { useEffect, useState, useCallback } from 'react'
 import { ChainId } from '../constants/chain'
-import { createSbt, getmemberDaoList } from '../utils/fetch/server'
+import { createSbt, getmemberDaoList, commitErrorMsg, getSbtDetail } from '../utils/fetch/server'
+import ReactGA from 'react-ga4'
 import { useCreateSbtContract } from 'hooks/useContract'
 import { TransactionResponse } from '@ethersproject/providers'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useGasPriceInfo } from './useGasPrice'
 
-export function useCreateSbtCallback(
-  chainId: ChainId | undefined,
-  daoAddress: string,
-  endTime: number | undefined,
-  fileUrl: string,
-  introduction: string,
-  itemName: string,
-  startTime: number | undefined,
-  tokenChainId: number | undefined,
-  totalSupply: number | undefined,
-  way: string,
-  symbol: string,
-  whitelist?: string[]
-) {
+export function useCreateSbtCallback() {
+  const addTransaction = useTransactionAdder()
   const contract = useCreateSbtContract()
-  return useCallback(async () => {
-    if (!contract) throw new Error('none contract')
-    let result: any = {}
-    if (
-      !chainId ||
-      !daoAddress ||
-      !fileUrl ||
-      !introduction ||
-      !itemName ||
-      !endTime ||
-      !startTime ||
-      !tokenChainId ||
-      !totalSupply ||
-      !way
-    )
-      return
+  const gasPriceInfoCallback = useGasPriceInfo()
 
-    try {
-      const res = await createSbt(
-        chainId,
-        daoAddress,
-        endTime,
-        fileUrl,
-        introduction,
-        itemName,
-        startTime,
-        tokenChainId,
-        totalSupply,
-        way,
-        whitelist
+  const CreateSbtCallback = useCallback(
+    async (
+      chainId: ChainId | undefined,
+      account: string | undefined,
+      daoAddress: string,
+      fileUrl: string,
+      itemName: string,
+      startTime: number | undefined,
+      tokenChainId: number | undefined,
+      totalSupply: number | undefined,
+      way: string,
+      symbol: string,
+      endTime: number | undefined,
+      introduction?: string,
+      accountlist?: string[]
+    ) => {
+      if (!contract) throw new Error('none contract')
+      let result: any = {}
+      if (
+        !chainId ||
+        !account ||
+        !daoAddress ||
+        !fileUrl ||
+        !introduction ||
+        !itemName ||
+        !startTime ||
+        !tokenChainId ||
+        !endTime ||
+        !totalSupply ||
+        !way
       )
-      if (res.data) {
-        result = res.data.data
-      } else {
-        return null
-      }
-    } catch (error) {
-      console.log(error)
-      return null
-    }
+        return
 
-    const args = [result.SBTId, itemName, symbol, result.tokenURI, result.signature]
-    const method = 'createSBT'
-    console.log('args=>', args)
-    return contract[method](...args)
-      .then((res: TransactionResponse) => {
-        console.log('contract=>', res)
+      try {
+        const res = await createSbt(
+          chainId,
+          daoAddress,
+          fileUrl,
+          itemName,
+          startTime,
+          tokenChainId,
+          totalSupply,
+          way,
+          symbol,
+          endTime,
+          introduction,
+          accountlist
+        )
+        if (!account) throw new Error('none account')
+        if (!res.data.data) throw new Error(res.data.msg || 'Network error')
+        result = res.data.data as any
+      } catch (error) {
+        console.error('Purchase', error)
+        throw error
+      }
+
+      const args = [result.SBTId, itemName, symbol, result.tokenURI, result.signature]
+      const method = 'createSBT'
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        from: account
       })
-      .catch((error: any) => {
-        console.log(error)
-      })
-  }, [
-    contract,
-    symbol,
-    chainId,
-    daoAddress,
-    endTime,
-    fileUrl,
-    introduction,
-    itemName,
-    startTime,
-    tokenChainId,
-    totalSupply,
-    way,
-    whitelist
-  ])
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: `Purchased a swap`,
+            claim: { recipient: `${account}_purchase_swap_${result.SBTId}` }
+          })
+          return {
+            hash: response.hash,
+            sbtId: result.SBTId
+          }
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001) {
+            commitErrorMsg(
+              'useCreatePublicSaleCallback',
+              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [addTransaction, contract, gasPriceInfoCallback]
+  )
+  return { CreateSbtCallback }
 }
 
 export function useMemberDaoList(exceptLevel: string) {
@@ -129,3 +150,24 @@ export function useMemberDaoList(exceptLevel: string) {
 //     result
 //   }
 // }
+export function useSbtDetail(sbtId: string) {
+  const [result, setResult] = useState<any>()
+  console.log(parseFloat(sbtId), 9)
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await getSbtDetail(parseFloat(sbtId))
+        if (res.data.data) {
+          setResult(res.data.data)
+        }
+      } catch (error) {
+        console.log(error)
+        setResult(null)
+      }
+    })()
+  }, [sbtId])
+
+  return {
+    result
+  }
+}

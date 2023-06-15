@@ -3,11 +3,10 @@ import soulboundBgimg from 'assets/images/soulbound_bg.png'
 import { ReactComponent as CalendarIcon } from 'assets/svg/calendar_icon.svg'
 import Input from 'components/Input'
 import UploadFile from 'components/UploadFile'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import Select from 'components/Select/Select'
 import DateTimePicker from 'components/DateTimePicker'
 import { BlackButton } from 'components/Button/Button'
-import Button from 'components/Button/Button'
 import Back from 'components/Back'
 import Image from 'components/Image'
 import { ChainList, ChainId, ChainListMap } from 'constants/chain'
@@ -16,7 +15,12 @@ import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useActiveWeb3React } from 'hooks'
-
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
+import { useUserInfo } from 'state/userInfo/hooks'
+import { isAddress } from 'utils'
 const InputTitleStyle = styled(Typography)(() => ({
   fontSize: 14,
   lineHeight: '16px',
@@ -52,19 +56,6 @@ const DateBoxStyle = styled(Box)(() => ({
   }
 }))
 
-const UploadButtonStyle = styled(Button)(() => ({
-  width: 158,
-  height: 36,
-  background: ' #FFFFFF',
-  border: ' 1px solid #0049C6',
-  borderRadius: ' 8px',
-  color: '#0049C6',
-  '&:hover': {
-    color: '#fff',
-    background: ' #0049C6'
-  }
-}))
-
 const UploadBoxStyle = styled(Box)(() => ({
   marginTop: 15,
   height: 87,
@@ -76,6 +67,25 @@ const UploadBoxStyle = styled(Box)(() => ({
   justifyContent: 'space-between'
 }))
 
+const UploadLabel = styled('label')({
+  border: ' 1px solid #0049C6',
+  width: 158,
+  height: 36,
+  fontWeight: 700,
+  fontSize: 14,
+  cursor: 'pointer',
+  display: 'flex',
+  textAlign: 'center',
+  color: '#0049C6',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: ' 8px',
+  '&:hover': {
+    color: '#fff',
+    background: ' #0049C6'
+  }
+})
+
 export default function Index() {
   const { library, account, chainId } = useActiveWeb3React()
   const theme = useTheme()
@@ -85,7 +95,8 @@ export default function Index() {
     { id: 3, value: 'whitelist', label: 'Upload Addresses' }
   ]
   const [whitelistBoole, setwhitelistBoole] = useState<boolean>(false)
-  const [whitelistValue, setwhitelistValue] = useState<string[]>([])
+  const [openSnackbar, setOpenSnackbar] = useState(false)
+  const [accountList, setaccountList] = useState<string[]>([])
   const [eligibilityValue, seteligibilityValue] = useState(eligibilityList[0].value)
 
   const [eventStartTime, setEventStartTime] = useState<number>()
@@ -103,33 +114,67 @@ export default function Index() {
   const [totalSupply, settotalSupply] = useState<string>('')
   const [daoAddress, setdaoAddress] = useState('')
   const [daoChainId, setdaoChainId] = useState<ChainId>()
-  const CreateSbtCallback = useCreateSbtCallback(
+  const { CreateSbtCallback } = useCreateSbtCallback()
+
+  const { showModal, hideModal } = useModal()
+  const history = useHistory()
+  const userSignature = useUserInfo()
+  const SubmitCreate = useCallback(() => {
+    showModal(<TransacitonPendingModal />)
+    CreateSbtCallback(
+      daoChainId,
+      account || undefined,
+      daoAddress,
+      fileValue,
+      itemName,
+      eventStartTime,
+      chainId,
+      parseFloat(totalSupply),
+      eligibilityValue,
+      symbolValue,
+      eventEndTime,
+      Introduction,
+      accountList
+    )
+      .then(res => {
+        hideModal()
+        console.log(res)
+        showModal(
+          <TransactionSubmittedModal
+            hideFunc={() => {
+              history.push(routes._SoulboundDetail + '/' + res.sbtId)
+            }}
+            hash={res.hash}
+          />
+        )
+      })
+      .catch((err: any) => {
+        showModal(
+          <MessageBox type="error">
+            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          </MessageBox>
+        )
+        console.error(err)
+      })
+  }, [
     daoChainId,
+    account,
     daoAddress,
     eventEndTime,
     fileValue,
-    Introduction,
     itemName,
     eventStartTime,
     chainId,
-    parseFloat(totalSupply),
+    totalSupply,
     eligibilityValue,
-    symbolValue
-  )
-  const { showModal, hideModal } = useModal()
-
-  const SubmitCreate = useCallback(() => {
-    showModal(<TransacitonPendingModal />)
-    CreateSbtCallback()
-      .then(hash => {
-        hideModal()
-        console.log(hash)
-      })
-      .catch((err: any) => {
-        hideModal()
-        console.error(err)
-      })
-  }, [CreateSbtCallback, hideModal, showModal])
+    Introduction,
+    symbolValue,
+    accountList,
+    CreateSbtCallback,
+    hideModal,
+    showModal,
+    history
+  ])
 
   const nextHandler = useMemo(() => {
     if (!daoValue) {
@@ -156,12 +201,7 @@ export default function Index() {
         error: 'Item Name required'
       }
     }
-    if (!Introduction.trim()) {
-      return {
-        disabled: true,
-        error: 'Introduction required'
-      }
-    }
+
     if (!symbolValue.trim()) {
       return {
         disabled: true,
@@ -180,10 +220,16 @@ export default function Index() {
         error: 'Token Eligibility required'
       }
     }
-    if (!eventEndTime || !eventStartTime) {
+    if (!eventStartTime || !eventEndTime) {
       return {
         disabled: true,
-        error: 'Claimable Period required'
+        error: 'StartTime required'
+      }
+    }
+    if (eventEndTime && eventEndTime < eventStartTime) {
+      return {
+        disabled: true,
+        error: 'Date error'
       }
     }
     return {
@@ -195,7 +241,6 @@ export default function Index() {
     chainId,
     fileValue,
     itemName,
-    Introduction,
     symbolValue,
     totalSupply,
     eligibilityValue,
@@ -203,6 +248,47 @@ export default function Index() {
     eventStartTime,
     SubmitCreate
   ])
+  useEffect(() => {
+    if (!account || !userSignature) {
+      history.push(routes.Governance)
+    }
+  }, [account, history, userSignature])
+
+  const insertLine = useCallback((list: string[], newItem: string) => {
+    const _ret = list.filter(item => item.toLowerCase() !== newItem.toLowerCase())
+    _ret.push(newItem)
+    return _ret
+  }, [])
+
+  const uploadCSV = useCallback(() => {
+    const el = document.getElementById('upload_CSV') as HTMLInputElement
+    if (!el || !el.files) return
+    const reader = new FileReader()
+    reader.onload = function() {
+      const ret: string[] = []
+      const textInput = reader.result as string
+      const allRows = textInput.split(/\r?\n|\r/)
+      for (let i = 0; i < allRows.length; i++) {
+        const splitTextInput = allRows[i].split(',')
+        if (!splitTextInput[0]?.trim()) {
+          continue
+        }
+        if (!isAddress(splitTextInput[0]?.trim())) {
+          setOpenSnackbar(true)
+          el.value = ''
+          return
+        }
+        ret.push(splitTextInput[0].trim())
+      }
+      el.value = ''
+      let newList: string[] = []
+      for (const item of ret) {
+        newList = insertLine(newList, item)
+        setaccountList(newList)
+      }
+    }
+    reader.readAsBinaryString(el.files[0])
+  }, [insertLine])
 
   return (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
@@ -343,9 +429,13 @@ export default function Index() {
 
           <Input
             value={totalSupply}
-            type="number"
+            type="text"
             onChange={e => {
-              settotalSupply(e.target.value)
+              const regex = /^([1-9]\d*|0)$/
+              const value = e.target.value
+              if (!value || (value && value != '0' && regex.test(value))) {
+                settotalSupply(value)
+              }
             }}
             label="Total supply"
             placeholder="Enter Total"
@@ -377,32 +467,49 @@ export default function Index() {
             {whitelistBoole && (
               <>
                 <UploadBoxStyle>
-                  {whitelistValue.length > 0 ? (
+                  {accountList.length > 0 ? (
                     <>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                         <Typography variant="body1" lineHeight="20px" color="#0049C6">
                           Filename001
                         </Typography>
                         <Typography variant="body1" lineHeight="20px">
-                          Total {whitelistValue.length} addresses
+                          Total {accountList.length} addresses
                         </Typography>
                       </Box>
-                      <UploadButtonStyle onClick={() => console.log(whitelistValue)}>Re-upload</UploadButtonStyle>
+                      <input
+                        accept=".csv"
+                        type="file"
+                        onChange={uploadCSV}
+                        id="upload_CSV"
+                        style={{ width: 0, height: 0 }}
+                      />
+                      <UploadLabel htmlFor="upload_CSV">Re-upload</UploadLabel>
                     </>
                   ) : (
                     <>
                       <Typography variant="body1" lineHeight={'20px'}>
-                        Download this <Link sx={{ cursor: 'pointer' }}>Reference template.</Link>
+                        Download this{' '}
+                        <Link href="/template/sbt-list.csv" sx={{ cursor: 'pointer' }}>
+                          Reference template.
+                        </Link>
                       </Typography>
-                      <UploadButtonStyle onClick={() => setwhitelistValue(['1', '3', '4'])}>
-                        Upload File
-                      </UploadButtonStyle>
+
+                      <input
+                        accept=".csv"
+                        type="file"
+                        onChange={uploadCSV}
+                        id="upload_CSV"
+                        style={{ width: 0, height: 0 }}
+                      />
+                      <UploadLabel htmlFor="upload_CSV">Upload File </UploadLabel>
                     </>
                   )}
                 </UploadBoxStyle>
               </>
             )}
           </Box>
+          {openSnackbar && <Alert severity="error">Address format error, please download the template.</Alert>}
           <Box sx={{ display: 'grid', flexDirection: 'column', gap: 10 }}>
             <InputTitleStyle>Claimable Period</InputTitleStyle>
             <ContentHintStyle>Items outside the time frame will stop being claimed</ContentHintStyle>
@@ -415,6 +522,7 @@ export default function Index() {
               />
               <ContentHintStyle style={{ whiteSpace: 'nowrap' }}>--</ContentHintStyle>
               <DateTimePicker
+                disabled={eventStartTime ? false : true}
                 label={'End time'}
                 minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
                 value={eventEndTime ? new Date(eventEndTime * 1000) : null}

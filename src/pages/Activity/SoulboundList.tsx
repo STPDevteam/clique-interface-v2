@@ -60,10 +60,11 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
 
 export default function SoulboundList() {
   const history = useHistory()
+  const sbtId = 87
   return (
     <StyledItem
       onClick={() => {
-        history.push(routes.SoulboundDetail)
+        history.push(routes._SoulboundDetail + '/' + sbtId)
       }}
     >
       <Image

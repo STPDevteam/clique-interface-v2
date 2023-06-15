@@ -674,30 +674,34 @@ export function publishList(chainId: number, daoAddress: string) {
 }
 
 export function createSbt(
-  chainId: number,
+  chainId: ChainId,
   daoAddress: string,
-  endTime: number,
   fileUrl: string,
-  introduction: string,
   itemName: string,
   startTime: number,
   tokenChainId: number,
   totalSupply: number,
   way: string,
-  whitelist?: string[]
+  symbol: string,
+  endTime: number,
+  introduction?: string,
+  account?: string[]
 ) {
   return Axios.post('/stpdao/v2/sbt/create', {
     chainId,
     daoAddress,
     endTime,
     fileUrl,
-    introduction,
     itemName,
     startTime,
     tokenChainId,
     totalSupply,
     way,
-    whitelist
+    symbol,
+    introduction,
+    whitelist: {
+      account
+    }
   })
 }
 
@@ -715,3 +719,7 @@ export function getmemberDaoList(exceptLevel: string) {
 //     status
 //   })
 // }
+
+export function getSbtDetail(sbtId: number) {
+  return Axios.get(`stpdao/v2/sbt/detail/${sbtId}`)
+}

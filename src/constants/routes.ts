@@ -31,7 +31,8 @@ export const routes = {
   ActivitySaleDetail: '/activity/sale/:chainId/:address/:id',
   Tokens: '/tokens',
   CreateSoulbound: '/createsoulbound',
-  SoulboundDetail: '/soulboundDetail',
+  _SoulboundDetail: '/soulboundDetail',
+  SoulboundDetail: '/soulboundDetail/:sbtId',
 
   Creator: '/creator',
   CreatorDao: '/creator/dao',

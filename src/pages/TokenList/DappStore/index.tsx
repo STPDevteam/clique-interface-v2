@@ -16,6 +16,7 @@ import chainLogo2 from 'assets/images/chainLogo2.png'
 import chainLogo3 from 'assets/images/chainLogo3.png'
 import chainLogo4 from 'assets/images/chainLogo4.png'
 import chainLogo5 from 'assets/images/chainLogo5.png'
+import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
 
 const cardsData = [
   // {
@@ -77,6 +78,8 @@ const cardsData = [
 ]
 
 function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }: any) {
+  const loginSignature = useLoginSignature()
+  const userSignature = useUserInfo()
   const history = useHistory()
 
   return (
@@ -110,7 +113,26 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
       }}
       onClick={() => {
         if (!route && !link) return
-        route ? history.push(route) : window.open(link, '_blank')
+        if (route) {
+          if (route === routes.CreateSoulbound) {
+            if (!userSignature) {
+              loginSignature()
+                .then(() => {
+                  history.push(route)
+                })
+                .catch(err => {
+                  console.log(err)
+                })
+            } else {
+              history.push(route)
+            }
+          } else {
+            history.push(route)
+          }
+        } else {
+          window.open(link, '_blank')
+        }
+        // route ? history.push(route) : window.open(link, '_blank')
       }}
     >
       <Box className="headerCon">
