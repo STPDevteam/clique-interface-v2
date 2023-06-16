@@ -1,8 +1,31 @@
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled, Stack } from '@mui/material'
 import Image from 'components/Image'
 import { DaoAvatars } from 'components/Avatars'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
+// import Pagination from 'components/Pagination'
+// import EmptyData from 'components/EmptyData'
+// import Loading from 'components/Loading'
+// import DelayLoading from 'components/DelayLoading'
+import { useSbtList } from 'hooks/useBackedSbtServer'
+import { ChainId, ChainList } from 'constants/chain'
+import { useEffect, useState } from 'react'
+
+export interface SbtListProp {
+  SBTId: number
+  chainId: ChainId
+  daoAddress: string
+  daoLogo: string
+  daoName: string
+  endTime: number
+  fileUrl: string
+  itemName: string
+  startTime: number
+  status: string
+  symbol: string
+  tokenChainId: number
+}
+
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
   boxShadow: theme.boxShadow.bs1,
@@ -59,29 +82,58 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
 }))
 
 export default function SoulboundList() {
+  const { result } = useSbtList()
+
+  return (
+    <>
+      {/* {
+      !loading && !result.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+      <DelayLoading loading={loading}>
+        <Loading sx={{ marginTop: 30 }} />
+      </DelayLoading> */}
+      <Stack spacing={20}>
+        {result && result.map((item: SbtListProp, index: any) => <ItemCrad key={index} {...item} />)}
+      </Stack>
+    </>
+  )
+}
+
+function ItemCrad(item: SbtListProp) {
   const history = useHistory()
-  const sbtId = 87
+  const [Chain, setChain] = useState<{
+    icon: JSX.Element
+    logo: string
+    symbol: string
+    name: string
+    id: ChainId
+    hex: string
+  }>()
+
+  useEffect(() => {
+    const ChainData = ChainList.filter(v => v.id == item.chainId)
+    setChain(ChainData[0])
+  }, [item])
+
   return (
     <StyledItem
       onClick={() => {
-        history.push(routes._SoulboundDetail + '/' + sbtId)
+        history.push(routes._SoulboundDetail + '/' + item.SBTId)
       }}
     >
       <Image
-        src={''}
+        src={item?.fileUrl}
         style={{
           height: 180,
           width: 180,
-          backgroundColor: '#bcbc',
           border: ' 1px solid #D4D7E2',
           borderRadius: '8px '
         }}
       />
       <ContentBoxStyle>
         <Box sx={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-          <DaoAvatars size={24} />
+          <DaoAvatars src={item?.daoLogo} size={24} />
           <Typography variant="h6" lineHeight={'19px'}>
-            Dao Name
+            {item?.daoName}
           </Typography>
         </Box>
         <Box>
@@ -97,18 +149,32 @@ export default function SoulboundList() {
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Network</ContentTitleStyle>
-            <ContentStyle>Ethereum</ContentStyle>
+            <ContentStyle>{Chain?.name}</ContentStyle>
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Status</ContentTitleStyle>
-            <StatusStyle color="active">Active</StatusStyle>
+            <StatusStyle color={item?.status}>{item?.status}</StatusStyle>
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Claimable Period</ContentTitleStyle>
-            <ContentStyle>06/06/2023 14:00 - 06/09/2023 14:00</ContentStyle>
+            <ContentStyle>
+              {formatTimestamp(item?.startTime)} - {formatTimestamp(item?.endTime)}
+            </ContentStyle>
           </ContentLayout>
         </Box>
       </ContentBoxStyle>
     </StyledItem>
   )
+}
+
+function formatTimestamp(timestamp: any) {
+  const date = new Date(timestamp * 1000)
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+
+  return `${month}/${day}/${year} ${hours}:${minutes}`
 }

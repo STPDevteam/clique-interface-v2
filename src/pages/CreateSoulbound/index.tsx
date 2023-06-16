@@ -21,6 +21,7 @@ import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
+import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 const InputTitleStyle = styled(Typography)(() => ({
   fontSize: 14,
   lineHeight: '16px',
@@ -401,7 +402,13 @@ export default function Index() {
               </Typography>
             }
           />
-          <Input
+
+          <Box sx={{ mb: 40 }}>
+            <InputTitleStyle sx={{ mb: 10 }}>Introduction (Optional)</InputTitleStyle>
+
+            <Editor content={Introduction} setContent={setIntroduction} />
+          </Box>
+          {/* <Input
             value={Introduction}
             rows={5}
             multiline
@@ -416,7 +423,7 @@ export default function Index() {
             onChange={e => {
               setIntroduction(e.target.value)
             }}
-          />
+          /> */}
 
           <Input
             value={symbolValue}

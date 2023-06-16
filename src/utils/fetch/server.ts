@@ -711,15 +711,27 @@ export function getmemberDaoList(exceptLevel: string) {
   })
 }
 
-// export function getSbtList(offset: number, limit: number, chainId: ChainId, status?: string) {
-//   return Axios.get('stpdao/v2/sbt/list', {
-//     offset,
-//     limit,
-//     chainId,
-//     status
-//   })
-// }
+export function getSbtList(offset: number, limit: number, chainId?: ChainId, status?: string) {
+  return Axios.get('stpdao/v2/sbt/list', {
+    offset,
+    limit,
+    chainId,
+    status
+  })
+}
 
 export function getSbtDetail(sbtId: number) {
   return Axios.get(`stpdao/v2/sbt/detail/${sbtId}`)
+}
+
+export function getSbtClaim(sbtId: number) {
+  return Axios.get(`stpdao/v2/sbt/claim/${sbtId}`)
+}
+
+export function getSbtClaimList(offset: number, limit: number, sbtId: number) {
+  return Axios.get(`stpdao/v2/sbt/claim/list`, {
+    offset,
+    limit,
+    sbtId
+  })
 }

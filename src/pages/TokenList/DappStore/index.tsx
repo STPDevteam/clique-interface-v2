@@ -17,7 +17,8 @@ import chainLogo3 from 'assets/images/chainLogo3.png'
 import chainLogo4 from 'assets/images/chainLogo4.png'
 import chainLogo5 from 'assets/images/chainLogo5.png'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
-
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
 const cardsData = [
   // {
   //   title: 'Clique NFT Pass',
@@ -81,6 +82,9 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const loginSignature = useLoginSignature()
   const userSignature = useUserInfo()
   const history = useHistory()
+  const { account } = useActiveWeb3React()
+
+  const toggleWalletModal = useWalletModalToggle()
 
   return (
     <Box
@@ -115,6 +119,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         if (!route && !link) return
         if (route) {
           if (route === routes.CreateSoulbound) {
+            if (!account) return toggleWalletModal()
             if (!userSignature) {
               loginSignature()
                 .then(() => {
