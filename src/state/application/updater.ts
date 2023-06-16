@@ -72,7 +72,7 @@ export default function Updater(): null {
   )
   const [timeInt, setTimeInt] = useState(0)
   useEffect(() => {
-    setTimeout(() => setTimeInt(timeInt + 1), 10000)
+    setTimeout(() => setTimeInt(timeInt + 1), 60000)
     providers.map((provider, index) =>
       provider
         ?.getBlockNumber()

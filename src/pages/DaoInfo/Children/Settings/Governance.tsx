@@ -7,22 +7,27 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Alert
 } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
-import Input from 'components/Input'
+import Input from 'components/Input/InputNumerical'
 import Button from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
-import CurrencyLogo from 'components/essential/CurrencyLogo'
+import defaultLogo from 'assets/images/create-token-ball.png'
 import AddTokenModal from '../AddTokenModal'
+import Image from 'components/Image'
 import useModal from 'hooks/useModal'
 import { Dots } from 'theme/components'
-import { useCallback, useMemo, useState } from 'react'
-import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { CreateDaoDataProp, govList } from 'state/buildingGovDao/actions'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
+import { toast } from 'react-toastify'
+import { ChainListMap } from 'constants/chain'
+import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -47,7 +52,7 @@ const Row = styled(Box)(() => ({
 export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
   const { showModal } = useModal()
   const [loading, setLoading] = useState(false)
-  const [fixTime, setFixtime] = useState('')
+  const [fixTime, setFixtime] = useState((daoInfo.votingPeriod / 3600).toString())
   const PeriodList = [
     { label: 'Fix time', value: 'Fixtime' },
     { label: 'Customization', value: 'Customization' }
@@ -58,29 +63,64 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
     { label: 'Multi-voting', value: '2' }
   ]
   const [PeriodValue, setPeriodValue] = useState(PeriodList[0].value)
-  const [TypesValue, setTypesValue] = useState(TypesList[0].value)
+  const [TypesValue, setTypesValue] = useState(daoInfo.votingType || TypesList[0].value)
+  const [cGovernance, setCGovernance] = useState([...daoInfo.governance])
+  const [proposalThreshold, setProposalThreshold] = useState(daoInfo.proposalThreshold || '')
   const history = useHistory()
   const weight = useMemo(
-    () => [
-      { createRequire: '1000', voteTokenId: 0, votesWeight: 100 },
-      { createRequire: '1000', voteTokenId: 0, votesWeight: 100 }
-    ],
-    []
+    () =>
+      cGovernance.map(item => ({
+        createRequire: item.createRequire,
+        voteTokenId: item.voteTokenId,
+        votesWeight: item.weight
+      })),
+    [cGovernance]
   )
-  console.log(daoInfo, PeriodValue)
-
   const cb = useUpdateGovernance()
-
   const updateGovernance = useCallback(() => {
     setLoading(true)
-    cb(Number(daoId), '', 0, Number(TypesValue), weight)
+    const time = PeriodValue === 'Fixtime' ? Number(fixTime) * 3600 : 0
+    cb(Number(daoId), Number(proposalThreshold), time, Number(TypesValue), weight)
       .then(res => {
-        console.log(res)
+        setLoading(false)
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'network error')
+          return
+        }
+        toast.success('Update success')
       })
       .catch(err => {
-        console.log(err)
+        toast.error(err || 'network error')
+        setLoading(false)
       })
-  }, [TypesValue, cb, daoId, weight])
+  }, [PeriodValue, TypesValue, cb, daoId, fixTime, proposalThreshold, weight])
+
+  const saveBtn: {
+    disabled: boolean
+    error?: undefined | string | JSX.Element
+  } = useMemo(() => {
+    if (Number(fixTime) < 72 && PeriodValue === 'Fixtime') {
+      return {
+        disabled: true,
+        error: 'Mininum voting period is 72 hours'
+      }
+    }
+    if (cGovernance.length < 1) {
+      return {
+        disabled: true,
+        error: 'Mininum token amount is 1'
+      }
+    }
+    if (!proposalThreshold) {
+      return {
+        disabled: true,
+        error: 'Please enter proposalThershold'
+      }
+    }
+    return {
+      disabled: false
+    }
+  }, [PeriodValue, cGovernance.length, fixTime, proposalThreshold])
 
   return (
     <Box>
@@ -88,7 +128,7 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
         <Button
           style={{ maxWidth: 184, height: 36 }}
           onClick={() => {
-            showModal(<AddTokenModal />)
+            showModal(<AddTokenModal daoId={daoId} governance={cGovernance} setCGovernance={setCGovernance} />)
           }}
         >
           Add Governance Token
@@ -100,8 +140,7 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
           Create new token
         </OutlineButton>
       </Row>
-      <BasicTable />
-
+      <BasicTable daoId={daoId} governance={cGovernance} setCGovernance={setCGovernance} />
       <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20 }}>
         <Typography
           sx={{
@@ -129,7 +168,8 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
                     Votes
                   </Typography>
                 }
-                value={''}
+                onChange={e => setProposalThreshold(e.target.value)}
+                value={proposalThreshold}
               />
             </Row>
             <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
@@ -147,14 +187,17 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
                     </Typography>
                   }
                   value={fixTime}
-                  onChange={e => setFixtime(e.target.value)}
+                  onChange={e => {
+                    // if (e.target.value && Number(e.target.value) < 72) return
+                    setFixtime(e.target.value)
+                  }}
                 />
               ) : (
                 <InputStyle
+                  readOnly
+                  value={''}
                   placeholderSize="14px"
                   placeholder="Customize the voting time when creating a proposal"
-                  value={fixTime}
-                  onChange={e => setFixtime(e.target.value)}
                 />
               )}
             </Row>
@@ -169,9 +212,13 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
           </Box>
         </GridLayoutff>
       </Box>
-
+      {saveBtn.error && (
+        <Alert sx={{ marginTop: 15 }} severity="error">
+          {saveBtn.error}
+        </Alert>
+      )}
       <Box mt={30} display="flex" justifyContent={'flex-end'}>
-        <BlackButton width="270px" height="40px" onClick={updateGovernance}>
+        <BlackButton width="270px" height="40px" onClick={updateGovernance} disabled={saveBtn.disabled}>
           {loading ? (
             <>
               Saving
@@ -213,27 +260,56 @@ const TextButtonStyle = styled(Typography)(() => ({
   fontWeight: 400,
   fontSize: '14px',
   lineHeight: '20px',
-  color: '#3F5170',
+  color: '#E46767',
   cursor: 'pointer',
   userSelect: 'none'
 }))
 
-function BasicTable() {
-  const { showModal } = useModal()
-  const rows = [
-    {
-      token: 'Loot (LOOT)',
-      network: 'Ethereum',
-      requir: '111',
-      weight: '1STP=1 Votes'
+function BasicTable({
+  daoId,
+  governance,
+  setCGovernance
+}: {
+  daoId: number
+  governance: govList[]
+  setCGovernance: Dispatch<SetStateAction<govList[]>>
+}) {
+  console.log(daoId)
+  const deleteTokenCB = useDeleteGovToken()
+  const rows = governance.map(item => ({
+    name: item.tokenName,
+    symbol: item.symbol,
+    require: item.createRequire,
+    weight: item.weight,
+    id: item.chainId,
+    logo: item.tokenLogo,
+    voteTokenId: item.voteTokenId,
+    token: item
+  }))
+
+  const delItem = useCallback(
+    (index: number) => {
+      const newArray = [...governance]
+      newArray.splice(index, 1)
+      setCGovernance(newArray)
     },
-    {
-      token: 'Loot (LOOT)',
-      network: 'Ethereum',
-      requir: '111',
-      weight: '1STP=1 Votes'
-    }
-  ]
+    [governance, setCGovernance]
+  )
+
+  const deleteToken = useCallback(
+    (voteTokenId: number, index: number) => {
+      deleteTokenCB(voteTokenId).then(res => {
+        if (res.data.code !== 200) {
+          toast.error('network error')
+          return
+        }
+        delItem(index)
+        toast.success('Remove success')
+      })
+    },
+    [delItem, deleteTokenCB]
+  )
+
   return (
     <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px' }}>
       <Table sx={{ minWidth: 650 }}>
@@ -247,30 +323,17 @@ function BasicTable() {
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <TableRow key={row.token + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+            <TableRow key={row.symbol + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableContentStyle sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <CurrencyLogo size="32px" /> {row.token}
+                <Image src={row.logo || defaultLogo} width={32} />
+                {row.name}({row.symbol})
               </TableContentStyle>
-              <TableContentStyle>{row.network}</TableContentStyle>
-              <TableContentStyle>{row.requir}</TableContentStyle>
+              <TableContentStyle>{ChainListMap[row.id].name}</TableContentStyle>
+              <TableContentStyle>{row.require}</TableContentStyle>
               <TableContentStyle>{row.weight}</TableContentStyle>
               <TableContentStyle sx={{ width: 200 }}>
                 <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
-                  <TextButtonStyle
-                    onClick={() => {
-                      showModal(<AddTokenModal />)
-                    }}
-                  >
-                    Edit
-                  </TextButtonStyle>
-                  <Box
-                    sx={{
-                      width: 0,
-                      height: 14,
-                      border: '1px solid #D4D7E2'
-                    }}
-                  ></Box>
-                  <TextButtonStyle sx={{ color: '#E46767' }}>Remove</TextButtonStyle>
+                  <TextButtonStyle onClick={() => deleteToken(row.voteTokenId, index)}>Remove</TextButtonStyle>
                 </Box>
               </TableContentStyle>
             </TableRow>

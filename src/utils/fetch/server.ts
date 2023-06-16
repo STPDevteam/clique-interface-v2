@@ -752,7 +752,7 @@ export type VoteWeightProp = {
 
 export function updateGovernance(
   daoId: number,
-  proposalThreshold: string,
+  proposalThreshold: number,
   votingPeriod: number,
   votingType: number,
   weight: VoteWeightProp[]
@@ -798,4 +798,36 @@ export function getProposalDetail(proposalId: number) {
 
 export function toVote(voteParams: VoteParamsProp[]) {
   return Axios.post('stpdao/v3/vote/voting', voteParams)
+}
+
+export function deleteGovToken(voteTokenId: number) {
+  return Axios.delete(`stpdao/v3/vote/delete/${voteTokenId}`)
+}
+
+export function addGovToken(
+  chainId: number,
+  createRequire: string,
+  daoId: number,
+  decimals: number,
+  symbol: string,
+  tokenAddress: string,
+  tokenLogo: string,
+  tokenName: string,
+  tokenType: string,
+  totalSupply: string,
+  votesWeight: number
+) {
+  return Axios.post('stpdao/v3/vote/add/token', {
+    chainId,
+    createRequire,
+    daoId,
+    decimals,
+    symbol,
+    tokenAddress,
+    tokenLogo,
+    tokenName,
+    tokenType,
+    totalSupply,
+    votesWeight
+  })
 }

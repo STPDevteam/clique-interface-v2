@@ -13,8 +13,6 @@ import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
 import { BlackButton } from 'components/Button/Button'
 import { useVoteModalToggle } from 'state/application/hooks'
 import { VotingTypes } from 'state/buildingGovDao/actions'
@@ -44,20 +42,19 @@ export default function VoteProgress({
   refresh,
   proposalOptions,
   proposalId,
-  proposalInfo,
-  proposalDetailInfo
+  proposalInfo
 }: {
   refresh: Dispatch<SetStateAction<number>>
   proposalOptions: ProposalOptionProp[]
   proposalId: number
   proposalInfo: useProposalDetailInfoProps
-  proposalDetailInfo?: useProposalDetailInfoProps
 }) {
   const isSmDown = useBreakpoint('sm')
   const { showModal } = useModal()
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
-  const allVotes = proposalDetailInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
+  const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
+  console.log(proposalInfo)
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -66,9 +63,7 @@ export default function VoteProgress({
           {proposalInfo.votingType === VotingTypes.SINGLE ? 'single-vote' : 'multi-vote'}
         </Typography>
         <Typography
-          onClick={() =>
-            showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} proposalOptions={proposalOptions} />)
-          }
+          onClick={() => showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} />)}
           variant="body1"
           sx={{ cursor: 'pointer' }}
           color={'#80829F'}
@@ -99,23 +94,20 @@ export default function VoteProgress({
                 </Box>
                 {allVotes && <SimpleProgress width="100%" per={Math.floor((item.votes / allVotes) * 100)} />}
               </Box>
-              {/* <BlackButton
-                height="36px"
-                disabled={proposalInfo.yourVotes === 0 || proposalInfo.status === 'Soon'}
-                onClick={voteModalToggle}
-                width="125px"
-              >
-                Vote
-              </BlackButton> */}
               <BlackButton
                 height="36px"
+                disabled={
+                  proposalInfo.yourVotes === 0 ||
+                  proposalInfo.status === 'Soon' ||
+                  (proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1)
+                }
                 onClick={() => {
                   setOptionId(proposalOptions[index].optionId)
                   voteModalToggle()
                 }}
                 width="125px"
               >
-                Vote
+                {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
               </BlackButton>
             </Box>
           </StyledItem>
@@ -126,19 +118,9 @@ export default function VoteProgress({
   )
 }
 
-function VoteListModal({
-  proposalId,
-  allVotes,
-  proposalOptions
-}: {
-  proposalId: number
-  allVotes: number | undefined
-  proposalOptions: ProposalOptionProp[]
-}) {
+function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
   const { hideModal } = useModal()
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
   const { result: proposalVoteList, page } = useProposalVoteList(proposalId)
-  console.log(daoInfo, proposalOptions)
   const history = useHistory()
 
   return (

@@ -101,22 +101,22 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   }
 }))
 
-// const StyledTeamMenu = styled(Box)({
-//   paddingLeft: 30,
-//   display: 'flex',
-//   justifyContent: 'flex-start',
-//   flexDirection: 'row',
-//   alignItems: 'center',
-//   gap: 10,
-//   color: '#3f5170',
-//   cursor: 'pointer',
-//   '& img': {
-//     width: 14
-//   },
-//   '& svg path': {
-//     fill: '#d4d7e2'
-//   }
-// })
+const StyledTeamMenu = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
+  color: '#3f5170',
+  cursor: 'pointer',
+  paddingLeft: 20,
+  '& img': {
+    width: 14
+  },
+  '& svg path': {
+    fill: '#97B7EF'
+  }
+})
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -192,38 +192,15 @@ export default function LeftSider() {
     [daoId]
   )
 
-  console.log(taskList)
-
-  // const menuList = useMemo(
-  //   () => [
-  //     {
-  //       text: 'Proposal',
-  //       icon: proposal,
-  //       route: makeRouteLink(routes.Proposal)
-  //     },
-  //     {
-  //       text: 'Workspace',
-  //       icon: workspace,
-  //       route: makeRouteLink(routes.DaoTeamTask)
-  //     },
-  //     {
-  //       text: 'DAO Rewards',
-  //       icon: bounty,
-  //       route: makeRouteLink(routes.DaoInfoActivity)
-  //     },
-  //     {
-  //       text: 'Member',
-  //       icon: member,
-  //       route: makeRouteLink(routes.DaoMember)
-  //     },
-  //     {
-  //       text: 'About & Settings',
-  //       icon: setting,
-  //       route: makeRouteLink(routes.DaoAboutSetting)
-  //     }
-  //   ],
-  //   [makeRouteLink]
-  // )
+  const workspaceList = useMemo(() => {
+    if (!taskList) return []
+    return taskList.map(item => ({
+      title: item.title,
+      link: makeRouteLink(routes.DaoTeamTask) + '/' + item.spacesId,
+      logo: taskIcon
+    }))
+  }, [makeRouteLink, taskList])
+  console.log(workspaceList)
 
   const teamspacesList: LeftSiderMenu[] = useMemo(
     () => [
@@ -237,7 +214,7 @@ export default function LeftSider() {
         title: 'Workspace',
         icon: <Workspace />,
         defaultOpen: false,
-        route: makeRouteLink(routes.DaoTeamTask),
+        route: '',
         children: [{ title: 'Task', link: makeRouteLink(routes.DaoTeamTask), logo: taskIcon }]
       },
       { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
@@ -382,28 +359,33 @@ export default function LeftSider() {
                 defaultOpen={item.defaultOpen}
                 height={50}
                 title={
-                  // <StyledTeamMenu>
-                  //   <Image src={item.icon}></Image>
-                  //   <p>{item.title}</p>
-                  // </StyledTeamMenu>
-                  <NavLink
-                    key={item.title + idx}
-                    id={`${item.route}-nav-link`}
-                    to={item.route ?? '#'}
-                    className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'flex-start',
-                      flexDirection: 'row',
-                      gap: 10,
-                      outline: 'none',
-                      marginRight: 0,
-                      paddingLeft: 20
-                    }}
-                  >
-                    {item.icon}
-                    <ListItemText primary={item.title} />
-                  </NavLink>
+                  <>
+                    {item.children ? (
+                      <StyledTeamMenu>
+                        {item.icon}
+                        <ListItemText primary={item.title} />
+                      </StyledTeamMenu>
+                    ) : (
+                      <NavLink
+                        key={item.title + idx}
+                        id={`${item.route}-nav-link`}
+                        to={item.route ?? ''}
+                        className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-start',
+                          flexDirection: 'row',
+                          gap: 10,
+                          outline: 'none',
+                          marginRight: 0,
+                          paddingLeft: 20
+                        }}
+                      >
+                        {item.icon}
+                        <ListItemText primary={item.title} />
+                      </NavLink>
+                    )}
+                  </>
                 }
               >
                 {item?.children?.map((item, idx1) => (

@@ -936,7 +936,7 @@ export function useUpdateDaoGeneral() {
 
 export function useUpdateGovernance() {
   return useCallback(
-    (daoId: number, proposalThreshold: string, votingPeriod: number, votingType: number, weight: VoteWeightProp[]) => {
+    (daoId: number, proposalThreshold: number, votingPeriod: number, votingType: number, weight: VoteWeightProp[]) => {
       return updateGovernance(daoId, proposalThreshold, votingPeriod, votingType, weight)
         .then(res => res)
         .catch(err => err)

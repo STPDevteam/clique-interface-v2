@@ -3,6 +3,8 @@ import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
 import {
+  addGovToken,
+  deleteGovToken,
   getProposalDetail,
   getProposalList,
   getProposalSnapshot,
@@ -211,6 +213,49 @@ export function useProposalVoteCallback() {
       .then(res => res)
       .catch(err => err)
   }, [])
+}
+
+export function useDeleteGovToken() {
+  return useCallback(async (voteTokenId: number) => {
+    return deleteGovToken(voteTokenId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useAddGovToken() {
+  return useCallback(
+    async (
+      chainId: number,
+      createRequire: string,
+      daoId: number,
+      decimals: number,
+      symbol: string,
+      tokenAddress: string,
+      tokenLogo: string,
+      tokenName: string,
+      tokenType: string,
+      totalSupply: string,
+      votesWeight: number
+    ) => {
+      return addGovToken(
+        chainId,
+        createRequire,
+        daoId,
+        decimals,
+        symbol,
+        tokenAddress,
+        tokenLogo,
+        tokenName,
+        tokenType,
+        totalSupply,
+        votesWeight
+      )
+        .then(res => res)
+        .catch(err => err)
+    },
+    []
+  )
 }
 
 export function useProposalDetailsInfo(proposalId: number, refresh: number) {

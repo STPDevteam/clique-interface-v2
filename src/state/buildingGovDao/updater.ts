@@ -3,10 +3,12 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { removeCreateDaoData, updateCreateDaoData, updateMyJoinDaoData } from './actions'
+import { useActiveWeb3React } from 'hooks'
 
 export default function Updater(): null {
   const dispatch = useDispatch()
   const location = useLocation()
+  const { account } = useActiveWeb3React()
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const createDaoData = useGetDaoInfo(Number(daoId || null))
   const hasSecondaryRoute = location.pathname.split('/').length > 2
@@ -23,7 +25,7 @@ export default function Updater(): null {
         }
       }
     }
-  }, [daoId, dispatch, location.pathname, createDaoData, hasSecondaryRoute])
+  }, [daoId, dispatch, location.pathname, createDaoData, hasSecondaryRoute, account])
 
   useEffect(() => {
     if (hasSecondaryRoute) {

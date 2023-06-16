@@ -62,7 +62,6 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
               proposalOptions={proposalDetailInfo.options}
               proposalId={proposalId}
               proposalInfo={proposalDetailInfo}
-              proposalDetailInfo={proposalDetailInfo}
             />
           </Grid>
           <Grid item md={12} xs={12}>

@@ -1,13 +1,19 @@
 import Modal from 'components/Modal/index'
-import { Box, Typography, styled, MenuItem } from '@mui/material'
-import UploadImage from 'components/UploadImage'
-import Select from 'components/Select/Select'
-import Input from 'components/Input'
-import Image from 'components/Image'
-import EthIcon from 'assets/svg/eth_logo.svg'
+import { Alert, Box, Typography, styled } from '@mui/material'
+import Input from 'components/Input/index'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { useAddGovToken } from 'hooks/useBackedProposalServer'
+import { useTokenByChain } from 'state/wallet/hooks'
+import { isAddress } from 'ethers/lib/utils'
+import { ChainId, ChainList, ChainListMap } from 'constants/chain'
+import ChainSelect from 'components/Select/ChainSelect'
+import NumericalInput from 'components/Input/InputNumerical'
+import { toast } from 'react-toastify'
+import { govList } from 'state/buildingGovDao/actions'
+import UploadImage from 'components/UploadImage'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -27,15 +33,100 @@ const ContentStyle = styled(Typography)(() => ({
   color: '#3F5170'
 }))
 
-const InputStyle = styled(Input)(() => ({
+const InputStyle = styled(NumericalInput)(() => ({
   height: 40
 }))
-export default function AddTokenModal() {
+export default function AddTokenModal({
+  daoId,
+  governance,
+  setCGovernance
+}: {
+  daoId: number
+  governance: govList[]
+  setCGovernance: Dispatch<SetStateAction<govList[]>>
+}) {
   const { hideModal } = useModal()
-  const ListItem = [
-    { label: 'Anyone', value: 'Anyone' },
-    { label: 'Holding token or NFT', value: 'Holding token or NFT' }
-  ]
+  const [tokenAddress, setTokenAddress] = useState('')
+  const [baseChainId, setBaseChainId] = useState<any>('')
+  const [requirementAmount, setRequirementAmount] = useState('')
+  const [avatar, setAvatar] = useState('')
+  const currentBaseChain = useMemo(() => (baseChainId ? ChainListMap[baseChainId] || null : null), [baseChainId])
+  const govToken = useTokenByChain(
+    isAddress(tokenAddress) ? tokenAddress : undefined,
+    currentBaseChain?.id ?? undefined
+  )
+  const addToken = useAddGovToken()
+  const addCB = useCallback(() => {
+    if (!govToken || !govToken.token.symbol || !govToken.token.name || !govToken.totalSupply) return
+    const item = {
+      chainId: govToken.token.chainId,
+      createRequire: requirementAmount,
+      decimals: govToken.token.decimals,
+      symbol: govToken.token.symbol,
+      tokenAddress: govToken.token.address,
+      tokenLogo: avatar,
+      tokenName: govToken.token.name,
+      tokenType: 'erc20',
+      //todo votetokenid not found
+      voteTokenId: 1,
+      weight: 1
+    }
+    addToken(
+      govToken.token.chainId,
+      requirementAmount,
+      daoId,
+      govToken.token.decimals,
+      govToken.token.symbol,
+      govToken.token.address,
+      avatar,
+      govToken.token.name,
+      'erc20',
+      govToken.totalSupply.toSignificant(),
+      1
+    ).then(res => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      setCGovernance([...governance, item])
+      toast.success('Add success')
+      hideModal()
+    })
+  }, [addToken, avatar, daoId, govToken, governance, hideModal, requirementAmount, setCGovernance])
+
+  const voteBtn: {
+    disabled: boolean
+    error?: undefined | string | JSX.Element
+  } = useMemo(() => {
+    if (!avatar) {
+      return {
+        disabled: true,
+        error: 'Please upload token logo'
+      }
+    }
+    if (!requirementAmount) {
+      return {
+        disabled: true,
+        error: 'Please enter createRequire amount'
+      }
+    }
+    if (!govToken) {
+      return {
+        disabled: true,
+        error: 'Token is invaild'
+      }
+    }
+    if (!tokenAddress) {
+      return {
+        disabled: true,
+        error: 'Please enter token contract address'
+      }
+    }
+    return {
+      disabled: false
+    }
+  }, [avatar, govToken, requirementAmount, tokenAddress])
+
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
       <BodyBoxStyle>
@@ -53,43 +144,60 @@ export default function AddTokenModal() {
         <Box sx={{ mt: 27, display: 'flex', justifyContent: 'space-between' }}>
           <Box>
             <ContentTitleStyle sx={{ mb: 5 }}>Token logo</ContentTitleStyle>
-            <UploadImage onChange={val => console.log(val)} size={124}></UploadImage>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 124,
+                height: 124,
+                border: '1px solid #D4D7E2',
+                borderRadius: '50%'
+              }}
+            >
+              <UploadImage value={avatar} size={124} onChange={val => setAvatar(val)} />
+            </Box>
           </Box>
           <Box sx={{ maxWidth: '253px', width: '100%' }}>
             <ContentTitleStyle sx={{ mb: 10 }}>Network</ContentTitleStyle>
-            <Select
-              noBold
-              style={{ fontWeight: 500, fontSize: 14 }}
+            <ChainSelect
               height={40}
-              value={ListItem[0].value}
-              // onChange={e => setCurrentProposalStatus(e.target.value)}
-            >
-              {ListItem.map(item => (
-                <MenuItem
-                  key={item.value}
-                  sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                  value={item.value}
-                >
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+              chainList={ChainList.filter(
+                v =>
+                  v.id !== ChainId.POLYGON_MANGO &&
+                  v.id !== ChainId.COINBASE_TESTNET &&
+                  v.id !== ChainId.ZetaChain_TESTNET &&
+                  v.id !== ChainId.ZKSYNC_ERA &&
+                  v.id !== ChainId.ZKSYNC_ERA_TESTNET
+              )}
+              selectedChain={currentBaseChain}
+              onChange={e => {
+                setBaseChainId(e?.id || null)
+              }}
+              label=""
+            />
             <ContentTitleStyle sx={{ mt: 10, mb: 10 }}>Token Contract Address</ContentTitleStyle>
-            <InputStyle placeholderSize="14px" placeholder={'Address'} value={''} />
+            <Input
+              height={40}
+              placeholderSize="14px"
+              placeholder={'0x...'}
+              value={tokenAddress}
+              onChange={e => setTokenAddress(e.target.value)}
+            />
           </Box>
         </Box>
         <Box sx={{ mt: 25, display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
           <Box>
             <ContentTitleStyle sx={{ mb: 20 }}>Token name </ContentTitleStyle>
-            <ContentStyle>Ethereum</ContentStyle>
+            <ContentStyle>{govToken?.token.name || '--'}</ContentStyle>
           </Box>
           <Box>
-            <ContentTitleStyle sx={{ mb: 14 }}>Symbol </ContentTitleStyle>
-            <Image width={28} height={28} src={EthIcon} alt="logo" />
+            <ContentTitleStyle sx={{ mb: 20 }}>Symbol </ContentTitleStyle>
+            <ContentStyle>{govToken?.token.symbol || '--'}</ContentStyle>
           </Box>
           <Box>
             <ContentTitleStyle sx={{ mb: 20 }}>Total supply</ContentTitleStyle>
-            <ContentStyle>2,000 ETH</ContentStyle>
+            <ContentStyle>{govToken?.totalSupply.toSignificant(18, { groupSeparator: ',' }) || '--'}</ContentStyle>
           </Box>
         </Box>
         <ContentTitleStyle sx={{ mt: 14 }}>Requirement</ContentTitleStyle>
@@ -102,10 +210,11 @@ export default function AddTokenModal() {
             placeholder={'--'}
             endAdornment={
               <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                STPT
+                {govToken?.token.symbol}
               </Typography>
             }
-            value={''}
+            onChange={e => setRequirementAmount(e.target.value)}
+            value={requirementAmount}
           />
           <Box
             sx={{
@@ -116,23 +225,30 @@ export default function AddTokenModal() {
               borderRadius: '8px'
             }}
           >
-            <Box sx={{ display: 'flex', padding: '10px 0 10px 20px' }}>
+            <Box sx={{ display: 'flex', padding: '10px 0 10px 20px', alignItems: 'center' }}>
               <ContentTitleStyle sx={{ whiteSpace: 'nowrap' }}>Voting Weight</ContentTitleStyle>
-              <Box sx={{ ml: 25, width: 0, border: ' 1px solid #D4D7E2' }}></Box>
+              <Box sx={{ ml: 25, width: 0, height: 20, border: ' 0.5px solid #D4D7E2' }}></Box>
               <Typography variant="body1" sx={{ ml: 50, whiteSpace: 'nowrap', color: '#B5B7CF', lineHeight: '16px' }}>
-                1 STPT =
+                {govToken?.token.symbol && `1 ${govToken?.token.symbol} = `}
               </Typography>
             </Box>
             <InputStyle
+              readOnly
+              value={govToken?.token.symbol ? '1' : ''}
+              placeholder=" "
               sx={{ border: 'none !important', background: 'transparent !important' }}
               endAdornment={
                 <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                  Votes
+                  {govToken?.token.symbol ? 'Votes' : '-'}
                 </Typography>
               }
-              value={'0'}
             />
           </Box>
+          {voteBtn.error && (
+            <Alert sx={{ marginTop: 15 }} severity="error">
+              {voteBtn.error}
+            </Alert>
+          )}
           <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
             <OutlineButton
               style={{ border: '1px solid #0049C6', color: '#0049C6' }}
@@ -142,7 +258,7 @@ export default function AddTokenModal() {
             >
               Close
             </OutlineButton>
-            <Button width="125px" height="40px" onClick={hideModal}>
+            <Button width="125px" height="40px" onClick={addCB} disabled={voteBtn.disabled}>
               Add
             </Button>
           </Box>
