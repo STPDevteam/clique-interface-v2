@@ -14,9 +14,9 @@ export default function OpenJobs() {
   const { account } = useActiveWeb3React()
   const joinApply = useApplyMember()
   const { showModal } = useModal()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { chainId: daoChainId } = useParams<{ chainId: string }>()
   const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress)
+  const { result: jobList } = useGetPublishJobList(curDaoChainId)
   const [input, setInput] = useState(Array(jobList.length).fill(''))
 
   const applyCallback = useCallback(

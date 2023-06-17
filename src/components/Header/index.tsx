@@ -295,7 +295,7 @@ export default function Header() {
     return path[3]
   }, [pathname])
   const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
-  console.log(daoId)
+  console.log('header', daoId, daoInfo)
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
 

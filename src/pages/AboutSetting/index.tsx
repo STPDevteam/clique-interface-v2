@@ -9,8 +9,7 @@ import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 // import ComingSoon from 'pages/ComingSoon'
 import NewGeneral from 'pages/DaoInfo/Children/Settings/NewGeneral'
 import Workspace from 'pages/DaoInfo/Children/Settings/Workspace'
-
-import Admin from 'pages/DaoInfo/Children/Settings/Admin'
+// import Admin from 'pages/DaoInfo/Children/Settings/Admin'
 import DaoContainer from 'components/DaoContainer'
 import Team from './Team'
 import { useSelector } from 'react-redux'
@@ -99,7 +98,7 @@ export default function AboutSetting() {
         label: 'Workspace',
         component: daoInfo ? (
           <Box mt={20}>
-            <Workspace daoInfo={daoInfo} daoChainId={Number(curDaoId)} />
+            <Workspace daoInfo={daoInfo} daoId={Number(curDaoId)} />
           </Box>
         ) : null
       },
@@ -108,14 +107,6 @@ export default function AboutSetting() {
         component: (
           <Box mt={20}>
             <Team />
-          </Box>
-        )
-      },
-      {
-        label: 'Admin',
-        component: (
-          <Box mt={20}>
-            <Admin />
           </Box>
         )
       }

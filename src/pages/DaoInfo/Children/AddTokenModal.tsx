@@ -4,7 +4,7 @@ import Input from 'components/Input/index'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useAddGovToken } from 'hooks/useBackedProposalServer'
 import { useTokenByChain } from 'state/wallet/hooks'
 import { isAddress } from 'ethers/lib/utils'
@@ -12,8 +12,10 @@ import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import ChainSelect from 'components/Select/ChainSelect'
 import NumericalInput from 'components/Input/InputNumerical'
 import { toast } from 'react-toastify'
-import { govList } from 'state/buildingGovDao/actions'
+import { updateCreateDaoData } from 'state/buildingGovDao/actions'
 import UploadImage from 'components/UploadImage'
+import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
+import { useDispatch } from 'react-redux'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -36,20 +38,14 @@ const ContentStyle = styled(Typography)(() => ({
 const InputStyle = styled(NumericalInput)(() => ({
   height: 40
 }))
-export default function AddTokenModal({
-  daoId,
-  governance,
-  setCGovernance
-}: {
-  daoId: number
-  governance: govList[]
-  setCGovernance: Dispatch<SetStateAction<govList[]>>
-}) {
+export default function AddTokenModal({ daoId }: { daoId: number }) {
   const { hideModal } = useModal()
+  const dispatch = useDispatch()
   const [tokenAddress, setTokenAddress] = useState('')
   const [baseChainId, setBaseChainId] = useState<any>('')
   const [requirementAmount, setRequirementAmount] = useState('')
   const [avatar, setAvatar] = useState('')
+  const createDaoData = useGetDaoInfo(Number(daoId))
   const currentBaseChain = useMemo(() => (baseChainId ? ChainListMap[baseChainId] || null : null), [baseChainId])
   const govToken = useTokenByChain(
     isAddress(tokenAddress) ? tokenAddress : undefined,
@@ -58,19 +54,6 @@ export default function AddTokenModal({
   const addToken = useAddGovToken()
   const addCB = useCallback(() => {
     if (!govToken || !govToken.token.symbol || !govToken.token.name || !govToken.totalSupply) return
-    const item = {
-      chainId: govToken.token.chainId,
-      createRequire: requirementAmount,
-      decimals: govToken.token.decimals,
-      symbol: govToken.token.symbol,
-      tokenAddress: govToken.token.address,
-      tokenLogo: avatar,
-      tokenName: govToken.token.name,
-      tokenType: 'erc20',
-      //todo votetokenid not found
-      voteTokenId: 1,
-      weight: 1
-    }
     addToken(
       govToken.token.chainId,
       requirementAmount,
@@ -88,11 +71,11 @@ export default function AddTokenModal({
         toast.error(res.data.msg || 'network error')
         return
       }
-      setCGovernance([...governance, item])
+      createDaoData && dispatch(updateCreateDaoData({ createDaoData }))
       toast.success('Add success')
       hideModal()
     })
-  }, [addToken, avatar, daoId, govToken, governance, hideModal, requirementAmount, setCGovernance])
+  }, [addToken, avatar, createDaoData, daoId, dispatch, govToken, hideModal, requirementAmount])
 
   const voteBtn: {
     disabled: boolean

@@ -12,6 +12,7 @@ import Pagination from 'components/Pagination'
 import useBreakpoint from 'hooks/useBreakpoint'
 import DaoContainer from 'components/DaoContainer'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const itemList = [
   { value: undefined, label: 'All Proposals' },
@@ -22,6 +23,7 @@ const itemList = [
 
 export default function Proposal() {
   const history = useHistory()
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
   const {
@@ -71,6 +73,7 @@ export default function Proposal() {
               height={isSmDown ? '30px' : '36px'}
               borderRadius={isSmDown ? '8px' : undefined}
               style={{ fontWeight: 700 }}
+              disabled={!daoInfo.daoCanCreateProposal}
               onClick={() => history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)}
             >
               + Create A Proposal

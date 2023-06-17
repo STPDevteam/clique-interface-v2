@@ -24,7 +24,11 @@ import {
   updateDaoGeneral,
   getV3DaoInfo,
   updateGovernance,
-  VoteWeightProp
+  VoteWeightProp,
+  addDaoMember,
+  addWorkspace,
+  updateWorkspace,
+  deleteWorkspace
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -548,50 +552,50 @@ export function useJobsApplyList(daoAddress: string, chainId: number, rand: numb
 export interface JobsListProps {
   account: string
   avatar: string
-  chainId: ChainId
-  daoAddress: string
+  daoId: number
   discord: string
   jobId: number
-  jobs: string
+  jobsLevel: number
   nickname: string
   opensea: string
   twitter: string
   youtobe: string
 }
 
-export function useJobsList(exceptLevel: string, daoAddress: string, chainId: number) {
+export function useJobsList(daoId: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
   const [result, setResult] = useState<JobsListProps[]>([])
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
 
   useEffect(() => {
     setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daoAddress, chainId])
+  }, [daoId])
 
   useEffect(() => {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+        const res = await getJobsList(daoId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: JobsListProps[] = data.map((item: JobsListProps) => ({
+        const list: JobsListProps[] = data.data.map((item: JobsListProps) => ({
           account: item.account,
           avatar: item.avatar,
-          chainId: item.chainId,
-          daoAddress: item.daoAddress,
+          daoId: item.daoId,
           discord: item.discord,
           jobId: item.jobId,
-          jobs: item.jobs,
+          jobsLevel: item.jobsLevel,
           nickname: item.nickname,
           opensea: item.opensea,
           twitter: item.twitter,
@@ -605,7 +609,47 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
         console.error('useJobsList', error)
       }
     })()
-  }, [chainId, currentPage, daoAddress, exceptLevel])
+  }, [currentPage, daoId])
+
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1) {
+        toTimeRefresh()
+        return
+      }
+      try {
+        const res = await getJobsList(daoId, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: JobsListProps[] = data.data.map((item: any) => ({
+          account: item.account,
+          avatar: item.avatar,
+          daoId: item.daoId,
+          discord: item.discord,
+          jobId: item.jobId,
+          jobsLevel: item.jobsLevel,
+          nickname: item.nickname,
+          opensea: item.opensea,
+          twitter: item.twitter,
+          youtobe: item.youtobe
+        }))
+        setResult(list)
+        toTimeRefresh()
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        toTimeRefresh()
+        console.error('useJobsList', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
 
   return useMemo(
     () => ({
@@ -994,4 +1038,36 @@ export function useGetDaoInfo(daoId: number) {
     })()
   }, [daoId])
   return result
+}
+
+export function useAddDaoMember() {
+  return useCallback((account: string, spacesId: number) => {
+    return addDaoMember(account, spacesId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useAddTeamspace() {
+  return useCallback((access: string, bio: string, daoId: number, title: string) => {
+    return addWorkspace(access, bio, daoId, title)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useUpdateTeamspace() {
+  return useCallback((access: string, bio: string, spacesId: number, title: string) => {
+    return updateWorkspace(access, bio, spacesId, title)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useDeleteTeamspace() {
+  return useCallback((spacesId: number) => {
+    return deleteWorkspace(spacesId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
 }

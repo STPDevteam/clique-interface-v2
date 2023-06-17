@@ -73,11 +73,11 @@ export default function Member() {
   useCallback(() => {}, [])
   const { isJoined } = useIsJoined(curDaoId)
   const { result: applyList } = useJobsApplyList(daoAddress, curDaoId, rand)
-  const { result: jobsList } = useJobsList('', daoAddress, curDaoId)
+  const { result: jobsList } = useJobsList(curDaoId)
 
   const tabList = !isJoined
     ? []
-    : isJoined && isJoined.job !== 'A_superAdmin'
+    : isJoined && isJoined.job !== 'owner' && isJoined.job !== 'superAdmin'
     ? [
         {
           label: 'Card View',

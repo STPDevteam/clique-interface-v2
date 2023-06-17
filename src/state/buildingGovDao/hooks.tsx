@@ -46,6 +46,7 @@ export function useMyDaoListDataCallback() {
 
 export function useBuildingDaoDataCallback() {
   const buildingDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
 
   const dispatch = useDispatch<AppDispatch>()
   const updateBuildingDaoData = useCallback(
@@ -69,6 +70,7 @@ export function useBuildingDaoDataCallback() {
     updateBuildingDaoData,
     removeBuildingDaoData,
     updateBuildingDaoKeyData,
-    buildingDaoData
+    buildingDaoData,
+    myJoinDaoData
   }
 }

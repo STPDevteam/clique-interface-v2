@@ -143,7 +143,7 @@ export default function Select(props: Props) {
               boxShadow: 'none',
               borderRadius: '8px 8px',
               border: '1px solid #97B7EF',
-              transform: width ? 'translateX(-12px)!important' : 'none',
+              // transform: width ? 'translateX(-12px)!important' : 'none',
               '& li': {
                 fontSize: 16,
                 // borderBottom: '1px solid rgba(0,0,0,0.1)',

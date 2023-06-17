@@ -139,7 +139,7 @@ export default function TaskDetail({
     return status
   }, [editData, initStatus])
 
-  const { result: jobsList } = useJobsList('C_member', TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
+  const { result: jobsList } = useJobsList(Number(TeamSpacesInfo?.chainId))
   const assigneeList = useMemo(() => {
     if (!jobsList) return []
     const _arr: any = []

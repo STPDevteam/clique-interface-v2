@@ -126,9 +126,10 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
     <Box>
       <Row sx={{ gap: 10, mb: 14 }}>
         <Button
+          disabled={cGovernance.length >= 1}
           style={{ maxWidth: 184, height: 36 }}
           onClick={() => {
-            showModal(<AddTokenModal daoId={daoId} governance={cGovernance} setCGovernance={setCGovernance} />)
+            showModal(<AddTokenModal daoId={daoId} />)
           }}
         >
           Add Governance Token

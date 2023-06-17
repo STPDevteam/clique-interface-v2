@@ -3,7 +3,6 @@ import { LoadingButton } from '@mui/lab'
 // import CrateBg from 'assets/images/cratedao_bg.png'
 // import { ReactComponent as WelcomeTitle } from 'assets/svg/web3title.svg'
 import WelcomWeb3 from 'assets/images/welcomweb3_bg.png'
-
 import UpImgButton from 'components/UploadImage/UpImgButton'
 // import { BlackButton } from 'components/Button/Button'
 import Input from 'components/Input'
@@ -17,7 +16,6 @@ import { formCheckValid } from 'utils'
 import * as yup from 'yup'
 import { FormType } from 'pages/DaoInfo/Children/Settings/type'
 import { toast } from 'react-toastify'
-import { useState } from 'react'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -52,7 +50,19 @@ export default function Index() {
       .required('Please enter your Organization Name')
       .min(4, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
       .max(20, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
-      .test('validate', 'Your Organization Username is invaild', () => daoHandleAvailable),
+      .test('validate', 'Your Organization Username is invaild', async value => {
+        if (value) {
+          queryHandleCallback(value).then((res: any) => {
+            if (res.data.code === 200) {
+              if (res.data.data) {
+                return false
+              }
+            }
+            return true
+          })
+        }
+        return true
+      }),
     Introduction: yup
       .string()
       .required('Please enter your Organization Introduction')
@@ -61,7 +71,6 @@ export default function Index() {
   })
 
   const queryHandleCallback = useDaoHandleQuery()
-  const [daoHandleAvailable, setDaoHanleAvailable] = useState(false)
 
   const initialValues = {
     Introduction: '',
@@ -155,29 +164,7 @@ export default function Index() {
                 <Typography variant="body2" sx={{ lineHeight: '20px', fontSize: 14, mt: 8 }}>
                   Organize username must be between 4-20 characters and contain letters, numbers and underscores only.
                 </Typography>
-                <FormItem
-                  name="handle"
-                  required
-                  onError={() => setDaoHanleAvailable(false)}
-                  onBlur={(e: any) => {
-                    const handle = e.target.value
-                    if ((handle.trim() && handle.trim().length < 4) || handle.trim().length > 20) {
-                      return
-                    }
-                    queryHandleCallback(handle.trim())
-                      .then(res => {
-                        if (!res.data.data) {
-                          setDaoHanleAvailable(false)
-                          return
-                        }
-                        setDaoHanleAvailable(res.data.data)
-                      })
-                      .catch(err => {
-                        console.log(err)
-                        setDaoHanleAvailable(false)
-                      })
-                  }}
-                >
+                <FormItem name="handle" required>
                   <Input
                     style={{ borderColor: errors.handle && touched.handle ? '#E46767' : '#D4D7E2' }}
                     value={values.handle}

@@ -5,42 +5,38 @@ import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
 import { useCallback, useState } from 'react'
 import Select from 'components/Select/Select'
-import { useCreateNewJob, useDeleteJob, useUpdateNewJob } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import { toast } from 'react-toastify'
+import { useAddTeamspace } from 'hooks/useBackedDaoServer'
 
 const guestList = [
-  { value: 1, label: 'superAdmin' },
-  { value: 2, label: 'Admin' }
+  { value: 'public', label: 'Public' },
+  { value: 'private', label: 'Private' }
 ]
 
-export default function AddJobsModal({
+export default function AddTeamspaceModal({
   isEdit,
-  publishId,
-  chainId,
+  daoId,
   originTitle,
   originContent,
-  originLevel,
+  originAccess,
   onDimiss
 }: {
   isEdit: boolean
-  publishId?: number
-  chainId: number
+  daoId: number
   originContent?: string
   originTitle?: string
-  originLevel: number
+  originAccess?: string
   onDimiss: () => void
 }) {
   const [title, setTitle] = useState(originTitle ?? '')
   const [des, setDes] = useState(originContent ?? '')
-  const [currentStatus, setCurrentStatus] = useState<number>(originLevel ?? 1)
+  const [currentStatus, setCurrentStatus] = useState<string>(originAccess ?? 'public')
   const { hideModal } = useModal()
-  const create = useCreateNewJob()
-  const deleteFn = useDeleteJob()
-  const update = useUpdateNewJob()
+  const create = useAddTeamspace()
 
   const onCreateClick = useCallback(() => {
-    create(chainId, des, currentStatus, title)
+    create(currentStatus, des, daoId, title)
       .then((res: any) => {
         if (res.data.code !== 200) {
           toast.error(res.data.msg || 'network error')
@@ -54,43 +50,7 @@ export default function AddJobsModal({
         console.log(err)
         toast.error('create error')
       })
-  }, [chainId, create, currentStatus, des, hideModal, onDimiss, title])
-
-  const onUpdateClick = useCallback(() => {
-    if (!publishId) return
-    update(des, publishId, currentStatus, title)
-      .then((res: any) => {
-        if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
-          return
-        }
-        toast.success('Update success')
-        hideModal()
-        onDimiss()
-      })
-      .catch(err => {
-        console.log(err)
-        toast.error('update error')
-      })
-  }, [currentStatus, des, hideModal, onDimiss, publishId, title, update])
-
-  const onDelete = useCallback(() => {
-    if (!publishId) return
-    deleteFn(publishId)
-      .then((res: any) => {
-        if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
-          return
-        }
-        toast.success('Delete success')
-        hideModal()
-        onDimiss()
-      })
-      .catch(err => {
-        console.log(err)
-        toast.error('delete error')
-      })
-  }, [deleteFn, hideModal, onDimiss, publishId])
+  }, [create, currentStatus, daoId, des, hideModal, onDimiss, title])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
@@ -106,7 +66,7 @@ export default function AddJobsModal({
             fontWeight: 500
           }}
         >
-          {isEdit ? 'Edit job' : 'Add job'}
+          {isEdit ? 'Edit Workspace' : 'Add Workspace'}
         </Box>
         <Input value={title} maxLength={200} onChange={e => setTitle(e.target.value)} label="Title" />
         <Input
@@ -152,25 +112,12 @@ export default function AddJobsModal({
           ''
         )}
         <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={10}>
-          {isEdit ? (
-            <>
-              <OutlineButton onClick={onDelete} noBold color="#E46767" width={'125px'} height="40px">
-                Delete
-              </OutlineButton>
-              <Button onClick={onUpdateClick} width="125px" height="40px" disabled={!title || !des}>
-                Save
-              </Button>
-            </>
-          ) : (
-            <>
-              <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
-                Close
-              </OutlineButton>
-              <Button onClick={onCreateClick} width="125px" height="40px" disabled={!title || !des}>
-                Add
-              </Button>
-            </>
-          )}
+          <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
+            Close
+          </OutlineButton>
+          <Button onClick={onCreateClick} width="125px" height="40px" disabled={!title || !des}>
+            {isEdit ? 'Save' : 'Add'}
+          </Button>
         </Stack>
       </Box>
     </Modal>
