@@ -78,7 +78,7 @@ export default function AddTeamspaceModal({
           maxLength={200}
           multiline
           rows={6}
-          label="Job description"
+          label="Description"
           onChange={e => setDes(e.target.value)}
         />
         <Select

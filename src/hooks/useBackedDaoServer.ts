@@ -28,7 +28,10 @@ import {
   addDaoMember,
   addWorkspace,
   updateWorkspace,
-  deleteWorkspace
+  deleteWorkspace,
+  getSpacesMemberList,
+  removeSpacesMember,
+  addSpacesMember
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -1067,6 +1070,82 @@ export function useUpdateTeamspace() {
 export function useDeleteTeamspace() {
   return useCallback((spacesId: number) => {
     return deleteWorkspace(spacesId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export interface SpacesMemberProp {
+  account: string
+  accountLogo: string
+  id: number
+  nickName: string
+  spacesId: number
+}
+
+export function useGetSpacesMemberList(spacesId: number, refresh?: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 8
+  const [result, setResult] = useState<SpacesMemberProp[]>([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getSpacesMemberList(spacesId, (currentPage - 1) * pageSize, pageSize)
+        setLoading(false)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: SpacesMemberProp[] = data.data
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useGetSpacesMemberList', error)
+      }
+    })()
+  }, [currentPage, refresh, spacesId])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
+}
+
+export function useRemoveSpacesMember() {
+  return useCallback((id: number) => {
+    return removeSpacesMember(id)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useAddSpacesMember() {
+  return useCallback((account: string, spacesId: number) => {
+    return addSpacesMember(account, spacesId)
       .then(res => res)
       .catch(err => err)
   }, [])

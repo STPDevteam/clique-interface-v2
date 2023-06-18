@@ -17,10 +17,9 @@ import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
 import { shortenAddress } from 'utils'
 import { ChainListMap } from 'constants/chain'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
@@ -78,7 +77,7 @@ const StyledText = styled(Typography)(
 export default function About() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const votingPeriodDate = useMemo(
     () => (daoInfo?.votingPeriod ? getVotingNumberByTimestamp(daoInfo.votingPeriod) : undefined),
     [daoInfo?.votingPeriod]

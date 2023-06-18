@@ -13,8 +13,7 @@ import { useMemo } from 'react'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '19px 24px',
@@ -75,7 +74,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
   const history = useHistory()
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoId)
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   return (
     <StyledCard onClick={() => history.push(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
@@ -195,7 +194,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
   const isSmDown = useBreakpoint('sm')
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoId)
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   const Creator = useMemo(() => {
     return props && props.v1V2ChainId ? (

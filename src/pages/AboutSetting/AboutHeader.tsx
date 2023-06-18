@@ -13,8 +13,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
-import { AppState } from 'state'
-import { useSelector } from 'react-redux'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -29,7 +28,7 @@ export default function Header() {
   const isSmDown = useBreakpoint('sm')
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoAdminLevel = useIsJoined(Number(curDaoId))
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   const categoryList = useMemo(() => {
     if (!daoInfo?.category) return []

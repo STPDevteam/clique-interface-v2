@@ -9,11 +9,10 @@ import DetailContent from './detail'
 import VoteProgress from './detail/VoteProgress'
 import VoteInfo from './detail/Info'
 import DaoContainer from 'components/DaoContainer'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
 import { useProposalDetailsInfo } from 'hooks/useBackedProposalServer'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { formatNumberWithCommas } from 'utils'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export default function ProposalDetail() {
   const { daoId: daoId, proposalId } = useParams<{
@@ -21,7 +20,7 @@ export default function ProposalDetail() {
     proposalId: string
   }>()
   const curDaoId = Number(daoId)
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   return daoInfo ? (
     <DaoContainer>

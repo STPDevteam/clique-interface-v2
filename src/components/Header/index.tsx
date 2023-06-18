@@ -22,8 +22,7 @@ import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 
 import PopperCard from 'components/PopperCard'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 interface TabContent {
   title: string
@@ -294,7 +293,7 @@ export default function Header() {
     const path = pathname.split('/')
     return path[3]
   }, [pathname])
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   console.log('header', daoId, daoInfo)
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])

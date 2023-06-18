@@ -871,3 +871,24 @@ export function deleteWorkspace(spacesId: number) {
     spacesId
   })
 }
+
+export function addSpacesMember(account: string, spacesId: number) {
+  return Axios.post('stpdao/v3/spaces/member/add', {
+    account,
+    spacesId
+  })
+}
+
+export function removeSpacesMember(id: number) {
+  return Axios.delete('stpdao/v3/spaces/member/delete', {
+    id
+  })
+}
+
+export function getSpacesMemberList(spacesId: number, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/spaces/member/list', {
+    spacesId,
+    offset,
+    limit
+  })
+}

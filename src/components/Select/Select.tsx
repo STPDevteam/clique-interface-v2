@@ -25,6 +25,7 @@ interface Props {
   renderValue?: any
   style?: React.CSSProperties | SxProps<Theme>
   noBold?: boolean
+  padding?: string
 }
 
 const StyledSelect = styled(MuiSelect)(() => ({
@@ -57,7 +58,8 @@ export default function Select(props: Props) {
     multiple,
     style,
     color,
-    noBold
+    noBold,
+    padding
   } = props
   const theme = useTheme()
   const hasValue = useMemo(() => {
@@ -89,7 +91,7 @@ export default function Select(props: Props) {
             width: '100%',
             maxWidth: 'calc(100vw - 70px)',
             height: '100%',
-            padding: '0 50px 0 20px !important',
+            padding: padding ? padding : '0 50px 0 20px !important',
             display: 'flex',
             color: color ? color : '#3f5170',
             fontFamily: 'Inter',

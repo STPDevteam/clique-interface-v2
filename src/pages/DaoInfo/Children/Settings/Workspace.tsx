@@ -9,19 +9,22 @@ import {
   TableHead,
   TableRow,
   tableCellClasses,
-  MenuItem,
-  Link
+  MenuItem
 } from '@mui/material'
+import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import AddIcon from 'assets/images/add.png'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
-import Select from 'components/Select/Select'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import { SpacesListProp, useGetSpacesList } from 'hooks/useBackedTaskServer'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import EmptyData from 'components/EmptyData'
 import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
 import useModal from 'hooks/useModal'
+import { useUpdateTeamspace } from 'hooks/useBackedDaoServer'
+import { toast } from 'react-toastify'
+import ManageMemberModal from '../Proposal/ManageMemberModal'
+import PopperCard from 'components/PopperCard'
 
 export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
   const { showModal } = useModal()
@@ -31,7 +34,7 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
 
   return (
     <Box>
-      <Tablee dataList={dataList} />
+      <Tablee daoId={daoId} dataList={dataList} onDimiss={() => setRand(Math.random())} />
       <Box
         sx={{ mt: 20, gap: 10, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         onClick={() => {
@@ -97,9 +100,19 @@ const StyledTableRow = styled(TableRow)(() => ({
     borderBottom: 'none'
   }
 }))
-
-function Tablee({ dataList }: { dataList: SpacesListProp[] }) {
+const itemList = [
+  { value: 'public', label: 'Public' },
+  { value: 'private', label: 'Private' }
+]
+const editList = [
+  { value: '0', label: 'Edit' },
+  { value: '1', label: 'Leave Teamspace' },
+  { value: '2', label: 'Delete Teamspace' }
+]
+function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: SpacesListProp[]; onDimiss: () => void }) {
   console.log(dataList)
+  const { showModal } = useModal()
+  const update = useUpdateTeamspace()
 
   const rows = useMemo(
     () =>
@@ -108,9 +121,29 @@ function Tablee({ dataList }: { dataList: SpacesListProp[] }) {
         member: item.members,
         creator: item.creator,
         access: item.access,
-        types: item.types
+        types: item.types,
+        data: item
       })),
     [dataList]
+  )
+
+  const handleManageClick = useCallback(
+    (spacesId: number) => {
+      showModal(<ManageMemberModal spacesId={spacesId} />)
+    },
+    [showModal]
+  )
+  const handleChangeVisibility = useCallback(
+    (access: string, data: SpacesListProp) => {
+      update(access, data.bio, data.spacesId, data.title).then((res: any) => {
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'network error')
+          return
+        }
+        toast.success('update success')
+      })
+    },
+    [update]
   )
 
   return (
@@ -160,30 +193,145 @@ function Tablee({ dataList }: { dataList: SpacesListProp[] }) {
                     </Typography>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Typography style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        width: '100%',
+                        '& p': {
+                          fontFamily: 'Inter',
+                          color: '#0049C6',
+                          fontWeight: 500,
+                          fontSize: 14,
+                          lineHeight: '20px'
+                        },
+                        '& p:hover': {
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }
+                      }}
+                    >
                       {row.member}
-                      <Link href="#">Manage</Link>
+                      <Typography onClick={() => handleManageClick(row.data.spacesId)}>Manage</Typography>
                     </Typography>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Select
-                      noBold
-                      placeholder=""
-                      style={{ fontWeight: 500, fontSize: 14, border: 'none' }}
-                      height={40}
-                      value={row.access}
-                      // onChange={e => setCurrentProposalStatus(e.target.value)}
+                    <PopperCard
+                      sx={{
+                        maxHeight: '50vh',
+                        overflowY: 'auto',
+                        width: 150,
+                        '&::-webkit-scrollbar': {
+                          display: 'none'
+                        }
+                      }}
+                      placement="bottom"
+                      targetElement={
+                        <Box
+                          flexDirection={'row'}
+                          display={'flex'}
+                          gap={12}
+                          sx={{
+                            marginTop: 12,
+                            height: 36,
+                            padding: 0,
+                            cursor: 'pointer',
+                            '&:hover': {
+                              borderColor: '#005BC60F'
+                            },
+                            '& svg': {
+                              marginLeft: 'auto'
+                            }
+                          }}
+                          alignItems={'center'}
+                        >
+                          <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                            {row.access.replace(/^\S/, (s: any) => s.toUpperCase())}
+                          </Typography>
+                          <ArrowIcon />
+                        </Box>
+                      }
                     >
-                      <MenuItem
-                        sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                        value={row.access}
-                      >
-                        Public
-                      </MenuItem>
-                    </Select>
+                      <>
+                        {itemList.map((item: any, index: number) => (
+                          <MenuItem
+                            key={item.value}
+                            sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                            value={item.value}
+                            onClick={() => {
+                              handleChangeVisibility(itemList[index].value, row.data)
+                            }}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ))}
+                      </>
+                    </PopperCard>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Link href="#">Manage</Link>
+                    <PopperCard
+                      sx={{
+                        maxHeight: '50vh',
+                        overflowY: 'auto',
+                        '&::-webkit-scrollbar': {
+                          display: 'none'
+                        }
+                      }}
+                      placement="bottom"
+                      targetElement={
+                        <Box
+                          flexDirection={'row'}
+                          display={'flex'}
+                          gap={12}
+                          sx={{
+                            marginTop: 12,
+                            height: 36,
+                            padding: 0,
+                            cursor: 'pointer',
+                            '&:hover': {
+                              borderColor: '#97B7EF'
+                            },
+                            '& svg': {
+                              marginLeft: 'auto'
+                            }
+                          }}
+                          alignItems={'center'}
+                        >
+                          <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                            Manage
+                          </Typography>
+                          <ArrowIcon />
+                        </Box>
+                      }
+                    >
+                      <>
+                        {editList.map((item: any, index: number) => (
+                          <MenuItem
+                            key={item.value}
+                            sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                            value={item.value}
+                            onClick={() => {
+                              if (editList[index].value === '0') {
+                                showModal(
+                                  <AddTeamspaceModal
+                                    isEdit={true}
+                                    daoId={daoId}
+                                    onDimiss={onDimiss}
+                                    originContent={row.data.bio}
+                                    originTitle={row.data.title}
+                                    originAccess={row.data.access}
+                                  />
+                                )
+                              } else if (editList[index].value === '1') {
+                              } else {
+                              }
+                            }}
+                          >
+                            {item.label}
+                          </MenuItem>
+                        ))}
+                      </>
+                    </PopperCard>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

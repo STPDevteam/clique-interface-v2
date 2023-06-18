@@ -10,12 +10,11 @@ import { RowCenter } from '../ProposalItem'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { Dots } from 'theme/components'
-import { AppState } from 'state'
-import { useSelector } from 'react-redux'
 import { useProposalDetailInfoProps, useProposalVoteCallback } from 'hooks/useBackedProposalServer'
 import { toast } from 'react-toastify'
 import NumericalInput from 'components/Input/InputNumerical'
 import { formatNumberWithCommas } from 'utils'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -37,7 +36,7 @@ export default function VoteModal({
   proposalOptions: number
   refresh: Dispatch<SetStateAction<number>>
 }) {
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   return !daoInfo.governance[0] || !proposalInfo ? null : (
     <VoteModalFunc

@@ -19,11 +19,10 @@ import { useCurrencyBalance } from 'state/wallet/hooks'
 import Editor from './Editor'
 import { routes } from 'constants/routes'
 import DaoContainer from 'components/DaoContainer'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
 import { toast } from 'react-toastify'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 // import { ChainListMap } from 'constants/chain'
 // import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
@@ -78,7 +77,7 @@ const DateSelectStyle = styled(Box)(() => ({
 
 export default function CreateProposal() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   return daoInfo ? (
     <CreateForm daoId={Number(daoId)} daoInfo={daoInfo} />
   ) : (

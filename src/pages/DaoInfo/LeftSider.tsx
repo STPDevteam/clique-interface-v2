@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { useGetLeftTaskList } from 'hooks/useBackedTaskServer'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -182,7 +183,7 @@ export default function LeftSider() {
   const { pathname } = useLocation()
   const history = useHistory()
   const { daoId: daoId } = useParams<{ daoId: string }>()
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const { result: taskList } = useGetLeftTaskList(Number(daoId))
   const makeRouteLink = useCallback(
@@ -200,7 +201,6 @@ export default function LeftSider() {
       logo: taskIcon
     }))
   }, [makeRouteLink, taskList])
-  console.log(workspaceList)
 
   const teamspacesList: LeftSiderMenu[] = useMemo(
     () => [
@@ -215,7 +215,7 @@ export default function LeftSider() {
         icon: <Workspace />,
         defaultOpen: false,
         route: '',
-        children: [{ title: 'Task', link: makeRouteLink(routes.DaoTeamTask), logo: taskIcon }]
+        children: workspaceList
       },
       { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
       { title: 'Member', icon: <Member />, defaultOpen: false, route: makeRouteLink(routes.DaoMember) },
@@ -226,7 +226,7 @@ export default function LeftSider() {
         route: makeRouteLink(routes.DaoAboutSetting)
       }
     ],
-    [makeRouteLink]
+    [makeRouteLink, workspaceList]
   )
 
   return (

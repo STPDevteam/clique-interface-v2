@@ -13,6 +13,8 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import DaoContainer from 'components/DaoContainer'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import useModal from 'hooks/useModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 
 const itemList = [
   { value: undefined, label: 'All Proposals' },
@@ -23,6 +25,7 @@ const itemList = [
 
 export default function Proposal() {
   const history = useHistory()
+  const { showModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
@@ -73,8 +76,15 @@ export default function Proposal() {
               height={isSmDown ? '30px' : '36px'}
               borderRadius={isSmDown ? '8px' : undefined}
               style={{ fontWeight: 700 }}
-              disabled={!daoInfo.daoCanCreateProposal}
-              onClick={() => history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)}
+              onClick={() => {
+                if (!daoInfo.daoCanCreateProposal) {
+                  showModal(
+                    <MessageBox type="error">Please wait for the administrator to set up governance rules</MessageBox>
+                  )
+                  return
+                }
+                history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)
+              }}
             >
               + Create A Proposal
             </Button>

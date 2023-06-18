@@ -330,7 +330,6 @@ export function useProposalVoteList(proposalId: number) {
         const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data as any
-        console.log('🚀 ~ file: useBackedProposalServer.ts:288 ~ ; ~ data:', data)
         if (!data) {
           setResult([])
           setTotal(0)
