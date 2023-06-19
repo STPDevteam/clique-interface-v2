@@ -4,7 +4,7 @@ import banner from 'assets/images/store_banner.png'
 // import nftIcon from 'assets/images/nftIcon.png'
 // import swapIcon from 'assets/images/swapIcon.png'
 import rewardsIcon from 'assets/images/rewardsIcon.png'
-import soulboundIcon from 'assets/images/soulboundIcon.png'
+// import soulboundIcon from 'assets/images/soulboundIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
@@ -65,15 +65,15 @@ const cardsData = [
     supportChainsIcon: '',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     link: 'https://www.npmjs.com/package/@myclique/governance-sdk'
-  },
-  {
-    title: 'Create Soulbound Token of DAO',
-    icon: soulboundIcon,
-    des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
-    supportChainsIcon: 'all',
-    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
-    route: routes.CreateSoulbound
   }
+  // {
+  //   title: 'Create Soulbound Token of DAO',
+  //   icon: soulboundIcon,
+  //   des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
+  //   supportChainsIcon: 'all',
+  //   bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
+  //   route: routes.CreateSoulbound
+  // }
 ]
 
 function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }: any) {
