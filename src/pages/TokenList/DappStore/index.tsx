@@ -4,6 +4,7 @@ import banner from 'assets/images/store_banner.png'
 // import nftIcon from 'assets/images/nftIcon.png'
 // import swapIcon from 'assets/images/swapIcon.png'
 import rewardsIcon from 'assets/images/rewardsIcon.png'
+// import soulboundIcon from 'assets/images/soulboundIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
@@ -65,6 +66,14 @@ const cardsData = [
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     link: 'https://www.npmjs.com/package/@myclique/governance-sdk'
   }
+  // {
+  //   title: 'Create Soulbound Token of DAO',
+  //   icon: soulboundIcon,
+  //   des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
+  //   supportChainsIcon: 'all',
+  //   bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
+  //   route: routes.CreateSoulbound
+  // }
 ]
 
 function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }: any) {
@@ -151,7 +160,7 @@ export default function Index() {
   return (
     <Box
       sx={{
-        // maxWidth: 1248,
+        maxWidth: 1440,
         padding: '44px 120px',
         '& .top_banner': {
           marginLeft: 18,
@@ -160,21 +169,13 @@ export default function Index() {
       }}
     >
       <Image className="top_banner" src={banner} />
-      <Box
-        mt={30}
-        sx={{
-          width: '100%',
-          display: 'flex',
-          flexWrap: 'wrap',
-          flexDirection: 'row'
-        }}
-      >
+      <Grid mt={30} container>
         {cardsData.map((item, index) => (
           <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
             <CardItem {...item} />
           </Grid>
         ))}
-      </Box>
+      </Grid>
     </Box>
   )
 }

@@ -44,6 +44,14 @@ export function useVoteModalToggle(): () => void {
   return useToggleModal(ApplicationModal.VOTE)
 }
 
+export function useSignLoginModalControl() {
+  const dispatch = useDispatch<AppDispatch>()
+  return {
+    open: useCallback(() => dispatch(setOpenModal(ApplicationModal.SIGN_LOGIN)), [dispatch]),
+    close: useCallback(() => dispatch(setOpenModal(null)), [dispatch])
+  }
+}
+
 // returns a function that allows adding a popup
 export function useAddPopup(): (content: PopupContent, key?: string) => void {
   const dispatch = useDispatch()
