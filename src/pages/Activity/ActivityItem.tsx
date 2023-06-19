@@ -17,7 +17,7 @@ const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
   boxShadow: theme.boxShadow.bs1,
   borderRadius: theme.borderRadius.default,
-  padding: '50px 39px 24px',
+  padding: '24px 59px 22px 34px',
   display: 'grid',
   gridTemplateColumns: '1fr 118px',
   columnGap: '24px',
@@ -35,11 +35,11 @@ const AirdropStyledItem = styled(StyledItem)({
 const StyledTitle = styled(Typography)(({}) => ({
   overflow: 'hidden',
   // height: 26,
-  // textOverflow: 'ellipsis',
-  // display: '-webkit-box',
-  // '-webkit-box-orient': 'vertical',
-  // '-webkit-line-clamp': '2',
-  // wordBreak: 'break-all',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  '-webkit-box-orient': 'vertical',
+  '-webkit-line-clamp': '2',
+  wordBreak: 'break-all',
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '27px'
@@ -50,7 +50,7 @@ const StyledText = styled(Typography)(
     fontSize: fontSize || 14,
     fontWeight: fontWeight || 500,
     lineHeight: '16px',
-    color: theme.palette.text.secondary,
+    color: '#80829F',
     [theme.breakpoints.down('sm')]: {
       fontSize: 12
     }
@@ -61,6 +61,7 @@ const StyledBoldText = styled(StyledText)(({ theme }) => ({
   fontWeight: 600,
   fontSize: 16,
   lineHeight: '20px',
+  color: '#3F5170',
   [theme.breakpoints.down('sm')]: {
     fontSize: 12
   }
@@ -104,6 +105,32 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
     marginTop: 5,
     borderRadius: '50%'
   }
+}))
+
+const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
+  width: 70,
+  height: 30,
+  padding: '6px 0 6px 13px',
+  background: color === 'active' ? '#EBFFD2' : color === 'soon' ? '#E9FAFF' : color ? color : '#F8FBFF',
+  borderRadius: '20px',
+  display: 'flex',
+  gap: 5,
+  alignItems: 'center',
+  fontWeight: 600,
+  fontSize: 12,
+  lineHeight: '18px',
+  color: color === 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : color ? color : '#B5B7CF',
+  '&:before': {
+    content: `''`,
+    width: 5,
+    height: 5,
+    background: color === 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : color ? color : '#B5B7CF',
+    borderRadius: '50%'
+  }
+}))
+
+const StatusTitleStyle = styled(StyledText)(({ color }: { color?: string }) => ({
+  color: color === 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : color ? color : '#B5B7CF'
 }))
 
 export const activityStatusText = {
@@ -209,22 +236,27 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
 export function PublicSaleItem() {
   return (
     <StyledItem>
-      <StyledStatusBox direction={'row'} spacing={24}>
-        <StyledStatusText color={'active'}>Active</StyledStatusText>
-        <StyledText fontSize={12}>2 days left</StyledText>
-      </StyledStatusBox>
       <Stack spacing={24}>
-        <StyledTitle variant="h6">
-          The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
-          with interacting with all projects on the protocol en to anyone, and project configurations can vary widely.
-          There are risks associated with interacting with all projects on the protoco
-        </StyledTitle>
+        <Box>
+          <Box sx={{ display: 'flex', gap: 15, alignItems: 'center' }}>
+            <StatusStyle color={'active'}>Active</StatusStyle>
+            <StatusTitleStyle color={'active'} fontSize={12}>
+              2 days left
+            </StatusTitleStyle>
+          </Box>
+
+          <StyledTitle variant="h6" sx={{ mt: 7 }}>
+            The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
+            with interacting with all projects on the protocol en to anyone, and project configurations can vary widely.
+            There are risks associated with interacting with all projects on the protoco
+          </StyledTitle>
+        </Box>
         <Box display={'grid'} gridTemplateColumns="1fr 1fr 1fr 1fr">
           <Stack spacing={16}>
             <StyledText>Token</StyledText>
             <StyledText>
               <Stack direction={'row'} alignItems="center">
-                <CurrencyLogo currency={undefined} size="22px" style={{ marginRight: '5px' }} />
+                <CurrencyLogo currency={undefined} size="30px" style={{ marginRight: '12px' }} />
                 <StyledBoldText noWrap>name</StyledBoldText>
               </Stack>
             </StyledText>
