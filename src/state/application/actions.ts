@@ -12,7 +12,8 @@ export enum ApplicationModal {
   WALLET,
   SETTINGS,
   MENU,
-  VOTE
+  VOTE,
+  SIGN_LOGIN
 }
 
 export interface UserIPLocation {

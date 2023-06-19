@@ -53,6 +53,7 @@ import Page from './RedirectPage'
 import AboutSetting from './AboutSetting'
 import DaoBounty from './daoBounty'
 import DappStore from './TokenList/DappStore'
+import LoginModal from 'components/Header/LoginModal'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -109,6 +110,7 @@ export default function App() {
     <Suspense fallback={null}>
       <ModalProvider>
         <AppWrapper id="app">
+          <LoginModal />
           <Route component={GoogleAnalyticsReporter} />
           <Route path={routes.Page} component={Page} />
           <ContentWrapper>
