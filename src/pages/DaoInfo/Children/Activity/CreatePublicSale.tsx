@@ -92,7 +92,7 @@ function CreatePublicSaleForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; d
               <Box>
                 <ChainSelect
                   chainList={ChainList}
-                  height={56}
+                  height={44}
                   selectedChain={selectChain}
                   onChange={e => setSelectChain(e || null)}
                   label="*Network"
