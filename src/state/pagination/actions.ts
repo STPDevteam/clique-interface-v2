@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { ChainId } from 'constants/chain'
 import { ActivityStatus } from 'hooks/useActivityInfo'
 import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 
@@ -9,7 +10,13 @@ export interface HomeListPaginationProp {
 }
 
 export interface ActivityListPaginationProp {
+  chainId: ChainId | undefined
   types: ActivityType | undefined
+  status: ActivityStatus | undefined
+  currentPage: number
+}
+export interface SbtListPaginationProp {
+  chainId: ChainId | undefined
   status: ActivityStatus | undefined
   currentPage: number
 }
@@ -25,6 +32,9 @@ export const updateHomeListPagination = createAction<{ homeListPagination: HomeL
 
 export const updateActivityListPagination = createAction<{ activityListPagination: ActivityListPaginationProp }>(
   'pagination/updateActivityListPagination'
+)
+export const updateSbtListPagination = createAction<{ sbtListPagination: SbtListPaginationProp }>(
+  'pagination/updateSbtListPagination'
 )
 
 export const updateNotificationListPagination = createAction<{

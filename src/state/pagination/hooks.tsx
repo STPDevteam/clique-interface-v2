@@ -1,5 +1,6 @@
 import { ActivityStatus } from 'hooks/useActivityInfo'
 import { ActivityType } from 'pages/DaoInfo/Children/Activity'
+import { ChainId } from 'constants/chain'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
@@ -9,7 +10,9 @@ import {
   ActivityListPaginationProp,
   updateActivityListPagination,
   NotificationListPaginationProp,
-  updateNotificationListPagination
+  updateNotificationListPagination,
+  updateSbtListPagination,
+  SbtListPaginationProp
 } from './actions'
 
 export function useHomeListPaginationCallback() {
@@ -60,6 +63,13 @@ export function useActivityListPaginationCallback() {
     },
     [dispatch]
   )
+  const setChainId = useCallback(
+    (chainId: ChainId | undefined) => {
+      updateActivityListPaginationCallback({ ...data, chainId })
+    },
+    [data, updateActivityListPaginationCallback]
+  )
+
   const setCurrentPage = useCallback(
     (currentPage: number) => {
       updateActivityListPaginationCallback({ ...data, currentPage })
@@ -84,6 +94,7 @@ export function useActivityListPaginationCallback() {
     setCurrentPage,
     setTypes,
     setStatus,
+    setChainId,
     data
   }
 }
@@ -123,6 +134,45 @@ export function useNotificationListPaginationCallback() {
     setUnReadCount,
     setReadAll,
     setReadOnce,
+    data
+  }
+}
+
+export function useSbtListPaginationCallback() {
+  const data = useSelector((state: AppState) => state.pagination.sbtListPagination)
+
+  const dispatch = useDispatch<AppDispatch>()
+  const updateSbtListPaginationCallback = useCallback(
+    (sbtListPagination: SbtListPaginationProp) => {
+      dispatch(updateSbtListPagination({ sbtListPagination }))
+    },
+    [dispatch]
+  )
+  const setChainId = useCallback(
+    (chainId: ChainId | undefined) => {
+      updateSbtListPaginationCallback({ ...data, chainId })
+    },
+    [data, updateSbtListPaginationCallback]
+  )
+
+  const setCurrentPage = useCallback(
+    (currentPage: number) => {
+      updateSbtListPaginationCallback({ ...data, currentPage })
+    },
+    [data, updateSbtListPaginationCallback]
+  )
+  const setStatus = useCallback(
+    (status: ActivityStatus | undefined) => {
+      updateSbtListPaginationCallback({ ...data, status })
+    },
+    [data, updateSbtListPaginationCallback]
+  )
+
+  return {
+    updateSbtListPaginationCallback,
+    setCurrentPage,
+    setStatus,
+    setChainId,
     data
   }
 }

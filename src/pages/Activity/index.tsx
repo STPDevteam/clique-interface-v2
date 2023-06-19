@@ -13,6 +13,8 @@ import BannerMobileImg from 'assets/images/activity_banner_mobile.jpeg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useState } from 'react'
 import { ChainList } from 'constants/chain'
+import { useSbtList } from 'hooks/useBackedSbtServer'
+
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
 //   gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -70,10 +72,24 @@ const tabList = [
 
 export default function Activity() {
   const { search, loading, result, page } = useActivityList()
+  const { search: searchsbt, loading: loadingsbt, result: resultsbt, page: pagesbt } = useSbtList()
+
   const isSmDown = useBreakpoint('sm')
   const [tabValue, setTabValue] = useState(0)
-  const [SwitchChainValue, setSwitchChainValue] = useState<number>(ChainList[0].id)
 
+  const [chainIdval, setchainIdval] = useState<number>()
+  const [statusval, setstatusval] = useState<ActivityStatus>()
+
+  const handleChange = (event: any, newValue: any) => {
+    if (newValue === 0) {
+      search.setChainId(chainIdval)
+      search.setStatus(statusval)
+    } else {
+      searchsbt.setChainId(chainIdval)
+      searchsbt.setStatus(statusval)
+    }
+    console.log(chainIdval, statusval, 123)
+  }
   return (
     <div>
       <BannerWrapper imgSrc={isSmDown ? BannerMobileImg : BannerImg}>
@@ -102,12 +118,14 @@ export default function Activity() {
       >
         <ContainerWrapper maxWidth={1150}>
           <RowCenter sx={{ mb: 30 }}>
-            <TabStyle value={tabValue}>
+            <TabStyle value={tabValue} onChange={handleChange}>
               {tabList.map((item, idx) => (
                 <Tab
                   key={item.label + idx}
                   label={item.label}
-                  onClick={() => setTabValue(idx)}
+                  onClick={() => {
+                    setTabValue(idx)
+                  }}
                   sx={{ gap: 10, marginRight: 50 }}
                   className={tabValue === idx ? 'active' : ''}
                 ></Tab>
@@ -119,16 +137,28 @@ export default function Activity() {
                 noBold
                 width={isSmDown ? '175px' : '270px'}
                 height={isSmDown ? '36px' : '40px'}
-                value={SwitchChainValue}
+                // value={tabValue === 0 ? search.chainId : searchsbt.chainId}
+                value={chainIdval}
                 onChange={e => {
-                  setSwitchChainValue(e.target.value)
+                  if (tabValue === 0) {
+                    search.setChainId(e.target.value)
+                  } else {
+                    searchsbt.setChainId(e.target.value)
+                  }
+                  setchainIdval(e.target.value)
                 }}
               >
+                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}>All chain</MenuItem>
                 {ChainList.map(item => (
                   <MenuItem
                     key={item.id}
                     sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                     value={item.id}
+                    selected={
+                      tabValue === 0
+                        ? search.chainId && search.chainId === item.id
+                        : searchsbt.chainId && searchsbt.chainId === item.id
+                    }
                   >
                     {item.name}
                   </MenuItem>
@@ -139,15 +169,27 @@ export default function Activity() {
                 noBold
                 width={isSmDown ? '175px' : '270px'}
                 height={isSmDown ? '36px' : '40px'}
-                value={search.status}
-                onChange={e => search.setStatus(e.target.value)}
+                // value={tabValue === 0 ? search.status : searchsbt.status}
+                value={statusval}
+                onChange={e => {
+                  if (tabValue === 0) {
+                    search.setStatus(e.target.value)
+                  } else {
+                    searchsbt.setStatus(e.target.value)
+                  }
+                  setstatusval(e.target.value)
+                }}
               >
                 {statusItemList.map((item, index) => (
                   <MenuItem
                     key={index}
                     sx={{ fontWeight: 500 }}
                     value={item.value}
-                    selected={search.status && search.status === item.value}
+                    selected={
+                      tabValue === 0
+                        ? search.status && search.status === item.value
+                        : searchsbt.status && searchsbt.status === item.value
+                    }
                   >
                     {item.label}
                   </MenuItem>
@@ -161,7 +203,7 @@ export default function Activity() {
             </>
           ) : (
             <>
-              <SoulboundList />
+              <SoulboundList loading={loadingsbt} page={pagesbt} result={resultsbt} />
             </>
           )}
         </ContainerWrapper>

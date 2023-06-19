@@ -15,7 +15,7 @@ import CircularStatic from './CircularStatic'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
-  boxShadow: theme.boxShadow.bs1,
+  // boxShadow: theme.boxShadow.bs1,
   borderRadius: theme.borderRadius.default,
   padding: '24px 59px 22px 34px',
   display: 'grid',

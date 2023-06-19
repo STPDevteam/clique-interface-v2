@@ -176,9 +176,10 @@ export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, acti
 
 export function useActivityList() {
   const {
-    data: { types, status, currentPage },
+    data: { chainId, types, status, currentPage },
     setTypes,
     setStatus,
+    setChainId,
     setCurrentPage
   } = useActivityListPaginationCallback()
 
@@ -197,14 +198,14 @@ export function useActivityList() {
     }
     setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [types, status])
+  }, [types, status, chainId])
 
   useEffect(() => {
     ;(async () => {
       setLoading(true)
       try {
         const res = await getActivityList(
-          0,
+          chainId,
           '',
           status,
           types === ActivityType.PUBLIC_SALE ? 'PublicSale' : types || '',
@@ -228,7 +229,7 @@ export function useActivityList() {
         console.error('getActivityList', error)
       }
     })()
-  }, [currentPage, status, types])
+  }, [currentPage, status, types, chainId])
 
   useEffect(() => {
     ;(async () => {
@@ -238,7 +239,7 @@ export function useActivityList() {
       }
       try {
         const res = await getActivityList(
-          0,
+          chainId,
           '',
           status,
           types === ActivityType.PUBLIC_SALE ? 'PublicSale' : types || '',
@@ -273,6 +274,8 @@ export function useActivityList() {
     search: {
       types,
       status,
+      chainId,
+      setChainId,
       setStatus,
       setTypes
     },

@@ -415,7 +415,7 @@ export function saveAirdropAddress(
 }
 
 export function getActivityList(
-  chainId: number,
+  chainId: ChainId | undefined,
   daoAddress: string,
   status: string | undefined,
   types: 'Airdrop' | 'PublicSale' | '',

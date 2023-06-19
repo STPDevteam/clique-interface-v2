@@ -14,6 +14,22 @@ import { useCreateSbtContract } from 'hooks/useContract'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useGasPriceInfo } from './useGasPrice'
+import { useSbtListPaginationCallback } from 'state/pagination/hooks'
+
+export interface SbtListProp {
+  SBTId: number
+  chainId: ChainId
+  daoAddress: string
+  daoLogo: string
+  daoName: string
+  endTime: number
+  fileUrl: string
+  itemName: string
+  startTime: number
+  status: string
+  symbol: string
+  tokenChainId: number
+}
 
 export function useCreateSbtCallback() {
   const addTransaction = useTransactionAdder()
@@ -160,28 +176,28 @@ export function useSbtClaimList(sbtId: number) {
   }
 }
 
-export function useSbtList(chainId?: ChainId, status?: string) {
-  const offset = 0
-  const limit = 8
-  const [result, setResult] = useState<any>()
-  useEffect(() => {
-    ;(async () => {
-      try {
-        const res = await getSbtList(offset, limit, chainId, status)
-        if (res.data.data) {
-          setResult(res.data.data)
-        }
-      } catch (error) {
-        console.log(error)
-        setResult(null)
-      }
-    })()
-  }, [offset, limit, chainId, status])
+// export function useSbtList(chainId?: ChainId, status?: string) {
+//   const offset = 0
+//   const limit = 8
+//   const [result, setResult] = useState<any>()
+//   useEffect(() => {
+//     ;(async () => {
+//       try {
+//         const res = await getSbtList(offset, limit, chainId, status)
+//         if (res.data.data) {
+//           setResult(res.data.data)
+//         }
+//       } catch (error) {
+//         console.log(error)
+//         setResult(null)
+//       }
+//     })()
+//   }, [offset, limit, chainId, status])
 
-  return {
-    result
-  }
-}
+//   return {
+//     result
+//   }
+// }
 
 export function useSbtDetail(sbtId: string) {
   const [result, setResult] = useState<any>()
@@ -271,7 +287,8 @@ export function useSbtWhetherClaim() {
     async (sbtId: string, account: string | undefined) => {
       if (!contract) throw new Error('none contract')
       if (!sbtId) return
-
+      const res = await getSbtClaim(parseFloat(sbtId))
+      if (!res.data.data.canClaim) return 'false'
       const args = [account, sbtId]
       const method = 'minted'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
@@ -290,4 +307,93 @@ export function useSbtWhetherClaim() {
     [contract, gasPriceInfoCallback]
   )
   return { SbtWhetherClaimCallback }
+}
+
+export function useSbtList() {
+  const {
+    data: { chainId, status, currentPage },
+    setStatus,
+    setChainId,
+    setCurrentPage
+  } = useSbtListPaginationCallback()
+  const [firstLoadData, setFirstLoadData] = useState(true)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 8
+  const [result, setResult] = useState<SbtListProp[]>([])
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+  useEffect(() => {
+    if (firstLoadData) {
+      setFirstLoadData(false)
+      return
+    }
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId, status])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getSbtList((currentPage - 1) * pageSize, pageSize, chainId, status)
+        setLoading(false)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        setResult(data.data)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('getSbtList', error)
+      }
+    })()
+  }, [currentPage, status, chainId])
+
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1) {
+        toTimeRefresh()
+        return
+      }
+      try {
+        const res = await getSbtList((currentPage - 1) * pageSize, pageSize, chainId, status)
+
+        const data = res.data as any
+        if (!data) {
+          return
+        }
+        setTotal(data.total)
+        setResult(data.data)
+        toTimeRefresh()
+      } catch (error) {
+        toTimeRefresh()
+        console.error('getSbtList', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
+
+  return {
+    loading: loading,
+    page: {
+      setCurrentPage,
+      currentPage,
+      total,
+      totalPage: Math.ceil(total / pageSize),
+      pageSize
+    },
+    search: {
+      status,
+      setStatus,
+      setChainId,
+      chainId
+    },
+    result
+  }
 }

@@ -88,6 +88,7 @@ export default function SoulboundDetail() {
   const { result: sbtDetail } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(parseFloat(sbtId))
   const [sbtClaimBool, setsbtClaimBool] = useState(false)
+  const [whiteBool, setwhiteBool] = useState(false)
   const { SbtClaimCallback } = useSbtClaim()
   const { SbtWhetherClaimCallback } = useSbtWhetherClaim()
   const [isJoin, setIsJoin] = useState(false)
@@ -112,8 +113,8 @@ export default function SoulboundDetail() {
       .then(res => {
         if (res.data.data) {
           setIsJoin(true)
-          setJoninLoding(false)
         }
+        setJoninLoding(false)
       })
       .catch(error => {
         console.log(error)
@@ -121,8 +122,13 @@ export default function SoulboundDetail() {
       })
     if (sbtId && account) {
       SbtWhetherClaimCallback(sbtId, account).then(bool => {
+        if (bool === 'false') {
+          setsbtClaimBool(true)
+          setwhiteBool(true)
+        } else {
+          setsbtClaimBool(bool)
+        }
         setClaimLoding(false)
-        setsbtClaimBool(bool)
       })
     } else {
       setClaimLoding(false)
@@ -135,7 +141,6 @@ export default function SoulboundDetail() {
     await joinDAO(sbtDetail.chainId, sbtDetail.daoAddress)
       .then(() => {
         setIsJoin(true)
-        console.log(true)
       })
       .catch(() => {
         setIsJoin(false)
@@ -236,7 +241,7 @@ export default function SoulboundDetail() {
               >
                 <Image src={sbtDetail.fileUrl} style={{ height: 310, width: 310, borderRadius: '10px' }} />
                 <ClaimButton disabled={ClaimLoding ? ClaimLoding : sbtClaimBool} onClick={sbtClaimCallbak}>
-                  {ClaimLoding ? 'Loding...' : sbtClaimBool ? ' Owned' : 'Claim'}
+                  {ClaimLoding ? 'Loding...' : whiteBool ? 'not Claim' : sbtClaimBool ? ' Owned' : 'Claim'}
                 </ClaimButton>
               </Box>
               <OwnersStyle>

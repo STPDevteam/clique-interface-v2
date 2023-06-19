@@ -3,32 +3,17 @@ import Image from 'components/Image'
 import { DaoAvatars } from 'components/Avatars'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
-// import Pagination from 'components/Pagination'
-// import EmptyData from 'components/EmptyData'
-// import Loading from 'components/Loading'
-// import DelayLoading from 'components/DelayLoading'
-import { useSbtList } from 'hooks/useBackedSbtServer'
+import Pagination from 'components/Pagination'
+import EmptyData from 'components/EmptyData'
+import Loading from 'components/Loading'
+import DelayLoading from 'components/DelayLoading'
+import { SbtListProp } from 'hooks/useBackedSbtServer'
 import { ChainId, ChainList } from 'constants/chain'
 import { useEffect, useState } from 'react'
 
-export interface SbtListProp {
-  SBTId: number
-  chainId: ChainId
-  daoAddress: string
-  daoLogo: string
-  daoName: string
-  endTime: number
-  fileUrl: string
-  itemName: string
-  startTime: number
-  status: string
-  symbol: string
-  tokenChainId: number
-}
-
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
-  boxShadow: theme.boxShadow.bs1,
+  // boxShadow: theme.boxShadow.bs1,
   borderRadius: theme.borderRadius.default,
   padding: '20px 56px 20px 24px',
   display: 'grid',
@@ -81,19 +66,39 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
   }
 }))
 
-export default function SoulboundList() {
-  const { result } = useSbtList()
-
+export default function SoulboundList({
+  loading,
+  page,
+  result
+}: {
+  loading: boolean
+  page: {
+    setCurrentPage: (currentPage: number) => void
+    currentPage: number
+    total: number
+    totalPage: number
+    pageSize: number
+  }
+  result: SbtListProp[]
+}) {
   return (
     <>
-      {/* {
-      !loading && !result.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
-      <DelayLoading loading={loading}>
-        <Loading sx={{ marginTop: 30 }} />
-      </DelayLoading> */}
-      <Stack spacing={20}>
-        {result && result.map((item: SbtListProp, index: any) => <ItemCrad key={index} {...item} />)}
-      </Stack>
+      <Box minHeight={150}>
+        {!loading && !result.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+        <DelayLoading loading={loading}>
+          <Loading sx={{ marginTop: 30 }} />
+        </DelayLoading>
+        <Stack spacing={20}>
+          {result && result.map((item: SbtListProp, index: any) => <ItemCrad key={index} {...item} />)}
+        </Stack>
+      </Box>
+      <Box mt={20} display={'flex'} justifyContent="center">
+        <Pagination
+          count={page.totalPage}
+          page={page.currentPage}
+          onChange={(_, value) => page.setCurrentPage(value)}
+        />
+      </Box>
     </>
   )
 }
