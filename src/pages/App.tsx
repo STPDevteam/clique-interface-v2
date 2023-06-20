@@ -18,7 +18,7 @@ import ProposalList from 'pages/DaoInfo/Children/Proposal'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreatorToken from 'pages/Creator/CreatorToken'
-import AiChat from 'pages/AiChat'
+// import AiChat from 'pages/AiChat'
 
 // swap
 // import CreateSales from 'pages/CreateSales'
@@ -31,7 +31,7 @@ import AiChat from 'pages/AiChat'
 // import TokenList from 'pages/TokenList'
 // import CreateSoulbound from 'pages/CreateSoulbound'
 // import SoulboundDetail from 'pages/Activity/Children/SoulboundDetail'
-import Activity from 'pages/Activity'
+// import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
@@ -115,7 +115,7 @@ export default function App() {
           <Route path={routes.Page} component={Page} />
           <ContentWrapper>
             <Header />
-            <AiChat />
+            {/* <AiChat /> */}
             <BodyWrapper id="body">
               <Popups />
               <Polling />
@@ -162,7 +162,7 @@ export default function App() {
                       </Governance>
                     )}
                   />
-                  <Route exact strict path={routes.Activity} component={Activity} />
+                  {/* <Route exact strict path={routes.Activity} component={Activity} /> */}
                   {/* <Route exact strict path={routes.CreateSoulbound} component={CreateSoulbound} /> */}
                   {/* <Route exact strict path={routes.SoulboundDetail} component={SoulboundDetail} /> */}
                   <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
