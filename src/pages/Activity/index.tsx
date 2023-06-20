@@ -34,7 +34,7 @@ import { useSbtList } from 'hooks/useBackedSbtServer'
 //   }
 // }))
 
-const TabStyle = styled(Tabs)(() => ({
+const TabStyle = styled(Tabs)(({ theme }) => ({
   '& .MuiButtonBase-root': {
     fontWeight: 500,
     fontSize: 18,
@@ -54,6 +54,14 @@ const TabStyle = styled(Tabs)(() => ({
     fontSize: 18,
     lineHeight: '22px',
     color: '#0049C6'
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .MuiButtonBase-root': {
+      fontSize: 16
+    },
+    '& .active': {
+      fontSize: 16
+    }
   }
 }))
 
@@ -75,20 +83,13 @@ export default function Activity() {
   const { search: searchsbt, loading: loadingsbt, result: resultsbt, page: pagesbt } = useSbtList()
 
   const isSmDown = useBreakpoint('sm')
-  const [tabValue, setTabValue] = useState(0)
+  const [tabValue, setTabValue] = useState(searchsbt.category || 0)
 
   const [chainIdval, setchainIdval] = useState<number>()
   const [statusval, setstatusval] = useState<ActivityStatus>()
 
   const handleChange = (event: any, newValue: any) => {
-    if (newValue === 0) {
-      search.setChainId(chainIdval)
-      search.setStatus(statusval)
-    } else {
-      searchsbt.setChainId(chainIdval)
-      searchsbt.setStatus(statusval)
-    }
-    console.log(chainIdval, statusval, 123)
+    searchsbt.setCategory(newValue)
   }
   return (
     <div>
@@ -117,7 +118,14 @@ export default function Activity() {
         }}
       >
         <ContainerWrapper maxWidth={1150}>
-          <RowCenter sx={{ mb: 30 }}>
+          <RowCenter
+            sx={{
+              mb: 30,
+              flexDirection: isSmDown ? 'column' : '',
+              gap: isSmDown ? 20 : 0,
+              alignItems: isSmDown ? 'stretch' : 'center'
+            }}
+          >
             <TabStyle value={tabValue} onChange={handleChange}>
               {tabList.map((item, idx) => (
                 <Tab
@@ -131,20 +139,17 @@ export default function Activity() {
                 ></Tab>
               ))}
             </TabStyle>
-            <Box sx={{ display: 'flex', gap: 16 }}>
+            <Box sx={{ display: 'flex', gap: isSmDown ? 10 : 16 }}>
               <Select
                 placeholder=""
                 noBold
-                width={isSmDown ? '175px' : '270px'}
+                width={isSmDown ? '175px' : '250px'}
                 height={isSmDown ? '36px' : '40px'}
                 // value={tabValue === 0 ? search.chainId : searchsbt.chainId}
                 value={chainIdval}
                 onChange={e => {
-                  if (tabValue === 0) {
-                    search.setChainId(e.target.value)
-                  } else {
-                    searchsbt.setChainId(e.target.value)
-                  }
+                  search.setChainId(e.target.value)
+                  searchsbt.setChainId(e.target.value)
                   setchainIdval(e.target.value)
                 }}
               >
@@ -167,16 +172,13 @@ export default function Activity() {
               <Select
                 placeholder=""
                 noBold
-                width={isSmDown ? '175px' : '270px'}
+                width={isSmDown ? '175px' : '250px'}
                 height={isSmDown ? '36px' : '40px'}
                 // value={tabValue === 0 ? search.status : searchsbt.status}
                 value={statusval}
                 onChange={e => {
-                  if (tabValue === 0) {
-                    search.setStatus(e.target.value)
-                  } else {
-                    searchsbt.setStatus(e.target.value)
-                  }
+                  search.setStatus(e.target.value)
+                  searchsbt.setStatus(e.target.value)
                   setstatusval(e.target.value)
                 }}
               >

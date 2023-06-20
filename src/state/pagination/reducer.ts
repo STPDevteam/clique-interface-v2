@@ -37,7 +37,8 @@ export const initialState: SysPagination = {
   sbtListPagination: {
     chainId: undefined,
     status: undefined,
-    currentPage: 1
+    currentPage: 1,
+    category: 0
   }
 }
 

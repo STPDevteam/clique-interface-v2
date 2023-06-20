@@ -167,12 +167,19 @@ export function useSbtListPaginationCallback() {
     },
     [data, updateSbtListPaginationCallback]
   )
+  const setCategory = useCallback(
+    (category: number) => {
+      updateSbtListPaginationCallback({ ...data, category })
+    },
+    [data, updateSbtListPaginationCallback]
+  )
 
   return {
     updateSbtListPaginationCallback,
     setCurrentPage,
     setStatus,
     setChainId,
+    setCategory,
     data
   }
 }

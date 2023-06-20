@@ -290,7 +290,7 @@ export default function Index() {
     }
     reader.readAsBinaryString(el.files[0])
   }, [insertLine])
-
+  console.log(Introduction, 90)
   return (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
       <Box

@@ -15,7 +15,7 @@ import CircularStatic from './CircularStatic'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
-  // boxShadow: theme.boxShadow.bs1,
+  boxShadow: theme.boxShadow.bs1,
   borderRadius: theme.borderRadius.default,
   padding: '24px 59px 22px 34px',
   display: 'grid',
@@ -233,22 +233,28 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
   )
 }
 
-export function PublicSaleItem() {
+export function PublicSaleItem({ item }: { item: ActivityListProp }) {
+  const history = useHistory()
+
+  const token = useNativeAndToken(item.tokenAddress, item.tokenChainId)
+  const amount = useMemo(() => {
+    if (!token) return undefined
+    return new TokenAmount(token, item.amount)
+  }, [item.amount, token])
   return (
-    <StyledItem>
+    <StyledItem
+      sx={{
+        height: '220px'
+      }}
+      onClick={() =>
+        history.push(routes._ActivityAirdropDetail + `/${item.chainId}/${item.daoAddress}/${item.activityId}`)
+      }
+    >
       <Stack spacing={24}>
         <Box>
-          <Box sx={{ display: 'flex', gap: 15, alignItems: 'center' }}>
-            <StatusStyle color={'active'}>Active</StatusStyle>
-            <StatusTitleStyle color={'active'} fontSize={12}>
-              2 days left
-            </StatusTitleStyle>
-          </Box>
-
-          <StyledTitle variant="h6" sx={{ mt: 7 }}>
-            The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
-            with interacting with all projects on the protocol en to anyone, and project configurations can vary widely.
-            There are risks associated with interacting with all projects on the protoco
+          <PublicStatus item={item} />
+          <StyledTitle variant="h6" sx={{ mt: 7, height: 54 }}>
+            {item?.title}
           </StyledTitle>
         </Box>
         <Box display={'grid'} gridTemplateColumns="1fr 1fr 1fr 1fr">
@@ -256,26 +262,72 @@ export function PublicSaleItem() {
             <StyledText>Token</StyledText>
             <StyledText>
               <Stack direction={'row'} alignItems="center">
-                <CurrencyLogo currency={undefined} size="30px" style={{ marginRight: '12px' }} />
+                {/* <CurrencyLogo currency={undefined} size="30px" style={{ marginRight: '12px' }} />
                 <StyledBoldText noWrap>name</StyledBoldText>
+                 */}
+                <CurrencyLogo currency={token || undefined} size="22px" style={{ marginRight: '5px' }} />
+                <StyledBoldText noWrap>{token ? `${token.name}(${token.symbol})` : '--'}</StyledBoldText>
               </Stack>
             </StyledText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Network</StyledText>
-            <StyledBoldText noWrap>{ChainListMap[5]?.name || '--'}</StyledBoldText>
+            <StyledBoldText noWrap>{ChainListMap[item.tokenChainId]?.name || '--'}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Amount</StyledText>
-            <StyledBoldText noWrap>4,000,000</StyledBoldText>
+            <StyledBoldText noWrap>{amount?.toSignificant(6, { groupSeparator: ',' }) || '--'}</StyledBoldText>
           </Stack>
           <Stack spacing={16}>
             <StyledText>Price</StyledText>
-            <StyledBoldText noWrap>0.0018ETH ($2.33)</StyledBoldText>
+            <StyledBoldText noWrap>{item?.price || '--'}</StyledBoldText>
           </Stack>
         </Box>
       </Stack>
       <CircularStatic value={10} />
     </StyledItem>
+  )
+}
+
+function PublicStatus({ item }: { item: ActivityListProp }) {
+  const now = currentTimeStamp()
+  let targetTimeString = ''
+  if (item.status === ActivityStatus.SOON) {
+    targetTimeString = getTargetTimeString(now, item.eventStartTime)
+  } else if (item.status === ActivityStatus.OPEN) {
+    targetTimeString = getTargetTimeString(now, item.eventEndTime)
+  } else if (item.status === ActivityStatus.ENDED) {
+    targetTimeString = getTargetTimeString(now, item.airdropStartTime)
+  } else if (item.status === ActivityStatus.AIRDROP) {
+    targetTimeString = getTargetTimeString(now, item.airdropEndTime)
+  }
+  return (
+    <>
+      <Box sx={{ display: 'flex', gap: 15, alignItems: 'center' }}>
+        <StatusStyle
+          color={
+            [ActivityStatus.OPEN, ActivityStatus.AIRDROP].includes(item.status)
+              ? 'active'
+              : [ActivityStatus.SOON, ActivityStatus.ENDED].includes(item.status)
+              ? 'soon'
+              : ''
+          }
+        >
+          {activityStatusText[item.status]}
+        </StatusStyle>
+        <StatusTitleStyle
+          color={
+            [ActivityStatus.OPEN, ActivityStatus.AIRDROP].includes(item.status)
+              ? 'active'
+              : [ActivityStatus.SOON, ActivityStatus.ENDED].includes(item.status)
+              ? 'soon'
+              : ''
+          }
+          fontSize={12}
+        >
+          {targetTimeString}
+        </StatusTitleStyle>
+      </Box>
+    </>
   )
 }

@@ -19,6 +19,7 @@ export interface SbtListPaginationProp {
   chainId: ChainId | undefined
   status: ActivityStatus | undefined
   currentPage: number
+  category: number
 }
 
 export interface NotificationListPaginationProp {

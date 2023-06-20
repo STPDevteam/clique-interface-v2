@@ -176,29 +176,6 @@ export function useSbtClaimList(sbtId: number) {
   }
 }
 
-// export function useSbtList(chainId?: ChainId, status?: string) {
-//   const offset = 0
-//   const limit = 8
-//   const [result, setResult] = useState<any>()
-//   useEffect(() => {
-//     ;(async () => {
-//       try {
-//         const res = await getSbtList(offset, limit, chainId, status)
-//         if (res.data.data) {
-//           setResult(res.data.data)
-//         }
-//       } catch (error) {
-//         console.log(error)
-//         setResult(null)
-//       }
-//     })()
-//   }, [offset, limit, chainId, status])
-
-//   return {
-//     result
-//   }
-// }
-
 export function useSbtDetail(sbtId: string) {
   const [result, setResult] = useState<any>()
   useEffect(() => {
@@ -281,7 +258,6 @@ export function useSbtClaim() {
 
 export function useSbtWhetherClaim() {
   const contract = useCreateSbtContract()
-  const gasPriceInfoCallback = useGasPriceInfo()
 
   const SbtWhetherClaimCallback = useCallback(
     async (sbtId: string, account: string | undefined) => {
@@ -291,27 +267,17 @@ export function useSbtWhetherClaim() {
       if (!res.data.data.canClaim) return 'false'
       const args = [account, sbtId]
       const method = 'minted'
-      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
-      return contract[method](...args, {
-        gasPrice,
-        gasLimit,
-        from: account
-      })
-        .then((response: TransactionResponse) => {
-          return response
-        })
-        .catch((err: any) => {
-          return err
-        })
+      return contract[method](...args)
     },
-    [contract, gasPriceInfoCallback]
+    [contract]
   )
   return { SbtWhetherClaimCallback }
 }
 
 export function useSbtList() {
   const {
-    data: { chainId, status, currentPage },
+    data: { chainId, status, currentPage, category },
+    setCategory,
     setStatus,
     setChainId,
     setCurrentPage
@@ -378,7 +344,6 @@ export function useSbtList() {
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRefresh])
-
   return {
     loading: loading,
     page: {
@@ -389,9 +354,11 @@ export function useSbtList() {
       pageSize
     },
     search: {
-      status,
       setStatus,
       setChainId,
+      setCategory,
+      category,
+      status,
       chainId
     },
     result

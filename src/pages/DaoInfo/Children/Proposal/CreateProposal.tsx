@@ -243,7 +243,7 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
     voteOption,
     voteType
   ])
-
+  console.log(content, 0)
   return (
     <DaoContainer>
       <Box>

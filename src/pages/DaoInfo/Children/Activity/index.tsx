@@ -117,7 +117,7 @@ export default function Activity() {
         )}
       </RowCenter>
       {activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}
-      {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList />}
+      {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList {...airdropData} />}
     </div>
   )
 }

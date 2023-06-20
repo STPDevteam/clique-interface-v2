@@ -48,7 +48,7 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
   width: 70,
   height: 30,
   padding: '6px 0 6px 13px',
-  background: color ? (color == 'active' ? '#EBFFD2' : '#E9FAFF') : '#E9FAFF',
+  background: color === 'active' ? '#EBFFD2' : color === 'soon' ? '#E9FAFF' : '#F8FBFF',
   borderRadius: '20px',
   display: 'flex',
   gap: 5,
@@ -56,12 +56,12 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
   fontWeight: 600,
   fontSize: 12,
   lineHeight: '18px',
-  color: color ? (color == 'active' ? '#21C431' : '#0049C6') : '#0049C6',
+  color: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#B5B7CF',
   '&:before': {
     content: `''`,
     width: 5,
     height: 5,
-    background: color ? (color == 'active' ? '#21C431' : '#0049C6') : '#0049C6',
+    background: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#B5B7CF',
     borderRadius: '50%'
   }
 }))

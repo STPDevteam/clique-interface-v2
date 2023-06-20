@@ -190,7 +190,6 @@ export function useActivityList() {
   const [result, setResult] = useState<ActivityListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
-
   useEffect(() => {
     if (firstLoadData) {
       setFirstLoadData(false)
