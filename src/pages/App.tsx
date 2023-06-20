@@ -31,7 +31,7 @@ import CreatorToken from 'pages/Creator/CreatorToken'
 // import TokenList from 'pages/TokenList'
 // import CreateSoulbound from 'pages/CreateSoulbound'
 // import SoulboundDetail from 'pages/Activity/Children/SoulboundDetail'
-// import Activity from 'pages/Activity'
+import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
@@ -162,7 +162,7 @@ export default function App() {
                       </Governance>
                     )}
                   />
-                  {/* <Route exact strict path={routes.Activity} component={Activity} /> */}
+                  <Route exact strict path={routes.Activity} component={Activity} />
                   {/* <Route exact strict path={routes.CreateSoulbound} component={CreateSoulbound} /> */}
                   {/* <Route exact strict path={routes.SoulboundDetail} component={SoulboundDetail} /> */}
                   <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
