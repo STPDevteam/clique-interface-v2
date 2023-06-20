@@ -16,7 +16,8 @@ import {
   publishList,
   updateNewJob,
   leftSpacesList,
-  getSpacesList
+  getSpacesList,
+  deleteSpace
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -206,14 +207,14 @@ export function useGetLeftTaskList(daoId: number) {
       try {
         const res = await leftSpacesList(daoId)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: LeftTaskDataProps[] = data.list
+        const list: LeftTaskDataProps[] = data.data
         setResult(list)
       } catch (error) {
         setResult([])
@@ -718,6 +719,14 @@ export interface SpacesListProp {
   spacesId: number
   title: string
   types: string
+}
+
+export function useDeleteSpace() {
+  return useCallback((spacesId: number) => {
+    return deleteSpace(spacesId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
 }
 
 export function useGetSpacesList(daoId: number, refresh?: number) {

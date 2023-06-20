@@ -31,7 +31,8 @@ import {
   deleteWorkspace,
   getSpacesMemberList,
   removeSpacesMember,
-  addSpacesMember
+  addSpacesMember,
+  getUserQuitDao
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -376,13 +377,13 @@ export function useHomeDaoList() {
 
 export function useIsJoined(daoId: number) {
   const [loading, setLoading] = useState(false)
-  const [isJoined, setIsJoined] = useState<{ isJoin: boolean; job: string }>()
+  const [isJoined, setIsJoined] = useState<{ isJoin: boolean; job: string; privateSpaces: [] }>()
   const userInfo = useUserInfo()
 
   useEffect(() => {
     ;(async () => {
       if (!userInfo?.loggedToken) {
-        setIsJoined({ isJoin: false, job: '' })
+        setIsJoined({ isJoin: false, job: '', privateSpaces: [] })
         return
       }
       setLoading(true)
@@ -396,7 +397,7 @@ export function useIsJoined(daoId: number) {
         throw new Error()
       } catch (error) {
         setLoading(false)
-        setIsJoined({ isJoin: false, job: '' })
+        setIsJoined({ isJoin: false, job: '', privateSpaces: [] })
       }
     })()
   }, [daoId, userInfo?.loggedToken])
@@ -1093,7 +1094,7 @@ export function useGetSpacesMemberList(spacesId: number, refresh?: number) {
   useEffect(() => {
     setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [spacesId])
 
   useEffect(() => {
     ;(async () => {
@@ -1146,6 +1147,14 @@ export function useRemoveSpacesMember() {
 export function useAddSpacesMember() {
   return useCallback((account: string, spacesId: number) => {
     return addSpacesMember(account, spacesId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useGetUserQuitDao() {
+  return useCallback((daoId: number) => {
+    return getUserQuitDao(daoId)
       .then(res => res)
       .catch(err => err)
   }, [])

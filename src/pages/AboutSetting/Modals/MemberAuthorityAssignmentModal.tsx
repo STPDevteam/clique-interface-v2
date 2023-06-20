@@ -1,9 +1,8 @@
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import Modal from '../../../components/Modal/index'
 import { Box, Typography, styled } from '@mui/material'
-import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import useModal from 'hooks/useModal'
 import { useCallback } from 'react'
+import OutlineButton from 'components/Button/OutlineButton'
 
 const MemberCard = styled(Box)({
   display: 'flex',
@@ -27,58 +26,48 @@ const MemberCard = styled(Box)({
   }
 })
 
-export default function MemberAuthorityAssignmentModal({
-  chainId,
-  daoAddress,
-  id,
-  onDimiss
-}: {
-  chainId: number
-  daoAddress: string
-  id: number
-  onDimiss: () => void
-}) {
-  const { showModal, hideModal } = useModal()
-  const { changeRole } = useChangeAdminRole()
+const levelList = [
+  {
+    name: 'Owner',
+    des: 'DAO owner Seed role',
+    isDisable: false
+  },
+  {
+    name: 'Super admin',
+    des: 'Super administrator can edit workspace settings and invite new members.',
+    isDisable: false
+  },
+  {
+    name: 'Admin',
+    des: 'DAO core members that can create and edit workspace.',
+    isDisable: false
+  }
+]
 
-  const clickMember = useCallback(() => {
-    changeRole(chainId, daoAddress, id)
-      .then(res => {
-        console.log(res)
-        hideModal()
-        showModal(<MessageBox type="success">Modify success</MessageBox>)
-        onDimiss()
-      })
-      .catch(err => console.log(err))
-  }, [chainId, changeRole, daoAddress, hideModal, id, onDimiss, showModal])
+export default function MemberAuthorityAssignmentModal({ level, onDimiss }: { level: number; onDimiss: () => void }) {
+  const { hideModal } = useModal()
+
+  console.log(level)
+
+  const removeMemberClick = useCallback(() => {
+    hideModal()
+    onDimiss()
+  }, [hideModal, onDimiss])
 
   return (
     <Modal maxWidth="371px" width="100%" padding="10px 0">
-      <Box display="flex" textAlign={'center'} width="100%" height="190px" flexDirection={'column'}>
-        {/* <MemberCard className={'BannedClass'}>
-          <Typography fontSize={16}>Owner</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            DAO owner Seed role
-          </Typography>
-        </MemberCard>
-        <MemberCard className={'BannedClass'}>
-          <Typography fontSize={16}>Super admin</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            Super administrator can edit workspace settings and invite new members.
-          </Typography>
-        </MemberCard> */}
-        <MemberCard className={'BannedClass'}>
-          <Typography fontSize={16}>Admin</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            DAO core members that can create and edit workspace.
-          </Typography>
-        </MemberCard>
-        <MemberCard className={'Member'} onClick={clickMember}>
-          <Typography fontSize={16}>Member</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            Browse workspace and settings
-          </Typography>
-        </MemberCard>
+      <Box display="flex" textAlign={'center'} width="100%" height="270px" flexDirection={'column'}>
+        {levelList.map((item: any, index: number) => (
+          <MemberCard key={item.name + index} className={'BannedClass'}>
+            <Typography fontSize={16}>{item.name}</Typography>
+            <Typography fontSize={14} color={'#80829F'}>
+              {item.des}
+            </Typography>
+          </MemberCard>
+        ))}
+        <OutlineButton onClick={removeMemberClick} noBold color="#E46767" width={'340px'} height="40px">
+          Remove
+        </OutlineButton>
       </Box>
     </Modal>
   )

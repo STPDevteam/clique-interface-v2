@@ -2,6 +2,7 @@ import { Box, Pagination, Stack, Typography, styled } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import { useAddSpacesMember, useGetSpacesMemberList, useRemoveSpacesMember } from 'hooks/useBackedDaoServer'
 import { ReactComponent as RemoveIcon } from 'assets/svg/removeIcon.svg'
+import Avatar from 'assets/images/avatar.png'
 import Modal from 'components/Modal'
 import Image from 'components/Image'
 import { isAddress, shortenAddress } from 'utils'
@@ -11,14 +12,17 @@ import Button from 'components/Button/Button'
 import { toast } from 'react-toastify'
 
 const StyledAddContainer = styled(Box)({
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: '1fr 125px',
   flexDirection: 'row',
-  alignItems: 'center'
+  alignItems: 'center',
+  gap: 12,
+  marginTop: 20
 })
 
 const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
-  padding: '40px 32px',
+  padding: '40px 0',
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
     padding: '20px 16px'
@@ -29,6 +33,8 @@ const StyledListText = styled(Typography)({
   fontSize: 13,
   fontWeight: 600,
   display: 'flex',
+  alignItems: 'center',
+  gap: 10,
   '& img': {
     width: 18,
     height: 18,
@@ -42,12 +48,24 @@ const StyledListText = styled(Typography)({
   }
 })
 
+const StyledListRightText = styled(Typography)({
+  fontSize: 13,
+  fontWeight: 600,
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  cursor: 'pointer',
+  justifyContent: 'flex-end'
+})
+
 export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
   const [rand, setRand] = useState(Math.random())
-  const { result, page } = useGetSpacesMemberList(spacesId, rand)
+  const { result: memberList, page } = useGetSpacesMemberList(spacesId, rand)
+  console.log('🚀 ~ file: ManageMemberModal.tsx:51 ~ ManageMemberModal ~ memberList:', memberList)
   const [address, setAddress] = useState('')
   const remove = useRemoveSpacesMember()
   const add = useAddSpacesMember()
+
   const removeMemberClick = useCallback(
     (id: number) => {
       remove(id).then((res: any) => {
@@ -74,43 +92,40 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
   }, [add, address, spacesId])
 
   return (
-    <Modal maxWidth="460px" closeIcon width="100%">
+    <Modal maxWidth="460px" closeIcon width="100%" padding="20px 30px">
+      <Typography variant="h6" fontWeight={500}>
+        Manage members - 🏠 General
+      </Typography>
       <StyledAddContainer>
-        <Input label="" width={'100%'} placeholder="0x..." value={address} onChange={e => setAddress(e.target.value)} />
+        <Input
+          label=""
+          width={'287px'}
+          placeholder="0x..."
+          value={address}
+          onChange={e => setAddress(e.target.value)}
+        />
         <Button onClick={addMemberClick} width="125px" height="40px" disabled={!address || !isAddress(address)}>
           Add Member
         </Button>
       </StyledAddContainer>
       <StyledBody>
         <Stack spacing={19}>
-          <Typography variant="h6" fontWeight={500}>
-            Manage members - 🏠 General
-          </Typography>
-          <Box
-            display={'grid'}
-            gridTemplateColumns="1fr 1fr 0.8fr"
-            gap={'10px 5px'}
-            alignItems={'center'}
-            justifyContent="center"
-          >
-            {result &&
-              result.map(item => (
-                <>
-                  <StyledListText>
-                    <Image src={item.accountLogo} width={18} />
-                    <Typography>{item.nickName}</Typography>
-                  </StyledListText>
-                  <StyledListText noWrap align="center">
-                    {shortenAddress(item.account)}
-                  </StyledListText>
-                  <StyledListText align="right" onClick={() => removeMemberClick(item.id)}>
-                    <RemoveIcon />
-                    Remove
-                  </StyledListText>
-                </>
-              ))}
+          <Box display={'grid'} gridTemplateColumns="1fr 1fr 0.8fr" gap={'10px 5px'} alignItems={'center'}>
+            {memberList.map(item => (
+              <>
+                <StyledListText>
+                  <Image src={item.accountLogo || Avatar} width={18} />
+                  <Typography>{item.nickName || 'unnamed'}</Typography>
+                </StyledListText>
+                <StyledListText noWrap>{shortenAddress(item.account)}</StyledListText>
+                <StyledListRightText onClick={() => removeMemberClick(item.id)}>
+                  <RemoveIcon />
+                  Remove
+                </StyledListRightText>
+              </>
+            ))}
           </Box>
-          {!result.length && <EmptyData />}
+          {!memberList.length && <EmptyData />}
           <Box display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}

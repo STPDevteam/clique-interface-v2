@@ -104,18 +104,23 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
 
 const StyledTeamMenu = styled(Box)({
   display: 'flex',
-  justifyContent: 'flex-start',
+  justifyContent: 'space-between',
   flexDirection: 'row',
   alignItems: 'center',
   gap: 10,
   color: '#3f5170',
   cursor: 'pointer',
-  paddingLeft: 20,
+  padding: '0 20px',
   '& img': {
     width: 14
   },
-  '& svg path': {
-    fill: '#97B7EF'
+  '& .ParentTitle': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    '& svg path': {
+      fill: '#97B7EF'
+    }
   }
 })
 
@@ -158,12 +163,38 @@ const Item = styled(Box)(({}) => ({
   }
 }))
 
+const ChildItem = styled(Box)({
+  height: 40,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '0 16px 0 60px',
+  '& .LBox': {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    '& img': {
+      width: 14
+    },
+    '& p': {
+      width: 100,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      color: '#3F5170',
+      fontSize: 14,
+      fontWeight: 500
+    }
+  }
+})
+
 export interface LeftSiderMenu {
   title: string
   link?: string
   icon?: ReactJSXElement
   route?: string
   logo?: string
+  isPublic?: boolean
   defaultOpen?: boolean
   children?: LeftSiderMenu[]
 }
@@ -186,6 +217,7 @@ export default function LeftSider() {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const { result: taskList } = useGetLeftTaskList(Number(daoId))
+  console.log('🚀 ~ file: LeftSider.tsx:189 ~ LeftSider ~ taskList:', taskList)
   const makeRouteLink = useCallback(
     (route: string) => {
       return route.replace(':daoId', daoId)
@@ -198,7 +230,8 @@ export default function LeftSider() {
     return taskList.map(item => ({
       title: item.title,
       link: makeRouteLink(routes.DaoTeamTask) + '/' + item.spacesId,
-      logo: taskIcon
+      logo: taskIcon,
+      isPublic: item.access === 'public' ? true : false
     }))
   }, [makeRouteLink, taskList])
 
@@ -352,18 +385,32 @@ export default function LeftSider() {
           }}
         >
           {teamspacesList.map((item, idx) => (
-            <Box key={idx} minHeight={50}>
+            <Box
+              key={idx}
+              minHeight={50}
+              sx={{
+                '&>div': {
+                  '&:hover': {
+                    backgroundColor: '#F8FBFF'
+                  }
+                }
+              }}
+            >
               <MyCollapse
                 hiddenArrow
                 bodyPl={0}
                 defaultOpen={item.defaultOpen}
                 height={50}
+                backgroundColor={'#F8FBFF'}
                 title={
                   <>
                     {item.children ? (
                       <StyledTeamMenu>
-                        {item.icon}
-                        <ListItemText primary={item.title} />
+                        <Box className={'ParentTitle'}>
+                          {item.icon}
+                          <ListItemText primary={item.title} />
+                        </Box>
+                        <ArrowIcon />
                       </StyledTeamMenu>
                     ) : (
                       <NavLink
@@ -394,8 +441,9 @@ export default function LeftSider() {
                     disablePadding
                     style={{ marginRight: 0 }}
                     sx={{
+                      cursor: 'pointer',
                       '&:hover': {
-                        backgroundColor: 'rgba(0, 91, 198, 0.06)'
+                        backgroundColor: '#F8FBFF'
                       },
                       '& a': {
                         color: theme => theme.palette.text.secondary,
@@ -419,10 +467,17 @@ export default function LeftSider() {
                       }
                     }}
                   >
-                    <NavLink to={item.link || ''}>
-                      <Image src={item.logo || ''}></Image>
-                      <p>{item.title}</p>
-                    </NavLink>
+                    <ChildItem
+                      onClick={() => {
+                        history.push(item.link || '')
+                      }}
+                    >
+                      <Box className={'LBox'}>
+                        <Image src={item.logo || ''}></Image>
+                        <Typography noWrap>{item.title}</Typography>
+                      </Box>
+                      {item.isPublic ? <Typography></Typography> : <Typography>🔒</Typography>}
+                    </ChildItem>
                   </List>
                 ))}
               </MyCollapse>

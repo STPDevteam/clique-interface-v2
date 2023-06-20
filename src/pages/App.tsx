@@ -140,7 +140,7 @@ export default function App() {
                           <Route path={routes.DaoAboutSetting} exact strict component={AboutSetting} />
                           <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoTeamTask} exact strict component={Task} />
+                          <Route path={routes._DaoTeamTask} exact strict component={Task} />
                           <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamTrash} exact strict component={ComingSoon} />
                           <Route path={routes.Proposal} exact strict component={ProposalList} />

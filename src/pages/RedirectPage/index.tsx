@@ -4,11 +4,12 @@ import JoinDAOModal from '../DaoInfo/Children/JoinDAOModal'
 import { useActiveWeb3React } from 'hooks'
 import { useCallback, useEffect, useState } from 'react'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { useIsJoined, useJoinDAO } from 'hooks/useBackedDaoServer'
+import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useParams } from 'react-router-dom'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export default function Page() {
   const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
@@ -22,7 +23,7 @@ export default function Page() {
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const userSignature = useUserInfo()
-  const { isJoined } = useIsJoined(curDaoChainId)
+  const { myJoinDaoData: isJoined } = useBuildingDaoDataCallback()
 
   const joinDAOCallback = useCallback(() => {
     setBtnDisabled(true)

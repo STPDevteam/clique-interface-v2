@@ -841,6 +841,12 @@ export function getSpacesList(daoId: number, offset: number, limit: number) {
   })
 }
 
+export function deleteSpace(spacesId: number) {
+  return Axios.delete('stpdao/v3/spaces/delete', {
+    spacesId
+  })
+}
+
 export function addDaoMember(account: string, spacesId: number) {
   return Axios.post('stpdao/v3/spaces/member/add', {
     account,
@@ -891,4 +897,8 @@ export function getSpacesMemberList(spacesId: number, offset: number, limit: num
     offset,
     limit
   })
+}
+
+export function getUserQuitDao(daoId: number) {
+  return Axios.delete(`stpdao/v3/user/quit/${daoId}`)
 }

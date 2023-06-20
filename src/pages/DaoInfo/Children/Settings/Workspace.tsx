@@ -25,6 +25,8 @@ import { useUpdateTeamspace } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 import ManageMemberModal from '../Proposal/ManageMemberModal'
 import PopperCard from 'components/PopperCard'
+import DeleteSpaceModal from 'pages/AboutSetting/Modals/DeleteSpaceModal'
+import TransferAdminModal from 'pages/AboutSetting/Modals/TransferAdminModal'
 
 export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
   const { showModal } = useModal()
@@ -316,6 +318,7 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                   <AddTeamspaceModal
                                     isEdit={true}
                                     daoId={daoId}
+                                    spacesId={row.data.spacesId}
                                     onDimiss={onDimiss}
                                     originContent={row.data.bio}
                                     originTitle={row.data.title}
@@ -323,7 +326,9 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                   />
                                 )
                               } else if (editList[index].value === '1') {
+                                showModal(<TransferAdminModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
                               } else {
+                                showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
                               }
                             }}
                           >

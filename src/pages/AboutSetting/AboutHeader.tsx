@@ -5,15 +5,16 @@ import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import { useParams } from 'react-router-dom'
-import { useIsJoined } from 'hooks/useBackedDaoServer'
+import { useGetUserQuitDao, useIsJoined } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { toast } from 'react-toastify'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -24,16 +25,40 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between'
 }))
 
+const Text = styled(Typography)({
+  mt: 10,
+  height: 20,
+  fontWeight: 500,
+  fontSize: '13px',
+  lineHeight: '20px',
+  color: '#E46767',
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  cursor: 'pointer',
+  userSelect: 'none'
+})
+
 export default function Header() {
   const isSmDown = useBreakpoint('sm')
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoAdminLevel = useIsJoined(Number(curDaoId))
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-
+  const quit = useGetUserQuitDao()
   const categoryList = useMemo(() => {
     if (!daoInfo?.category) return []
     return daoInfo.category
   }, [daoInfo?.category])
+
+  const handleQuitClick = useCallback(() => {
+    quit(Number(curDaoId)).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      toast.success('Quit success')
+    })
+  }, [curDaoId, quit])
 
   return (
     <Box>
@@ -131,24 +156,14 @@ export default function Header() {
               </Box>
             </Box>
           </Box>
-          <Typography
-            sx={{
-              mt: 10,
-              height: 20,
-              fontWeight: 500,
-              fontSize: '13px',
-              lineHeight: '20px',
-              color: '#E46767',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              cursor: 'pointer',
-              userSelect: 'none'
-            }}
-          >
-            <QuitIcon />
-            Quit DAO
-          </Typography>
+          {daoAdminLevel.isJoined?.isJoin && daoAdminLevel.isJoined.job !== 'owner' ? (
+            <Text onClick={handleQuitClick}>
+              <QuitIcon />
+              Quit DAO
+            </Text>
+          ) : (
+            <></>
+          )}
         </StyledHeader>
       </ContainerWrapper>
     </Box>

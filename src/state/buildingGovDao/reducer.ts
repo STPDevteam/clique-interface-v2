@@ -52,7 +52,8 @@ const initialDaoDataState: BuildingDaoData = {
   },
   myJoinDaoData: {
     isJoin: false,
-    job: ''
+    job: '',
+    privateSpaces: []
   },
   createDaoListData: [
     {

@@ -35,6 +35,11 @@ export type govList = {
   weight: number
 }
 
+export type PrivateSpacesProp = {
+  isJoin: boolean
+  spacesId: number
+}
+
 export interface CreateDaoListDataProp {
   name: string
   logo: string
@@ -43,6 +48,7 @@ export interface CreateDaoListDataProp {
 export interface MyJoinDaoDataProp {
   isJoin: boolean
   job: string
+  privateSpaces: PrivateSpacesProp[]
 }
 export interface CreateDaoDataProp {
   approve: boolean

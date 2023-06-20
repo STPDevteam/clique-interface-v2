@@ -1,6 +1,6 @@
 // import AddButton from 'components/Button/Button'
 import { Box, Tooltip, Typography } from '@mui/material'
-import { ITaskItem, useGetTaskList, useRemoveTask, useSpacesInfo, useUpdateTask } from 'hooks/useBackedTaskServer'
+import { ITaskItem, useGetTaskList, useRemoveTask, useUpdateTask } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
@@ -10,12 +10,11 @@ import { ReactComponent as DelIcon } from 'assets/svg/del.svg'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
-import { useIsJoined } from 'hooks/useBackedDaoServer'
 // import PopperCard from 'components/PopperCard'
 import TaskDetail from 'pages/Task/Children/TaskDetail'
 import { toast } from 'react-toastify'
 import { useProposalBaseList } from 'hooks/useBackedProposalServer'
-import { ChainId } from 'constants/chain'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 function ContextMenu({
   children,
@@ -157,18 +156,17 @@ const taskTypeList = [
 ]
 
 export default function DragTaskPanel() {
+  const { spacesId: spacesId } = useParams<{ spacesId: string }>()
   const [rand, setRand] = useState(Math.random())
   const { showModal, hideModal } = useModal()
   const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId)
-  const taskId = 0 as ChainId
   const update = useUpdateTask()
   const remove = useRemoveTask()
-  const { isJoined } = useIsJoined(daoId)
+  const { myJoinDaoData: isJoined } = useBuildingDaoDataCallback()
   const { result } = useProposalBaseList(daoId)
-  const { result: TeamSpacesInfo } = useSpacesInfo(taskId, '')
-  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
+  const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), '', '', rand)
 
   const showSidePanel = useCallback(
     (editData, initStatus) => {
@@ -181,13 +179,14 @@ export default function DragTaskPanel() {
           }}
           initStatus={initStatus}
           proposalBaseList={result}
-          TeamSpacesInfo={TeamSpacesInfo}
+          daoId={daoId}
+          spacesId={Number(spacesId)}
           editData={editData}
           identity={isJoined?.job || ''}
         />
       )
     },
-    [TeamSpacesInfo, hideModal, isJoined, result, showModal]
+    [daoId, hideModal, isJoined?.job, result, showModal, spacesId]
   )
 
   const taskAllTypeList = useMemo(() => {

@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react'
 import Select from 'components/Select/Select'
 import useModal from 'hooks/useModal'
 import { toast } from 'react-toastify'
-import { useAddTeamspace } from 'hooks/useBackedDaoServer'
+import { useAddTeamspace, useUpdateTeamspace } from 'hooks/useBackedDaoServer'
 
 const guestList = [
   { value: 'public', label: 'Public' },
@@ -17,6 +17,7 @@ const guestList = [
 export default function AddTeamspaceModal({
   isEdit,
   daoId,
+  spacesId,
   originTitle,
   originContent,
   originAccess,
@@ -24,6 +25,7 @@ export default function AddTeamspaceModal({
 }: {
   isEdit: boolean
   daoId: number
+  spacesId?: number
   originContent?: string
   originTitle?: string
   originAccess?: string
@@ -34,6 +36,7 @@ export default function AddTeamspaceModal({
   const [currentStatus, setCurrentStatus] = useState<string>(originAccess ?? 'public')
   const { hideModal } = useModal()
   const create = useAddTeamspace()
+  const update = useUpdateTeamspace()
 
   const onCreateClick = useCallback(() => {
     create(currentStatus, des, daoId, title)
@@ -51,6 +54,19 @@ export default function AddTeamspaceModal({
         toast.error('create error')
       })
   }, [create, currentStatus, daoId, des, hideModal, onDimiss, title])
+
+  const onUpdateClick = useCallback(() => {
+    if (!spacesId) return
+    update(currentStatus, des, spacesId, title).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      toast.success('Update success')
+      hideModal()
+      onDimiss()
+    })
+  }, [currentStatus, des, hideModal, onDimiss, spacesId, title, update])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
@@ -115,7 +131,12 @@ export default function AddTeamspaceModal({
           <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
             Close
           </OutlineButton>
-          <Button onClick={onCreateClick} width="125px" height="40px" disabled={!title || !des}>
+          <Button
+            onClick={isEdit ? onUpdateClick : onCreateClick}
+            width="125px"
+            height="40px"
+            disabled={!title || !des}
+          >
             {isEdit ? 'Save' : 'Add'}
           </Button>
         </Stack>

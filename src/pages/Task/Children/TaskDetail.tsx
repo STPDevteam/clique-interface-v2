@@ -121,7 +121,8 @@ export default function TaskDetail({
   open,
   onDismiss,
   proposalBaseList,
-  TeamSpacesInfo,
+  daoId,
+  spacesId,
   editData,
   identity,
   initStatus
@@ -129,7 +130,8 @@ export default function TaskDetail({
   open: boolean
   onDismiss: () => void
   proposalBaseList: ProposalListBaseProp[]
-  TeamSpacesInfo: any
+  daoId: number
+  spacesId: number
   editData: ITaskQuote
   identity: string
   initStatus: string
@@ -139,7 +141,7 @@ export default function TaskDetail({
     return status
   }, [editData, initStatus])
 
-  const { result: jobsList } = useJobsList(Number(TeamSpacesInfo?.chainId))
+  const { result: jobsList } = useJobsList(daoId)
   const assigneeList = useMemo(() => {
     if (!jobsList) return []
     const _arr: any = []
@@ -199,7 +201,7 @@ export default function TaskDetail({
   }, [taskDetailData?.content])
 
   const createCallback = useCallback(() => {
-    if (!TeamSpacesInfo) return
+    if (!spacesId) return
     create(
       assignees,
       content,
@@ -207,7 +209,7 @@ export default function TaskDetail({
       priority,
       Number(proposal),
       '0',
-      TeamSpacesInfo.teamSpacesId,
+      spacesId,
       currentStatus ? TaskStatus[currentStatus] : 'A_notStarted',
       value
     ).then((res: any) => {
@@ -216,7 +218,7 @@ export default function TaskDetail({
         toast.success('Create task success')
       } else toast.error('network error')
     })
-  }, [TeamSpacesInfo, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
+  }, [spacesId, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
 
   const updateCallback = useCallback(() => {
     if (!editData) return

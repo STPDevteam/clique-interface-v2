@@ -3,14 +3,13 @@ import LeftMenu from './LeftSider'
 import { useActiveWeb3React } from 'hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useEffect } from 'react'
-import { useIsJoined } from 'hooks/useBackedDaoServer'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export default function DaoInfoLayout({ children }: { children: any }) {
-  const { daoId: daoId } = useParams<{ daoId: string }>()
   const { account } = useActiveWeb3React()
   const history = useHistory()
-  const { isJoined } = useIsJoined(Number(daoId))
+  const { myJoinDaoData: isJoined } = useBuildingDaoDataCallback()
   const userSignature = useUserInfo()
 
   useEffect(() => {

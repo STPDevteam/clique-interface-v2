@@ -15,15 +15,23 @@ import { useParams } from 'react-router-dom'
 import { useGetPublishJobList, useJobsList } from 'hooks/useBackedTaskServer'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MemberAuthorityAssignmentModal from './Modals/MemberAuthorityAssignmentModal'
-import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
+// import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 import EmptyData from 'components/EmptyData'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 
 const TopText = styled(Box)({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center'
 })
+
+export enum LevelNameOf {
+  'owner' = '0',
+  'superAdmin' = '1',
+  'admin' = '2'
+}
 
 export default function Team() {
   const isSmDown = useBreakpoint('sm')
@@ -33,6 +41,7 @@ export default function Team() {
   const { daoId: daoChainId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoChainId)
   const spacesId = 0
+  const { account: curAccount } = useActiveWeb3React()
   const { result: jobList } = useGetPublishJobList(curDaoId, randNum)
   const { result: memberList } = useJobsList(curDaoId, rand)
   const { myJoinDaoData: memberLevel } = useBuildingDaoDataCallback()
@@ -58,7 +67,7 @@ export default function Team() {
   }, [curDaoId, showModal])
 
   const tableList = useMemo(() => {
-    return memberList.map(({ avatar, daoId, account, nickname, jobId }) => [
+    return memberList.map(({ avatar, daoId, account, nickname, jobsLevel }) => [
       <Box
         key={account + daoId}
         display={'flex'}
@@ -89,23 +98,17 @@ export default function Team() {
           }
         }}
         onClick={() => {
-          showModal(
-            <MemberAuthorityAssignmentModal
-              chainId={curDaoId}
-              daoAddress={''}
-              id={jobId}
-              onDimiss={() => setRand(Math.random())}
-            />
-          )
+          if (curAccount && account === curAccount) return
+          showModal(<MemberAuthorityAssignmentModal level={jobsLevel} onDimiss={() => setRand(Math.random())} />)
         }}
       >
         <Typography width={130} textAlign={'left'}>
-          Admin
+          {memberLevel.job}
         </Typography>
         <ExpandMoreIcon />
       </Box>
     ])
-  }, [curDaoId, memberList, showModal])
+  }, [curAccount, memberLevel.job, memberList, showModal])
 
   return (
     <Box
