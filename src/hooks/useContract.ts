@@ -143,9 +143,8 @@ export function usePublicSaleContract(queryChainId?: ChainId): Contract | null {
     queryChainId
   )
 }
-export function useCreateSbtContract(queryChainId?: ChainId): Contract | null {
+export function useSbtContract(queryChainId?: ChainId): Contract | null {
   const { chainId } = useActiveWeb3React()
-
   return useContract(
     queryChainId || chainId ? CREATE_SBT[(queryChainId || chainId) as ChainId] : undefined,
     CREATE_SBT_ABI,

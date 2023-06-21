@@ -241,7 +241,6 @@ export function useSingleCallResult(
   chainId?: ChainId
 ): CallState {
   const fragment = useMemo(() => contract?.interface?.getFunction(methodName), [contract, methodName])
-
   const calls = useMemo<Call[]>(() => {
     return contract && contract.address !== ZERO_ADDRESS && fragment && isValidMethodArgs(inputs)
       ? [
@@ -254,8 +253,8 @@ export function useSingleCallResult(
   }, [contract, fragment, inputs])
 
   const result = useCallsData(calls, options, chainId)[0]
-  const latestBlockNumber = useBlockNumber(chainId)
 
+  const latestBlockNumber = useBlockNumber(chainId)
   return useMemo(() => {
     return toCallState(result, contract?.interface, fragment, latestBlockNumber)
   }, [result, contract, fragment, latestBlockNumber])

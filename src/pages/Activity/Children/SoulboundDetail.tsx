@@ -1,4 +1,4 @@
-import { Box, styled, Typography } from '@mui/material'
+import { Box, styled, Typography, Alert } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Button from 'components/Button/Button'
@@ -9,7 +9,6 @@ import EllipsisIcon from 'assets/images/ellipsis_icon.png'
 import Back from 'components/Back'
 import { useSbtDetail, useSbtClaim, useSbtClaimList, useSbtWhetherClaim } from 'hooks/useBackedSbtServer'
 import { useParams } from 'react-router-dom'
-import { checkIsJoin } from 'utils/fetch/server'
 import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -21,6 +20,8 @@ import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { ChainList, ChainId } from 'constants/chain'
 import { shortenAddress } from 'utils'
+import { useIsJoined } from 'hooks/useBackedDaoServer'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   height: 800,
@@ -79,20 +80,23 @@ const OwnersStyle = styled(Box)(() => ({
 }))
 
 export default function SoulboundDetail() {
-  const { account } = useActiveWeb3React()
+  const { library, account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
 
   const { sbtId } = useParams<{ sbtId: string }>()
-  const { result: sbtDetail } = useSbtDetail(sbtId)
+  const { result: sbtDetail, whetherClaimBool } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(parseFloat(sbtId))
-  const [sbtClaimBool, setsbtClaimBool] = useState(false)
-  const [whiteBool, setwhiteBool] = useState(false)
+  const [sbtClaimBool, setsbtClaimBool] = useState(true)
+  // const [whiteBool, setwhiteBool] = useState(false)
   const { SbtClaimCallback } = useSbtClaim()
-  const { SbtWhetherClaimCallback } = useSbtWhetherClaim()
-  const [isJoin, setIsJoin] = useState(false)
+  const { claimBool } = useSbtWhetherClaim(sbtId)
+  const [isJoin, setIsJoin] = useState(true)
+  const [switchChain, setSwitchChain] = useState(false)
   const joinDAO = useJoinDAO()
+  const { isJoined } = useIsJoined(sbtDetail?.chainId, sbtDetail?.daoAddress)
+
   const [Chain, setChain] = useState<{
     icon: JSX.Element
     logo: string
@@ -101,44 +105,33 @@ export default function SoulboundDetail() {
     id: ChainId
     hex: string
   }>()
-  const [JoninLoding, setJoninLoding] = useState(true)
-  const [ClaimLoding, setClaimLoding] = useState(true)
   const { showModal, hideModal } = useModal()
   useEffect(() => {
-    if (!sbtDetail) return
-
-    const ChainData = ChainList.filter(v => v.id == sbtDetail.chainId)
+    const ChainData = ChainList.filter(v => v.id == sbtDetail?.chainId)
     setChain(ChainData[0])
-    checkIsJoin(sbtDetail.chainId, sbtDetail.daoAddress)
-      .then(res => {
-        if (res.data.data) {
-          setIsJoin(true)
-        }
-        setJoninLoding(false)
-      })
-      .catch(error => {
-        console.log(error)
-        setIsJoin(false)
-      })
-    if (sbtId && account) {
-      SbtWhetherClaimCallback(sbtId, account).then(bool => {
-        if (bool === 'false') {
-          setsbtClaimBool(true)
-          setwhiteBool(true)
+
+    if (sbtId && account && chainId) {
+      if (chainId === sbtDetail?.tokenChainId) {
+        setSwitchChain(false)
+        if (claimBool) {
+          setsbtClaimBool(false)
         } else {
-          setsbtClaimBool(bool)
+          setsbtClaimBool(true)
         }
-        setClaimLoding(false)
-      })
-    } else {
-      setClaimLoding(false)
+      } else {
+        setsbtClaimBool(true)
+        setSwitchChain(true)
+      }
+      if (isJoined) {
+        setIsJoin(true)
+      }
     }
-  }, [sbtDetail, sbtId, userSignature, account, SbtWhetherClaimCallback])
+  }, [sbtDetail, sbtId, userSignature, chainId, account, whetherClaimBool, isJoined, claimBool, isJoin])
 
   const JoninCallback = useCallback(async () => {
     if (!account) return toggleWalletModal()
     if (!userSignature) return loginSignature()
-    await joinDAO(sbtDetail.chainId, sbtDetail.daoAddress)
+    await joinDAO(sbtDetail?.chainId, sbtDetail?.daoAddress)
       .then(() => {
         setIsJoin(true)
       })
@@ -175,96 +168,145 @@ export default function SoulboundDetail() {
         console.error(err)
       })
   }, [SbtClaimCallback, sbtId, account, userSignature, hideModal, showModal, toggleWalletModal, loginSignature])
+
+  // const nextHandler = useMemo(() => {
+  //   if (!isJoin) {
+  //     return {
+  //       JoinDaodisabled: true,
+  //       Claimdisabled: true,
+  //       error: 'Dao required'
+  //     }
+  //   }
+  //   if (whetherClaim === undefined) {
+  //     return {
+  //       JoinDaodisabled: false,
+  //       Claimdisabled: true,
+  //       error: 'Blockchain required'
+  //     }
+  //   }
+  //   if (!whiteBool) {
+  //     return {
+  //       JoinDaodisabled: false,
+  //       Claimdisabled: true,
+  //       error: 'File required'
+  //     }
+  //   }
+  //   return {
+  //     JoinDaodisabled: false,
+  //     Claimdisabled: false
+  //   }
+  // }, [])
   return (
     <>
-      {sbtDetail && (
-        <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
-          <Back />
-          <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
-            <ContentBoxStyle>
-              <ContentHeaderStyle>
-                <Typography fontSize={24} fontWeight={700} lineHeight={'29px'} color={'#3F5170'}>
-                  {sbtDetail.itemName}
-                </Typography>
-                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
-                  <DaoAvatars src={sbtDetail.daoLogo} size={45} />
-                  <Box>
-                    <Typography variant="body1" color={'#80829F'}>
-                      Base on
-                    </Typography>
-                    <Typography variant="h6" fontSize={18} lineHeight={'20px'}>
-                      {sbtDetail.daoName}
-                    </Typography>
-                  </Box>
-                  <JoInButton disabled={JoninLoding ? JoninLoding : isJoin} onClick={JoninCallback}>
-                    {JoninLoding ? 'Loading...' : 'Joined'}
-                  </JoInButton>
-                </Box>
-              </ContentHeaderStyle>
-              <DetailLayoutStyle>
-                <RowCenter>
-                  <Box>
-                    <DetailTitleStyle>Items</DetailTitleStyle>
-                    <DetailStyle>{sbtDetail.totalSupply}</DetailStyle>
-                  </Box>
-                  <Box>
-                    <DetailTitleStyle>Network</DetailTitleStyle>
-                    <DetailStyle>{Chain?.name || '--'}</DetailStyle>
-                  </Box>
-                  <Box>
-                    <DetailTitleStyle>Contract Address</DetailTitleStyle>
-                    <DetailStyle> {shortenAddress(sbtDetail.tokenAddress, 3)}</DetailStyle>
-                  </Box>
-                </RowCenter>
+      <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
+        <Back />
+        <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
+          <ContentBoxStyle>
+            <ContentHeaderStyle>
+              <Typography fontSize={24} fontWeight={700} lineHeight={'29px'} color={'#3F5170'}>
+                {sbtDetail?.itemName || '--'}
+              </Typography>
+              <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
+                <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
                 <Box>
-                  <DetailTitleStyle>Claimable Period</DetailTitleStyle>
-                  <DetailStyle fontSize={20}>
-                    {formatTimestamp(sbtDetail.startTime)} -{' '}
-                    {sbtDetail.endTime ? formatTimestamp(sbtDetail.endTime) : '--'}
+                  <Typography variant="body1" color={'#80829F'}>
+                    Base on
+                  </Typography>
+                  <Typography variant="h6" fontSize={18} lineHeight={'20px'}>
+                    {sbtDetail?.daoName || '--'}
+                  </Typography>
+                </Box>
+                <JoInButton disabled={isJoin} onClick={JoninCallback}>
+                  {isJoin ? 'Joined' : 'Joined'}
+                </JoInButton>
+              </Box>
+            </ContentHeaderStyle>
+            <DetailLayoutStyle>
+              <RowCenter>
+                <Box>
+                  <DetailTitleStyle>Items</DetailTitleStyle>
+                  <DetailStyle>{sbtDetail?.totalSupply}</DetailStyle>
+                </Box>
+                <Box>
+                  <DetailTitleStyle>Network</DetailTitleStyle>
+                  <DetailStyle>{Chain?.name || '--'}</DetailStyle>
+                </Box>
+                <Box>
+                  <DetailTitleStyle>Contract Address</DetailTitleStyle>
+                  <DetailStyle>
+                    {sbtDetail?.tokenAddress ? shortenAddress(sbtDetail?.tokenAddress, 3) : '--'}
                   </DetailStyle>
                 </Box>
-              </DetailLayoutStyle>
-              <Typography sx={{ padding: '20px 40px' }} variant="body1" lineHeight={'20px'} fontWeight={400}>
-                {sbtDetail.introduction}
-              </Typography>
-            </ContentBoxStyle>
-            <ContentBoxStyle maxWidth={580}>
+              </RowCenter>
+              <Box>
+                <DetailTitleStyle>Claimable Period</DetailTitleStyle>
+                <DetailStyle fontSize={20}>
+                  {formatTimestamp(sbtDetail?.startTime)} -{' '}
+                  {sbtDetail?.endTime ? formatTimestamp(sbtDetail?.endTime) : '--'}
+                </DetailStyle>
+              </Box>
+            </DetailLayoutStyle>
+            <Typography sx={{ padding: '20px 40px' }} variant="body1" lineHeight={'20px'} fontWeight={400}>
+              {sbtDetail?.introduction}
+            </Typography>
+          </ContentBoxStyle>
+          <ContentBoxStyle maxWidth={580}>
+            <Box
+              sx={{
+                height: 470,
+                pt: '30px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 10,
+                alignItems: 'center',
+                borderBottom: '1px solid #D4D7E2'
+              }}
+            >
               <Box
                 sx={{
-                  padding: '30px 135px',
+                  padding: '0 135px',
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: 30,
                   alignItems: 'center',
-                  borderBottom: '1px solid #D4D7E2;'
+                  flexDirection: 'column',
+                  gap: 30
                 }}
               >
-                <Image src={sbtDetail.fileUrl} style={{ height: 310, width: 310, borderRadius: '10px' }} />
-                <ClaimButton disabled={ClaimLoding ? ClaimLoding : sbtClaimBool} onClick={sbtClaimCallbak}>
-                  {ClaimLoding ? 'Loding...' : whiteBool ? 'not Claim' : sbtClaimBool ? ' Owned' : 'Claim'}
+                <Image src={sbtDetail?.fileUrl} style={{ height: 310, width: 310, borderRadius: '10px' }} />
+                <ClaimButton disabled={whetherClaimBool ? whetherClaimBool : sbtClaimBool} onClick={sbtClaimCallbak}>
+                  {whetherClaimBool ? 'Owned' : sbtClaimBool ? 'ont Owned' : 'Claim'}
                 </ClaimButton>
               </Box>
-              <OwnersStyle>
-                <Typography variant="body1" color="#B5B7CF" lineHeight={'20px'}>
-                  Owners(2,000)
-                </Typography>
-                <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                  {sbtClaimList &&
-                    sbtClaimList.map((item: any) => (
-                      <Image
-                        key={item.account}
-                        src={item.accountLogo || avatar}
-                        style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
-                      />
-                    ))}
+              {switchChain && (
+                <Alert
+                  severity="error"
+                  onClick={() => {
+                    account && triggerSwitchChain(library, sbtDetail?.tokenChainId, account)
+                  }}
+                >
+                  Address format error, please download the template.
+                </Alert>
+              )}
+            </Box>
+            <OwnersStyle>
+              <Typography variant="body1" color="#B5B7CF" lineHeight={'20px'}>
+                Owners(2,000)
+              </Typography>
+              <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
+                {sbtClaimList &&
+                  sbtClaimList.map((item: any) => (
+                    <Image
+                      key={item.account}
+                      src={item.accountLogo || avatar}
+                      style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
+                    />
+                  ))}
 
-                  {sbtClaimList && sbtClaimList.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
-                </Box>
-              </OwnersStyle>
-            </ContentBoxStyle>
-          </Box>
-        </ContainerWrapper>
-      )}
+                {sbtClaimList && sbtClaimList.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
+              </Box>
+            </OwnersStyle>
+          </ContentBoxStyle>
+        </Box>
+      </ContainerWrapper>
     </>
   )
 }

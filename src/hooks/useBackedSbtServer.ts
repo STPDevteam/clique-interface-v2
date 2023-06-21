@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { ChainId } from '../constants/chain'
 import {
   createSbt,
@@ -10,11 +10,13 @@ import {
   getSbtClaimList
 } from '../utils/fetch/server'
 import ReactGA from 'react-ga4'
-import { useCreateSbtContract } from 'hooks/useContract'
+import { useSbtContract } from 'hooks/useContract'
+import { useSingleCallResult } from 'state/multicall/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useGasPriceInfo } from './useGasPrice'
 import { useSbtListPaginationCallback } from 'state/pagination/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 export interface SbtListProp {
   SBTId: number
@@ -33,7 +35,7 @@ export interface SbtListProp {
 
 export function useCreateSbtCallback() {
   const addTransaction = useTransactionAdder()
-  const contract = useCreateSbtContract()
+  const contract = useSbtContract()
   const gasPriceInfoCallback = useGasPriceInfo()
 
   const CreateSbtCallback = useCallback(
@@ -177,7 +179,16 @@ export function useSbtClaimList(sbtId: number) {
 }
 
 export function useSbtDetail(sbtId: string) {
+  const { account } = useActiveWeb3React()
+  const contract = useSbtContract()
   const [result, setResult] = useState<any>()
+  const whetherClaim = useSingleCallResult(
+    contract,
+    'minted',
+    [account || undefined, parseFloat(sbtId)],
+    undefined,
+    undefined
+  ).result?.[0]
   useEffect(() => {
     ;(async () => {
       try {
@@ -192,13 +203,22 @@ export function useSbtDetail(sbtId: string) {
     })()
   }, [sbtId])
 
+  const whetherClaimBool = useMemo(() => {
+    if (whetherClaim === undefined) {
+      return ''
+    }
+
+    return whetherClaim
+  }, [whetherClaim])
+
   return {
-    result
+    result,
+    whetherClaimBool
   }
 }
 
 export function useSbtClaim() {
-  const contract = useCreateSbtContract()
+  const contract = useSbtContract()
   const gasPriceInfoCallback = useGasPriceInfo()
   const addTransaction = useTransactionAdder()
 
@@ -256,22 +276,23 @@ export function useSbtClaim() {
   return { SbtClaimCallback }
 }
 
-export function useSbtWhetherClaim() {
-  const contract = useCreateSbtContract()
+export function useSbtWhetherClaim(sbtId: string) {
+  const [claimBool, setClaimBool] = useState()
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await getSbtClaim(parseFloat(sbtId))
+        if (res.data.data) {
+          setClaimBool(res.data.data.canClaim)
+        }
+      } catch (error) {
+        console.error('Purchase', error)
+        throw error
+      }
+    })()
+  }, [sbtId])
 
-  const SbtWhetherClaimCallback = useCallback(
-    async (sbtId: string, account: string | undefined) => {
-      if (!contract) throw new Error('none contract')
-      if (!sbtId) return
-      const res = await getSbtClaim(parseFloat(sbtId))
-      if (!res.data.data.canClaim) return 'false'
-      const args = [account, sbtId]
-      const method = 'minted'
-      return contract[method](...args)
-    },
-    [contract]
-  )
-  return { SbtWhetherClaimCallback }
+  return { claimBool }
 }
 
 export function useSbtList() {
