@@ -27,6 +27,8 @@ import ManageMemberModal from '../Proposal/ManageMemberModal'
 import PopperCard from 'components/PopperCard'
 import DeleteSpaceModal from 'pages/AboutSetting/Modals/DeleteSpaceModal'
 import TransferAdminModal from 'pages/AboutSetting/Modals/TransferAdminModal'
+import { useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
   const { showModal } = useModal()
@@ -112,9 +114,10 @@ const editList = [
   { value: '2', label: 'Delete Teamspace' }
 ]
 function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: SpacesListProp[]; onDimiss: () => void }) {
-  console.log(dataList)
+  const { account } = useActiveWeb3React()
   const { showModal } = useModal()
   const update = useUpdateTeamspace()
+  const { myJoinDaoData: adminLevel } = useMyDaoDataCallback()
 
   const rows = useMemo(
     () =>
@@ -214,7 +217,20 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                       }}
                     >
                       {row.member}
-                      <Typography onClick={() => handleManageClick(row.data.spacesId)}>Manage</Typography>
+                      <Typography
+                        onClick={() => {
+                          if (
+                            adminLevel.job !== 'owner' ||
+                            (account && account.toLocaleLowerCase() !== row.data.creator.account.toLocaleLowerCase())
+                          ) {
+                            toast.error("You don't have permissions")
+                            return
+                          }
+                          handleManageClick(row.data.spacesId)
+                        }}
+                      >
+                        Manage
+                      </Typography>
                     </Typography>
                   </StyledTableCell>
                   <StyledTableCell>
@@ -261,6 +277,14 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                             sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                             value={item.value}
                             onClick={() => {
+                              if (
+                                adminLevel.job !== 'owner' ||
+                                (account &&
+                                  account.toLocaleLowerCase() !== row.data.creator.account.toLocaleLowerCase())
+                              ) {
+                                toast.error("You don't have permissions")
+                                return
+                              }
                               handleChangeVisibility(itemList[index].value, row.data)
                             }}
                           >
@@ -313,6 +337,14 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                             sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                             value={item.value}
                             onClick={() => {
+                              if (
+                                adminLevel.job !== 'owner' ||
+                                (account &&
+                                  account.toLocaleLowerCase() !== row.data.creator.account.toLocaleLowerCase())
+                              ) {
+                                toast.error("You don't have permissions")
+                                return
+                              }
                               if (editList[index].value === '0') {
                                 showModal(
                                   <AddTeamspaceModal

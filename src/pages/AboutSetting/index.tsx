@@ -123,9 +123,9 @@ export default function AboutSetting() {
 
   const currentTabLinks = useMemo(() => {
     const list =
-      daoAuthData?.job === DaoAdminLevelProp.SUPER_ADMIN || daoAuthData?.job === DaoAdminLevelProp.OWNER
+      daoAuthData?.job === DaoAdminLevelProp[1] || daoAuthData?.job === DaoAdminLevelProp[0]
         ? tabList
-        : daoAuthData?.job === DaoAdminLevelProp.ADMIN
+        : daoAuthData?.job === DaoAdminLevelProp[2]
         ? tabList.filter(i => ['About', 'General', 'Governance Settings'].includes(i.label))
         : tabList.filter(i => i.label === 'About')
 

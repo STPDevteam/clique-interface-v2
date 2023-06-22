@@ -12,9 +12,10 @@ import {
 } from './actions'
 
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
+type MyJoinDaoDataPropKey = keyof MyJoinDaoDataProp
 
 export function useMyDaoDataCallback() {
-  // const daoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
+  const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
 
   const dispatch = useDispatch<AppDispatch>()
   const updateJoinDaoDataCb = useCallback(
@@ -24,9 +25,18 @@ export function useMyDaoDataCallback() {
     },
     [dispatch]
   )
+  const updateJoinDaoKeyDataCb = useCallback(
+    (key: MyJoinDaoDataPropKey, value: any) => {
+      const _updateData = (Object.assign({ ...myJoinDaoData }, { [key]: value }) as unknown) as MyJoinDaoDataProp
+      updateJoinDaoDataCb(_updateData)
+    },
+    [myJoinDaoData, updateJoinDaoDataCb]
+  )
 
   return {
-    updateJoinDaoDataCb
+    updateJoinDaoDataCb,
+    updateJoinDaoKeyDataCb,
+    myJoinDaoData
   }
 }
 
@@ -46,7 +56,6 @@ export function useMyDaoListDataCallback() {
 
 export function useBuildingDaoDataCallback() {
   const buildingDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
-  const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
 
   const dispatch = useDispatch<AppDispatch>()
   const updateBuildingDaoData = useCallback(
@@ -70,7 +79,6 @@ export function useBuildingDaoDataCallback() {
     updateBuildingDaoData,
     removeBuildingDaoData,
     updateBuildingDaoKeyData,
-    buildingDaoData,
-    myJoinDaoData
+    buildingDaoData
   }
 }

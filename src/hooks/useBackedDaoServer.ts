@@ -425,32 +425,11 @@ export function useJoinDAO() {
 }
 
 export function useChangeAdminRole() {
-  const [loading, setLoading] = useState(false)
-  const { account } = useActiveWeb3React()
-
-  const changeRole = useCallback(
-    async (chainId: ChainId, daoAddress: string, jobId: number) => {
-      if (!account) {
-        return
-      }
-      setLoading(true)
-      try {
-        const res = await changeAdminRole(chainId, 'C_member', daoAddress, jobId)
-        if (res.data.data) {
-          setLoading(false)
-        }
-      } catch (error) {
-        console.log(error)
-        setLoading(false)
-      }
-    },
-    [account]
-  )
-
-  return {
-    loading,
-    changeRole
-  }
+  return useCallback(async (changeAccount: string, changeToLevel: number, daoId: number) => {
+    return changeAdminRole(changeAccount, changeToLevel, daoId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
 }
 
 export function useLogin() {

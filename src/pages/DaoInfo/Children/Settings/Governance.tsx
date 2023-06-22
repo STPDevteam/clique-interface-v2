@@ -28,6 +28,7 @@ import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 import { ChainListMap } from 'constants/chain'
 import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -126,9 +127,12 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
     <Box>
       <Row sx={{ gap: 10, mb: 14 }}>
         <Button
-          disabled={cGovernance.length >= 1}
           style={{ maxWidth: 184, height: 36 }}
           onClick={() => {
+            if (cGovernance.length >= 1) {
+              toast.error('There can only be one governance token, if you want to modify it, please remove it first')
+              return
+            }
             showModal(<AddTokenModal daoId={daoId} />)
           }}
         >
@@ -276,6 +280,7 @@ function BasicTable({
   setCGovernance: Dispatch<SetStateAction<govList[]>>
 }) {
   console.log(daoId)
+  const { updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const deleteTokenCB = useDeleteGovToken()
   const rows = governance.map(item => ({
     name: item.tokenName,
@@ -334,7 +339,14 @@ function BasicTable({
               <TableContentStyle>{row.weight}</TableContentStyle>
               <TableContentStyle sx={{ width: 200 }}>
                 <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
-                  <TextButtonStyle onClick={() => deleteToken(row.voteTokenId, index)}>Remove</TextButtonStyle>
+                  <TextButtonStyle
+                    onClick={() => {
+                      updateBuildingDaoKeyData('governance', [])
+                      deleteToken(row.voteTokenId, index)
+                    }}
+                  >
+                    Remove
+                  </TextButtonStyle>
                 </Box>
               </TableContentStyle>
             </TableRow>

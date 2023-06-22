@@ -1,13 +1,16 @@
-import Button from 'components/Button/Button'
 import Modal from '../../../components/Modal/index'
-import { Box, Stack, MenuItem, Alert } from '@mui/material'
+import { Box, Stack, MenuItem } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import Select from 'components/Select/Select'
 import useModal from 'hooks/useModal'
 import { toast } from 'react-toastify'
 import { useAddTeamspace, useUpdateTeamspace } from 'hooks/useBackedDaoServer'
+import * as yup from 'yup'
+import FormItem from 'components/FormItem'
+import { Form, Formik } from 'formik'
+import { LoadingButton } from '@mui/lab'
 
 const guestList = [
   { value: 'public', label: 'Public' },
@@ -31,116 +34,160 @@ export default function AddTeamspaceModal({
   originAccess?: string
   onDimiss: () => void
 }) {
-  const [title, setTitle] = useState(originTitle ?? '')
-  const [des, setDes] = useState(originContent ?? '')
   const [currentStatus, setCurrentStatus] = useState<string>(originAccess ?? 'public')
   const { hideModal } = useModal()
   const create = useAddTeamspace()
   const update = useUpdateTeamspace()
 
-  const onCreateClick = useCallback(() => {
-    create(currentStatus, des, daoId, title)
-      .then((res: any) => {
+  const validationSchema = yup.object().shape({
+    title: yup
+      .string()
+      .trim()
+      .required('Title required'),
+    des: yup
+      .string()
+      .trim()
+      .required('Description required')
+  })
+
+  const initialValues = {
+    title: originTitle || '',
+    des: originContent || ''
+  }
+
+  const handleSubmit = (values: any) => {
+    if (isEdit) {
+      if (!spacesId) return
+      update(currentStatus, values.des, spacesId, values.title).then((res: any) => {
         if (res.data.code !== 200) {
           toast.error(res.data.msg || 'network error')
           return
         }
-        toast.success('Create success')
+        toast.success('Update success')
         hideModal()
         onDimiss()
       })
-      .catch(err => {
-        console.log(err)
-        toast.error('create error')
-      })
-  }, [create, currentStatus, daoId, des, hideModal, onDimiss, title])
-
-  const onUpdateClick = useCallback(() => {
-    if (!spacesId) return
-    update(currentStatus, des, spacesId, title).then((res: any) => {
-      if (res.data.code !== 200) {
-        toast.error(res.data.msg || 'network error')
-        return
-      }
-      toast.success('Update success')
-      hideModal()
-      onDimiss()
-    })
-  }, [currentStatus, des, hideModal, onDimiss, spacesId, title, update])
+    } else {
+      create(currentStatus, values.des, daoId, values.title)
+        .then((res: any) => {
+          if (res.data.code !== 200) {
+            toast.error(res.data.msg || 'network error')
+            return
+          }
+          toast.success('Create success')
+          hideModal()
+          onDimiss()
+        })
+        .catch(err => {
+          console.log(err)
+          toast.error('create error')
+        })
+    }
+  }
 
   return (
-    <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
-      <Box display="grid" textAlign={'center'} width="100%" height="480px">
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          width="100%"
-          color={'#3F5170'}
-          sx={{
-            fontSize: 14,
-            fontWeight: 500
-          }}
-        >
-          {isEdit ? 'Edit Workspace' : 'Add Workspace'}
-        </Box>
-        <Input value={title} maxLength={200} onChange={e => setTitle(e.target.value)} label="Title" />
-        <Input
-          height={138}
-          style={{
-            padding: '5px 20px'
-          }}
-          value={des}
-          maxLength={200}
-          multiline
-          rows={6}
-          label="Description"
-          onChange={e => setDes(e.target.value)}
-        />
-        <Select
-          placeholder=""
-          width={'422px'}
-          height={40}
-          noBold
-          label="Guests"
-          value={currentStatus}
-          style={{ borderRadius: '8px', borderColor: '#D4D7E2' }}
-          onChange={e => {
-            setCurrentStatus(e.target.value)
-          }}
-        >
-          {guestList.map(item => (
-            <MenuItem
-              key={item.value}
-              sx={{ fontWeight: 500, fontSize: 10 }}
-              value={item.value}
-              selected={currentStatus === item.value}
-            >
-              {item.label}
-            </MenuItem>
-          ))}
-        </Select>
-        {!title.trim() ? (
-          <Alert severity="error">Title required</Alert>
-        ) : !des ? (
-          <Alert severity="error">Description required</Alert>
-        ) : (
-          ''
-        )}
-        <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={10}>
-          <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
-            Close
-          </OutlineButton>
-          <Button
-            onClick={isEdit ? onUpdateClick : onCreateClick}
-            width="125px"
-            height="40px"
-            disabled={!title || !des}
-          >
-            {isEdit ? 'Save' : 'Add'}
-          </Button>
-        </Stack>
-      </Box>
-    </Modal>
+    <Formik
+      enableReinitialize
+      validationSchema={validationSchema}
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+    >
+      {({ values, setFieldValue, errors, touched }) => {
+        return (
+          <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
+            <Box component={Form} display="grid" textAlign={'center'} width="100%" height="480px">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                width="100%"
+                color={'#3F5170'}
+                sx={{
+                  fontSize: 14,
+                  fontWeight: 500
+                }}
+              >
+                {isEdit ? 'Edit Workspace' : 'Add Workspace'}
+              </Box>
+              <FormItem name="title" required>
+                <Input
+                  value={values.title}
+                  style={{ borderColor: errors.title && touched.title ? '#e46767' : '#d4d7e2' }}
+                  maxLength={200}
+                  onChange={e => setFieldValue('title', e)}
+                  label="Title"
+                />
+              </FormItem>
+              <FormItem name="des" required>
+                <Input
+                  height={138}
+                  style={{
+                    padding: '5px 20px',
+                    borderColor: errors.des && touched.des ? '#e46767' : '#d4d7e2'
+                  }}
+                  value={values.des}
+                  maxLength={200}
+                  multiline
+                  rows={6}
+                  label="Description"
+                  onChange={e => setFieldValue('des', e)}
+                />
+              </FormItem>
+              <Select
+                placeholder=""
+                width={'422px'}
+                height={40}
+                noBold
+                label="Guests"
+                value={currentStatus}
+                style={{ borderRadius: '8px', borderColor: '#D4D7E2' }}
+                onChange={e => {
+                  setCurrentStatus(e.target.value)
+                }}
+              >
+                {guestList.map(item => (
+                  <MenuItem
+                    key={item.value}
+                    sx={{ fontWeight: 500, fontSize: 10 }}
+                    value={item.value}
+                    selected={currentStatus === item.value}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              <Stack gridTemplateColumns={'1fr 1fr'} justifyContent={'space-between'} flexDirection={'row'} mt={10}>
+                <OutlineButton onClick={hideModal} noBold color="#0049C6" width={'125px'} height="40px">
+                  Close
+                </OutlineButton>
+                {isEdit ? (
+                  <LoadingButton
+                    loadingPosition="start"
+                    startIcon={<></>}
+                    variant="contained"
+                    color="primary"
+                    sx={{ width: 125, height: 40, textAlign: 'center' }}
+                    type="submit"
+                  >
+                    Save
+                  </LoadingButton>
+                ) : (
+                  <LoadingButton
+                    loadingPosition="start"
+                    startIcon={<></>}
+                    variant="contained"
+                    color="primary"
+                    sx={{ width: 125, height: 40, textAlign: 'center' }}
+                    type="submit"
+                  >
+                    Add
+                  </LoadingButton>
+                )}
+              </Stack>
+            </Box>
+          </Modal>
+        )
+      }}
+    </Formik>
   )
 }

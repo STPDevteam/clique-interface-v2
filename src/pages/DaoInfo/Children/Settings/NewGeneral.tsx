@@ -2,25 +2,17 @@ import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Input from 'components/Input'
-// import Image from 'components/Image'
 import UpImgButton from 'components/UploadImage/UpImgButton'
-// import NumericalInput from 'components/Input/InputNumerical'
 import Tooltip from 'components/Tooltip'
-// import ToggleButtonGroup from 'components/ToggleButtonGroup'
-// import ChainSelect from 'components/Select/ChainSelect'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import { Form, Formik } from 'formik'
 import * as yup from 'yup'
 import FormItem from 'components/FormItem'
 import { FormType } from './type'
 import { formCheckValid } from 'utils'
-// import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import { toast } from 'react-toastify'
 import { useUpdateDaoGeneral } from 'hooks/useBackedDaoServer'
-// import tokenLogo from 'assets/images/tokenLogo.png'
-// import { useTokenByChain } from 'state/wallet/hooks'
-// import { Token, TokenAmount } from 'constants/token'
 
 export const sxInputStyle = {
   '& .MuiInputBase-root': {
@@ -80,18 +72,18 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
     instagram: yup
       .string()
       .trim()
-      .url('Please enter a valid URL'),
-    tokenContractAddr: yup.string().matches(/^0x[a-fA-F0-9]{40}$/, 'Invalid token contract address'),
-    holdAmount: yup.string().when('ToggleValue', {
-      is: 'Anyone',
-      then: yup.string(),
-      otherwise: yup.string().required('amount can not be empty')
-    }),
-    tokenChain: yup.object({
-      icon: yup.mixed<ReactNode>(),
-      link: yup.string(),
-      selectedIcon: yup.mixed<ReactNode>()
-    })
+      .url('Please enter a valid URL')
+    // tokenContractAddr: yup.string().matches(/^0x[a-fA-F0-9]{40}$/, 'Invalid token contract address'),
+    // holdAmount: yup.string().when('ToggleValue', {
+    //   is: 'Anyone',
+    //   then: yup.string(),
+    //   otherwise: yup.string().required('amount can not be empty')
+    // }),
+    // tokenChain: yup.object({
+    //   icon: yup.mixed<ReactNode>(),
+    //   link: yup.string(),
+    //   selectedIcon: yup.mixed<ReactNode>()
+    // })
   })
   // const ListItem = [
   //   { label: 'Anyone', value: 'Anyone' },
@@ -109,9 +101,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
     website: daoInfo.website || '',
     github: daoInfo.github || '',
     discord: daoInfo.discord || '',
-    handle: daoInfo.handle,
-    holdAmount: daoInfo.join.holdAmount || '',
-    tokenContractAddr: daoInfo.join.tokenAddress || ''
+    handle: daoInfo.handle
   }
 
   const handleSubmit = (values: any) => {
@@ -136,6 +126,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
           return
         }
         toast.success('Update success')
+        // update redux
       })
       .catch(err => {
         console.log(err)

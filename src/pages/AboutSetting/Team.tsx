@@ -15,9 +15,8 @@ import { useParams } from 'react-router-dom'
 import { useGetPublishJobList, useJobsList } from 'hooks/useBackedTaskServer'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MemberAuthorityAssignmentModal from './Modals/MemberAuthorityAssignmentModal'
-// import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 import EmptyData from 'components/EmptyData'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 
@@ -27,10 +26,10 @@ const TopText = styled(Box)({
   alignItems: 'center'
 })
 
-export enum LevelNameOf {
-  'owner' = '0',
-  'superAdmin' = '1',
-  'admin' = '2'
+export const adminLevelIndex = {
+  owner: 0,
+  superAdmin: 1,
+  admin: 2
 }
 
 export default function Team() {
@@ -44,7 +43,7 @@ export default function Team() {
   const { account: curAccount } = useActiveWeb3React()
   const { result: jobList } = useGetPublishJobList(curDaoId, randNum)
   const { result: memberList } = useJobsList(curDaoId, rand)
-  const { myJoinDaoData: memberLevel } = useBuildingDaoDataCallback()
+  const { myJoinDaoData: memberLevel } = useMyDaoDataCallback()
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -56,7 +55,7 @@ export default function Team() {
     }
   }, [])
 
-  const addMemberCB = useCallback(() => {
+  useCallback(() => {
     showModal(<AddMemberModal onClose={hideModal} spacesId={spacesId} />)
   }, [hideModal, showModal])
 
@@ -98,12 +97,25 @@ export default function Team() {
           }
         }}
         onClick={() => {
-          if (curAccount && account === curAccount) return
-          showModal(<MemberAuthorityAssignmentModal level={jobsLevel} onDimiss={() => setRand(Math.random())} />)
+          if (curAccount && account.toLocaleLowerCase() === curAccount.toLocaleLowerCase()) return
+          if (memberLevel.job === 'superAdmin') {
+            if (jobsLevel === 0) return
+          } else if (memberLevel.job === 'admin') {
+            if ([0, 1].includes(jobsLevel)) return
+          }
+          showModal(
+            <MemberAuthorityAssignmentModal
+              myLevel={adminLevelIndex[memberLevel.job as keyof typeof adminLevelIndex]}
+              account={account}
+              daoId={daoId}
+              level={jobsLevel}
+              onDimiss={() => setRand(Math.random())}
+            />
+          )
         }}
       >
         <Typography width={130} textAlign={'left'}>
-          {memberLevel.job}
+          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp]}
         </Typography>
         <ExpandMoreIcon />
       </Box>
@@ -164,11 +176,11 @@ export default function Team() {
           Jobs
         </Typography>
         <Box display={'flex'} gap={35} flexDirection={'row'}>
-          {memberLevel?.job === DaoAdminLevelProp.SUPER_ADMIN || memberLevel?.job === DaoAdminLevelProp.OWNER ? (
-            <BlueButton actionText="Add Members" onClick={addMemberCB} />
+          {/* {memberLevel?.job === DaoAdminLevelProp.SUPER_ADMIN || memberLevel?.job === DaoAdminLevelProp.OWNER ? (
+            <BlueButton actionText="Add Admins" onClick={addMemberCB} />
           ) : (
             <></>
-          )}
+          )} */}
           <BlueButton actionText="Add Jobs" onClick={addJobsCB} />
         </Box>
       </TopText>
