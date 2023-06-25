@@ -13,8 +13,6 @@ import ChainSelect from 'components/Select/ChainSelect'
 import NumericalInput from 'components/Input/InputNumerical'
 import { toast } from 'react-toastify'
 import UploadImage from 'components/UploadImage'
-// import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
-// import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -42,7 +40,7 @@ const RedText = styled(Typography)({
   color: '#E46767'
 })
 
-export default function AddTokenModal({ daoId }: { daoId: number }) {
+export default function AddTokenModal({ daoId, setRand }: { daoId: number; setRand: () => void }) {
   const { hideModal } = useModal()
   const [tokenAddress, setTokenAddress] = useState('')
   const [baseChainId, setBaseChainId] = useState<any>('')
@@ -53,7 +51,6 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
     isAddress(tokenAddress) ? tokenAddress : undefined,
     currentBaseChain?.id ?? undefined
   )
-  // const { updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const addToken = useAddGovToken()
 
   const voteBtn: {
@@ -124,8 +121,9 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
       }
       toast.success('Add success')
       hideModal()
+      setRand()
     })
-  }, [addToken, avatar, daoId, govToken, hideModal, requirementAmount, voteBtn.error])
+  }, [addToken, avatar, daoId, govToken, hideModal, requirementAmount, setRand, voteBtn.error])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>

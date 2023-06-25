@@ -95,7 +95,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   const [description, setDescription] = useState('')
   const [startTime, setStarttime] = useState<number>()
   const [endTime, setEndtime] = useState<number>()
-  // const [introduction, setIntroduction] = useState('')
+  const [startValidate, setStartValidate] = useState(false)
   const [voteType, setVoteType] = useState<VotingTypes>(
     daoInfo.votingType === VotingTypes.ANY
       ? VotingTypes.SINGLE
@@ -117,20 +117,20 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     return _token
   }, [daoInfo.governance])
   const myBalance = useCurrencyBalance(account || undefined, createToken)
-  console.log(daoInfo, myBalance)
+
   const errors: {
     text: string
     name: string
   } = useMemo(() => {
     if (!title.trim()) {
       return {
-        text: 'title required',
+        text: 'Title required',
         name: 'title'
       }
     }
     if (!description) {
       return {
-        text: 'description required',
+        text: 'Description required',
         name: 'description'
       }
     }
@@ -142,13 +142,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     }
     if (!startTime) {
       return {
-        text: 'start time required',
+        text: 'Start time required',
         name: 'time'
       }
     }
     if (!endTime) {
       return {
-        text: 'end time required',
+        text: 'End time required',
         name: 'time'
       }
     }
@@ -175,6 +175,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   }, [daoId, history])
 
   const handleSubmit = useCallback(() => {
+    setStartValidate(true)
     if (!daoId || !endTime || !startTime || errors.text) return
     setLoading(true)
     createProposalCallback(
@@ -193,11 +194,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
         setLoading(false)
         toast.success('Create proposal success')
         toList()
+        setStartValidate(false)
       })
       .catch((err: any) => {
         toast.error('Network error')
         setLoading(false)
         console.log(err)
+        setStartValidate(false)
       })
   }, [
     createProposalCallback,
@@ -245,9 +248,9 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
               setTitle(val.target.value)
             }}
             label="Title"
-            style={{ borderColor: errors.text && errors.name === 'title' ? '#E46767' : '#D4D7E2' }}
+            style={{ borderColor: startValidate && errors.text && errors.name === 'title' ? '#E46767' : '#D4D7E2' }}
           />
-          {errors.text && errors.name === 'title' && (
+          {startValidate && errors.text && errors.name === 'title' && (
             <Typography color={'#E46767'} fontSize={14} fontWeight={500} sx={{ marginTop: '10px !important' }}>
               {errors.text}
             </Typography>
@@ -261,7 +264,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
           <div>
             <LabelText>Description</LabelText>
             <Editor content={description} setContent={setDescription} />
-            {errors.text && errors.name === 'description' && (
+            {startValidate && errors.text && errors.name === 'description' && (
               <Typography color={'#E46767'} fontSize={14} fontWeight={500} sx={{ marginTop: '50px !important' }}>
                 {errors.text}
               </Typography>

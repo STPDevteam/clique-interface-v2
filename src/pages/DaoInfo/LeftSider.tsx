@@ -217,13 +217,7 @@ export default function LeftSider() {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const { result: taskList } = useGetLeftTaskList(Number(daoId))
-  console.log('🚀 ~ file: LeftSider.tsx:189 ~ LeftSider ~ taskList:', taskList)
-  const makeRouteLink = useCallback(
-    (route: string) => {
-      return route.replace(':daoId', daoId)
-    },
-    [daoId]
-  )
+  const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
 
   const workspaceList = useMemo(() => {
     if (!taskList) return []

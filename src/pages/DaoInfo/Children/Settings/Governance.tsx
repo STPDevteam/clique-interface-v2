@@ -24,7 +24,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { govList } from 'state/buildingGovDao/actions'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
-import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
+import { useGetDaoInfo, useUpdateGovernance } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 import { ChainListMap } from 'constants/chain'
 import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
@@ -64,7 +64,8 @@ export default function General({ daoId }: { daoId: number }) {
     { label: 'Single-voting', value: '1' },
     { label: 'Multi-voting', value: '2' }
   ]
-
+  const [rand, setRand] = useState(Math.random())
+  const createDaoData = useGetDaoInfo(daoId, rand)
   const [startValite, setStartValite] = useState(false)
   const [PeriodValue, setPeriodValue] = useState(PeriodList[0].value)
   const [TypesValue, setTypesValue] = useState(daoInfo.votingType || TypesList[0].value)
@@ -80,7 +81,6 @@ export default function General({ daoId }: { daoId: number }) {
     [daoInfo.governance]
   )
   const cb = useUpdateGovernance()
-  console.log('daoInfo', daoInfo.governance)
 
   const saveBtn: {
     disabled: boolean
@@ -145,7 +145,7 @@ export default function General({ daoId }: { daoId: number }) {
               toast.error('There can only be one governance token, if you want to modify it, please remove it first')
               return
             }
-            showModal(<AddTokenModal daoId={daoId} />)
+            showModal(<AddTokenModal daoId={daoId} setRand={() => setRand(Math.random())} />)
           }}
         >
           Add Governance Token
@@ -157,7 +157,9 @@ export default function General({ daoId }: { daoId: number }) {
           Create new token
         </OutlineButton>
       </Row>
-      <BasicTable daoId={daoId} governance={daoInfo.governance} />
+      {createDaoData?.governance && (
+        <BasicTable setRand={() => setRand(Math.random())} governance={createDaoData?.governance} />
+      )}
       <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20 }}>
         <Typography
           sx={{
@@ -293,8 +295,7 @@ const TextButtonStyle = styled(Typography)(() => ({
   userSelect: 'none'
 }))
 
-function BasicTable({ daoId, governance }: { daoId: number; governance: govList[] }) {
-  console.log('governance', daoId, governance)
+function BasicTable({ setRand, governance }: { setRand: () => void; governance: govList[] }) {
   const { updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const deleteTokenCB = useDeleteGovToken()
   const rows = governance.map(item => ({
@@ -325,9 +326,10 @@ function BasicTable({ daoId, governance }: { daoId: number; governance: govList[
           return
         }
         toast.success('Remove success')
+        setRand()
       })
     },
-    [deleteTokenCB]
+    [deleteTokenCB, setRand]
   )
 
   return (

@@ -16,6 +16,8 @@ import { formCheckValid } from 'utils'
 import * as yup from 'yup'
 import { FormType } from 'pages/DaoInfo/Children/Settings/type'
 import { toast } from 'react-toastify'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -30,6 +32,7 @@ const InputStyle = styled(Input)(() => ({
 }))
 
 export default function Index() {
+  const history = useHistory()
   const validationSchema = yup.object().shape({
     daoLogo: yup.string().required('Please upload your Dao picture'),
     daoName: yup
@@ -50,6 +53,7 @@ export default function Index() {
       .required('Please enter your Organization Name')
       .min(4, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
       .max(20, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
+      .matches(/^\w*$/, 'Only contain letters, numbers and underscores')
       .test('validate', 'Your Organization Username is invaild', async value => {
         if (value) {
           queryHandleCallback(value).then((res: any) => {
@@ -95,6 +99,7 @@ export default function Index() {
       return
     }
     toast.success('Create success')
+    history.push(routes._DaoInfo + `/${res.data.data}/proposal`)
   }
   return (
     <Formik
