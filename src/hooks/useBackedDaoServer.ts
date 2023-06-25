@@ -1008,7 +1008,6 @@ export function useGetDaoInfo(daoId: number) {
         if (!daoId) return
         const res = await getV3DaoInfo(daoId)
         const data = res.data.data as CreateDaoDataProp
-        console.log('1011', data)
 
         if (!data) {
           setResult(undefined)

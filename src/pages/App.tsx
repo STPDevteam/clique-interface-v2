@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
 import { styled } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
@@ -18,7 +18,7 @@ import ProposalList from 'pages/DaoInfo/Children/Proposal'
 import Creator from 'pages/Creator'
 import CreatorDao from 'pages/Creator/CreatorDao'
 import CreateDao from 'pages/Creator/CreateDao'
-
+import { useDispatch } from 'react-redux'
 import CreatorToken from 'pages/Creator/CreatorToken'
 // import AiChat from 'pages/AiChat'
 
@@ -57,6 +57,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 import LoginModal from 'components/Header/LoginModal'
+import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -100,6 +101,8 @@ const BodyWrapper = styled('div')(({ theme }) => ({
 }))
 
 export default function App() {
+  const { pathname } = useLocation()
+  const dispatch = useDispatch()
   useEffect(() => {
     fetchUserLocation().then(res => {
       store.dispatch({
@@ -108,6 +111,12 @@ export default function App() {
       })
     })
   }, [])
+
+  useEffect(() => {
+    if (!pathname.includes('/governance/daoInfo')) {
+      dispatch(removeCreateDaoData())
+    }
+  }, [dispatch, pathname])
 
   return (
     <Suspense fallback={null}>
