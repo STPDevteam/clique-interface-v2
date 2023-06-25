@@ -32,7 +32,7 @@ export const routes = {
   Tokens: '/tokens',
   CreateSoulbound: '/createsoulbound',
   _SoulboundDetail: '/soulboundDetail',
-  SoulboundDetail: '/soulboundDetail/:sbtId',
+  SoulboundDetail: '/soulboundDetail/:chainId/:address/:sbtId',
 
   Creator: '/creator',
   CreatorDao: '/creator/dao',

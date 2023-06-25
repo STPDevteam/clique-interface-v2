@@ -1,5 +1,5 @@
 import { Alert, styled, Typography, Box, useTheme, MenuItem, Link } from '@mui/material'
-import soulboundBgimg from 'assets/images/soulbound_bg.png'
+import SoulTokenBgImg from 'assets/images/soulbound_bg.png'
 import { ReactComponent as CalendarIcon } from 'assets/svg/calendar_icon.svg'
 import Input from 'components/Input'
 import UploadFile from 'components/UploadFile'
@@ -9,8 +9,8 @@ import DateTimePicker from 'components/DateTimePicker'
 import { BlackButton } from 'components/Button/Button'
 import Back from 'components/Back'
 import Image from 'components/Image'
-import { ChainList, ChainId, ChainListMap } from 'constants/chain'
-import { useMemberDaoList, useCreateSbtCallback } from 'hooks/useBackedSbtServer'
+import { ChainList, ChainListMap } from 'constants/chain'
+import { useMemberDaoList, useCreateSbtCallback, DaoMemberProp } from 'hooks/useBackedSbtServer'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
@@ -95,26 +95,27 @@ export default function Index() {
     { id: 2, value: 'joined', label: 'DAO Members' },
     { id: 3, value: 'whitelist', label: 'Upload Addresses' }
   ]
-  const [whitelistBoole, setwhitelistBoole] = useState<boolean>(false)
+  const [whitelistBoole, setWhitelistBoole] = useState<boolean>(false)
   const [openSnackbar, setOpenSnackbar] = useState(false)
-  const [accountList, setaccountList] = useState<string[]>([])
-  const [eligibilityValue, seteligibilityValue] = useState(eligibilityList[0].value)
+  const [accountList, setAccountList] = useState<string[]>([])
+  const [eligibilityValue, setEligibilityValue] = useState(eligibilityList[0].value)
 
   const [eventStartTime, setEventStartTime] = useState<number>()
   const [eventEndTime, setEventEndTime] = useState<number>()
-  const [fileValue, setfileValue] = useState('')
+  const [fileValue, setFileValue] = useState('')
   const { result: daoList } = useMemberDaoList('C_member')
+
   const daoMemberList = useMemo(() => {
     if (!daoList) return
     return daoList
   }, [daoList])
-  const [daoValue, setdaoValue] = useState('')
-  const [symbolValue, setsymbolValue] = useState('')
-  const [itemName, setitemName] = useState('')
+
+  const [daoValue, setDaoValue] = useState<DaoMemberProp | null>(null)
+
+  const [symbolValue, setSymbolValue] = useState('')
+  const [itemName, setItemName] = useState('')
   const [Introduction, setIntroduction] = useState('')
-  const [totalSupply, settotalSupply] = useState<string>('')
-  const [daoAddress, setdaoAddress] = useState('')
-  const [daoChainId, setdaoChainId] = useState<ChainId>()
+  const [totalSupply, setTotalSupply] = useState<string>('')
   const { CreateSbtCallback } = useCreateSbtCallback()
 
   const { showModal, hideModal } = useModal()
@@ -123,9 +124,9 @@ export default function Index() {
   const SubmitCreate = useCallback(() => {
     showModal(<TransacitonPendingModal />)
     CreateSbtCallback(
-      daoChainId,
+      daoValue?.chainId,
       account || undefined,
-      daoAddress,
+      daoValue?.daoAddress,
       fileValue,
       itemName,
       eventStartTime,
@@ -143,7 +144,9 @@ export default function Index() {
         showModal(
           <TransactionSubmittedModal
             hideFunc={() => {
-              history.push(routes._SoulboundDetail + '/' + res.sbtId)
+              history.push(
+                routes._SoulboundDetail + '/' + daoValue?.chainId + '/' + daoValue?.daoAddress + '/' + res.sbtId
+              )
             }}
             hash={res.hash}
           />
@@ -158,22 +161,22 @@ export default function Index() {
         console.error(err)
       })
   }, [
-    daoChainId,
+    showModal,
+    CreateSbtCallback,
+    daoValue?.chainId,
+    daoValue?.daoAddress,
     account,
-    daoAddress,
-    eventEndTime,
     fileValue,
     itemName,
     eventStartTime,
     chainId,
     totalSupply,
     eligibilityValue,
-    Introduction,
     symbolValue,
+    eventEndTime,
+    Introduction,
     accountList,
-    CreateSbtCallback,
     hideModal,
-    showModal,
     history
   ])
 
@@ -285,12 +288,11 @@ export default function Index() {
       let newList: string[] = []
       for (const item of ret) {
         newList = insertLine(newList, item)
-        setaccountList(newList)
+        setAccountList(newList)
       }
     }
     reader.readAsBinaryString(el.files[0])
   }, [insertLine])
-  console.log(Introduction, 90)
   return (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
       <Box
@@ -302,7 +304,7 @@ export default function Index() {
         }}
       >
         <img
-          src={soulboundBgimg}
+          src={SoulTokenBgImg}
           alt=""
           style={{
             width: 600,
@@ -331,22 +333,20 @@ export default function Index() {
           <Select
             placeholder="select Dao"
             noBold
-            value={daoValue}
+            value={daoValue?.chainId}
             onChange={e => {
-              setdaoValue(e.target.value)
-              setdaoAddress(e.target.value.daoAddress)
-              setdaoChainId(e.target.value.chainId)
+              setDaoValue(daoMemberList?.find(v => v.chainId === e.target.value) || null)
             }}
           >
             {daoMemberList &&
-              daoMemberList.map((item: any, index: any) => (
+              daoMemberList.map((item, index) => (
                 <MenuItem
                   key={index}
                   sx={{
                     fontWeight: 500,
                     fontSize: '14px !important'
                   }}
-                  value={item}
+                  value={item?.chainId}
                 >
                   <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
                     <Image
@@ -385,7 +385,7 @@ export default function Index() {
             size={150}
             value={fileValue}
             onChange={e => {
-              setfileValue(e)
+              setFileValue(e)
             }}
           />
         </Box>
@@ -394,7 +394,7 @@ export default function Index() {
             value={itemName}
             label="Item Name"
             placeholder="Write a description"
-            onChange={e => setitemName(e.target.value)}
+            onChange={e => setItemName(e.target.value)}
             maxLength={50}
             endAdornment={
               <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
@@ -408,27 +408,10 @@ export default function Index() {
 
             <Editor content={Introduction} setContent={setIntroduction} />
           </Box>
-          {/* <Input
-            value={Introduction}
-            rows={5}
-            multiline
-            label="Introduction (Optional)"
-            placeholder="Write a description"
-            maxLength={2000}
-            endAdornment={
-              <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
-                {Introduction.length}/2000
-              </Typography>
-            }
-            onChange={e => {
-              setIntroduction(e.target.value)
-            }}
-          /> */}
-
           <Input
             value={symbolValue}
             onChange={e => {
-              setsymbolValue(e.target.value)
+              setSymbolValue(e.target.value)
             }}
             label="symbol"
             placeholder="Enter Symbol"
@@ -441,7 +424,7 @@ export default function Index() {
               const regex = /^([1-9]\d*|0)$/
               const value = e.target.value
               if (!value || (value && value != '0' && regex.test(value))) {
-                settotalSupply(value)
+                setTotalSupply(value)
               }
             }}
             label="Total supply"
@@ -453,11 +436,11 @@ export default function Index() {
               label="Set Token Eligibility"
               value={eligibilityValue}
               onChange={e => {
-                seteligibilityValue(e.target.value)
+                setEligibilityValue(e.target.value)
                 if (e.target.value === 'whitelist') {
-                  setwhitelistBoole(true)
+                  setWhitelistBoole(true)
                 } else {
-                  setwhitelistBoole(false)
+                  setWhitelistBoole(false)
                 }
               }}
             >

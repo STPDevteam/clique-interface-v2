@@ -705,7 +705,7 @@ export function createSbt(
   })
 }
 
-export function getmemberDaoList(exceptLevel: string) {
+export function getMemberDaoList(exceptLevel: string) {
   return Axios.get('stpdao/v2/jobs/left', {
     exceptLevel
   })

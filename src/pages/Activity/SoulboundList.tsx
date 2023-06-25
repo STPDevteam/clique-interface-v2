@@ -122,7 +122,7 @@ function ItemCrad(item: SbtListProp) {
   return (
     <StyledItem
       onClick={() => {
-        history.push(routes._SoulboundDetail + '/' + item.SBTId)
+        history.push(routes._SoulboundDetail + '/' + item.chainId + '/' + item.daoAddress + '/' + item.SBTId)
       }}
     >
       <Image

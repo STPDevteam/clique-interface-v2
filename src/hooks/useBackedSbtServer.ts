@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { ChainId } from '../constants/chain'
 import {
   createSbt,
-  getmemberDaoList,
+  getMemberDaoList,
   commitErrorMsg,
   getSbtDetail,
   getSbtClaim,
@@ -33,6 +33,31 @@ export interface SbtListProp {
   tokenChainId: number
 }
 
+export interface SbtDetailProp {
+  chainId: ChainId
+  daoAddress: string
+  daoLogo: string
+  daoName: string
+  endTime: number
+  fileUrl: string
+  introduction: string
+  itemName: string
+  startTime: number
+  status: string
+  tokenAddress: string
+  tokenChainId: number
+  totalSupply: number
+  way: string
+}
+
+export interface DaoMemberProp {
+  chainId: ChainId
+  daoAddress: string
+  daoLogo: string
+  daoName: string
+  role: string
+}
+
 export function useCreateSbtCallback() {
   const addTransaction = useTransactionAdder()
   const contract = useSbtContract()
@@ -42,7 +67,7 @@ export function useCreateSbtCallback() {
     async (
       chainId: ChainId | undefined,
       account: string | undefined,
-      daoAddress: string,
+      daoAddress: string | undefined,
       fileUrl: string,
       itemName: string,
       startTime: number | undefined,
@@ -52,7 +77,7 @@ export function useCreateSbtCallback() {
       symbol: string,
       endTime: number | undefined,
       introduction?: string,
-      accountlist?: string[]
+      accountList?: string[]
     ) => {
       if (!contract) throw new Error('none contract')
       let result: any = {}
@@ -84,7 +109,7 @@ export function useCreateSbtCallback() {
           symbol,
           endTime,
           introduction,
-          accountlist
+          accountList
         )
         if (!account) throw new Error('none account')
         if (!res.data.data) throw new Error(res.data.msg || 'Network error')
@@ -135,21 +160,20 @@ export function useCreateSbtCallback() {
 }
 
 export function useMemberDaoList(exceptLevel: string) {
-  const [result, setResult] = useState<any>()
+  const [result, setResult] = useState<DaoMemberProp[]>()
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await getmemberDaoList(exceptLevel)
+        const res = await getMemberDaoList(exceptLevel)
         if (res.data.data) {
           setResult(res.data.data)
         }
       } catch (error) {
         console.log(error)
-        setResult(null)
+        setResult(undefined)
       }
     })()
   }, [exceptLevel])
-
   return {
     result
   }
@@ -181,28 +205,29 @@ export function useSbtClaimList(sbtId: number) {
 export function useSbtDetail(sbtId: string) {
   const { account } = useActiveWeb3React()
   const contract = useSbtContract()
-  const [result, setResult] = useState<any>()
+  const [result, setResult] = useState<SbtDetailProp>()
   const whetherClaim = useSingleCallResult(
     contract,
     'minted',
-    [account || undefined, parseFloat(sbtId)],
+    [account || undefined, Number(sbtId)],
     undefined,
     undefined
   ).result?.[0]
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await getSbtDetail(parseFloat(sbtId))
+        const res = await getSbtDetail(Number(sbtId))
         if (res.data.data) {
           setResult(res.data.data)
+          return
         }
+        throw new Error()
       } catch (error) {
         console.log(error)
-        setResult(null)
+        setResult(undefined)
       }
     })()
   }, [sbtId])
-
   const whetherClaimBool = useMemo(() => {
     if (whetherClaim === undefined) {
       return ''
@@ -276,23 +301,32 @@ export function useSbtClaim() {
   return { SbtClaimCallback }
 }
 
-export function useSbtWhetherClaim(sbtId: string) {
+export function useSbtWhetherClaim(sbtId: number) {
+  const [loading, setLoading] = useState(true)
   const [claimBool, setClaimBool] = useState()
+  const [isWhiteBool, setIsWhiteBool] = useState()
+
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await getSbtClaim(parseFloat(sbtId))
+        const res = await getSbtClaim(sbtId)
+        console.log(res, 9)
         if (res.data.data) {
           setClaimBool(res.data.data.canClaim)
+          setIsWhiteBool(res.data.data.isWhite)
+          setLoading(false)
+          return
         }
+        throw new Error()
       } catch (error) {
-        console.error('Purchase', error)
+        console.error('SbtClaim', error)
+        setLoading(false)
         throw error
       }
     })()
   }, [sbtId])
 
-  return { claimBool }
+  return { loading, isWhiteBool, claimBool }
 }
 
 export function useSbtList() {
