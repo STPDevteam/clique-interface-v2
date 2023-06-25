@@ -92,8 +92,8 @@ export default function LeftSider() {
           display: { sm: 'block', xs: 'inline-flex' }
         }}
       >
-        {myJoinedDaoList.map(({ daoAddress, chainId, daoName }) => (
-          <DaoItem key={daoAddress + chainId} chainId={chainId} daoName={daoName} daoAddress={daoAddress} />
+        {myJoinedDaoList.map(({ daoLogo, daoId, daoName }) => (
+          <DaoItem key={daoName + daoId} daoId={daoId} daoName={daoName} daoLogo={daoLogo} />
         ))}
       </Box>
       <Box
@@ -127,14 +127,13 @@ export default function LeftSider() {
   )
 }
 
-function DaoItem({ chainId, daoAddress, daoName }: { chainId: ChainId; daoAddress: string; daoName: string }) {
+function DaoItem({ daoId, daoLogo, daoName }: { daoId: number; daoLogo: string; daoName: string }) {
   const history = useHistory()
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
 
   return (
-    <Item onClick={() => history.push(`${routes._DaoInfo}/${chainId}/${daoAddress}`)}>
-      <DaoAvatars src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.name || daoName} />
-      <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
+    <Item onClick={() => history.push(`${routes._DaoInfo}/${daoId}/proposal`)}>
+      <DaoAvatars src={daoLogo} alt={'daoName'} />
+      <Text noWrap>{daoName || 'daoName'}</Text>
     </Item>
   )
 }
