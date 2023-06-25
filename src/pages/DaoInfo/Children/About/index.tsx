@@ -10,16 +10,18 @@ import {
   TableRow
 } from '@mui/material'
 import EmptyData from 'components/EmptyData'
-import CurrencyLogo from 'components/essential/CurrencyLogo'
+import Image from 'components/Image'
 import Tooltip from 'components/Tooltip'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 import { shortenAddress } from 'utils'
+import defaultLogo from 'assets/images/create-token-ball.png'
 import { ChainListMap } from 'constants/chain'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useParams } from 'react-router-dom'
+import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
@@ -75,20 +77,20 @@ const StyledText = styled(Typography)(
 )
 
 export default function About() {
-  const { daoId: daoId } = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
+  const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const [rand] = useState(Math.random())
+  const createDaoData = useGetDaoInfo(Number(daoId), rand)
   const votingPeriodDate = useMemo(
     () => (daoInfo?.votingPeriod ? getVotingNumberByTimestamp(daoInfo.votingPeriod) : undefined),
     [daoInfo?.votingPeriod]
   )
 
-  console.log(daoId)
-
   return (
     <div>
       <Title sx={{ mb: 18 }}>Governance</Title>
-      <BasicTable list={daoInfo.governance} />
+      {createDaoData && <BasicTable list={createDaoData.governance} />}
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
         gap={isSmDown ? 20 : 10}
@@ -310,8 +312,8 @@ function BasicTable({ list }: { list: govList[] }) {
               {list.map((row, index) => (
                 <TableRow key={row?.symbol + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableContentText sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <CurrencyLogo size="32px" />
-                    {row?.tokenLogo}
+                    <Image src={row.tokenLogo || defaultLogo} width={32} />
+                    {row.tokenName}({row.symbol})
                   </TableContentText>
                   <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>
                   <TableContentText>{shortenAddress(row?.tokenAddress, 3)}</TableContentText>

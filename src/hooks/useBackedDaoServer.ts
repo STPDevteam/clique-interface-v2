@@ -1000,7 +1000,7 @@ export interface DaoInfoProps {
   website: 'string'
 }
 
-export function useGetDaoInfo(daoId: number) {
+export function useGetDaoInfo(daoId: number, refresh?: number) {
   const [result, setResult] = useState<CreateDaoDataProp>()
   useEffect(() => {
     ;(async () => {
@@ -1008,7 +1008,6 @@ export function useGetDaoInfo(daoId: number) {
         if (!daoId) return
         const res = await getV3DaoInfo(daoId)
         const data = res.data.data as CreateDaoDataProp
-
         if (!data) {
           setResult(undefined)
           return
@@ -1019,7 +1018,7 @@ export function useGetDaoInfo(daoId: number) {
         console.error('useGetDaoInfo', error)
       }
     })()
-  }, [daoId])
+  }, [daoId, refresh])
   return result
 }
 

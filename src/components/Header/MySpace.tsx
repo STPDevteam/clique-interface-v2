@@ -47,6 +47,7 @@ const Item = styled(Box)(({}) => ({
 
 export default function MySpace() {
   const { result: myJoinedDaoList } = useMyJoinedDao()
+  console.log('🚀 ~ file: MySpace.tsx:50 ~ MySpace ~ myJoinedDaoList:', myJoinedDaoList)
   const history = useHistory()
 
   return (

@@ -19,7 +19,7 @@ import taskIcon from 'assets/images/task.png'
 // import calendarIcon from 'assets/images/calendar.png'
 // import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { DaoAvatars } from 'components/Avatars'
 import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
@@ -69,14 +69,13 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   },
   '.activemenuLink': {
     textDecoration: 'none',
-    padding: '9px 16px',
     color: theme.palette.primary.main,
     backgroundColor: 'rgba(0, 91, 198, 0.06)'
   },
-  '.activemenuLink svg path': {
+  '.activemenuLink>svg path': {
     fill: 'rgba(0, 73, 198, 1)'
   },
-  '.activemenuLink svg': {
+  '.activemenuLink>svg': {
     width: 30,
     height: 30
   },
@@ -213,17 +212,12 @@ export function DaoItem() {
 export default function LeftSider() {
   const { pathname } = useLocation()
   const history = useHistory()
+  const [activeIndex, setActiveIndex] = useState([false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const { result: taskList } = useGetLeftTaskList(Number(daoId))
-  console.log('🚀 ~ file: LeftSider.tsx:189 ~ LeftSider ~ taskList:', taskList)
-  const makeRouteLink = useCallback(
-    (route: string) => {
-      return route.replace(':daoId', daoId)
-    },
-    [daoId]
-  )
+  const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
 
   const workspaceList = useMemo(() => {
     if (!taskList) return []
@@ -386,22 +380,22 @@ export default function LeftSider() {
         >
           {teamspacesList.map((item, idx) => (
             <Box
+              onClick={() => {
+                setActiveIndex(() => {
+                  const newItems = [false, false, false, false, false]
+                  newItems[idx] = true
+                  return newItems
+                })
+              }}
               key={idx}
               minHeight={50}
-              sx={{
-                '&>div': {
-                  '&:hover': {
-                    backgroundColor: '#F8FBFF'
-                  }
-                }
-              }}
+              className={activeIndex[idx] ? 'activemenuLink' : ' '}
             >
               <MyCollapse
                 hiddenArrow
                 bodyPl={0}
                 defaultOpen={item.defaultOpen}
                 height={50}
-                backgroundColor={'#F8FBFF'}
                 title={
                   <>
                     {item.children ? (
@@ -425,6 +419,7 @@ export default function LeftSider() {
                           gap: 10,
                           outline: 'none',
                           marginRight: 0,
+                          padding: 10,
                           paddingLeft: 20
                         }}
                       >
