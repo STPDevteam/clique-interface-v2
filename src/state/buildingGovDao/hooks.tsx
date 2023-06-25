@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import {
@@ -10,6 +10,7 @@ import {
   CreateDaoListDataProp,
   updateDaoListData
 } from './actions'
+import { checkIsJoin, getV3DaoInfo } from 'utils/fetch/server'
 
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
 type MyJoinDaoDataPropKey = keyof MyJoinDaoDataProp
@@ -81,4 +82,34 @@ export function useBuildingDaoDataCallback() {
     updateBuildingDaoKeyData,
     buildingDaoData
   }
+}
+
+export function useUpdateDaoDataCallback() {
+  const dispatch = useDispatch()
+
+  const updateDaoBaseData = useCallback(
+    async (daoId: number) => {
+      const res = await getV3DaoInfo(daoId)
+      const createDaoData = res.data.data as CreateDaoDataProp
+      dispatch(updateCreateDaoData({ createDaoData }))
+    },
+    [dispatch]
+  )
+
+  const updateDaoMyJoinData = useCallback(
+    async (daoId: number) => {
+      const res = await checkIsJoin(daoId)
+      const myJoinDaoData = res.data.data as MyJoinDaoDataProp
+      dispatch(updateMyJoinDaoData({ myJoinDaoData }))
+    },
+    [dispatch]
+  )
+
+  return useMemo(
+    () => ({
+      updateDaoBaseData,
+      updateDaoMyJoinData
+    }),
+    [updateDaoBaseData, updateDaoMyJoinData]
+  )
 }
