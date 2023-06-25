@@ -325,6 +325,7 @@ export function CreateGovernanceModal() {
                     v.id !== ChainId.ZKSYNC_ERA &&
                     v.id !== ChainId.ZKSYNC_ERA_TESTNET
                 )}
+                height={44}
                 selectedChain={currentBaseChain}
                 onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
                 label="*Network"

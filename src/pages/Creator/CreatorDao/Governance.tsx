@@ -163,7 +163,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
                   v.id !== ChainId.ZKSYNC_ERA &&
                   v.id !== ChainId.ZKSYNC_ERA_TESTNET
               )}
-              height={56}
+              height={44}
               selectedChain={currentBaseChain}
               onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
               label="*Network"

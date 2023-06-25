@@ -1,6 +1,16 @@
 import { useState, useCallback, useMemo } from 'react'
 import { NavLink, useHistory, useLocation } from 'react-router-dom'
-import { AppBar, Box, Breadcrumbs, Typography, styled as muiStyled, styled } from '@mui/material'
+import {
+  AppBar,
+  Box,
+  Breadcrumbs,
+  Typography,
+  styled as muiStyled,
+  styled,
+  Tooltip,
+  TooltipProps,
+  tooltipClasses
+} from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
 import Web3Status from './Web3Status'
@@ -22,7 +32,7 @@ import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 // import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
-
+import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 
 interface TabContent {
@@ -364,6 +374,7 @@ export default function Header() {
       <StyledMobileAppBar>
         <TabsBox />
       </StyledMobileAppBar>
+
       <StyledAppBar>
         <Box display="flex" alignItems="center">
           <MainLogo to={routes.Governance}>
@@ -540,6 +551,14 @@ function TabsBox() {
   )
 }
 
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({}) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: 'transparent'
+  }
+}))
+
 export function HeaderRight() {
   const { pathname } = useLocation()
   const userInfo = useUserInfo()
@@ -553,7 +572,39 @@ export function HeaderRight() {
       <NetworkSelect />
       {userInfo?.loggedToken && <MySpace />}
       <Web3Status />
-      {pathname === routes.DappStore || pathname === routes.Governance ? '' : <PopperMenu />}
+      {pathname === routes.DappStore || pathname === routes.Governance ? (
+        <Box mr={20}>
+          <LightTooltip
+            title={
+              <div
+                style={{
+                  border: '1px solid #97B7EF',
+                  borderRadius: '8px',
+                  width: 103,
+                  height: 28,
+                  lineHeight: '28px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  backgroundColor: '#F8FBFF',
+                  color: '#97B7EF'
+                }}
+                onClick={() =>
+                  window.open('https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique', '_blank')
+                }
+              >
+                Learn more
+              </div>
+            }
+          >
+            <div>
+              <Image width={17} src={gitBookIcon} />
+            </div>
+          </LightTooltip>
+        </Box>
+      ) : (
+        <PopperMenu />
+      )}
     </Box>
   )
 }
