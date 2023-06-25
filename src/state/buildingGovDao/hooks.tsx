@@ -11,6 +11,7 @@ import {
   updateDaoListData
 } from './actions'
 import { checkIsJoin, getV3DaoInfo } from 'utils/fetch/server'
+import { useParams } from 'react-router-dom'
 
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
 type MyJoinDaoDataPropKey = keyof MyJoinDaoDataProp
@@ -86,24 +87,22 @@ export function useBuildingDaoDataCallback() {
 
 export function useUpdateDaoDataCallback() {
   const dispatch = useDispatch()
+  const { daoId: _daoId } = useParams<{ daoId: string }>()
+  const daoId = useMemo(() => Number(_daoId), [_daoId])
 
-  const updateDaoBaseData = useCallback(
-    async (daoId: number) => {
-      const res = await getV3DaoInfo(daoId)
-      const createDaoData = res.data.data as CreateDaoDataProp
-      dispatch(updateCreateDaoData({ createDaoData }))
-    },
-    [dispatch]
-  )
+  const updateDaoBaseData = useCallback(async () => {
+    if (!daoId) return
+    const res = await getV3DaoInfo(daoId)
+    const createDaoData = res.data.data as CreateDaoDataProp
+    dispatch(updateCreateDaoData({ createDaoData }))
+  }, [daoId, dispatch])
 
-  const updateDaoMyJoinData = useCallback(
-    async (daoId: number) => {
-      const res = await checkIsJoin(daoId)
-      const myJoinDaoData = res.data.data as MyJoinDaoDataProp
-      dispatch(updateMyJoinDaoData({ myJoinDaoData }))
-    },
-    [dispatch]
-  )
+  const updateDaoMyJoinData = useCallback(async () => {
+    if (!daoId) return
+    const res = await checkIsJoin(daoId)
+    const myJoinDaoData = res.data.data as MyJoinDaoDataProp
+    dispatch(updateMyJoinDaoData({ myJoinDaoData }))
+  }, [daoId, dispatch])
 
   return useMemo(
     () => ({
