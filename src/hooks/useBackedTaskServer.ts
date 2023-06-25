@@ -358,8 +358,8 @@ export function useUpdateTask() {
 }
 
 export function useReviewApply() {
-  return useCallback((chainId: ChainId, daoAddress: string, isPass: boolean, jobsApplyId: number) => {
-    return applyReview(chainId, daoAddress, isPass, jobsApplyId)
+  return useCallback((isPass: boolean, jobsApplyId: number) => {
+    return applyReview(isPass, jobsApplyId)
       .then(res => res)
       .catch(err => console.log(err))
   }, [])

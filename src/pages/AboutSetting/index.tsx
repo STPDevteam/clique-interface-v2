@@ -12,9 +12,10 @@ import Workspace from 'pages/DaoInfo/Children/Settings/Workspace'
 // import Admin from 'pages/DaoInfo/Children/Settings/Admin'
 import DaoContainer from 'components/DaoContainer'
 import Team from './Team'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
+import Setting from 'assets/images/settingImg.png'
+import Image from 'components/Image'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
@@ -48,7 +49,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 export default function AboutSetting() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
-  const daoInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { isJoined: daoAuthData } = useIsJoined(Number(curDaoId))
 
   const tabList = useMemo(() => {
@@ -90,7 +91,7 @@ export default function AboutSetting() {
         label: 'Governance',
         component: daoInfo ? (
           <Box mt={14}>
-            <Governance daoInfo={daoInfo} daoId={Number(curDaoId)} />
+            <Governance daoId={Number(curDaoId)} />
           </Box>
         ) : null
       },
@@ -151,11 +152,13 @@ export default function AboutSetting() {
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
+              gap: 6
             }}
           >
+            <Image src={Setting} width={38} />
             <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
-              ⚙️ About & Setting
+              About & Setting
             </Typography>
           </Box>
         </Box>

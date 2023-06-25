@@ -12,7 +12,7 @@ import { useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
 import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -68,12 +68,12 @@ const StyledTabs = styled('div')(({ theme }) => ({
 
 export default function Member() {
   const [rand, setRand] = useState(Math.random())
-  const { address: daoAddress, daoId: daoId } = useParams<{ address: string; daoId: string }>()
+  const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const curDaoId = Number(daoId)
   useCallback(() => {}, [])
-  const { myJoinDaoData: isJoined } = useBuildingDaoDataCallback()
-  const { result: applyList } = useJobsApplyList(daoAddress, curDaoId, rand)
+  const { myJoinDaoData: isJoined } = useMyDaoDataCallback()
+  const { result: applyList } = useJobsApplyList(curDaoId, rand)
   const { result: jobsList } = useJobsList(curDaoId)
 
   const tabList = !isJoined
@@ -179,12 +179,7 @@ export default function Member() {
         ) : tabValue === 0 ? (
           <CardView result={jobsList} role={isJoined?.job} />
         ) : tabValue === 1 ? (
-          <JobApplication
-            result={applyList}
-            daoChainId={curDaoId}
-            daoAddress={daoAddress}
-            reFetch={() => setRand(Math.random())}
-          />
+          <JobApplication result={applyList} reFetch={() => setRand(Math.random())} />
         ) : (
           <InviteUser />
         )}

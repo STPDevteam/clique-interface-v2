@@ -41,8 +41,9 @@ export type PrivateSpacesProp = {
 }
 
 export interface CreateDaoListDataProp {
-  name: string
-  logo: string
+  daoId: number
+  daoName: string
+  daoLogo: string
 }
 
 export interface MyJoinDaoDataProp {

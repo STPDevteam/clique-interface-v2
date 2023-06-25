@@ -20,8 +20,8 @@ import AddTokenModal from '../AddTokenModal'
 import Image from 'components/Image'
 import useModal from 'hooks/useModal'
 import { Dots } from 'theme/components'
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { CreateDaoDataProp, govList } from 'state/buildingGovDao/actions'
+import { useCallback, useMemo, useState } from 'react'
+import { govList } from 'state/buildingGovDao/actions'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
@@ -50,8 +50,9 @@ const Row = styled(Box)(() => ({
   display: 'flex'
 }))
 
-export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
+export default function General({ daoId }: { daoId: number }) {
   const { showModal } = useModal()
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const [loading, setLoading] = useState(false)
   const [fixTime, setFixtime] = useState((daoInfo.votingPeriod / 3600).toString())
   const PeriodList = [
@@ -63,22 +64,59 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
     { label: 'Single-voting', value: '1' },
     { label: 'Multi-voting', value: '2' }
   ]
+
+  const [startValite, setStartValite] = useState(false)
   const [PeriodValue, setPeriodValue] = useState(PeriodList[0].value)
   const [TypesValue, setTypesValue] = useState(daoInfo.votingType || TypesList[0].value)
-  const [cGovernance, setCGovernance] = useState([...daoInfo.governance])
   const [proposalThreshold, setProposalThreshold] = useState(daoInfo.proposalThreshold || '')
   const history = useHistory()
   const weight = useMemo(
     () =>
-      cGovernance.map(item => ({
+      daoInfo.governance.map(item => ({
         createRequire: item.createRequire,
         voteTokenId: item.voteTokenId,
         votesWeight: item.weight
       })),
-    [cGovernance]
+    [daoInfo.governance]
   )
   const cb = useUpdateGovernance()
+  console.log('daoInfo', daoInfo.governance)
+
+  const saveBtn: {
+    disabled: boolean
+    text?: string
+    error?: undefined | string | JSX.Element
+  } = useMemo(() => {
+    if (Number(fixTime) < 72 && PeriodValue === 'Fixtime') {
+      return {
+        disabled: true,
+        text: 'time',
+        error: 'Mininum voting period is 72 hours'
+      }
+    }
+    if (daoInfo.governance.length < 1) {
+      return {
+        disabled: true,
+        text: 'governance',
+        error: 'Mininum token amount is 1'
+      }
+    }
+    if (!proposalThreshold || Number(proposalThreshold) < 1) {
+      return {
+        disabled: true,
+        text: 'threshold',
+        error: 'Please enter proposalThershold'
+      }
+    }
+    return {
+      disabled: false,
+      text: ''
+    }
+  }, [PeriodValue, daoInfo.governance.length, fixTime, proposalThreshold])
+
   const updateGovernance = useCallback(() => {
+    setStartValite(true)
+    if (saveBtn?.error || !weight) return
     setLoading(true)
     const time = PeriodValue === 'Fixtime' ? Number(fixTime) * 3600 : 0
     cb(Number(daoId), Number(proposalThreshold), time, Number(TypesValue), weight)
@@ -89,39 +127,13 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
           return
         }
         toast.success('Update success')
+        setStartValite(false)
       })
       .catch(err => {
         toast.error(err || 'network error')
         setLoading(false)
       })
-  }, [PeriodValue, TypesValue, cb, daoId, fixTime, proposalThreshold, weight])
-
-  const saveBtn: {
-    disabled: boolean
-    error?: undefined | string | JSX.Element
-  } = useMemo(() => {
-    if (Number(fixTime) < 72 && PeriodValue === 'Fixtime') {
-      return {
-        disabled: true,
-        error: 'Mininum voting period is 72 hours'
-      }
-    }
-    if (cGovernance.length < 1) {
-      return {
-        disabled: true,
-        error: 'Mininum token amount is 1'
-      }
-    }
-    if (!proposalThreshold) {
-      return {
-        disabled: true,
-        error: 'Please enter proposalThershold'
-      }
-    }
-    return {
-      disabled: false
-    }
-  }, [PeriodValue, cGovernance.length, fixTime, proposalThreshold])
+  }, [PeriodValue, TypesValue, cb, daoId, fixTime, proposalThreshold, saveBtn.error, weight])
 
   return (
     <Box>
@@ -129,7 +141,7 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
         <Button
           style={{ maxWidth: 184, height: 36 }}
           onClick={() => {
-            if (cGovernance.length >= 1) {
+            if (daoInfo.governance.length >= 1) {
               toast.error('There can only be one governance token, if you want to modify it, please remove it first')
               return
             }
@@ -145,7 +157,7 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
           Create new token
         </OutlineButton>
       </Row>
-      <BasicTable daoId={daoId} governance={cGovernance} setCGovernance={setCGovernance} />
+      <BasicTable daoId={daoId} governance={daoInfo.governance} />
       <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20 }}>
         <Typography
           sx={{
@@ -166,6 +178,9 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
                 Minimum Votes Needed For Proposal To Execute
               </InputTitleStyle>
               <InputStyle
+                style={{
+                  borderColor: startValite && saveBtn.error && saveBtn.text === 'threshold' ? '#E46767' : '#D4D7E2'
+                }}
                 placeholderSize="14px"
                 placeholder={'0'}
                 endAdornment={
@@ -176,6 +191,9 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
                 onChange={e => setProposalThreshold(e.target.value)}
                 value={proposalThreshold}
               />
+              {startValite && saveBtn.text === 'threshold' && (
+                <Typography color={'#E46767'}>{saveBtn.error}</Typography>
+              )}
             </Row>
             <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
               <Row sx={{ justifyContent: 'space-between' }}>
@@ -183,20 +201,25 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
                 <ToggleButtonGroup Props={PeriodList} setToggleValue={setPeriodValue} />
               </Row>
               {PeriodValue === 'Fixtime' ? (
-                <InputStyle
-                  placeholderSize="14px"
-                  placeholder={'0'}
-                  endAdornment={
-                    <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                      Hours
-                    </Typography>
-                  }
-                  value={fixTime}
-                  onChange={e => {
-                    // if (e.target.value && Number(e.target.value) < 72) return
-                    setFixtime(e.target.value)
-                  }}
-                />
+                <Row sx={{ flexDirection: 'column' }}>
+                  <InputStyle
+                    placeholderSize="14px"
+                    style={{
+                      borderColor: startValite && saveBtn.error && saveBtn.text === 'time' ? '#E46767' : '#D4D7E2'
+                    }}
+                    placeholder={'0'}
+                    endAdornment={
+                      <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                        Hours
+                      </Typography>
+                    }
+                    value={fixTime}
+                    onChange={e => {
+                      setFixtime(e.target.value)
+                    }}
+                  />
+                  {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
+                </Row>
               ) : (
                 <InputStyle
                   readOnly
@@ -217,13 +240,13 @@ export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp
           </Box>
         </GridLayoutff>
       </Box>
-      {saveBtn.error && (
+      {startValite && saveBtn.error && saveBtn.text === 'governance' && (
         <Alert sx={{ marginTop: 15 }} severity="error">
           {saveBtn.error}
         </Alert>
       )}
       <Box mt={30} display="flex" justifyContent={'flex-end'}>
-        <BlackButton width="270px" height="40px" onClick={updateGovernance} disabled={saveBtn.disabled}>
+        <BlackButton width="270px" height="40px" onClick={updateGovernance}>
           {loading ? (
             <>
               Saving
@@ -270,16 +293,8 @@ const TextButtonStyle = styled(Typography)(() => ({
   userSelect: 'none'
 }))
 
-function BasicTable({
-  daoId,
-  governance,
-  setCGovernance
-}: {
-  daoId: number
-  governance: govList[]
-  setCGovernance: Dispatch<SetStateAction<govList[]>>
-}) {
-  console.log(daoId)
+function BasicTable({ daoId, governance }: { daoId: number; governance: govList[] }) {
+  console.log('governance', daoId, governance)
   const { updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const deleteTokenCB = useDeleteGovToken()
   const rows = governance.map(item => ({
@@ -293,27 +308,26 @@ function BasicTable({
     token: item
   }))
 
-  const delItem = useCallback(
-    (index: number) => {
-      const newArray = [...governance]
-      newArray.splice(index, 1)
-      setCGovernance(newArray)
-    },
-    [governance, setCGovernance]
-  )
+  // const delItem = useCallback(
+  //   (index: number) => {
+  //     const newArray = [...governance]
+  //     newArray.splice(index, 1)
+  //     setCGovernance(newArray)
+  //   },
+  //   [governance, setCGovernance]
+  // )
 
   const deleteToken = useCallback(
-    (voteTokenId: number, index: number) => {
+    (voteTokenId: number) => {
       deleteTokenCB(voteTokenId).then(res => {
         if (res.data.code !== 200) {
           toast.error('network error')
           return
         }
-        delItem(index)
         toast.success('Remove success')
       })
     },
-    [delItem, deleteTokenCB]
+    [deleteTokenCB]
   )
 
   return (
@@ -342,7 +356,7 @@ function BasicTable({
                   <TextButtonStyle
                     onClick={() => {
                       updateBuildingDaoKeyData('governance', [])
-                      deleteToken(row.voteTokenId, index)
+                      deleteToken(row.voteTokenId)
                     }}
                   >
                     Remove

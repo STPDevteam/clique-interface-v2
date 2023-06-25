@@ -156,11 +156,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
   }, [item.amount, token])
 
   return (
-    <AirdropStyledItem
-      onClick={() =>
-        history.push(routes._ActivityAirdropDetail + `/${item.chainId}/${item.daoAddress}/${item.activityId}`)
-      }
-    >
+    <AirdropStyledItem onClick={() => history.push(routes._ActivityAirdropDetail + `/${item.daoId}/${item.airdropId}`)}>
       <StyledStatusBox direction={'row'} spacing={24}>
         <ShowStatus item={item} />
       </StyledStatusBox>

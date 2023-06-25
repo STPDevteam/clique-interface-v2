@@ -9,7 +9,6 @@ import { AIRDROP_ADDRESS, ZERO_ADDRESS } from '../../../../constants'
 import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useActiveWeb3React } from 'hooks'
-import { DaoAdminLevelProp, DaoInfoProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { Chain } from 'models/chain'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -29,12 +28,14 @@ import { tryParseAmount } from 'utils/parseAmount'
 import { Dots } from 'theme/components'
 import { BlackButton } from 'components/Button/Button'
 import { useCreateAirdropONECallback } from 'hooks/useAirdropCallback'
-import useModal from 'hooks/useModal'
+import useBreakpoint from 'hooks/useBreakpoint'
+import DaoContainer from 'components/DaoContainer'
+import { useBuildingDaoDataCallback, useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-import useBreakpoint from 'hooks/useBreakpoint'
-import DaoContainer from 'components/DaoContainer'
+import useModal from 'hooks/useModal'
 
 const createAirdropInputFieldList = [
   'Username For Twitter',
@@ -52,31 +53,30 @@ const StyledText = styled(Typography)(({ theme, fontWeight }: { fontWeight?: num
 }))
 
 export default function CreateAirdrop() {
-  const { chainId: daoChainId, address: daoAddress } = useParams<{ chainId: string; address: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+  const { daoId: daoChainId } = useParams<{ daoId: string }>()
+  const daoId = Number(daoChainId)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { account } = useActiveWeb3React()
-
-  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
+  const { myJoinDaoData: daoAdminLevel } = useMyDaoDataCallback()
   const history = useHistory()
   useEffect(() => {
-    if (!account || daoAdminLevel === DaoAdminLevelProp.NOROLE) {
+    if (!account || daoAdminLevel.job === 'noRole' || daoAdminLevel.job === 'visitor') {
       history.goBack()
     }
   }, [daoAdminLevel, history, account])
 
-  return daoInfo ? <CreateAirdropForm daoChainId={curDaoChainId} daoInfo={daoInfo} /> : <Loading />
+  return daoInfo ? <CreateAirdropForm daoChainId={daoId} daoInfo={daoInfo} /> : <Loading />
 }
 
-function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
+function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
   const history = useHistory()
   const theme = useTheme()
-  const { hideModal, showModal } = useModal()
+  console.log(daoInfo)
+  const { showModal, hideModal } = useModal()
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/DAO_Rewards`)
-  }, [daoChainId, daoInfo.daoAddress, history])
+    history.replace(routes._DaoInfo + `/${daoChainId}/DAO_Rewards`)
+  }, [daoChainId, history])
   const { account, chainId, library } = useActiveWeb3React()
-
   const [airdropAddress, setAirdropAddress] = useState('')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -114,9 +114,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   )
 
   const validFieldList = useMemo(() => fieldList.filter(item => item.checked), [fieldList])
-
   const inputValueAmount = tryParseAmount(inputValue, airdropCurrency || undefined)
-
   const [approveState, approveCallback] = useApproveCallback(
     inputValueAmount,
     network?.id ? AIRDROP_ADDRESS[network.id as ChainId] : undefined,
@@ -126,10 +124,17 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
   const createAirdropONECallback = useCreateAirdropONECallback()
 
   const create = useCallback(() => {
-    if (!network?.id || !inputValueAmount || !eventStartTime || !eventEndTime || !airdropStartTime || !airdropEndTime)
+    if (
+      !network ||
+      !network.id ||
+      !inputValueAmount ||
+      !eventStartTime ||
+      !eventEndTime ||
+      !airdropStartTime ||
+      !airdropEndTime
+    )
       return
     showModal(<TransacitonPendingModal />)
-
     createAirdropONECallback(
       isEth,
       title,
@@ -141,10 +146,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
       eventEndTime,
       airdropStartTime,
       airdropEndTime,
-      {
-        daoChainId,
-        daoAddress: daoInfo.daoAddress
-      },
+      daoChainId,
       validFieldList.map(item => ({ name: item.name, required: item.required }))
     )
       .then(hash => {
@@ -165,7 +167,6 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     airdropStartTime,
     createAirdropONECallback,
     daoChainId,
-    daoInfo.daoAddress,
     description,
     eventEndTime,
     eventStartTime,
@@ -173,7 +174,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
     history,
     inputValueAmount,
     isEth,
-    network?.id,
+    network,
     showModal,
     title,
     trueAirdropAddress,
@@ -370,6 +371,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoC
 
               <Box>
                 <ChainSelect
+                  height={40}
                   label="Please Select Network"
                   chainList={ChainList}
                   selectedChain={network}

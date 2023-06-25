@@ -334,8 +334,8 @@ export default function LeftSider() {
             <>
               {myJoinedDaoList.map(option => (
                 <Box
-                  key={option.daoAddress + option.chainId}
-                  onClick={() => history.push(`${routes._DaoInfo}/${option.chainId}`)}
+                  key={option.daoId + option.daoName}
+                  onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
                 >
                   <DaoItem />
                 </Box>

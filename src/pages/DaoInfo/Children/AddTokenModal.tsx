@@ -1,5 +1,5 @@
 import Modal from 'components/Modal/index'
-import { Alert, Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled } from '@mui/material'
 import Input from 'components/Input/index'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
@@ -12,10 +12,9 @@ import { ChainId, ChainList, ChainListMap } from 'constants/chain'
 import ChainSelect from 'components/Select/ChainSelect'
 import NumericalInput from 'components/Input/InputNumerical'
 import { toast } from 'react-toastify'
-import { updateCreateDaoData } from 'state/buildingGovDao/actions'
 import UploadImage from 'components/UploadImage'
-import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
-import { useDispatch } from 'react-redux'
+// import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+// import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -38,21 +37,73 @@ const ContentStyle = styled(Typography)(() => ({
 const InputStyle = styled(NumericalInput)(() => ({
   height: 40
 }))
+
+const RedText = styled(Typography)({
+  color: '#E46767'
+})
+
 export default function AddTokenModal({ daoId }: { daoId: number }) {
   const { hideModal } = useModal()
-  const dispatch = useDispatch()
   const [tokenAddress, setTokenAddress] = useState('')
   const [baseChainId, setBaseChainId] = useState<any>('')
   const [requirementAmount, setRequirementAmount] = useState('')
   const [avatar, setAvatar] = useState('')
-  const createDaoData = useGetDaoInfo(Number(daoId))
   const currentBaseChain = useMemo(() => (baseChainId ? ChainListMap[baseChainId] || null : null), [baseChainId])
   const govToken = useTokenByChain(
     isAddress(tokenAddress) ? tokenAddress : undefined,
     currentBaseChain?.id ?? undefined
   )
+  // const { updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const addToken = useAddGovToken()
+
+  const voteBtn: {
+    disabled: boolean
+    text?: string
+    error?: undefined | string | JSX.Element
+  } = useMemo(() => {
+    if (!avatar) {
+      return {
+        disabled: true,
+        text: 'avatar',
+        error: 'Please upload token logo'
+      }
+    }
+    if (!requirementAmount) {
+      return {
+        disabled: true,
+        text: 'requirement',
+        error: 'Please enter createRequire amount'
+      }
+    }
+    if (!govToken) {
+      return {
+        disabled: true,
+        text: 'token',
+        error: 'Token is invaild'
+      }
+    }
+    if (!tokenAddress) {
+      return {
+        disabled: true,
+        text: 'address',
+        error: 'Please enter token contract address'
+      }
+    }
+    if (!currentBaseChain) {
+      return {
+        disabled: true,
+        text: 'chain',
+        error: 'Please select network'
+      }
+    }
+    return {
+      disabled: false,
+      text: ''
+    }
+  }, [avatar, currentBaseChain, govToken, requirementAmount, tokenAddress])
+
   const addCB = useCallback(() => {
+    if (voteBtn.error) return
     if (!govToken || !govToken.token.symbol || !govToken.token.name || !govToken.totalSupply) return
     addToken(
       govToken.token.chainId,
@@ -71,44 +122,10 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
         toast.error(res.data.msg || 'network error')
         return
       }
-      createDaoData && dispatch(updateCreateDaoData({ createDaoData }))
       toast.success('Add success')
       hideModal()
     })
-  }, [addToken, avatar, createDaoData, daoId, dispatch, govToken, hideModal, requirementAmount])
-
-  const voteBtn: {
-    disabled: boolean
-    error?: undefined | string | JSX.Element
-  } = useMemo(() => {
-    if (!avatar) {
-      return {
-        disabled: true,
-        error: 'Please upload token logo'
-      }
-    }
-    if (!requirementAmount) {
-      return {
-        disabled: true,
-        error: 'Please enter createRequire amount'
-      }
-    }
-    if (!govToken) {
-      return {
-        disabled: true,
-        error: 'Token is invaild'
-      }
-    }
-    if (!tokenAddress) {
-      return {
-        disabled: true,
-        error: 'Please enter token contract address'
-      }
-    }
-    return {
-      disabled: false
-    }
-  }, [avatar, govToken, requirementAmount, tokenAddress])
+  }, [addToken, avatar, daoId, govToken, hideModal, requirementAmount, voteBtn.error])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
@@ -140,6 +157,7 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
             >
               <UploadImage value={avatar} size={124} onChange={val => setAvatar(val)} />
             </Box>
+            {voteBtn.text === 'avatar' && <RedText>{voteBtn.error}</RedText>}
           </Box>
           <Box sx={{ maxWidth: '253px', width: '100%' }}>
             <ContentTitleStyle sx={{ mb: 10 }}>Network</ContentTitleStyle>
@@ -159,6 +177,7 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
               }}
               label=""
             />
+            {voteBtn.text === 'chain' && <RedText>{voteBtn.error}</RedText>}
             <ContentTitleStyle sx={{ mt: 10, mb: 10 }}>Token Contract Address</ContentTitleStyle>
             <Input
               height={40}
@@ -167,6 +186,7 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
               value={tokenAddress}
               onChange={e => setTokenAddress(e.target.value)}
             />
+            {voteBtn.text === 'address' && <RedText>{voteBtn.error}</RedText>}
           </Box>
         </Box>
         <Box sx={{ mt: 25, display: 'flex', justifyContent: 'space-between', textAlign: 'center' }}>
@@ -199,6 +219,7 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
             onChange={e => setRequirementAmount(e.target.value)}
             value={requirementAmount}
           />
+          {voteBtn.text === 'requirement' && <RedText>{voteBtn.error}</RedText>}
           <Box
             sx={{
               height: 40,
@@ -227,11 +248,6 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
               }
             />
           </Box>
-          {voteBtn.error && (
-            <Alert sx={{ marginTop: 15 }} severity="error">
-              {voteBtn.error}
-            </Alert>
-          )}
           <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
             <OutlineButton
               style={{ border: '1px solid #0049C6', color: '#0049C6' }}
@@ -241,7 +257,7 @@ export default function AddTokenModal({ daoId }: { daoId: number }) {
             >
               Close
             </OutlineButton>
-            <Button width="125px" height="40px" onClick={addCB} disabled={voteBtn.disabled}>
+            <Button width="125px" height="40px" onClick={addCB}>
               Add
             </Button>
           </Box>

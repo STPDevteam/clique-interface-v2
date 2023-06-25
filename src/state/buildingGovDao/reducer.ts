@@ -44,8 +44,9 @@ const initialDaoDataState: BuildingDaoData = {
   },
   createDaoListData: [
     {
-      name: '',
-      logo: ''
+      daoId: 0,
+      daoName: '',
+      daoLogo: ''
     }
   ]
 }

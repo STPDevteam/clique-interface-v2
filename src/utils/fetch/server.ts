@@ -20,7 +20,7 @@ export function commitErrorMsg(title: string, content: string, func: string, par
 }
 
 export function getMyJoinedDao() {
-  return Axios.get('stpdao/v2/jobs/left')
+  return Axios.get('stpdao/v3/user/left')
 }
 
 export function getHomeDaoList(
@@ -127,21 +127,18 @@ export function getSpaceId(chainId: number, daoAddress: string) {
   })
 }
 
-export function applyReview(chainId: number, daoAddress: string, isPass: boolean, jobsApplyId: number) {
-  return Axios.post('stpdao/v2/jobs/apply/review', {
-    chainId,
-    daoAddress,
+export function applyReview(isPass: boolean, jobsApplyId: number) {
+  return Axios.post('stpdao/v3/jobs/apply/review', {
     isPass,
     jobsApplyId
   })
 }
 
-export function getApplyList(offset: number, count: number, chainId: number, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/apply/list', {
+export function getApplyList(offset: number, limit: number, daoId: number) {
+  return Axios.get('stpdao/v3/jobs/apply/list', {
+    daoId,
     offset,
-    count,
-    chainId,
-    daoAddress
+    limit
   })
 }
 
@@ -170,7 +167,7 @@ export function getTaskList(
 }
 
 export function jobsApply(jobPublishId: number, message: string) {
-  return Axios.post('stpdao/v2/jobs/apply', {
+  return Axios.post('stpdao/v3/jobs/apply', {
     jobPublishId,
     message
   })
@@ -422,48 +419,40 @@ export function toCreatePublicSale(
 }
 
 export function saveAirdropAddress(
+  account: string,
+  airdropId: number,
+  daoId: number,
   address: string[],
   amount: string[],
   sign: {
-    account: string
-    chainId: number
-    daoAddress: string
-    airdropId: number
     message: string
     signature: string
   }
 ) {
-  return Axios.post('stpdao/v2/airdrop/address', {
+  return Axios.post('stpdao/v3/airdrop/address', {
+    account,
+    airdropId,
     array: {
       address,
       amount
     },
+    daoId,
     ...sign
   })
 }
 
-export function getActivityList(
-  chainId: number,
-  daoAddress: string,
-  status: string | undefined,
-  types: 'Airdrop' | 'PublicSale' | '',
-  offset: number,
-  count: number
-) {
-  return Axios.get('stpdao/v2/activity/list', {
-    chainId,
-    daoAddress,
+export function getActivityList(daoId: number, status: string | undefined, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/airdrop/list', {
+    daoId,
     status: status || '',
-    types,
     offset,
-    count
+    limit
   })
 }
 
-export function getAirdropProof(address: string, activityId: number) {
-  return Axios.get('stpdao/v2/airdrop/proof', {
-    address,
-    id: activityId
+export function getAirdropProof(airdropId: number) {
+  return Axios.get('stpdao/v3/airdrop/proof', {
+    airdropId
   })
 }
 
@@ -592,47 +581,44 @@ export function daoHandleMakeSign(handle: string, account: string, chainId: numb
 }
 
 export function createAirdropOne(
-  title: string,
-  description: string,
-  tokenChainId: number,
-  tokenAddress: string,
-  maxAirdropAmount: string,
-  startTime: number,
-  endTime: number,
-  airdropStartTime: number,
   airdropEndTime: number,
+  airdropStartTime: number,
+  collectInformation: { name: string; required: boolean }[],
+  description: string,
+  endTime: number,
+  maxAirdropAmount: string,
   sign: {
     account: string
-    chainId: number
-    daoAddress: string
+    daoId: number
     message: string
     signature: string
   },
-  collectInformation: { name: string; required: boolean }[]
+  startTime: number,
+  title: string,
+  tokenAddress: string,
+  tokenChainId: number
 ) {
-  return Axios.post('stpdao/v2/airdrop/create', {
-    title,
-    description,
-    tokenChainId,
-    tokenAddress,
-    maxAirdropAmount,
-    startTime,
-    endTime,
-    airdropStartTime,
+  return Axios.post('stpdao/v3/airdrop/create', {
     airdropEndTime,
+    airdropStartTime,
+    collectInformation,
+    description,
+    endTime,
+    maxAirdropAmount,
     sign,
-    collectInformation
+    startTime,
+    title,
+    tokenAddress,
+    tokenChainId
   })
 }
 
-export function getAirdropDescData(activityId: number) {
-  return Axios.get('stpdao/v2/airdrop/collect', {
-    id: activityId
-  })
+export function getAirdropDescData(airdropId: number) {
+  return Axios.get(`stpdao/v3/airdrop/info/${airdropId}`)
 }
 
 export function airdropSaveUserCollect(account: string, airdropId: number, userSubmit: string) {
-  return Axios.post('stpdao/v2/airdrop/save/user', {
+  return Axios.post('stpdao/v3/airdrop/submit/data', {
     account,
     airdropId,
     userSubmit
@@ -640,7 +626,7 @@ export function airdropSaveUserCollect(account: string, airdropId: number, userS
 }
 
 export function airdropDownloadUserCollect(account: string, airdropId: number, message: string, signature: string) {
-  return Axios.post('stpdao/v2/airdrop/user/download', {
+  return Axios.post('stpdao/v3/airdrop/download/data', {
     account,
     airdropId,
     message,
@@ -649,7 +635,7 @@ export function airdropDownloadUserCollect(account: string, airdropId: number, m
 }
 
 export function getAirdropAccountList(airdropId: number) {
-  return Axios.get('stpdao/v2/airdrop/address/list', {
+  return Axios.get('stpdao/v3/airdrop/address/list', {
     airdropId
   })
 }

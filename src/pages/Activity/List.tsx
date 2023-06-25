@@ -9,11 +9,11 @@ import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
 import { PublicSaleItem, AirdropItem } from 'pages/Activity/ActivityItem'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 function ItemWrapper({
   children,
@@ -30,7 +30,7 @@ function ItemWrapper({
 }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, daoChainId)
+  const { buildingDaoData: daoBaseInfo } = useBuildingDaoDataCallback()
   return (
     <Stack spacing={24}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
@@ -39,7 +39,7 @@ function ItemWrapper({
         </Link>
         <RowCenter flexWrap={'wrap'}>
           <Typography variant="h6" mr={10}>
-            {daoBaseInfo?.name || '--'}
+            {daoBaseInfo?.daoName || '--'}
           </Typography>
           <Typography
             fontSize={isSmDown ? 12 : 14}
@@ -96,7 +96,7 @@ export default function List({
             <ItemWrapper
               daoAddress={item.daoAddress}
               daoChainId={item.chainId}
-              key={item.activityId}
+              key={item.airdropId}
               publishTime={item.publishTime}
               type={ActivityType.AIRDROP}
             >

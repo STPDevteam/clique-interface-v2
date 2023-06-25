@@ -44,9 +44,9 @@ export function useMyJoinedDao() {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<
     {
-      chainId: ChainId
+      daoId: number
+      daoLogo: string
       daoName: string
-      daoAddress: string
     }[]
   >([])
 
@@ -60,16 +60,15 @@ export function useMyJoinedDao() {
       try {
         const res = await getMyJoinedDao()
         setLoading(false)
-        const data = res.data.data
+        const data = res.data as any
         if (!data) {
           setResult([])
           return
         }
-
-        const list = data.map((item: any) => ({
-          chainId: item.chainId,
+        const list = data.data.map((item: any) => ({
+          daoId: item.daoId,
+          daoLogo: item.daoLogo,
           daoName: item.daoName,
-          daoAddress: item.daoAddress,
           isSuper: item.role === 'superAdmin' ? true : false
         }))
         setResult([
@@ -470,7 +469,7 @@ export interface JobsApplyListProp {
   nickname: string
 }
 
-export function useJobsApplyList(daoAddress: string, chainId: number, rand: number) {
+export function useJobsApplyList(daoId: number, rand: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -480,13 +479,13 @@ export function useJobsApplyList(daoAddress: string, chainId: number, rand: numb
   useEffect(() => {
     setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daoAddress, chainId])
+  }, [daoId])
 
   useEffect(() => {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getApplyList((currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+        const res = await getApplyList((currentPage - 1) * pageSize, pageSize, daoId)
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -514,7 +513,7 @@ export function useJobsApplyList(daoAddress: string, chainId: number, rand: numb
         console.error('useJobsApplyList', error)
       }
     })()
-  }, [chainId, currentPage, daoAddress, rand])
+  }, [currentPage, daoId, rand])
 
   return useMemo(
     () => ({
@@ -1009,6 +1008,8 @@ export function useGetDaoInfo(daoId: number) {
         if (!daoId) return
         const res = await getV3DaoInfo(daoId)
         const data = res.data.data as CreateDaoDataProp
+        console.log('1011', data)
+
         if (!data) {
           setResult(undefined)
           return

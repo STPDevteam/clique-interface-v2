@@ -27,7 +27,7 @@ export const routes = {
 
   Activity: '/activity',
   _ActivityAirdropDetail: '/activity/dao_drop',
-  ActivityAirdropDetail: '/activity/dao_drop/:chainId/:address/:id',
+  ActivityAirdropDetail: '/activity/dao_drop/:daoId/:id',
   _ActivitySaleDetail: '/activity/sale',
   ActivitySaleDetail: '/activity/sale/:chainId/:address/:id',
   Tokens: '/tokens',

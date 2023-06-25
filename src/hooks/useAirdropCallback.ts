@@ -63,10 +63,7 @@ export function useCreateAirdropONECallback() {
       endTime: number,
       airdropStartTime: number,
       airdropEndTime: number,
-      sign: {
-        daoChainId: number
-        daoAddress: string
-      },
+      daoId: number,
       collectInformation: { name: string; required: boolean }[]
     ) => {
       if (!account) throw new Error('none account')
@@ -92,23 +89,22 @@ export function useCreateAirdropONECallback() {
       let result: any = {}
       try {
         const res = await createAirdropOne(
-          title,
-          description,
-          tokenChainId,
-          tokenAddress,
-          amount,
-          startTime,
-          endTime,
-          airdropStartTime,
           airdropEndTime,
+          airdropStartTime,
+          collectInformation,
+          description,
+          endTime,
+          amount,
           {
-            chainId: sign.daoChainId,
-            daoAddress: sign.daoAddress,
             account,
+            daoId,
             message: airdropSignatureStr.message,
             signature: airdropSignatureStr.sign
           },
-          collectInformation
+          startTime,
+          title,
+          tokenAddress,
+          tokenChainId
         )
         if (!res.data.data) {
           throw new Error(res.data.msg)
@@ -269,8 +265,7 @@ export function usePublishAirdropCallback() {
       airdropToken: Token,
       needStake: CurrencyAmount,
       airdropList: { address: string; amount: string }[],
-      chainId: number,
-      daoAddress: string
+      daoId
     ) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
@@ -304,13 +299,12 @@ export function usePublishAirdropCallback() {
 
       try {
         const res = await saveAirdropAddress(
+          account,
+          airdropId,
+          daoId,
           listRaw.map(item => item.address),
           listRaw.map(item => item.amountRaw),
           {
-            account,
-            chainId,
-            daoAddress,
-            airdropId,
             message: airdropSignatureStr.message,
             signature: airdropSignatureStr.sign
           }
