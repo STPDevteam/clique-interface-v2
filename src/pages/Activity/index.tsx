@@ -7,7 +7,7 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 // import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import List from './List'
-import SoulboundList from './SoulboundList'
+import SoulTokenList from './SoulTokenList'
 import BannerImg from 'assets/images/activity_banner.jpg'
 import BannerMobileImg from 'assets/images/activity_banner_mobile.jpeg'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -80,17 +80,18 @@ const tabList = [
 
 export default function Activity() {
   const { search, loading, result, page } = useActivityList()
-  const { search: searchsbt, loading: loadingsbt, result: resultsbt, page: pagesbt } = useSbtList()
+  const { search: searchSbt, loading: loadingSbt, result: resultSbt, page: pageSbt } = useSbtList()
 
   const isSmDown = useBreakpoint('sm')
-  const [tabValue, setTabValue] = useState(searchsbt.category || 0)
+  const [tabValue, setTabValue] = useState(searchSbt.category || 0)
 
-  const [chainIdval, setchainIdval] = useState<number>()
-  const [statusval, setstatusval] = useState<ActivityStatus>()
+  const [chainIdVal, setChainId] = useState<number>()
+  const [statusVal, setStatus] = useState<ActivityStatus>()
 
   const handleChange = (event: any, newValue: any) => {
-    searchsbt.setCategory(newValue)
+    searchSbt.setCategory(newValue)
   }
+
   return (
     <div>
       <BannerWrapper imgSrc={isSmDown ? BannerMobileImg : BannerImg}>
@@ -145,12 +146,11 @@ export default function Activity() {
                 noBold
                 width={isSmDown ? '175px' : '250px'}
                 height={isSmDown ? '36px' : '40px'}
-                // value={tabValue === 0 ? search.chainId : searchsbt.chainId}
-                value={chainIdval}
+                value={chainIdVal}
                 onChange={e => {
                   search.setChainId(e.target.value)
-                  searchsbt.setChainId(e.target.value)
-                  setchainIdval(e.target.value)
+                  searchSbt.setChainId(e.target.value)
+                  setChainId(e.target.value)
                 }}
               >
                 <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}>All chain</MenuItem>
@@ -162,7 +162,7 @@ export default function Activity() {
                     selected={
                       tabValue === 0
                         ? search.chainId && search.chainId === item.id
-                        : searchsbt.chainId && searchsbt.chainId === item.id
+                        : searchSbt.chainId && searchSbt.chainId === item.id
                     }
                   >
                     {item.name}
@@ -174,12 +174,11 @@ export default function Activity() {
                 noBold
                 width={isSmDown ? '175px' : '250px'}
                 height={isSmDown ? '36px' : '40px'}
-                // value={tabValue === 0 ? search.status : searchsbt.status}
-                value={statusval}
+                value={statusVal}
                 onChange={e => {
                   search.setStatus(e.target.value)
-                  searchsbt.setStatus(e.target.value)
-                  setstatusval(e.target.value)
+                  searchSbt.setStatus(e.target.value)
+                  setStatus(e.target.value)
                 }}
               >
                 {statusItemList.map((item, index) => (
@@ -190,7 +189,7 @@ export default function Activity() {
                     selected={
                       tabValue === 0
                         ? search.status && search.status === item.value
-                        : searchsbt.status && searchsbt.status === item.value
+                        : searchSbt.status && searchSbt.status === item.value
                     }
                   >
                     {item.label}
@@ -205,7 +204,7 @@ export default function Activity() {
             </>
           ) : (
             <>
-              <SoulboundList loading={loadingsbt} page={pagesbt} result={resultsbt} />
+              <SoulTokenList loading={loadingSbt} page={pageSbt} result={resultSbt} />
             </>
           )}
         </ContainerWrapper>

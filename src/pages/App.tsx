@@ -29,8 +29,8 @@ import CreatorToken from 'pages/Creator/CreatorToken'
 // import SaleDetail from 'pages/CreateSales/Details'
 // import SaleList from 'pages/CreateSales/SalesList'
 // import TokenList from 'pages/TokenList'
-import CreateSoulbound from 'pages/CreateSoulbound'
-import SoulboundDetail from 'pages/Activity/Children/SoulboundDetail'
+import CreateSoulToken from 'pages/CreateSoulToken'
+import SoulTokenDetail from 'pages/Activity/Children/SoulTokenDetail'
 import Activity from 'pages/Activity'
 import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
@@ -163,8 +163,8 @@ export default function App() {
                     )}
                   />
                   <Route exact strict path={routes.Activity} component={Activity} />
-                  <Route exact strict path={routes.CreateSoulbound} component={CreateSoulbound} />
-                  <Route exact strict path={routes.SoulboundDetail} component={SoulboundDetail} />
+                  <Route exact strict path={routes.CreateSoulToken} component={CreateSoulToken} />
+                  <Route exact strict path={routes.SoulTokenDetail} component={SoulTokenDetail} />
                   <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
                   {/* <Route exact strict path={routes.ActivitySaleDetail} component={ActivitySaleDetail} /> */}
                   {/* <Route exact strict path={routes.Tokens} component={TokenList} /> */}

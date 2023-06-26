@@ -74,7 +74,7 @@ const cardsData = [
     des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: 'all',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
-    route: routes.CreateSoulbound
+    route: routes.CreateSoulToken
   }
 ]
 
@@ -118,7 +118,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
       onClick={() => {
         if (!route && !link) return
         if (route) {
-          if (route === routes.CreateSoulbound) {
+          if (route === routes.CreateSoulToken) {
             if (!account) return toggleWalletModal()
             if (!userSignature) {
               loginSignature()

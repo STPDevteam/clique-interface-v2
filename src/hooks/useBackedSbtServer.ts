@@ -5,7 +5,7 @@ import {
   getMemberDaoList,
   commitErrorMsg,
   getSbtDetail,
-  getSbtClaim,
+  getSbtIsClaim,
   getSbtList,
   getSbtClaimList
 } from '../utils/fetch/server'
@@ -17,6 +17,13 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useGasPriceInfo } from './useGasPrice'
 import { useSbtListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
+
+export enum ClaimWay {
+  AnyOne = 'anyone',
+  Joined = 'joined',
+  WhiteList = 'whitelist'
+}
 
 export interface SbtListProp {
   SBTId: number
@@ -56,6 +63,17 @@ export interface DaoMemberProp {
   daoLogo: string
   daoName: string
   role: string
+}
+
+export interface SbtClaimListProp {
+  account: string
+  accountLogo: string
+}
+
+export interface SbtIsClaimProp {
+  canClaim: boolean
+  isWhite: boolean
+  signature: string
 }
 
 export function useCreateSbtCallback() {
@@ -140,7 +158,7 @@ export function useCreateSbtCallback() {
         .catch((err: any) => {
           if (err.code !== 4001) {
             commitErrorMsg(
-              'useCreatePublicSaleCallback',
+              'useCreateSBTCallback',
               JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
               method,
               JSON.stringify(args)
@@ -165,9 +183,8 @@ export function useMemberDaoList(exceptLevel: string) {
     ;(async () => {
       try {
         const res = await getMemberDaoList(exceptLevel)
-        if (res.data.data) {
-          setResult(res.data.data)
-        }
+        const data = res.data.data
+        setResult(data)
       } catch (error) {
         console.log(error)
         setResult(undefined)
@@ -182,17 +199,16 @@ export function useMemberDaoList(exceptLevel: string) {
 export function useSbtClaimList(sbtId: number) {
   const offset = 0
   const limit = 32
-  const [result, setResult] = useState<any>()
+  const [result, setResult] = useState<SbtClaimListProp[]>()
   useEffect(() => {
     ;(async () => {
       try {
         const res = await getSbtClaimList(offset, limit, sbtId)
-        if (res.data.data) {
-          setResult(res.data.data)
-        }
+        const data = res.data.data
+        setResult(data)
       } catch (error) {
         console.log(error)
-        setResult(null)
+        setResult(undefined)
       }
     })()
   }, [offset, limit, sbtId])
@@ -204,6 +220,7 @@ export function useSbtClaimList(sbtId: number) {
 
 export function useSbtDetail(sbtId: string) {
   const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   const contract = useSbtContract()
   const [result, setResult] = useState<SbtDetailProp>()
   const whetherClaim = useSingleCallResult(
@@ -217,28 +234,24 @@ export function useSbtDetail(sbtId: string) {
     ;(async () => {
       try {
         const res = await getSbtDetail(Number(sbtId))
-        if (res.data.data) {
-          setResult(res.data.data)
-          return
-        }
-        throw new Error()
+        const data = res.data.data
+        setResult(data)
       } catch (error) {
         console.log(error)
         setResult(undefined)
       }
     })()
-  }, [sbtId])
-  const whetherClaimBool = useMemo(() => {
+  }, [sbtId, userSignature])
+  const contractQueryIsClaim = useMemo(() => {
     if (whetherClaim === undefined) {
       return ''
     }
 
     return whetherClaim
   }, [whetherClaim])
-
   return {
     result,
-    whetherClaimBool
+    contractQueryIsClaim
   }
 }
 
@@ -255,8 +268,9 @@ export function useSbtClaim() {
       if (!sbtId) return
 
       try {
-        const res = await getSbtClaim(parseFloat(sbtId))
+        const res = await getSbtIsClaim(parseFloat(sbtId))
         result = res.data.data as any
+        if (!result.signature) throw new Error('sbt signature is null')
       } catch (error) {
         console.error('Purchase', error)
         throw error
@@ -301,19 +315,16 @@ export function useSbtClaim() {
   return { SbtClaimCallback }
 }
 
-export function useSbtWhetherClaim(sbtId: number) {
+export function useSbtQueryIsClaim(sbtId: number) {
+  const userSignature = useUserInfo()
   const [loading, setLoading] = useState(true)
-  const [claimBool, setClaimBool] = useState()
-  const [isWhiteBool, setIsWhiteBool] = useState()
-
+  const [result, setResult] = useState<SbtIsClaimProp>()
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await getSbtClaim(sbtId)
-        console.log(res, 9)
+        const res = await getSbtIsClaim(sbtId)
         if (res.data.data) {
-          setClaimBool(res.data.data.canClaim)
-          setIsWhiteBool(res.data.data.isWhite)
+          setResult(res.data.data)
           setLoading(false)
           return
         }
@@ -324,9 +335,9 @@ export function useSbtWhetherClaim(sbtId: number) {
         throw error
       }
     })()
-  }, [sbtId])
+  }, [sbtId, userSignature])
 
-  return { loading, isWhiteBool, claimBool }
+  return { loading, result }
 }
 
 export function useSbtList() {

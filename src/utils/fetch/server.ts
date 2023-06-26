@@ -724,7 +724,7 @@ export function getSbtDetail(sbtId: number) {
   return Axios.get(`stpdao/v2/sbt/detail/${sbtId}`)
 }
 
-export function getSbtClaim(sbtId: number) {
+export function getSbtIsClaim(sbtId: number) {
   return Axios.get(`stpdao/v2/sbt/claim/${sbtId}`)
 }
 

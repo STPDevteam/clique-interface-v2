@@ -45,6 +45,5 @@ export default function Editor({
   content: string
   setContent: Dispatch<SetStateAction<string>>
 }) {
-  console.log(content)
   return <ReactQuill style={{ height: 320 }} modules={modules} theme="snow" value={content} onChange={setContent} />
 }

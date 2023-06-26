@@ -7,7 +7,7 @@ import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import EllipsisIcon from 'assets/images/ellipsis_icon.png'
 import Back from 'components/Back'
-import { useSbtDetail, useSbtClaim, useSbtClaimList, useSbtWhetherClaim } from 'hooks/useBackedSbtServer'
+import { useSbtDetail, useSbtClaim, useSbtClaimList, useSbtQueryIsClaim, ClaimWay } from 'hooks/useBackedSbtServer'
 import { useParams } from 'react-router-dom'
 import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
@@ -18,8 +18,8 @@ import TransacitonPendingModal from 'components/Modal/TransactionModals/Transact
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import { ChainList, ChainId } from 'constants/chain'
-import { shortenAddress } from 'utils'
+import { ChainId, ChainListMap } from 'constants/chain'
+import { shortenAddress, formatTimestamp } from 'utils'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
@@ -87,11 +87,12 @@ const OwnersStyle = styled(Box)(() => ({
   padding: '20px 25px'
 }))
 
-export default function SoulboundDetail() {
+export default function SoulTokenDetail() {
   const { library, account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
+  const { showModal, hideModal } = useModal()
 
   const { chainId: daoChainId, address: daoAddress, sbtId } = useParams<{
     chainId: string
@@ -100,39 +101,50 @@ export default function SoulboundDetail() {
   }>()
   const curDaoChainId = Number(daoChainId) as ChainId
 
-  const { result: sbtDetail, whetherClaimBool } = useSbtDetail(sbtId)
+  const { result: sbtDetail, contractQueryIsClaim } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(Number(sbtId))
-  const [sbtClaimBool, setSbtClaimBool] = useState(false)
-  // const [whiteBool, setwhiteBool] = useState(false)
-  const { SbtClaimCallback } = useSbtClaim()
+  const { result: sbtIsClaim } = useSbtQueryIsClaim(Number(sbtId))
   const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
-  const { claimBool, isWhiteBool } = useSbtWhetherClaim(Number(sbtId))
-  const [isJoin, setIsJoin] = useState(false)
+  const { SbtClaimCallback } = useSbtClaim()
   const joinDAO = useJoinDAO()
 
-  const [Chain, setChain] = useState<{
-    icon: JSX.Element
-    logo: string
-    symbol: string
-    name: string
-    id: ChainId
-    hex: string
-  }>()
-  const { showModal, hideModal } = useModal()
-  useEffect(() => {
-    const ChainData = ChainList.filter(v => v.id == sbtDetail?.chainId)
-    setChain(ChainData[0])
+  const [isJoin, setIsJoin] = useState(false)
 
-    if (account && chainId && sbtDetail) {
-      if (chainId === sbtDetail?.tokenChainId && claimBool && isJoin) {
-        setSbtClaimBool(false)
-      } else {
-        setSbtClaimBool(true)
-      }
-    } else {
-      setSbtClaimBool(false)
+  const isClaim = useMemo(() => {
+    if (
+      !account ||
+      !userSignature ||
+      chainId !== sbtDetail?.tokenChainId ||
+      (!isJoin && ClaimWay.Joined === sbtDetail?.way) ||
+      (!sbtIsClaim?.canClaim && !sbtIsClaim?.isWhite && !sbtIsClaim?.signature)
+    ) {
+      return true
     }
-  }, [sbtDetail, chainId, account, claimBool, isJoin])
+    if (sbtIsClaim?.canClaim && sbtIsClaim?.signature) {
+      return false
+    }
+    return true
+  }, [sbtIsClaim, account, userSignature, chainId, sbtDetail, isJoin])
+
+  // const isClaim = useMemo(() => {
+  //   if (!account || !userSignature) {
+  //     return false
+  //   }
+
+  //   if (chainId !== sbtDetail?.tokenChainId || (!isJoin && sbtDetail?.way === ClaimWay.Joined)) {
+  //     return true
+  //   }
+
+  //   if (!sbtIsClaim?.canClaim && !sbtIsClaim?.isWhite && !sbtIsClaim?.signature) {
+  //     return true
+  //   }
+
+  //   if (sbtIsClaim?.canClaim && sbtIsClaim?.signature) {
+  //     return false
+  //   }
+
+  //   return true
+  // }, [sbtIsClaim, account, userSignature, chainId, sbtDetail, isJoin])
 
   useEffect(() => {
     if (isJoined) {
@@ -140,21 +152,30 @@ export default function SoulboundDetail() {
     } else {
       setIsJoin(false)
     }
-  }, [isJoin, isJoined])
+  }, [isJoined])
 
   const nextHandler = useMemo(() => {
     if (!sbtDetail) {
       return {
-        DataError: 'DataError'
+        error: 'Query data is null.'
       }
     }
-    if (!account || !chainId) {
+    if (
+      !contractQueryIsClaim &&
+      (Math.floor(Date.now() / 1000) < sbtDetail?.startTime || Math.floor(Date.now() / 1000) > sbtDetail?.endTime)
+    ) {
+      return {
+        error: 'The claiming period has either ended or has not yet started.'
+      }
+    }
+
+    if (!account || !chainId || !userSignature) {
       return {
         error: 'Please log in first.'
       }
     }
 
-    if (chainId !== sbtDetail?.tokenChainId && sbtDetail) {
+    if (chainId !== sbtDetail?.tokenChainId) {
       return {
         error: (
           <Box>
@@ -172,30 +193,20 @@ export default function SoulboundDetail() {
       }
     }
 
-    if (!isJoin) {
+    if (!isJoin && ClaimWay.Joined === sbtDetail?.way) {
       return {
         error: 'Please join the DAO first.'
       }
     }
-    if (Math.floor(Date.now() / 1000) < sbtDetail?.startTime || Math.floor(Date.now() / 1000) > sbtDetail?.endTime) {
-      return {
-        error: 'The claiming period has either ended or has not yet started.'
-      }
-    }
-    if (!isWhiteBool && !claimBool) {
+
+    if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way) {
       return {
         error: 'Not within the whitelist range.'
       }
     }
 
-    if (!claimBool) {
-      return {
-        error: 'not Claim'
-      }
-    }
-
     return
-  }, [account, chainId, isJoin, claimBool, isWhiteBool, library, sbtDetail])
+  }, [account, userSignature, chainId, isJoin, contractQueryIsClaim, sbtIsClaim, library, sbtDetail])
 
   const JoinCallback = useCallback(async () => {
     if (!account) return toggleWalletModal()
@@ -267,12 +278,12 @@ export default function SoulboundDetail() {
               <DetailLayoutStyle>
                 <RowCenter>
                   <Box>
-                    <DetailTitleStyle>Items</DetailTitleStyle>
+                    <DetailTitleStyle>Items </DetailTitleStyle>
                     <DetailStyle>{sbtDetail?.totalSupply}</DetailStyle>
                   </Box>
                   <Box>
                     <DetailTitleStyle>Network</DetailTitleStyle>
-                    <DetailStyle>{Chain?.name || '--'}</DetailStyle>
+                    <DetailStyle>{ChainListMap[sbtDetail?.chainId]?.name || '--'}</DetailStyle>
                   </Box>
                   <Box>
                     <DetailTitleStyle>Contract Address</DetailTitleStyle>
@@ -308,8 +319,11 @@ export default function SoulboundDetail() {
                     gap: 10
                   }}
                 >
-                  <ClaimButton disabled={whetherClaimBool ? whetherClaimBool : sbtClaimBool} onClick={sbtClaimCallback}>
-                    {whetherClaimBool ? 'Owned' : sbtClaimBool ? 'ont Owned' : 'Claim'}
+                  <ClaimButton
+                    disabled={contractQueryIsClaim ? contractQueryIsClaim : isClaim}
+                    onClick={sbtClaimCallback}
+                  >
+                    {contractQueryIsClaim ? 'Owned' : isClaim ? 'CannotClaim' : 'Claim'}
                   </ClaimButton>
                   {nextHandler?.error && (
                     <Box
@@ -344,15 +358,4 @@ export default function SoulboundDetail() {
       </ContainerWrapper>
     </>
   )
-}
-function formatTimestamp(timestamp: any) {
-  const date = new Date(timestamp * 1000)
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-
-  return `${month}/${day}/${year} ${hours}:${minutes}`
 }

@@ -10,7 +10,7 @@ import { BlackButton } from 'components/Button/Button'
 import Back from 'components/Back'
 import Image from 'components/Image'
 import { ChainList, ChainListMap } from 'constants/chain'
-import { useMemberDaoList, useCreateSbtCallback, DaoMemberProp } from 'hooks/useBackedSbtServer'
+import { useMemberDaoList, useCreateSbtCallback, DaoMemberProp, ClaimWay } from 'hooks/useBackedSbtServer'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
@@ -87,14 +87,15 @@ const UploadLabel = styled('label')({
   }
 })
 
+const eligibilityList = [
+  { id: 1, value: ClaimWay.AnyOne, label: 'Anyone' },
+  { id: 2, value: ClaimWay.Joined, label: 'DAO Members' },
+  { id: 3, value: ClaimWay.WhiteList, label: 'Upload Addresses' }
+]
+
 export default function Index() {
   const { library, account, chainId } = useActiveWeb3React()
   const theme = useTheme()
-  const eligibilityList = [
-    { id: 1, value: 'anyone', label: 'Anyone' },
-    { id: 2, value: 'joined', label: 'DAO Members' },
-    { id: 3, value: 'whitelist', label: 'Upload Addresses' }
-  ]
   const [whitelistBoole, setWhitelistBoole] = useState<boolean>(false)
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [accountList, setAccountList] = useState<string[]>([])
@@ -145,7 +146,7 @@ export default function Index() {
           <TransactionSubmittedModal
             hideFunc={() => {
               history.push(
-                routes._SoulboundDetail + '/' + daoValue?.chainId + '/' + daoValue?.daoAddress + '/' + res.sbtId
+                routes._SoulTokenDetail + '/' + daoValue?.chainId + '/' + daoValue?.daoAddress + '/' + res.sbtId
               )
             }}
             hash={res.hash}

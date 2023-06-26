@@ -8,8 +8,8 @@ import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import DelayLoading from 'components/DelayLoading'
 import { SbtListProp } from 'hooks/useBackedSbtServer'
-import { ChainId, ChainList } from 'constants/chain'
-import { useEffect, useState } from 'react'
+import { ChainListMap } from 'constants/chain'
+import { formatTimestamp } from 'utils/index'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -66,7 +66,7 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
   }
 }))
 
-export default function SoulboundList({
+export default function SoulTokenList({
   loading,
   page,
   result
@@ -89,7 +89,7 @@ export default function SoulboundList({
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
         <Stack spacing={20}>
-          {result && result.map((item: SbtListProp, index: any) => <ItemCrad key={index} {...item} />)}
+          {result && result.map((item: SbtListProp, index: any) => <ItemCard key={index} {...item} />)}
         </Stack>
       </Box>
       <Box mt={20} display={'flex'} justifyContent="center">
@@ -103,26 +103,13 @@ export default function SoulboundList({
   )
 }
 
-function ItemCrad(item: SbtListProp) {
+function ItemCard(item: SbtListProp) {
   const history = useHistory()
-  const [Chain, setChain] = useState<{
-    icon: JSX.Element
-    logo: string
-    symbol: string
-    name: string
-    id: ChainId
-    hex: string
-  }>()
-
-  useEffect(() => {
-    const ChainData = ChainList.filter(v => v.id == item.chainId)
-    setChain(ChainData[0])
-  }, [item])
 
   return (
     <StyledItem
       onClick={() => {
-        history.push(routes._SoulboundDetail + '/' + item.chainId + '/' + item.daoAddress + '/' + item.SBTId)
+        history.push(routes._SoulTokenDetail + '/' + item.chainId + '/' + item.daoAddress + '/' + item.SBTId)
       }}
     >
       <Image
@@ -154,7 +141,7 @@ function ItemCrad(item: SbtListProp) {
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Network</ContentTitleStyle>
-            <ContentStyle>{Chain?.name}</ContentStyle>
+            <ContentStyle>{ChainListMap[item.chainId]?.name || '--'}</ContentStyle>
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Status</ContentTitleStyle>
@@ -163,23 +150,12 @@ function ItemCrad(item: SbtListProp) {
           <ContentLayout>
             <ContentTitleStyle>Claimable Period</ContentTitleStyle>
             <ContentStyle>
-              {formatTimestamp(item?.startTime)} - {formatTimestamp(item?.endTime)}
+              {item?.startTime ? formatTimestamp(item?.startTime) : '--'} -
+              {item?.endTime ? formatTimestamp(item?.endTime) : '--'}
             </ContentStyle>
           </ContentLayout>
         </Box>
       </ContentBoxStyle>
     </StyledItem>
   )
-}
-
-function formatTimestamp(timestamp: any) {
-  const date = new Date(timestamp * 1000)
-
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  const hours = String(date.getHours()).padStart(2, '0')
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-
-  return `${month}/${day}/${year} ${hours}:${minutes}`
 }
