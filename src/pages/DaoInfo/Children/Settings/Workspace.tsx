@@ -27,8 +27,8 @@ import ManageMemberModal from '../Proposal/ManageMemberModal'
 import PopperCard from 'components/PopperCard'
 import DeleteSpaceModal from 'pages/AboutSetting/Modals/DeleteSpaceModal'
 import TransferAdminModal from 'pages/AboutSetting/Modals/TransferAdminModal'
-import { useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
   const { showModal } = useModal()
@@ -117,7 +117,7 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
   const { account } = useActiveWeb3React()
   const { showModal } = useModal()
   const update = useUpdateTeamspace()
-  const { myJoinDaoData: adminLevel } = useMyDaoDataCallback()
+  const { myJoinDaoData: adminLevel } = useUpdateDaoDataCallback()
 
   const rows = useMemo(
     () =>

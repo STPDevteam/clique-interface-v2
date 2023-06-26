@@ -1,10 +1,10 @@
 import { Box, styled, Typography } from '@mui/material'
-import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 import Image from 'components/Image'
 import { routes } from 'constants/routes'
 import { useHistory } from 'react-router-dom'
 import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -46,8 +46,7 @@ const Item = styled(Box)(({}) => ({
 }))
 
 export default function MySpace() {
-  const { result: myJoinedDaoList } = useMyJoinedDao()
-  console.log('🚀 ~ file: MySpace.tsx:50 ~ MySpace ~ myJoinedDaoList:', myJoinedDaoList)
+  const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const history = useHistory()
 
   return (

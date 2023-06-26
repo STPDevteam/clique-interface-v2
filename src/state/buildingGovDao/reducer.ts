@@ -45,34 +45,8 @@ const initialDaoDataState: BuildingDaoData = {
     job: '',
     privateSpaces: []
   },
-  createDaoListData: [
-    {
-      daoId: 0,
-      daoName: '',
-      daoLogo: ''
-    }
-  ],
-  spaceListData: [
-    {
-      access: '',
-      bio: '',
-      creator: {
-        account: '',
-        avatar: '',
-        nickname: ''
-      },
-      daoId: 0,
-      lastEditBy: {
-        account: '',
-        avatar: '',
-        nickname: ''
-      },
-      lastEditTime: 0,
-      spacesId: 0,
-      title: '',
-      types: ''
-    }
-  ]
+  createDaoListData: [],
+  spaceListData: []
 }
 
 export default createReducer(initialDaoDataState, builder =>
@@ -93,15 +67,10 @@ export default createReducer(initialDaoDataState, builder =>
       }
     })
     .addCase(updateSpaceListData, (state, { payload }) => {
-      state.spaceListData = {
-        ...state.spaceListData,
-        ...payload.spaceListData
-      }
+      state.spaceListData = payload.spaceListData
     })
     .addCase(updateDaoListData, (state, { payload }) => {
-      state.createDaoListData = {
-        ...state.createDaoListData,
-        ...payload.createDaoListData
-      }
+      console.log('🚀 ~ file: reducer.ts:99 ~ .addCase ~ payload:', payload.createDaoListData)
+      state.createDaoListData = payload.createDaoListData
     })
 )

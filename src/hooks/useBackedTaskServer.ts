@@ -205,7 +205,7 @@ export function useGetLeftTaskList(daoId: number) {
       if (!daoId) return
       setLoading(true)
       try {
-        const res = await leftSpacesList(daoId)
+        const res = await leftSpacesList(daoId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data as any
         if (!data) {

@@ -28,7 +28,7 @@ import { useGetDaoInfo, useUpdateGovernance } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 import { ChainListMap } from 'constants/chain'
 import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -67,8 +67,8 @@ export default function General({ daoId }: { daoId: number }) {
   const [rand, setRand] = useState(Math.random())
   const createDaoData = useGetDaoInfo(daoId, rand)
   const [startValite, setStartValite] = useState(false)
-  const [PeriodValue, setPeriodValue] = useState(PeriodList[0].value)
-  const [TypesValue, setTypesValue] = useState(daoInfo.votingType || TypesList[0].value)
+  const [PeriodValue, setPeriodValue] = useState(daoInfo.votingPeriod > 0 ? 'Fixtime' : 'Customization')
+  const [TypesValue, setTypesValue] = useState(TypesList[daoInfo.votingType].value)
   const [proposalThreshold, setProposalThreshold] = useState(daoInfo.proposalThreshold || '')
   const history = useHistory()
   const weight = useMemo(
@@ -80,6 +80,7 @@ export default function General({ daoId }: { daoId: number }) {
       })),
     [daoInfo.governance]
   )
+
   const cb = useUpdateGovernance()
 
   const saveBtn: {
@@ -114,6 +115,8 @@ export default function General({ daoId }: { daoId: number }) {
     }
   }, [PeriodValue, daoInfo.governance.length, fixTime, proposalThreshold])
 
+  const { updateDaoBaseData } = useUpdateDaoDataCallback()
+
   const updateGovernance = useCallback(() => {
     setStartValite(true)
     if (saveBtn?.error || !weight) return
@@ -126,6 +129,7 @@ export default function General({ daoId }: { daoId: number }) {
           toast.error(res.data.msg || 'network error')
           return
         }
+        updateDaoBaseData()
         toast.success('Update success')
         setStartValite(false)
       })
@@ -133,7 +137,7 @@ export default function General({ daoId }: { daoId: number }) {
         toast.error(err || 'network error')
         setLoading(false)
       })
-  }, [PeriodValue, TypesValue, cb, daoId, fixTime, proposalThreshold, saveBtn.error, weight])
+  }, [PeriodValue, TypesValue, cb, daoId, fixTime, proposalThreshold, saveBtn?.error, updateDaoBaseData, weight])
 
   return (
     <Box>
@@ -200,7 +204,11 @@ export default function General({ daoId }: { daoId: number }) {
             <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
               <Row sx={{ justifyContent: 'space-between' }}>
                 <InputTitleStyle>Voting period</InputTitleStyle>
-                <ToggleButtonGroup Props={PeriodList} setToggleValue={setPeriodValue} />
+                <ToggleButtonGroup
+                  initIndex={daoInfo.votingPeriod > 0 ? 0 : 1}
+                  Props={PeriodList}
+                  setToggleValue={setPeriodValue}
+                />
               </Row>
               {PeriodValue === 'Fixtime' ? (
                 <Row sx={{ flexDirection: 'column' }}>
@@ -237,7 +245,7 @@ export default function General({ daoId }: { daoId: number }) {
           <Box>
             <Row sx={{ maxWidth: 463, justifyContent: 'space-between', mb: 10 }}>
               <InputTitleStyle>Voting Types</InputTitleStyle>
-              <ToggleButtonGroup Props={TypesList} setToggleValue={setTypesValue} />
+              <ToggleButtonGroup initIndex={daoInfo.votingType} Props={TypesList} setToggleValue={setTypesValue} />
             </Row>
           </Box>
         </GridLayoutff>

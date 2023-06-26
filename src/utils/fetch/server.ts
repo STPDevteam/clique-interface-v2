@@ -682,8 +682,11 @@ export function publishList(daoId: number, offset: number, limit: number) {
   return Axios.get('stpdao/v3/jobs/publish/list', { daoId, offset, limit })
 }
 
-export function leftSpacesList(daoId: number) {
-  return Axios.get(`stpdao/v3/spaces/list/${daoId}`)
+export function leftSpacesList(daoId: number, offset: number, limit: number) {
+  return Axios.get(`stpdao/v3/spaces/list/${daoId}`, {
+    offset,
+    limit
+  })
 }
 
 export function updateDaoGeneral(
@@ -824,7 +827,7 @@ export function getSpacesList(daoId: number, offset: number, limit: number) {
 }
 
 export function deleteSpace(spacesId: number) {
-  return Axios.delete('stpdao/v3/spaces/delete', {
+  return Axios.post('stpdao/v3/spaces/delete', {
     spacesId
   })
 }

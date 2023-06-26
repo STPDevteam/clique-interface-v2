@@ -23,12 +23,8 @@ import { useCallback, useMemo, useState } from 'react'
 import { DaoAvatars } from 'components/Avatars'
 import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
-import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { useGetLeftTaskList } from 'hooks/useBackedTaskServer'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -198,13 +194,11 @@ export interface LeftSiderMenu {
   children?: LeftSiderMenu[]
 }
 
-export function DaoItem() {
-  const daoBaseInfo = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
-
+export function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
   return (
     <Item>
-      <DaoAvatars size={24} src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.daoName || '-'} />
-      <Text noWrap>{daoBaseInfo?.daoName || '-'}</Text>
+      <DaoAvatars size={24} src={daoLogo} alt={daoName || '-'} />
+      <Text noWrap>{daoName || '-'}</Text>
     </Item>
   )
 }
@@ -215,19 +209,20 @@ export default function LeftSider() {
   const [activeIndex, setActiveIndex] = useState([false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  const { result: myJoinedDaoList } = useMyJoinedDao()
-  const { result: taskList } = useGetLeftTaskList(Number(daoId))
+  const { createDaoListData: myJoinedDaoList, spaceListData } = useUpdateDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
+  console.log('spaceListData', spaceListData)
 
-  const workspaceList = useMemo(() => {
-    if (!taskList) return []
-    return taskList.map(item => ({
-      title: item.title,
-      link: makeRouteLink(routes.DaoTeamTask) + '/' + item.spacesId,
-      logo: taskIcon,
-      isPublic: item.access === 'public' ? true : false
-    }))
-  }, [makeRouteLink, taskList])
+  const workspaceList = useMemo(
+    () =>
+      spaceListData.map(item => ({
+        title: item.title,
+        link: makeRouteLink(routes.DaoTeamTask) + '/' + item.spacesId,
+        logo: taskIcon,
+        isPublic: item.access === 'public' ? true : false
+      })),
+    [makeRouteLink, spaceListData]
+  )
 
   const teamspacesList: LeftSiderMenu[] = useMemo(
     () => [
@@ -331,7 +326,7 @@ export default function LeftSider() {
                   key={option.daoId + option.daoName}
                   onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
                 >
-                  <DaoItem />
+                  <DaoItem {...option} />
                 </Box>
               ))}
             </>

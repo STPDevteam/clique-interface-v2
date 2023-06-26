@@ -16,12 +16,14 @@ const CustomToggleButton = styled(ToggleButton)(() => ({
 }))
 
 export default function ToggleButtn({
+  initIndex,
   Props,
   setToggleValue,
   itemWidth
 }: {
+  initIndex: number
   Props: { label: string; value: string }[]
-  setToggleValue: (value: string) => void
+  setToggleValue: (value: any) => void
   itemWidth?: number
 }) {
   const UnselectedStyle = {
@@ -40,7 +42,7 @@ export default function ToggleButtn({
     borderRadius: '48px'
   }
 
-  const [alignment, setAlignment] = useState(Props[0].value)
+  const [alignment, setAlignment] = useState(Props[initIndex].value)
 
   const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
     setAlignment(newAlignment)

@@ -30,7 +30,7 @@ import { BlackButton } from 'components/Button/Button'
 import { useCreateAirdropONECallback } from 'hooks/useAirdropCallback'
 import useBreakpoint from 'hooks/useBreakpoint'
 import DaoContainer from 'components/DaoContainer'
-import { useBuildingDaoDataCallback, useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
@@ -57,7 +57,7 @@ export default function CreateAirdrop() {
   const daoId = Number(daoChainId)
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { account } = useActiveWeb3React()
-  const { myJoinDaoData: daoAdminLevel } = useMyDaoDataCallback()
+  const { myJoinDaoData: daoAdminLevel } = useUpdateDaoDataCallback()
   const history = useHistory()
   useEffect(() => {
     if (!account || daoAdminLevel.job === 'noRole' || daoAdminLevel.job === 'visitor') {

@@ -13,6 +13,7 @@ import { formCheckValid } from 'utils'
 import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import { toast } from 'react-toastify'
 import { useUpdateDaoGeneral } from 'hooks/useBackedDaoServer'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export const sxInputStyle = {
   '& .MuiInputBase-root': {
@@ -92,6 +93,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
   // const childStateRef = useRef<{ token: Token; totalSupply: TokenAmount } | undefined | null>(null)
   const theme = useTheme()
   const updateDaoGeneral = useUpdateDaoGeneral()
+  const { updateDaoBaseData } = useUpdateDaoDataCallback()
   const initialValues = {
     daoLogo: daoInfo.daoLogo || '',
     name: daoInfo.daoName || '',
@@ -125,8 +127,8 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
           toast.error(res.data.msg || 'Network error')
           return
         }
+        updateDaoBaseData()
         toast.success('Update success')
-        // update redux
       })
       .catch(err => {
         console.log(err)

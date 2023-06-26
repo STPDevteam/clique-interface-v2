@@ -92,7 +92,11 @@ export default function VoteProgress({
                     Votes)
                   </Typography>
                 </Box>
-                {allVotes && <SimpleProgress width="100%" per={Math.floor((item.votes / allVotes) * 100)} />}
+                {item.votes === 0 ? (
+                  <SimpleProgress width="100%" per={0} />
+                ) : (
+                  <SimpleProgress width="100%" per={Math.floor((item.votes / allVotes) * 100)} />
+                )}
               </Box>
               <BlackButton
                 height="36px"

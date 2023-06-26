@@ -8,39 +8,14 @@ import {
   MyJoinDaoDataProp,
   updateMyJoinDaoData,
   CreateDaoListDataProp,
-  updateDaoListData
+  updateDaoListData,
+  updateSpaceListData
 } from './actions'
-import { checkIsJoin, getV3DaoInfo } from 'utils/fetch/server'
+import { checkIsJoin, getMyJoinedDao, getV3DaoInfo, leftSpacesList } from 'utils/fetch/server'
 import { useParams } from 'react-router-dom'
+import { LeftTaskDataProps } from 'hooks/useBackedTaskServer'
 
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
-type MyJoinDaoDataPropKey = keyof MyJoinDaoDataProp
-
-export function useMyDaoDataCallback() {
-  const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
-
-  const dispatch = useDispatch<AppDispatch>()
-  const updateJoinDaoDataCb = useCallback(
-    (myJoinDaoData: MyJoinDaoDataProp) => {
-      //api returns here
-      dispatch(updateMyJoinDaoData({ myJoinDaoData }))
-    },
-    [dispatch]
-  )
-  const updateJoinDaoKeyDataCb = useCallback(
-    (key: MyJoinDaoDataPropKey, value: any) => {
-      const _updateData = (Object.assign({ ...myJoinDaoData }, { [key]: value }) as unknown) as MyJoinDaoDataProp
-      updateJoinDaoDataCb(_updateData)
-    },
-    [myJoinDaoData, updateJoinDaoDataCb]
-  )
-
-  return {
-    updateJoinDaoDataCb,
-    updateJoinDaoKeyDataCb,
-    myJoinDaoData
-  }
-}
 
 export function useMyDaoListDataCallback() {
   const dispatch = useDispatch<AppDispatch>()
@@ -87,6 +62,11 @@ export function useBuildingDaoDataCallback() {
 
 export function useUpdateDaoDataCallback() {
   const dispatch = useDispatch()
+  const spaceListData = useSelector((state: AppState) => state.buildingGovernanceDao.spaceListData)
+  const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
+  const createDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
+  const createDaoListData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoListData)
+
   const { daoId: _daoId } = useParams<{ daoId: string }>()
   const daoId = useMemo(() => Number(_daoId), [_daoId])
 
@@ -104,11 +84,40 @@ export function useUpdateDaoDataCallback() {
     dispatch(updateMyJoinDaoData({ myJoinDaoData }))
   }, [daoId, dispatch])
 
+  const updateMyJoinedDaoListData = useCallback(async () => {
+    if (!daoId) return
+    const res = await getMyJoinedDao()
+    const createDaoListData = res.data.data as CreateDaoListDataProp[]
+    dispatch(updateDaoListData({ createDaoListData }))
+  }, [daoId, dispatch])
+
+  const updateWrokspaceListData = useCallback(async () => {
+    if (!daoId) return
+    const res = await leftSpacesList(daoId, 0, 50)
+    const spaceListData = res.data.data as LeftTaskDataProps[]
+    dispatch(updateSpaceListData({ spaceListData }))
+  }, [daoId, dispatch])
+
   return useMemo(
     () => ({
       updateDaoBaseData,
-      updateDaoMyJoinData
+      updateDaoMyJoinData,
+      updateWrokspaceListData,
+      updateMyJoinedDaoListData,
+      createDaoData,
+      spaceListData,
+      myJoinDaoData,
+      createDaoListData
     }),
-    [updateDaoBaseData, updateDaoMyJoinData]
+    [
+      createDaoData,
+      myJoinDaoData,
+      spaceListData,
+      createDaoListData,
+      updateDaoBaseData,
+      updateDaoMyJoinData,
+      updateMyJoinedDaoListData,
+      updateWrokspaceListData
+    ]
   )
 }

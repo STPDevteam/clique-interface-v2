@@ -9,7 +9,7 @@ import { AirdropList, PublicSaleList } from './List'
 import { useDaoActivityList } from 'hooks/useBackedActivityServer'
 import { ErrorOutline } from '@mui/icons-material'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useBuildingDaoDataCallback, useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -44,7 +44,7 @@ export default function Activity() {
   const theme = useTheme()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId)
-  const { myJoinDaoData: daoAdminLevel } = useMyDaoDataCallback()
+  const { myJoinDaoData: daoAdminLevel } = useUpdateDaoDataCallback()
   const history = useHistory()
   const [activityType] = useState<ActivityType>(ActivityType.AIRDROP)
   const { buildingDaoData: backedDaoInfo } = useBuildingDaoDataCallback()

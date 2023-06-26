@@ -16,7 +16,7 @@ import { useGetPublishJobList, useJobsList } from 'hooks/useBackedTaskServer'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MemberAuthorityAssignmentModal from './Modals/MemberAuthorityAssignmentModal'
 import EmptyData from 'components/EmptyData'
-import { useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 
@@ -43,7 +43,7 @@ export default function Team() {
   const { account: curAccount } = useActiveWeb3React()
   const { result: jobList } = useGetPublishJobList(curDaoId, randNum)
   const { result: memberList } = useJobsList(curDaoId, rand)
-  const { myJoinDaoData: memberLevel } = useMyDaoDataCallback()
+  const { myJoinDaoData: memberLevel } = useUpdateDaoDataCallback()
 
   useEffect(() => {
     const handleBeforeUnload = () => {

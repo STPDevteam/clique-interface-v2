@@ -12,7 +12,7 @@ import { useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
 import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
-import { useMyDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -72,7 +72,7 @@ export default function Member() {
   const [tabValue, setTabValue] = useState(0)
   const curDaoId = Number(daoId)
   useCallback(() => {}, [])
-  const { myJoinDaoData: isJoined } = useMyDaoDataCallback()
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
   const { result: jobsList } = useJobsList(curDaoId)
 
