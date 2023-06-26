@@ -2,7 +2,7 @@ import { Box, Typography, styled } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // import CrateBg from 'assets/images/cratedao_bg.png'
 // import { ReactComponent as WelcomeTitle } from 'assets/svg/web3title.svg'
-import WelcomWeb3 from 'assets/images/welcomweb3_bg.png'
+import WelcomeWeb3 from 'assets/images/welcomweb3_bg.png'
 import UpImgButton from 'components/UploadImage/UpImgButton'
 // import { BlackButton } from 'components/Button/Button'
 import Input from 'components/Input'
@@ -55,16 +55,18 @@ export default function Index() {
       .min(4, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
       .max(20, 'Allow only a minimum of 4 letters and a maximum of 20 letters.')
       .matches(/^\w*$/, 'Only contain letters, numbers and underscores')
-      .test('validate', 'Your Organization Username is invaild', async value => {
-        if (value) {
-          queryHandleCallback(value).then((res: any) => {
+      .test('validate', 'Your Organization Username is invalid or This name has been used', async value => {
+        if (value && value?.length >= 4 && value?.length <= 20) {
+          try {
+            const res = await queryHandleCallback(value)
             if (res.data.code === 200) {
-              if (res.data.data) {
-                return false
-              }
+              if (res.data.data === true) return false
+              return true
             }
-            return true
-          })
+            return false
+          } catch (error) {
+            return false
+          }
         }
         return true
       }),
@@ -123,7 +125,7 @@ export default function Index() {
               }}
             >
               <img
-                src={WelcomWeb3}
+                src={WelcomeWeb3}
                 alt=""
                 style={{
                   height: '100%',
@@ -170,7 +172,8 @@ export default function Index() {
               <Box sx={{ mt: 20, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
                 <TitleStyle>Organization UserName</TitleStyle>
                 <Typography variant="body2" sx={{ lineHeight: '20px', fontSize: 14, mt: 8 }}>
-                  Organize username must be between 4-20 characters and contain letters, numbers and underscores only.
+                  Organize username must be between 4-20 lowercase characters and contain letters, numbers and
+                  underscores only.
                 </Typography>
                 <FormItem name="handle" required>
                   <Input
