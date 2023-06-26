@@ -6,7 +6,6 @@ import { useCallback } from 'react'
 import { useDeleteSpace } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import { toast } from 'react-toastify'
-import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const Text = styled(Typography)({
   marginTop: 20,
@@ -21,7 +20,6 @@ const Text = styled(Typography)({
 export default function DeleteSpaceModal({ spacesId, onDimiss }: { spacesId: number; onDimiss: () => void }) {
   const { hideModal } = useModal()
   const del = useDeleteSpace()
-  const { updateWrokspaceListData } = useUpdateDaoDataCallback()
 
   const onDelete = useCallback(() => {
     del(spacesId)
@@ -30,7 +28,6 @@ export default function DeleteSpaceModal({ spacesId, onDimiss }: { spacesId: num
           toast.error(res.data.msg || 'network error')
           return
         }
-        updateWrokspaceListData()
         toast.success('Delete success')
         hideModal()
         onDimiss()
@@ -39,7 +36,7 @@ export default function DeleteSpaceModal({ spacesId, onDimiss }: { spacesId: num
         console.log(err)
         toast.error('delete error')
       })
-  }, [del, hideModal, onDimiss, spacesId, updateWrokspaceListData])
+  }, [del, hideModal, onDimiss, spacesId])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
