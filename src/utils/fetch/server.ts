@@ -279,12 +279,12 @@ export function getDaoAdmins(daoAddress: string, chainId: number) {
   })
 }
 
-export function getTokenList(chainId: number | string, creator: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/token/list', {
+export function getTokenList(chainId: number | string, creator: string, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/token/list', {
     chainId,
     creator,
     offset,
-    count
+    limit
   })
 }
 
@@ -457,29 +457,26 @@ export function getAirdropProof(airdropId: number) {
 }
 
 export function getTokenLogo(tokenAddress: string, tokenChainId: number) {
-  return Axios.get('stpdao/v2/token/img', {
-    tokenAddress,
-    tokenChainId
+  return Axios.get('stpdao/v3/token/img', {
+    tokenChainId,
+    tokenAddress
   })
 }
 
-export function getNotificationListInfo(account: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/notification/list', {
+export function getNotificationListInfo(account: string, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/notification/list', {
     account,
     offset,
-    count
+    limit
   })
 }
 
-export function getNotificationUnreadTotal(account: string) {
-  return Axios.get('stpdao/v2/notification/unread/total', {
-    account
-  })
+export function getNotificationUnreadTotal() {
+  return Axios.get('stpdao/v3/notification/unread/total')
 }
 
-export function notificationToRead(account: string, notificationId: number, readAll: boolean) {
-  return Axios.post('stpdao/v2/notification/read', {
-    account,
+export function notificationToRead(notificationId: number, readAll: boolean) {
+  return Axios.post('stpdao/v3/notification/read', {
     notificationId,
     readAll
   })

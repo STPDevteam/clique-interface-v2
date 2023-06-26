@@ -5,9 +5,7 @@ import { routes } from 'constants/routes'
 // import useModal from 'hooks/useModal'
 import { useHistory } from 'react-router-dom'
 // import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
-import { ChainId } from 'constants/chain'
 import { DaoAvatars } from 'components/Avatars'
 
 const Wrapper = styled('div')(({ theme }) => ({

@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
+import { LeftTaskDataProps } from 'hooks/useBackedTaskServer'
 
 export enum VotingTypes {
   ANY,
@@ -77,4 +78,7 @@ export const updateDaoListData = createAction<{ createDaoListData: CreateDaoList
   'buildingDao/updateDaoListData'
 )
 export const updateMyJoinDaoData = createAction<{ myJoinDaoData: MyJoinDaoDataProp }>('buildingDao/updateMyJoinDaoData')
+export const updateSpaceListData = createAction<{ spaceListData: LeftTaskDataProps[] }>(
+  'buildingDao/updateSpaceListData'
+)
 export const removeCreateDaoData = createAction('buildingDao/removeCreateDaoData')

@@ -7,13 +7,16 @@ import {
   CreateDaoListDataProp,
   updateDaoListData,
   MyJoinDaoDataProp,
-  updateMyJoinDaoData
+  updateMyJoinDaoData,
+  updateSpaceListData
 } from './actions'
+import { LeftTaskDataProps } from 'hooks/useBackedTaskServer'
 
 interface BuildingDaoData {
   createDaoData: CreateDaoDataProp
   myJoinDaoData: MyJoinDaoDataProp
   createDaoListData: CreateDaoListDataProp[]
+  spaceListData: LeftTaskDataProps[]
 }
 
 const initialDaoDataState: BuildingDaoData = {
@@ -48,6 +51,27 @@ const initialDaoDataState: BuildingDaoData = {
       daoName: '',
       daoLogo: ''
     }
+  ],
+  spaceListData: [
+    {
+      access: '',
+      bio: '',
+      creator: {
+        account: '',
+        avatar: '',
+        nickname: ''
+      },
+      daoId: 0,
+      lastEditBy: {
+        account: '',
+        avatar: '',
+        nickname: ''
+      },
+      lastEditTime: 0,
+      spacesId: 0,
+      title: '',
+      types: ''
+    }
   ]
 }
 
@@ -66,6 +90,12 @@ export default createReducer(initialDaoDataState, builder =>
       state.myJoinDaoData = {
         ...state.myJoinDaoData,
         ...payload.myJoinDaoData
+      }
+    })
+    .addCase(updateSpaceListData, (state, { payload }) => {
+      state.spaceListData = {
+        ...state.spaceListData,
+        ...payload.spaceListData
       }
     })
     .addCase(updateDaoListData, (state, { payload }) => {
