@@ -18,6 +18,7 @@ import { FormType } from 'pages/DaoInfo/Children/Settings/type'
 import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -75,6 +76,7 @@ export default function Index() {
   })
 
   const queryHandleCallback = useDaoHandleQuery()
+  const { updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
 
   const initialValues = {
     Introduction: '',
@@ -98,6 +100,7 @@ export default function Index() {
       toast.error(res.data.msg)
       return
     }
+    updateMyJoinedDaoListData()
     toast.success('Create success')
     history.push(routes._DaoInfo + `/${res.data.data}/proposal`)
   }

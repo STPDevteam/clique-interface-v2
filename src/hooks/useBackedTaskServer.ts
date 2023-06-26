@@ -733,7 +733,7 @@ export function useGetSpacesList(daoId: number, refresh?: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
-  const pageSize = 8
+  const pageSize = 50
   const [result, setResult] = useState<SpacesListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
