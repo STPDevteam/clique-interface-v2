@@ -11,7 +11,6 @@ import * as yup from 'yup'
 import FormItem from 'components/FormItem'
 import { Form, Formik } from 'formik'
 import { LoadingButton } from '@mui/lab'
-import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const guestList = [
   { value: 'public', label: 'Public' },
@@ -39,7 +38,6 @@ export default function AddTeamspaceModal({
   const { hideModal } = useModal()
   const create = useAddTeamspace()
   const update = useUpdateTeamspace()
-  const { updateWrokspaceListData: execute } = useUpdateDaoDataCallback()
 
   const validationSchema = yup.object().shape({
     title: yup
@@ -65,7 +63,6 @@ export default function AddTeamspaceModal({
           toast.error(res.data.msg || 'network error')
           return
         }
-        execute()
         toast.success('Update success')
         hideModal()
         onDimiss()
@@ -77,7 +74,6 @@ export default function AddTeamspaceModal({
             toast.error(res.data.msg || 'network error')
             return
           }
-          execute()
           toast.success('Create success')
           hideModal()
           onDimiss()

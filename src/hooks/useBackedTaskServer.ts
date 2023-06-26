@@ -22,6 +22,8 @@ import {
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { JobsListProps } from './useBackedDaoServer'
+import { useDispatch } from 'react-redux'
+import { updateSpaceListData } from 'state/buildingGovDao/actions'
 
 export interface SpaceInfoProp {
   access: string
@@ -733,7 +735,8 @@ export function useGetSpacesList(daoId: number, refresh?: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
-  const pageSize = 8
+  const pageSize = 50
+  const dispatch = useDispatch()
   const [result, setResult] = useState<SpacesListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
@@ -757,6 +760,7 @@ export function useGetSpacesList(daoId: number, refresh?: number) {
         }
         setTotal(data.total)
         const list: SpacesListProp[] = data.data
+        dispatch(updateSpaceListData({ spaceListData: list }))
         setResult(list)
       } catch (error) {
         setResult([])
