@@ -1,22 +1,8 @@
 import { Box } from '@mui/material'
 import LeftMenu from './LeftSider'
-import { useActiveWeb3React } from 'hooks'
-import { useUserInfo } from 'state/userInfo/hooks'
-import { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import JoinDaoFrame from './Children/JoinDAOModal'
 
 export default function DaoInfoLayout({ children }: { children: any }) {
-  const { account } = useActiveWeb3React()
-  const history = useHistory()
-  const { myJoinDaoData: isJoined } = useBuildingDaoDataCallback()
-  const userSignature = useUserInfo()
-
-  useEffect(() => {
-    if (!account || !userSignature || !isJoined) {
-    }
-  }, [account, history, isJoined, userSignature])
-
   return (
     <Box
       sx={{
@@ -34,6 +20,7 @@ export default function DaoInfoLayout({ children }: { children: any }) {
       >
         {children}
       </Box>
+      <JoinDaoFrame />
     </Box>
   )
 }

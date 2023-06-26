@@ -49,7 +49,6 @@ import Member from './Member'
 // import Task from './Task'
 const Task = lazy(() => import('./Task'))
 import ComingSoon from './ComingSoon'
-import Page from './RedirectPage'
 import AboutSetting from './AboutSetting'
 import DaoBounty from './daoBounty'
 import DappStore from './TokenList/DappStore'
@@ -124,7 +123,6 @@ export default function App() {
         <AppWrapper id="app">
           <LoginModal />
           <Route component={GoogleAnalyticsReporter} />
-          <Route path={routes.Page} component={Page} />
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
@@ -156,7 +154,6 @@ export default function App() {
                           <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
                           <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
                           <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
-
                           <Route
                             exact
                             path={routes.DaoInfo}

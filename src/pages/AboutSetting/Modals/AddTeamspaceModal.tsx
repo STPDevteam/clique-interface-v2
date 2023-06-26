@@ -11,6 +11,7 @@ import * as yup from 'yup'
 import FormItem from 'components/FormItem'
 import { Form, Formik } from 'formik'
 import { LoadingButton } from '@mui/lab'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const guestList = [
   { value: 'public', label: 'Public' },
@@ -38,6 +39,7 @@ export default function AddTeamspaceModal({
   const { hideModal } = useModal()
   const create = useAddTeamspace()
   const update = useUpdateTeamspace()
+  const { updateDaoMyJoinData } = useUpdateDaoDataCallback()
 
   const validationSchema = yup.object().shape({
     title: yup
@@ -77,6 +79,7 @@ export default function AddTeamspaceModal({
           toast.success('Create success')
           hideModal()
           onDimiss()
+          updateDaoMyJoinData()
         })
         .catch(err => {
           console.log(err)

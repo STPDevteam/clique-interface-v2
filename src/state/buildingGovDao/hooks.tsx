@@ -9,7 +9,8 @@ import {
   updateMyJoinDaoData,
   CreateDaoListDataProp,
   updateDaoListData,
-  updateSpaceListData
+  updateSpaceListData,
+  updateJoinDaoModalStatus
 } from './actions'
 import { checkIsJoin, getMyJoinedDao, getV3DaoInfo, leftSpacesList } from 'utils/fetch/server'
 import { useParams } from 'react-router-dom'
@@ -63,6 +64,7 @@ export function useBuildingDaoDataCallback() {
 export function useUpdateDaoDataCallback() {
   const dispatch = useDispatch()
   const spaceListData = useSelector((state: AppState) => state.buildingGovernanceDao.spaceListData)
+  const isOpen = useSelector((state: AppState) => state.buildingGovernanceDao.isShowJoinDaoModal)
   const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
   const createDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
   const createDaoListData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoListData)
@@ -82,6 +84,13 @@ export function useUpdateDaoDataCallback() {
     const res = await checkIsJoin(daoId)
     const myJoinDaoData = res.data.data as MyJoinDaoDataProp
     dispatch(updateMyJoinDaoData({ myJoinDaoData }))
+  }, [daoId, dispatch])
+
+  const updateJoinDaoDataStatus = useCallback(async () => {
+    if (!daoId) return
+    const res = await checkIsJoin(daoId)
+    const myJoinDaoData = res.data.data as MyJoinDaoDataProp
+    dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: myJoinDaoData.isJoin }))
   }, [daoId, dispatch])
 
   const updateMyJoinedDaoListData = useCallback(async () => {
@@ -104,20 +113,24 @@ export function useUpdateDaoDataCallback() {
       updateDaoMyJoinData,
       updateWrokspaceListData,
       updateMyJoinedDaoListData,
+      updateJoinDaoDataStatus,
+      isOpen,
       createDaoData,
       spaceListData,
       myJoinDaoData,
       createDaoListData
     }),
     [
-      createDaoData,
-      myJoinDaoData,
-      spaceListData,
-      createDaoListData,
       updateDaoBaseData,
       updateDaoMyJoinData,
+      updateWrokspaceListData,
       updateMyJoinedDaoListData,
-      updateWrokspaceListData
+      updateJoinDaoDataStatus,
+      isOpen,
+      createDaoData,
+      spaceListData,
+      myJoinDaoData,
+      createDaoListData
     ]
   )
 }

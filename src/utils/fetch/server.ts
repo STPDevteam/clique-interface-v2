@@ -173,11 +173,8 @@ export function jobsApply(jobPublishId: number, message: string) {
   })
 }
 
-export function joinDAO(chainId: number, daoAddress: string) {
-  return Axios.post('stpdao/v2/jobs/join/member', {
-    chainId,
-    daoAddress
-  })
+export function joinDAO(daoId: number) {
+  return Axios.post(`stpdao/v3/user/join/${daoId}`, {})
 }
 
 export function changeAdminRole(account: string, changeToLevel: number, daoId: number) {

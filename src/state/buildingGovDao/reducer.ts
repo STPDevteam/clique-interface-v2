@@ -8,7 +8,8 @@ import {
   updateDaoListData,
   MyJoinDaoDataProp,
   updateMyJoinDaoData,
-  updateSpaceListData
+  updateSpaceListData,
+  updateJoinDaoModalStatus
 } from './actions'
 import { LeftTaskDataProps } from 'hooks/useBackedTaskServer'
 
@@ -17,6 +18,7 @@ interface BuildingDaoData {
   myJoinDaoData: MyJoinDaoDataProp
   createDaoListData: CreateDaoListDataProp[]
   spaceListData: LeftTaskDataProps[]
+  isShowJoinDaoModal: boolean
 }
 
 const initialDaoDataState: BuildingDaoData = {
@@ -46,7 +48,8 @@ const initialDaoDataState: BuildingDaoData = {
     privateSpaces: []
   },
   createDaoListData: [],
-  spaceListData: []
+  spaceListData: [],
+  isShowJoinDaoModal: false
 }
 
 export default createReducer(initialDaoDataState, builder =>
@@ -70,7 +73,9 @@ export default createReducer(initialDaoDataState, builder =>
       state.spaceListData = payload.spaceListData
     })
     .addCase(updateDaoListData, (state, { payload }) => {
-      console.log('🚀 ~ file: reducer.ts:99 ~ .addCase ~ payload:', payload.createDaoListData)
       state.createDaoListData = payload.createDaoListData
+    })
+    .addCase(updateJoinDaoModalStatus, (state, { payload }) => {
+      state.isShowJoinDaoModal = payload.isShowJoinDaoModal
     })
 )

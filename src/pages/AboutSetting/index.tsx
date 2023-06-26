@@ -99,7 +99,7 @@ export default function AboutSetting() {
         label: 'Workspace',
         component: daoInfo ? (
           <Box mt={20}>
-            <Workspace daoInfo={daoInfo} daoId={Number(curDaoId)} />
+            <Workspace daoId={Number(curDaoId)} />
           </Box>
         ) : null
       },

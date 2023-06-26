@@ -416,10 +416,10 @@ export function useApplyMember() {
 }
 
 export function useJoinDAO() {
-  return useCallback(async (chainId: number, daoAddress: string) => {
-    return joinDAO(chainId, daoAddress)
+  return useCallback(async (daoId: number) => {
+    return joinDAO(daoId)
       .then(res => res)
-      .catch(err => console.log(err))
+      .catch(err => err)
   }, [])
 }
 

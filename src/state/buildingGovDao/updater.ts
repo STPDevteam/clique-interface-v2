@@ -2,7 +2,13 @@ import { useGetDaoInfo, useIsJoined, useMyJoinedDao } from 'hooks/useBackedDaoSe
 import { useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
-import { updateCreateDaoData, updateDaoListData, updateMyJoinDaoData, updateSpaceListData } from './actions'
+import {
+  updateCreateDaoData,
+  updateDaoListData,
+  updateJoinDaoModalStatus,
+  updateMyJoinDaoData,
+  updateSpaceListData
+} from './actions'
 import { useGetLeftTaskList } from 'hooks/useBackedTaskServer'
 
 export default function Updater(): null {
@@ -27,6 +33,12 @@ export default function Updater(): null {
   useEffect(() => {
     if (myJoinDaoData) {
       dispatch(updateMyJoinDaoData({ myJoinDaoData }))
+    }
+  }, [dispatch, myJoinDaoData])
+
+  useEffect(() => {
+    if (myJoinDaoData) {
+      dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: myJoinDaoData.isJoin }))
     }
   }, [dispatch, myJoinDaoData])
 

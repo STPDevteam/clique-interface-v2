@@ -769,7 +769,7 @@ export function useGetSpacesList(daoId: number, refresh?: number) {
         console.error('useGetSpacesList', error)
       }
     })()
-  }, [currentPage, daoId, refresh])
+  }, [currentPage, daoId, dispatch, refresh])
 
   useEffect(() => {
     ;(async () => {

@@ -15,7 +15,6 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import AddIcon from 'assets/images/add.png'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
-import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import { SpacesListProp, useGetSpacesList } from 'hooks/useBackedTaskServer'
 import { useCallback, useMemo, useState } from 'react'
 import EmptyData from 'components/EmptyData'
@@ -30,11 +29,10 @@ import TransferAdminModal from 'pages/AboutSetting/Modals/TransferAdminModal'
 import { useActiveWeb3React } from 'hooks'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
-export default function General({ daoInfo, daoId }: { daoInfo: CreateDaoDataProp; daoId: number }) {
+export default function General({ daoId }: { daoId: number }) {
   const { showModal } = useModal()
   const [rand, setRand] = useState(Math.random())
   const { result: dataList } = useGetSpacesList(daoId, rand)
-  console.log(daoInfo)
 
   return (
     <Box>
@@ -118,6 +116,7 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
   const { showModal } = useModal()
   const update = useUpdateTeamspace()
   const { myJoinDaoData: adminLevel } = useUpdateDaoDataCallback()
+  const { updateDaoMyJoinData } = useUpdateDaoDataCallback()
 
   const rows = useMemo(
     () =>
@@ -146,9 +145,11 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
           return
         }
         toast.success('update success')
+        onDimiss()
+        updateDaoMyJoinData()
       })
     },
-    [update]
+    [onDimiss, update, updateDaoMyJoinData]
   )
 
   return (

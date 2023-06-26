@@ -68,6 +68,12 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
     color: theme.palette.primary.main,
     backgroundColor: 'rgba(0, 91, 198, 0.06)'
   },
+  '.activemenuLink ul': {
+    backgroundColor: '#fff'
+  },
+  '.activemenuLink ul:hover': {
+    backgroundColor: '#F8FBFF'
+  },
   '.activemenuLink>svg path': {
     fill: 'rgba(0, 73, 198, 1)'
   },
@@ -209,9 +215,10 @@ export default function LeftSider() {
   const [activeIndex, setActiveIndex] = useState([false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  const { createDaoListData: myJoinedDaoList, spaceListData } = useUpdateDaoDataCallback()
+  const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
-  console.log('spaceListData', spaceListData)
+  const [activeIdx, setActiveIdx] = useState(-1)
+  console.log(myJoinDaoData)
 
   const workspaceList = useMemo(
     () =>
@@ -333,33 +340,6 @@ export default function LeftSider() {
           </PopperCard>
         </Box>
         <div />
-        {/* <List>
-          {menuList.map((item, idx) => (
-            <NavLink
-              key={item.text + idx}
-              id={`${item.route}-nav-link`}
-              to={item.route ?? ''}
-              className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-start',
-                flexDirection: 'row',
-                gap: 10,
-                outline: 'none',
-                marginRight: 0,
-                paddingLeft: 20
-              }}
-            >
-              <item.icon width={30} height={30} />
-              <ListItemText primary={item.text} />
-            </NavLink>
-          ))}
-        </List> */}
-        {/* <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'}>
-          <Typography variant="h5" textAlign={'left'} fontSize={16} sx={{ color: '#3F5170', padding: '6px 24px 16px' }}>
-            Teamspaces
-          </Typography>
-        </Box> */}
         <Box
           gap={10}
           mt={8}
@@ -432,6 +412,9 @@ export default function LeftSider() {
                     style={{ marginRight: 0 }}
                     sx={{
                       cursor: 'pointer',
+                      '& .activeChild': {
+                        backgroundColor: '#005BC60F'
+                      },
                       '&:hover': {
                         backgroundColor: '#F8FBFF'
                       },
@@ -458,15 +441,40 @@ export default function LeftSider() {
                     }}
                   >
                     <ChildItem
+                      className={activeIdx === idx1 ? 'activeChild' : ''}
                       onClick={() => {
+                        if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) return
+                        setActiveIdx(idx1)
                         history.push(item.link || '')
                       }}
                     >
-                      <Box className={'LBox'}>
-                        <Image src={item.logo || ''}></Image>
-                        <Typography noWrap>{item.title}</Typography>
-                      </Box>
-                      {item.isPublic ? <Typography></Typography> : <Typography>🔒</Typography>}
+                      {item.isPublic ? (
+                        <>
+                          <Box className={'LBox'}>
+                            <Image src={item.logo || ''}></Image>
+                            <Typography noWrap>{item.title}</Typography>
+                          </Box>
+                          <Typography></Typography>
+                        </>
+                      ) : myJoinDaoData && myJoinDaoData.privateSpaces[idx1]?.isJoin ? (
+                        <>
+                          <Box className={'LBox'}>
+                            <Image src={item.logo || ''}></Image>
+                            <Typography noWrap>{item.title}</Typography>
+                          </Box>
+                          <Typography>🔒</Typography>
+                        </>
+                      ) : (
+                        <>
+                          <Box className={'LBox'} sx={{ cursor: 'not-allowed' }}>
+                            <Image src={item.logo || ''}></Image>
+                            <Typography noWrap sx={{ opacity: 0.3 }}>
+                              {item.title}
+                            </Typography>
+                          </Box>
+                          <Typography sx={{ opacity: 0.4 }}>🔒</Typography>
+                        </>
+                      )}
                     </ChildItem>
                   </List>
                 ))}
