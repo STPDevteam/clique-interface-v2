@@ -9,12 +9,6 @@
     "@popperjs/core": "^2.10.2",
     "@reach/portal": "^0.16.2",
     "@reduxjs/toolkit": "^1.6.2",
-    "@storybook/addon-actions": "^6.3.12",
-    "@storybook/addon-essentials": "^6.3.12",
-    "@storybook/addon-links": "^6.3.12",
-    "@storybook/node-logger": "^6.3.12",
-    "@storybook/preset-create-react-app": "^3.2.0",
-    "@storybook/react": "^6.3.12",
     "@types/big.js": "^6.1.2",
     "@types/jest": "^27.0.2",
     "@types/lodash.flatmap": "^4.5.6",
@@ -72,14 +66,12 @@
   "scripts": {
     "start": "craco start",
     "start:service-worker": "yarn build && yarn serve -s build",
-    "build": "CI= craco build",
+    "build": "craco build",
     "build:pre": "env-cmd -f ./.env.pre.production yarn build",
     "build:test": "env-cmd -f ./.env.test.production yarn build",
     "build:dev": "env-cmd -f ./.env.dev.production yarn build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -131,7 +123,6 @@
     "react-quill": "^2.0.0",
     "react-select-material-ui": "^9.2.0",
     "react-toastify": "8.0.0",
-    "styled-components": "^5.3.9",
     "toformat": "^2.0.0",
     "web3": "^1.7.4",
     "xss": "^1.0.14",
