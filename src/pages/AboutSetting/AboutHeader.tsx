@@ -5,7 +5,7 @@ import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import { useParams } from 'react-router-dom'
-import { useGetUserQuitDao, useIsJoined } from 'hooks/useBackedDaoServer'
+import { useGetUserQuitDao } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
@@ -13,8 +13,10 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useCallback, useMemo } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { toast } from 'react-toastify'
+import { useDispatch } from 'react-redux'
+import { updateJoinDaoModalStatus } from 'state/buildingGovDao/actions'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -39,10 +41,17 @@ const Text = styled(Typography)({
   userSelect: 'none'
 })
 
+const LinkStyle = styled(Link)(() => ({
+  display: 'flex',
+  alignItems: 'center'
+}))
+
 export default function Header() {
   const isSmDown = useBreakpoint('sm')
+  const dispatch = useDispatch()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
-  const daoAdminLevel = useIsJoined(Number(curDaoId))
+  // const { isJoined } = useIsJoined(Number(curDaoId))
+  const { myJoinDaoData, updateDaoMyJoinData } = useUpdateDaoDataCallback()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const quit = useGetUserQuitDao()
   const categoryList = useMemo(() => {
@@ -56,9 +65,12 @@ export default function Header() {
         toast.error(res.data.msg || 'network error')
         return
       }
+      updateDaoMyJoinData()
+      dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
+
       toast.success('Quit success')
     })
-  }, [curDaoId, quit])
+  }, [curDaoId, quit, updateDaoMyJoinData, dispatch])
 
   return (
     <Box>
@@ -88,7 +100,7 @@ export default function Header() {
                   {daoInfo?.daoName || '--'}
                 </Typography>
                 {daoInfo?.approve && <AuthIcon />}
-                <AdminTag level={daoAdminLevel.isJoined?.job} />
+                <AdminTag level={myJoinDaoData?.job} />
               </Box>
               <Typography sx={{ mt: 6, font: ' 500 14px/17px "Inter"', color: '#97B7EF' }}>
                 @{daoInfo?.handle}
@@ -122,41 +134,31 @@ export default function Header() {
                   </Box>
                 ))}
               </Box>
-              <Box sx={{ mt: 13, display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ mt: 13, gap: 10, display: 'flex', alignItems: 'center' }}>
                 {daoInfo?.twitter && isSocialUrl('twitter', daoInfo.twitter) && (
-                  <Link
-                    target={'_blank'}
-                    href={daoInfo.twitter}
-                    underline="none"
-                    sx={{ mr: 10, display: 'flex', alignItems: 'center' }}
-                  >
+                  <LinkStyle target={'_blank'} href={daoInfo.twitter} underline="none">
                     <Twitter />
-                  </Link>
+                  </LinkStyle>
                 )}
                 {daoInfo?.discord && isSocialUrl('discord', daoInfo.discord) && (
-                  <Link
-                    target={'_blank'}
-                    href={daoInfo.discord}
-                    underline="none"
-                    sx={{ mr: 10, display: 'flex', alignItems: 'center' }}
-                  >
+                  <LinkStyle target={'_blank'} href={daoInfo.discord} underline="none">
                     <Discord />
-                  </Link>
+                  </LinkStyle>
                 )}
                 {daoInfo?.github && isSocialUrl('github', daoInfo.github) && (
-                  <Link fontSize={12} target={'_blank'} href={daoInfo.github} underline="none" mr={10}>
+                  <LinkStyle fontSize={12} target={'_blank'} href={daoInfo.github} underline="none" mr={10}>
                     <Youtobe />
-                  </Link>
+                  </LinkStyle>
                 )}
                 {daoInfo?.website && isSocialUrl('', daoInfo.website) && (
-                  <Link fontSize={12} target={'_blank'} href={daoInfo.website} underline="none">
+                  <LinkStyle fontSize={12} target={'_blank'} href={daoInfo.website} underline="none">
                     <Opensea />
-                  </Link>
+                  </LinkStyle>
                 )}
               </Box>
             </Box>
           </Box>
-          {daoAdminLevel.isJoined?.isJoin && daoAdminLevel.isJoined.job !== 'owner' ? (
+          {myJoinDaoData?.isJoin && myJoinDaoData?.job !== 'owner' ? (
             <Text onClick={handleQuitClick}>
               <QuitIcon />
               Quit DAO

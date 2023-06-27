@@ -9,7 +9,7 @@ import {
   getDaoInfo,
   // getHomeDaoList,
   getDaoList,
-  // getHomeOverview,
+  getHomeOverview,
   getJoinDaoMembersLogs,
   getMyJoinedDao,
   getTokenList,
@@ -838,10 +838,10 @@ export function useDaoHandleQuery() {
 }
 
 export interface HomeOverviewProp {
-  totalProposal: string
-  totalApproveDao: string
-  totalDao: string
-  totalAccount: string
+  totalProposal: number
+  totalApproveDao: number
+  totalDao: number
+  totalAccount: number
 }
 
 export function useHomeOverview(): HomeOverviewProp | undefined {
@@ -850,10 +850,9 @@ export function useHomeOverview(): HomeOverviewProp | undefined {
   useEffect(() => {
     ;(async () => {
       try {
-        // const res = await getHomeOverview()
-        // const data = res.data.data as any
-        const data = { totalDao: 99, totalAccount: 999, totalProposal: 9999 }
-
+        const res = await getHomeOverview()
+        const data = res.data.data as any
+        setOverview(data)
         if (!data) {
           setOverview(undefined)
           return
