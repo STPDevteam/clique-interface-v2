@@ -66,7 +66,7 @@
   "scripts": {
     "start": "craco start",
     "start:service-worker": "yarn build && yarn serve -s build",
-    "build": "craco build",
+    "build": "CI= craco build",
     "build:pre": "env-cmd -f ./.env.pre.production yarn build",
     "build:test": "env-cmd -f ./.env.test.production yarn build",
     "build:dev": "env-cmd -f ./.env.dev.production yarn build",

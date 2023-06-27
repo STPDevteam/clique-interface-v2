@@ -251,7 +251,6 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                           display={'flex'}
                           gap={12}
                           sx={{
-                            marginTop: 12,
                             height: 36,
                             padding: 0,
                             cursor: 'pointer',
@@ -311,7 +310,6 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                           display={'flex'}
                           gap={12}
                           sx={{
-                            marginTop: 12,
                             height: 36,
                             padding: 0,
                             cursor: 'pointer',
