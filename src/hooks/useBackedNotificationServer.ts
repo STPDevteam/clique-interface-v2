@@ -109,7 +109,7 @@ export function useUpdateNotificationUnReadCount() {
         return
       }
       try {
-        const res = await getNotificationUnreadTotal(account)
+        const res = await getNotificationUnreadTotal()
         const data = res.data.data as any
         if (!data) {
           return
@@ -129,14 +129,14 @@ export function useNotificationToRead() {
   const toBackedReadOnce = useCallback(
     async (notificationId: number) => {
       if (!account) return
-      return notificationToRead(account, notificationId, false)
+      return notificationToRead(notificationId, false)
     },
     [account]
   )
 
   const toBackedReadAll = useCallback(async () => {
     if (!account) return
-    return notificationToRead(account, 0, true)
+    return notificationToRead(0, true)
   }, [account])
 
   return {

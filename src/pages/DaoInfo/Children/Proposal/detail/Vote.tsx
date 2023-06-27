@@ -1,40 +1,24 @@
 import { Box, Stack, styled, Typography, useTheme } from '@mui/material'
 import { RowCenter } from '../ProposalItem'
 import CheckBox from 'components/Checkbox'
-import { BlackButton } from 'components/Button/Button'
-import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { useCallback, useMemo, useState } from 'react'
-import VoteModal from './VoteModal'
-import { useVoteModalToggle } from 'state/application/hooks'
-import { ChainId } from 'constants/chain'
 import { TokenAmount } from 'constants/token'
 import JSBI from 'jsbi'
+import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 
 export const VoteWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.common.white,
-  borderRadius: theme.borderRadius.default,
-  boxShadow: theme.boxShadow.bs2,
-  padding: '32px',
+  padding: '0',
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
     padding: '20px 16px'
   }
 }))
 
-export default function Vote({
-  proposalInfo,
-  daoChainId,
-  daoAddress
-}: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
-}) {
+export default function Vote({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
   const theme = useTheme()
-  const voteModalToggle = useVoteModalToggle()
 
-  const [checkList, setCheckList] = useState<boolean[]>(proposalInfo.proposalOptions.map(() => false))
+  const [checkList, setCheckList] = useState<boolean[]>(proposalInfo.options.map(() => false))
   const setCheckListIndex = useCallback(
     (index: number, value: boolean) => {
       if (proposalInfo.votingType === VotingTypes.SINGLE) {
@@ -50,14 +34,9 @@ export default function Vote({
     [checkList, proposalInfo.votingType]
   )
 
-  const selectIds = useMemo(
-    () => checkList.map((val, index) => (val ? index : undefined)).filter(i => i !== undefined) as number[],
-    [checkList]
-  )
-
   return (
     <VoteWrapper>
-      {!proposalInfo.myVoteInfo?.length ? (
+      {!proposalInfo.yourVotes ? (
         <>
           <RowCenter>
             <Typography variant="h6" fontWeight={500}>
@@ -68,66 +47,28 @@ export default function Vote({
             </Typography>
           </RowCenter>
           <Stack spacing={20} mt={24} mb={16}>
-            {proposalInfo.proposalOptions.map(({ name }, index) => (
+            {proposalInfo.options.map(({ optionContent }, index) => (
               <CheckBox
                 key={index}
-                disabled={proposalInfo.status !== ProposalStatus.OPEN}
+                disabled={proposalInfo.status !== 'Open'}
                 checked={checkList[index]}
                 onChange={(e: any) => {
                   setCheckListIndex(index, e.target.checked)
                 }}
-                label={name}
+                label={optionContent}
               />
             ))}
           </Stack>
-          {proposalInfo.status === ProposalStatus.OPEN && proposalInfo.myVoteInfo?.length === 0 && (
-            <>
-              <BlackButton
-                height="44px"
-                disabled={checkList.filter(i => i).length === 0}
-                onClick={voteModalToggle}
-                width="112px"
-              >
-                Vote Now
-              </BlackButton>
-              <VoteModal
-                proposalInfo={proposalInfo}
-                daoAddress={daoAddress}
-                daoChainId={daoChainId}
-                voteFor={selectIds}
-              />
-            </>
-          )}
         </>
       ) : (
-        <VoteResult type={proposalInfo.votingType} myVoteInfo={proposalInfo.myVoteInfo} />
+        <VoteResult type={proposalInfo.votingType} myVoteInfo={proposalInfo.yourVotes} />
       )}
-      <RowCenter mt={5}>
-        <Typography fontSize={12} color={theme.palette.text.secondary}>
-          Minimum Votes Needed For Success
-        </Typography>
-        <Typography fontSize={12}>
-          {proposalInfo.votingThreshold?.toSignificant(6, {
-            groupSeparator: ','
-          }) || '-'}
-        </Typography>
-      </RowCenter>
+      <RowCenter mt={5}></RowCenter>
     </VoteWrapper>
   )
 }
 
-function VoteResult({
-  type,
-  myVoteInfo
-}: {
-  type: VotingTypes
-  myVoteInfo:
-    | {
-        name: string
-        amount: TokenAmount
-      }[]
-    | undefined
-}) {
+function VoteResult({ type, myVoteInfo }: { type: VotingTypes; myVoteInfo: any | undefined }) {
   const theme = useTheme()
   const total = useMemo(() => {
     if (!myVoteInfo?.length) return undefined
@@ -142,7 +83,7 @@ function VoteResult({
       <Typography variant="h6" fontWeight={500}>
         Your choice
       </Typography>
-      {myVoteInfo?.map((item, index) => (
+      {myVoteInfo?.map((item: any, index: number) => (
         <RowCenter
           key={index}
           sx={{

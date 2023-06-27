@@ -1,7 +1,7 @@
 import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
-import { ChainId } from 'constants/chain'
+import { VoteParamsProp } from 'hooks/useBackedProposalServer'
 
 export function getHomeContributorsList(offset: number, count: number) {
   return Axios.get('stpdao/v2/account/top/list', {
@@ -20,7 +20,7 @@ export function commitErrorMsg(title: string, content: string, func: string, par
 }
 
 export function getMyJoinedDao() {
-  return Axios.get('stpdao/v2/jobs/left')
+  return Axios.get('stpdao/v3/user/left')
 }
 
 export function getHomeDaoList(
@@ -34,25 +34,68 @@ export function getHomeDaoList(
   if (category.trim()) {
     req.category = category === CategoriesTypeProp.ALL ? '' : category
   }
-  return Axios.get('stpdao/v2/dao/list', {
+  return Axios.get('stpdao/v3/dao/list', {
     ...req,
     offset,
     count
   })
 }
 
-export function Login(account: string, signature: string) {
-  return Axios.post('stpdao/v2/account/jwt/signIn', {
+export function getDaoList(
+  { keyword, categoryId }: { keyword: string; categoryId: string },
+  offset: number,
+  limit: number
+) {
+  const req: any = {}
+
+  if (keyword.trim()) req.keyword = keyword.trim()
+  // if (categoryId.trim()) {
+  //   req.category = categoryId === CategoriesTypeProp.ALL ? '' : categoryId
+  // }
+  switch (categoryId.trim()) {
+    case CategoriesTypeProp.Social:
+      req.categoryId = '1'
+      break
+    case CategoriesTypeProp.Protocol:
+      req.categoryId = '2'
+      break
+    case CategoriesTypeProp.NFT:
+      req.categoryId = '3'
+      break
+    case CategoriesTypeProp.Metaverse:
+      req.categoryId = '4'
+      break
+    case CategoriesTypeProp.Gaming:
+      req.categoryId = '5'
+      break
+    // case CategoriesTypeProp.Dapp:
+    //   req.category = '6'
+    //   break
+    case CategoriesTypeProp.Other:
+      req.categoryId = '6'
+      break
+    default:
+      req.categoryId = ''
+      break
+  }
+
+  return Axios.get('stpdao/v3/dao/list', {
+    ...req,
+    offset,
+    limit
+  })
+}
+
+export function Login(account: string, message: string, signature: string) {
+  return Axios.post('stpdao/v3/user/signIn', {
     account,
+    message,
     signature
   })
 }
 
-export function checkIsJoin(chainId: ChainId, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/identity', {
-    chainId,
-    daoAddress
-  })
+export function checkIsJoin(daoId: number) {
+  return Axios.get(`stpdao/v3/user/identity/${daoId}`)
 }
 
 export function switchJoinDao(
@@ -84,31 +127,26 @@ export function getSpaceId(chainId: number, daoAddress: string) {
   })
 }
 
-export function applyReview(chainId: number, daoAddress: string, isPass: boolean, jobsApplyId: number) {
-  return Axios.post('stpdao/v2/jobs/apply/review', {
-    chainId,
-    daoAddress,
+export function applyReview(isPass: boolean, jobsApplyId: number) {
+  return Axios.post('stpdao/v3/jobs/apply/review', {
     isPass,
     jobsApplyId
   })
 }
 
-export function getApplyList(offset: number, count: number, chainId: number, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/apply/list', {
+export function getApplyList(offset: number, limit: number, daoId: number) {
+  return Axios.get('stpdao/v3/jobs/apply/list', {
+    daoId,
     offset,
-    count,
-    chainId,
-    daoAddress
+    limit
   })
 }
 
-export function getJobsList(exceptLevel: string, offset: number, count: number, chainId: number, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/list', {
-    exceptLevel,
+export function getJobsList(daoId: number, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/jobs/list', {
+    daoId,
     offset,
-    count,
-    chainId,
-    daoAddress
+    limit
   })
 }
 
@@ -119,7 +157,7 @@ export function getTaskList(
   status: string | undefined,
   priority: string | undefined
 ) {
-  return Axios.get('stpdao/v2/task/list', {
+  return Axios.get('stpdao/v3/task/list', {
     offset,
     count,
     spacesId,
@@ -129,30 +167,26 @@ export function getTaskList(
 }
 
 export function jobsApply(jobPublishId: number, message: string) {
-  return Axios.post('stpdao/v2/jobs/apply', {
+  return Axios.post('stpdao/v3/jobs/apply', {
     jobPublishId,
     message
   })
 }
 
-export function joinDAO(chainId: number, daoAddress: string) {
-  return Axios.post('stpdao/v2/jobs/join/member', {
-    chainId,
-    daoAddress
-  })
+export function joinDAO(daoId: number) {
+  return Axios.post(`stpdao/v3/user/join/${daoId}`, {})
 }
 
-export function changeAdminRole(chainId: number, changeTo: string, daoAddress: string, jobId: number) {
-  return Axios.post('stpdao/v2/jobs/alter', {
-    chainId,
-    changeTo,
-    daoAddress,
-    jobId
+export function changeAdminRole(account: string, changeToLevel: number, daoId: number) {
+  return Axios.post('stpdao/v3/jobs/alter', {
+    account,
+    changeToLevel,
+    daoId
   })
 }
 
 export function removeTask(spacesId: number, taskId: number[]) {
-  return Axios.post('stpdao/v2/task/remove', {
+  return Axios.post('stpdao/v3/task/remove', {
     spacesId,
     taskId
   })
@@ -172,7 +206,7 @@ export function updateTask(
   taskName: string,
   weight: number
 ) {
-  return Axios.post('stpdao/v2/task/update', {
+  return Axios.post('stpdao/v3/task/update', {
     assignAccount,
     content,
     deadline,
@@ -199,7 +233,7 @@ export function createTask(
   status: string,
   taskName: string
 ) {
-  return Axios.post('stpdao/v2/task/create', {
+  return Axios.post('stpdao/v3/task/create', {
     assignAccount,
     content,
     deadline,
@@ -213,7 +247,7 @@ export function createTask(
 }
 
 export function getTaskDetail(taskId: number) {
-  return Axios.get(`stpdao/v2/task/detail/${taskId}`)
+  return Axios.get(`stpdao/v3/task/detail/${taskId}`)
 }
 
 export function getMembersCount(daoAddress: string, chainId: number) {
@@ -223,12 +257,16 @@ export function getMembersCount(daoAddress: string, chainId: number) {
   })
 }
 
-export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
-  return Axios.get('stpdao/v2/dao/info', {
-    account: account || '',
-    daoAddress,
-    chainId
-  })
+// export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
+//   return Axios.get('stpdao/v2/dao/info', {
+//     account: account || '',
+//     daoAddress,
+//     chainId
+//   })
+// }
+
+export function getDaoInfo(daoId: number) {
+  return Axios.get(`stpdao/v3/dao/info/${daoId}`)
 }
 
 export function getDaoAdmins(daoAddress: string, chainId: number) {
@@ -238,12 +276,12 @@ export function getDaoAdmins(daoAddress: string, chainId: number) {
   })
 }
 
-export function getTokenList(chainId: number | string, creator: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/token/list', {
+export function getTokenList(chainId: number | string, creator: string, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/token/list', {
     chainId,
     creator,
     offset,
-    count
+    limit
   })
 }
 
@@ -269,19 +307,11 @@ export function getProposalContent(uuid: string) {
   })
 }
 
-export function getProposalList(
-  chainId: number | string,
-  daoAddress: string,
-  status: number | undefined,
-  offset: number,
-  count: number
-) {
-  return Axios.get('stpdao/v2/proposal/list', {
-    chainId,
-    daoAddress,
+export function getProposalList(daoId: number | string, status: string | undefined, offset: number, limit: number) {
+  return Axios.get(`stpdao/v3/proposal/list/${daoId}`, {
     status: status || '',
     offset,
-    count
+    limit
   })
 }
 
@@ -293,19 +323,11 @@ export function getProposalSnapshot(chainId: number, daoAddress: string, proposa
   })
 }
 
-export function getProposalVotesList(
-  chainId: number | string,
-  daoAddress: string,
-  proposalId: number,
-  offset: number,
-  count: number
-) {
-  return Axios.get('stpdao/v2/votes/list', {
-    chainId,
-    daoAddress,
+export function getProposalVotesList(proposalId: number, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/vote/list', {
     proposalId,
     offset,
-    count
+    limit
   })
 }
 
@@ -394,75 +416,64 @@ export function toCreatePublicSale(
 }
 
 export function saveAirdropAddress(
+  account: string,
+  airdropId: number,
+  daoId: number,
   address: string[],
   amount: string[],
   sign: {
-    account: string
-    chainId: number
-    daoAddress: string
-    airdropId: number
     message: string
     signature: string
   }
 ) {
-  return Axios.post('stpdao/v2/airdrop/address', {
+  return Axios.post('stpdao/v3/airdrop/address', {
+    account,
+    airdropId,
     array: {
       address,
       amount
     },
+    daoId,
     ...sign
   })
 }
 
-export function getActivityList(
-  chainId: number,
-  daoAddress: string,
-  status: string | undefined,
-  types: 'Airdrop' | 'PublicSale' | '',
-  offset: number,
-  count: number
-) {
-  return Axios.get('stpdao/v2/activity/list', {
-    chainId,
-    daoAddress,
+export function getActivityList(daoId: number, status: string | undefined, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/airdrop/list', {
+    daoId,
     status: status || '',
-    types,
     offset,
-    count
+    limit
   })
 }
 
-export function getAirdropProof(address: string, activityId: number) {
-  return Axios.get('stpdao/v2/airdrop/proof', {
-    address,
-    id: activityId
+export function getAirdropProof(airdropId: number) {
+  return Axios.get('stpdao/v3/airdrop/proof', {
+    airdropId
   })
 }
 
 export function getTokenLogo(tokenAddress: string, tokenChainId: number) {
-  return Axios.get('stpdao/v2/token/img', {
-    tokenAddress,
-    tokenChainId
+  return Axios.get('stpdao/v3/token/img', {
+    tokenChainId,
+    tokenAddress
   })
 }
 
-export function getNotificationListInfo(account: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/notification/list', {
+export function getNotificationListInfo(account: string, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/notification/list', {
     account,
     offset,
-    count
+    limit
   })
 }
 
-export function getNotificationUnreadTotal(account: string) {
-  return Axios.get('stpdao/v2/notification/unread/total', {
-    account
-  })
+export function getNotificationUnreadTotal() {
+  return Axios.get('stpdao/v3/notification/unread/total')
 }
 
-export function notificationToRead(account: string, notificationId: number, readAll: boolean) {
-  return Axios.post('stpdao/v2/notification/read', {
-    account,
+export function notificationToRead(notificationId: number, readAll: boolean) {
+  return Axios.post('stpdao/v3/notification/read', {
     notificationId,
     readAll
   })
@@ -549,11 +560,9 @@ export function getAccountSendRecordList(account: string, offset: number, count:
   })
 }
 
-export function daoHandleQuery(handle: string, account: string, chainId: number) {
-  return Axios.get('stpdao/v2/sign/query/handle', {
-    handle,
-    account,
-    chainId
+export function daoHandleQuery(handle: string) {
+  return Axios.get('stpdao/v3/dao/handle/check', {
+    handle
   })
 }
 
@@ -566,47 +575,44 @@ export function daoHandleMakeSign(handle: string, account: string, chainId: numb
 }
 
 export function createAirdropOne(
-  title: string,
-  description: string,
-  tokenChainId: number,
-  tokenAddress: string,
-  maxAirdropAmount: string,
-  startTime: number,
-  endTime: number,
-  airdropStartTime: number,
   airdropEndTime: number,
+  airdropStartTime: number,
+  collectInformation: { name: string; required: boolean }[],
+  description: string,
+  endTime: number,
+  maxAirdropAmount: string,
   sign: {
     account: string
-    chainId: number
-    daoAddress: string
+    daoId: number
     message: string
     signature: string
   },
-  collectInformation: { name: string; required: boolean }[]
+  startTime: number,
+  title: string,
+  tokenAddress: string,
+  tokenChainId: number
 ) {
-  return Axios.post('stpdao/v2/airdrop/create', {
-    title,
-    description,
-    tokenChainId,
-    tokenAddress,
-    maxAirdropAmount,
-    startTime,
-    endTime,
-    airdropStartTime,
+  return Axios.post('stpdao/v3/airdrop/create', {
     airdropEndTime,
+    airdropStartTime,
+    collectInformation,
+    description,
+    endTime,
+    maxAirdropAmount,
     sign,
-    collectInformation
+    startTime,
+    title,
+    tokenAddress,
+    tokenChainId
   })
 }
 
-export function getAirdropDescData(activityId: number) {
-  return Axios.get('stpdao/v2/airdrop/collect', {
-    id: activityId
-  })
+export function getAirdropDescData(airdropId: number) {
+  return Axios.get(`stpdao/v3/airdrop/info/${airdropId}`)
 }
 
 export function airdropSaveUserCollect(account: string, airdropId: number, userSubmit: string) {
-  return Axios.post('stpdao/v2/airdrop/save/user', {
+  return Axios.post('stpdao/v3/airdrop/submit/data', {
     account,
     airdropId,
     userSubmit
@@ -614,7 +620,7 @@ export function airdropSaveUserCollect(account: string, airdropId: number, userS
 }
 
 export function airdropDownloadUserCollect(account: string, airdropId: number, message: string, signature: string) {
-  return Axios.post('stpdao/v2/airdrop/user/download', {
+  return Axios.post('stpdao/v3/airdrop/download/data', {
     account,
     airdropId,
     message,
@@ -623,7 +629,7 @@ export function airdropDownloadUserCollect(account: string, airdropId: number, m
 }
 
 export function getAirdropAccountList(airdropId: number) {
-  return Axios.get('stpdao/v2/airdrop/address/list', {
+  return Axios.get('stpdao/v3/airdrop/address/list', {
     airdropId
   })
 }
@@ -647,30 +653,236 @@ export function sendAiChat(content: string[]) {
   })
 }
 
-export function createNewJob(access: string, chainId: number, daoAddress: string, jobBio: string, title: string) {
-  return Axios.post('stpdao/v2/jobs/publish', {
-    access,
-    chainId,
-    daoAddress,
+export function createNewJob(daoId: number, jobBio: string, level: number, title: string) {
+  return Axios.post('stpdao/v3/jobs/publish', {
+    daoId,
     jobBio,
+    level,
     title
   })
 }
 
-export function updateNewJob(jobBio: string, jobPublishId: number, title: string) {
-  return Axios.post('stpdao/v2/jobs/publish/edit', {
+export function updateNewJob(jobBio: string, jobPublishId: number, level: number, title: string) {
+  return Axios.post('stpdao/v3/jobs/publish/edit', {
     jobBio,
     jobPublishId,
+    level,
     title
   })
 }
 
 export function deleteJob(publishId: number) {
-  return Axios.delete(`stpdao/v2/jobs/publish/${publishId}`)
+  return Axios.delete(`stpdao/v3/jobs/publish/${publishId}`)
 }
 
-export function publishList(chainId: number, daoAddress: string) {
-  return Axios.get('stpdao/v2/jobs/publish/list', { chainId, daoAddress })
+export function publishList(daoId: number, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/jobs/publish/list', { daoId, offset, limit })
+}
+
+export function leftSpacesList(daoId: number, offset: number, limit: number) {
+  return Axios.get(`stpdao/v3/spaces/list/${daoId}`, {
+    offset,
+    limit
+  })
+}
+
+export function updateDaoGeneral(
+  bio: string,
+  category: string[],
+  daoId: number,
+  daoLogo: string,
+  daoName: string,
+  discord: string,
+  github: string,
+  join:
+    | {
+        chainId: number
+        decimals: number
+        holdAmount: string
+        symbol: string
+        tokenAddress: string
+        tokenLogo: string
+        tokenName: string
+        tokenType: string
+        totalSupply: string
+      }
+    | undefined,
+  twitter: string,
+  website: string
+) {
+  return Axios.post('stpdao/v3/dao/setting/general', {
+    bio,
+    category,
+    daoId,
+    daoLogo,
+    daoName,
+    discord,
+    github,
+    join,
+    twitter,
+    website
+  })
+}
+
+export type VoteWeightProp = {
+  createRequire: string
+  voteTokenId: number
+  votesWeight: number
+}
+
+export function updateGovernance(
+  daoId: number,
+  proposalThreshold: number,
+  votingPeriod: number,
+  votingType: number,
+  weight: VoteWeightProp[]
+) {
+  return Axios.post('stpdao/v3/dao/setting/governance', { daoId, proposalThreshold, votingPeriod, votingType, weight })
+}
+
+export function getV3DaoInfo(daoId: number) {
+  return Axios.get(`stpdao/v3/dao/info/${daoId}`)
+}
+
+export function createDao(bio: string, category: string[], daoLogo: string, daoName: string, handle: string) {
+  return Axios.post('stpdao/v3/dao/create', { bio, category, daoLogo, daoName, handle })
+}
+
+export function joinV3Dao(daoId: number) {
+  return Axios.post(`stpdao/v3/user/join/${daoId}`, {})
+}
+
+export function createProposal(
+  content: string,
+  daoId: number,
+  endTime: number,
+  introduction: string,
+  options: string[],
+  startTime: number,
+  title: string,
+  voteTokenId: number[],
+  voteType: number
+) {
+  return Axios.post('stpdao/v3/proposal/create', {
+    content,
+    daoId,
+    endTime,
+    introduction,
+    options,
+    startTime,
+    title,
+    voteTokenId,
+    voteType
+  })
+}
+
+export function getProposalDetail(proposalId: number) {
+  return Axios.get(`stpdao/v3/proposal/info/${proposalId}`)
+}
+
+export function toVote(voteParams: VoteParamsProp[]) {
+  return Axios.post('stpdao/v3/vote/voting', voteParams)
+}
+
+export function deleteGovToken(voteTokenId: number) {
+  return Axios.delete(`stpdao/v3/vote/delete/${voteTokenId}`)
+}
+
+export function addGovToken(
+  chainId: number,
+  createRequire: string,
+  daoId: number,
+  decimals: number,
+  symbol: string,
+  tokenAddress: string,
+  tokenLogo: string,
+  tokenName: string,
+  tokenType: string,
+  totalSupply: string,
+  votesWeight: number
+) {
+  return Axios.post('stpdao/v3/vote/add/token', {
+    chainId,
+    createRequire,
+    daoId,
+    decimals,
+    symbol,
+    tokenAddress,
+    tokenLogo,
+    tokenName,
+    tokenType,
+    totalSupply,
+    votesWeight
+  })
+}
+
+export function getSpacesList(daoId: number, offset: number, limit: number) {
+  return Axios.get(`stpdao/v3/spaces/list/${daoId}`, {
+    offset,
+    limit
+  })
+}
+
+export function deleteSpace(spacesId: number) {
+  return Axios.post('stpdao/v3/spaces/delete', {
+    spacesId
+  })
+}
+
+export function addDaoMember(account: string, spacesId: number) {
+  return Axios.post('stpdao/v3/spaces/member/add', {
+    account,
+    spacesId
+  })
+}
+
+export function addWorkspace(access: string, bio: string, daoId: number, title: string) {
+  return Axios.post('stpdao/v3/spaces/create', {
+    access,
+    bio,
+    daoId,
+    title
+  })
+}
+
+export function updateWorkspace(access: string, bio: string, spacesId: number, title: string) {
+  return Axios.post('stpdao/v3/spaces/update', {
+    access,
+    bio,
+    spacesId,
+    title
+  })
+}
+
+export function deleteWorkspace(spacesId: number) {
+  return Axios.post('stpdao/v3/spaces/remove', {
+    spacesId
+  })
+}
+
+export function addSpacesMember(account: string, spacesId: number) {
+  return Axios.post('stpdao/v3/spaces/member/add', {
+    account,
+    spacesId
+  })
+}
+
+export function removeSpacesMember(id: number) {
+  return Axios.delete('stpdao/v3/spaces/member/delete', {
+    id
+  })
+}
+
+export function getSpacesMemberList(spacesId: number, offset: number, limit: number) {
+  return Axios.get('stpdao/v3/spaces/member/list', {
+    spacesId,
+    offset,
+    limit
+  })
+}
+
+export function getUserQuitDao(daoId: number) {
+  return Axios.delete(`stpdao/v3/user/quit/${daoId}`)
 }
 
 export function createSbt(

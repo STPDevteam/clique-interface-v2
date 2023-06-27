@@ -12,12 +12,13 @@ import Image from 'components/Image'
 import Table from 'components/Table'
 import Avatar from 'assets/images/avatar.png'
 import { useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
 import { useGetPublishJobList, useJobsList } from 'hooks/useBackedTaskServer'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MemberAuthorityAssignmentModal from './Modals/MemberAuthorityAssignmentModal'
+import EmptyData from 'components/EmptyData'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
-import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
+import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 
 const TopText = styled(Box)({
   display: 'flex',
@@ -25,17 +26,24 @@ const TopText = styled(Box)({
   alignItems: 'center'
 })
 
+export const adminLevelIndex = {
+  owner: 0,
+  superAdmin: 1,
+  admin: 2
+}
+
 export default function Team() {
   const isSmDown = useBreakpoint('sm')
   const [rand, setRand] = useState(Math.random())
   const [randNum, setRandNum] = useState(Math.random())
   const { showModal, hideModal } = useModal()
-  const { account } = useActiveWeb3React()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: jobList } = useGetPublishJobList(curDaoChainId, daoAddress, randNum)
-  const { result: memberList } = useJobsList('A_superAdmin', daoAddress, curDaoChainId, rand)
-  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
+  const { daoId: daoChainId } = useParams<{ daoId: string }>()
+  const curDaoId = Number(daoChainId)
+  const spacesId = 0
+  const { account: curAccount } = useActiveWeb3React()
+  const { result: jobList } = useGetPublishJobList(curDaoId, randNum)
+  const { result: memberList } = useJobsList(curDaoId, rand)
+  const { myJoinDaoData: memberLevel } = useUpdateDaoDataCallback()
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -47,25 +55,20 @@ export default function Team() {
     }
   }, [])
 
-  const addMemberCB = useCallback(() => {
-    showModal(<AddMemberModal onClose={hideModal} daoAddress={daoAddress} curDaoChainId={curDaoChainId} />)
-  }, [curDaoChainId, daoAddress, hideModal, showModal])
+  useCallback(() => {
+    showModal(<AddMemberModal onClose={hideModal} spacesId={spacesId} />)
+  }, [hideModal, showModal])
 
   const addJobsCB = useCallback(() => {
     showModal(
-      <AddJobsModal
-        isEdit={false}
-        chainId={curDaoChainId}
-        daoAddress={daoAddress}
-        onDimiss={() => setRandNum(Math.random())}
-      />
+      <AddJobsModal isEdit={false} chainId={curDaoId} onDimiss={() => setRandNum(Math.random())} originLevel={1} />
     )
-  }, [curDaoChainId, daoAddress, showModal])
+  }, [curDaoId, showModal])
 
   const tableList = useMemo(() => {
-    return memberList.map(({ avatar, chainId, account, nickname, jobId }) => [
+    return memberList.map(({ avatar, daoId, account, nickname, jobsLevel }) => [
       <Box
-        key={account + chainId}
+        key={account + daoId}
         display={'flex'}
         alignItems={'center'}
         gap={10}
@@ -80,11 +83,11 @@ export default function Team() {
           {nickname || 'unnamed'}
         </Typography>
       </Box>,
-      <Box key={account + chainId} display={'flex'} justifyContent={'flex-start'}>
+      <Box key={account + daoId} display={'flex'} justifyContent={'flex-start'}>
         <Typography>{account}</Typography>
       </Box>,
       <Box
-        key={account + chainId}
+        key={account + daoId}
         display={'flex'}
         justifyContent={'space-between'}
         sx={{
@@ -94,23 +97,30 @@ export default function Team() {
           }
         }}
         onClick={() => {
+          if (curAccount && account.toLocaleLowerCase() === curAccount.toLocaleLowerCase()) return
+          if (memberLevel.job === 'superAdmin') {
+            if (jobsLevel === 0) return
+          } else if (memberLevel.job === 'admin') {
+            if ([0, 1].includes(jobsLevel)) return
+          }
           showModal(
             <MemberAuthorityAssignmentModal
-              chainId={curDaoChainId}
-              daoAddress={daoAddress}
-              id={jobId}
+              myLevel={adminLevelIndex[memberLevel.job as keyof typeof adminLevelIndex]}
+              account={account}
+              daoId={daoId}
+              level={jobsLevel}
               onDimiss={() => setRand(Math.random())}
             />
           )
         }}
       >
         <Typography width={130} textAlign={'left'}>
-          Admin
+          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp]}
         </Typography>
         <ExpandMoreIcon />
       </Box>
     ])
-  }, [curDaoChainId, daoAddress, memberList, showModal])
+  }, [curAccount, memberLevel.job, memberList, showModal])
 
   return (
     <Box
@@ -166,11 +176,11 @@ export default function Team() {
           Jobs
         </Typography>
         <Box display={'flex'} gap={35} flexDirection={'row'}>
-          {daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN ? (
-            <BlueButton actionText="Add Members" onClick={addMemberCB} />
+          {/* {memberLevel?.job === DaoAdminLevelProp.SUPER_ADMIN || memberLevel?.job === DaoAdminLevelProp.OWNER ? (
+            <BlueButton actionText="Add Admins" onClick={addMemberCB} />
           ) : (
             <></>
-          )}
+          )} */}
           <BlueButton actionText="Add Jobs" onClick={addJobsCB} />
         </Box>
       </TopText>
@@ -188,13 +198,17 @@ export default function Team() {
           <JobCard key={item.title + index} {...item} onDimiss={() => setRandNum(Math.random())} />
         ))}
       </Box>
-      <Table
-        collapsible={false}
-        firstAlign="left"
-        variant="outlined"
-        header={['Member', 'Address', 'Guests']}
-        rows={tableList}
-      ></Table>
+      {tableList.length === 0 ? (
+        <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>
+      ) : (
+        <Table
+          collapsible={false}
+          firstAlign="left"
+          variant="outlined"
+          header={['Member', 'Address', 'Guests']}
+          rows={tableList}
+        />
+      )}
     </Box>
   )
 }
@@ -231,23 +245,20 @@ export function BlueButton({
 }
 
 function JobCard({
-  title,
-  access,
-  chainId,
-  daoAddress,
+  daoId,
   jobBio,
   jobPublishId,
+  level,
+  title,
   onDimiss
 }: {
-  title: string
-  access: string
-  chainId: number
-  daoAddress: string
+  daoId: number
   jobBio: string
   jobPublishId: number
+  level: number
+  title: string
   onDimiss: () => void
 }) {
-  console.log(access)
   const { showModal, hideModal } = useModal()
 
   const editIconClick = useCallback(() => {
@@ -257,13 +268,13 @@ function JobCard({
         isEdit={true}
         originTitle={title}
         originContent={jobBio}
+        originLevel={level}
         publishId={jobPublishId}
-        chainId={chainId}
-        daoAddress={daoAddress}
+        chainId={daoId}
         onDimiss={onDimiss}
       />
     )
-  }, [chainId, daoAddress, hideModal, jobBio, jobPublishId, onDimiss, showModal, title])
+  }, [daoId, hideModal, jobBio, jobPublishId, level, onDimiss, showModal, title])
 
   const detailIconClick = useCallback(() => {
     showModal(
@@ -271,11 +282,12 @@ function JobCard({
         title={title}
         content={jobBio}
         publishId={jobPublishId}
-        chainId={chainId}
-        daoAddress={daoAddress}
+        chainId={daoId}
+        level={level}
+        onDimiss={onDimiss}
       />
     )
-  }, [chainId, daoAddress, jobBio, jobPublishId, showModal, title])
+  }, [daoId, jobBio, jobPublishId, level, onDimiss, showModal, title])
 
   return (
     <Box

@@ -15,9 +15,9 @@ import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 
 export const JobsType: any = {
-  A_superAdmin: 'Super Admin',
-  B_admin: 'Admin',
-  C_member: 'Member'
+  0: 'Owner',
+  1: 'superAdmin',
+  2: 'Admin'
 }
 
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
@@ -114,13 +114,13 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 '& button': {
                   fontWeight: 500
                 },
-                '& .A_superAdmin': {
+                '& .Owner': {
                   backgroundColor: '#0049C6'
                 },
-                '& .B_admin': {
+                '& .superAdmin': {
                   backgroundColor: '#97B7EF'
                 },
-                '& .C_member': {
+                '& .Admin': {
                   backgroundColor: '#EBF0F7',
                   color: '#80829F'
                 }
@@ -165,12 +165,12 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
                 <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
               </Box>
-              <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={item.jobs}>
-                {JobsType[item.jobs] || 'unnamed'}
+              <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={JobsType[item.jobsLevel]}>
+                {JobsType[item.jobsLevel] || 'unnamed'}
               </Button>
             </Box>
             {hoverIndex === index &&
-              role === 'A_superAdmin' &&
+              (role === 'superAdmin' || role === 'owner') &&
               account &&
               account.toLowerCase() !== item.account.toLowerCase() && (
                 <Box

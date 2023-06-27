@@ -8,15 +8,17 @@ import AddJobsModal from './AddJobsModal'
 export default function JobDetailModal({
   title,
   content,
+  level,
   publishId,
   chainId,
-  daoAddress
+  onDimiss
 }: {
   title: string
   content: string
   chainId: number
+  level: number
   publishId: number
-  daoAddress: string
+  onDimiss: () => void
 }) {
   const { showModal, hideModal } = useModal()
   const editClick = useCallback(() => {
@@ -26,13 +28,13 @@ export default function JobDetailModal({
         isEdit={true}
         originTitle={title}
         originContent={content}
+        originLevel={level}
         publishId={publishId}
         chainId={chainId}
-        daoAddress={daoAddress}
-        onDimiss={() => {}}
+        onDimiss={onDimiss}
       />
     )
-  }, [chainId, content, daoAddress, hideModal, publishId, showModal, title])
+  }, [chainId, content, hideModal, level, onDimiss, publishId, showModal, title])
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
       <Box

@@ -1,14 +1,15 @@
 import { Box, Typography, LinearProgress, linearProgressClasses, styled } from '@mui/material'
 
-const StyledLinearProgress = styled(LinearProgress)(({ theme }) => ({
-  height: 10,
-  borderRadius: 5,
+const StyledLinearProgress = styled(LinearProgress)(({}) => ({
+  height: 24,
+  borderRadius: '40px',
+  border: '1px solid #D4D7E2',
   [`&.${linearProgressClasses.colorPrimary}`]: {
     backgroundColor: 'rgba(37, 37, 37, 0.1)'
   },
   [`& .${linearProgressClasses.bar}`]: {
-    borderRadius: 5,
-    backgroundColor: theme.palette.primary.main
+    borderRadius: '40px',
+    backgroundColor: '#21C331'
   }
 }))
 

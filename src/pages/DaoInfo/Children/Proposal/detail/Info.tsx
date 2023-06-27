@@ -1,9 +1,8 @@
 import { Box, Link as MuiLink, styled, Typography, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { ChainId } from 'constants/chain'
-import { useProposalSnapshot } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps, useProposalSnapshot } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
-import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
 import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
@@ -25,22 +24,15 @@ const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
-export default function Info({
-  proposalInfo,
-  daoAddress,
-  daoChainId
-}: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
-}) {
+export default function Info({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   const { account, library, chainId } = useActiveWeb3React()
-  const proposalSnapshot = useProposalSnapshot(daoChainId, daoAddress, proposalInfo.proposalId)
-  const cancelProposalCallback = useCancelProposalCallback(daoAddress)
+  const daoChainId = 0 as ChainId
+  const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
+  const cancelProposalCallback = useCancelProposalCallback('')
 
-  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`${daoAddress}_cancelProposal`)
+  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
   const { showModal, hideModal } = useModal()
   const onCancelProposalCallback = useCallback(() => {
     showModal(<TransacitonPendingModal />)
@@ -67,18 +59,29 @@ export default function Info({
   return (
     <VoteWrapper>
       <Box>
-        <Typography variant="h6" mb={19} fontWeight={500}>
+        <Typography fontSize={14} fontWeight={600} color={'#80829F'}>
           Details
         </Typography>
-        <Box display={'grid'} gridTemplateColumns="86px 1fr" rowGap={15} alignItems={'center'}>
+        <Box
+          mt={12}
+          sx={{
+            borderTop: '1px solid #D4D7E2'
+          }}
+          mb={13}
+          padding={'13px 0'}
+          display={'grid'}
+          gridTemplateColumns="86px 1fr"
+          rowGap={10}
+          alignItems={'center'}
+        >
           <LeftText>Proposer</LeftText>
           <Box display={'flex'} flexDirection={'column'}>
-            <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.creator}`}>
+            <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
               <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
-                {shortenAddress(proposalInfo.creator, isSmDown ? 3 : 4)}
+                {shortenAddress(proposalInfo.proposer.account, isSmDown ? 3 : 4)}
               </Typography>
             </Link>
-            <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
+            <AdminTagBlock daoAddress={''} chainId={daoChainId} account={proposalInfo.proposer.account} />
           </Box>
 
           <LeftText>Start Time</LeftText>
@@ -105,10 +108,10 @@ export default function Info({
             </svg>
           </MuiLink>
         </Box>
-        {account === proposalInfo.creator && proposalInfo.status === ProposalStatus.SOON && (
+        {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
           <Box mt={15}>
             <BlackButton
-              height="44px"
+              height="40px"
               width="160px"
               disabled={isCancel}
               onClick={chainId !== daoChainId ? switchNetwork : onCancelProposalCallback}

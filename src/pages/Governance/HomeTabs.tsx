@@ -18,7 +18,7 @@ const StyledWrapper = styled('ul')(({ theme }) => ({
     cursor: 'pointer',
     padding: '12px 0',
     marginLeft: 64,
-    '&:first-child': {
+    '&:first-of-type': {
       marginLeft: 0
     },
     [theme.breakpoints.down('sm')]: {

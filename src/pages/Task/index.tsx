@@ -11,6 +11,8 @@ import { ReactComponent as ALlTask } from 'assets/svg/allTask.svg'
 import TeamSpacesTask from 'pages/TeamSpaces/Task'
 // import useBreakpoint from 'hooks/useBreakpoint'
 import owl from 'assets/images/owl.png'
+import EmptyPage from 'pages/DaoInfo/Children/emptyPage'
+
 import {
   DataGrid,
   GridColDef,
@@ -24,6 +26,7 @@ import { useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
 import DaoContainer from 'components/DaoContainer'
 import { MapPriorityType, MapTaskStatus } from './Children/TaskDetail'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StatusWrapper = styled(Box)(() => ({
   width: 100,
@@ -302,42 +305,44 @@ export default function Index() {
   const [tabValue, setTabValue] = useState(0)
   const [currentPriority, setCurrentPriority] = useState()
   const [currentStatus, setCurrentStatus] = useState()
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
 
   // const handleEdit = useCallback(() => {}, [])
 
   return (
     <DaoContainer>
-      <Stack
-        spacing={10}
-        sx={{
-          position: 'relative'
-        }}
-      >
-        <Box
+      {isJoined.isJoin ? (
+        <Stack
+          spacing={10}
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 20
+            position: 'relative'
           }}
         >
           <Box
             sx={{
               display: 'flex',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              gap: 10,
-              '& p': {
-                fontWeight: 600,
-                fontSize: 30,
-                textAlign: 'left',
-                color: '#3f5170'
-              }
+              mb: 20
             }}
           >
-            <Image width={38} src={TaskIcon}></Image>
-            <Typography>Workspace</Typography>
-          </Box>
-          {/* {tabValue === 1 ? (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                '& p': {
+                  fontWeight: 600,
+                  fontSize: 30,
+                  textAlign: 'left',
+                  color: '#3f5170'
+                }
+              }}
+            >
+              <Image width={38} src={TaskIcon}></Image>
+              <Typography>Workspace</Typography>
+            </Box>
+            {/* {tabValue === 1 ? (
           <Button
             onClick={handleEdit}
             style={{
@@ -354,94 +359,94 @@ export default function Index() {
         ) : (
           ''
         )} */}
-        </Box>
-        <Typography maxWidth={740} sx={{ marginTop: '0!important' }}>
-          Use this template to track your personal tasks. Click{' '}
-          <span style={{ color: '#0049C6', fontWeight: 700 }}>+ New</span> to create a new task directly on this board.
-          Click an existing task to add additional context or subtasks.
-        </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}
-        >
-          <StyledTabs>
-            <Tabs value={tabValue}>
-              {tabList.map((item, idx) => (
-                <Tab
-                  key={item.label + idx}
-                  icon={item.icon}
-                  iconPosition="start"
-                  label={item.label}
-                  onClick={() => setTabValue(idx)}
-                  sx={{ gap: 10 }}
-                  className={tabValue === idx ? 'active' : ''}
-                ></Tab>
-              ))}
-            </Tabs>
-          </StyledTabs>
-          {tabValue === 1 ? (
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 10
-              }}
-            >
-              <Select
-                placeholder=""
-                width={130}
-                height={25}
-                color="#80829F"
-                noBold
-                style={{ borderRadius: '40px' }}
-                value={currentPriority}
-                onChange={e => {
-                  setCurrentPriority(e.target.value)
+          </Box>
+          <Typography maxWidth={740} sx={{ marginTop: '0!important' }}>
+            Use this template to track your personal tasks. Click{' '}
+            <span style={{ color: '#0049C6', fontWeight: 700 }}>+ New</span> to create a new task directly on this
+            board. Click an existing task to add additional context or subtasks.
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}
+          >
+            <StyledTabs>
+              <Tabs value={tabValue}>
+                {tabList.map((item, idx) => (
+                  <Tab
+                    key={item.label + idx}
+                    icon={item.icon}
+                    iconPosition="start"
+                    label={item.label}
+                    onClick={() => setTabValue(idx)}
+                    sx={{ gap: 10 }}
+                    className={tabValue === idx ? 'active' : ''}
+                  ></Tab>
+                ))}
+              </Tabs>
+            </StyledTabs>
+            {tabValue === 1 ? (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 10
                 }}
               >
-                {priorityFilter.map(item => (
-                  <MenuItem
-                    key={item.value}
-                    sx={{ fontWeight: 500, fontSize: 10 }}
-                    value={item.value}
-                    selected={currentPriority && currentPriority === item.value}
-                  >
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-              <Select
-                placeholder=""
-                width={140}
-                height={25}
-                color="#80829F"
-                noBold
-                value={currentStatus}
-                style={{ borderRadius: '40px' }}
-                onChange={e => {
-                  setCurrentStatus(e.target.value)
-                }}
-              >
-                {statusFilter.map(item => (
-                  <MenuItem
-                    key={item.value}
-                    sx={{ fontWeight: 500, fontSize: 10 }}
-                    value={item.value}
-                    selected={currentStatus && currentStatus === item.value}
-                  >
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
-              {/* <OutlinedButton width={'95px'} height={'25px'} color="#80829F" borderRadius="40px" noBold>
+                <Select
+                  placeholder=""
+                  width={130}
+                  height={25}
+                  color="#80829F"
+                  noBold
+                  style={{ borderRadius: '40px' }}
+                  value={currentPriority}
+                  onChange={e => {
+                    setCurrentPriority(e.target.value)
+                  }}
+                >
+                  {priorityFilter.map(item => (
+                    <MenuItem
+                      key={item.value}
+                      sx={{ fontWeight: 500, fontSize: 10 }}
+                      value={item.value}
+                      selected={currentPriority && currentPriority === item.value}
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Select
+                  placeholder=""
+                  width={140}
+                  height={25}
+                  color="#80829F"
+                  noBold
+                  value={currentStatus}
+                  style={{ borderRadius: '40px' }}
+                  onChange={e => {
+                    setCurrentStatus(e.target.value)
+                  }}
+                >
+                  {statusFilter.map(item => (
+                    <MenuItem
+                      key={item.value}
+                      sx={{ fontWeight: 500, fontSize: 10 }}
+                      value={item.value}
+                      selected={currentStatus && currentStatus === item.value}
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {/* <OutlinedButton width={'95px'} height={'25px'} color="#80829F" borderRadius="40px" noBold>
               Duplicate
             </OutlinedButton> */}
-              {/* <OutlinedButton
+                {/* <OutlinedButton
               width={'95px'}
               height={'25px'}
               color="#E46767"
@@ -451,14 +456,17 @@ export default function Index() {
             >
               Delete
             </OutlinedButton> */}
-            </Box>
-          ) : (
-            ''
-          )}
-        </Box>
-        <Divider />
-        {tabValue === 0 ? <TeamSpacesTask /> : <AllTaskTable priority={currentPriority} status={currentStatus} />}
-      </Stack>
+              </Box>
+            ) : (
+              ''
+            )}
+          </Box>
+          <Divider />
+          {tabValue === 0 ? <TeamSpacesTask /> : <AllTaskTable priority={currentPriority} status={currentStatus} />}
+        </Stack>
+      ) : (
+        <EmptyPage />
+      )}
     </DaoContainer>
   )
 }

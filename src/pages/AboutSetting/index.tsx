@@ -1,17 +1,21 @@
 import { Box, Typography, styled, Divider, MenuList, MenuItem } from '@mui/material'
 import { useState, useMemo } from 'react'
 import { useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Header from './AboutHeader'
-import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
-import { DaoAdminLevelProp, useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
+// import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
+import Governance from 'pages/DaoInfo/Children/Settings/Governance'
+import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 // import ComingSoon from 'pages/ComingSoon'
-import General from 'pages/DaoInfo/Children/Settings/General'
-import { useActiveWeb3React } from 'hooks'
-import Admin from 'pages/DaoInfo/Children/Settings/Admin'
+import NewGeneral from 'pages/DaoInfo/Children/Settings/NewGeneral'
+import Workspace from 'pages/DaoInfo/Children/Settings/Workspace'
+// import Admin from 'pages/DaoInfo/Children/Settings/Admin'
 import DaoContainer from 'components/DaoContainer'
 import Team from './Team'
+import Setting from 'assets/images/settingImg.png'
+import Image from 'components/Image'
+import { useIsJoined } from 'hooks/useBackedDaoServer'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
@@ -43,12 +47,10 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 }))
 
 export default function AboutSetting() {
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const { account } = useActiveWeb3React()
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const { isJoined: daoAuthData } = useIsJoined(Number(curDaoId))
 
   const tabList = useMemo(() => {
     return [
@@ -61,39 +63,51 @@ export default function AboutSetting() {
           </>
         )
       },
+      // {
+      //   label: 'General',
+      //   component: daoInfo ? (
+      //     <Box mt={20}>
+      //       <General daoInfo={daoInfo} daoChainId={daoId} />
+      //     </Box>
+      //   ) : null
+      // },
       {
         label: 'General',
         component: daoInfo ? (
           <Box mt={20}>
-            <General daoInfo={daoInfo} daoChainId={curDaoChainId} />
+            <NewGeneral daoInfo={daoInfo} daoChainId={Number(curDaoId)} />
           </Box>
         ) : null
       },
       // {
-      //   label: 'Token',
-      //   component: <ComingSoon />
+      //   label: 'Governance Settings',
+      //   component: (
+      //     <Box mt={20}>
+      //       <GovernanceSetting daoInfo={daoInfo} daoChainId={Number(curDaoId)} />
+      //     </Box>
+      //   )
       // },
       {
-        label: 'Governance Settings',
-        component: (
-          <Box mt={20}>
-            <GovernanceSetting daoInfo={daoInfo} daoChainId={curDaoChainId} />
+        label: 'Governance',
+        component: daoInfo ? (
+          <Box mt={14}>
+            <Governance daoId={Number(curDaoId)} />
           </Box>
-        )
+        ) : null
+      },
+      {
+        label: 'Workspace',
+        component: daoInfo ? (
+          <Box mt={20}>
+            <Workspace daoId={Number(curDaoId)} />
+          </Box>
+        ) : null
       },
       {
         label: 'Team',
         component: (
           <Box mt={20}>
             <Team />
-          </Box>
-        )
-      },
-      {
-        label: 'Admin',
-        component: (
-          <Box mt={20}>
-            <Admin />
           </Box>
         )
       }
@@ -106,24 +120,25 @@ export default function AboutSetting() {
       //   component: <ComingSoon />
       // },
     ]
-  }, [curDaoChainId, daoInfo])
+  }, [curDaoId, daoInfo])
 
   const currentTabLinks = useMemo(() => {
     const list =
-      daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN
+      daoAuthData?.job === DaoAdminLevelProp[1] || daoAuthData?.job === DaoAdminLevelProp[0]
         ? tabList
-        : daoAdminLevel === DaoAdminLevelProp.ADMIN
+        : daoAuthData?.job === DaoAdminLevelProp[2]
         ? tabList.filter(i => ['About', 'General', 'Governance Settings'].includes(i.label))
         : tabList.filter(i => i.label === 'About')
 
     return list
-  }, [daoAdminLevel, tabList])
+  }, [daoAuthData?.job, tabList])
 
   return (
     <DaoContainer>
       <Box>
         <Box
           sx={{
+            mb: 30,
             display: 'flex',
             justifyContent: 'space-between',
             flexDirection: 'row',
@@ -137,11 +152,13 @@ export default function AboutSetting() {
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
+              gap: 6
             }}
           >
+            <Image src={Setting} width={38} />
             <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
-              ⚙️ About & Setting
+              About & Setting
             </Typography>
           </Box>
         </Box>

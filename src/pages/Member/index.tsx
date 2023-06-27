@@ -8,11 +8,12 @@ import { useState, useCallback } from 'react'
 import CardView from './Children/CardView'
 import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
-import { useIsJoined, useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
+import { useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
 import { useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
 import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import EmptyPage from 'pages/DaoInfo/Children/emptyPage'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -68,17 +69,17 @@ const StyledTabs = styled('div')(({ theme }) => ({
 
 export default function Member() {
   const [rand, setRand] = useState(Math.random())
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
+  const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
-  const curDaoChainId = Number(daoChainId) as ChainId
+  const curDaoId = Number(daoId)
   useCallback(() => {}, [])
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
-  const { result: applyList } = useJobsApplyList(daoAddress, Number(daoChainId), rand)
-  const { result: jobsList } = useJobsList('', daoAddress, Number(daoChainId))
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
+  const { result: applyList } = useJobsApplyList(curDaoId, rand)
+  const { result: jobsList } = useJobsList(curDaoId)
 
   const tabList = !isJoined
     ? []
-    : isJoined && isJoined !== 'A_superAdmin'
+    : isJoined && isJoined.job !== 'owner' && isJoined.job !== 'superAdmin'
     ? [
         {
           label: 'Card View',
@@ -105,90 +106,89 @@ export default function Member() {
       ]
   return (
     <DaoContainer>
-      <Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            '& button': {
-              width: 125,
-              height: 36,
-              borderRadius: '8px'
-            }
-          }}
-        >
+      {isJoined.isJoin ? (
+        <Box>
           <Box
             sx={{
               display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              '& svg path': {
-                fill: '#0049C6'
-              },
-              '& p': {
-                fontWeight: 600,
-                fontSize: 30,
-                textAlign: 'left',
-                color: '#3f5170'
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              '& button': {
+                width: 125,
+                height: 36,
+                borderRadius: '8px'
               }
             }}
           >
-            <MemberIcon width={38} height={38} />
-            <Typography>Member</Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                '& svg path': {
+                  fill: '#0049C6'
+                },
+                '& p': {
+                  fontWeight: 600,
+                  fontSize: 30,
+                  textAlign: 'left',
+                  color: '#3f5170'
+                }
+              }}
+            >
+              <MemberIcon width={38} height={38} />
+              <Typography>Member</Typography>
+            </Box>
+            {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}
           </Box>
-          {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}
-        </Box>
-        <Typography
-          variant="h5"
-          fontWeight={500}
-          lineHeight={'20px'}
-          sx={{
-            width: '700px',
-            textAlign: 'left',
-            color: '#3f5170',
-            fontSize: 14,
-            mt: 15
-          }}
-        >
-          Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
-          to receive information about new openings.
-        </Typography>
-        <StyledTabs>
-          <Tabs value={tabValue}>
-            {tabList.map((item, idx) => (
-              <Tab
-                key={item.label + idx}
-                icon={item.icon}
-                iconPosition="start"
-                label={item.label}
-                onClick={() => setTabValue(idx)}
-                sx={{ gap: 10, marginRight: 50 }}
-                className={tabValue === idx ? 'active' : ''}
-              ></Tab>
-            ))}
-          </Tabs>
-        </StyledTabs>
-        <Divider />
-        {tabList.length === 2 ? (
-          tabValue === 0 ? (
-            <CardView result={jobsList} role={isJoined} />
+          <Typography
+            variant="h5"
+            fontWeight={500}
+            lineHeight={'20px'}
+            sx={{
+              width: '700px',
+              textAlign: 'left',
+              color: '#3f5170',
+              fontSize: 14,
+              mt: 15
+            }}
+          >
+            Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
+            to receive information about new openings.
+          </Typography>
+          <StyledTabs>
+            <Tabs value={tabValue}>
+              {tabList.map((item, idx) => (
+                <Tab
+                  key={item.label + idx}
+                  icon={item.icon}
+                  iconPosition="start"
+                  label={item.label}
+                  onClick={() => setTabValue(idx)}
+                  sx={{ gap: 10, marginRight: 50 }}
+                  className={tabValue === idx ? 'active' : ''}
+                ></Tab>
+              ))}
+            </Tabs>
+          </StyledTabs>
+          <Divider />
+          {tabList.length === 2 ? (
+            tabValue === 0 ? (
+              <CardView result={jobsList} role={isJoined?.job} />
+            ) : (
+              <OpenJobs />
+            )
+          ) : tabValue === 0 ? (
+            <CardView result={jobsList} role={isJoined?.job} />
+          ) : tabValue === 1 ? (
+            <JobApplication result={applyList} reFetch={() => setRand(Math.random())} />
           ) : (
-            <OpenJobs />
-          )
-        ) : tabValue === 0 ? (
-          <CardView result={jobsList} role={isJoined} />
-        ) : tabValue === 1 ? (
-          <JobApplication
-            result={applyList}
-            daoChainId={curDaoChainId}
-            daoAddress={daoAddress}
-            reFetch={() => setRand(Math.random())}
-          />
-        ) : (
-          <InviteUser />
-        )}
-      </Box>
+            <InviteUser />
+          )}
+        </Box>
+      ) : (
+        <EmptyPage />
+      )}
     </DaoContainer>
   )
 }

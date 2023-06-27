@@ -35,14 +35,14 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   lineHeight: '16px'
 }))
 
-export const StyledDelButton = styled('button')(({ theme }) => ({
-  border: `2px solid ${theme.palette.text.primary}`,
+export const StyledDelButton = styled('button')(({}) => ({
+  borderColor: 'transparent',
   borderRadius: '8px',
   width: 54,
   height: 44,
   cursor: 'pointer',
   position: 'relative',
-  background: theme.palette.common.white,
+  background: 'rgba(228, 103, 103, 0.2)',
   '&:disabled': {
     opacity: 0.2
   },
@@ -52,9 +52,10 @@ export const StyledDelButton = styled('button')(({ theme }) => ({
     right: 0,
     bottom: 0,
     left: 0,
-    background: theme.palette.text.primary,
-    width: '15px',
-    height: '2px',
+    background: '#E46767',
+    width: '13px',
+    height: '3px',
+    borderRadius: '5px',
     position: 'absolute',
     margin: 'auto'
   }

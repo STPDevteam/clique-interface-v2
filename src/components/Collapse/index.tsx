@@ -1,4 +1,4 @@
-import { Box, Collapse, Typography, useTheme } from '@mui/material'
+import { Box, Collapse, SxProps, Theme, Typography, useTheme } from '@mui/material'
 import { useState } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
@@ -8,13 +8,19 @@ export default function Index({
   title,
   defaultOpen,
   hiddenArrow,
-  bodyPl
+  bodyPl,
+  height,
+  style,
+  backgroundColor
 }: {
   children: any
   title: string | JSX.Element
   defaultOpen?: boolean
   hiddenArrow?: boolean
   bodyPl?: number
+  height?: number
+  backgroundColor?: string
+  style?: React.CSSProperties & SxProps<Theme>
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen || false)
   const theme = useTheme()
@@ -22,16 +28,18 @@ export default function Index({
     <Box>
       <Box
         sx={{
-          height: 40,
+          height: height ? height : 40,
           display: 'flex',
           alignItems: 'center',
           gap: '5px',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          backgroundColor: isOpen ? (backgroundColor ? backgroundColor : 'unset') : 'unset',
+          ...style
         }}
         onClick={() => setIsOpen(!isOpen)}
       >
         {!hiddenArrow ? isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon /> : null}
-        <Typography fontSize={13} fontWeight={600} variant="body1" color={theme.palette.text.primary}>
+        <Typography width={'100%'} fontSize={13} fontWeight={600} variant="body1" color={theme.palette.text.primary}>
           {title}
         </Typography>
       </Box>

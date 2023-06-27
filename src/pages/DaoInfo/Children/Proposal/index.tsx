@@ -1,7 +1,6 @@
-import { Box, Grid, MenuItem, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography, MenuItem, Grid } from '@mui/material'
 import Button from 'components/Button/Button'
 import Select from 'components/Select/Select'
-import { ProposalStatus } from 'hooks/useProposalInfo'
 import ProposalItem from './ProposalItem'
 import { useHistory, useParams } from 'react-router'
 import { routes } from 'constants/routes'
@@ -13,29 +12,35 @@ import Pagination from 'components/Pagination'
 import useBreakpoint from 'hooks/useBreakpoint'
 import DaoContainer from 'components/DaoContainer'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import useModal from 'hooks/useModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 
 const itemList = [
   { value: undefined, label: 'All Proposals' },
-  { value: ProposalStatus.SOON, label: 'Soon' },
-  { value: ProposalStatus.OPEN, label: 'Active' },
-  { value: ProposalStatus.CLOSED, label: 'Closed' }
+  { value: 'Soon', label: 'Soon' },
+  { value: 'Active', label: 'Active' },
+  { value: 'Closed', label: 'Closed' }
 ]
 
 export default function Proposal() {
   const history = useHistory()
-  const params = useParams<{ chainId: string; address: string }>()
+  const { showModal } = useModal()
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
   const {
     search: { status: currentProposalStatus, setStatus: setCurrentProposalStatus },
     loading,
     result: proposalBaseList,
     page
-  } = useProposalBaseList(Number(params.chainId), params.address)
+  } = useProposalBaseList(Number(params.daoId))
+  console.log(proposalBaseList, currentProposalStatus)
 
   return (
     <DaoContainer>
       <Box>
-        <Box mb={30} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
+        <Box mb={20} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
           <Box>
             <Stack
               sx={{
@@ -71,7 +76,15 @@ export default function Proposal() {
               height={isSmDown ? '30px' : '36px'}
               borderRadius={isSmDown ? '8px' : undefined}
               style={{ fontWeight: 700 }}
-              onClick={() => history.push(routes._DaoInfo + `/${params.chainId}/${params.address}/proposal/create`)}
+              onClick={() => {
+                if (!daoInfo.daoCanCreateProposal) {
+                  showModal(
+                    <MessageBox type="error">Please wait for the administrator to set up governance rules</MessageBox>
+                  )
+                  return
+                }
+                history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)
+              }}
             >
               + Create A Proposal
             </Button>
@@ -79,8 +92,8 @@ export default function Proposal() {
               noBold
               placeholder=""
               style={{ fontWeight: 500, fontSize: 14 }}
-              width={isSmDown ? 160 : 158}
-              height={isSmDown ? 36 : 36}
+              // width={isSmDown ? 160 : 158}
+              height={isSmDown ? '30px' : '36px'}
               value={currentProposalStatus}
               onChange={e => setCurrentProposalStatus(e.target.value)}
             >
@@ -89,7 +102,7 @@ export default function Proposal() {
                   key={item.value}
                   sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                   value={item.value}
-                  selected={currentProposalStatus && currentProposalStatus === item.value}
+                  selected={currentProposalStatus === item.value}
                 >
                   {item.label}
                 </MenuItem>
@@ -97,7 +110,7 @@ export default function Proposal() {
             </Select>
           </Stack>
         </Box>
-        <Box mt={19} minHeight={200}>
+        <Box minHeight={200}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
             <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -105,7 +118,7 @@ export default function Proposal() {
             </Box>
           </DelayLoading>
 
-          <Grid container rowSpacing={18} justifyContent={'space-between'} width={'100%'}>
+          <Grid container justifyContent={'space-between'} width={'100%'}>
             {!loading &&
               proposalBaseList.map(item => (
                 <Box key={item.proposalId + item.startTime + item.endTime} mb={20}>
@@ -114,6 +127,7 @@ export default function Proposal() {
               ))}
           </Grid>
         </Box>
+
         <Box mt={20} display={'flex'} justifyContent="center">
           <Pagination
             count={page.totalPage}

@@ -1,4 +1,4 @@
-import { MenuItem } from '@mui/material'
+import { MenuItem, SxProps, Theme } from '@mui/material'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
 import InputLabel from 'components/Input/InputLabel'
@@ -15,7 +15,8 @@ export default function ChainSelect({
   height,
   active,
   empty,
-  placeholder
+  placeholder,
+  style
 }: {
   label?: string
   disabled?: boolean
@@ -27,6 +28,8 @@ export default function ChainSelect({
   active?: boolean
   empty?: boolean
   placeholder?: string
+  value?: number
+  style?: React.CSSProperties | SxProps<Theme>
 }) {
   const handleChange = useCallback(
     e => {
@@ -61,6 +64,7 @@ export default function ChainSelect({
         placeholder={placeholder ?? 'Select Chain'}
         // width={'100%'}
         primary={active}
+        style={style}
       >
         {currentList.map(option => (
           <MenuItem

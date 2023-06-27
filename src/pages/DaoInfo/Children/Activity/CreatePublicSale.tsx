@@ -52,7 +52,7 @@ export default function CreatePublicSale() {
   const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
   const history = useHistory()
   useEffect(() => {
-    if (!account || daoAdminLevel === DaoAdminLevelProp.NORMAL) {
+    if (!account || daoAdminLevel === DaoAdminLevelProp.NOROLE) {
       history.goBack()
     }
   }, [daoAdminLevel, history, account])

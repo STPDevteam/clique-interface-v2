@@ -62,28 +62,28 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
   }, [createDaoCallback, hideModal, next, showModal])
 
   const govToken = useTokenByChain(
-    isAddress(buildingDaoData.tokenAddress) ? buildingDaoData.tokenAddress : undefined,
-    buildingDaoData.baseChainId
+    isAddress(buildingDaoData.tokenAddr) ? buildingDaoData.tokenAddr : undefined,
+    buildingDaoData.chainID
   )
 
   const currentBaseChain = useMemo(
-    () => (buildingDaoData.baseChainId ? ChainListMap[buildingDaoData.baseChainId] || null : null),
-    [buildingDaoData.baseChainId]
+    () => (buildingDaoData.chainID ? ChainListMap[buildingDaoData.chainID] || null : null),
+    [buildingDaoData.chainID]
   )
 
   const nextHandler = useMemo(() => {
     if (
       !buildingDaoData.daoName.trim() ||
-      !buildingDaoData.daoHandle.trim() ||
-      !buildingDaoData.description.trim() ||
-      !buildingDaoData.daoImage
+      !buildingDaoData.handle.trim() ||
+      !buildingDaoData.bio.trim() ||
+      !buildingDaoData.daoLogo
     ) {
       return {
         disabled: true,
         error: 'Basic data required'
       }
     }
-    if (!buildingDaoData.baseChainId) {
+    if (!buildingDaoData.chainID) {
       return {
         disabled: true,
         error: 'Network required'
@@ -113,13 +113,13 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
     //     error: 'Default voting period required'
     //   }
     // }
-    if (!buildingDaoData.category.trim()) {
+    if (!buildingDaoData.category) {
       return {
         disabled: true,
         error: 'Categories required'
       }
     }
-    if (buildingDaoData.votingTypes === undefined) {
+    if (buildingDaoData.votingType === undefined) {
       return {
         disabled: true,
         error: 'Voting types required'
@@ -165,7 +165,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
               )}
               height={44}
               selectedChain={currentBaseChain}
-              onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
+              onChange={e => updateBuildingDaoKeyData('chainID', e?.id || null)}
               label="*Network"
             />
             <Box display={'flex'} justifyContent="center">
@@ -175,9 +175,9 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
           </Box>
           <Box>
             <Input
-              value={buildingDaoData.tokenAddress}
-              errSet={() => updateBuildingDaoKeyData('tokenAddress', '')}
-              onChange={e => updateBuildingDaoKeyData('tokenAddress', e.target.value || '')}
+              value={buildingDaoData.tokenAddr}
+              errSet={() => updateBuildingDaoKeyData('tokenAddr', '')}
+              onChange={e => updateBuildingDaoKeyData('tokenAddr', e.target.value || '')}
               style={{ marginBottom: 50 }}
               placeholder="0x"
               type="address"
@@ -215,13 +215,13 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
             placeholder="100,000"
           />
           <DateTimeSet
-            value={buildingDaoData.defaultVotingPeriod}
-            onUpdate={num => updateBuildingDaoKeyData('defaultVotingPeriod', num)}
+            value={buildingDaoData.votingPeriod}
+            onUpdate={num => updateBuildingDaoKeyData('votingPeriod', num)}
           />
           <VotingTypesSelect
             width={296}
-            value={buildingDaoData.votingTypes}
-            onChange={e => updateBuildingDaoKeyData('votingTypes', e.target.value)}
+            value={buildingDaoData.votingType}
+            onChange={e => updateBuildingDaoKeyData('votingType', e.target.value)}
           />
         </Box>
       </CreatorBox>

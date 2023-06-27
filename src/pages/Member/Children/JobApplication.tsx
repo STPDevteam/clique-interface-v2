@@ -6,7 +6,6 @@ import Table from 'components/Table'
 import { useCallback, useMemo } from 'react'
 import { JobsApplyListProp } from 'hooks/useBackedDaoServer'
 import { useReviewApply } from 'hooks/useBackedTaskServer'
-import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
@@ -14,17 +13,7 @@ import { JobsType } from './CardView'
 import avatar from 'assets/images/avatar.png'
 // import Button from 'components/Button/Button'
 
-export default function JobApplication({
-  result,
-  daoChainId,
-  daoAddress,
-  reFetch
-}: {
-  result: JobsApplyListProp[]
-  daoChainId: ChainId
-  daoAddress: string
-  reFetch: () => void
-}) {
+export default function JobApplication({ result, reFetch }: { result: JobsApplyListProp[]; reFetch: () => void }) {
   const { showModal } = useModal()
   const { account } = useActiveWeb3React()
   const reviewApply = useReviewApply()
@@ -32,7 +21,7 @@ export default function JobApplication({
     (op: string, applyId: number) => {
       if (!account) return
       if (op === 'agree') {
-        reviewApply(daoChainId, daoAddress, true, applyId)
+        reviewApply(true, applyId)
           .then(res => {
             showModal(<MessageBox type="success">Agree success</MessageBox>)
             reFetch()
@@ -40,7 +29,7 @@ export default function JobApplication({
           })
           .catch(e => console.log(e))
       } else {
-        reviewApply(daoChainId, daoAddress, false, applyId)
+        reviewApply(false, applyId)
           .then(res => {
             showModal(<MessageBox type="success">Reject success</MessageBox>)
             reFetch()
@@ -49,7 +38,7 @@ export default function JobApplication({
           .catch(e => console.log(e))
       }
     },
-    [account, daoAddress, daoChainId, reFetch, reviewApply, showModal]
+    [account, reFetch, reviewApply, showModal]
   )
 
   console.log(result)

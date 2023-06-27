@@ -1,20 +1,14 @@
-import {
-  Select as MuiSelect,
-  InputLabel as MuiInputLabel,
-  styled,
-  InputBase,
-  useTheme,
-  Theme,
-  MenuItem,
-  Typography
-} from '@mui/material'
+import { Select as MuiSelect, styled, InputBase, useTheme, Theme, MenuItem, Typography } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SelectedIcon from 'assets/componentsIcon/selected_icon.svg'
 // import SelectedHoverIcon from 'assets/componentsIcon/selected_hover_icon.svg'
 import CheckboxMulIcon from '../../assets/componentsIcon/checkbox.svg'
 import SelectedMulIcon from '../../assets/componentsIcon/checkbox_checked.svg'
 import React, { useMemo, useState } from 'react'
+import InputLabel from '../Input/InputLabel'
+
 import { SxProps } from '@mui/system'
+import { useMemo, useState } from 'react'
 interface Props {
   children?: React.ReactNode
   onChange?: (e: any) => void
@@ -32,28 +26,20 @@ interface Props {
   renderValue?: any
   style?: React.CSSProperties | SxProps<Theme>
   noBold?: boolean
+  padding?: string
 }
 
-const StyledInputLabel = styled(MuiInputLabel)(({ theme }) => ({
-  // opacity: 0.6,
-  fontSize: 12,
-  textAlign: 'left',
-  fontWeight: 500,
-  color: theme.palette.text.secondary,
-  marginBottom: '8px'
-}))
-
-const StyledSelect = styled(MuiSelect)(({ theme }) => ({
+const StyledSelect = styled(MuiSelect)(() => ({
   cursor: 'pointer',
   borderRadius: '10px',
   position: 'relative',
   padding: '10px',
   '& .MuiSelect-icon': {
-    color: theme.palette.primary.contrastText,
+    color: '#D4D7E2',
     right: '10px'
   },
   '&.Mui-focused': {
-    borderColor: theme.palette.primary.main
+    borderColor: '#97B7EF'
   }
 }))
 
@@ -73,7 +59,8 @@ export default function Select(props: Props) {
     multiple,
     style,
     color,
-    noBold
+    noBold,
+    padding
   } = props
   const theme = useTheme()
   const hasValue = useMemo(() => {
@@ -84,16 +71,17 @@ export default function Select(props: Props) {
     return true
   }, [defaultValue, value])
   const [open, setOpen] = useState(false)
+  console.log(primary)
 
   return (
     <div>
-      {label && <StyledInputLabel>{label}</StyledInputLabel>}
+      {label && <InputLabel>{label}</InputLabel>}
       <StyledSelect
         open={multiple ? open : undefined}
         onClick={() => multiple && setOpen(true)}
         sx={{
           // backgroundColor: primary ? theme.palette.primary.main : theme.bgColor.bg1,
-          backgroundColor: color ? 'transparent' : primary ? theme.palette.primary.main : 'transparent',
+          backgroundColor: 'transparent',
           width: width || '100%',
           height: height || '40px',
           padding: '0',
@@ -104,7 +92,7 @@ export default function Select(props: Props) {
             width: '100%',
             maxWidth: 'calc(100vw - 70px)',
             height: '100%',
-            padding: '0 50px 0 20px !important',
+            padding: padding ? padding : '0 50px 0 20px !important',
             display: 'flex',
             color: color ? color : '#3f5170',
             fontFamily: 'Inter',
@@ -154,13 +142,14 @@ export default function Select(props: Props) {
           sx: {
             '& .MuiPaper-root': {
               width: width ?? 'unset',
-              borderRadius: '10px',
               mt: '10px',
-              boxShadow: theme => theme.shadows[4],
-              transform: width ? 'translateX(-12px)!important' : 'none',
+              boxShadow: 'none',
+              borderRadius: '8px 8px',
+              border: '1px solid #97B7EF',
+              // transform: width ? 'translateX(-12px)!important' : 'none',
               '& li': {
                 fontSize: 16,
-                borderBottom: '1px solid rgba(0,0,0,0.1)',
+                // borderBottom: '1px solid rgba(0,0,0,0.1)',
                 display: 'flex',
                 alignItems: 'center',
                 padding: '12px 0',
@@ -172,11 +161,9 @@ export default function Select(props: Props) {
                 }
               },
               '& li:hover': {
-                backgroundColor: theme => theme.bgColor.bg1
+                backgroundColor: '#F8FBFF'
               },
-              '& li:last-child': {
-                borderBottom: 'none'
-              },
+              '& li:first-of-type': {},
               '& .MuiMenuItem-root': {
                 display: 'flex',
                 justifyContent: 'space-between',

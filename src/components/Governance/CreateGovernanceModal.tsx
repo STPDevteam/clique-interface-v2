@@ -49,10 +49,10 @@ export function CreateGovernanceModal() {
   const [step, setStep] = useState<CreateGovernanceStep>(CreateGovernanceStep.BASE_INFO)
   const { account, chainId } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
-  const { available: daoHandleAvailable, queryHandleCallback } = useDaoHandleQuery(buildingDaoData.daoHandle)
+  const queryHandleCallback = useDaoHandleQuery()
 
   useEffect(() => {
-    queryHandleCallback(account || undefined, chainId || undefined)
+    queryHandleCallback(account ?? '')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -82,25 +82,25 @@ export function CreateGovernanceModal() {
         error: 'Dao name required'
       }
     }
-    if (!buildingDaoData.daoImage) {
+    if (!buildingDaoData.daoLogo) {
       return {
         disabled: true,
         error: 'Dao logo required'
       }
     }
-    if (!buildingDaoData.daoHandle.trim()) {
+    if (!buildingDaoData.handle.trim()) {
       return {
         disabled: true,
         error: 'DAO Handle on Clique required'
       }
     }
-    if (!buildingDaoData.description.trim()) {
+    if (!buildingDaoData.bio.trim()) {
       return {
         disabled: true,
         error: 'Description required'
       }
     }
-    if (!buildingDaoData.category.trim()) {
+    if (!buildingDaoData.category) {
       return {
         disabled: true,
         error: 'Categories required'
@@ -120,50 +120,49 @@ export function CreateGovernanceModal() {
         )
       }
     }
-    if (daoHandleAvailable !== true) {
-      return {
-        disabled: true,
-        error: 'DAO Handle on Clique unavailable'
-      }
-    }
+    // if (daoHandleAvailable !== true) {
+    //   return {
+    //     disabled: true,
+    //     error: 'DAO Handle on Clique unavailable'
+    //   }
+    // }
     return {
       disabled: false,
       handler: () => setStep(CreateGovernanceStep.CONFIG)
     }
   }, [
     account,
+    buildingDaoData.bio,
     buildingDaoData.category,
-    buildingDaoData.daoHandle,
-    buildingDaoData.daoImage,
+    buildingDaoData.daoLogo,
     buildingDaoData.daoName,
-    buildingDaoData.description,
-    daoHandleAvailable,
+    buildingDaoData.handle,
     toggleWalletModal
   ])
 
   const govToken = useTokenByChain(
-    isAddress(buildingDaoData.tokenAddress) ? buildingDaoData.tokenAddress : undefined,
-    buildingDaoData.baseChainId
+    isAddress(buildingDaoData.governance[0].tokenAddress) ? buildingDaoData.governance[0].tokenAddress : undefined,
+    buildingDaoData.governance[0].chainId
   )
 
   const currentBaseChain = useMemo(
-    () => (buildingDaoData.baseChainId ? ChainListMap[buildingDaoData.baseChainId] || null : null),
-    [buildingDaoData.baseChainId]
+    () => (buildingDaoData.governance[0].chainId ? ChainListMap[buildingDaoData.governance[0].chainId] || null : null),
+    [buildingDaoData.governance]
   )
 
   const nextBuildHandler = useMemo(() => {
     if (
       !buildingDaoData.daoName.trim() ||
-      !buildingDaoData.daoHandle.trim() ||
-      !buildingDaoData.description.trim() ||
-      !buildingDaoData.daoImage
+      !buildingDaoData.handle.trim() ||
+      !buildingDaoData.bio.trim() ||
+      !buildingDaoData.daoLogo
     ) {
       return {
         disabled: true,
         error: 'Basic data required'
       }
     }
-    if (!buildingDaoData.baseChainId) {
+    if (!buildingDaoData.governance[0].chainId) {
       return {
         disabled: true,
         error: 'Network required'
@@ -175,25 +174,25 @@ export function CreateGovernanceModal() {
         error: 'Token required'
       }
     }
-    if (!buildingDaoData.createProposalMinimum) {
+    if (!buildingDaoData.governance[0].createRequire) {
       return {
         disabled: true,
         error: 'Minimum tokens needed to create proposal required'
       }
     }
-    if (!buildingDaoData.executeMinimum) {
-      return {
-        disabled: true,
-        error: 'Minimum votes needed for proposal to execute required'
-      }
-    }
+    // if (!buildingDaoData.executeMinimum) {
+    //   return {
+    //     disabled: true,
+    //     error: 'Minimum votes needed for proposal to execute required'
+    //   }
+    // }
     // if (!buildingDaoData.defaultVotingPeriod) {
     //   return {
     //     disabled: true,
     //     error: 'Default voting period required'
     //   }
     // }
-    if (buildingDaoData.votingTypes === undefined) {
+    if (buildingDaoData.votingType === undefined) {
       return {
         disabled: true,
         error: 'Voting types required'
@@ -250,8 +249,8 @@ export function CreateGovernanceModal() {
               <UploadImage
                 sx={{ margin: '30px auto' }}
                 size={156}
-                onChange={val => updateBuildingDaoKeyData('daoImage', val)}
-                value={buildingDaoData.daoImage}
+                onChange={val => updateBuildingDaoKeyData('daoLogo', val)}
+                value={buildingDaoData.daoLogo}
               />
               <Box display={'grid'} gap="16px">
                 <Input
@@ -271,17 +270,15 @@ export function CreateGovernanceModal() {
                   placeholder="Lowercase characters, numbers, underscores"
                   userPattern={'^[0-9a-z_]*$'}
                   maxLength={30}
-                  error={daoHandleAvailable === false}
-                  onBlur={() => queryHandleCallback(account || undefined, chainId || undefined)}
+                  // error={daoHandleAvailable === false}
+                  onBlur={() => queryHandleCallback(account ?? '')}
                   endAdornment={
                     <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
-                      {buildingDaoData.daoHandle.length}/30
+                      {buildingDaoData.handle.length}/30
                     </Typography>
                   }
-                  value={buildingDaoData.daoHandle}
-                  onChange={e =>
-                    updateBuildingDaoKeyData('daoHandle', removeEmoji(e.target.value || '').replace(' ', ''))
-                  }
+                  value={buildingDaoData.handle}
+                  onChange={e => updateBuildingDaoKeyData('handle', removeEmoji(e.target.value || '').replace(' ', ''))}
                 />
                 <Input
                   type="textarea"
@@ -289,17 +286,17 @@ export function CreateGovernanceModal() {
                   maxLength={1000}
                   endAdornment={
                     <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2">
-                      {buildingDaoData.description.length}/1000
+                      {buildingDaoData.bio.length}/1000
                     </Typography>
                   }
                   rows="6"
                   multiline
                   placeholder="Describe your DAO to new and existing members"
-                  value={buildingDaoData.description}
-                  onChange={e => updateBuildingDaoKeyData('description', e.target.value || '')}
+                  value={buildingDaoData.bio}
+                  onChange={e => updateBuildingDaoKeyData('bio', e.target.value || '')}
                 />
                 <CategoriesSelect
-                  value={buildingDaoData.category}
+                  value={buildingDaoData.category.join(',')}
                   onChange={val => updateBuildingDaoKeyData('category', val)}
                 />
 
@@ -327,14 +324,14 @@ export function CreateGovernanceModal() {
                 )}
                 height={44}
                 selectedChain={currentBaseChain}
-                onChange={e => updateBuildingDaoKeyData('baseChainId', e?.id || null)}
+                onChange={e => updateBuildingDaoKeyData('chainID', e?.id || null)}
                 label="*Network"
               />
               <Input
                 type="address"
-                value={buildingDaoData.tokenAddress}
-                errSet={() => updateBuildingDaoKeyData('tokenAddress', '')}
-                onChange={e => updateBuildingDaoKeyData('tokenAddress', e.target.value || '')}
+                value={buildingDaoData.tokenAddr}
+                errSet={() => updateBuildingDaoKeyData('tokenAddr', '')}
+                onChange={e => updateBuildingDaoKeyData('tokenAddr', e.target.value || '')}
                 placeholder="0x"
                 label="*Token Contract Address"
                 rightLabel={<Link underline="none" href={routes.CreatorToken}>{`Create A New Token>`}</Link>}
@@ -345,7 +342,9 @@ export function CreateGovernanceModal() {
                 label="*Minimum Tokens Needed To Create Proposal"
                 placeholder="100,000"
                 showFormatWrapper={() =>
-                  buildingDaoData.createProposalMinimum ? toFormatGroup(buildingDaoData.createProposalMinimum) : ''
+                  buildingDaoData.governance[0].createRequire
+                    ? toFormatGroup(buildingDaoData.governance[0].createRequire)
+                    : ''
                 }
                 value={buildingDaoData.createProposalMinimum}
                 onChange={e => updateBuildingDaoKeyData('createProposalMinimum', e.target.value || '')}
@@ -361,12 +360,12 @@ export function CreateGovernanceModal() {
                 onChange={e => updateBuildingDaoKeyData('executeMinimum', e.target.value || '')}
               />
               <DateTimeSet
-                value={buildingDaoData.defaultVotingPeriod}
-                onUpdate={num => updateBuildingDaoKeyData('defaultVotingPeriod', num)}
+                value={buildingDaoData.votingPeriod}
+                onUpdate={num => updateBuildingDaoKeyData('votingPeriod', num)}
               />
               <VotingTypesSelect
-                value={buildingDaoData.votingTypes}
-                onChange={e => updateBuildingDaoKeyData('votingTypes', e.target.value)}
+                value={buildingDaoData.votingType}
+                onChange={e => updateBuildingDaoKeyData('votingType', e.target.value)}
               />
 
               {nextBuildHandler.error ? (
@@ -377,6 +376,7 @@ export function CreateGovernanceModal() {
 
               <Box mt={20} display="flex" justifyContent={{ sm: 'center', xs: 'space-evenly' }} gap="40px">
                 <OutlineButton
+                  noBold
                   width={isSmDown ? '130px' : '166px'}
                   height={36}
                   onClick={() => setStep(CreateGovernanceStep.BASE_INFO)}

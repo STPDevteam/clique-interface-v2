@@ -4,17 +4,17 @@ import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
-import { useDaoAdminLevel, useDaoInfo } from 'hooks/useDaoInfo'
 import { useParams } from 'react-router-dom'
-import { ChainId } from 'constants/chain'
-import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
+import { useGetUserQuitDao, useIsJoined } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
-import { useActiveWeb3React } from 'hooks'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
+import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { toast } from 'react-toastify'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -22,23 +22,43 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   background: theme.palette.common.white,
   padding: '20px 0',
   display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center'
+  justifyContent: 'space-between'
 }))
+
+const Text = styled(Typography)({
+  mt: 10,
+  height: 20,
+  fontWeight: 500,
+  fontSize: '13px',
+  lineHeight: '20px',
+  color: '#E46767',
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  cursor: 'pointer',
+  userSelect: 'none'
+})
 
 export default function Header() {
   const isSmDown = useBreakpoint('sm')
-  const { account } = useActiveWeb3React()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
-  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
-
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoAdminLevel = useIsJoined(Number(curDaoId))
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const quit = useGetUserQuitDao()
   const categoryList = useMemo(() => {
     if (!daoInfo?.category) return []
-    return daoInfo.category.split(',')
+    return daoInfo.category
   }, [daoInfo?.category])
+
+  const handleQuitClick = useCallback(() => {
+    quit(Number(curDaoId)).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      toast.success('Quit success')
+    })
+  }, [curDaoId, quit])
 
   return (
     <Box>
@@ -65,11 +85,10 @@ export default function Header() {
             <Box sx={{ ml: 35, height: 142 }}>
               <Box sx={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <Typography variant="h5" sx={{ font: '600 24px/29px "Inter" ' }}>
-                  {daoInfo?.name || '--'}
+                  {daoInfo?.daoName || '--'}
                 </Typography>
-                {backedDaoInfo?.verified && <AuthIcon />}
-
-                <AdminTag level={daoAdminLevel} />
+                {daoInfo?.approve && <AuthIcon />}
+                <AdminTag level={daoAdminLevel.isJoined?.job} />
               </Box>
               <Typography sx={{ mt: 6, font: ' 500 14px/17px "Inter"', color: '#97B7EF' }}>
                 @{daoInfo?.handle}
@@ -137,19 +156,14 @@ export default function Header() {
               </Box>
             </Box>
           </Box>
-          {/* (<Button
-            variant="contained"
-            sx={{
-              width: '95px',
-              height: '36px',
-              background: '#0049C6',
-              borderRadius: '8px',
-              color: '#fff',
-              font: '700 14px/20px "Inter"'
-            }}
-          >
-            + Follow
-          </Button>) */}
+          {daoAdminLevel.isJoined?.isJoin && daoAdminLevel.isJoined.job !== 'owner' ? (
+            <Text onClick={handleQuitClick}>
+              <QuitIcon />
+              Quit DAO
+            </Text>
+          ) : (
+            <></>
+          )}
         </StyledHeader>
       </ContainerWrapper>
     </Box>

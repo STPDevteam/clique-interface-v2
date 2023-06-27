@@ -1,42 +1,43 @@
-import { Alert, Box, Button as MuiButton, ButtonGroup, Link, Stack, styled, Typography } from '@mui/material'
-import Back from 'components/Back'
+import { Alert, Box, Button as MuiButton, ButtonGroup, Stack, styled, Typography } from '@mui/material'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
-import { RowCenter } from './ProposalItem'
+// import { RowCenter } from './ProposalItem'
+import { LoadingButton } from '@mui/lab'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import OutlineButton from 'components/Button/OutlineButton'
-import Button, { BlackButton } from 'components/Button/Button'
+import Button from 'components/Button/Button'
 import { useHistory, useParams } from 'react-router'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
-import { VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
-import { DaoInfoProp, useDaoInfo } from 'hooks/useDaoInfo'
-import { ChainId, ChainListMap } from 'constants/chain'
-import Loading from 'components/Loading'
+import { CreateDaoDataProp, VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
+// import Loading from 'components/Loading'
 import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useCreateProposalCallback } from 'hooks/useProposalCallback'
-import { useProposalSign } from 'hooks/useProposalInfo'
-import { TokenAmount } from 'constants/token'
-import JSBI from 'jsbi'
-import useModal from 'hooks/useModal'
-import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import { Token } from 'constants/token'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 import Editor from './Editor'
 import { routes } from 'constants/routes'
 import DaoContainer from 'components/DaoContainer'
+import { toast } from 'react-toastify'
+import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
+import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+// import { ChainListMap } from 'constants/chain'
+// import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  fontSize: 12
+  fontSize: 14,
+  marginBottom: 6
 }))
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
+  width: 431,
   '& button': {
+    height: 36,
     borderWidth: '1px',
     color: theme.palette.text.primary,
     fontWeight: 600,
@@ -50,196 +51,167 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   }
 }))
 
-export default function CreateProposal() {
-  const { chainId: daoChainId, address: daoAddress } = useParams<{ chainId: string; address: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+const DateSelectStyle = styled(Box)(() => ({
+  width: 365,
+  height: 40,
+  display: 'grid',
+  alignItems: 'center',
+  gridTemplateColumns: '150px 1fr',
+  border: '1px solid #D4D7E2',
+  borderRadius: '8px',
+  '& .MuiInputBase-input': {
+    padding: 0,
+    height: 40,
+    background: 'transparent'
+  },
+  '& .timelabel': {
+    paddingLeft: 14,
+    margin: 0,
+    display: 'flex',
+    alignItems: 'center',
+    lineHeight: '20px',
+    borderRight: '1px solid #D4D7E2',
+    gap: 8
+  }
+}))
 
-  return daoInfo ? <CreateForm daoChainId={curDaoChainId} daoInfo={daoInfo} /> : <Loading />
+export default function CreateProposal() {
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  return daoInfo ? (
+    <CreateForm daoId={Number(daoId)} daoInfo={daoInfo} />
+  ) : (
+    <CreateForm daoId={Number(daoId)} daoInfo={daoInfo} />
+  )
 }
 
-function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId: ChainId }) {
+function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
   const history = useHistory()
-  const { showModal, hideModal } = useModal()
-  const { chainId, account, library } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const [loading, setLoading] = useState(false)
+  const [voteOption, setVoteOption] = useState(['Approve', 'Disapprove', ''])
   const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
-  const [introduction, setIntroduction] = useState('')
-  const [startTime, setStartTime] = useState<number>()
-  const [endTime, setEndTime] = useState<number>()
+  const [description, setDescription] = useState('')
+  const [startTime, setStarttime] = useState<number>()
+  const [endTime, setEndtime] = useState<number>()
+  const [startValidate, setStartValidate] = useState(false)
   const [voteType, setVoteType] = useState<VotingTypes>(
-    daoInfo.votingType !== VotingTypes.MULTI ? VotingTypes.SINGLE : VotingTypes.MULTI
+    daoInfo.votingType === VotingTypes.ANY
+      ? VotingTypes.SINGLE
+      : daoInfo.votingType === VotingTypes.MULTI
+      ? VotingTypes.MULTI
+      : VotingTypes.SINGLE
   )
-  const [voteOption, setVoteOption] = useState<string[]>(['Approve', 'Disapprove', ''])
-  const createProposalCallback = useCreateProposalCallback(daoInfo.daoAddress)
-  const createProposalSign = useProposalSign(daoInfo.daoAddress, daoChainId)
-
-  const myBalance = useMemo(() => {
-    if (!daoInfo.token || !createProposalSign) {
+  const createProposalCallback = useCreateProposalCallback()
+  const createToken = useMemo(() => {
+    if (!daoInfo.governance[0] || !daoInfo.governance[0].createRequire) {
       return undefined
     }
-    return new TokenAmount(daoInfo.token, JSBI.BigInt(createProposalSign?.balance || '0'))
-  }, [createProposalSign, daoInfo.token])
-
-  const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/proposal`)
-  }, [daoChainId, daoInfo.daoAddress, history])
-
-  const onCreateProposal = useCallback(() => {
-    if (
-      !createProposalSign ||
-      account?.toLowerCase() !== createProposalSign.account?.toLowerCase() ||
-      !startTime ||
-      !endTime
+    const _token = new Token(
+      daoInfo.governance[0].chainId,
+      daoInfo.governance[0].tokenAddress,
+      daoInfo.governance[0].decimals,
+      daoInfo.governance[0].symbol
     )
-      return
-    showModal(<TransacitonPendingModal />)
-    createProposalCallback(
-      title,
-      introduction,
-      content,
-      startTime,
-      endTime,
-      voteType,
-      voteOption.filter(i => i),
-      {
-        chainId: createProposalSign.tokenChainId,
-        balance: createProposalSign.balance,
-        tokenAddress: createProposalSign.tokenAddress,
-        signType: 0,
-        deadline: createProposalSign.deadline
-      },
-      createProposalSign.signature
-    )
-      .then(hash => {
-        hideModal()
-        showModal(<TransactionSubmittedModal hideFunc={toList} hash={hash} />)
-      })
-      .catch((err: any) => {
-        hideModal()
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
-      })
-  }, [
-    createProposalSign,
-    account,
-    introduction,
-    startTime,
-    endTime,
-    showModal,
-    createProposalCallback,
-    title,
-    content,
-    voteType,
-    voteOption,
-    hideModal,
-    toList
-  ])
+    return _token
+  }, [daoInfo.governance])
+  const myBalance = useCurrencyBalance(account || undefined, createToken)
 
-  const paramsCheck: {
-    disabled: boolean
-    handler?: () => void
-    error?: undefined | string | JSX.Element
+  const errors: {
+    text: string
+    name: string
   } = useMemo(() => {
-    // const currentTime = currentTimeStamp()
-    if (!title) {
+    if (!title.trim()) {
       return {
-        disabled: true,
-        error: 'Title required'
+        text: 'Title required',
+        name: 'title'
       }
     }
-    if (!startTime) {
+    if (!description) {
       return {
-        disabled: true,
-        error: 'Start time required'
-      }
-    }
-    // if (startTime < currentTime) {
-    //   return {
-    //     disabled: true,
-    //     error: 'The start time must be later than the current time'
-    //   }
-    // }
-    if (!endTime) {
-      return {
-        disabled: true,
-        error: 'End time required'
-      }
-    }
-    if (endTime <= startTime) {
-      return {
-        disabled: true,
-        error: 'The start time must be earlier than the end time'
-      }
-    }
-    if (!voteType) {
-      return {
-        disabled: true,
-        error: 'Voting type required'
+        text: 'Description required',
+        name: 'description'
       }
     }
     if (voteOption.filter(i => i).length < 2) {
       return {
-        disabled: true,
-        error: 'Voting options minimum is two'
+        name: 'option',
+        text: 'Voting options minimum is two'
       }
     }
-    if (!account) {
+    if (!startTime) {
       return {
-        disabled: true,
-        error: (
-          <>
-            You need to{' '}
-            <Link sx={{ cursor: 'pointer' }} onClick={toggleWalletModal}>
-              connect
-            </Link>{' '}
-            your wallet
-          </>
-        )
+        text: 'Start time required',
+        name: 'time'
       }
     }
-    if (daoChainId !== chainId) {
+    if (!endTime) {
       return {
-        disabled: true,
-        error: (
-          <>
-            You need{' '}
-            <Link
-              sx={{ cursor: 'pointer' }}
-              onClick={() => daoChainId && triggerSwitchChain(library, daoChainId, account)}
-            >
-              switch
-            </Link>{' '}
-            to {ChainListMap[daoChainId].name}
-          </>
-        )
+        text: 'End time required',
+        name: 'time'
       }
     }
-    if (!myBalance || !daoInfo.proposalThreshold || myBalance.lessThan(daoInfo.proposalThreshold)) {
+    if (startTime >= endTime) {
       return {
-        disabled: true,
-        error: 'Insufficient balance'
+        text: 'The start time must be earlier than the end time',
+        name: 'time'
+      }
+    }
+    if (!myBalance || !daoInfo.governance[0].createRequire || myBalance.lessThan(daoInfo.governance[0].createRequire)) {
+      return {
+        text: 'Insufficient balance',
+        name: 'balance'
       }
     }
     return {
-      disabled: false
+      text: '',
+      name: ''
     }
+  }, [daoInfo.governance, description, endTime, myBalance, startTime, title, voteOption])
+
+  const toList = useCallback(() => {
+    history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+  }, [daoId, history])
+
+  const handleSubmit = useCallback(() => {
+    setStartValidate(true)
+    if (!daoId || !endTime || !startTime || errors.text) return
+    setLoading(true)
+    createProposalCallback(
+      description,
+      daoId,
+      endTime,
+      '',
+      voteOption.filter((i: any) => i),
+      startTime,
+      title,
+      [daoInfo.governance[0].voteTokenId],
+      voteType
+    )
+      .then(res => {
+        console.log(res)
+        setLoading(false)
+        toast.success('Create proposal success')
+        toList()
+        setStartValidate(false)
+      })
+      .catch((err: any) => {
+        toast.error('Network error')
+        setLoading(false)
+        console.log(err)
+        setStartValidate(false)
+      })
   }, [
-    account,
-    chainId,
-    daoChainId,
-    daoInfo.proposalThreshold,
+    createProposalCallback,
+    daoId,
+    daoInfo.governance,
+    description,
     endTime,
-    library,
-    myBalance,
+    errors.text,
     startTime,
     title,
-    toggleWalletModal,
+    toList,
     voteOption,
     voteType
   ])
@@ -247,112 +219,191 @@ function CreateForm({ daoInfo, daoChainId }: { daoInfo: DaoInfoProp; daoChainId:
   return (
     <DaoContainer>
       <Box>
-        <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
-        <Typography variant="h6" mt={28}>
-          Create Proposal
-        </Typography>
-        <Box display="grid" mt={20} gridTemplateColumns={{ md: '1fr 1fr', xs: 'unset' }} gap="66px">
-          <Stack spacing={20}>
-            <Input value={title} placeholder="Title" onChange={e => setTitle(e.target.value)} label="Title" />
-            <Input
-              value={introduction}
-              onChange={e => setIntroduction(e.target.value)}
-              label="Introduction"
-              placeholder="Introduction"
-            />
-            <div>
-              <LabelText>Description</LabelText>
-              <Editor content={content} setContent={setContent} />
-            </div>
-          </Stack>
-          <Box>
-            <Stack paddingTop="30px" spacing={'20px'}>
-              <Box display={'grid'} gridTemplateColumns="70px 1fr" alignItems={'center'} gap="12px 24px">
-                <LabelText>Start Time</LabelText>
-                <DateTimePicker
-                  value={startTime ? new Date(startTime * 1000) : null}
-                  onValue={timestamp => {
-                    setStartTime(timestamp)
-                    if (!daoInfo.isCustomVotes) {
-                      setEndTime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
-                    }
-                  }}
-                ></DateTimePicker>
-                <LabelText>End Time</LabelText>
-                <DateTimePicker
-                  disabled={!daoInfo.isCustomVotes}
-                  minDateTime={startTime ? new Date(startTime * 1000) : undefined}
-                  value={endTime ? new Date(endTime * 1000) : null}
-                  onValue={timestamp => setEndTime(timestamp)}
-                ></DateTimePicker>
-              </Box>
-
-              <Box>
-                <LabelText mb={6}>Voting Type</LabelText>
-
-                {daoInfo.votingType === VotingTypes.ANY ? (
-                  <StyledButtonGroup variant="outlined">
-                    <MuiButton
-                      className={voteType === VotingTypes.SINGLE ? 'active' : ''}
-                      onClick={() => setVoteType(VotingTypes.SINGLE)}
-                    >
-                      Single-voting
-                    </MuiButton>
-                    <MuiButton
-                      className={voteType === VotingTypes.MULTI ? 'active' : ''}
-                      onClick={() => setVoteType(VotingTypes.MULTI)}
-                    >
-                      Multi-voting
-                    </MuiButton>
-                  </StyledButtonGroup>
-                ) : (
-                  <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
-                )}
-              </Box>
-
-              <VotingOptions option={voteOption} setOption={setVoteOption} />
-
-              <Box>
-                <RowCenter>
-                  <LabelText>Minimum Tokens Needed To Create Proposal</LabelText>
-                  <LabelText>
-                    {daoInfo.proposalThreshold?.toSignificant(6, { groupSeparator: ',' }) || '--'}{' '}
-                    {daoInfo.token?.symbol}
-                  </LabelText>
-                </RowCenter>
-                <RowCenter>
-                  <LabelText>Balance</LabelText>
-                  <LabelText>
-                    {myBalance?.toSignificant(6, { groupSeparator: ',' }) || '--'} {daoInfo.token?.symbol}
-                  </LabelText>
-                </RowCenter>
-              </Box>
-            </Stack>
-
-            {paramsCheck.error ? (
-              <Alert severity="error" sx={{ marginTop: 20 }}>
-                {paramsCheck.error}
-              </Alert>
-            ) : (
-              <Alert severity="success" sx={{ marginTop: 20 }}>
-                You can now create a proposal
-              </Alert>
+        <Stack
+          sx={{
+            'svg path': {
+              fill: 'rgba(0, 73, 198, 1)'
+            }
+          }}
+          direction={'row'}
+          alignItems={'center'}
+        >
+          <ProposalIcon />
+          <Typography
+            sx={{
+              ml: '6px',
+              fontWeight: '600',
+              fontSize: '30px',
+              lineHeight: '20px'
+            }}
+          >
+            Create Proposal
+          </Typography>
+        </Stack>
+        <Stack spacing={20} mt={40}>
+          <Input
+            value={title}
+            placeholder="Title"
+            onChange={val => {
+              setTitle(val.target.value)
+            }}
+            label="Title"
+            style={{ borderColor: startValidate && errors.text && errors.name === 'title' ? '#E46767' : '#D4D7E2' }}
+          />
+          {startValidate && errors.text && errors.name === 'title' && (
+            <Typography color={'#E46767'} fontSize={14} fontWeight={500} sx={{ marginTop: '10px !important' }}>
+              {errors.text}
+            </Typography>
+          )}
+          {/* <Input
+            value={introduction}
+            onChange={e => setIntroduction(e.target.value)}
+            label="Introduction"
+            placeholder="Introduction"
+          /> */}
+          <div>
+            <LabelText>Description</LabelText>
+            <Editor content={description} setContent={setDescription} />
+            {startValidate && errors.text && errors.name === 'description' && (
+              <Typography color={'#E46767'} fontSize={14} fontWeight={500} sx={{ marginTop: '50px !important' }}>
+                {errors.text}
+              </Typography>
             )}
-
-            <Stack spacing={60} direction="row" mt={50}>
-              <OutlineButton onClick={history.goBack} height="36px">
-                Cancel
-              </OutlineButton>
-              <BlackButton disabled={paramsCheck.disabled} onClick={onCreateProposal}>
-                Create
-              </BlackButton>
+          </div>
+        </Stack>
+        <Box mt={62}>
+          {/* <Box sx={{ mb: 20 }}>
+            <LabelText>Voting Token</LabelText>
+            <CheckBoxs list={daoInfo.governance} />
+          </Box> */}
+          <Stack spacing={'20px'}>
+            <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
+              <LabelText mb={6} width={150} textAlign={'left'}>
+                Voting Type
+              </LabelText>
+              {daoInfo.votingType === VotingTypes.ANY ? (
+                <StyledButtonGroup variant="outlined">
+                  <MuiButton
+                    className={voteType === VotingTypes.SINGLE ? 'active' : ''}
+                    onClick={() => setVoteType(VotingTypes.SINGLE)}
+                  >
+                    Single-voting
+                  </MuiButton>
+                  <MuiButton
+                    className={voteType === VotingTypes.MULTI ? 'active' : ''}
+                    onClick={() => setVoteType(VotingTypes.MULTI)}
+                  >
+                    Multi-voting
+                  </MuiButton>
+                </StyledButtonGroup>
+              ) : (
+                <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
+              )}
             </Stack>
-          </Box>
+            <VotingOptions option={voteOption} setOption={setVoteOption} />
+            <Box display={'grid'} gridTemplateColumns="150px 1fr" alignItems={'center'}>
+              <Typography variant="body1" lineHeight={'16px'} color={'#80829F'}>
+                Voting period
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <DateSelectStyle>
+                  <LabelText className="timelabel">
+                    <TimeIcon />
+                    Start Time
+                  </LabelText>
+                  <DateTimePicker
+                    label=" "
+                    value={startTime ? new Date(startTime * 1000) : null}
+                    onValue={timestamp => {
+                      setStarttime(timestamp)
+                      if (daoInfo.votingPeriod) {
+                        setEndtime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
+                      }
+                    }}
+                  ></DateTimePicker>
+                </DateSelectStyle>
+                <Box
+                  sx={{
+                    width: 0,
+                    height: 10,
+                    border: '1px solid #D4D7E2',
+                    transform: 'rotate(90deg)'
+                  }}
+                />
+                <DateSelectStyle>
+                  <LabelText className="timelabel">
+                    <TimeIcon />
+                    End Time
+                  </LabelText>
+                  <DateTimePicker
+                    label=" "
+                    disabled={daoInfo.votingPeriod !== 0}
+                    minDateTime={startTime ? new Date(startTime * 1000) : undefined}
+                    value={endTime ? new Date(endTime * 1000) : null}
+                    onValue={timestamp => setEndtime(timestamp)}
+                  ></DateTimePicker>
+                </DateSelectStyle>
+              </Box>
+            </Box>
+          </Stack>
+          {errors.text && (errors.name === 'balance' || errors.name === 'time') && (
+            <Alert style={{ marginTop: 30 }} severity="error">
+              {errors.text}
+            </Alert>
+          )}
+          <Stack direction="row" mt={20} mb={20} justifyContent={'space-between'}>
+            <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
+              Back
+            </OutlineButton>
+            {!account ? (
+              <Button width="200px" height="40px" onClick={toggleWalletModal}>
+                Connect wallet
+              </Button>
+            ) : (
+              <LoadingButton
+                loading={loading}
+                loadingPosition="center"
+                startIcon={<></>}
+                variant="contained"
+                color="primary"
+                sx={{ width: 200, height: 40, textAlign: 'center' }}
+                onClick={handleSubmit}
+              >
+                Publish
+              </LoadingButton>
+            )}
+          </Stack>
         </Box>
       </Box>
     </DaoContainer>
   )
 }
+
+const InputBoxstyle = styled(Box)(() => ({
+  boxSizing: 'border-box',
+  height: 40,
+  background: ' #FFFFFF',
+  border: '1px solid #D4D7E2',
+  borderRadius: ' 8px',
+  display: 'flex',
+  alignItems: 'center',
+  '& .headetitle': {
+    width: '114px',
+    height: 40,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#97B7EF',
+    borderRadius: '8px',
+    color: '#fff'
+  },
+  '& .inputStyle': {
+    flex: 1,
+    height: 36,
+    border: 'none',
+    background: 'transparent !important'
+  }
+}))
 
 function VotingOptions({ option, setOption }: { option: string[]; setOption: Dispatch<SetStateAction<string[]>> }) {
   const updateVoteOption = useCallback(
@@ -379,35 +430,124 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
 
   return (
     <div>
-      <RowCenter>
-        <LabelText>Voting Options</LabelText>
-        <LabelText
-          display={'flex'}
-          alignItems="center"
-          onClick={addVoteOption}
-          sx={{ cursor: 'pointer', color: theme => theme.palette.primary.main }}
-        >
-          <AddCircleOutlineIcon sx={{ width: 16 }} />
-          Add A Option
-        </LabelText>
-      </RowCenter>
-      <Stack spacing={8} mt={16}>
-        <Input value={option[0]} onChange={e => updateVoteOption(0, e.target.value)} placeholder="Approve" />
-        <Input value={option[1]} onChange={e => updateVoteOption(1, e.target.value)} placeholder="Disapprove" />
-        {option.map(
-          (_, index) =>
-            index > 1 && (
-              <Box display={'grid'} gap="24px" gridTemplateColumns={'1fr 54px'} key={index}>
-                <Input
-                  value={option[index]}
-                  onChange={e => updateVoteOption(index, e.target.value)}
-                  placeholder="Option"
-                />
-                <StyledDelButton onClick={() => removeVoteOption(index)} />
-              </Box>
-            )
-        )}
-      </Stack>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr' }}>
+        <LabelText sx={{ margin: 0, height: 40, display: 'flex', alignItems: 'center' }}>Voting Options</LabelText>
+        <Box sx={{ display: 'grid', gap: 14, flexDirection: 'column' }} component="form">
+          <InputBoxstyle>
+            <Typography variant="body1" className="headetitle">
+              Options 1
+            </Typography>
+            <Input
+              className="inputStyle"
+              value={option[0]}
+              onChange={e => {
+                updateVoteOption(0, e.target.value)
+              }}
+              placeholder="Approve"
+            />
+            <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
+          </InputBoxstyle>
+          <InputBoxstyle>
+            <Typography variant="body1" className="headetitle">
+              Options 2
+            </Typography>
+            <Input
+              className="inputStyle"
+              value={option[1]}
+              onChange={e => {
+                updateVoteOption(1, e.target.value)
+              }}
+              placeholder="Disapprove"
+            />
+            <StyledDelButton sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }} />
+          </InputBoxstyle>
+          {option.map(
+            (_, index) =>
+              index > 1 && (
+                <InputBoxstyle key={index}>
+                  <Typography variant="body1" className="headetitle">
+                    Options {index + 1}
+                  </Typography>
+                  <Input
+                    className="inputStyle"
+                    value={option[index]}
+                    onChange={e => {
+                      updateVoteOption(index, e.target.value)
+                    }}
+                    placeholder="Option"
+                  />
+                  <StyledDelButton
+                    sx={{ mr: 5, height: 30, width: 40, borderRadius: '4px' }}
+                    onClick={() => removeVoteOption(index)}
+                  />
+                </InputBoxstyle>
+              )
+          )}
+          <Box>
+            <LabelText
+              onClick={addVoteOption}
+              sx={{ display: 'flex', gap: 8, cursor: 'pointer', color: '#97B7EF', fontSize: 14 }}
+            >
+              <AddCircleOutlineIcon sx={{ width: 16 }} />
+              Add Option
+            </LabelText>
+          </Box>
+        </Box>
+      </Box>
     </div>
   )
 }
+
+// const CreadStyle = styled(Box)(({}) => ({
+//   boxSizing: 'border-box',
+//   width: 227,
+//   height: 86,
+//   borderRadius: '8px',
+//   display: 'grid',
+//   gridTemplateColumns: '58px 1fr'
+// }))
+
+// function CheckBoxs({ list }: { list: govList[] }) {
+//   const [checkedValues, setCheckedValues] = useState<number[]>([])
+
+//   const handleCheckboxChange = (event: any, id: number) => {
+//     const isChecked = event.target.checked
+//     if (isChecked) {
+//       setCheckedValues([...checkedValues, id])
+//     } else {
+//       setCheckedValues(checkedValues.filter(value => value !== id))
+//     }
+//   }
+
+//   return (
+//     <>
+//       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
+//         {list.map((item: govList, index: number) => (
+//           <CreadStyle
+//             sx={{
+//               background: !checkedValues.includes(item.voteTokenId) ? '#FAFAFA' : '#F8FBFF',
+//               border: !checkedValues.includes(item.voteTokenId) ? ' 1px solid #D4D7E2' : '1px solid #97B7EF'
+//             }}
+//             key={index}
+//           >
+//             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+//               <Checkbox
+//                 sx={{ borderRadius: '50%', color: '#D9D9D9' }}
+//                 checked={checkedValues.includes(item.voteTokenId)}
+//                 onChange={event => handleCheckboxChange(event, item.voteTokenId)}
+//               />
+//             </Box>
+//             <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+//               <Typography variant="body1" lineHeight="16px">
+//                 `${item.tokenName}(${item.symbol})`
+//               </Typography>
+//               <Typography marginTop={14} variant="body1" lineHeight="16px" color={'#80829F'}>
+//                 1{item.symbol} = 1 Votes
+//               </Typography>
+//             </Box>
+//           </CreadStyle>
+//         ))}
+//       </Box>
+//     </>
+//   )
+// }

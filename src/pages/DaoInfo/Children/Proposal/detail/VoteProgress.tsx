@@ -1,26 +1,27 @@
-import { Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Box, Link, Stack, styled, Typography } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
-import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
-import { TokenAmount } from 'constants/token'
-import { useProposalVoteList } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps, useProposalVoteList } from 'hooks/useBackedProposalServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import JSBI from 'jsbi'
-import { useMemo } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useHistory } from 'react-router'
-import { shortenAddress } from 'utils'
+import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
+import { BlackButton } from 'components/Button/Button'
+import { useVoteModalToggle } from 'state/application/hooks'
+import { VotingTypes } from 'state/buildingGovDao/actions'
+import VoteModal from './VoteModal'
 
-const StyledItem = styled(Box)(({ theme }) => ({
-  border: `1px solid ${theme.bgColor.bg2}`,
-  borderRadius: '12px',
-  padding: '12px 32px 15px'
+const StyledItem = styled(Box)(({}) => ({
+  borderRadius: '8px',
+  backgroundColor: '#F8FBFF',
+  padding: '21px 30px'
 }))
 
 const StyledBody = styled(Box)(({ theme }) => ({
@@ -38,100 +39,92 @@ const StyledListText = styled(Typography)({
 })
 
 export default function VoteProgress({
+  refresh,
   proposalOptions,
-  daoAddress,
-  daoChainId,
-  proposalId
+  proposalId,
+  proposalInfo
 }: {
+  refresh: Dispatch<SetStateAction<number>>
   proposalOptions: ProposalOptionProp[]
-  daoAddress: string
-  daoChainId: ChainId
   proposalId: number
+  proposalInfo: useProposalDetailInfoProps
 }) {
-  const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const allVotes = useMemo(() => {
-    let ret = new TokenAmount(proposalOptions[0].amount.token, JSBI.BigInt(0))
-    for (const { amount } of proposalOptions) {
-      ret = ret.add(amount)
-    }
-    return ret
-  }, [proposalOptions])
   const { showModal } = useModal()
+  const [optionId, setOptionId] = useState(0)
+  const voteModalToggle = useVoteModalToggle()
+  const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
+  console.log(proposalInfo)
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
       <RowCenter flexWrap={'wrap'}>
-        <Typography variant="h6" fontWeight={500}>
-          Current Results
+        <Typography fontSize={14} color={'#80829F'} fontWeight={500}>
+          {proposalInfo.votingType === VotingTypes.SINGLE ? 'single-vote' : 'multi-vote'}
         </Typography>
         <Typography
-          onClick={() =>
-            showModal(
-              <VoteListModal
-                allVotes={allVotes}
-                daoChainId={daoChainId}
-                daoAddress={daoAddress}
-                proposalId={proposalId}
-                proposalOptions={proposalOptions}
-              />
-            )
-          }
+          onClick={() => showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} />)}
           variant="body1"
           sx={{ cursor: 'pointer' }}
-          color={theme.palette.primary.main}
+          color={'#80829F'}
         >
-          View All Votes ({allVotes.toSignificant(6, { groupSeparator: ',' })})
+          View all votes ({allVotes && formatNumberWithCommas(allVotes)})
         </Typography>
       </RowCenter>
       <Stack mt={16} spacing={10}>
         {proposalOptions.map((item, index) => (
           <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
-            <Typography mb={5}>{item.name}</Typography>
             <Box
               display={'grid'}
               sx={{
-                gridTemplateColumns: { sm: '1fr 180px', xs: '1fr' }
+                gridTemplateColumns: { sm: '1fr 125px', xs: '1fr' }
               }}
+              justifyContent={'space-between'}
+              alignItems={'center'}
               columnGap="24px"
               rowGap={'5px'}
             >
-              <SimpleProgress width="100%" per={Math.floor(item.per * 100)} />
-              <Typography color={theme.palette.text.secondary} fontSize={14} fontWeight={600}>
-                {(item.per * 100).toFixed(1)}%({item.amount.toSignificant(6, { groupSeparator: ',' })} Votes)
-              </Typography>
+              <Box display={'grid'}>
+                <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
+                  <Typography mb={5}>{item.optionContent}</Typography>
+                  <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
+                    {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%({formatNumberWithCommas(item.votes)}{' '}
+                    Votes)
+                  </Typography>
+                </Box>
+                {item.votes === 0 ? (
+                  <SimpleProgress width="100%" per={0} />
+                ) : (
+                  <SimpleProgress width="100%" per={Math.floor((item.votes / allVotes) * 100)} />
+                )}
+              </Box>
+              <BlackButton
+                height="36px"
+                disabled={
+                  proposalInfo.yourVotes === 0 ||
+                  proposalInfo.status === 'Soon' ||
+                  (proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1)
+                }
+                onClick={() => {
+                  setOptionId(proposalOptions[index].optionId)
+                  voteModalToggle()
+                }}
+                width="125px"
+              >
+                {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
+              </BlackButton>
             </Box>
           </StyledItem>
         ))}
       </Stack>
+      <VoteModal refresh={refresh} proposalInfo={proposalInfo} proposalOptions={optionId} />
     </VoteWrapper>
   )
 }
 
-function VoteListModal({
-  daoAddress,
-  daoChainId,
-  proposalId,
-  allVotes,
-  proposalOptions
-}: {
-  daoAddress: string
-  daoChainId: ChainId
-  proposalId: number
-  allVotes: TokenAmount
-  proposalOptions: ProposalOptionProp[]
-}) {
+function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
   const { hideModal } = useModal()
-  const { result: proposalVoteList, page } = useProposalVoteList(daoChainId, daoAddress, proposalId)
-  const token = useMemo(() => proposalOptions[0].amount.token, [proposalOptions])
-  const showList = useMemo(() => {
-    if (!token) return []
-    return proposalVoteList.map(item => ({
-      optionName: proposalOptions[item.optionIndex].name,
-      voter: item.voter,
-      amount: new TokenAmount(token, item.amount)
-    }))
-  }, [proposalOptions, proposalVoteList, token])
+  const { result: proposalVoteList, page } = useProposalVoteList(proposalId)
   const history = useHistory()
 
   return (
@@ -139,7 +132,7 @@ function VoteListModal({
       <StyledBody>
         <Stack spacing={19}>
           <Typography variant="h6" fontWeight={500}>
-            Votes ({allVotes.toSignificant(6, { groupSeparator: ',' })})
+            Votes ({(allVotes && formatNumberWithCommas(allVotes)) || '--'})
           </Typography>
           <Box
             display={'grid'}
@@ -148,7 +141,7 @@ function VoteListModal({
             alignItems={'center'}
             justifyContent="center"
           >
-            {showList.map(item => (
+            {proposalVoteList.map(item => (
               <>
                 {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
                 <Link
@@ -162,12 +155,14 @@ function VoteListModal({
                 >
                   <StyledListText>{shortenAddress(item.voter)}</StyledListText>
                 </Link>
-                <StyledListText noWrap>{item.optionName}</StyledListText>
-                <StyledListText>{item.amount.toSignificant(6, { groupSeparator: ',' })}</StyledListText>
+                <StyledListText noWrap align="center">
+                  {item.optionContent}
+                </StyledListText>
+                <StyledListText align="right">{formatNumberWithCommas(item.votes)}</StyledListText>
               </>
             ))}
           </Box>
-          {!showList.length && <EmptyData />}
+          {!proposalVoteList.length && <EmptyData />}
           <Box display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}

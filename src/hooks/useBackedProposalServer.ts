@@ -1,28 +1,45 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
-import { getProposalList, getProposalSnapshot, getProposalVotesList } from '../utils/fetch/server'
+import {
+  addGovToken,
+  deleteGovToken,
+  getProposalDetail,
+  getProposalList,
+  getProposalSnapshot,
+  getProposalVotesList,
+  toVote
+} from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
+import { useActiveWeb3React } from 'hooks'
+import { govList } from 'state/buildingGovDao/actions'
 
 export interface ProposalListBaseProp {
-  daoChainId: ChainId
+  v1V2ChainId: ChainId
   daoAddress: string
-  daoAddressV1: string
+  v1V2DaoAddress: string
   proposalId: number
+  proposalSIP: number
+  introduction: string
+  votes: number
   title: string
   contentV1: string
   startTime: number
   endTime: number
-  proposer: string
-  version: 'v1' | 'v2'
+  proposer: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  version: 'v1' | 'v2' | 'v3'
   status: ProposalStatus
   targetTimeString: string
 }
 
-function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
+function makeLIstData(data: any): ProposalListBaseProp[] {
   const now = currentTimeStamp()
-  return list.map((item: any) => {
+  return data.map((item: any) => {
     const startTime = item.startTime
     const endTime = item.endTime
 
@@ -46,25 +63,25 @@ function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
 
     return {
       proposalId: item.proposalId,
-      daoChainId,
+      proposalSIP: item.proposalSIP,
+      v1V2ChainId: item.v1V2ChainId,
       version: item.version,
       title: item.title,
-      daoAddress: item.daoAddress,
-      daoAddressV1: item.daoAddressV1,
-      contentV1: item.contentV1.replace(/^\[markdown\]/, ''),
-      startTime: item.startTime,
-      endTime: item.endTime,
+      votes: item.votes,
+      v1V2DaoAddress: item.v1V2DaoAddress,
+      startTime: startTime,
+      endTime: endTime,
       proposer: item.proposer,
+      introduction: item.introduction,
       status: _status,
       targetTimeString
     }
   })
 }
 
-export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
-  const [status, setStatus] = useState<ProposalStatus>()
+export function useProposalBaseList(daoId: number) {
+  const [status, setStatus] = useState<string>()
   const [currentPage, setCurrentPage] = useState(1)
-
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -84,23 +101,24 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
+      if (!daoId) {
         setResult([])
         setTotal(0)
         return
       }
       setLoading(true)
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalList(daoId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
+
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBaseProp[] = makeLIstData(data.data)
         setResult(list)
       } catch (error) {
         setResult([])
@@ -109,11 +127,11 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
         console.error('getProposalList', error)
       }
     })()
-  }, [status, currentPage, daoAddress, daoChainId])
+  }, [status, currentPage, daoId])
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
+      if (!daoId) {
         setResult([])
         setTotal(0)
         return
@@ -123,14 +141,13 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
         return
       }
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
-        const data = res.data.data as any
-
+        const res = await getProposalList(daoId, status, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
         if (!data) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBaseProp[] = makeLIstData(data.data)
         setResult(list)
         toTimeRefresh()
       } catch (error) {
@@ -158,6 +175,125 @@ export function useProposalBaseList(daoChainId: ChainId, daoAddress: string) {
   }
 }
 
+export interface ProposalDetailInfoOptionProps {
+  optionContent: string
+  optionId: number
+  optionIndex: number
+  votes: number
+}
+export interface useProposalDetailInfoProps {
+  alreadyVoted: number
+  content: string
+  endTime: number
+  introduction: string
+  options: ProposalDetailInfoOptionProps[]
+  proposalId: number
+  proposalSIP: number
+  proposer: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  startTime: number
+  status: string
+  title: string
+  useVoteBase: govList[]
+  votingType: number
+  yourVotes: number
+}
+
+export interface VoteParamsProp {
+  optionId: number
+  votes: number
+}
+
+export function useProposalVoteCallback() {
+  return useCallback(async (voteParams: VoteParamsProp[]) => {
+    return toVote(voteParams)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useDeleteGovToken() {
+  return useCallback(async (voteTokenId: number) => {
+    return deleteGovToken(voteTokenId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useAddGovToken() {
+  return useCallback(
+    async (
+      chainId: number,
+      createRequire: string,
+      daoId: number,
+      decimals: number,
+      symbol: string,
+      tokenAddress: string,
+      tokenLogo: string,
+      tokenName: string,
+      tokenType: string,
+      totalSupply: string,
+      votesWeight: number
+    ) => {
+      return addGovToken(
+        chainId,
+        createRequire,
+        daoId,
+        decimals,
+        symbol,
+        tokenAddress,
+        tokenLogo,
+        tokenName,
+        tokenType,
+        totalSupply,
+        votesWeight
+      )
+        .then(res => res)
+        .catch(err => err)
+    },
+    []
+  )
+}
+
+export function useProposalDetailsInfo(proposalId: number, refresh: number) {
+  const { account } = useActiveWeb3React()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [result, setResult] = useState<useProposalDetailInfoProps>()
+
+  useEffect(() => {
+    ;(async () => {
+      if (!account || !proposalId) {
+        setResult(undefined)
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await getProposalDetail(proposalId)
+        setLoading(false)
+        const data = res.data.data as any
+        setResult(data)
+      } catch (error) {
+        setResult(undefined)
+        setLoading(false)
+        console.error('useGetProposalDetail', error)
+      }
+    })()
+  }, [account, proposalId, refresh])
+
+  const ret = useMemo(() => {
+    if (!result) return undefined
+    return result
+  }, [result])
+
+  return {
+    loading,
+    result: ret
+  }
+}
+
 export function useProposalSnapshot(chainId: ChainId, daoAddress: string, proposalId: number) {
   const [snapshot, setSnapshot] = useState<number | string>()
   useEffect(() => {
@@ -179,42 +315,31 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(daoChainId: ChainId, daoAddress: string, proposalId: number) {
+export function useProposalVoteList(proposalId: number) {
   const [currentPage, setCurrentPage] = useState(1)
-
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<{ optionIndex: number; voter: string; amount: string }[]>([])
+  const [result, setResult] = useState<{ optionContent: string; voter: string; votes: number }[]>([])
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
-        setResult([])
-        setTotal(0)
-        return
-      }
+      if (!proposalId) return
       setLoading(true)
       try {
-        const res = await getProposalVotesList(
-          daoChainId,
-          daoAddress,
-          proposalId,
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
+        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list = data.list.map((item: any) => ({
-          optionIndex: item.optionIndex,
+        const list = data.data.map((item: any) => ({
+          optionContent: item.optionContent,
           voter: item.voter,
-          amount: item.amount
+          votes: item.votes
         }))
         setResult(list)
       } catch (error) {
@@ -224,7 +349,7 @@ export function useProposalVoteList(daoChainId: ChainId, daoAddress: string, pro
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [currentPage, daoAddress, daoChainId, proposalId])
+  }, [currentPage, proposalId])
 
   return {
     loading: loading,

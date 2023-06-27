@@ -156,6 +156,7 @@ export function useCurrencyBalance(
     return true
   }, [currency])
   const ethBalance = useETHBalances(isEth ? [account] : [], chainId)
+  console.log('🚀 ~ file: hooks.ts:159 ~ ethBalance:', ethBalance, isEth, account)
 
   const tokenBalance = useTokenBalance(account, isEth ? undefined : (currency as Token))
 

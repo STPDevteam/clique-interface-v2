@@ -1,185 +1,122 @@
-import { Alert, Box, Link, Slider, Stack, styled, Typography, useTheme } from '@mui/material'
+import { Alert, Box, Link, Stack, styled, Typography, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import Modal from 'components/Modal'
-import { ChainId, ChainListMap } from 'constants/chain'
-import { TokenAmount } from 'constants/token'
-import { useDaoInfo } from 'hooks/useDaoInfo'
-import { SignType, useProposalVoteCallback } from 'hooks/useProposalCallback'
-import {
-  ProposalDetailProp,
-  ProposalOptionProp,
-  ProposalSignProp,
-  ProposalStatus,
-  useProposalSign
-} from 'hooks/useProposalInfo'
-import JSBI from 'jsbi'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
-import { VotingTypes } from 'state/buildingGovDao/actions'
+import { govList, VotingTypes } from 'state/buildingGovDao/actions'
 import { RowCenter } from '../ProposalItem'
-import useModal from 'hooks/useModal'
-import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { Dots } from 'theme/components'
-import { getAmountForPer } from 'utils/dao'
+import { useProposalDetailInfoProps, useProposalVoteCallback } from 'hooks/useBackedProposalServer'
+import { toast } from 'react-toastify'
+import NumericalInput from 'components/Input/InputNumerical'
+import { formatNumberWithCommas } from 'utils'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
   padding: '40px 32px'
 })
 
-const Text = styled(Typography)(({ theme, color }: { color?: string; theme?: any }) => ({
-  fontSize: 13,
+const Text = styled(Typography)(({ color }: { color?: string }) => ({
+  fontSize: 14,
   fontWeight: 600,
-  color: color || theme.palette.text.secondary
+  color: color || '#3F5170'
 }))
 
 export default function VoteModal({
+  refresh,
   proposalInfo,
-  daoChainId,
-  daoAddress,
-  voteFor
+  proposalOptions
 }: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
-  voteFor: number[]
+  proposalInfo: useProposalDetailInfoProps
+  proposalOptions: number
+  refresh: Dispatch<SetStateAction<number>>
 }) {
-  const daoInfo = useDaoInfo(daoAddress, daoChainId)
-  const voteProposalSign = useProposalSign(daoAddress, daoChainId, SignType.VOTE, proposalInfo.proposalId)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
-  const myVotes = useMemo(() => {
-    if (!daoInfo?.token || !voteProposalSign) {
-      return undefined
-    }
-    return new TokenAmount(daoInfo.token, JSBI.BigInt(voteProposalSign?.balance || '0'))
-  }, [voteProposalSign, daoInfo?.token])
-
-  return !voteProposalSign || myVotes === undefined ? null : (
+  return !daoInfo.governance[0] || !proposalInfo ? null : (
     <VoteModalFunc
-      myVotes={myVotes}
-      voteProposalSign={voteProposalSign}
+      refresh={refresh}
+      myVotes={proposalInfo.yourVotes}
+      voteProposalSign={daoInfo.governance[0]}
       proposalInfo={proposalInfo}
-      daoChainId={daoChainId}
-      daoAddress={daoAddress}
-      voteFor={voteFor}
+      proposalOptions={proposalOptions}
     />
   )
 }
 
 function VoteModalFunc({
+  refresh,
   proposalInfo,
-  daoChainId,
-  daoAddress,
-  voteFor,
   myVotes,
-  voteProposalSign
+  voteProposalSign,
+  proposalOptions
 }: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
-  voteFor: number[]
-  voteProposalSign: ProposalSignProp
-  myVotes: TokenAmount
+  refresh: Dispatch<SetStateAction<number>>
+  proposalInfo: useProposalDetailInfoProps
+  voteProposalSign: govList
+  myVotes: number
+  proposalOptions: number
 }) {
-  const theme = useTheme()
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
-  const { account, library, chainId } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
-  const proposalVoteCallback = useProposalVoteCallback(daoAddress)
-  // const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(
-  //   `${daoAddress}_${account}_proposalVote_${proposalInfo.proposalId}`
-  // )
-  // lock account
+  const proposalVoteCallback = useProposalVoteCallback()
+
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_proposalVote`)
+  const [injectVotes, setInjectVotes] = useState('')
+  const handleVotesChange = (e: any) => {
+    setInjectVotes(e)
+  }
 
-  const [chooseOption, setChooseOption] = useState<{ [x in number]: TokenAmount | undefined }>({})
-  useEffect(() => {
-    const _val: {
-      [x: number]: TokenAmount | undefined
-    } = {}
-    for (const index of voteFor) {
-      _val[index] = proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : chooseOption[index]
-    }
-    setChooseOption(_val)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myVotes, proposalInfo.votingType, voteFor])
-
-  const chooseOptionCallback = useCallback(
-    (index: number, amount: TokenAmount) => {
-      const _val = Object.assign({}, chooseOption)
-      _val[index] = amount
-      setChooseOption(_val)
-    },
-    [chooseOption]
-  )
-
-  const validChooseOptions = useMemo(() => {
-    const ret = Object.assign({}, chooseOption)
-    for (const key in chooseOption) {
-      if (Object.prototype.hasOwnProperty.call(chooseOption, key)) {
-        const val = chooseOption[key]
-        if (!val || !val.greaterThan(JSBI.BigInt(0))) {
-          delete ret[key]
-        }
-      }
-    }
-    return ret
-  }, [chooseOption])
-
-  const { showModal, hideModal } = useModal()
   const onProposalVoteCallback = useCallback(() => {
-    if (!voteProposalSign) return
-    showModal(<TransacitonPendingModal />)
-    proposalVoteCallback(
-      proposalInfo.proposalId,
-      Object.keys(validChooseOptions).map(item => Number(item)),
-      Object.values(validChooseOptions).map(item => item?.raw.toString() || '0'),
+    proposalVoteCallback([
       {
-        chainId: voteProposalSign.tokenChainId,
-        tokenAddress: voteProposalSign.tokenAddress,
-        balance: voteProposalSign.balance,
-        signType: SignType.VOTE
-      },
-      voteProposalSign.signature
-    )
-      .then(hash => {
-        hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} />)
+        optionId: proposalOptions,
+        votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
+      }
+    ])
+      .then(res => {
+        if (res.data.code !== 200) {
+          toast.error('vote error')
+          return
+        }
+        refresh(Math.random())
+        setInjectVotes('')
+        voteModalToggle()
+        toast.success('Vote success')
       })
-      .catch((err: any) => {
-        hideModal()
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
+      .catch(err => {
+        toast.error(err.msg || 'network error')
       })
-  }, [hideModal, proposalInfo.proposalId, proposalVoteCallback, showModal, validChooseOptions, voteProposalSign])
+  }, [injectVotes, myVotes, proposalInfo.votingType, proposalOptions, proposalVoteCallback, refresh, voteModalToggle])
 
   const voteBtn: {
     disabled: boolean
     handler?: () => void
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    if (proposalInfo.status !== ProposalStatus.OPEN) {
+    if (proposalInfo.status !== 'Active') {
       return {
         disabled: true,
         error: 'Proposal voting is not opened'
       }
     }
-    if (proposalInfo.myVoteInfo?.length) {
+    if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1) {
       return {
         disabled: true,
         error: 'You have already voted'
+      }
+    }
+    if (!injectVotes && proposalInfo.votingType === 2) {
+      return {
+        disabled: true,
+        error: 'Please enter your votes'
       }
     }
     if (!account) {
@@ -196,102 +133,73 @@ function VoteModalFunc({
         )
       }
     }
-    if (daoChainId !== chainId) {
-      return {
-        disabled: true,
-        error: (
-          <>
-            You need{' '}
-            <Link
-              sx={{ cursor: 'pointer' }}
-              onClick={() => daoChainId && triggerSwitchChain(library, daoChainId, account)}
-            >
-              switch
-            </Link>{' '}
-            to {ChainListMap[daoChainId].name}
-          </>
-        )
-      }
-    }
-    if (!myVotes || !myVotes.greaterThan(JSBI.BigInt(0))) {
+    if (!myVotes || myVotes <= 0 || myVotes < Number(injectVotes)) {
       return {
         disabled: true,
         error: 'Insufficient votes'
       }
     }
-
-    if (!Object.keys(validChooseOptions).length) {
-      return {
-        disabled: true,
-        error: 'Slide the bar to input the tokens you want to vote'
-      }
-    }
-
     return {
       disabled: false,
       handler: onProposalVoteCallback
     }
   }, [
     account,
-    chainId,
-    daoChainId,
-    library,
+    injectVotes,
     myVotes,
     onProposalVoteCallback,
-    proposalInfo.myVoteInfo?.length,
+    proposalInfo.alreadyVoted,
     proposalInfo.status,
-    toggleWalletModal,
-    validChooseOptions
+    proposalInfo.votingType,
+    toggleWalletModal
   ])
 
   return (
-    <Modal maxWidth="380px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
+    <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
       <StyledBody>
         <Typography fontWeight={500} variant="h6">
-          Votes
+          Cast your Vote
         </Typography>
         {proposalInfo.votingType === VotingTypes.SINGLE ? (
           <Stack spacing={19} mt={19}>
-            <RowCenter>
-              <Text>Your votes</Text>
-              <Text color={theme.palette.text.primary}>
-                {myVotes?.toSignificant(6, { groupSeparator: ',' }) || '--'}
-              </Text>
-            </RowCenter>
-            <div>
-              <Text>Voting for</Text>
-              <Box
-                sx={{
-                  backgroundColor: theme.bgColor.bg4,
-                  borderRadius: '8px',
-                  padding: '10px 15px'
-                }}
-              >
-                <Text color={theme.palette.text.primary}>{proposalInfo.proposalOptions[voteFor[0]]?.name}</Text>
-              </Box>
-            </div>
+            <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
+              <Typography fontWeight={500} fontSize={14}>
+                Your votes
+              </Typography>
+              <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
+                {(myVotes && formatNumberWithCommas(myVotes)) || '--'}
+              </Typography>
+            </Box>
           </Stack>
         ) : (
           <MultiVote
             totalVotes={myVotes}
-            options={proposalInfo.proposalOptions}
-            chooseOption={chooseOption}
-            chooseOptionCallback={chooseOptionCallback}
+            voteProposalSign={voteProposalSign}
+            FatherVotes={injectVotes}
+            setFatherVotes={handleVotesChange}
           />
         )}
-
         {voteBtn.error && (
           <Alert sx={{ marginTop: 15 }} severity="error">
             {voteBtn.error}
           </Alert>
         )}
-
         <RowCenter mt={19}>
-          <OutlineButton width={122} height={40} borderRadius="8px" onClick={voteModalToggle}>
-            Back
+          <OutlineButton
+            width={200}
+            color="#80829F"
+            style={{
+              borderColor: '#D4D7E2'
+            }}
+            noBold
+            height={40}
+            borderRadius="8px"
+            onClick={voteModalToggle}
+          >
+            Cancel
           </OutlineButton>
           <BlackButton
-            width="122px"
+            width="200px"
             height="40px"
             disabled={voteBtn.disabled || isVoting}
             onClick={voteBtn.handler}
@@ -314,86 +222,34 @@ function VoteModalFunc({
 
 function MultiVote({
   totalVotes,
-  options,
-  chooseOption,
-  chooseOptionCallback
+  voteProposalSign,
+  FatherVotes,
+  setFatherVotes
 }: {
-  totalVotes: TokenAmount | undefined
-  options: ProposalOptionProp[]
-  chooseOption: { [x in number]: TokenAmount | undefined }
-  chooseOptionCallback: (index: number, amount: TokenAmount) => void
+  totalVotes: number | undefined
+  voteProposalSign: govList
+  FatherVotes: string
+  setFatherVotes: Dispatch<SetStateAction<string>>
 }) {
   const theme = useTheme()
-  const totalPer = 100
-  const [perArr, setPerArr] = useState<{ [x in number]: number }>({})
-  const { account } = useActiveWeb3React()
-
-  const optionIds = useMemo(() => Object.keys(chooseOption).map(i => Number(i)), [chooseOption])
-  const token = useMemo(() => options?.[0]?.amount.token, [options])
-
-  const perArrCallback = useCallback(
-    (index: number, value: number) => {
-      const _val = Object.assign({}, perArr)
-      _val[index] = Number(value)
-      setPerArr(_val)
-    },
-    [perArr]
-  )
-
-  useEffect(() => {
-    const _p: { [x in number]: number } = {}
-    if (!optionIds) return
-    for (const id of optionIds) {
-      _p[id] = 0
-    }
-    setPerArr(_p)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  console.log(voteProposalSign)
 
   return (
     <Stack spacing={19} mt={19}>
       <RowCenter>
-        <Text>Your total votes</Text>
-        <Text color={theme.palette.text.primary}>{totalVotes?.toSignificant(6, { groupSeparator: ',' }) || '--'}</Text>
+        <Text>Your votes</Text>
+        <Box display={'grid'} flexDirection={'row'} alignItems={'center'} gridTemplateColumns={'auto 10px auto'}>
+          <NumericalInput
+            style={{ marginRight: 10, width: 173 }}
+            value={FatherVotes}
+            onChange={e => setFatherVotes(e.target.value)}
+          />
+          <Typography> / </Typography>
+          <Typography color={theme.palette.text.primary}>
+            {(totalVotes && formatNumberWithCommas(totalVotes)) || '--'}
+          </Typography>
+        </Box>
       </RowCenter>
-      <div>
-        <Text mb={15}>Voting for</Text>
-        <div>
-          {options.map((item, index) =>
-            optionIds.includes(index) ? (
-              <Box key={index}>
-                <Text>{item.name}</Text>
-                <Box display={'grid'} gridTemplateColumns="1.6fr 1fr" justifyItems={'end'} alignItems="center">
-                  <Slider
-                    value={Number(perArr[index])}
-                    onChange={(_, newValue) => {
-                      const _newValue = newValue as number
-                      let used = 0
-                      for (const key in perArr) {
-                        if (Object.prototype.hasOwnProperty.call(perArr, key)) {
-                          if (index !== Number(key)) used = used + perArr[key]
-                        }
-                      }
-                      const maxPer = totalPer - used
-                      const curPer = maxPer < _newValue ? maxPer : _newValue
-
-                      perArrCallback(index, curPer)
-                      chooseOptionCallback(
-                        index,
-                        new TokenAmount(token, getAmountForPer(totalVotes?.raw.toString() || 0, curPer))
-                      )
-                    }}
-                    sx={{ height: 7 }}
-                  />
-                  <Text color={theme.palette.text.primary}>
-                    {chooseOption[index]?.toSignificant(6, { groupSeparator: ',' }) || '0'}
-                  </Text>
-                </Box>
-              </Box>
-            ) : null
-          )}
-        </div>
-      </div>
     </Stack>
   )
 }

@@ -5,53 +5,40 @@ import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
 import { useCallback, useState } from 'react'
 import Select from 'components/Select/Select'
-import { useSetDaoAdminCallback } from 'hooks/useGovernanceDaoCallback'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import useModal from 'hooks/useModal'
-import { useActiveWeb3React } from 'hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { isAddress } from 'ethers/lib/utils'
+import { useAddDaoMember } from 'hooks/useBackedDaoServer'
+import { toast } from 'react-toastify'
 
-const guestList = [{ value: 'B_admin', label: 'Admin' }]
+const guestList = [
+  { value: 1, label: 'superAdmin' },
+  { value: 2, label: 'Admin' }
+]
 
-export default function AddMemberModal({
-  onClose,
-  daoAddress,
-  curDaoChainId
-}: {
-  onClose: () => void
-  daoAddress: string
-  curDaoChainId: number
-}) {
-  const { chainId, library, account } = useActiveWeb3React()
-  const { showModal, hideModal } = useModal()
+export default function AddMemberModal({ onClose, spacesId }: { onClose: () => void; spacesId: number }) {
+  const { hideModal } = useModal()
   const [address, setAddress] = useState('')
-  const [currentStatus, setCurrentStatus] = useState<string>('B_admin')
-  const setDaoAdminCallback = useSetDaoAdminCallback(daoAddress)
+  const [currentStatus, setCurrentStatus] = useState<number>(1)
+  const add = useAddDaoMember()
   const [btnDisable, setBtnDisable] = useState(false)
-
-  const switchNetwork = useCallback(() => {
-    triggerSwitchChain(library, curDaoChainId, account || '')
-  }, [account, curDaoChainId, library])
 
   const createNewMember = useCallback(() => {
     setBtnDisable(true)
-    setDaoAdminCallback(address, true)
-      .then(() => {
+    add(address, spacesId)
+      .then((res: any) => {
+        if (res.data.code !== 200) {
+          toast.error('add error')
+          return
+        }
         hideModal()
-        setAddress('')
         setBtnDisable(false)
+        toast.success('add member success')
       })
       .catch((err: any) => {
         hideModal()
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
+        toast.error(err?.data?.message || err?.error?.message || err?.message || 'unknown error')
       })
-  }, [address, hideModal, setDaoAdminCallback, showModal])
+  }, [add, address, hideModal, spacesId])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
@@ -96,7 +83,13 @@ export default function AddMemberModal({
             </MenuItem>
           ))}
         </Select>
-        <Box height={48}>{!isAddress(address) && address.trim() && <Alert severity="error">Wrong address</Alert>}</Box>
+        <Box height={48}>
+          {(!isAddress(address) || !address.trim()) && (
+            <Alert severity="error" sx={{ marginTop: 15 }}>
+              Wrong address
+            </Alert>
+          )}
+        </Box>
         <Stack
           gridTemplateColumns={'1fr 1fr'}
           justifyContent={'space-between'}
@@ -106,12 +99,7 @@ export default function AddMemberModal({
           <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
             Close
           </OutlineButton>
-          <Button
-            onClick={curDaoChainId === chainId ? createNewMember : switchNetwork}
-            width="125px"
-            height="40px"
-            disabled={btnDisable || !isAddress(address)}
-          >
+          <Button onClick={createNewMember} width="125px" height="40px" disabled={btnDisable || !isAddress(address)}>
             Add
           </Button>
         </Stack>
