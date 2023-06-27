@@ -4,7 +4,6 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useState } from 'react'
 import { ContainerWrapper } from '../StyledCreate'
 import Basic from './Basic'
-import Governance from './Governance'
 import Review from './Review'
 
 const StyledTabWrapper = styled(Box)(({}) => ({
@@ -22,19 +21,17 @@ const StyledTabWrapper = styled(Box)(({}) => ({
 
 enum Tabs {
   BASIC,
-  GOVERNANCE,
   REVIEW
 }
 
 const tabs = [
   { name: '1. Basic', value: Tabs.BASIC },
-  { name: '2. Governance', value: Tabs.GOVERNANCE },
   { name: '3. Review', value: Tabs.REVIEW }
 ]
 
 export default function Index() {
   const [curTab, setCurTab] = useState(Tabs.BASIC)
-  const [hash, setHash] = useState<string>()
+  const [hash] = useState<string>()
   const isSmDown = useBreakpoint('sm')
   return (
     <ContainerWrapper maxWidth={1140} margin={isSmDown ? '0 auto 40px' : '40px auto 80px'}>
@@ -49,16 +46,7 @@ export default function Index() {
           </Box>
         ))}
       </StyledTabWrapper>
-      {curTab === Tabs.BASIC && <Basic next={() => setCurTab(Tabs.GOVERNANCE)}></Basic>}
-      {curTab === Tabs.GOVERNANCE && (
-        <Governance
-          next={(hash: string) => {
-            setHash(hash)
-            setCurTab(Tabs.REVIEW)
-          }}
-          back={() => setCurTab(Tabs.BASIC)}
-        ></Governance>
-      )}
+      {curTab === Tabs.BASIC && <Basic next={() => setCurTab(Tabs.REVIEW)}></Basic>}
       {curTab === Tabs.REVIEW && <Review hash={hash} />}
     </ContainerWrapper>
   )

@@ -23,17 +23,17 @@ export const JobsType: any = {
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoId = Number(curDaoId) as ChainId
   const [hoverIndex, setHoverIndex] = useState<any>(null)
-  const { changeRole } = useChangeAdminRole()
+  const changeRole = useChangeAdminRole()
 
   const onRemove = useCallback(
-    async (e: any, id) => {
-      changeRole(curDaoChainId, daoAddress, id)
+    async (e: any, address: string) => {
+      changeRole(address, 100, daoId)
       e.stopPropagation()
     },
-    [changeRole, curDaoChainId, daoAddress]
+    [changeRole, daoId]
   )
   return (
     <Box
@@ -187,7 +187,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                     height="22px"
                     borderRadius="30px"
                     fontSize={13}
-                    onClick={e => onRemove(e, item.jobId)}
+                    onClick={e => onRemove(e, item.account)}
                   >
                     Remove
                   </Button>

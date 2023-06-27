@@ -13,7 +13,7 @@ import {
 import { DaoAdminLevelProp } from './useDaoInfo'
 
 export interface UserProfileDaoProp {
-  accountLevel: DaoAdminLevelProp
+  accountLevel: typeof DaoAdminLevelProp
   chainId: ChainId
   daoAddress: string
   daoLogo: string

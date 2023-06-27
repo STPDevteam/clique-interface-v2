@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom'
 import TaskDetail from 'pages/Task/Children/TaskDetail'
 import { toast } from 'react-toastify'
 import { useProposalBaseList } from 'hooks/useBackedProposalServer'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 function ContextMenu({
   children,
@@ -164,7 +164,7 @@ export default function DragTaskPanel() {
   const daoId = Number(curDaoId)
   const update = useUpdateTask()
   const remove = useRemoveTask()
-  const { myJoinDaoData: isJoined } = useBuildingDaoDataCallback()
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result } = useProposalBaseList(daoId)
   const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), '', '', rand)
 
