@@ -31,7 +31,7 @@ export default function Updater(): null {
 
   useEffect(() => {
     if (myJoinDaoData) {
-      dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: myJoinDaoData.isJoin }))
+      dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: !myJoinDaoData.isJoin }))
     }
   }, [dispatch, myJoinDaoData])
 

@@ -3,7 +3,7 @@ import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import { styled, Box, Typography, useTheme, Stack } from '@mui/material'
 import { useState } from 'react'
 import { useHomeOverview } from 'hooks/useBackedDaoServer'
-// import { formatMillion } from 'utils/dao'
+import { formatMillion } from 'utils/dao'
 import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledSearchPanel = styled(Box)(({ theme }) => ({
@@ -72,10 +72,10 @@ export default function SearchPanel({
         }}
         alignItems="center"
       >
-        <StaticsItem name="DAOs" value={homeOverview ? homeOverview.totalDao : '-'} />
+        <StaticsItem name="DAOs" value={homeOverview ? formatMillion(homeOverview.totalDao) : '-'} />
         {/* <StaticsItem name="Verified DAOs" value={homeOverview ? formatMillion(homeOverview.totalApproveDao) : '-'} /> */}
-        <StaticsItem name="Users" value={homeOverview ? homeOverview.totalAccount : '-'} />
-        <StaticsItem name="Proposals" value={homeOverview ? homeOverview.totalProposal : '-'} />
+        <StaticsItem name="Users" value={homeOverview ? formatMillion(homeOverview.totalAccount) : '-'} />
+        <StaticsItem name="Proposals" value={homeOverview ? formatMillion(homeOverview.totalProposal) : '-'} />
       </Stack>
     </StyledSearchPanel>
   )

@@ -77,7 +77,7 @@ const CategoryWrapper = styled(Box)({
 
 export default function JoinDaoFrame() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
-  const { createDaoData, updateDaoMyJoinData, isOpen } = useUpdateDaoDataCallback()
+  const { createDaoData, updateDaoMyJoinData, isOpen, updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
@@ -90,7 +90,7 @@ export default function JoinDaoFrame() {
   }, [dispatch])
   const onClickJoinDao = useCallback(() => {
     if (!daoId) return
-    setDisable(true)
+    // setDisable(true)
     if (!account) {
       toggleWalletModal()
     } else if (!userSignature?.loggedToken) {
@@ -115,12 +115,23 @@ export default function JoinDaoFrame() {
           return
         }
         updateDaoMyJoinData()
+        updateMyJoinedDaoListData()
         toast.success('Join success')
         setDisable(false)
         dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
       })
     }
-  }, [account, cb, daoId, dispatch, loginSignature, toggleWalletModal, updateDaoMyJoinData, userSignature?.loggedToken])
+  }, [
+    account,
+    cb,
+    daoId,
+    dispatch,
+    loginSignature,
+    toggleWalletModal,
+    updateDaoMyJoinData,
+    updateMyJoinedDaoListData,
+    userSignature?.loggedToken
+  ])
 
   return (
     <Wrapper className={`bottom-popup ${isOpen ? '' : 'out'}`}>
