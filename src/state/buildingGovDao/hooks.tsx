@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
 import {
@@ -15,6 +15,7 @@ import {
 import { checkIsJoin, getMyJoinedDao, getV3DaoInfo, leftSpacesList } from 'utils/fetch/server'
 import { useParams } from 'react-router-dom'
 import { LeftTaskDataProps } from 'hooks/useBackedTaskServer'
+import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 
 type CreateDaoDataPropKey = keyof CreateDaoDataProp
 
@@ -133,4 +134,15 @@ export function useUpdateDaoDataCallback() {
       createDaoListData
     ]
   )
+}
+
+export function useGlobalUpdateMyJoinList() {
+  const dispatch = useDispatch()
+  const { result: myJoinDaoListData } = useMyJoinedDao()
+
+  useEffect(() => {
+    if (myJoinDaoListData) {
+      dispatch(updateDaoListData({ createDaoListData: myJoinDaoListData }))
+    }
+  }, [dispatch, myJoinDaoListData])
 }

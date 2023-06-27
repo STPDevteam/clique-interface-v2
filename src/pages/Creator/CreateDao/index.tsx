@@ -4,10 +4,10 @@ import { LoadingButton } from '@mui/lab'
 // import { ReactComponent as WelcomeTitle } from 'assets/svg/web3title.svg'
 import WelcomeWeb3 from 'assets/images/welcomweb3_bg.png'
 import UpImgButton from 'components/UploadImage/UpImgButton'
-// import { BlackButton } from 'components/Button/Button'
 import Input from 'components/Input'
 import CategoriesSelect from 'components/Governance/CategoriesSelect'
 import Back from 'components/Back'
+// import OutlineButton from 'components/Button/OutlineButton'
 import { createDao } from 'utils/fetch/server'
 import { useDaoHandleQuery } from 'hooks/useBackedDaoServer'
 import FormItem from 'components/FormItem'
@@ -19,6 +19,9 @@ import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
+import { useEffect } from 'react'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -34,6 +37,15 @@ const InputStyle = styled(Input)(() => ({
 
 export default function Index() {
   const history = useHistory()
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
+
+  useEffect(() => {
+    if (!account || !userSignature) {
+      history.replace(routes.Governance)
+    }
+  }, [account, history, userSignature])
+
   const validationSchema = yup.object().shape({
     daoLogo: yup.string().required('Please upload your Dao picture'),
     daoName: yup
@@ -212,8 +224,10 @@ export default function Index() {
               <Box
                 sx={{ mt: 40, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
               >
+                {/* <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
+                  Back
+                </OutlineButton> */}
                 <Back sx={{ margin: '0 !important' }} />
-                {/* <BlackButton style={{ width: '270px', height: '40px' }}>Create Now</BlackButton> */}
                 <LoadingButton
                   // loading={isSaving}
                   loadingPosition="start"

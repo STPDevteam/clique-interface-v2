@@ -7,6 +7,9 @@ import { useHistory } from 'react-router-dom'
 // import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 import { DaoAvatars } from 'components/Avatars'
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 
 const Wrapper = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -81,7 +84,11 @@ export default function LeftSider() {
   // const { showModal } = useModal()
   const history = useHistory()
   const { result: myJoinedDaoList } = useMyJoinedDao()
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
 
+  const toggleWalletModal = useWalletModalToggle()
+  const loginSignature = useLoginSignature()
   return (
     <Wrapper>
       <Box
@@ -112,7 +119,13 @@ export default function LeftSider() {
             Search
           </Text>
         </Item>
-        <Item onClick={() => history.push(routes.CreateDao)}>
+        <Item
+          onClick={() => {
+            if (!account) return toggleWalletModal()
+            if (!userSignature) return loginSignature()
+            history.push(routes.CreateDao)
+          }}
+        >
           <div className="action">
             <AddIcon width={16}></AddIcon>
           </div>

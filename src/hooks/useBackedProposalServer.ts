@@ -12,7 +12,7 @@ import {
   toVote
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
-import { useActiveWeb3React } from 'hooks'
+// import { useActiveWeb3React } from 'hooks'
 import { govList } from 'state/buildingGovDao/actions'
 
 export interface ProposalListBaseProp {
@@ -259,13 +259,13 @@ export function useAddGovToken() {
 }
 
 export function useProposalDetailsInfo(proposalId: number, refresh: number) {
-  const { account } = useActiveWeb3React()
+  // const { account } = useActiveWeb3React()
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<useProposalDetailInfoProps>()
 
   useEffect(() => {
     ;(async () => {
-      if (!account || !proposalId) {
+      if (!proposalId) {
         setResult(undefined)
         return
       }
@@ -281,7 +281,7 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
         console.error('useGetProposalDetail', error)
       }
     })()
-  }, [account, proposalId, refresh])
+  }, [proposalId, refresh])
 
   const ret = useMemo(() => {
     if (!result) return undefined
