@@ -179,13 +179,14 @@ export default function TaskDetail({
     },
     [onDismiss]
   )
+  console.log(editData?.assignAccount)
 
   const isSmDown = useBreakpoint('sm')
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
   const [currentStatus, setCurrentStatus] = useState(preStatus ?? '')
-  const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
+  const [assignees, setAssignees] = useState<any>(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
   const [proposal, setProposal] = useState(updateProposal ?? '')
   const [value, setValue] = useState(editData?.taskName ?? '')
@@ -373,7 +374,7 @@ export default function TaskDetail({
                 value={assignees}
                 multiple={false}
                 onChange={(value: any, option: any) => {
-                  console.log(value)
+                  console.log('values', value, option)
                   setAssignees(option.value)
                 }}
               />
@@ -600,9 +601,9 @@ export default function TaskDetail({
                 height={isSmDown ? 40 : undefined}
                 value={assignees}
                 multiple={false}
-                onChange={(value: any, option: any) => {
-                  console.log(value)
-                  setAssignees(option.value)
+                onChange={(value: any) => {
+                  console.log('change', value)
+                  setAssignees(value)
                 }}
               />
             </RowContent>
