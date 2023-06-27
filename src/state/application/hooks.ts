@@ -50,6 +50,7 @@ export function useSignLoginModalControl() {
     open: useCallback(() => dispatch(setOpenModal(ApplicationModal.SIGN_LOGIN)), [dispatch]),
     close: useCallback(() => dispatch(setOpenModal(null)), [dispatch])
   }
+}
 export function useSignLoginModalToggle(): () => void {
   return useToggleModal(ApplicationModal.SIGN_LOGIN)
 }

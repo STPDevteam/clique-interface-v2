@@ -58,7 +58,6 @@ import LoginModal from 'components/Header/LoginModal'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
-import LoginModal from 'components/Header/LoginModal'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 
 const AppWrapper = styled('div')(({ theme }) => ({
