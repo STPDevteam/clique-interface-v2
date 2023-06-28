@@ -35,7 +35,6 @@ export const routes = {
   SoulboundDetail: '/soulboundDetail',
 
   Creator: '/creator',
-  CreatorDao: '/creator/dao',
   CreateDao: '/create/dao',
   CreatorToken: '/creator/token',
 

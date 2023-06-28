@@ -66,7 +66,7 @@ export const Tabs: Tab[] = [
       // },
       {
         title: 'Create DAO',
-        route: routes.CreatorDao,
+        route: routes.CreateDao,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
             <DaosIcon />

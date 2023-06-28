@@ -52,14 +52,8 @@ export default function Index() {
       .string()
       .trim()
       .required('Please enter your Organization Name')
-      .max(
-        18,
-        'The organize username must be longer than 6 characters and shorter than 18 characters, and can only contain letters, numbers and, ‘_’.'
-      )
-      .min(
-        6,
-        'The organize username must be longer than 6 characters and shorter than 18 characters, and can only contain letters, numbers and, ‘_’.'
-      ),
+      .max(18, 'The organize username must be longer than 6 characters and shorter than 18 characters.')
+      .min(6, 'The organize username must be longer than 6 characters and shorter than 18 characters.'),
     handle: yup
       .string()
       .trim()

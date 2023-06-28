@@ -16,7 +16,7 @@ import GovernanceHome from 'pages/Governance'
 import DaoInfoLayout from 'pages/DaoInfo/DaoInfoLayout'
 import ProposalList from 'pages/DaoInfo/Children/Proposal'
 import Creator from 'pages/Creator'
-import CreatorDao from 'pages/Creator/CreatorDao'
+// import CreatorDao from 'pages/Creator/CreatorDao'
 import CreateDao from 'pages/Creator/CreateDao'
 import { useDispatch } from 'react-redux'
 import CreatorToken from 'pages/Creator/CreatorToken'
@@ -182,7 +182,7 @@ export default function App() {
                   {/* <Route exact strict path={routes.ActivitySaleDetail} component={ActivitySaleDetail} /> */}
                   {/* <Route exact strict path={routes.Tokens} component={TokenList} /> */}
                   <Route exact strict path={routes.Creator} component={Creator} />
-                  <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
+                  {/* <Route exact strict path={routes.CreatorDao} component={CreatorDao} /> */}
                   <Route exact strict path={routes.CreateDao} component={CreateDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
                   <Route exact strict path={routes.Notification} component={Notification} />

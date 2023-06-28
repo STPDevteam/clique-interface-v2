@@ -7,14 +7,12 @@ import { useCallback, useMemo } from 'react'
 import { JobsApplyListProp } from 'hooks/useBackedDaoServer'
 import { useReviewApply } from 'hooks/useBackedTaskServer'
 import { useActiveWeb3React } from 'hooks'
-import useModal from 'hooks/useModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { JobsType } from './CardView'
 import avatar from 'assets/images/avatar.png'
+import { toast } from 'react-toastify'
 // import Button from 'components/Button/Button'
 
 export default function JobApplication({ result, reFetch }: { result: JobsApplyListProp[]; reFetch: () => void }) {
-  const { showModal } = useModal()
   const { account } = useActiveWeb3React()
   const reviewApply = useReviewApply()
   const opTypeCallback = useCallback(
@@ -22,26 +20,30 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
       if (!account) return
       if (op === 'agree') {
         reviewApply(true, applyId)
-          .then(res => {
-            showModal(<MessageBox type="success">Agree success</MessageBox>)
+          .then((res: any) => {
+            if (res.data.code !== 200) {
+              toast.error(res.data.msg || 'network error')
+              return
+            }
             reFetch()
-            console.log(res)
+            toast.success('Agree success')
           })
           .catch(e => console.log(e))
       } else {
         reviewApply(false, applyId)
-          .then(res => {
-            showModal(<MessageBox type="success">Reject success</MessageBox>)
+          .then((res: any) => {
+            if (res.data.code !== 200) {
+              toast.error(res.data.msg || 'network error')
+              return
+            }
             reFetch()
-            console.log(res)
+            toast.success('Reject success')
           })
           .catch(e => console.log(e))
       }
     },
-    [account, reFetch, reviewApply, showModal]
+    [account, reFetch, reviewApply]
   )
-
-  console.log(result)
 
   const tableList = useMemo(() => {
     return result.map((item: JobsApplyListProp) => [
