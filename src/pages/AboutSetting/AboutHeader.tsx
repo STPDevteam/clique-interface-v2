@@ -5,7 +5,7 @@ import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import { useParams } from 'react-router-dom'
-import { useGetUserQuitDao } from 'hooks/useBackedDaoServer'
+import { useGetUserQuitDao, useJoinDAO } from 'hooks/useBackedDaoServer'
 import { isSocialUrl } from 'utils/dao'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
@@ -17,6 +17,7 @@ import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buil
 import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { updateJoinDaoModalStatus } from 'state/buildingGovDao/actions'
+import Button from 'components/Button/Button'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -53,7 +54,10 @@ export default function Header() {
   // const { isJoined } = useIsJoined(Number(curDaoId))
   const { myJoinDaoData, updateDaoMyJoinData } = useUpdateDaoDataCallback()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  console.log(myJoinDaoData)
+
   const quit = useGetUserQuitDao()
+  const cb = useJoinDAO()
   const categoryList = useMemo(() => {
     if (!daoInfo?.category) return []
     return daoInfo.category
@@ -67,10 +71,21 @@ export default function Header() {
       }
       updateDaoMyJoinData()
       dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
-
       toast.success('Quit success')
     })
   }, [curDaoId, quit, updateDaoMyJoinData, dispatch])
+
+  const joinDaoClick = useCallback(() => {
+    cb(Number(curDaoId)).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      updateDaoMyJoinData()
+      toast.success('Join success')
+      dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
+    })
+  }, [cb, curDaoId, dispatch, updateDaoMyJoinData])
 
   return (
     <Box>
@@ -158,13 +173,15 @@ export default function Header() {
               </Box>
             </Box>
           </Box>
-          {myJoinDaoData?.isJoin && myJoinDaoData?.job !== 'owner' ? (
+          {myJoinDaoData?.job === 'owner' ? null : myJoinDaoData.isJoin ? (
             <Text onClick={handleQuitClick}>
               <QuitIcon />
               Quit DAO
             </Text>
           ) : (
-            <></>
+            <Button width="87px" height="36px" onClick={joinDaoClick}>
+              Join DAO
+            </Button>
           )}
         </StyledHeader>
       </ContainerWrapper>

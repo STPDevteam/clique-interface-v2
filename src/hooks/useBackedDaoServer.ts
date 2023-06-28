@@ -32,7 +32,8 @@ import {
   getSpacesMemberList,
   removeSpacesMember,
   addSpacesMember,
-  getUserQuitDao
+  getUserQuitDao,
+  transferSpacesMember
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -1116,6 +1117,14 @@ export function useGetSpacesMemberList(spacesId: number, refresh?: number) {
 export function useRemoveSpacesMember() {
   return useCallback((id: number) => {
     return removeSpacesMember(id)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useTransferSpacesMember() {
+  return useCallback((spacesId: number, transferToAccount: string) => {
+    return transferSpacesMember(spacesId, transferToAccount)
       .then(res => res)
       .catch(err => err)
   }, [])

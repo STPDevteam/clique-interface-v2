@@ -873,6 +873,13 @@ export function removeSpacesMember(id: number) {
   })
 }
 
+export function transferSpacesMember(spacesId: number, transferToAccount: string) {
+  return Axios.post('stpdao/v3/spaces/member/transfer', {
+    spacesId,
+    transferToAccount
+  })
+}
+
 export function getSpacesMemberList(spacesId: number, offset: number, limit: number) {
   return Axios.get('stpdao/v3/spaces/member/list', {
     spacesId,

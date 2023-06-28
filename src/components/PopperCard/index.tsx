@@ -61,7 +61,7 @@ export default function PopperCard({
           anchorEl={anchorEl}
           className="popperCon"
           style={{
-            zIndex: 9999,
+            zIndex: 99999,
             borderColor: '#D4D7E2'
           }}
         >

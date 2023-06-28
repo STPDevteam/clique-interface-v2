@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react'
 import Input from 'components/Input'
 import Button from 'components/Button/Button'
 import { toast } from 'react-toastify'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledAddContainer = styled(Box)({
   display: 'grid',
@@ -60,8 +61,12 @@ const StyledListRightText = styled(Typography)({
 
 export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
   const [rand, setRand] = useState(Math.random())
+  const { account } = useActiveWeb3React()
   const { result: memberList, page } = useGetSpacesMemberList(spacesId, rand)
-  console.log('🚀 ~ file: ManageMemberModal.tsx:51 ~ ManageMemberModal ~ memberList:', memberList)
+  // const filteredList = useMemo(() => memberList.filter(item => item.account !== account?.toLocaleLowerCase()), [
+  //   account,
+  //   memberList
+  // ])
   const [address, setAddress] = useState('')
   const remove = useRemoveSpacesMember()
   const add = useAddSpacesMember()
@@ -118,7 +123,15 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
                   <Typography>{item.nickName || 'unnamed'}</Typography>
                 </StyledListText>
                 <StyledListText noWrap>{shortenAddress(item.account)}</StyledListText>
-                <StyledListRightText onClick={() => removeMemberClick(item.id)}>
+                <StyledListRightText
+                  onClick={() => {
+                    if (account && item.account === account.toLocaleLowerCase()) {
+                      toast.error('Unable to remove yourself')
+                      return
+                    }
+                    removeMemberClick(item.id)
+                  }}
+                >
                   <RemoveIcon />
                   Remove
                 </StyledListRightText>
