@@ -179,7 +179,7 @@ export default function TaskDetail({
     },
     [onDismiss]
   )
-  console.log(editData?.assignAccount)
+  console.log(identity)
 
   const isSmDown = useBreakpoint('sm')
   const [isCopied, setCopied] = useCopyClipboard()
@@ -283,7 +283,7 @@ export default function TaskDetail({
         open={open}
         onClose={toggleDrawer}
       >
-        {(identity && identity === 'C_member') || isEdit === true ? (
+        {(identity && identity === 'visitor') || isEdit === true ? (
           <>
             <Box
               display={'flex'}
@@ -306,7 +306,7 @@ export default function TaskDetail({
                 Back
               </Typography>
               <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
-                {isEdit && identity !== 'C_member' ? (
+                {isEdit && identity !== 'visitor' ? (
                   <>
                     <Box
                       onClick={() => setCopied(link)}
