@@ -187,9 +187,9 @@ export function useActivityList() {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getActivityList(0, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getActivityList(undefined, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
@@ -214,8 +214,8 @@ export function useActivityList() {
         return
       }
       try {
-        const res = await getActivityList(0, status, (currentPage - 1) * pageSize, pageSize)
-        const data = res.data.data as any
+        const res = await getActivityList(undefined, status, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
         if (!data) {
           return
         }

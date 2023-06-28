@@ -37,7 +37,7 @@ function ContextMenu({
   return (
     <Box sx={{ position: 'relative' }}>
       <Box>{children}</Box>
-      {isShow && !hideMenu && isJoined !== 'C_member' && (
+      {isShow && !hideMenu && isJoined !== 'visitor' && (
         <Box
           sx={{
             position: 'absolute',
@@ -64,7 +64,7 @@ function ContextMenu({
               }
             }}
             onClick={() => {
-              if (isJoined === 'C_member') return
+              if (isJoined === 'visitor') return
               const newState = [...taskList]
               const del = newState[ind].splice(index, 1)
               remove(del[0].spacesId, [del[0].taskId])
@@ -499,7 +499,7 @@ export default function DragTaskPanel() {
                                 <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
                                   {item.taskName}
                                 </Typography>
-                                {/* {isJoined === 'C_member' ? (
+                                {/* {isJoined === 'visitor' ? (
                                 ''
                               ) : (
                                 <PopperCard
@@ -534,7 +534,7 @@ export default function DragTaskPanel() {
                                         }
                                       }}
                                       onClick={e => {
-                                        if (isJoined === 'C_member') return
+                                        if (isJoined === 'visitor') return
                                         const newState = [...taskList]
                                         const del = newState[ind].splice(index, 1)
                                         remove(del[0].spacesId, [del[0].taskId])

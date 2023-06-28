@@ -438,7 +438,7 @@ export function saveAirdropAddress(
   })
 }
 
-export function getActivityList(daoId: number, status: string | undefined, offset: number, limit: number) {
+export function getActivityList(daoId: number | undefined, status: string | undefined, offset: number, limit: number) {
   return Axios.get('stpdao/v3/airdrop/list', {
     daoId,
     status: status || '',
