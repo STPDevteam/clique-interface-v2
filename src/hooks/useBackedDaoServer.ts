@@ -461,7 +461,7 @@ export function useLogin() {
 export interface JobsApplyListProp {
   account: string
   applyId: number
-  applyRole: string
+  applyLevel: number
   applyTime: number
   avatar: string
   chainId: number
@@ -498,7 +498,7 @@ export function useJobsApplyList(daoId: number, rand: number) {
         const list: JobsApplyListProp[] = data.map((item: any) => ({
           account: item.account,
           applyId: item.applyId,
-          applyRole: item.applyRole,
+          applyLevel: item.applyLevel,
           applyTime: item.applyTime,
           avatar: item.avatar,
           chainId: item.chainId,

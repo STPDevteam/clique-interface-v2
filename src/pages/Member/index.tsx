@@ -75,6 +75,7 @@ export default function Member() {
   useCallback(() => {}, [])
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
+  console.log('🚀 ~ file: index.tsx:78 ~ Member ~ applyList:', applyList)
   const { result: jobsList } = useJobsList(curDaoId)
 
   const tabList = !isJoined

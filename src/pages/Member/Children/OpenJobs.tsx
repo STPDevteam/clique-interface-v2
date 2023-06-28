@@ -2,7 +2,6 @@ import { Box, Typography } from '@mui/material'
 import Button from 'components/Button/Button'
 import EmptyData from 'components/EmptyData'
 import Input from 'components/Input'
-import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import { useApplyMember } from 'hooks/useBackedDaoServer'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
@@ -13,9 +12,9 @@ import { toast } from 'react-toastify'
 export default function OpenJobs() {
   const { account } = useActiveWeb3React()
   const joinApply = useApplyMember()
-  const { chainId: daoChainId } = useParams<{ chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: jobList } = useGetPublishJobList(curDaoChainId)
+  const { daoId: daoChainId } = useParams<{ daoId: string }>()
+  const daoId = Number(daoChainId)
+  const { result: jobList } = useGetPublishJobList(daoId)
   const [input, setInput] = useState(Array(jobList.length).fill(''))
 
   const applyCallback = useCallback(
@@ -26,7 +25,7 @@ export default function OpenJobs() {
           toast.error(res.data.msg || 'network error')
           return
         }
-        toast.error('Apply success')
+        toast.success('Apply success')
       })
     },
     [account, input, joinApply]
