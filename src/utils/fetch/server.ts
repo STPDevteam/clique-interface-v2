@@ -480,44 +480,41 @@ export function notificationToRead(notificationId: number, readAll: boolean) {
 }
 
 export function userProfile(account: string) {
-  return Axios.post('stpdao/v2/account/query', {
+  return Axios.get('stpdao/v3/user/info', {
     account
   })
 }
 
 export function userProfileUpdate(
   accountLogo: string,
-  nickname: string,
-  introduction: string,
-  discord: string,
-  twitter: string,
   country: string,
+  discord: string,
   email: string,
+  // github: string,
+  introduction: string,
+  nickname: string,
   opensea: string,
+  twitter: string,
   youtube: string
 ) {
-  return Axios.post('stpdao/v2/account/update', {
-    param: {
-      accountLogo,
-      discord,
-      github: '',
-      introduction,
-      nickname,
-      country,
-      email,
-      opensea,
-      youtube,
-      twitter
-    }
+  return Axios.post('stpdao/v3/user/edit', {
+    accountLogo,
+    country,
+    discord,
+    email,
+    github: '',
+    introduction,
+    nickname,
+    opensea,
+    twitter,
+    youtube
   })
 }
 
-export function userFollowAccount(followAccount: string, status: boolean) {
-  return Axios.post('stpdao/v2/account/update/follow', {
-    params: {
-      followAccount,
-      status
-    }
+export function userFollowAccount(isFollow: boolean, targetAccount: string) {
+  return Axios.post('stpdao/v3/user/follow/alter', {
+    isFollow,
+    targetAccount
   })
 }
 
@@ -528,27 +525,26 @@ export function userFollowStatus(myself: string, others: string) {
   })
 }
 
-export function getAccountNFTs(chainId: number, account: string, index: number, size: number) {
-  return Axios.get('stpdao/v2/account/nfts', {
+export function getAccountNFTs(chainId: number, index: number, size: number) {
+  return Axios.get('stpdao/v3/user/nfts', {
     chainId,
-    account,
-    index,
-    size
+    size,
+    index
   })
 }
 
-export function getAccountFollowersList(account: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/account/followers/list', {
-    account,
-    offset,
-    count
+export function getAccountFollowersList(userId: number, limit: number, offset: number) {
+  return Axios.get('stpdao/v3/user/followers/list', {
+    userId,
+    limit,
+    offset
   })
 }
-export function getAccountFollowingList(account: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/account/following/list', {
-    account,
-    offset,
-    count
+export function getAccountFollowingList(userId: number | undefined, limit: number, offset: number) {
+  return Axios.get('stpdao/v3/user/following/list', {
+    userId,
+    limit,
+    offset
   })
 }
 

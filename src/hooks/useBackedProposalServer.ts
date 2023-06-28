@@ -80,7 +80,7 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
 }
 
 export function useProposalBaseList(daoId: number) {
-  const [status, setStatus] = useState<string>()
+  const [status, setStatus] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)

@@ -11,10 +11,10 @@ export interface ActivityListProp {
   airdropId: number
   daoId: number
   amount: string
-  chainId: ChainId
   tokenChainId: ChainId
   creator: string
-  daoAddress: string
+  daoLogo: string
+  daoName: string
   eventStartTime: number
   eventEndTime: number
   airdropStartTime: number
@@ -49,10 +49,10 @@ function daoActivityListHandler(data: any) {
       airdropId: item.airdropId,
       daoId: item.daoId,
       amount: item.stakingAmount,
-      chainId: item.chainId,
       tokenChainId: item.tokenChainId,
       creator: item.creator,
-      daoAddress: item.daoAddress,
+      daoLogo: item.daoLogo,
+      daoName: item.daoName,
       eventStartTime,
       eventEndTime,
       airdropStartTime,

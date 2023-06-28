@@ -25,9 +25,17 @@ export function useCreateProposalCallback() {
       voteTokenId: number[],
       voteType: number
     ) => {
-      return createProposal(content, daoId, endTime, introduction, options, startTime, title, voteTokenId, voteType)
-        .then(res => console.log(res))
-        .catch(err => console.log(err))
+      return await createProposal(
+        content,
+        daoId,
+        endTime,
+        introduction,
+        options,
+        startTime,
+        title,
+        voteTokenId,
+        voteType
+      )
     },
     []
   )

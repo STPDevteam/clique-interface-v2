@@ -17,6 +17,11 @@ const StyledBody = styled(Box)({
   padding: '32px'
 })
 
+const TextareaStyle = styled(Input)({
+  height: '138px',
+  lineHeight: '20px'
+})
+
 export default function UpdateProfileModal({
   userProfile,
   refreshProfile
@@ -47,8 +52,9 @@ export default function UpdateProfileModal({
       signatureStr = await loginSignature()
     }
     if (!signatureStr) return
+
     try {
-      await userProfileUpdate(avatar, name, bio, discord, twitter, country, email, opensea, youtube)
+      await userProfileUpdate(avatar, country, discord, email, bio, name, opensea, twitter, youtube)
       showModal(<TransactiontionSubmittedModal header="Update success!" hideFunc={refreshProfile} />)
     } catch (error) {
       const err: any = error
@@ -114,7 +120,7 @@ export default function UpdateProfileModal({
             </Typography>
           </Box>
           <Input value={name} label="User Name" placeholder="nickname" onChange={e => setName(e.target.value)} />
-          <Input
+          <TextareaStyle
             value={bio}
             multiline
             placeholder="Tell us about yourself!"

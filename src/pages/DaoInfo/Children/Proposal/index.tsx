@@ -17,7 +17,7 @@ import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 
 const itemList = [
-  { value: undefined, label: 'All Proposals' },
+  { value: '', label: 'All Proposals' },
   { value: 'Soon', label: 'Soon' },
   { value: 'Active', label: 'Active' },
   { value: 'Closed', label: 'Closed' }
@@ -99,7 +99,7 @@ export default function Proposal() {
             >
               {itemList.map(item => (
                 <MenuItem
-                  key={item.value}
+                  key={item.label}
                   sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                   value={item.value}
                   selected={currentProposalStatus === item.value}

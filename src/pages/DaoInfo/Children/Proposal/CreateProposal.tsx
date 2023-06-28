@@ -190,11 +190,14 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       voteType
     )
       .then(res => {
-        console.log(res)
         setLoading(false)
+        setStartValidate(false)
+        if (res.data.code !== 200) {
+          toast.error('Network error')
+          return
+        }
         toast.success('Create proposal success')
         toList()
-        setStartValidate(false)
       })
       .catch((err: any) => {
         toast.error('Network error')
@@ -215,7 +218,6 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     voteOption,
     voteType
   ])
-
   return (
     <DaoContainer>
       <Box>
@@ -313,11 +315,14 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   </LabelText>
                   <DateTimePicker
                     label=" "
+                    minDateTime={(Date.now() + 5 * 60 * 1000) as any}
                     value={startTime ? new Date(startTime * 1000) : null}
                     onValue={timestamp => {
-                      setStarttime(timestamp)
+                      if (!timestamp) return
+                      setStarttime(startTime ? timestamp : timestamp + 5 * 60)
+
                       if (daoInfo.votingPeriod) {
-                        setEndtime(timestamp ? timestamp + daoInfo.votingPeriod : undefined)
+                        setEndtime((startTime ? timestamp : timestamp + 5 * 60) + daoInfo.votingPeriod)
                       }
                     }}
                   ></DateTimePicker>

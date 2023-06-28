@@ -100,11 +100,30 @@ export default function Profile() {
     account || undefined,
     currentAccount && currentAccount !== account ? currentAccount : undefined
   )
+
   const [rand, setRand] = useState(Math.random())
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
+  const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand, isFollowed)
 
-  const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand)
+  const { result: accountFollowersList } = useAccountFollowersList(profileInfo?.userId)
+  const { result: accountFollowingList } = useAccountFollowingList(profileInfo?.userId)
+
+  const FollowersNum = useMemo(() => {
+    if (!accountFollowersList) return 0
+    return accountFollowersList.length
+  }, [accountFollowersList])
+
+  const FollowingNum = useMemo(() => {
+    if (!accountFollowingList) return 0
+    return accountFollowingList.length
+  }, [accountFollowingList])
+
+  const isFollow = useMemo(() => {
+    if (!account) return false
+    return profileInfo?.isFollow
+  }, [account, profileInfo])
+
   const refreshProfile = useCallback(() => {
     setRand(Math.random())
     hideModal()
@@ -242,6 +261,7 @@ export default function Profile() {
                   <RowCenter
                     mt={{ xs: 10 }}
                     sx={{
+                      justifyContent: 'flex-end',
                       '& svg': {
                         marginRight: 5
                       },
@@ -250,7 +270,6 @@ export default function Profile() {
                       }
                     }}
                   >
-                    <div></div>
                     <OutlineButton
                       style={{ border: 'none' }}
                       noBold
@@ -272,7 +291,7 @@ export default function Profile() {
                   </RowCenter>
                 ) : (
                   <Box mt={{ xs: 10 }}>
-                    {isFollowed ? (
+                    {isFollow ? (
                       <Button
                         onClick={() => toggleFollow(false)}
                         width={isSmDown ? '100px' : '200px'}
@@ -332,9 +351,9 @@ export default function Profile() {
                   sx={{
                     cursor: 'pointer'
                   }}
-                  onClick={() => showModal(<AccountFollowersList currentAccount={currentAccount || ''} />)}
+                  onClick={() => showModal(<AccountFollowersList userId={profileInfo?.userId} />)}
                 >
-                  {profileInfo?.followers || 0} Followers
+                  {FollowersNum || 0} Followers
                 </Typography>
                 <Box
                   sx={{
@@ -349,9 +368,9 @@ export default function Profile() {
                   sx={{
                     cursor: 'pointer'
                   }}
-                  onClick={() => showModal(<AccountFollowingList currentAccount={currentAccount || ''} />)}
+                  onClick={() => showModal(<AccountFollowingList userId={profileInfo?.userId} />)}
                 >
-                  {profileInfo?.following || 0} Following
+                  {FollowingNum || 0} Following
                 </Typography>
               </Stack>
               <Stack
@@ -416,24 +435,25 @@ export default function Profile() {
   )
 }
 
-function AccountFollowersList({ currentAccount }: { currentAccount: string }) {
-  const { result: accountFollowersList, page, loading } = useAccountFollowersList(currentAccount)
+function AccountFollowersList({ userId }: { userId: number | undefined }) {
+  const { result: accountFollowersList, page, loading } = useAccountFollowersList(userId)
   const { hideModal } = useModal()
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
+  console.log(accountFollowersList, 90)
   return (
     <Modal maxWidth="600px" closeIcon width="100%">
       <StyledBody>
         <Typography variant="h5">Followers</Typography>
         <Stack spacing={isSmDown ? 10 : 19} mt={20}>
-          {accountFollowersList.map(item => (
+          {accountFollowersList?.map(item => (
             <Box
               display={'grid'}
               gridTemplateColumns="1fr 1fr 1.3fr"
               gap={'10px 5px'}
               alignItems={'center'}
               justifyContent="center"
-              key={item.followers}
+              key={item.userId}
             >
               <>
                 <Link
@@ -442,7 +462,7 @@ function AccountFollowersList({ currentAccount }: { currentAccount: string }) {
                   sx={{ cursor: 'pointer' }}
                   onClick={() => {
                     hideModal()
-                    history.push(routes._Profile + `/${item.followers}`)
+                    history.push(routes._Profile + `/${item.account}`)
                   }}
                 >
                   <Box display={'flex'} alignItems="center">
@@ -450,8 +470,8 @@ function AccountFollowersList({ currentAccount }: { currentAccount: string }) {
                     <StyledListText ml={4}>{item.nickname || 'unnamed'}</StyledListText>
                   </Box>
                 </Link>
-                <StyledListText>{shortenAddress(item.followers)}</StyledListText>
-                <StyledListText textAlign={'right'}>{item.followTime}</StyledListText>
+                <StyledListText>{shortenAddress(item.account)}</StyledListText>
+                <StyledListText textAlign={'right'}>{item.relation}</StyledListText>
               </>
             </Box>
           ))}
@@ -470,8 +490,8 @@ function AccountFollowersList({ currentAccount }: { currentAccount: string }) {
   )
 }
 
-function AccountFollowingList({ currentAccount }: { currentAccount: string }) {
-  const { result: accountFollowingList, page, loading } = useAccountFollowingList(currentAccount)
+function AccountFollowingList({ userId }: { userId: number | undefined }) {
+  const { result: accountFollowingList, page, loading } = useAccountFollowingList(userId)
   const { hideModal } = useModal()
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
@@ -487,7 +507,7 @@ function AccountFollowingList({ currentAccount }: { currentAccount: string }) {
               gap={'10px 5px'}
               alignItems={'center'}
               justifyContent="center"
-              key={item.following}
+              key={item.userId}
             >
               <>
                 <Link
@@ -496,7 +516,7 @@ function AccountFollowingList({ currentAccount }: { currentAccount: string }) {
                   sx={{ cursor: 'pointer' }}
                   onClick={() => {
                     hideModal()
-                    history.push(routes._Profile + `/${item.following}`)
+                    history.push(routes._Profile + `/${item.account}`)
                   }}
                 >
                   <Box display={'flex'} alignItems="center">
@@ -504,8 +524,8 @@ function AccountFollowingList({ currentAccount }: { currentAccount: string }) {
                     <StyledListText ml={4}>{item.nickname || 'unnamed'}</StyledListText>
                   </Box>
                 </Link>
-                <StyledListText>{shortenAddress(item.following)}</StyledListText>
-                <StyledListText textAlign={'right'}>{item.followTime}</StyledListText>
+                <StyledListText>{shortenAddress(item.account)}</StyledListText>
+                <StyledListText textAlign={'right'}>{item.relation}</StyledListText>
               </>
             </Box>
           ))}

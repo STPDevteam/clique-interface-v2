@@ -37,7 +37,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 // ]
 
 const statusItemList = [
-  { value: undefined, label: 'All' },
+  { value: '', label: 'All' },
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
   { value: ActivityStatus.OPEN, label: ActivityStatus.OPEN },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
@@ -124,7 +124,7 @@ export default function Activity() {
                   key={index}
                   sx={{ fontWeight: 500 }}
                   value={item.value}
-                  selected={search.status && search.status === item.value}
+                  selected={search.status === item.value}
                 >
                   {item.label}
                 </MenuItem>

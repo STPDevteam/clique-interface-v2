@@ -30,24 +30,22 @@ import msg from 'assets/images/msg.png'
 // }))
 
 export function DaoItem({
-  daoAddress,
+  daoId,
   accountLevel,
-  chainId,
   daoLogo,
   daoName,
-  description,
+  bio,
   handle,
   activeProposals,
   totalProposals,
   isApprove,
   members
 }: {
-  daoAddress: string
+  daoId: number
   accountLevel: string
-  chainId: number
   daoLogo: string
   daoName: string
-  description: string
+  bio: string
   handle: string
   activeProposals: number
   totalProposals: number
@@ -87,7 +85,7 @@ export function DaoItem({
         }
       }}
       onClick={() => {
-        history.push(routes._DaoInfo + `/${chainId}/${daoAddress}/proposal`)
+        history.push(routes._DaoInfo + `/${daoId}/proposal`)
       }}
     >
       <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'} gap={10}>
@@ -123,7 +121,7 @@ export function DaoItem({
           </div>
         </Box>
       </Box>
-      <Typography className="des">{description}</Typography>
+      <Typography className="des">{bio}</Typography>
       <Box
         display={'flex'}
         justifyContent={'space-between'}
@@ -164,7 +162,7 @@ export function DaoItem({
 export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[] | undefined }) {
   // const theme = useTheme()
   const isSmDown = useBreakpoint()
-
+  console.log(adminDao)
   if (!adminDao || !adminDao.length) {
     return null
   }
@@ -237,7 +235,7 @@ export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[]
         }}
       >
         {adminDao?.map(item => (
-          <DaoItem {...item} key={item.chainId} />
+          <DaoItem {...item} key={item.daoId} />
         ))}
       </Box>
     </ContainerWrapper>
