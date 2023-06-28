@@ -13,6 +13,7 @@ import { routes } from 'constants/routes'
 import { useCallback, useState } from 'react'
 import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
+import { toast } from 'react-toastify'
 
 export const JobsType: any = {
   0: 'Owner',
@@ -30,7 +31,13 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
 
   const onRemove = useCallback(
     async (e: any, address: string) => {
-      changeRole(address, 100, daoId)
+      changeRole(address, 100, daoId).then((res: any) => {
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'network error')
+          return
+        }
+        toast.success('Remove success')
+      })
       e.stopPropagation()
     },
     [changeRole, daoId]

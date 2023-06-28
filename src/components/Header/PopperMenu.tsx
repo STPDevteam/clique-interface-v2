@@ -17,7 +17,7 @@ const menuList = [
     icon: <ScopeIcon />,
     route: routes.Governance
   },
-  { title: 'Create DAO', icon: <DaosIcon />, route: routes.CreatorDao },
+  { title: 'Create DAO', icon: <DaosIcon />, route: routes.CreateDao },
   {
     title: 'Dao Rewards',
     icon: <RewardsIcon />,

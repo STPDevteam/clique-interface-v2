@@ -32,7 +32,8 @@ import {
   getSpacesMemberList,
   removeSpacesMember,
   addSpacesMember,
-  getUserQuitDao
+  getUserQuitDao,
+  transferSpacesMember
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -460,7 +461,7 @@ export function useLogin() {
 export interface JobsApplyListProp {
   account: string
   applyId: number
-  applyRole: string
+  applyLevel: number
   applyTime: number
   avatar: string
   chainId: number
@@ -497,7 +498,7 @@ export function useJobsApplyList(daoId: number, rand: number) {
         const list: JobsApplyListProp[] = data.map((item: any) => ({
           account: item.account,
           applyId: item.applyId,
-          applyRole: item.applyRole,
+          applyLevel: item.applyLevel,
           applyTime: item.applyTime,
           avatar: item.avatar,
           chainId: item.chainId,
@@ -1116,6 +1117,14 @@ export function useGetSpacesMemberList(spacesId: number, refresh?: number) {
 export function useRemoveSpacesMember() {
   return useCallback((id: number) => {
     return removeSpacesMember(id)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useTransferSpacesMember() {
+  return useCallback((spacesId: number, transferToAccount: string) => {
+    return transferSpacesMember(spacesId, transferToAccount)
       .then(res => res)
       .catch(err => err)
   }, [])

@@ -1,36 +1,34 @@
 import { Box, Typography } from '@mui/material'
 import Button from 'components/Button/Button'
+import EmptyData from 'components/EmptyData'
 import Input from 'components/Input'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import { useApplyMember } from 'hooks/useBackedDaoServer'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
-import useModal from 'hooks/useModal'
 import { useCallback, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export default function OpenJobs() {
   const { account } = useActiveWeb3React()
   const joinApply = useApplyMember()
-  const { showModal } = useModal()
-  const { chainId: daoChainId } = useParams<{ chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const { result: jobList } = useGetPublishJobList(curDaoChainId)
+  const { daoId: daoChainId } = useParams<{ daoId: string }>()
+  const daoId = Number(daoChainId)
+  const { result: jobList } = useGetPublishJobList(daoId)
   const [input, setInput] = useState(Array(jobList.length).fill(''))
 
   const applyCallback = useCallback(
     (index: number, publishId: number) => {
       if (!account) return
       joinApply(publishId, input[index]).then((res: any) => {
-        if (res.data.code === 400) {
-          showModal(<MessageBox type="error">{res.data.msg}</MessageBox>)
-        } else {
-          showModal(<MessageBox type="success">Apply success</MessageBox>)
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'network error')
+          return
         }
+        toast.success('Apply success')
       })
     },
-    [account, input, joinApply, showModal]
+    [account, input, joinApply]
   )
 
   const handleInputChange = (index: number, value: string) => {
@@ -43,6 +41,7 @@ export default function OpenJobs() {
 
   return (
     <Box gap={10} mt={10}>
+      {jobList.length === 0 && <EmptyData />}
       {jobList.map((item, index) => (
         <Box
           key={item.jobPublishId + index}

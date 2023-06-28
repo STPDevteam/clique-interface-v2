@@ -1,11 +1,13 @@
 import Button from 'components/Button/Button'
 import Modal from '../../../components/Modal/index'
 import { Box, MenuItem, Stack, Typography, styled } from '@mui/material'
-import { useCallback, useState } from 'react'
-import { useDeleteSpace } from 'hooks/useBackedTaskServer'
+import { useCallback, useMemo, useState } from 'react'
 import useModal from 'hooks/useModal'
 import { toast } from 'react-toastify'
-import Select from 'components/Select/Select'
+import PopperCard from 'components/PopperCard'
+import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+import { useGetSpacesMemberList, useTransferSpacesMember } from 'hooks/useBackedDaoServer'
+import { useActiveWeb3React } from 'hooks'
 
 const Text = styled(Typography)({
   marginTop: 0,
@@ -28,71 +30,105 @@ const Title = styled(Typography)({
   fontWeight: 500
 })
 
-const adminList = [
-  {
-    account: '0x5159ed45c75C406CFCd832caCEE5B5E48eaD568E',
-    nickname: 'Niko'
-  },
-  {
-    account: '0x5159ed45c75C406CFCd832caCEE5B5E48eaD568E',
-    nickname: 'Taiko'
-  },
-  {
-    account: '0x5159ed45c75C406CFCd832caCEE5B5E48eaD568E',
-    nickname: 'wuxidixi'
-  }
-]
-
 export default function TransferAdminModal({ spacesId, onDimiss }: { spacesId: number; onDimiss: () => void }) {
   const { hideModal } = useModal()
+  const { account } = useActiveWeb3React()
+  const { result: memberList } = useGetSpacesMemberList(spacesId)
+  const filteredList = useMemo(() => memberList.filter(item => item.account !== account?.toLocaleLowerCase()), [
+    account,
+    memberList
+  ])
   const [currentStatus, setCurrentStatus] = useState('')
-  const del = useDeleteSpace()
+  const transfer = useTransferSpacesMember()
 
   const transferClick = useCallback(() => {
-    del(spacesId)
+    if (!currentStatus) return
+    transfer(spacesId, currentStatus)
       .then((res: any) => {
         if (res.data.code !== 200) {
           toast.error(res.data.msg || 'network error')
           return
         }
-        toast.success('Delete success')
+        toast.success('Transfer success')
         hideModal()
         onDimiss()
       })
-      .catch(err => {
-        console.log(err)
-        toast.error('delete error')
-      })
-  }, [del, hideModal, onDimiss, spacesId])
+      .catch(err => toast.error(err))
+  }, [currentStatus, hideModal, onDimiss, spacesId, transfer])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
       <Box display="grid" textAlign={'center'} width="100%" height="180px">
         <Title>Leave workspace</Title>
         <Text>Transfer this workspace to an admin.</Text>
-        <Select
-          placeholder=""
-          width={'422px'}
-          height={40}
-          noBold
-          label=""
-          value={currentStatus}
-          style={{ borderRadius: '8px', borderColor: '#D4D7E2', fontSize: 14 }}
-          onChange={e => {
-            setCurrentStatus(e.target.value)
+        <PopperCard
+          sx={{
+            marginTop: 13,
+            maxHeight: '50vh',
+            overflowY: 'auto',
+            width: 422,
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            }
           }}
-        >
-          {adminList.map((item: any) => (
-            <MenuItem
-              key={item.account}
-              sx={{ fontWeight: 500, fontSize: '13px !important' }}
-              value={item.value}
-              selected={currentStatus === item.value}
+          placement="bottom-start"
+          targetElement={
+            <Box
+              flexDirection={'row'}
+              display={'flex'}
+              gap={12}
+              sx={{
+                height: 36,
+                padding: '0 14px',
+                border: '1px solid #D4D7E2',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                '&:hover': {
+                  borderColor: '#97B7EF'
+                },
+                '& svg': {
+                  marginLeft: 'auto'
+                }
+              }}
+              alignItems={'center'}
             >
-              {item.account}
-            </MenuItem>
-          ))}
-        </Select>
+              <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                {currentStatus}
+              </Typography>
+              <ArrowIcon />
+            </Box>
+          }
+        >
+          <>
+            {filteredList.map((item: any) => (
+              <MenuItem
+                key={item.account + item.id}
+                sx={{
+                  fontWeight: 500,
+                  fontSize: '13px !important',
+                  padding: 6,
+                  '& p:fitst-child': {
+                    width: 394
+                  },
+                  '& p:nth-of-type(2)': {
+                    width: 80,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }
+                }}
+                value={item.account}
+                selected={currentStatus === item.account}
+                onClick={() => {
+                  setCurrentStatus(item.account)
+                }}
+              >
+                <Typography>{item.account}-</Typography>
+                <Typography>{item.nickname || 'unnamed'}</Typography>
+              </MenuItem>
+            ))}
+          </>
+        </PopperCard>
         <Stack justifyContent={'center'} mt={20}>
           <Button width="100%" height="40px" onClick={transferClick}>
             Transfer and leave

@@ -72,6 +72,9 @@ const CategoryWrapper = styled(Box)({
   },
   '& .colorItem2': {
     backgroundColor: '#FFEDF9'
+  },
+  '& .colorItem3': {
+    backgroundColor: '#F6F2FF'
   }
 })
 
@@ -146,7 +149,7 @@ export default function JoinDaoFrame() {
             {createDaoData?.daoName}
           </Typography>
           <CategoryWrapper>
-            {createDaoData.category.map((item: any, index: number) => (
+            {createDaoData?.category.map((item: any, index: number) => (
               <span key={item} className={'colorItem' + index}>
                 {item}
               </span>

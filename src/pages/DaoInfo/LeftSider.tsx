@@ -218,7 +218,7 @@ export default function LeftSider() {
   const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [activeIdx, setActiveIdx] = useState(-1)
-  console.log(myJoinDaoData)
+  console.log(myJoinDaoData, spaceListData)
 
   const workspaceList = useMemo(
     () =>

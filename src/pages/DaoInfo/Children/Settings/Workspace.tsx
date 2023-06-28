@@ -33,6 +33,7 @@ export default function General({ daoId }: { daoId: number }) {
   const { showModal } = useModal()
   const [rand, setRand] = useState(Math.random())
   const { result: dataList } = useGetSpacesList(daoId, rand)
+  const { updateDaoMyJoinData } = useUpdateDaoDataCallback()
 
   return (
     <Box>
@@ -40,7 +41,16 @@ export default function General({ daoId }: { daoId: number }) {
       <Box
         sx={{ mt: 20, gap: 10, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
         onClick={() => {
-          showModal(<AddTeamspaceModal isEdit={false} daoId={daoId} onDimiss={() => setRand(Math.random())} />)
+          showModal(
+            <AddTeamspaceModal
+              isEdit={false}
+              daoId={daoId}
+              onDimiss={() => {
+                updateDaoMyJoinData()
+                setRand(Math.random())
+              }}
+            />
+          )
         }}
       >
         <img src={AddIcon} width={14} />
@@ -350,7 +360,10 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                     isEdit={true}
                                     daoId={daoId}
                                     spacesId={row.data.spacesId}
-                                    onDimiss={onDimiss}
+                                    onDimiss={() => {
+                                      updateDaoMyJoinData()
+                                      onDimiss()
+                                    }}
                                     originContent={row.data.bio}
                                     originTitle={row.data.title}
                                     originAccess={row.data.access}
