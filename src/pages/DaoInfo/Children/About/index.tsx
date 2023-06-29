@@ -80,7 +80,6 @@ export default function About() {
   const isSmDown = useBreakpoint('sm')
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  console.log('🚀 ~ file: index.tsx:83 ~ About ~ daoInfo:', daoInfo)
   const [rand] = useState(Math.random())
   const createDaoData = useGetDaoInfo(Number(daoId), rand)
   const votingPeriodDate = useMemo(
@@ -277,22 +276,6 @@ const TableContentText = styled(TableCell)(() => ({
 }))
 
 function BasicTable({ list }: { list: govList[] }) {
-  // const rows = [
-  //   {
-  //     token: 'Loot (LOOT)',
-  //     network: 'Ethereum',
-  //     address: '0xF2da7b9CDb35Dc7c8e875DE0241b02376825CF86',
-  //     requir: '111',
-  //     weight: '1STP=1 Votes'
-  //   },
-  //   {
-  //     token: 'Loot (LOOT)',
-  //     network: 'Ethereum',
-  //     address: '0xF2da7b9CDb35Dc7c8e875DE0241b02376825CF86',
-  //     requir: '111',
-  //     weight: '1STP=1 Votes'
-  //   }
-  // ]
   return (
     <>
       {list.length === 0 ? (
@@ -313,7 +296,7 @@ function BasicTable({ list }: { list: govList[] }) {
               {list.map((row, index) => (
                 <TableRow key={row?.symbol + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableContentText sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Image src={row.tokenLogo || defaultLogo} width={32} />
+                    <Image src={row.tokenLogo || defaultLogo} width={32} height={32} />
                     {row.tokenName}({row.symbol})
                   </TableContentText>
                   <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>

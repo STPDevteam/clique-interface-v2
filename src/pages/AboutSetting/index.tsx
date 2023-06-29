@@ -126,8 +126,6 @@ export default function AboutSetting() {
     const list =
       myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]
         ? tabList
-        : myJoinDaoData?.job === DaoAdminLevelProp[2]
-        ? tabList.filter(i => ['About', 'Workspace'].includes(i.label))
         : tabList.filter(i => i.label === 'About')
 
     return list

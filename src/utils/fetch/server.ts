@@ -863,9 +863,9 @@ export function addSpacesMember(account: string, spacesId: number) {
   })
 }
 
-export function removeSpacesMember(id: number) {
-  return Axios.delete('stpdao/v3/spaces/member/delete', {
-    id
+export function removeSpacesMember(workspaceJoinId: number) {
+  return Axios.post('stpdao/v3/spaces/member/delete', {
+    workspaceJoinId
   })
 }
 

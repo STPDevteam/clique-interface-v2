@@ -231,13 +231,13 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                       <Typography
                         onClick={() => {
                           if (
-                            adminLevel.job !== 'owner' ||
-                            (account && account.toLocaleLowerCase() !== row.data.creator.account.toLocaleLowerCase())
+                            adminLevel.job === 'owner' ||
+                            (account && account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
                           ) {
+                            handleManageClick(row.data.spacesId)
+                          } else {
                             toast.error("You don't have permissions")
-                            return
                           }
-                          handleManageClick(row.data.spacesId)
                         }}
                       >
                         Manage
@@ -288,14 +288,14 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                             value={item.value}
                             onClick={() => {
                               if (
-                                adminLevel.job !== 'owner' ||
+                                adminLevel.job === 'owner' ||
                                 (account &&
-                                  account.toLocaleLowerCase() !== row.data.creator.account.toLocaleLowerCase())
+                                  account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
                               ) {
+                                handleChangeVisibility(itemList[index].value, row.data)
+                              } else {
                                 toast.error("You don't have permissions")
-                                return
                               }
-                              handleChangeVisibility(itemList[index].value, row.data)
                             }}
                           >
                             {item.label}
@@ -347,35 +347,37 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                             value={item.value}
                             onClick={() => {
                               if (
-                                adminLevel.job !== 'owner' ||
+                                adminLevel.job === 'owner' ||
                                 (account &&
-                                  account.toLocaleLowerCase() !== row.data.creator.account.toLocaleLowerCase())
+                                  account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
                               ) {
-                                toast.error("You don't have permissions")
-                                return
-                              }
-                              if (editList[index].value === '0') {
-                                showModal(
-                                  <AddTeamspaceModal
-                                    isEdit={true}
-                                    daoId={daoId}
-                                    spacesId={row.data.spacesId}
-                                    onDimiss={() => {
-                                      updateDaoMyJoinData()
-                                      onDimiss()
-                                    }}
-                                    originContent={row.data.bio}
-                                    originTitle={row.data.title}
-                                    originAccess={row.data.access}
-                                  />
-                                )
-                              } else if (editList[index].value === '1') {
-                                showModal(
-                                  <TransferAdminModal daoId={daoId} spacesId={row.data.spacesId} onDimiss={onDimiss} />
-                                )
-                              } else {
-                                showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
-                              }
+                                if (editList[index].value === '0') {
+                                  showModal(
+                                    <AddTeamspaceModal
+                                      isEdit={true}
+                                      daoId={daoId}
+                                      spacesId={row.data.spacesId}
+                                      onDimiss={() => {
+                                        updateDaoMyJoinData()
+                                        onDimiss()
+                                      }}
+                                      originContent={row.data.bio}
+                                      originTitle={row.data.title}
+                                      originAccess={row.data.access}
+                                    />
+                                  )
+                                } else if (editList[index].value === '1') {
+                                  showModal(
+                                    <TransferAdminModal
+                                      daoId={daoId}
+                                      spacesId={row.data.spacesId}
+                                      onDimiss={onDimiss}
+                                    />
+                                  )
+                                } else {
+                                  showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
+                                }
+                              } else toast.error("You don't have permissions")
                             }}
                           >
                             {item.label}
