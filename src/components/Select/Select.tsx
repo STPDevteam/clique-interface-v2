@@ -90,7 +90,7 @@ export default function Select(props: Props) {
           '& .MuiSelect-select': {
             width: '100%',
             maxWidth: 'calc(100vw - 70px)',
-            height: '100%',
+            height: '100% !important',
             padding: padding ? padding : '0 50px 0 20px !important',
             display: 'flex',
             color: color ? color : '#3f5170',

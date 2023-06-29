@@ -1,5 +1,5 @@
 import { Box, Typography, styled, Divider, MenuList, MenuItem } from '@mui/material'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 import Header from './AboutHeader'
@@ -14,8 +14,8 @@ import DaoContainer from 'components/DaoContainer'
 import Team from './Team'
 import Setting from 'assets/images/settingImg.png'
 import Image from 'components/Image'
-import { useIsJoined } from 'hooks/useBackedDaoServer'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+// import { useIsJoined } from 'hooks/useBackedDaoServer'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
@@ -50,8 +50,8 @@ export default function AboutSetting() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  const { isJoined: daoAuthData } = useIsJoined(Number(curDaoId))
-
+  // const { isJoined: myJoinDaoData } = useIsJoined(Number(curDaoId))
+  const { myJoinDaoData } = useUpdateDaoDataCallback()
   const tabList = useMemo(() => {
     return [
       {
@@ -124,14 +124,23 @@ export default function AboutSetting() {
 
   const currentTabLinks = useMemo(() => {
     const list =
-      daoAuthData?.job === DaoAdminLevelProp[1] || daoAuthData?.job === DaoAdminLevelProp[0]
+      myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]
         ? tabList
-        : daoAuthData?.job === DaoAdminLevelProp[2]
+        : myJoinDaoData?.job === DaoAdminLevelProp[2]
         ? tabList.filter(i => ['About', 'Workspace'].includes(i.label))
         : tabList.filter(i => i.label === 'About')
 
     return list
-  }, [daoAuthData?.job, tabList])
+  }, [myJoinDaoData?.job, tabList])
+  useEffect(() => {
+    if (
+      myJoinDaoData?.job !== DaoAdminLevelProp[1] ||
+      myJoinDaoData?.job !== DaoAdminLevelProp[0] ||
+      myJoinDaoData?.job !== DaoAdminLevelProp[2]
+    ) {
+      return setTabValue(0)
+    }
+  }, [myJoinDaoData?.job])
 
   return (
     <DaoContainer>
