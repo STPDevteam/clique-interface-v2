@@ -15,6 +15,8 @@ import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useEffect } from 'react'
 
 const itemList = [
   { value: '', label: 'All Proposals' },
@@ -27,6 +29,7 @@ export default function Proposal() {
   const history = useHistory()
   const { showModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const { updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
   const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
   const {
@@ -36,6 +39,10 @@ export default function Proposal() {
     page
   } = useProposalBaseList(Number(params.daoId))
   console.log(proposalBaseList, currentProposalStatus)
+
+  useEffect(() => {
+    updateMyJoinedDaoListData()
+  }, [params.daoId, updateMyJoinedDaoListData])
 
   return (
     <DaoContainer>

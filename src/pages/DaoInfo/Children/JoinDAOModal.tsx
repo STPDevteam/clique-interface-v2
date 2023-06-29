@@ -93,7 +93,6 @@ export default function JoinDaoFrame() {
   }, [dispatch])
   const onClickJoinDao = useCallback(() => {
     if (!daoId) return
-    // setDisable(true)
     if (!account) {
       toggleWalletModal()
     } else if (!userSignature?.loggedToken) {
@@ -111,10 +110,10 @@ export default function JoinDaoFrame() {
         })
       })
     } else {
+      setDisable(true)
       cb(Number(daoId)).then((res: any) => {
         if (res.data.code !== 200) {
           toast.error(res.data.msg || 'network error')
-          setDisable(false)
           return
         }
         updateDaoMyJoinData()
