@@ -370,7 +370,9 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                   />
                                 )
                               } else if (editList[index].value === '1') {
-                                showModal(<TransferAdminModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
+                                showModal(
+                                  <TransferAdminModal daoId={daoId} spacesId={row.data.spacesId} onDimiss={onDimiss} />
+                                )
                               } else {
                                 showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
                               }

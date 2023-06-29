@@ -6,7 +6,7 @@ import useModal from 'hooks/useModal'
 import { toast } from 'react-toastify'
 import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
-import { useGetSpacesMemberList, useTransferSpacesMember } from 'hooks/useBackedDaoServer'
+import { useJobsList, useTransferSpacesMember } from 'hooks/useBackedDaoServer'
 import { useActiveWeb3React } from 'hooks'
 
 const Text = styled(Typography)({
@@ -30,10 +30,19 @@ const Title = styled(Typography)({
   fontWeight: 500
 })
 
-export default function TransferAdminModal({ spacesId, onDimiss }: { spacesId: number; onDimiss: () => void }) {
+export default function TransferAdminModal({
+  daoId,
+  spacesId,
+  onDimiss
+}: {
+  daoId: number
+  spacesId: number
+  onDimiss: () => void
+}) {
   const { hideModal } = useModal()
   const { account } = useActiveWeb3React()
-  const { result: memberList } = useGetSpacesMemberList(spacesId)
+  const { result: memberList } = useJobsList(daoId)
+  // const { result: memberList } = useGetSpacesMemberList(spacesId)
   const filteredList = useMemo(() => memberList.filter(item => item.account !== account?.toLocaleLowerCase()), [
     account,
     memberList
