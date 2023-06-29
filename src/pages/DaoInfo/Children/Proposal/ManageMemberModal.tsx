@@ -115,8 +115,14 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
       </StyledAddContainer>
       <StyledBody>
         <Stack spacing={19}>
-          <Box display={'grid'} gridTemplateColumns="1fr 1fr 0.8fr" gap={'10px 5px'} alignItems={'center'}>
-            {memberList.map(item => (
+          {memberList.map(item => (
+            <Box
+              key={item.account}
+              display={'grid'}
+              gridTemplateColumns="1fr 1fr 0.8fr"
+              gap={'10px 5px'}
+              alignItems={'center'}
+            >
               <>
                 <StyledListText>
                   <Image src={item.accountLogo || Avatar} width={18} />
@@ -136,8 +142,8 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
                   Remove
                 </StyledListRightText>
               </>
-            ))}
-          </Box>
+            </Box>
+          ))}
           {!memberList.length && <EmptyData />}
           <Box display={'flex'} justifyContent="center">
             <Pagination

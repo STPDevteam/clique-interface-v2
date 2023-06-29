@@ -80,7 +80,6 @@ export default function About() {
   const isSmDown = useBreakpoint('sm')
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  console.log('🚀 ~ file: index.tsx:83 ~ About ~ daoInfo:', daoInfo)
   const [rand] = useState(Math.random())
   const createDaoData = useGetDaoInfo(Number(daoId), rand)
   const votingPeriodDate = useMemo(
