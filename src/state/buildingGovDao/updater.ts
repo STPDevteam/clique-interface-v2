@@ -4,10 +4,14 @@ import { useDispatch } from 'react-redux'
 import { useLocation, useParams } from 'react-router-dom'
 import { updateCreateDaoData, updateJoinDaoModalStatus, updateMyJoinDaoData, updateSpaceListData } from './actions'
 import { useGetLeftTaskList } from 'hooks/useBackedTaskServer'
+import { useActiveWeb3React } from 'hooks'
+import useModal from 'hooks/useModal'
 
 export default function Updater(): null {
   const dispatch = useDispatch()
   const location = useLocation()
+  const { account } = useActiveWeb3React()
+  const { hideModal } = useModal()
   const { daoId: _daoId } = useParams<{ daoId: string }>()
   const daoId = useMemo(() => (location.pathname.includes('/governance/daoInfo') ? Number(_daoId) : 0), [
     _daoId,
@@ -40,6 +44,12 @@ export default function Updater(): null {
       dispatch(updateSpaceListData({ spaceListData }))
     }
   }, [dispatch, spaceListData])
+
+  useEffect(() => {
+    if (account) {
+      hideModal()
+    }
+  }, [account, hideModal])
 
   return null
 }

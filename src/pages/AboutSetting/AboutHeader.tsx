@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import { useDispatch } from 'react-redux'
 import { updateJoinDaoModalStatus } from 'state/buildingGovDao/actions'
 import Button from 'components/Button/Button'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
@@ -51,7 +52,7 @@ export default function Header() {
   const isSmDown = useBreakpoint('sm')
   const dispatch = useDispatch()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
-  // const { isJoined } = useIsJoined(Number(curDaoId))
+  const { account } = useActiveWeb3React()
   const { myJoinDaoData, updateDaoMyJoinData } = useUpdateDaoDataCallback()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   console.log(myJoinDaoData)
@@ -173,7 +174,7 @@ export default function Header() {
               </Box>
             </Box>
           </Box>
-          {myJoinDaoData?.job === 'owner' ? null : myJoinDaoData.isJoin ? (
+          {!account ? null : myJoinDaoData?.job === 'owner' ? null : myJoinDaoData.isJoin ? (
             <Text onClick={handleQuitClick}>
               <QuitIcon />
               Quit DAO
