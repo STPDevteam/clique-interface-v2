@@ -39,11 +39,10 @@ export default function Team() {
   const { showModal, hideModal } = useModal()
   const { daoId: daoChainId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoChainId)
-  const spacesId = 0
   const { account: curAccount } = useActiveWeb3React()
   const { result: jobList } = useGetPublishJobList(curDaoId, randNum)
   const { result: memberList } = useJobsList(curDaoId, rand)
-  const { myJoinDaoData: memberLevel } = useUpdateDaoDataCallback()
+  const { myJoinDaoData: memberLevel, updateDaoMyJoinData } = useUpdateDaoDataCallback()
 
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -55,9 +54,9 @@ export default function Team() {
     }
   }, [])
 
-  useCallback(() => {
-    showModal(<AddMemberModal onClose={hideModal} spacesId={spacesId} />)
-  }, [hideModal, showModal])
+  const addMemberCB = useCallback(() => {
+    showModal(<AddMemberModal onClose={hideModal} daoId={curDaoId} />)
+  }, [curDaoId, hideModal, showModal])
 
   const addJobsCB = useCallback(() => {
     showModal(
@@ -109,7 +108,10 @@ export default function Team() {
               account={account}
               daoId={daoId}
               level={jobsLevel}
-              onDimiss={() => setRand(Math.random())}
+              onDimiss={() => {
+                updateDaoMyJoinData()
+                setRand(Math.random())
+              }}
             />
           )
         }}
@@ -120,7 +122,7 @@ export default function Team() {
         <ExpandMoreIcon />
       </Box>
     ])
-  }, [curAccount, memberLevel.job, memberList, showModal])
+  }, [curAccount, memberLevel.job, memberList, showModal, updateDaoMyJoinData])
 
   return (
     <Box
@@ -176,11 +178,7 @@ export default function Team() {
           Jobs
         </Typography>
         <Box display={'flex'} gap={35} flexDirection={'row'}>
-          {/* {memberLevel?.job === DaoAdminLevelProp.SUPER_ADMIN || memberLevel?.job === DaoAdminLevelProp.OWNER ? (
-            <BlueButton actionText="Add Admins" onClick={addMemberCB} />
-          ) : (
-            <></>
-          )} */}
+          <BlueButton actionText="Add Admins" onClick={addMemberCB} />
           <BlueButton actionText="Add Jobs" onClick={addJobsCB} />
         </Box>
       </TopText>

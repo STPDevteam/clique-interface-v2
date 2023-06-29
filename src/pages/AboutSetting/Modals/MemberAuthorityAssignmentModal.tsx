@@ -70,7 +70,6 @@ export default function MemberAuthorityAssignmentModal({
     return [true, true, true]
   }, [myLevel])
   console.log(myLevel, level)
-  console.log('list', btnDisabledList)
 
   const removeMemberClick = useCallback(
     (level: number) => {

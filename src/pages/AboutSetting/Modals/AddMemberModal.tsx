@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react'
 import Select from 'components/Select/Select'
 import useModal from 'hooks/useModal'
 import { isAddress } from 'ethers/lib/utils'
-import { useAddDaoMember } from 'hooks/useBackedDaoServer'
+import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 
 const guestList = [
@@ -15,30 +15,30 @@ const guestList = [
   { value: 2, label: 'Admin' }
 ]
 
-export default function AddMemberModal({ onClose, spacesId }: { onClose: () => void; spacesId: number }) {
+export default function AddMemberModal({ onClose, daoId }: { onClose: () => void; daoId: number }) {
   const { hideModal } = useModal()
   const [address, setAddress] = useState('')
   const [currentStatus, setCurrentStatus] = useState<number>(1)
-  const add = useAddDaoMember()
+  const add = useChangeAdminRole()
   const [btnDisable, setBtnDisable] = useState(false)
 
   const createNewMember = useCallback(() => {
     setBtnDisable(true)
-    add(address, spacesId)
+    add(address, currentStatus, daoId)
       .then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error('add error')
+          toast.error('Add error')
           return
         }
         hideModal()
         setBtnDisable(false)
-        toast.success('add member success')
+        toast.success('Add member success')
       })
       .catch((err: any) => {
         hideModal()
         toast.error(err?.data?.message || err?.error?.message || err?.message || 'unknown error')
       })
-  }, [add, address, hideModal, spacesId])
+  }, [add, address, currentStatus, daoId, hideModal])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">

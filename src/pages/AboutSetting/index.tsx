@@ -127,7 +127,7 @@ export default function AboutSetting() {
       daoAuthData?.job === DaoAdminLevelProp[1] || daoAuthData?.job === DaoAdminLevelProp[0]
         ? tabList
         : daoAuthData?.job === DaoAdminLevelProp[2]
-        ? tabList.filter(i => ['About', 'General', 'Governance Settings'].includes(i.label))
+        ? tabList.filter(i => ['About', 'Workspace'].includes(i.label))
         : tabList.filter(i => i.label === 'About')
 
     return list
