@@ -120,7 +120,7 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
               <>
                 <StyledListText>
                   <Image src={item.accountLogo || Avatar} width={18} />
-                  <Typography>{item.nickName || 'unnamed'}</Typography>
+                  <Typography>{item.nickname || 'unnamed'}</Typography>
                 </StyledListText>
                 <StyledListText noWrap>{shortenAddress(item.account)}</StyledListText>
                 <StyledListRightText

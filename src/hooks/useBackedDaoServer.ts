@@ -1058,7 +1058,7 @@ export interface SpacesMemberProp {
   account: string
   accountLogo: string
   id: number
-  nickName: string
+  nickname: string
   spacesId: number
 }
 

@@ -345,7 +345,10 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                     disabled={daoInfo.votingPeriod !== 0}
                     minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                     value={endTime ? new Date(endTime * 1000) : null}
-                    onValue={timestamp => setEndtime(timestamp)}
+                    onValue={timestamp => {
+                      if (!timestamp) return
+                      setEndtime(endTime ? timestamp : timestamp + 5 * 60)
+                    }}
                   ></DateTimePicker>
                 </DateSelectStyle>
               </Box>
