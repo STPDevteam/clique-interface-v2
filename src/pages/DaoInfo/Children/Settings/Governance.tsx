@@ -95,7 +95,7 @@ export default function General({ daoId }: { daoId: number }) {
         error: 'Mininum voting period is 72 hours'
       }
     }
-    if (daoInfo.governance.length < 1) {
+    if (createDaoData && createDaoData.governance.length < 1) {
       return {
         disabled: true,
         text: 'governance',
@@ -113,7 +113,7 @@ export default function General({ daoId }: { daoId: number }) {
       disabled: false,
       text: ''
     }
-  }, [PeriodValue, daoInfo.governance.length, fixTime, proposalThreshold])
+  }, [PeriodValue, createDaoData, fixTime, proposalThreshold])
 
   const { updateDaoBaseData } = useUpdateDaoDataCallback()
 
