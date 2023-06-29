@@ -162,7 +162,6 @@ export function DaoItem({
 export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[] | undefined }) {
   // const theme = useTheme()
   const isSmDown = useBreakpoint()
-  console.log(adminDao)
   if (!adminDao || !adminDao.length) {
     return null
   }

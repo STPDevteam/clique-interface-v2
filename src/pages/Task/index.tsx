@@ -218,14 +218,14 @@ const tabList = [
 ]
 
 const priorityFilter = [
-  { value: undefined, label: 'All priority' },
+  { value: '', label: 'All priority' },
   { value: 'A_High', label: 'High' },
   { value: 'B_Medium', label: 'Medium' },
   { value: 'C_Low', label: 'Low' }
 ]
 
 const statusFilter = [
-  { value: undefined, label: 'All status' },
+  { value: '', label: 'All status' },
   { value: 'A_notStarted', label: 'Not started' },
   { value: 'B_inProgress', label: 'In progress' },
   { value: 'C_done', label: 'Done' },
@@ -303,8 +303,8 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
 export default function Index() {
   // const isSmDown = useBreakpoint('sm')
   const [tabValue, setTabValue] = useState(0)
-  const [currentPriority, setCurrentPriority] = useState()
-  const [currentStatus, setCurrentStatus] = useState()
+  const [currentPriority, setCurrentPriority] = useState('')
+  const [currentStatus, setCurrentStatus] = useState('')
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
 
   // const handleEdit = useCallback(() => {}, [])
@@ -414,7 +414,7 @@ export default function Index() {
                       key={item.value}
                       sx={{ fontWeight: 500, fontSize: 10 }}
                       value={item.value}
-                      selected={currentPriority && currentPriority === item.value}
+                      selected={currentPriority === item.value}
                     >
                       {item.label}
                     </MenuItem>
@@ -437,7 +437,7 @@ export default function Index() {
                       key={item.value}
                       sx={{ fontWeight: 500, fontSize: 10 }}
                       value={item.value}
-                      selected={currentStatus && currentStatus === item.value}
+                      selected={currentStatus === item.value}
                     >
                       {item.label}
                     </MenuItem>

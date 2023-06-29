@@ -55,7 +55,6 @@ export default function Header() {
   const { account } = useActiveWeb3React()
   const { myJoinDaoData, updateDaoMyJoinData } = useUpdateDaoDataCallback()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  console.log(myJoinDaoData)
 
   const quit = useGetUserQuitDao()
   const cb = useJoinDAO()
