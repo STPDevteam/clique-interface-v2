@@ -75,6 +75,12 @@ const CategoryWrapper = styled(Box)({
   },
   '& .colorItem3': {
     backgroundColor: '#F6F2FF'
+  },
+  '& .colorItem4': {
+    backgroundColor: '#FFF0D2'
+  },
+  '& .colorItem5': {
+    backgroundColor: '#BD73F6'
   }
 })
 
