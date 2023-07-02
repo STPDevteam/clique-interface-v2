@@ -53,7 +53,7 @@ export default function Header() {
   const dispatch = useDispatch()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const { account } = useActiveWeb3React()
-  const { myJoinDaoData, updateDaoMyJoinData } = useUpdateDaoDataCallback()
+  const { myJoinDaoData, updateDaoMyJoinData, updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   const quit = useGetUserQuitDao()
@@ -70,10 +70,11 @@ export default function Header() {
         return
       }
       updateDaoMyJoinData()
+      updateMyJoinedDaoListData()
       dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
       toast.success('Quit success')
     })
-  }, [curDaoId, quit, updateDaoMyJoinData, dispatch])
+  }, [quit, curDaoId, updateDaoMyJoinData, updateMyJoinedDaoListData, dispatch])
 
   const joinDaoClick = useCallback(() => {
     cb(Number(curDaoId)).then((res: any) => {
@@ -82,10 +83,11 @@ export default function Header() {
         return
       }
       updateDaoMyJoinData()
+      updateMyJoinedDaoListData()
       toast.success('Join success')
       dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
     })
-  }, [cb, curDaoId, dispatch, updateDaoMyJoinData])
+  }, [cb, curDaoId, dispatch, updateDaoMyJoinData, updateMyJoinedDaoListData])
 
   return (
     <Box>
