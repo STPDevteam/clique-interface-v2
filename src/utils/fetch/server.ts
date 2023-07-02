@@ -748,6 +748,10 @@ export function joinV3Dao(daoId: number) {
   return Axios.post(`stpdao/v3/user/join/${daoId}`, {})
 }
 
+export function cancelProposal(proposalId: number) {
+  return Axios.post(`stpdao/v3/proposal/cancel/${proposalId}`, {})
+}
+
 export function createProposal(
   content: string,
   daoId: number,

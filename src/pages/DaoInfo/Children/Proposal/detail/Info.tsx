@@ -1,60 +1,44 @@
-import { Box, Link as MuiLink, styled, Typography, useTheme } from '@mui/material'
+import { Box, styled, Typography, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
-import { ChainId } from 'constants/chain'
-import { useProposalDetailInfoProps, useProposalSnapshot } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
-import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
+import { shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import { VoteWrapper } from './Vote'
-import useModal from 'hooks/useModal'
-import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 import { routes } from 'constants/routes'
 import { Link } from 'react-router-dom'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { toast } from 'react-toastify'
+import ReactHtmlParser from 'react-html-parser'
+import { escapeAttrValue } from 'xss'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
 export default function Info({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
+  console.log('🚀 ~ file: Info.tsx:23 ~ Info ~ proposalInfo:', proposalInfo)
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const { account, library, chainId } = useActiveWeb3React()
-  const daoChainId = 0 as ChainId
-  const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
-  const cancelProposalCallback = useCancelProposalCallback('')
+  const { account } = useActiveWeb3React()
+  // const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
+  const cancelProposalCallback = useCancelProposalCallback()
 
   const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
-  const { showModal, hideModal } = useModal()
   const onCancelProposalCallback = useCallback(() => {
-    showModal(<TransacitonPendingModal />)
-    cancelProposalCallback(proposalInfo.proposalId)
-      .then(hash => {
-        hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} />)
-      })
-      .catch((err: any) => {
-        hideModal()
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
-      })
-  }, [cancelProposalCallback, hideModal, proposalInfo.proposalId, showModal])
-
-  const switchNetwork = useCallback(() => {
-    triggerSwitchChain(library, daoChainId, account || '')
-  }, [account, daoChainId, library])
+    cancelProposalCallback(proposalInfo.proposalId).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'network error')
+        return
+      }
+      toast.success('Cancel success')
+    })
+  }, [cancelProposalCallback, proposalInfo.proposalId])
 
   return (
     <VoteWrapper>
@@ -67,8 +51,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
           sx={{
             borderTop: '1px solid #D4D7E2'
           }}
-          mb={13}
-          padding={'13px 0'}
+          padding={'13px 0 0'}
           display={'grid'}
           gridTemplateColumns="86px 1fr"
           rowGap={10}
@@ -81,7 +64,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
                 {shortenAddress(proposalInfo.proposer.account, isSmDown ? 3 : 4)}
               </Typography>
             </Link>
-            <AdminTagBlock daoAddress={''} chainId={daoChainId} account={proposalInfo.proposer.account} />
+            <ShowAdminTag />
           </Box>
 
           <LeftText>Start Time</LeftText>
@@ -90,7 +73,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
           <LeftText>End Time</LeftText>
           <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
 
-          <LeftText>Snapshot</LeftText>
+          {/* <LeftText>Snapshot</LeftText>
           <MuiLink
             underline="none"
             sx={{ display: 'flex' }}
@@ -106,16 +89,23 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
                 fill={theme.palette.primary.light}
               />
             </svg>
-          </MuiLink>
+          </MuiLink> */}
         </Box>
+        <div className="ql-editor">
+          {ReactHtmlParser(
+            filterXSS(proposalInfo.content || '', {
+              onIgnoreTagAttr: function(_, name, value) {
+                if (name === 'class') {
+                  return name + '="' + escapeAttrValue(value) + '"'
+                }
+                return undefined
+              }
+            })
+          )}
+        </div>
         {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
           <Box mt={15}>
-            <BlackButton
-              height="40px"
-              width="160px"
-              disabled={isCancel}
-              onClick={chainId !== daoChainId ? switchNetwork : onCancelProposalCallback}
-            >
+            <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
               {isCancel ? (
                 <>
                   Cancel

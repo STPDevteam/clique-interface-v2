@@ -145,7 +145,7 @@ export default function General({ daoId }: { daoId: number }) {
         <Button
           style={{ maxWidth: 184, height: 36 }}
           onClick={() => {
-            if (daoInfo.governance.length >= 1) {
+            if (createDaoData && createDaoData.governance.length >= 1) {
               toast.error('There can only be one governance token, if you want to modify it, please remove it first')
               return
             }

@@ -5,11 +5,17 @@ import { useActiveWeb3React } from '.'
 import { useGovernanceDaoContract } from './useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import ReactGA from 'react-ga4'
-import { commitErrorMsg, createProposal } from 'utils/fetch/server'
+import { cancelProposal, commitErrorMsg, createProposal } from 'utils/fetch/server'
 
 export enum SignType {
   CREATE_PROPOSAL,
   VOTE
+}
+
+export function useCancelProposalCallback() {
+  return useCallback(async (proposalId: number) => {
+    return await cancelProposal(proposalId)
+  }, [])
 }
 
 export function useCreateProposalCallback() {
@@ -38,55 +44,6 @@ export function useCreateProposalCallback() {
       )
     },
     []
-  )
-}
-
-export function useCancelProposalCallback(daoAddress: string) {
-  const addTransaction = useTransactionAdder()
-  const contract = useGovernanceDaoContract(daoAddress)
-  const { account } = useActiveWeb3React()
-  const gasPriceInfoCallback = useGasPriceInfo()
-
-  return useCallback(
-    async (proposalId: number) => {
-      if (!account) throw new Error('none account')
-      if (!contract) throw new Error('none contract')
-
-      const args = [proposalId]
-
-      const method = 'cancelProposal'
-      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
-
-      return contract[method](...args, {
-        gasPrice,
-        gasLimit,
-        from: account
-      })
-        .then((response: TransactionResponse) => {
-          addTransaction(response, {
-            summary: 'Cancel proposal',
-            claim: { recipient: `${contract.address}_cancelProposal` }
-          })
-          return response.hash
-        })
-        .catch((err: any) => {
-          if (err.code !== 4001) {
-            commitErrorMsg(
-              'useCancelProposalCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
-              method,
-              JSON.stringify(args)
-            )
-            ReactGA.event({
-              category: `catch-${method}`,
-              action: `${err?.error?.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
-              label: JSON.stringify(args)
-            })
-          }
-          throw err
-        })
-    },
-    [account, contract, gasPriceInfoCallback, addTransaction]
   )
 }
 

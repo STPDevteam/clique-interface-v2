@@ -13,6 +13,7 @@ import { useProposalDetailsInfo } from 'hooks/useBackedProposalServer'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { formatNumberWithCommas } from 'utils'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 export default function ProposalDetail() {
   const { daoId: daoId, proposalId } = useParams<{
@@ -33,6 +34,7 @@ export default function ProposalDetail() {
 
 function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
   const history = useHistory()
+  const { account } = useActiveWeb3React()
   const [rand, setRand] = useState(Math.random())
   const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
 
@@ -79,7 +81,9 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
               <Typography>
                 Voting types: {proposalDetailInfo.votingType === VotingTypes.SINGLE ? 'Single-voting' : 'Multi-voting'}
               </Typography>
-              <Typography>Your votes: {formatNumberWithCommas(proposalDetailInfo.yourVotes) || '--'}</Typography>
+              <Typography>
+                Your votes: {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes)) || '--'}
+              </Typography>
             </Box>
           </Grid>
           <Grid item md={12} xs={12}>
