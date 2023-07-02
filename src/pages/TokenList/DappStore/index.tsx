@@ -129,11 +129,19 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           Support Chains
         </Typography>
         {supportChainsIcon === 'all' ? (
-          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+          <Typography
+            mt={10}
+            fontWeight={400}
+            fontSize={14}
+            lineHeight={'20px'}
+            color={'#3F5170'}
+            textAlign={'left'}
+            width={'100%'}
+          >
             All Chain
           </Typography>
         ) : supportChainsIcon === '' ? (
-          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
             -
           </Typography>
         ) : (
