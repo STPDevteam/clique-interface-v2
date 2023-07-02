@@ -6,7 +6,7 @@ import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
 import { shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import { VoteWrapper } from './Vote'
-import { useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
@@ -21,7 +21,13 @@ const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
-export default function Info({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
+export default function Info({
+  proposalInfo,
+  refresh
+}: {
+  proposalInfo: useProposalDetailInfoProps
+  refresh: Dispatch<SetStateAction<number>>
+}) {
   console.log('🚀 ~ file: Info.tsx:23 ~ Info ~ proposalInfo:', proposalInfo)
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
@@ -36,9 +42,10 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
         toast.error(res.data.msg || 'network error')
         return
       }
+      refresh(Math.random())
       toast.success('Cancel success')
     })
-  }, [cancelProposalCallback, proposalInfo.proposalId])
+  }, [cancelProposalCallback, proposalInfo.proposalId, refresh])
 
   return (
     <VoteWrapper>
@@ -58,13 +65,13 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
           alignItems={'center'}
         >
           <LeftText>Proposer</LeftText>
-          <Box display={'flex'} flexDirection={'column'}>
+          <Box display={'flex'} flexDirection={'row'} gap={10}>
             <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
               <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
                 {shortenAddress(proposalInfo.proposer.account, isSmDown ? 3 : 4)}
               </Typography>
             </Link>
-            <ShowAdminTag />
+            <ShowAdminTag level={proposalInfo.proposer.daoJobs} />
           </Box>
 
           <LeftText>Start Time</LeftText>

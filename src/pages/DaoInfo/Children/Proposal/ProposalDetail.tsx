@@ -35,7 +35,7 @@ export default function ProposalDetail() {
 function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
-  const [rand, setRand] = useState(Math.random())
+  const [rand, setRand] = useState<number>(Math.random())
   const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
 
   const toList = useCallback(() => {
@@ -87,7 +87,7 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
             </Box>
           </Grid>
           <Grid item md={12} xs={12}>
-            <VoteInfo proposalInfo={proposalDetailInfo} />
+            <VoteInfo proposalInfo={proposalDetailInfo} refresh={setRand} />
           </Grid>
         </Grid>
       </Box>

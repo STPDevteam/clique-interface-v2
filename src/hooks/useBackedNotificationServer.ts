@@ -29,11 +29,19 @@ export interface NotificationInfoProp {
 
 export interface NotificationProp {
   account: string
+  activityId: number
+  activityTitle: string
   alreadyRead: boolean
+  avatar: string
+  daoId: number
+  daoLogo: string
+  daoName: string
   notificationId: number
   notificationTime: number
+  startTime: number
+  tokenAddress: string
+  tokenChainId: number
   types: NotificationTypes
-  info: NotificationInfoProp
 }
 
 export function useNotificationListInfo() {
@@ -64,14 +72,14 @@ export function useNotificationListInfo() {
       try {
         const res = await getNotificationListInfo(account, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           return
         }
         setTotal(data.total)
         setUnReadCount(data.unreadTotal)
-        setResult(data.list)
+        setResult(data.data)
       } catch (error) {
         setResult([])
         setTotal(0)
