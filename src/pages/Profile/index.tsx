@@ -130,9 +130,9 @@ export default function Profile() {
   }, [hideModal])
 
   useEffect(() => {
-    if (!currentAccount) history.replace('/')
+    if (!currentAccount || !account) history.replace('/')
     hideModal()
-  }, [currentAccount, hideModal, history])
+  }, [currentAccount, hideModal, history, account])
 
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
@@ -425,7 +425,7 @@ export default function Profile() {
       <Box display={'grid'} gap="48px">
         <AccountNFTs account={currentAccount || ''} />
 
-        {isSelf && <MyTokens account={currentAccount || ''} />}
+        {isSelf && <MyTokens account={currentAccount || ''} chainId={chainId} />}
 
         <MyDaos adminDao={profileInfo?.adminDao} />
 

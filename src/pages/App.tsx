@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
-import { styled } from '@mui/material'
+import { styled, useTheme } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
@@ -93,16 +93,17 @@ const ContentWrapper = styled('div')({
   alignItems: 'center'
 })
 
-const BodyWrapper = styled('div')(({ theme }) => ({
-  paddingTop: theme.height.header,
-  minHeight: '100vh',
-  [theme.breakpoints.down('md')]: {
-    minHeight: `${theme.height.mobileHeader} - 50px)`
-  }
+const BodyWrapper = styled('div')(({}) => ({
+  // paddingTop: theme.height.header,
+  minHeight: '100vh'
+  // [theme.breakpoints.down('md')]: {
+  //   minHeight: `${theme.height.mobileHeader} - 50px)`
+  // }
 }))
 
 export default function App() {
   const { pathname } = useLocation()
+  const theme = useTheme()
   const dispatch = useDispatch()
   useEffect(() => {
     fetchUserLocation().then(res => {
@@ -129,7 +130,15 @@ export default function App() {
             <Header />
             {/* <AiChat /> */}
             <ToastContainer />
-            <BodyWrapper id="body">
+            <BodyWrapper
+              id="body"
+              sx={{
+                paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
+                [theme.breakpoints.down('md')]: {
+                  minHeight: `${theme.height.mobileHeader} - 50px`
+                }
+              }}
+            >
               <Popups />
               <Polling />
               {/* <WarningModal /> */}
