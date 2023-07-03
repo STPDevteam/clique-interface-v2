@@ -103,6 +103,7 @@ export default function VoteProgress({
                 disabled={
                   proposalInfo.yourVotes === 0 ||
                   proposalInfo.status === 'Soon' ||
+                  proposalInfo.status === 'Cancel' ||
                   (proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1)
                 }
                 onClick={() => {

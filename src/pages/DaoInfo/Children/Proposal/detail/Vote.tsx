@@ -12,6 +12,16 @@ export const VoteWrapper = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
     padding: '20px 16px'
+  },
+  '& .ql-editor': {
+    color: '#80829F',
+    fontFamily: 'Inter',
+    fontSize: 14,
+    fontWeight: 500,
+    lineHeight: '20px',
+    letterSpacing: 0,
+    textAlign: 'left',
+    padding: '12px 0'
   }
 }))
 

@@ -74,7 +74,7 @@ export default function Header() {
       dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
       toast.success('Quit success')
     })
-  }, [curDaoId, quit, updateDaoMyJoinData, updateMyJoinedDaoListData, dispatch])
+  }, [quit, curDaoId, updateDaoMyJoinData, updateMyJoinedDaoListData, dispatch])
 
   const joinDaoClick = useCallback(() => {
     cb(Number(curDaoId)).then((res: any) => {

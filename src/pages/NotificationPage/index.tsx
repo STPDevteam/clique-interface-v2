@@ -18,7 +18,6 @@ import { useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
-import { useActiveWeb3React } from 'hooks'
 import Image from 'components/Image'
 import NotiIcon from 'assets/images/notiIcon.png'
 // import PushManagementModal from './PushManagementModal'
@@ -89,7 +88,6 @@ function MsgItem({
   toBackedReadOnce: (notificationId: number) => Promise<any>
 }) {
   const [isRead, setIsRead] = useState(item.alreadyRead)
-  const { account } = useActiveWeb3React()
 
   const history = useHistory()
   const showData: {
@@ -101,47 +99,28 @@ function MsgItem({
         item.types === 'Airdrop'
           ? 'You have a new DAO Rewards can be claimed'
           : item.types === 'NewProposal'
-          ? item.info.proposalName || ''
+          ? item.activityTitle || ''
           : item.types === 'ReserveToken'
           ? 'You have a new token can be claimed'
-          : item.types === 'PublicSaleCreated'
-          ? 'You created a new swap'
-          : account?.toLowerCase() === item.info.creator?.toLowerCase()
-          ? `${item.info.buyer ?? ''} purchased your swap`
-          : item.info.creator?.toLowerCase() !== account?.toLowerCase()
-          ? 'You purchased a swap'
-          : item.types === 'PublicSaleCanceled'
-          ? 'You cancelled a swap'
           : 'message',
       link:
         item.types === 'Airdrop'
-          ? item.info.activityId && item.info.chainId && item.info.daoAddress
-            ? routes._ActivityAirdropDetail + `/${item.info.chainId}/${item.info.daoAddress}/${item.info.activityId}`
+          ? item.activityId && item.daoId
+            ? routes._ActivityAirdropDetail + `/${item.daoId}/${item.activityId}`
             : ''
           : item.types === 'NewProposal'
-          ? item.info.chainId && item.info.daoAddress
-            ? routes._DaoInfo +
-              `/${item.info.chainId}/${item.info.daoAddress}/proposal/detail/${item.info.proposalId || 0}`
+          ? item.daoId
+            ? routes._DaoInfo + `/${item.daoId}/proposal/detail/${item.activityId}`
             : ''
           : item.types === 'ReserveToken'
           ? routes._Profile
           : item.types === 'PublicSaleCreated' ||
             item.types === 'PublicSalePurchased' ||
             item.types === 'PublicSaleCanceled'
-          ? routes._SaleDetails + `/${item.info.activityId || 0}`
+          ? routes._SaleDetails + `/${item.activityId || 0}`
           : ''
     }
-  }, [
-    account,
-    item.info.activityId,
-    item.info.buyer,
-    item.info.chainId,
-    item.info.creator,
-    item.info.daoAddress,
-    item.info.proposalId,
-    item.info.proposalName,
-    item.types
-  ])
+  }, [item.activityId, item.activityTitle, item.daoId, item.types])
 
   return (
     <Box
@@ -161,9 +140,9 @@ function MsgItem({
       </RowCenter>
       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
         <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} src={item.info.daoLogo} />
+          <DaoAvatars size={64} src={item.daoLogo} />
           <Box ml={16}>
-            <Text>{item.info.daoName}</Text>
+            <Text>{item.daoName}</Text>
             <Text display={'inline-block'}>
               {showData.text}
               {'. '}
@@ -179,9 +158,9 @@ function MsgItem({
         item.types === 'PublicSalePurchased' ||
         item.types === 'PublicSaleCanceled' ? (
         <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} src={item.info.tokenLogo} />
+          <DaoAvatars size={64} src={item.daoLogo} />
           <Box ml={16}>
-            <Text>{item.info.activityName}</Text>
+            <Text>{item.daoName}</Text>
             <Text display={'inline-block'}>
               {showData.text}
               {'. '}

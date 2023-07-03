@@ -95,11 +95,10 @@ export function useUpdateDaoDataCallback() {
   }, [daoId, dispatch])
 
   const updateMyJoinedDaoListData = useCallback(async () => {
-    if (!daoId) return
     const res = await getMyJoinedDao()
     const createDaoListData = res.data.data as CreateDaoListDataProp[]
     dispatch(updateDaoListData({ createDaoListData }))
-  }, [daoId, dispatch])
+  }, [dispatch])
 
   const updateWrokspaceListData = useCallback(async () => {
     if (!daoId) return

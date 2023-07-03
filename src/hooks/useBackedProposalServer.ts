@@ -192,6 +192,7 @@ export interface useProposalDetailInfoProps {
   proposer: {
     account: string
     avatar: string
+    daoJobs: string
     nickname: string
   }
   startTime: number
