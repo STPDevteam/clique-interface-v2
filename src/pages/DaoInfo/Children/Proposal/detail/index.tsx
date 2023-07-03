@@ -56,7 +56,13 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
           {createTimeStampStr(proposalInfo.startTime, proposalInfo.endTime, proposalInfo.status)}
         </Typography>
       </Box>
-      <Typography fontSize={30} fontWeight={600} lineHeight={'20px'} mt={16}>
+      <Typography
+        sx={{ width: '100%', wordWrap: 'break-word' }}
+        fontSize={30}
+        fontWeight={600}
+        lineHeight={'32px'}
+        mt={16}
+      >
         {proposalInfo.title}
       </Typography>
       <Box display={'flex'} mt={15}>
