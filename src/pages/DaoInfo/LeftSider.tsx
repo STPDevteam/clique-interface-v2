@@ -446,7 +446,13 @@ export default function LeftSider() {
                     <ChildItem
                       className={activeIdx === idx1 ? 'activeChild' : ''}
                       onClick={() => {
-                        if (myJoinDaoData.job === 'owner' || item.isPublic) {
+                        if (
+                          myJoinDaoData.job === 'owner' ||
+                          item.isPublic ||
+                          (account &&
+                            account.toLocaleLowerCase() === spaceListData[idx1].creator.account.toLocaleLowerCase()) ||
+                          (!item.isPublic && myJoinDaoData.privateSpaces[idx1]?.isJoin)
+                        ) {
                           setActiveIdx(idx1)
                           history.push(item.link || '')
                         } else if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) {

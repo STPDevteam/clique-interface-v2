@@ -29,7 +29,8 @@ const ContentStyle = styled(Typography)(() => ({
   fontWeight: 700,
   fontSize: 16,
   lineHeight: '16px',
-  color: '#3F5170'
+  color: '#3F5170',
+  wordBreak: 'break-word'
 }))
 
 const InputStyle = styled(NumericalInput)(() => ({
@@ -196,7 +197,7 @@ export default function AddTokenModal({ daoId, setRand }: { daoId: number; setRa
             <ContentTitleStyle sx={{ mb: 20 }}>Symbol </ContentTitleStyle>
             <ContentStyle>{govToken?.token.symbol || '--'}</ContentStyle>
           </Box>
-          <Box>
+          <Box maxWidth={'130px'}>
             <ContentTitleStyle sx={{ mb: 20 }}>Total supply</ContentTitleStyle>
             <ContentStyle>{govToken?.totalSupply.toSignificant(18, { groupSeparator: ',' }) || '--'}</ContentStyle>
           </Box>

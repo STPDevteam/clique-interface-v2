@@ -90,7 +90,20 @@ const ContentWrapper = styled('div')({
   width: '100%',
   maxHeight: '100vh',
   overflow: 'auto',
-  alignItems: 'center'
+  alignItems: 'center',
+  '& .toast-container': {
+    width: 446,
+    '& .Toastify__toast': {
+      borderRadius: '10px',
+      border: '1px solid #97B7EF'
+    },
+    '& .Toastify__toast-body': {
+      justifyContent: 'center',
+      color: '#3F5170',
+      fontWeight: 500,
+      fontSize: 14
+    }
+  }
 })
 
 const BodyWrapper = styled('div')(({}) => ({
@@ -129,7 +142,7 @@ export default function App() {
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
-            <ToastContainer />
+            <ToastContainer className={'toast-container'} position="top-center" />
             <BodyWrapper
               id="body"
               sx={{
