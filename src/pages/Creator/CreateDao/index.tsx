@@ -1,4 +1,4 @@
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // import CrateBg from 'assets/images/cratedao_bg.png'
 // import { ReactComponent as WelcomeTitle } from 'assets/svg/web3title.svg'
@@ -39,6 +39,7 @@ export default function Index() {
   const history = useHistory()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const theme = useTheme()
 
   useEffect(() => {
     if (!account || !userSignature) {
@@ -198,6 +199,12 @@ export default function Index() {
                     value={values.Introduction}
                     onChange={e => setFieldValue('Introduction', e.target.value)}
                     placeholder="Write a description"
+                    maxLength={200}
+                    endAdornment={
+                      <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
+                        {values.Introduction.length}/200
+                      </Typography>
+                    }
                   />
                 </FormItem>
               </Box>

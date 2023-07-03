@@ -1,5 +1,5 @@
 import Modal from '../../../components/Modal/index'
-import { Box, Stack, MenuItem } from '@mui/material'
+import { Box, Stack, MenuItem, Typography, useTheme } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
 import Input from 'components/Input'
 import { useState } from 'react'
@@ -38,6 +38,7 @@ export default function AddTeamspaceModal({
   const { hideModal } = useModal()
   const create = useAddTeamspace()
   const update = useUpdateTeamspace()
+  const theme = useTheme()
 
   const validationSchema = yup.object().shape({
     title: yup
@@ -113,9 +114,14 @@ export default function AddTeamspaceModal({
                 <Input
                   value={values.title}
                   style={{ borderColor: errors.title && touched.title ? '#e46767' : '#d4d7e2' }}
-                  maxLength={200}
+                  maxLength={20}
                   onChange={e => setFieldValue('title', e)}
                   label="Title"
+                  endAdornment={
+                    <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
+                      {values.title.length}/20
+                    </Typography>
+                  }
                 />
               </FormItem>
               <FormItem name="des" required>
@@ -123,7 +129,8 @@ export default function AddTeamspaceModal({
                   height={138}
                   style={{
                     padding: '5px 20px',
-                    borderColor: errors.des && touched.des ? '#e46767' : '#d4d7e2'
+                    borderColor: errors.des && touched.des ? '#e46767' : '#d4d7e2',
+                    lineHeight: '20px'
                   }}
                   value={values.des}
                   maxLength={200}

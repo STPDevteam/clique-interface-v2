@@ -157,14 +157,14 @@ export default function Header() {
                     <Twitter />
                   </LinkStyle>
                 )}
+                {daoInfo?.github && isSocialUrl('github', daoInfo.github) && (
+                  <LinkStyle fontSize={12} target={'_blank'} href={daoInfo.github} underline="none">
+                    <Youtobe />
+                  </LinkStyle>
+                )}
                 {daoInfo?.discord && isSocialUrl('discord', daoInfo.discord) && (
                   <LinkStyle target={'_blank'} href={daoInfo.discord} underline="none">
                     <Discord />
-                  </LinkStyle>
-                )}
-                {daoInfo?.github && isSocialUrl('github', daoInfo.github) && (
-                  <LinkStyle fontSize={12} target={'_blank'} href={daoInfo.github} underline="none" mr={10}>
-                    <Youtobe />
                   </LinkStyle>
                 )}
                 {daoInfo?.website && isSocialUrl('', daoInfo.website) && (

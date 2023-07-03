@@ -1,4 +1,4 @@
-import { Alert, Box, Button as MuiButton, ButtonGroup, Stack, styled, Typography } from '@mui/material'
+import { Alert, Box, Button as MuiButton, ButtonGroup, Stack, styled, Typography, useTheme } from '@mui/material'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
 // import { RowCenter } from './ProposalItem'
@@ -86,6 +86,7 @@ export default function CreateProposal() {
 }
 
 function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
+  const theme = useTheme()
   const history = useHistory()
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
@@ -122,9 +123,16 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     text: string
     name: string
   } = useMemo(() => {
+    console.log(description)
     if (!title.trim()) {
       return {
         text: 'Title required',
+        name: 'title'
+      }
+    }
+    if (title.length > 100) {
+      return {
+        text: 'Title Length exceeds the limit',
         name: 'title'
       }
     }
@@ -249,6 +257,12 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             onChange={val => {
               setTitle(val.target.value)
             }}
+            maxLength={100}
+            endAdornment={
+              <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
+                {title.length}/100
+              </Typography>
+            }
             label="Title"
             style={{ borderColor: startValidate && errors.text && errors.name === 'title' ? '#E46767' : '#D4D7E2' }}
           />
@@ -354,7 +368,8 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
               </Box>
             </Box>
           </Stack>
-          {errors.text && (errors.name === 'balance' || errors.name === 'time') && (
+          {/* {errors.text && (errors.name === 'balance' || errors.name === 'time') && ( */}
+          {errors.text && (
             <Alert style={{ marginTop: 30 }} severity="error">
               {errors.text}
             </Alert>

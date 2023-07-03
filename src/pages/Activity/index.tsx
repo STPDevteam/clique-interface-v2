@@ -39,7 +39,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 const statusItemList = [
   { value: '', label: 'All' },
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
-  { value: ActivityStatus.OPEN, label: ActivityStatus.OPEN },
+  { value: ActivityStatus.Active, label: ActivityStatus.Active },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
   { value: ActivityStatus.AIRDROP, label: 'DAO Rewards' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
