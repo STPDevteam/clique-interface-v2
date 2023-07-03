@@ -217,7 +217,7 @@ export default function Airdrop() {
                 <Grid container spacing={40}>
                   <Grid item md={7} xs={12}>
                     <Box>
-                      <Typography fontSize={20} fontWeight={600}>
+                      <Typography sx={{ width: '100%', wordWrap: 'break-word' }} fontSize={20} fontWeight={600}>
                         {airdropDescData?.title}
                       </Typography>
                       <Box mt={20} className="ql-editor">
@@ -351,7 +351,7 @@ export default function Airdrop() {
                           <StyledText2>{airdropDescData?.addressNum || '--'}</StyledText2>
                         </RowCenter>
 
-                        {airdropDescData?.status === ActivityStatus.OPEN ||
+                        {airdropDescData?.status === ActivityStatus.Active ||
                         airdropDescData?.status === ActivityStatus.ENDED ? (
                           <Box display={'flex'} flexDirection="row-reverse">
                             <BlackButton

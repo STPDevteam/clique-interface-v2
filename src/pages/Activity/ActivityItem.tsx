@@ -34,12 +34,12 @@ const AirdropStyledItem = styled(StyledItem)({
 
 const StyledTitle = styled(Typography)(({}) => ({
   overflow: 'hidden',
-  // height: 26,
-  // textOverflow: 'ellipsis',
-  // display: '-webkit-box',
-  // '-webkit-box-orient': 'vertical',
-  // '-webkit-line-clamp': '2',
-  // wordBreak: 'break-all',
+  height: 54,
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  '-webkit-box-orient': 'vertical',
+  '-webkit-line-clamp': '2',
+  wordBreak: 'break-all',
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '27px'
@@ -108,7 +108,7 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
 
 export const activityStatusText = {
   [ActivityStatus.SOON]: 'Soon',
-  [ActivityStatus.OPEN]: 'Open',
+  [ActivityStatus.Active]: 'Open',
   [ActivityStatus.ENDED]: 'Ended',
   [ActivityStatus.AIRDROP]: 'DAO Rewards',
   [ActivityStatus.CLOSED]: 'Closed'
@@ -119,7 +119,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
   let targetTimeString = ''
   if (item.status === ActivityStatus.SOON) {
     targetTimeString = getTargetTimeString(now, item.eventStartTime)
-  } else if (item.status === ActivityStatus.OPEN) {
+  } else if (item.status === ActivityStatus.Active) {
     targetTimeString = getTargetTimeString(now, item.eventEndTime)
   } else if (item.status === ActivityStatus.ENDED) {
     targetTimeString = getTargetTimeString(now, item.airdropStartTime)
@@ -131,7 +131,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
     <>
       <StyledStatusText
         color={
-          [ActivityStatus.OPEN, ActivityStatus.AIRDROP].includes(item.status)
+          [ActivityStatus.Active, ActivityStatus.AIRDROP].includes(item.status)
             ? 'active'
             : [ActivityStatus.SOON, ActivityStatus.ENDED].includes(item.status)
             ? 'soon'
