@@ -54,7 +54,6 @@ export default function VoteProgress({
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  console.log(proposalInfo)
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -164,7 +163,18 @@ function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes:
             ))}
           </Box>
           {!proposalVoteList.length && <EmptyData />}
-          <Box display={'flex'} justifyContent="center">
+          <Box
+            display={'flex'}
+            justifyContent="center"
+            sx={{
+              '& .MuiPaginationItem-previousNext': {
+                background: '#fff !important'
+              },
+              '& .MuiPaginationItem-page.Mui-selected': {
+                color: '#3F5170'
+              }
+            }}
+          >
             <Pagination
               count={page.totalPage}
               page={page.currentPage}
