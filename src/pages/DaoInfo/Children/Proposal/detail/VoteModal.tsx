@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import NumericalInput from 'components/Input/InputNumerical'
 import { formatNumberWithCommas } from 'utils'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import BigNumber from 'bignumber.js'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -116,6 +117,12 @@ function VoteModalFunc({
         error: 'You have already voted'
       }
     }
+    if (Number(injectVotes) === 0 && injectVotes) {
+      return {
+        disabled: true,
+        error: 'Vote amount must greater than 0'
+      }
+    }
     if (!injectVotes && proposalInfo.votingType === 2) {
       return {
         disabled: true,
@@ -170,7 +177,9 @@ function VoteModalFunc({
                 Your votes
               </Typography>
               <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
-                {(myVotes && formatNumberWithCommas(myVotes - myAlreadyVotes)) || '--'}
+                {(myVotes &&
+                  formatNumberWithCommas(new BigNumber(myVotes).minus(new BigNumber(myAlreadyVotes)).toString())) ||
+                  '--'}
               </Typography>
             </Box>
           </Stack>
@@ -256,7 +265,10 @@ function MultiVote({
           />
           <Typography> / </Typography>
           <Typography color={theme.palette.text.primary}>
-            {(totalVotes && myAlreadyVotes && formatNumberWithCommas(totalVotes - myAlreadyVotes)) || '--'}
+            {(totalVotes &&
+              myAlreadyVotes &&
+              formatNumberWithCommas(new BigNumber(totalVotes).minus(new BigNumber(myAlreadyVotes)).toString())) ||
+              '--'}
           </Typography>
         </Box>
       </RowCenter>

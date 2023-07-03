@@ -7,7 +7,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Box
 } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Image from 'components/Image'
@@ -16,12 +17,14 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo, useState } from 'react'
 import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
-import { shortenAddress } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 import defaultLogo from 'assets/images/create-token-ball.png'
 import { ChainListMap } from 'constants/chain'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useParams } from 'react-router-dom'
 import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
+import Copy from 'components/essential/Copy'
+import { ExternalLink } from 'theme/components'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
@@ -111,7 +114,7 @@ export default function About() {
           <StyledText>
             {votingPeriodDate
               ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
-              : '--'}
+              : 'Customization'}
           </StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
@@ -276,6 +279,7 @@ const TableContentText = styled(TableCell)(() => ({
 }))
 
 function BasicTable({ list }: { list: govList[] }) {
+  console.log('🚀 ~ file: index.tsx:281 ~ BasicTable ~ list:', list)
   return (
     <>
       {list.length === 0 ? (
@@ -300,7 +304,20 @@ function BasicTable({ list }: { list: govList[] }) {
                     {row.tokenName}({row.symbol})
                   </TableContentText>
                   <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>
-                  <TableContentText>{shortenAddress(row?.tokenAddress, 3)}</TableContentText>
+                  <TableContentText>
+                    <Box
+                      display={'flex'}
+                      flexDirection={'row'}
+                      sx={{
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenAddress, 'address')}>
+                        {shortenAddress(row?.tokenAddress, 3)}
+                      </ExternalLink>
+                      <Copy margin="0 0 0 10px" toCopy={row?.tokenAddress} />
+                    </Box>
+                  </TableContentText>
                   <TableContentText>{row?.createRequire}</TableContentText>
                   <TableContentText>{row?.weight}</TableContentText>
                 </TableRow>

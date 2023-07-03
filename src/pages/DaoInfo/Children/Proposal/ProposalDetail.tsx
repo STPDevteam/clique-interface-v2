@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import Back from 'components/Back'
 import Loading from 'components/Loading'
 import { routes } from 'constants/routes'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import DetailContent from './detail'
 // import DetailVote from './detail/Vote'
@@ -41,6 +41,10 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoId}/proposal`)
   }, [daoId, history])
+
+  useEffect(() => {
+    setRand(Math.random())
+  }, [account])
 
   return proposalDetailInfo ? (
     <Box>

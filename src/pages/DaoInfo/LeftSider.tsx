@@ -446,9 +446,12 @@ export default function LeftSider() {
                     <ChildItem
                       className={activeIdx === idx1 ? 'activeChild' : ''}
                       onClick={() => {
-                        if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) return
-                        setActiveIdx(idx1)
-                        history.push(item.link || '')
+                        if (myJoinDaoData.job === 'owner' || item.isPublic) {
+                          setActiveIdx(idx1)
+                          history.push(item.link || '')
+                        } else if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) {
+                          return
+                        }
                       }}
                     >
                       {item.isPublic ? (
@@ -469,7 +472,10 @@ export default function LeftSider() {
                         </>
                       ) : (
                         <>
-                          <Box className={'LBox'} sx={{ cursor: 'not-allowed' }}>
+                          <Box
+                            className={'LBox'}
+                            sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
+                          >
                             <Image src={item.logo || ''}></Image>
                             <Typography noWrap sx={{ opacity: 0.3 }}>
                               {item.title}

@@ -101,6 +101,7 @@ export default function VoteProgress({
                 height="36px"
                 disabled={
                   proposalInfo.yourVotes === 0 ||
+                  proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
                   proposalInfo.status === 'Soon' ||
                   proposalInfo.status === 'Cancel' ||
                   proposalInfo.status === 'Failed' ||
