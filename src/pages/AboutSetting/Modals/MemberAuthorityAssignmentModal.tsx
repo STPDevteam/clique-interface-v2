@@ -5,6 +5,7 @@ import { useCallback, useMemo } from 'react'
 import OutlineButton from 'components/Button/OutlineButton'
 import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
+import DoubleCheckModal from './DoubleCheckModal'
 
 const MemberCard = styled(Box)({
   display: 'flex',
@@ -59,7 +60,7 @@ export default function MemberAuthorityAssignmentModal({
   level: number
   onDimiss: () => void
 }) {
-  const { hideModal } = useModal()
+  const { showModal, hideModal } = useModal()
   const changeRole = useChangeAdminRole()
   const btnDisabledList = useMemo(() => {
     if (myLevel === 1) {
@@ -88,9 +89,10 @@ export default function MemberAuthorityAssignmentModal({
 
   const changeAdminLevelClick = useCallback(
     (index: number) => {
-      removeMemberClick(index)
+      hideModal()
+      showModal(<DoubleCheckModal action={() => removeMemberClick(index)} />)
     },
-    [removeMemberClick]
+    [hideModal, removeMemberClick, showModal]
   )
 
   return (

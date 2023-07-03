@@ -33,11 +33,15 @@ const Title = styled(Typography)({
 export default function TransferAdminModal({
   daoId,
   spacesId,
-  onDimiss
+  onDimiss,
+  operator,
+  isCreator
 }: {
   daoId: number
   spacesId: number
   onDimiss: () => void
+  operator: string
+  isCreator: boolean | undefined | null
 }) {
   const { hideModal } = useModal()
   const { account } = useActiveWeb3React()
@@ -68,7 +72,7 @@ export default function TransferAdminModal({
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
       <Box display="grid" textAlign={'center'} width="100%" height="180px">
-        <Title>Leave workspace</Title>
+        <Title>{isCreator && (operator === 'owner' || !isCreator) ? 'Transfer' : 'Level'} workspace</Title>
         <Text>Transfer this workspace to an admin.</Text>
         <PopperCard
           sx={{

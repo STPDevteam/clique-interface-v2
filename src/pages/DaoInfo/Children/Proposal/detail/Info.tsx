@@ -3,7 +3,7 @@ import { BlackButton } from 'components/Button/Button'
 import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
 import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
-import { shortenAddress } from 'utils'
+import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import { VoteWrapper } from './Vote'
 import { Dispatch, SetStateAction, useCallback } from 'react'
@@ -16,6 +16,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
 import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
+import Copy from 'components/essential/Copy'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
@@ -28,7 +29,6 @@ export default function Info({
   proposalInfo: useProposalDetailInfoProps
   refresh: Dispatch<SetStateAction<number>>
 }) {
-  console.log('🚀 ~ file: Info.tsx:23 ~ Info ~ proposalInfo:', proposalInfo)
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   const { account } = useActiveWeb3React()
@@ -50,20 +50,31 @@ export default function Info({
   return (
     <VoteWrapper>
       <Box>
-        <Typography fontSize={14} fontWeight={600} color={'#80829F'}>
+        <Typography fontSize={14} fontWeight={600} color={'#80829F'} mb={6}>
           Details
         </Typography>
-        <Box
-          mt={12}
-          sx={{
-            borderTop: '1px solid #D4D7E2'
-          }}
-          padding={'13px 0 0'}
-          display={'grid'}
-          gridTemplateColumns="86px 1fr"
-          rowGap={10}
-          alignItems={'center'}
-        >
+        <div className="ql-editor" style={{ borderTop: '1px solid #D4D7E2' }}>
+          {ReactHtmlParser(
+            filterXSS(proposalInfo.content || '', {
+              onIgnoreTagAttr: function(_, name, value) {
+                if (name === 'class') {
+                  return name + '="' + escapeAttrValue(value) + '"'
+                }
+                return undefined
+              }
+            })
+          )}
+        </div>
+        <Box mb={12} display={'grid'} gridTemplateColumns="186px 1fr" rowGap={10} alignItems={'center'}>
+          <LeftText>ProposalThreshold</LeftText>
+          <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
+
+          <LeftText>Token contract address</LeftText>
+          <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
+            <Typography>{proposalInfo.useVoteBase[0].tokenAddress}</Typography>
+            <Copy toCopy={proposalInfo.useVoteBase[0].tokenAddress} />
+          </Box>
+
           <LeftText>Proposer</LeftText>
           <Box display={'flex'} flexDirection={'row'} gap={10}>
             <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
@@ -98,18 +109,6 @@ export default function Info({
             </svg>
           </MuiLink> */}
         </Box>
-        <div className="ql-editor">
-          {ReactHtmlParser(
-            filterXSS(proposalInfo.content || '', {
-              onIgnoreTagAttr: function(_, name, value) {
-                if (name === 'class') {
-                  return name + '="' + escapeAttrValue(value) + '"'
-                }
-                return undefined
-              }
-            })
-          )}
-        </div>
         {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
           <Box mt={15}>
             <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>

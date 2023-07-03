@@ -201,6 +201,7 @@ export interface useProposalDetailInfoProps {
   title: string
   useVoteBase: govList[]
   votingType: number
+  proposalThreshold: number
   yourVotes: number
 }
 

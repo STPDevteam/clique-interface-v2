@@ -372,6 +372,12 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                       daoId={daoId}
                                       spacesId={row.data.spacesId}
                                       onDimiss={onDimiss}
+                                      operator={adminLevel.job}
+                                      isCreator={
+                                        row.data &&
+                                        account &&
+                                        account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase()
+                                      }
                                     />
                                   )
                                 } else {

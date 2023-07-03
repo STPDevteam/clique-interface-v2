@@ -48,7 +48,7 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
 
   return proposalDetailInfo ? (
     <Box>
-      <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
+      <Back sx={{ marginLeft: 0 }} text="All Proposals" event={toList} />
       <Box mt={20}>
         <Grid container spacing={20}>
           <Grid item md={12} xs={12}>

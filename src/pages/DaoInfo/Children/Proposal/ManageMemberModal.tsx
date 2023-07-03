@@ -131,7 +131,7 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
                 <StyledListText noWrap>{shortenAddress(item.account)}</StyledListText>
                 <StyledListRightText
                   onClick={() => {
-                    if (account && item.account === account.toLocaleLowerCase()) {
+                    if (account && item.account.toLocaleLowerCase() === account.toLocaleLowerCase()) {
                       toast.error('Unable to remove yourself')
                       return
                     }

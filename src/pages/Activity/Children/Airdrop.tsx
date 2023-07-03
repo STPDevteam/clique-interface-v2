@@ -212,7 +212,7 @@ export default function Airdrop() {
         <ContainerWrapper maxWidth={1150}>
           {!showManage ? (
             <Stack spacing={40}>
-              <Back sx={{ margin: 0 }} />
+              <Back sx={{ margin: '0 !important' }} />
               <Box>
                 <Grid container spacing={40}>
                   <Grid item md={7} xs={12}>
@@ -428,7 +428,7 @@ export default function Airdrop() {
             </Stack>
           ) : (
             <Box>
-              <Back sx={{ margin: 0 }} event={() => setShowManage(false)} />
+              <Back sx={{ margin: '0 !important' }} event={() => setShowManage(false)} />
               {airdropInfos && airdropDescData && (
                 <ManageLoading
                   airdropInfo={airdropInfos}

@@ -90,6 +90,7 @@ export function useActivityListPaginationCallback() {
 
 export function useNotificationListPaginationCallback() {
   const data = useSelector((state: AppState) => state.pagination.notificationListPagination)
+  console.log('🚀 ~ file: hooks.tsx:93 ~ useNotificationListPaginationCallback ~ data:', data)
 
   const dispatch = useDispatch<AppDispatch>()
   const updateNotificationListPaginationCallback = useCallback(

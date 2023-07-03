@@ -344,7 +344,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
   return (
     <DaoContainer>
       <Box>
-        <Back sx={{ margin: 0 }} text="All DAO Rewards" event={toList} />
+        <Back sx={{ marginLeft: 0 }} text="All DAO Rewards" event={toList} />
         <Box mt={20}>
           <ContainerWrapper maxWidth={709}>
             <Typography variant="h6">Create A DAO Rewards Event</Typography>

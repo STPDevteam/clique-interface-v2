@@ -47,7 +47,7 @@ export interface NotificationProp {
 export function useNotificationListInfo() {
   const {
     data: { currentPage },
-    setUnReadCount,
+    // setUnReadCount,
     setCurrentPage
   } = useNotificationListPaginationCallback()
   const { account } = useActiveWeb3React()
@@ -65,7 +65,7 @@ export function useNotificationListInfo() {
     ;(async () => {
       if (!account) {
         setResult([])
-        setUnReadCount(0)
+        // setUnReadCount(0)
         return
       }
       setLoading(true)
@@ -78,7 +78,7 @@ export function useNotificationListInfo() {
           return
         }
         setTotal(data.total)
-        setUnReadCount(data.unreadTotal)
+        // setUnReadCount(data.unreadTotal)
         setResult(data.data)
       } catch (error) {
         setResult([])

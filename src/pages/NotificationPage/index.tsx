@@ -195,9 +195,11 @@ export default function NotificationPage() {
   const {
     setReadOnce,
     setReadAll,
+    data,
     data: { unReadCount }
   } = useNotificationListPaginationCallback()
   const { toBackedReadAll, toBackedReadOnce } = useNotificationToRead()
+  console.log('notificationList', notificationList, unReadCount, data)
 
   return (
     <Box
@@ -236,7 +238,7 @@ export default function NotificationPage() {
                 }
               }}
             >
-              Make all as read
+              Mark all as read
             </OutlineButton>
           </Stack>
         </RowCenter>
