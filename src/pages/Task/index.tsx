@@ -20,7 +20,7 @@ import {
   GridValueFormatterParams,
   GridSelectionModel
 } from '@mui/x-data-grid'
-import { useGetTaskList, useSpacesInfo } from 'hooks/useBackedTaskServer'
+import { useGetTaskList } from 'hooks/useBackedTaskServer'
 import { useMemo } from 'react'
 import { useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
@@ -234,9 +234,8 @@ const statusFilter = [
 
 const AllTaskTable = function({ priority, status }: { priority: string | undefined; status: string | undefined }) {
   // const [selectedRow, setSelectRow] = useState<GridSelectionModel>()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
-  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, status, priority)
+  const { spacesId } = useParams<{ spacesId: string }>()
+  const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), status, priority)
   // const remove = useRemoveTask()
 
   const rows = useMemo(() => {

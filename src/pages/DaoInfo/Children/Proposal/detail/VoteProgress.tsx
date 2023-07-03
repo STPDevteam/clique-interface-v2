@@ -103,6 +103,8 @@ export default function VoteProgress({
                   proposalInfo.yourVotes === 0 ||
                   proposalInfo.status === 'Soon' ||
                   proposalInfo.status === 'Cancel' ||
+                  proposalInfo.status === 'Failed' ||
+                  proposalInfo.status === 'Success' ||
                   (proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1)
                 }
                 onClick={() => {

@@ -112,7 +112,13 @@ function ProposalV3Item(props: ProposalListBaseProp) {
         {props.title}
       </Typography>
       <RowCenter sx={{ mt: 10 }}>
-        <Box sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box
+          sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          onClick={e => {
+            history.push(routes._Profile + `/${props.proposer.account}`)
+            e.stopPropagation()
+          }}
+        >
           <Image height={20} width={20} src={props.proposer?.avatar || avatar} />
           <Typography variant="body1" sx={{ lineHeight: '20px' }}>
             {props.proposer?.nickname || 'unnamed'}

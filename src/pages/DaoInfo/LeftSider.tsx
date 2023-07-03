@@ -25,6 +25,7 @@ import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -211,6 +212,7 @@ export function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string
 
 export default function LeftSider() {
   const { pathname } = useLocation()
+  const { account } = useActiveWeb3React()
   const history = useHistory()
   const [activeIndex, setActiveIndex] = useState([false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
@@ -328,14 +330,15 @@ export default function LeftSider() {
             }
           >
             <>
-              {myJoinedDaoList.map(option => (
-                <Box
-                  key={option.daoId + option.daoName}
-                  onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
-                >
-                  <DaoItem {...option} />
-                </Box>
-              ))}
+              {account &&
+                myJoinedDaoList.map(option => (
+                  <Box
+                    key={option.daoId + option.daoName}
+                    onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+                  >
+                    <DaoItem {...option} />
+                  </Box>
+                ))}
             </>
           </PopperCard>
         </Box>

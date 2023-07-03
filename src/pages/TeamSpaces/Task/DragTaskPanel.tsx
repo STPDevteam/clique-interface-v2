@@ -261,11 +261,11 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].weight
         )
           .then((res: any) => {
-            if (res.code !== 200) {
-              toast.error(res.msg || 'network error')
+            if (res.data.code !== 200) {
+              toast.error(res.msg || 'Network error')
               return
             }
-            toast.success('update success')
+            toast.success('Update success')
             setRand(Math.random())
             console.log(res)
           })
@@ -306,11 +306,11 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].weight
         )
           .then((res: any) => {
-            if (res.code !== 200) {
-              toast.error(res.msg || 'network error')
+            if (res.data.code !== 200) {
+              toast.error(res.msg || 'Network error')
               return
             }
-            toast.success('update success')
+            toast.success('Update success')
             setRand(Math.random())
             console.log(res)
           })

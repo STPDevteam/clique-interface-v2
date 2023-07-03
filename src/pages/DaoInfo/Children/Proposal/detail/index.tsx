@@ -21,6 +21,8 @@ function createTimeStampStr(startTime: number, endTime: number, status: string) 
     targetTimeString = getTargetTimeString(now, startTime)
   } else if (status === 'Active') {
     targetTimeString = getTargetTimeString(now, endTime)
+  } else if (status === 'Cancel') {
+    targetTimeString = 'User Cancel'
   } else {
     targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
   }

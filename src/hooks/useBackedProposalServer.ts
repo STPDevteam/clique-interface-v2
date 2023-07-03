@@ -51,6 +51,7 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
     } else {
       _status = ProposalStatus.CLOSED
     }
+    if (item.status === 'Cancel') _status = ProposalStatus.CANCEL
 
     let targetTimeString = ''
     if (_status === ProposalStatus.SOON) {
@@ -60,6 +61,7 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
     } else {
       targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
     }
+    if (_status === ProposalStatus.CANCEL) targetTimeString = 'User Cancel'
 
     return {
       proposalId: item.proposalId,
@@ -111,7 +113,6 @@ export function useProposalBaseList(daoId: number) {
         const res = await getProposalList(daoId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data as any
-
         if (!data) {
           setResult([])
           setTotal(0)

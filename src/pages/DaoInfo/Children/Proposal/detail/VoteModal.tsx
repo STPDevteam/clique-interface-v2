@@ -42,6 +42,7 @@ export default function VoteModal({
     <VoteModalFunc
       refresh={refresh}
       myVotes={proposalInfo.yourVotes}
+      myAlreadyVotes={proposalInfo.alreadyVoted}
       voteProposalSign={daoInfo.governance[0]}
       proposalInfo={proposalInfo}
       proposalOptions={proposalOptions}
@@ -53,6 +54,7 @@ function VoteModalFunc({
   refresh,
   proposalInfo,
   myVotes,
+  myAlreadyVotes,
   voteProposalSign,
   proposalOptions
 }: {
@@ -60,6 +62,7 @@ function VoteModalFunc({
   proposalInfo: useProposalDetailInfoProps
   voteProposalSign: govList
   myVotes: number
+  myAlreadyVotes: number
   proposalOptions: number
 }) {
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
@@ -167,13 +170,14 @@ function VoteModalFunc({
                 Your votes
               </Typography>
               <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
-                {(myVotes && formatNumberWithCommas(myVotes)) || '--'}
+                {(myVotes && formatNumberWithCommas(myVotes - myAlreadyVotes)) || '--'}
               </Typography>
             </Box>
           </Stack>
         ) : (
           <MultiVote
             totalVotes={myVotes}
+            myAlreadyVotes={myAlreadyVotes}
             voteProposalSign={voteProposalSign}
             FatherVotes={injectVotes}
             setFatherVotes={handleVotesChange}
@@ -222,11 +226,13 @@ function VoteModalFunc({
 
 function MultiVote({
   totalVotes,
+  myAlreadyVotes,
   voteProposalSign,
   FatherVotes,
   setFatherVotes
 }: {
   totalVotes: number | undefined
+  myAlreadyVotes: number | undefined
   voteProposalSign: govList
   FatherVotes: string
   setFatherVotes: Dispatch<SetStateAction<string>>
@@ -240,13 +246,17 @@ function MultiVote({
         <Text>Your votes</Text>
         <Box display={'grid'} flexDirection={'row'} alignItems={'center'} gridTemplateColumns={'auto 10px auto'}>
           <NumericalInput
+            placeholder="0"
             style={{ marginRight: 10, width: 173 }}
             value={FatherVotes}
-            onChange={e => setFatherVotes(e.target.value)}
+            onChange={e => {
+              if (totalVotes && myAlreadyVotes && Number(e.target.value) > totalVotes - myAlreadyVotes) return
+              setFatherVotes(e.target.value)
+            }}
           />
           <Typography> / </Typography>
           <Typography color={theme.palette.text.primary}>
-            {(totalVotes && formatNumberWithCommas(totalVotes)) || '--'}
+            {(totalVotes && myAlreadyVotes && formatNumberWithCommas(totalVotes - myAlreadyVotes)) || '--'}
           </Typography>
         </Box>
       </RowCenter>

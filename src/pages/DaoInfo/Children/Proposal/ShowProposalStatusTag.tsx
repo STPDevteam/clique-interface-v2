@@ -50,6 +50,8 @@ export default function ShowProposalStatusTag({ status }: { status: ProposalStat
 }
 
 export function ShowProposalStatusV3Tag({ status }: { status: ProposalStatus }) {
+  console.log(status)
+
   const theme = useTheme()
   return status === ProposalStatus.SOON ? (
     <StyledV3Chip label="Soon" variant="outlined" bgColor={theme.palette.common.white} textColor={'#21C331'} />
