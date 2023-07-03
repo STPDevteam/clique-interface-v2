@@ -16,6 +16,7 @@ import OutlineButton from 'components/Button/OutlineButton'
 import { Dots } from 'theme/components'
 import { timeStampToFormat } from 'utils/dao'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
+import { ChainId } from 'constants/chain'
 
 const claimBtnStyle = {
   width: '75px',
@@ -102,30 +103,34 @@ function CreateTokenReservedList() {
   const createTokenReserved = useCreateTokenReserved()
 
   return (
-    <Box display={'grid'} gap="10px" mt={25}>
-      {createTokenReserved?.map((item, index) => (
-        <StyledClaimItem key={index}>
-          <Stack direction={'row'} spacing={6} alignItems="center" flexWrap={'wrap'}>
-            <CurrencyLogo size="24px" currency={item.tokenAmount.token} />
-            <Link
-              target={'_blank'}
-              underline="none"
-              href={getEtherscanLink(item.tokenAmount.token.chainId, item.tokenAmount.token.address, 'address')}
-            >
-              <b>
-                {item.tokenAmount.toSignificant(6, { groupSeparator: ',' })} {item.tokenAmount.token.symbol}
-              </b>
-            </Link>
-            <Typography>can be claimed on {timeStampToFormat(item.lockDate)}</Typography>
-          </Stack>
-          <CreateTokenReservedClaim item={item} />
-        </StyledClaimItem>
-      ))}
-    </Box>
+    <>
+      {createTokenReserved && (
+        <Box display={'grid'} gap="10px" mt={25}>
+          {createTokenReserved?.map((item, index) => (
+            <StyledClaimItem key={index}>
+              <Stack direction={'row'} spacing={6} alignItems="center" flexWrap={'wrap'}>
+                <CurrencyLogo size="24px" currency={item.tokenAmount.token} />
+                <Link
+                  target={'_blank'}
+                  underline="none"
+                  href={getEtherscanLink(item.tokenAmount.token.chainId, item.tokenAmount.token.address, 'address')}
+                >
+                  <b>
+                    {item.tokenAmount.toSignificant(6, { groupSeparator: ',' })} {item.tokenAmount.token.symbol}
+                  </b>
+                </Link>
+                <Typography>can be claimed on {timeStampToFormat(item.lockDate)}</Typography>
+              </Stack>
+              <CreateTokenReservedClaim item={item} />
+            </StyledClaimItem>
+          ))}
+        </Box>
+      )}
+    </>
   )
 }
 
-export default function MyTokens({ account }: { account: string }) {
+export default function MyTokens({ account, chainId }: { account: string; chainId: ChainId | undefined }) {
   const theme = useTheme()
   return (
     <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
@@ -138,8 +143,8 @@ export default function MyTokens({ account }: { account: string }) {
         </Typography>
       </Box>
       <CreateTokenReservedList />
-      <Box mt={25}>
-        <TokenListTable account={account} />
+      <Box sx={{ mt: 25 }}>
+        <TokenListTable account={account} chainId={chainId} />
       </Box>
     </ContainerWrapper>
   )

@@ -798,11 +798,11 @@ export function useTokenList(account: string, chainId: number | string) {
           setTotal(0)
           return
         }
-        setTotal(data.total)
+        setTotal(res.data.total)
         const list: {
           chainId: ChainId
           tokenAddress: string
-        }[] = data.list.map((item: any) => ({
+        }[] = data.map((item: any) => ({
           chainId: item.chainId,
           tokenAddress: item.tokenAddress
         }))

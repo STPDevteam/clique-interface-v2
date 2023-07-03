@@ -124,9 +124,10 @@ export default function Index() {
           <Box component={Form} sx={{ height: '100%', width: '100%', display: 'flex' }}>
             <Box
               sx={{
-                height: 'calc(100vh - 80px)',
-                width: '600px',
-                minWidth: 600,
+                height: '100vh',
+                // minHeight: '900px',
+                maxWidth: '70vh',
+                width: '50vw',
                 display: 'flex'
               }}
             >
@@ -145,7 +146,7 @@ export default function Index() {
               sx={{
                 boxSizing: 'border-box',
                 maxWidth: 644,
-                padding: '70px 0 0 80px'
+                padding: '70px  80px'
               }}
             >
               <Typography variant="h3" sx={{ lineHeight: '56px', fontWeight: 700 }}>
@@ -216,7 +217,14 @@ export default function Index() {
               </Box>
 
               <Box
-                sx={{ mt: 40, width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                sx={{
+                  mt: 40,
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 10
+                }}
               >
                 {/* <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
                   Back

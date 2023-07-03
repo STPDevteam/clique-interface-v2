@@ -27,8 +27,6 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
     ])
   }, [loading, tokenList])
 
-  console.log(tableList)
-
   return (
     <>
       {tableList.length !== 0 ? (
@@ -42,7 +40,7 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
           <DelayLoading loading={loading}>
             <Loading sx={{ marginTop: 30 }} />
           </DelayLoading>
-          <Box mt={40} display={'flex'} justifyContent="center">
+          <Box mt={20} display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}
               page={page.currentPage}
@@ -51,7 +49,7 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
           </Box>
         </>
       ) : (
-        <Box mt={-25}>
+        <Box>
           <EmptyData>No Data</EmptyData>
         </Box>
       )}
