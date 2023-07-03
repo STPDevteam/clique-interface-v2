@@ -71,25 +71,24 @@ function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boole
         item.types === 'Airdrop'
           ? 'You have a new DAO Rewards can be claimed'
           : item.types === 'NewProposal'
-          ? item.info.proposalName || ''
+          ? item.activityTitle || ''
           : item.types === 'ReserveToken'
           ? 'You have a new token can be claimed'
           : 'message',
       link:
         item.types === 'Airdrop'
-          ? item.info.activityId && item.info.chainId && item.info.daoAddress
-            ? routes._ActivityAirdropDetail + `/${item.info.chainId}/${item.info.daoAddress}/${item.info.activityId}`
+          ? item.activityId && item.daoId
+            ? routes._ActivityAirdropDetail + `/${item.daoId}/${item.activityId}`
             : ''
           : item.types === 'NewProposal'
-          ? item.info.chainId && item.info.daoAddress
-            ? routes._DaoInfo +
-              `/${item.info.chainId}/${item.info.daoAddress}/proposal/detail/${item.info.proposalId || 0}`
+          ? item.daoId && item.activityId
+            ? routes._DaoInfo + `/${item.daoId}/proposal/detail/${item.activityId || 0}`
             : ''
           : item.types === 'ReserveToken'
           ? routes._Profile
           : ''
     }
-  }, [item.info, item.types])
+  }, [item.activityId, item.activityTitle, item.daoId, item.types])
 
   return (
     <Box sx={{ cursor: isReadAll ? 'auto' : 'pointer' }}>
@@ -99,9 +98,9 @@ function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boole
       </RowCenter>
       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
         <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} src={item.info.daoLogo} />
+          <DaoAvatars size={64} src={item.daoLogo} />
           <Box ml={16}>
-            <Text>{item.info.daoName}</Text>
+            <Text>{item.daoName}</Text>
             <Text display={'inline-block'}>
               {showData.text}
               {'. '}
