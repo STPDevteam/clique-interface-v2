@@ -150,7 +150,8 @@ export default function General({ daoId }: { daoId: number }) {
                 toast.error('There can only be one governance token, if you want to modify it, please remove it first')
                 return
               }
-              showModal(<AddTokenModal daoId={daoId} setRand={() => {}} />)
+
+              showModal(<AddTokenModal updater={updateDaoBaseData} daoId={daoId} setRand={() => {}} />)
             }}
           >
             Add Governance Token

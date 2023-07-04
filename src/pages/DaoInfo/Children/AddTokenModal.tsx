@@ -41,7 +41,15 @@ const RedText = styled(Typography)({
   color: '#E46767'
 })
 
-export default function AddTokenModal({ daoId, setRand }: { daoId: number; setRand: () => void }) {
+export default function AddTokenModal({
+  updater,
+  daoId,
+  setRand
+}: {
+  updater: () => void
+  daoId: number
+  setRand: () => void
+}) {
   const { hideModal } = useModal()
   const [tokenAddress, setTokenAddress] = useState('')
   const [baseChainId, setBaseChainId] = useState<any>('')
@@ -123,8 +131,9 @@ export default function AddTokenModal({ daoId, setRand }: { daoId: number; setRa
       toast.success('Add success')
       hideModal()
       setRand()
+      updater()
     })
-  }, [addToken, avatar, daoId, govToken, hideModal, requirementAmount, setRand, voteBtn.error])
+  }, [addToken, avatar, daoId, govToken, hideModal, requirementAmount, updater, setRand, voteBtn.error])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>

@@ -52,7 +52,7 @@ export interface daoInfoPops {
   token: any
 }
 
-export default function AddTokenModal({
+export default function EditTokenModal({
   daoInfo,
   daoId,
   proposalThreshold,
