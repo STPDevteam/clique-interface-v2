@@ -126,20 +126,22 @@ export default function Index() {
             <Box
               sx={{
                 height: '100vh',
-                // minHeight: '900px',
                 maxWidth: '70vh',
                 width: '50vw',
-                display: 'flex'
+                [theme.breakpoints.down('sm')]: {
+                  display: 'none'
+                }
               }}
             >
               <img
                 src={WelcomeWeb3}
                 alt=""
                 style={{
-                  height: '100%',
-                  width: '100%',
-                  objectFit: 'cover',
-                  flexGrow: 1
+                  position: 'fixed',
+                  height: '100vh',
+                  maxWidth: '70vh',
+                  width: '50vw',
+                  objectFit: 'cover'
                 }}
               />
             </Box>
@@ -147,7 +149,10 @@ export default function Index() {
               sx={{
                 boxSizing: 'border-box',
                 maxWidth: 644,
-                padding: '70px  80px'
+                padding: '70px  80px',
+                [theme.breakpoints.down('sm')]: {
+                  padding: '40px  30px'
+                }
               }}
             >
               <Typography variant="h3" sx={{ lineHeight: '56px', fontWeight: 700 }}>
@@ -243,7 +248,14 @@ export default function Index() {
                   startIcon={<></>}
                   variant="contained"
                   color="primary"
-                  sx={{ width: 270, height: 40, textAlign: 'center' }}
+                  sx={{
+                    width: 270,
+                    height: 40,
+                    textAlign: 'center',
+                    [theme.breakpoints.down('sm')]: {
+                      width: 180
+                    }
+                  }}
                   type="submit"
                 >
                   Create Now

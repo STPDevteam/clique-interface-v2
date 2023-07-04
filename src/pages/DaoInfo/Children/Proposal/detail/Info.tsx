@@ -49,7 +49,7 @@ export default function Info({
 
   return (
     <VoteWrapper>
-      <Box>
+      <Box pb={40}>
         <Typography fontSize={14} fontWeight={600} color={'#80829F'} mb={6}>
           Details
         </Typography>

@@ -21,7 +21,7 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
       </Box>,
       <ChainText key={tokenAddress} chainId={chainId} />,
       <ShowCopyTokenAddress key={2} address={tokenAddress} chainId={chainId} />,
-      <Typography key={tokenAddress} fontWeight={600} fontSize={13}>
+      <Typography sx={{ whiteSpace: 'normal' }} key={tokenAddress} fontWeight={600} fontSize={13}>
         <ShowTokenSupply address={tokenAddress} chainId={chainId} />
       </Typography>
     ])
