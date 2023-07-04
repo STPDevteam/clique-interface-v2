@@ -39,7 +39,7 @@ function daoActivityListHandler(data: any) {
       eventStartTime > curTime
         ? ActivityStatus.SOON
         : eventStartTime <= curTime && curTime <= eventEndTime
-        ? ActivityStatus.Active
+        ? ActivityStatus.OPEN
         : airdropStartTime > curTime
         ? ActivityStatus.ENDED
         : airdropStartTime <= curTime && curTime <= airdropEndTime
@@ -345,7 +345,7 @@ export function useGetAirdropDescData(airdropId: number) {
           eventStartTime > curTime
             ? ActivityStatus.SOON
             : eventStartTime <= curTime && curTime <= eventEndTime
-            ? ActivityStatus.Active
+            ? ActivityStatus.OPEN
             : airdropStartTime > curTime
             ? ActivityStatus.ENDED
             : airdropStartTime <= curTime && curTime <= airdropEndTime
