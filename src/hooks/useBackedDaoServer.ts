@@ -33,7 +33,9 @@ import {
   removeSpacesMember,
   addSpacesMember,
   getUserQuitDao,
-  transferSpacesMember
+  transferSpacesMember,
+  setDaoGovernance,
+  WeightPops
 } from '../utils/fetch/server'
 import { useWeb3Instance } from './useWeb3Instance'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -966,6 +968,15 @@ export function useUpdateGovernance() {
       return updateGovernance(daoId, proposalThreshold, votingPeriod, votingType, weight)
         .then(res => res)
         .catch(err => err)
+    },
+    []
+  )
+}
+
+export function useSetDaoGovernance() {
+  return useCallback(
+    (daoId: number, proposalThreshold: number, votingPeriod: number, votingType: number, weight: WeightPops[]) => {
+      return setDaoGovernance(daoId, proposalThreshold, votingPeriod, votingType, weight)
     },
     []
   )

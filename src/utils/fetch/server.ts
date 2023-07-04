@@ -683,6 +683,22 @@ export function leftSpacesList(daoId: number, offset: number, limit: number) {
   })
 }
 
+export interface WeightPops {
+  createRequire: string
+  voteTokenId: number
+  votesWeight: number
+}
+
+export function setDaoGovernance(
+  daoId: number,
+  proposalThreshold: number,
+  votingPeriod: number,
+  votingType: number,
+  weight: WeightPops[]
+) {
+  return Axios.post('stpdao/v3/dao/setting/governance', { daoId, proposalThreshold, votingPeriod, votingType, weight })
+}
+
 export function updateDaoGeneral(
   bio: string,
   category: string[],

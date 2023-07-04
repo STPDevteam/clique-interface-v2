@@ -17,6 +17,7 @@ import OutlineButton from 'components/Button/OutlineButton'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import defaultLogo from 'assets/images/create-token-ball.png'
 import AddTokenModal from '../AddTokenModal'
+import EditTokenModal from '../EditTokenModal'
 import Image from 'components/Image'
 import useModal from 'hooks/useModal'
 import { Dots } from 'theme/components'
@@ -24,7 +25,7 @@ import { useCallback, useMemo, useState } from 'react'
 import { govList } from 'state/buildingGovDao/actions'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
-import { useGetDaoInfo, useUpdateGovernance } from 'hooks/useBackedDaoServer'
+import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 import { ChainListMap } from 'constants/chain'
 import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
@@ -64,8 +65,7 @@ export default function General({ daoId }: { daoId: number }) {
     { label: 'Single-voting', value: '1' },
     { label: 'Multi-voting', value: '2' }
   ]
-  const [rand, setRand] = useState(Math.random())
-  const createDaoData = useGetDaoInfo(daoId, rand)
+  const { createDaoData } = useUpdateDaoDataCallback()
   const [startValite, setStartValite] = useState(false)
   const [PeriodValue, setPeriodValue] = useState(daoInfo.votingPeriod > 0 ? 'Fixtime' : 'Customization')
   const [TypesValue, setTypesValue] = useState(TypesList[daoInfo.votingType].value)
@@ -142,18 +142,20 @@ export default function General({ daoId }: { daoId: number }) {
   return (
     <Box>
       <Row sx={{ gap: 10, mb: 14 }}>
-        <Button
-          style={{ maxWidth: 184, height: 36 }}
-          onClick={() => {
-            if (createDaoData && createDaoData.governance.length >= 1) {
-              toast.error('There can only be one governance token, if you want to modify it, please remove it first')
-              return
-            }
-            showModal(<AddTokenModal daoId={daoId} setRand={() => setRand(Math.random())} />)
-          }}
-        >
-          Add Governance Token
-        </Button>
+        {createDaoData && createDaoData.governance.length < 1 && (
+          <Button
+            style={{ maxWidth: 184, height: 36 }}
+            onClick={() => {
+              if (createDaoData && createDaoData.governance.length >= 1) {
+                toast.error('There can only be one governance token, if you want to modify it, please remove it first')
+                return
+              }
+              showModal(<AddTokenModal daoId={daoId} setRand={() => {}} />)
+            }}
+          >
+            Add Governance Token
+          </Button>
+        )}
         <OutlineButton
           style={{ maxWidth: 184, height: 36, color: '#3F5170', border: '1px solid #3F5170' }}
           onClick={() => history.push(routes.CreatorToken)}
@@ -162,7 +164,15 @@ export default function General({ daoId }: { daoId: number }) {
         </OutlineButton>
       </Row>
       {createDaoData?.governance && (
-        <BasicTable setRand={() => setRand(Math.random())} governance={createDaoData?.governance} />
+        <BasicTable
+          updater={updateDaoBaseData}
+          setRand={() => {}}
+          governance={createDaoData?.governance}
+          daoId={daoId}
+          proposalThreshold={Number(createDaoData?.proposalThreshold)}
+          votingPeriod={createDaoData?.votingPeriod}
+          votingType={createDaoData?.votingType}
+        />
       )}
       <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20 }}>
         <Typography
@@ -303,7 +313,23 @@ const TextButtonStyle = styled(Typography)(() => ({
   userSelect: 'none'
 }))
 
-function BasicTable({ setRand, governance }: { setRand: () => void; governance: govList[] }) {
+function BasicTable({
+  setRand,
+  governance,
+  daoId,
+  proposalThreshold,
+  votingPeriod,
+  votingType,
+  updater
+}: {
+  setRand: () => void
+  governance: govList[]
+  daoId: number
+  proposalThreshold: number
+  votingPeriod: number
+  votingType: number
+  updater: () => void
+}) {
   const { updateBuildingDaoKeyData } = useBuildingDaoDataCallback()
   const deleteTokenCB = useDeleteGovToken()
   const rows = governance.map(item => ({
@@ -316,6 +342,7 @@ function BasicTable({ setRand, governance }: { setRand: () => void; governance: 
     voteTokenId: item.voteTokenId,
     token: item
   }))
+  const { showModal } = useModal()
 
   // const delItem = useCallback(
   //   (index: number) => {
@@ -363,6 +390,24 @@ function BasicTable({ setRand, governance }: { setRand: () => void; governance: 
               <TableContentStyle>{row.weight}</TableContentStyle>
               <TableContentStyle sx={{ width: 200 }}>
                 <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
+                  <TextButtonStyle
+                    sx={{ color: '#3F5170' }}
+                    onClick={() => {
+                      showModal(
+                        <EditTokenModal
+                          updater={updater}
+                          daoInfo={row}
+                          daoId={daoId}
+                          proposalThreshold={proposalThreshold}
+                          votingPeriod={votingPeriod}
+                          votingType={votingType}
+                        />
+                      )
+                    }}
+                  >
+                    Edit
+                  </TextButtonStyle>
+                  |
                   <TextButtonStyle
                     onClick={() => {
                       updateBuildingDaoKeyData('governance', [])
