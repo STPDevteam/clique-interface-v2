@@ -33,7 +33,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
     async (e: any, address: string) => {
       changeRole(address, 100, daoId).then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         toast.success('Remove success')

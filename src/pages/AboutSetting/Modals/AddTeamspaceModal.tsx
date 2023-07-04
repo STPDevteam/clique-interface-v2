@@ -61,7 +61,7 @@ export default function AddTeamspaceModal({
       if (!spacesId) return
       update(currentStatus, values.des, spacesId, values.title).then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         toast.success('Update success')
@@ -72,7 +72,7 @@ export default function AddTeamspaceModal({
       create(currentStatus, values.des, daoId, values.title)
         .then((res: any) => {
           if (res.data.code !== 200) {
-            toast.error(res.data.msg || 'network error')
+            toast.error(res.data.msg || 'Network error')
             return
           }
           toast.success('Create success')
@@ -81,7 +81,7 @@ export default function AddTeamspaceModal({
         })
         .catch(err => {
           console.log(err)
-          toast.error('create error')
+          toast.error('Create error')
         })
     }
   }

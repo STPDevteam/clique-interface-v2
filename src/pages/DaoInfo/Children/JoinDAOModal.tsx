@@ -105,7 +105,7 @@ export default function JoinDaoFrame() {
       loginSignature().then(() => {
         cb(Number(daoId)).then((res: any) => {
           if (res.data.code !== 200) {
-            toast.error(res.data.msg || 'network error')
+            toast.error(res.data.msg || 'Network error')
             setDisable(false)
             return
           }
@@ -119,7 +119,7 @@ export default function JoinDaoFrame() {
       setDisable(true)
       cb(Number(daoId)).then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         updateDaoMyJoinData()

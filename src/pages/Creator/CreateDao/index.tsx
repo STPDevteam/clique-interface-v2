@@ -106,7 +106,7 @@ export default function Index() {
 
     const res = await createDao(data.bio, data.category, data.daoLogo, data.daoName, data.handle)
     if (res.data.code !== 200) {
-      toast.error(res.data.msg)
+      toast.error(res.data.msg || 'Network error')
       return
     }
     updateMyJoinedDaoListData()

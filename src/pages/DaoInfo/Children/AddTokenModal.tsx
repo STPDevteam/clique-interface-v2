@@ -117,7 +117,7 @@ export default function AddTokenModal({ daoId, setRand }: { daoId: number; setRa
       1
     ).then(res => {
       if (res.data.code !== 200) {
-        toast.error(res.data.msg || 'network error')
+        toast.error(res.data.msg || 'Network error')
         return
       }
       toast.success('Add success')

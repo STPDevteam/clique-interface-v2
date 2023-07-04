@@ -151,10 +151,10 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
     (access: string, data: SpacesListProp) => {
       update(access, data.bio, data.spacesId, data.title).then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
-        toast.success('update success')
+        toast.success('Update success')
         onDimiss()
         updateDaoMyJoinData()
       })
@@ -373,11 +373,6 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                       spacesId={row.data.spacesId}
                                       onDimiss={onDimiss}
                                       operator={adminLevel.job}
-                                      isCreator={
-                                        row.data &&
-                                        account &&
-                                        account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase()
-                                      }
                                     />
                                   )
                                 } else {

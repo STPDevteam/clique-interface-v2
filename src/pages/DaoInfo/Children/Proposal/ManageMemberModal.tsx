@@ -75,7 +75,7 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
     (id: number) => {
       remove(id).then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         setRand(Math.random())
@@ -88,7 +88,7 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
   const addMemberClick = useCallback(() => {
     add(address, spacesId).then((res: any) => {
       if (res.data.code !== 200) {
-        toast.error(res.data.msg || 'network error')
+        toast.error(res.data.msg || 'Network error')
         return
       }
       setRand(Math.random())

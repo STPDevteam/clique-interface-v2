@@ -87,7 +87,7 @@ function VoteModalFunc({
     ])
       .then(res => {
         if (res.data.code !== 200) {
-          toast.error('vote error')
+          toast.error('Vote error')
           return
         }
         refresh(Math.random())
@@ -96,7 +96,7 @@ function VoteModalFunc({
         toast.success('Vote success')
       })
       .catch(err => {
-        toast.error(err.msg || 'network error')
+        toast.error(err.msg || 'Network error')
       })
   }, [injectVotes, myVotes, proposalInfo.votingType, proposalOptions, proposalVoteCallback, refresh, voteModalToggle])
 

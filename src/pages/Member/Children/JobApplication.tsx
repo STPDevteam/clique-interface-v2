@@ -22,7 +22,7 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         reviewApply(true, applyId)
           .then((res: any) => {
             if (res.data.code !== 200) {
-              toast.error(res.data.msg || 'network error')
+              toast.error(res.data.msg || 'Network error')
               return
             }
             reFetch()
@@ -33,7 +33,7 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         reviewApply(false, applyId)
           .then((res: any) => {
             if (res.data.code !== 200) {
-              toast.error(res.data.msg || 'network error')
+              toast.error(res.data.msg || 'Network error')
               return
             }
             reFetch()

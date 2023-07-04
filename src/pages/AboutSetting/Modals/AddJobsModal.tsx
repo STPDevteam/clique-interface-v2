@@ -61,7 +61,7 @@ export default function AddJobsModal({
     deleteFn(publishId)
       .then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         toast.success('Delete success')
@@ -70,7 +70,7 @@ export default function AddJobsModal({
       })
       .catch(err => {
         console.log(err)
-        toast.error('delete error')
+        toast.error('Delete error')
       })
   }, [deleteFn, hideModal, onDimiss, publishId])
 
@@ -80,7 +80,7 @@ export default function AddJobsModal({
       update(values.des, publishId, currentStatus, values.title)
         .then((res: any) => {
           if (res.data.code !== 200) {
-            toast.error(res.data.msg || 'network error')
+            toast.error(res.data.msg || 'Network error')
             return
           }
           toast.success('Update success')
@@ -89,13 +89,13 @@ export default function AddJobsModal({
         })
         .catch(err => {
           console.log(err)
-          toast.error('update error')
+          toast.error('Update error')
         })
     } else {
       create(chainId, values.des, currentStatus, values.title)
         .then((res: any) => {
           if (res.data.code !== 200) {
-            toast.error(res.data.msg || 'network error')
+            toast.error(res.data.msg || 'Network error')
             return
           }
           toast.success('Create success')
@@ -104,7 +104,7 @@ export default function AddJobsModal({
         })
         .catch(err => {
           console.log(err)
-          toast.error('create error')
+          toast.error('Create error')
         })
     }
   }

@@ -76,7 +76,7 @@ export default function MemberAuthorityAssignmentModal({
     (level: number) => {
       changeRole(account, level, daoId).then((res: any) => {
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         toast.success('Change success')

@@ -36,7 +36,7 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
       })
       .catch((err: any) => {
         hideModal()
-        toast.error(err?.data?.message || err?.error?.message || err?.message || 'unknown error')
+        toast.error(err?.data?.message || err?.error?.message || err?.message || 'Unknown error')
       })
   }, [add, address, currentStatus, daoId, hideModal])
 

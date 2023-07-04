@@ -126,7 +126,7 @@ export default function General({ daoId }: { daoId: number }) {
       .then(res => {
         setLoading(false)
         if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         updateDaoBaseData()
@@ -134,7 +134,7 @@ export default function General({ daoId }: { daoId: number }) {
         setStartValite(false)
       })
       .catch(err => {
-        toast.error(err || 'network error')
+        toast.error(err || 'Network error')
         setLoading(false)
       })
   }, [PeriodValue, TypesValue, cb, daoId, fixTime, proposalThreshold, saveBtn?.error, updateDaoBaseData, weight])
@@ -330,7 +330,7 @@ function BasicTable({ setRand, governance }: { setRand: () => void; governance: 
     (voteTokenId: number) => {
       deleteTokenCB(voteTokenId).then(res => {
         if (res.data.code !== 200) {
-          toast.error('network error')
+          toast.error('Network error')
           return
         }
         toast.success('Remove success')
