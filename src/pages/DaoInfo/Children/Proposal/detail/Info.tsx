@@ -65,8 +65,8 @@ export default function Info({
             })
           )}
         </div>
-        <Box mb={12} display={'grid'} gridTemplateColumns="186px 1fr" rowGap={10} alignItems={'center'}>
-          <LeftText>ProposalThreshold</LeftText>
+        <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
+          <LeftText>Minimum Votes Needed To Execute</LeftText>
           <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
 
           <LeftText>Token contract address</LeftText>
