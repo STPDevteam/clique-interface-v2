@@ -129,7 +129,7 @@ export function useDaoActivityList(daoId: ChainId, activityType?: ActivityType) 
       }
       try {
         const res = await getActivityList(daoId, status, (currentPage - 1) * pageSize, pageSize)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           return
         }
@@ -396,7 +396,6 @@ export function useAirdropAccountListById(activityId: number, token: Token) {
           setResult([])
           return
         }
-
         setResult(
           data.map((item: any) => ({
             address: item.address,
