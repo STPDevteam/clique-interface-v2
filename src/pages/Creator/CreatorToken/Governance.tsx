@@ -349,7 +349,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
             </>
           ))}
         </Box>
-        <OutlineButton width={isSmDown ? 120 : 250} height={isSmDown ? 40 : 56} onClick={addReservedRowCallback}>
+        <OutlineButton noBold width={isSmDown ? 120 : 250} height={isSmDown ? 40 : 56} onClick={addReservedRowCallback}>
           + Add
         </OutlineButton>
       </CreatorBox>
@@ -372,7 +372,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
       )}
 
       <Box mt={30} display="flex" justifyContent={'center'} gap="40px">
-        <OutlineButton width="166px" onClick={back}>
+        <OutlineButton width="252px" height={36} onClick={back} noBold>
           Back
         </OutlineButton>
         <BlackButton width="252px" disabled={nextHandler.disabled} onClick={nextHandler.handler}>
