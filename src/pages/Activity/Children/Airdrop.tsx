@@ -236,7 +236,12 @@ export default function Airdrop() {
                   </Grid>
                   <Grid item md={5} xs={12}>
                     {account && account === airdropInfos?.creator && (
-                      <OutlineButton style={{ marginBottom: 16 }} height={48} onClick={() => setShowManage(true)}>
+                      <OutlineButton
+                        noBold
+                        style={{ marginBottom: 16 }}
+                        height={48}
+                        onClick={() => setShowManage(true)}
+                      >
                         Manage
                       </OutlineButton>
                     )}

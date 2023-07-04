@@ -46,7 +46,10 @@ export default function TransferAdminModal({
   const { result: memberList } = useJobsList(daoId)
   // const { result: memberList } = useGetSpacesMemberList(spacesId)
   const filteredList = useMemo(
-    () => memberList.filter(item => item.account.toLocaleLowerCase() !== account?.toLocaleLowerCase()),
+    () =>
+      memberList.filter(
+        item => item.account.toLocaleLowerCase() !== account?.toLocaleLowerCase() && item.jobsLevel <= 1
+      ),
     [account, memberList]
   )
   const [currentStatus, setCurrentStatus] = useState('')

@@ -68,9 +68,7 @@ export default function Activity() {
             {activityTypeText[ActivityType.AIRDROP]}
           </MuiButton> */}
         </StyledButtonGroup>
-        {(daoAdminLevel.job === DaoAdminLevelProp[0] ||
-          daoAdminLevel.job === DaoAdminLevelProp[1] ||
-          daoAdminLevel.job === DaoAdminLevelProp[2]) && (
+        {(daoAdminLevel.job === DaoAdminLevelProp[0] || daoAdminLevel.job === DaoAdminLevelProp[1]) && (
           <>
             {backedDaoInfo?.approve ? (
               <BlackButton

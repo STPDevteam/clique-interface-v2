@@ -279,7 +279,6 @@ const TableContentText = styled(TableCell)(() => ({
 }))
 
 function BasicTable({ list }: { list: govList[] }) {
-  console.log('🚀 ~ file: index.tsx:281 ~ BasicTable ~ list:', list)
   return (
     <>
       {list.length === 0 ? (
