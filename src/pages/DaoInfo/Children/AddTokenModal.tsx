@@ -4,7 +4,7 @@ import Input from 'components/Input/index'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAddGovToken } from 'hooks/useBackedProposalServer'
 import { useTokenByChain } from 'state/wallet/hooks'
 import { isAddress } from 'ethers/lib/utils'
@@ -13,6 +13,8 @@ import ChainSelect from 'components/Select/ChainSelect'
 import NumericalInput from 'components/Input/InputNumerical'
 import { toast } from 'react-toastify'
 import UploadImage from 'components/UploadImage'
+import { getTokenLogo } from 'utils/fetch/server'
+import Image from 'components/Image'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -55,6 +57,7 @@ export default function AddTokenModal({
   const [baseChainId, setBaseChainId] = useState<any>('')
   const [requirementAmount, setRequirementAmount] = useState('')
   const [avatar, setAvatar] = useState('')
+  const [tokenLogo, setTokenLogo] = useState('')
   const currentBaseChain = useMemo(() => (baseChainId ? ChainListMap[baseChainId] || null : null), [baseChainId])
   const govToken = useTokenByChain(
     isAddress(tokenAddress) ? tokenAddress : undefined,
@@ -62,12 +65,24 @@ export default function AddTokenModal({
   )
   const addToken = useAddGovToken()
 
+  useEffect(() => {
+    if (!isAddress(tokenAddress) || !currentBaseChain?.id) return
+    try {
+      getTokenLogo(tokenAddress, currentBaseChain?.id).then(res => {
+        if (res.data.data.ownImg) {
+          setTokenLogo(res.data.data.ownImg)
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }, [tokenAddress, currentBaseChain?.id])
   const voteBtn: {
     disabled: boolean
     text?: string
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
-    if (!avatar) {
+    if (!avatar && !tokenLogo) {
       return {
         disabled: true,
         text: 'avatar',
@@ -106,7 +121,7 @@ export default function AddTokenModal({
       disabled: false,
       text: ''
     }
-  }, [avatar, currentBaseChain, govToken, requirementAmount, tokenAddress])
+  }, [avatar, tokenLogo, currentBaseChain, govToken, requirementAmount, tokenAddress])
 
   const addCB = useCallback(() => {
     if (voteBtn.error) return
@@ -118,7 +133,7 @@ export default function AddTokenModal({
       govToken.token.decimals,
       govToken.token.symbol,
       govToken.token.address,
-      avatar,
+      tokenLogo || avatar,
       govToken.token.name,
       'erc20',
       govToken.totalSupply.toSignificant(),
@@ -133,7 +148,7 @@ export default function AddTokenModal({
       setRand()
       updater()
     })
-  }, [addToken, avatar, daoId, govToken, hideModal, requirementAmount, updater, setRand, voteBtn.error])
+  }, [addToken, tokenLogo, avatar, daoId, govToken, hideModal, requirementAmount, updater, setRand, voteBtn.error])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
@@ -163,7 +178,11 @@ export default function AddTokenModal({
                 borderRadius: '50%'
               }}
             >
-              <UploadImage value={avatar} size={124} onChange={val => setAvatar(val)} />
+              {tokenLogo ? (
+                <Image src={tokenLogo} alt="" height={124} width={124} style={{ borderRadius: '50%' }} />
+              ) : (
+                <UploadImage value={avatar} size={124} onChange={val => setAvatar(val)} />
+              )}
             </Box>
             {voteBtn.text === 'avatar' && <RedText>{voteBtn.error}</RedText>}
           </Box>
