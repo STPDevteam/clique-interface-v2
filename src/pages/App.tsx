@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
@@ -49,7 +49,8 @@ import store from 'state'
 // import Home from './Home'
 import Member from './Member'
 // import Task from './Task'
-const Task = lazy(() => import('./Task'))
+// const Task = lazy(() => import('./Task'))
+import Task from './Task'
 import ComingSoon from './ComingSoon'
 import AboutSetting from './AboutSetting'
 import DaoBounty from './daoBounty'
