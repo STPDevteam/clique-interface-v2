@@ -321,7 +321,7 @@ function BasicTable({ list }: { list: govList[] }) {
               {list.map((row, index) => (
                 <TableRow key={row?.symbol + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableContentText sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Image src={row.tokenLogo || defaultLogo} width={32} height={32} />
+                    <Image src={row.tokenLogo || defaultLogo} width={32} height={32} style={{ borderRadius: '50%' }} />
                     {row.tokenName}({row.symbol})
                   </TableContentText>
                   <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>

@@ -371,7 +371,7 @@ export default function LeftSider() {
               onClick={() => {
                 setActiveIdx(-1)
                 setActiveIndex(() => {
-                  const newItems = [false, false, false, false, false]
+                  const newItems = [false, false, false, false, false, false]
                   newItems[idx] = true
                   return newItems
                 })
