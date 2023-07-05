@@ -89,7 +89,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
               color: '#97B7EF'
             }}
           >
-            {props.proposalSIP}
+            SIP {props.proposalSIP}
           </Typography>
           <Box
             sx={{
@@ -119,7 +119,12 @@ function ProposalV3Item(props: ProposalListBaseProp) {
             e.stopPropagation()
           }}
         >
-          <Image height={20} width={20} src={props.proposer?.avatar || avatar} />
+          <Image
+            height={20}
+            width={20}
+            style={{ border: '1px solid #D4DCE2', borderRadius: '50%' }}
+            src={props.proposer?.avatar || avatar}
+          />
           <Typography variant="body1" sx={{ lineHeight: '20px' }}>
             {props.proposer?.nickname || 'unnamed'}
           </Typography>
@@ -211,7 +216,12 @@ function ProposalV2Item(props: ProposalListBaseProp) {
           target="_blank"
         >
           <Box sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Image height={20} width={20} src={props.proposer?.avatar || avatar} />
+            <Image
+              height={20}
+              width={20}
+              style={{ border: '1px solid #D4DCE2', borderRadius: '50%' }}
+              src={props.proposer?.avatar || avatar}
+            />
             <Typography variant="body1" sx={{ lineHeight: '20px' }}>
               {props.proposer?.nickname || 'unnamed'}
             </Typography>
@@ -252,7 +262,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
                   color: '#97B7EF'
                 }}
               >
-                {props.proposalSIP}
+                SIP {props.proposalSIP}
               </Typography>
               <Box
                 sx={{
@@ -366,25 +376,29 @@ function ProposalV2Item(props: ProposalListBaseProp) {
 function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  console.log(proposalInfo)
 
   const Creator = useMemo(
     () => (
-      <Link
-        underline="hover"
-        href={
-          proposalInfo.proposer
-            ? getEtherscanLink(proposalInfo.v1V2ChainId, proposalInfo.proposer.account, 'address')
-            : undefined
-        }
-        target="_blank"
-      >
+      // <Link
+      //   underline="hover"
+      //   href={
+      //     proposalInfo.proposer
+      //       ? getEtherscanLink(proposalInfo.v1V2ChainId, proposalInfo.proposer.account, 'address')
+      //       : undefined
+      //   }
+      //   target="_blank"
+      // >
+      //   <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
+      //     {proposalInfo?.proposer.account && shortenAddress(proposalInfo.proposer.account)}
+      //   </Typography>
+      // </Link>
+      <>
         <Typography fontSize={16} fontWeight={600} mr={8} color={theme.palette.text.primary}>
           {proposalInfo?.proposer.account && shortenAddress(proposalInfo.proposer.account)}
         </Typography>
-      </Link>
+      </>
     ),
-    [proposalInfo.v1V2ChainId, proposalInfo.proposer, theme.palette.text.primary]
+    [proposalInfo.proposer, theme.palette.text.primary]
   )
 
   return (

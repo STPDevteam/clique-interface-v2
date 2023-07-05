@@ -71,8 +71,8 @@ export default function Info({
 
           <LeftText>Token contract address</LeftText>
           <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
-            <Typography>{proposalInfo.useVoteBase[0].tokenAddress}</Typography>
-            <Copy toCopy={proposalInfo.useVoteBase[0].tokenAddress} />
+            <Typography>{proposalInfo.useVoteBase[0]?.tokenAddress}</Typography>
+            <Copy toCopy={proposalInfo.useVoteBase[0]?.tokenAddress} />
           </Box>
 
           <LeftText>Proposer</LeftText>
