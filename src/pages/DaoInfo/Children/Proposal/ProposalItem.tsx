@@ -113,7 +113,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
       </Typography>
       <RowCenter sx={{ mt: 10 }}>
         <Box
-          sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          sx={{ width: 115, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}
           onClick={e => {
             history.push(routes._Profile + `/${props.proposer.account}`)
             e.stopPropagation()
@@ -125,7 +125,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
             style={{ border: '1px solid #D4DCE2', borderRadius: '50%' }}
             src={props.proposer?.avatar || avatar}
           />
-          <Typography variant="body1" sx={{ lineHeight: '20px' }}>
+          <Typography variant="body1" noWrap sx={{ lineHeight: '20px', width: 80 }}>
             {props.proposer?.nickname || 'unnamed'}
           </Typography>
           <AdminIcon className="AdminIcon" />
