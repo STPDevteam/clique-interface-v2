@@ -19,12 +19,16 @@ import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import defaultLogo from 'assets/images/create-token-ball.png'
+import AboutIcon from 'assets/images/about_icon.png'
+
 import { ChainListMap } from 'constants/chain'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useParams } from 'react-router-dom'
 import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
 import Copy from 'components/essential/Copy'
 import { ExternalLink } from 'theme/components'
+import Header from 'pages/AboutSetting/AboutHeader'
+import DaoContainer from 'components/DaoContainer'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
@@ -91,38 +95,54 @@ export default function About() {
   )
 
   return (
-    <div>
-      <Title sx={{ mb: 18 }}>Governance</Title>
-      {createDaoData && <BasicTable list={createDaoData.governance} />}
-      <StyledItem
-        direction={isSmDown ? 'column' : 'row'}
-        gap={isSmDown ? 20 : 10}
-        sx={{
-          mt: 20,
-          justifyContent: { sm: 'space-between', xs: 'unset' }
-        }}
-      >
-        <Stack spacing={isSmDown ? 16 : 10}>
-          <ContentTitle sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            Threshold
-            <Tooltip value={'Minimum Votes Needed For Proposal To Execute '} />
-          </ContentTitle>
-          <StyledText>{daoInfo?.proposalThreshold} Votes</StyledText>
-        </Stack>
-        <Stack spacing={isSmDown ? 16 : 10}>
-          <ContentTitle>Voting Period</ContentTitle>
-          <StyledText>
-            {votingPeriodDate
-              ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
-              : 'Customization'}
-          </StyledText>
-        </Stack>
-        <Stack spacing={isSmDown ? 16 : 10}>
-          <ContentTitle>Voting Types</ContentTitle>
-          <StyledText>{daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}</StyledText>
-        </Stack>
-      </StyledItem>
-      {/* <StyledTitle variant="h5">Token info</StyledTitle>
+    <DaoContainer>
+      <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6
+          }}
+        >
+          <Image src={AboutIcon} width={38} />
+          <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
+            About
+          </Typography>
+        </Box>
+
+        <Header />
+        <div>
+          <Title sx={{ mb: 18 }}>Governance</Title>
+          {createDaoData && <BasicTable list={createDaoData.governance} />}
+          <StyledItem
+            direction={isSmDown ? 'column' : 'row'}
+            gap={isSmDown ? 20 : 10}
+            sx={{
+              mt: 20,
+              justifyContent: { sm: 'space-between', xs: 'unset' }
+            }}
+          >
+            <Stack spacing={isSmDown ? 16 : 10}>
+              <ContentTitle sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                Threshold
+                <Tooltip value={'Minimum Votes Needed For Proposal To Execute '} />
+              </ContentTitle>
+              <StyledText>{daoInfo?.proposalThreshold} Votes</StyledText>
+            </Stack>
+            <Stack spacing={isSmDown ? 16 : 10}>
+              <ContentTitle>Voting Period</ContentTitle>
+              <StyledText>
+                {votingPeriodDate
+                  ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
+                  : 'Customization'}
+              </StyledText>
+            </Stack>
+            <Stack spacing={isSmDown ? 16 : 10}>
+              <ContentTitle>Voting Types</ContentTitle>
+              <StyledText>{daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}</StyledText>
+            </Stack>
+          </StyledItem>
+          {/* <StyledTitle variant="h5">Token info</StyledTitle>
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
         gap={isSmDown ? 20 : 10}
@@ -254,7 +274,9 @@ export default function About() {
         )}
         {!daoAdminLoading && !daoAdminList?.length && <EmptyData />}
       </Box> */}
-    </div>
+        </div>
+      </Box>
+    </DaoContainer>
   )
 }
 

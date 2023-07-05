@@ -24,7 +24,7 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   minHeight: 142,
   background: theme.palette.common.white,
-  padding: '20px 0',
+  padding: '20px 0 30px',
   display: 'flex',
   justifyContent: 'space-between'
 }))

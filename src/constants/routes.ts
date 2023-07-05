@@ -17,7 +17,7 @@ export const routes = {
   DaoTreasury: '/governance/daoInfo/:daoId/treasury',
   DaoIdea: '/governance/daoInfo/:daoId/idea',
   DaoBounty: '/governance/daoInfo/:daoId/bounty',
-  DaoAboutSetting: '/governance/daoInfo/:daoId/about_setting',
+  DaoAboutSetting: '/governance/daoInfo/:daoId/setting',
   DaoTeamMeetings: '/governance/daoInfo/:daoId/teamspaces/general/meetings',
   DaoTeamDocs: '/governance/daoInfo/:daoId/teamspaces/general/docs',
   DaoTeamTask: '/governance/daoInfo/:daoId/teamspaces/general/workspace',
