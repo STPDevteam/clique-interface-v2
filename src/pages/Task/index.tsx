@@ -319,17 +319,22 @@ export default function Index() {
   const [currentStatus, setCurrentStatus] = useState('')
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   // const handleEdit = useCallback(() => {}, [])
-  console.log('info', workspaceInfo)
+  console.log('info', workspaceInfo, isJoined)
 
   useEffect(() => {
-    if (workspaceInfo) return
-    if (
-      workspaceInfo?.access !== 'public' ||
-      isJoined.job !== 'owner' ||
-      (account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase()) ||
-      (workspaceInfo?.access !== 'public' && !isPublic)
-    ) {
-      history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+    if (workspaceInfo) {
+      console.log(
+        isJoined.job !== 'owner',
+        account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase(),
+        workspaceInfo?.access === 'private' && !isPublic
+      )
+      if (
+        isJoined.job !== 'owner' ||
+        (account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase()) ||
+        (workspaceInfo?.access === 'private' && !isPublic)
+      ) {
+        history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+      }
     }
   }, [account, daoId, history, isJoined.job, isPublic, workspaceInfo])
 
