@@ -139,6 +139,9 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
       sx={{
         '& table tbody tr td:nth-of-type(4)': {
           maxWidth: '173px !important'
+        },
+        '& .MuiTableCell-root:last-child, .MuiTableCell-root:first-of-type': {
+          borderRadius: 0
         }
       }}
     >
