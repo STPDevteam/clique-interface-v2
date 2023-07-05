@@ -329,10 +329,13 @@ export default function Index() {
         workspaceInfo?.access === 'private' && !isPublic
       )
       if (
-        isJoined.job !== 'owner' ||
-        (account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase()) ||
-        (workspaceInfo?.access === 'private' && !isPublic)
-      ) {
+        isJoined.job === 'owner' ||
+        workspaceInfo.access !== 'public' ||
+        (account && account.toLocaleLowerCase() === workspaceInfo.creator.account.toLocaleLowerCase()) ||
+        (workspaceInfo.access !== 'public' && isPublic)
+      )
+        return
+      else if (workspaceInfo?.access === 'private' && !isPublic) {
         history.replace(routes._DaoInfo + `/${daoId}/proposal`)
       }
     }
@@ -369,7 +372,7 @@ export default function Index() {
               }}
             >
               <Image width={38} src={TaskIcon}></Image>
-              <Typography>Workspace</Typography>
+              <Typography>{workspaceInfo?.title || 'Task'}</Typography>
             </Box>
             {/* {tabValue === 1 ? (
           <Button
