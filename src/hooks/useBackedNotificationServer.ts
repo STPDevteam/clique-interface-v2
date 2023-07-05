@@ -3,6 +3,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { getNotificationListInfo, getNotificationUnreadTotal, notificationToRead } from '../utils/fetch/server'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 export type NotificationTypes =
   | 'Airdrop'
@@ -108,11 +109,11 @@ export function useNotificationListInfo() {
 
 export function useUpdateNotificationUnReadCount() {
   const { setUnReadCount } = useNotificationListPaginationCallback()
-  const { account } = useActiveWeb3React()
+  const userInfo = useUserInfo()
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!userInfo?.loggedToken) {
         setUnReadCount(0)
         return
       }
@@ -128,7 +129,7 @@ export function useUpdateNotificationUnReadCount() {
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [userInfo?.loggedToken])
 }
 
 export function useNotificationToRead() {

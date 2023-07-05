@@ -21,7 +21,7 @@ export const routes = {
   DaoTeamMeetings: '/governance/daoInfo/:daoId/teamspaces/general/meetings',
   DaoTeamDocs: '/governance/daoInfo/:daoId/teamspaces/general/docs',
   DaoTeamTask: '/governance/daoInfo/:daoId/teamspaces/general/workspace',
-  _DaoTeamTask: '/governance/daoInfo/:daoId/teamspaces/general/workspace/:spacesId',
+  _DaoTeamTask: '/governance/daoInfo/:daoId/teamspaces/general/workspace/:isPublic/:spacesId',
   DaoTeamCalendar: '/governance/daoInfo/:daoId/teamspaces/general/calendar',
   DaoTeamTrash: '/governance/daoInfo/:daoId/teamspaces/general/trash',
 
