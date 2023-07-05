@@ -236,20 +236,20 @@ export default function General({ daoId }: { daoId: number }) {
                       </Typography>
                     }
                     value={fixTime}
+                    noDecimals
                     onChange={e => {
                       setFixtime(e.target.value)
                     }}
                   />
                   {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
                 </Row>
-              ) : (
-                <InputStyle
-                  readOnly
-                  value={''}
-                  placeholderSize="14px"
-                  placeholder="Customize the voting time when creating a proposal"
-                />
-              )}
+              ) : // <InputStyle
+              //   readOnly
+              //   value={''}
+              //   placeholderSize="14px"
+              //   placeholder="Customize the voting time when creating a proposal"
+              // />
+              null}
             </Row>
           </GridLayoutff>
         </Box>
@@ -267,7 +267,7 @@ export default function General({ daoId }: { daoId: number }) {
           {saveBtn.error}
         </Alert>
       )}
-      <Box mt={30} display="flex" justifyContent={'flex-end'}>
+      <Box mt={30} display="flex" justifyContent={'flex-end'} mb={20}>
         <BlackButton width="270px" height="40px" onClick={updateGovernance}>
           {loading ? (
             <>

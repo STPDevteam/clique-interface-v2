@@ -17,7 +17,8 @@ import {
   updateNewJob,
   leftSpacesList,
   getSpacesList,
-  deleteSpace
+  deleteSpace,
+  getWorkspaceInfo
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
@@ -57,6 +58,28 @@ export function useGetMembersInfo(daoAddress: string, chainId: ChainId) {
       }
     })()
   }, [chainId, daoAddress])
+
+  return {
+    result
+  }
+}
+
+export function useGetWorkspaceInfo(spacesId: number) {
+  const [result, setResult] = useState<any>()
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await getWorkspaceInfo(spacesId)
+        if (res.data.data) {
+          setResult(res.data.data)
+        }
+      } catch (error) {
+        console.log(error)
+        setResult(null)
+      }
+    })()
+  }, [spacesId])
 
   return {
     result
