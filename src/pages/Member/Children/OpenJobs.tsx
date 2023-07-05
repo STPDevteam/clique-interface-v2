@@ -5,16 +5,27 @@ import Input from 'components/Input'
 import { useActiveWeb3React } from 'hooks'
 import { useApplyMember } from 'hooks/useBackedDaoServer'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 export default function OpenJobs() {
   const { account } = useActiveWeb3React()
   const joinApply = useApplyMember()
   const { daoId: daoChainId } = useParams<{ daoId: string }>()
   const daoId = Number(daoChainId)
-  const { result: jobList } = useGetPublishJobList(daoId)
+  const { result: listData } = useGetPublishJobList(daoId)
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
+
+  const jobList = useMemo(() => {
+    if (isJoined.job === 'admin') {
+      const list = listData.filter(i => i.level !== 2)
+      return list
+    }
+    return listData
+  }, [listData, isJoined])
+
   const [input, setInput] = useState(Array(jobList.length).fill(''))
 
   const applyCallback = useCallback(
@@ -30,7 +41,6 @@ export default function OpenJobs() {
     },
     [account, input, joinApply]
   )
-
   const handleInputChange = (index: number, value: string) => {
     setInput(prevState => {
       const updateValues = [...prevState]
