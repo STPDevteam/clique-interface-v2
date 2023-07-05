@@ -315,7 +315,6 @@ export default function Index() {
     }
     return false
   }, [isJoined, spacesId])
-  console.log('info', isJoin)
 
   const daoId = Number(curDaoId)
   const _spacesId = Number(spacesId)

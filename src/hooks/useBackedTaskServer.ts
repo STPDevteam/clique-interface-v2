@@ -65,7 +65,7 @@ export function useGetMembersInfo(daoAddress: string, chainId: ChainId) {
 }
 
 export function useGetWorkspaceInfo(spacesId: number) {
-  const [result, setResult] = useState<any>()
+  const [result, setResult] = useState<LeftTaskDataProps | null>()
 
   useEffect(() => {
     ;(async () => {

@@ -216,7 +216,7 @@ export default function LeftSider() {
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
   const history = useHistory()
-  const [activeIndex, setActiveIndex] = useState([false, false, false, false, false])
+  const [activeIndex, setActiveIndex] = useState([false, false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
@@ -369,6 +369,7 @@ export default function LeftSider() {
           {currentTabLinks.map((item, idx) => (
             <Box
               onClick={() => {
+                setActiveIdx(-1)
                 setActiveIndex(() => {
                   const newItems = [false, false, false, false, false]
                   newItems[idx] = true
@@ -388,7 +389,7 @@ export default function LeftSider() {
                   <>
                     {item.children ? (
                       <StyledTeamMenu>
-                        <Box className={'ParentTitle'}>
+                        <Box className={item.route && pathname === item.route ? 'active ParentTitle' : 'ParentTitle'}>
                           {item.icon}
                           <ListItemText primary={item.title} />
                         </Box>
@@ -455,7 +456,7 @@ export default function LeftSider() {
                   >
                     <ChildItem
                       className={activeIdx === idx1 ? 'activeChild' : ''}
-                      onClick={() => {
+                      onClick={(e: any) => {
                         if (
                           myJoinDaoData.job === 'owner' ||
                           item.isPublic ||
@@ -465,6 +466,7 @@ export default function LeftSider() {
                         ) {
                           setActiveIdx(idx1)
                           history.push(item.link || '')
+                          e.stopPropagation()
                         } else if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) {
                           return
                         }
