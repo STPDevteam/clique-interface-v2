@@ -15,7 +15,8 @@ export enum ProposalStatus {
   OPEN = 2,
   CLOSED = 3,
   CANCEL = 4,
-  SUCCESS = 5
+  SUCCESS = 5,
+  FAILED = 6
 }
 
 export interface ProposalSignProp {

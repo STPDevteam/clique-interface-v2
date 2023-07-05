@@ -34,6 +34,7 @@ export interface ProposalListBaseProp {
   }
   version: 'v1' | 'v2' | 'v3'
   status: ProposalStatus
+  isPass: string
   targetTimeString: string
 }
 
@@ -76,6 +77,7 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
       proposer: item.proposer,
       introduction: item.introduction,
       status: _status,
+      isPass: item.status,
       targetTimeString
     }
   })

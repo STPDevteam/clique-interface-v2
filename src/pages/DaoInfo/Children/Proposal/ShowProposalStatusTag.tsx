@@ -45,7 +45,7 @@ export default function ShowProposalStatusTag({ status }: { status: ProposalStat
   ) : status === ProposalStatus.SUCCESS || status === 'Success' ? (
     <StyledChip label="Success" bgColor={theme.palette.primary.main} textColor={theme.palette.common.white} />
   ) : (
-    <StyledChip label="Closed" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
+    <StyledChip label="Failed" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
   )
 }
 

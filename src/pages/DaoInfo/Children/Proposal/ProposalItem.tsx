@@ -13,7 +13,6 @@ import { useMemo } from 'react'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledCard = styled(Box)(({ theme }) => ({
   padding: '19px 24px',
@@ -74,7 +73,6 @@ function ProposalV3Item(props: ProposalListBaseProp) {
   const history = useHistory()
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoId)
-  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   return (
     <StyledCard onClick={() => history.push(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
@@ -134,7 +132,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
           <Typography sx={{ fontWeight: 800, color: '#0049C6' }} variant="h5">
             {formatNumberWithCommas(props.votes)} Votes
           </Typography>
-        ) : props.status === 3 && props.votes >= Number(daoInfo.proposalThreshold) ? (
+        ) : props.status === 3 && props.isPass === 'Success' ? (
           <>
             <Box
               sx={{
@@ -164,7 +162,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
               </Typography>
             </Box>
           </>
-        ) : props.status === 3 && props.votes < Number(daoInfo.proposalThreshold) ? (
+        ) : props.status === 3 && props.isPass === 'Failed' ? (
           <Box
             sx={{
               width: 100,
@@ -205,7 +203,6 @@ function ProposalV2Item(props: ProposalListBaseProp) {
   const isSmDown = useBreakpoint('sm')
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoId)
-  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   const Creator = useMemo(() => {
     return props && props.v1V2ChainId ? (
@@ -302,7 +299,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
                 <Typography sx={{ fontWeight: 800, color: '#0049C6' }} variant="h5">
                   {formatNumberWithCommas(props.votes)} Votes
                 </Typography>
-              ) : props.status === 3 && props.votes >= Number(daoInfo.proposalThreshold) ? (
+              ) : props.status === 3 && props.isPass === 'Success' ? (
                 <>
                   <Box
                     sx={{
@@ -332,7 +329,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
                     </Typography>
                   </Box>
                 </>
-              ) : props.status === 3 && props.votes < Number(daoInfo.proposalThreshold) ? (
+              ) : props.status === 3 && props.isPass === 'Failed' ? (
                 <Box
                   sx={{
                     width: 100,

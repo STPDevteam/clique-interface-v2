@@ -323,19 +323,13 @@ export default function Index() {
 
   useEffect(() => {
     if (workspaceInfo) {
-      console.log(
-        isJoined.job !== 'owner',
-        account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase(),
-        workspaceInfo?.access === 'private' && !isPublic
-      )
       if (
         isJoined.job === 'owner' ||
-        workspaceInfo.access !== 'public' ||
         (account && account.toLocaleLowerCase() === workspaceInfo.creator.account.toLocaleLowerCase()) ||
-        (workspaceInfo.access !== 'public' && isPublic)
+        (workspaceInfo.access === 'private' && isPublic)
       )
         return
-      else if (workspaceInfo?.access === 'private' && !isPublic) {
+      else if ((workspaceInfo.access === 'private' && !isPublic) || workspaceInfo.access === 'private') {
         history.replace(routes._DaoInfo + `/${daoId}/proposal`)
       }
     }
@@ -393,9 +387,8 @@ export default function Index() {
         )} */}
           </Box>
           <Typography maxWidth={740} sx={{ marginTop: '0!important' }}>
-            Use this template to track your personal tasks. Click{' '}
-            <span style={{ color: '#0049C6', fontWeight: 700 }}>+ New</span> to create a new task directly on this
-            board. Click an existing task to add additional context or subtasks.
+            {workspaceInfo?.bio ||
+              'Use this template to track your personal tasks. Click Add New to create a new task directly on this board. Click an existing task to add additional context or subtasks.'}
           </Typography>
           <Box
             sx={{
