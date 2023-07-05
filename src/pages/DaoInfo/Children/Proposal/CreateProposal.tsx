@@ -507,13 +507,15 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
               )
           )}
           <Box>
-            <LabelText
-              onClick={addVoteOption}
-              sx={{ display: 'flex', gap: 8, cursor: 'pointer', color: '#97B7EF', fontSize: 14 }}
-            >
-              <AddCircleOutlineIcon sx={{ width: 16 }} />
-              Add Option
-            </LabelText>
+            {option.length < 10 && (
+              <LabelText
+                onClick={addVoteOption}
+                sx={{ display: 'flex', gap: 8, cursor: 'pointer', color: '#97B7EF', fontSize: 14 }}
+              >
+                <AddCircleOutlineIcon sx={{ width: 16 }} />
+                Add Option
+              </LabelText>
+            )}
           </Box>
         </Box>
       </Box>

@@ -1,4 +1,5 @@
-import { Box, Pagination, Stack, Typography, styled } from '@mui/material'
+import { Box, Stack, Typography, styled } from '@mui/material'
+import Pagination from 'components/Pagination'
 import EmptyData from 'components/EmptyData'
 import { useAddSpacesMember, useGetSpacesMemberList, useRemoveSpacesMember } from 'hooks/useBackedDaoServer'
 import { ReactComponent as RemoveIcon } from 'assets/svg/removeIcon.svg'

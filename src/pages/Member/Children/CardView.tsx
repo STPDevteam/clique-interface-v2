@@ -14,6 +14,10 @@ import { useCallback, useState } from 'react'
 import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import { toast } from 'react-toastify'
+import { ReactComponent as TwitterGray } from 'assets/svg/twitter_gray.svg'
+import { ReactComponent as DiscordGray } from 'assets/svg/discord_gray.svg'
+import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
+import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
 
 export const JobsType: any = {
   0: 'Owner',
@@ -134,8 +138,8 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
               }}
             >
               <Image src={item.avatar || owl}></Image>
-              <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24}>
-                {item.nickname}
+              <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24} padding={'0 10px'}>
+                {item.nickname || 'unnamed'}
               </Typography>
               <Box
                 sx={{
@@ -164,13 +168,30 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                   alignItems: 'center',
                   margin: '10px 0',
                   cursor: 'pointer',
+                  height: 16,
                   gap: 10
                 }}
               >
-                <Twitter onClick={() => window.open(item.twitter, '_blank')}></Twitter>
-                <Youtobe onClick={() => window.open(item.youtobe, '_blank')}></Youtobe>
-                <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
-                <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
+                {item.twitter ? (
+                  <Twitter onClick={() => window.open(item.twitter, '_blank')}></Twitter>
+                ) : (
+                  <TwitterGray />
+                )}
+                {item.youtobe ? (
+                  <Youtobe onClick={() => window.open(item.youtobe, '_blank')}></Youtobe>
+                ) : (
+                  <YoutobeGray />
+                )}
+                {item.discord ? (
+                  <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
+                ) : (
+                  <DiscordGray />
+                )}
+                {item.opensea ? (
+                  <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
+                ) : (
+                  <OpenseaGray />
+                )}
               </Box>
               <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={JobsType[item.jobsLevel]}>
                 {JobsType[item.jobsLevel] || 'unnamed'}

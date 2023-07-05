@@ -74,11 +74,16 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
       </Typography>,
       <Box key={item.message} width={'100%'}>
         <Typography
-          noWrap
           sx={{
             width: '100%',
+            lineHeight: '20px',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
             overflow: 'hidden',
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            '-webkit-box-orient': 'vertical',
+            '-webkit-line-clamp': '2'
           }}
           fontWeight={400}
           fontSize={12}

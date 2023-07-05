@@ -16,6 +16,7 @@ import Button from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import ToggleButtonGroup from 'components/ToggleButtonGroup'
 import defaultLogo from 'assets/images/create-token-ball.png'
+import { ReactComponent as Bar } from 'assets/svg/bar.svg'
 import AddTokenModal from '../AddTokenModal'
 import EditTokenModal from '../EditTokenModal'
 import Image from 'components/Image'
@@ -408,7 +409,7 @@ function BasicTable({
                   >
                     Edit
                   </TextButtonStyle>
-                  |
+                  <Bar />
                   <TextButtonStyle
                     onClick={() => {
                       updateBuildingDaoKeyData('governance', [])

@@ -168,7 +168,7 @@ function VoteModalFunc({
     <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
       <StyledBody>
         <Typography fontWeight={500} variant="h6">
-          Cast your Vote
+          Cast your vote
         </Typography>
         {proposalInfo.votingType === VotingTypes.SINGLE ? (
           <Stack spacing={19} mt={19}>
