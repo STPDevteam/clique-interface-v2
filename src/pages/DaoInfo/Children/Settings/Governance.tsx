@@ -236,6 +236,7 @@ export default function General({ daoId }: { daoId: number }) {
                       </Typography>
                     }
                     value={fixTime}
+                    noDecimals
                     onChange={e => {
                       setFixtime(e.target.value)
                     }}
@@ -268,7 +269,7 @@ export default function General({ daoId }: { daoId: number }) {
           {saveBtn.error}
         </Alert>
       )}
-      <Box mt={30} display="flex" justifyContent={'flex-end'}>
+      <Box mt={30} display="flex" justifyContent={'flex-end'} mb={20}>
         <BlackButton width="270px" height="40px" onClick={updateGovernance}>
           {loading ? (
             <>

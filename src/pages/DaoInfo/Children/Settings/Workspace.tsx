@@ -62,7 +62,7 @@ export default function General({ daoId }: { daoId: number }) {
             color: '#97B7EF'
           }}
         >
-          New teamspace
+          New workspace
         </Typography>
       </Box>
     </Box>
@@ -118,8 +118,8 @@ const itemList = [
 ]
 const editList = [
   { value: '0', label: 'Edit' },
-  { value: '1', label: 'Leave Teamspace' },
-  { value: '2', label: 'Delete Teamspace' }
+  { value: '1', label: 'Leave Workspace' },
+  { value: '2', label: 'Delete Workspace' }
 ]
 function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: SpacesListProp[]; onDimiss: () => void }) {
   const { account } = useActiveWeb3React()

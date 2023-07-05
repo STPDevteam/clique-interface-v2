@@ -225,13 +225,17 @@ export default function LeftSider() {
 
   const workspaceList = useMemo(
     () =>
-      spaceListData.map(item => ({
+      spaceListData.map((item: any, index: number) => ({
         title: item.title,
-        link: makeRouteLink(routes.DaoTeamTask) + `/${item.access === 'public' ? true : false}` + '/' + item.spacesId,
+        link:
+          makeRouteLink(routes.DaoTeamTask) +
+          `/${myJoinDaoData.privateSpaces[index]?.isJoin ? true : false}` +
+          '/' +
+          item.spacesId,
         logo: taskIcon,
         isPublic: item.access === 'public' ? true : false
       })),
-    [makeRouteLink, spaceListData]
+    [makeRouteLink, myJoinDaoData.privateSpaces, spaceListData]
   )
 
   const teamspacesList: LeftSiderMenu[] = useMemo(

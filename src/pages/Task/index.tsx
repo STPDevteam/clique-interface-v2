@@ -20,7 +20,7 @@ import {
   GridValueFormatterParams,
   GridSelectionModel
 } from '@mui/x-data-grid'
-import { useGetTaskList } from 'hooks/useBackedTaskServer'
+import { useGetTaskList, useGetWorkspaceInfo } from 'hooks/useBackedTaskServer'
 import { useMemo } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
@@ -303,22 +303,40 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
 
 export default function Index() {
   // const isSmDown = useBreakpoint('sm')
-  const { daoId: curDaoId, isPublic: _isPublic } = useParams<{ daoId: string; isPublic: string }>()
+  const { daoId: curDaoId, isPublic: _isPublic, spacesId: spacesId } = useParams<{
+    daoId: string
+    isPublic: string
+    spacesId: string
+  }>()
   const isPublic = useMemo(() => _isPublic === 'true', [_isPublic])
   const daoId = Number(curDaoId)
+  const _spacesId = Number(spacesId)
   const history = useHistory()
   const { account } = useActiveWeb3React()
+  const { result: workspaceInfo } = useGetWorkspaceInfo(_spacesId)
   const [tabValue, setTabValue] = useState(0)
   const [currentPriority, setCurrentPriority] = useState('')
   const [currentStatus, setCurrentStatus] = useState('')
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   // const handleEdit = useCallback(() => {}, [])
+  console.log('info', workspaceInfo, isJoined)
 
   useEffect(() => {
-    if (!isPublic) {
-      history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+    if (workspaceInfo) {
+      console.log(
+        isJoined.job !== 'owner',
+        account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase(),
+        workspaceInfo?.access === 'private' && !isPublic
+      )
+      if (
+        isJoined.job !== 'owner' ||
+        (account && account?.toLocaleLowerCase() !== workspaceInfo.creator.account.toLocaleLowerCase()) ||
+        (workspaceInfo?.access === 'private' && !isPublic)
+      ) {
+        history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+      }
     }
-  }, [account, daoId, history, isPublic])
+  }, [account, daoId, history, isJoined.job, isPublic, workspaceInfo])
 
   return (
     <DaoContainer>

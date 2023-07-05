@@ -683,6 +683,10 @@ export function leftSpacesList(daoId: number, offset: number, limit: number) {
   })
 }
 
+export function getWorkspaceInfo(spacesId: number) {
+  return Axios.get(`stpdao/v3/spaces/info/${spacesId}`)
+}
+
 export interface WeightPops {
   createRequire: string
   voteTokenId: number

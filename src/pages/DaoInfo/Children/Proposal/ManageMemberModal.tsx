@@ -62,6 +62,7 @@ const StyledListRightText = styled(Typography)({
 
 export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
   const [rand, setRand] = useState(Math.random())
+  const [isBtnDisable, setIsBtnDisable] = useState(false)
   const { account } = useActiveWeb3React()
   const { result: memberList, page } = useGetSpacesMemberList(spacesId, rand)
   // const filteredList = useMemo(() => memberList.filter(item => item.account !== account?.toLocaleLowerCase()), [
@@ -87,13 +88,20 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
   )
 
   const addMemberClick = useCallback(() => {
+    setIsBtnDisable(true)
     add(address, spacesId).then((res: any) => {
       if (res.data.code !== 200) {
         toast.error(res.data.msg || 'Network error')
+        setTimeout(() => {
+          setIsBtnDisable(false)
+        }, 3000)
         return
       }
       setRand(Math.random())
       toast.success('Add member success')
+      setTimeout(() => {
+        setIsBtnDisable(false)
+      }, 3000)
     })
   }, [add, address, spacesId])
 
@@ -110,7 +118,12 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
           value={address}
           onChange={e => setAddress(e.target.value)}
         />
-        <Button onClick={addMemberClick} width="125px" height="40px" disabled={!address || !isAddress(address)}>
+        <Button
+          onClick={addMemberClick}
+          width="125px"
+          height="40px"
+          disabled={!address || !isAddress(address) || isBtnDisable}
+        >
           Add Member
         </Button>
       </StyledAddContainer>

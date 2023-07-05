@@ -107,7 +107,7 @@ export default function EditTokenModal({
     }
   }, [SetDaoGovernance, daoId, proposalThreshold, votingPeriod, votingType, weight, updater, hideModal])
   const voteBtn = useMemo(() => {
-    if (!requirementAmount) {
+    if (!requirementAmount || Number(requirementAmount) < 1) {
       return {
         disabled: true,
         text: 'requirement',
@@ -131,7 +131,7 @@ export default function EditTokenModal({
             color: '#3F5170'
           }}
         >
-          Edit Governanve Token
+          Edit Governance Token
         </Typography>
 
         <Box sx={{ mt: 27, display: 'flex', justifyContent: 'space-between' }}>
@@ -227,34 +227,6 @@ export default function EditTokenModal({
             }}
             value={requirementAmount}
           />
-          {/* <Box
-            sx={{
-              height: 40,
-              width: '100%',
-              display: 'flex',
-              border: '1px solid #D4D7E2',
-              borderRadius: '8px'
-            }}
-          >
-            <Box sx={{ display: 'flex', padding: '10px 0 10px 20px', alignItems: 'center' }}>
-              <ContentTitleStyle sx={{ whiteSpace: 'nowrap' }}>Voting Weight</ContentTitleStyle>
-              <Box sx={{ ml: 25, width: 0, height: 20, border: ' 0.5px solid #D4D7E2' }}></Box>
-              <Typography variant="body1" sx={{ ml: 50, whiteSpace: 'nowrap', color: '#B5B7CF', lineHeight: '16px' }}>
-                {govToken?.token.symbol && `1 ${govToken?.token.symbol} = `}
-              </Typography>
-            </Box>
-            <InputStyle
-              readOnly
-              value={govToken?.token.symbol ? '1' : ''}
-              placeholder=" "
-              sx={{ border: 'none !important', background: 'transparent !important' }}
-              endAdornment={
-                <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                  {govToken?.token.symbol ? 'Votes' : '-'}
-                </Typography>
-              }
-            />
-          </Box> */}
           {voteBtn.text === 'requirement' && <RedText>{voteBtn.error}</RedText>}
           <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
             <OutlineButton
