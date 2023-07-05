@@ -324,6 +324,7 @@ export default function Header() {
     })
     return [daoInfo.daoName, ..._list]
   }, [curPath, daoInfo?.daoName])
+  console.log(makeBreadcrumbs)
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 

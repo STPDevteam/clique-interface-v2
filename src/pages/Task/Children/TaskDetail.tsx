@@ -1,4 +1,4 @@
-import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel } from '@mui/material'
+import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel, Alert } from '@mui/material'
 import ConfirmButton from 'components/Button/Button'
 import SaveButton from 'components/Button/OutlineButton'
 import Image from 'components/Image'
@@ -249,18 +249,18 @@ export default function TaskDetail({
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
+        <SaveButton width="140px" height="36px" disabled={!value.trim()} color="#0049C6" onClick={updateCallback}>
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
+        <ConfirmButton width="140px" height="36px" disabled={!value.trim()} color="#ffffff" onClick={createCallback}>
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback])
+  }, [createCallback, editData, updateCallback, value])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -734,6 +734,11 @@ export default function TaskDetail({
             >
               <Editor content={content} setContent={setContent} />
             </RowContent>
+            {!value.trim() && (
+              <Alert style={{ marginTop: 20 }} severity="error">
+                Task title required
+              </Alert>
+            )}
             <ColSentence>{getActions()}</ColSentence>
           </>
         )}

@@ -2,7 +2,7 @@ import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem, Stack, Tooltip }
 import Select from 'components/Select/Select'
 // import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import TaskIcon from 'assets/images/workspace.png'
 // import EditIcon from 'assets/images/edit.png'
 import Image from 'components/Image'
@@ -22,11 +22,13 @@ import {
 } from '@mui/x-data-grid'
 import { useGetTaskList } from 'hooks/useBackedTaskServer'
 import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
 import DaoContainer from 'components/DaoContainer'
 import { MapPriorityType, MapTaskStatus } from './Children/TaskDetail'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { routes } from 'constants/routes'
+import { useActiveWeb3React } from 'hooks'
 
 const StatusWrapper = styled(Box)(() => ({
   width: 100,
@@ -301,12 +303,22 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
 
 export default function Index() {
   // const isSmDown = useBreakpoint('sm')
+  const { daoId: curDaoId, isPublic: _isPublic } = useParams<{ daoId: string; isPublic: string }>()
+  const isPublic = useMemo(() => _isPublic === 'true', [_isPublic])
+  const daoId = Number(curDaoId)
+  const history = useHistory()
+  const { account } = useActiveWeb3React()
   const [tabValue, setTabValue] = useState(0)
   const [currentPriority, setCurrentPriority] = useState('')
   const [currentStatus, setCurrentStatus] = useState('')
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
-
   // const handleEdit = useCallback(() => {}, [])
+
+  useEffect(() => {
+    if (!isPublic) {
+      history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+    }
+  }, [account, daoId, history, isPublic])
 
   return (
     <DaoContainer>
