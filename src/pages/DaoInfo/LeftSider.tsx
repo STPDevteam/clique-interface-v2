@@ -6,6 +6,7 @@ import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
 // import { ReactComponent as Idea } from 'assets/svg/Idea.svg'
 import { ReactComponent as Bounty } from 'assets/svg/bounty.svg'
 import { ReactComponent as Member } from 'assets/svg/member.svg'
+import { ReactComponent as About } from 'assets/svg/about.svg'
 import { ReactComponent as Setting } from 'assets/svg/setting.svg'
 // import { ReactComponent as Add } from 'assets/svg/add.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
@@ -26,6 +27,7 @@ import PopperCard from 'components/PopperCard'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -220,7 +222,6 @@ export default function LeftSider() {
   const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [activeIdx, setActiveIdx] = useState(-1)
-  console.log(myJoinDaoData, spaceListData)
 
   const workspaceList = useMemo(
     () =>
@@ -254,8 +255,9 @@ export default function LeftSider() {
       },
       { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
       { title: 'Member', icon: <Member />, defaultOpen: false, route: makeRouteLink(routes.DaoMember) },
+      { title: 'About', icon: <About />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoAbout) },
       {
-        title: 'About & Settings',
+        title: 'Settings',
         icon: <Setting />,
         defaultOpen: false,
         route: makeRouteLink(routes.DaoAboutSetting)
@@ -263,6 +265,14 @@ export default function LeftSider() {
     ],
     [makeRouteLink, workspaceList]
   )
+  const currentTabLinks = useMemo(() => {
+    const list =
+      myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]
+        ? teamspacesList
+        : teamspacesList.filter(i => i.title !== 'Settings')
+
+    return list
+  }, [myJoinDaoData?.job, teamspacesList])
 
   return (
     <StyledAppBar>
@@ -360,7 +370,7 @@ export default function LeftSider() {
             }
           }}
         >
-          {teamspacesList.map((item, idx) => (
+          {currentTabLinks.map((item, idx) => (
             <Box
               onClick={() => {
                 setActiveIndex(() => {

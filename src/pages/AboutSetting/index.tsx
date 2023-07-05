@@ -1,8 +1,8 @@
 import { Box, Typography, styled, Divider, MenuList, MenuItem } from '@mui/material'
 import { useState, useMemo, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import DaoInfoAbout from 'pages/DaoInfo/Children/About'
-import Header from './AboutHeader'
+// import DaoInfoAbout from 'pages/DaoInfo/Children/About'
+// import Header from './AboutHeader'
 // import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
 import Governance from 'pages/DaoInfo/Children/Settings/Governance'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
@@ -16,6 +16,10 @@ import Setting from 'assets/images/settingImg.png'
 import Image from 'components/Image'
 // import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   width: 'fit-content',
@@ -48,21 +52,24 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 
 export default function AboutSetting() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
+  const history = useHistory()
   const [tabValue, setTabValue] = useState(0)
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   // const { isJoined: myJoinDaoData } = useIsJoined(Number(curDaoId))
   const { myJoinDaoData } = useUpdateDaoDataCallback()
   const tabList = useMemo(() => {
     return [
-      {
-        label: 'About',
-        component: (
-          <>
-            <Header />
-            <DaoInfoAbout />
-          </>
-        )
-      },
+      // {
+      //   label: 'About',
+      //   component: (
+      //     <>
+      //       <Header />
+      //       <DaoInfoAbout />
+      //     </>
+      //   )
+      // },
       // {
       //   label: 'General',
       //   component: daoInfo ? (
@@ -139,41 +146,37 @@ export default function AboutSetting() {
       return setTabValue(0)
     }
   }, [myJoinDaoData?.job])
+  useEffect(() => {
+    if (
+      !account ||
+      !userSignature ||
+      (myJoinDaoData?.job !== DaoAdminLevelProp[1] && myJoinDaoData?.job !== DaoAdminLevelProp[0])
+    ) {
+      history.replace(routes._DaoInfo + `/${curDaoId}/proposal`)
+    }
+  }, [account, history, myJoinDaoData?.job, userSignature, curDaoId])
 
   return (
     <DaoContainer>
       <Box>
         <Box
           sx={{
-            mb: 30,
             display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'row',
-            '& button': {
-              width: 125,
-              height: 36,
-              borderRadius: '8px'
-            }
+            alignItems: 'center',
+            gap: 6
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6
-            }}
-          >
-            <Image src={Setting} width={38} />
-            <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
-              About & Setting
-            </Typography>
-          </Box>
+          <Image src={Setting} width={38} />
+          <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
+            Setting
+          </Typography>
         </Box>
         <MenuList
           sx={{
             display: 'flex',
             justifyContent: 'flex-start',
-            flexDirection: 'row'
+            flexDirection: 'row',
+            paddingTop: 0
           }}
         >
           {currentTabLinks.map(({ label }, index) => (

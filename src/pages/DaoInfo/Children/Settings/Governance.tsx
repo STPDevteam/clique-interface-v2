@@ -243,13 +243,15 @@ export default function General({ daoId }: { daoId: number }) {
                   />
                   {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
                 </Row>
-              ) : // <InputStyle
-              //   readOnly
-              //   value={''}
-              //   placeholderSize="14px"
-              //   placeholder="Customize the voting time when creating a proposal"
-              // />
-              null}
+              ) : (
+                ''
+                // <InputStyle
+                //   readOnly
+                //   value={''}
+                //   placeholderSize="14px"
+                //   placeholder="Customize the voting time when creating a proposal"
+                // />
+              )}
             </Row>
           </GridLayoutff>
         </Box>

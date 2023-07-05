@@ -38,6 +38,7 @@ import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
 import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
+import About from 'pages/DaoInfo/Children/About'
 // import CreatePublicSale from 'pages/DaoInfo/Children/Activity/CreatePublicSale'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
@@ -165,6 +166,7 @@ export default function App() {
                       <DaoInfoLayout>
                         <DaoInfoUpdater />
                         <Switch>
+                          <Route path={routes.DaoInfoAbout} exact strict component={About} />
                           <Route path={routes.DaoMember} exact strict component={Member} />
                           <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
                           <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
