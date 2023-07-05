@@ -69,7 +69,7 @@ export default function AddTokenModal({
     if (!isAddress(tokenAddress) || !currentBaseChain?.id) return
     try {
       getTokenLogo(tokenAddress, currentBaseChain?.id).then(res => {
-        if (res.data.data.ownImg) {
+        if (res.data.data && res.data.data.ownImg) {
           setTokenLogo(res.data.data.ownImg)
         }
       })
