@@ -194,7 +194,12 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                   </StyledTableCell>
                   <StyledTableCell>
                     <Typography style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <Image width={18} height={18} src={row.creator.avatar || avatar} />
+                      <Image
+                        width={18}
+                        height={18}
+                        src={row.creator.avatar || avatar}
+                        style={{ borderRadius: '50%' }}
+                      />
                       <Typography
                         noWrap
                         sx={{

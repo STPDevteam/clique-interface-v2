@@ -77,7 +77,7 @@ export default function Team() {
           overflow: 'hidden'
         }}
       >
-        <Image width={18} height={18} src={avatar || Avatar} />
+        <Image width={18} height={18} src={avatar || Avatar} style={{ borderRadius: '50%' }} />
         <Typography textAlign={'left'} width={'100%'} color={'#3F5170'} fontWeight={500} fontSize={14} noWrap>
           {nickname || 'unnamed'}
         </Typography>

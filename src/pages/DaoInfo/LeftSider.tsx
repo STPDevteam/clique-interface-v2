@@ -216,7 +216,7 @@ export default function LeftSider() {
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
   const history = useHistory()
-  const [activeIndex, setActiveIndex] = useState([false, false, false, false, false])
+  const [activeIndex, setActiveIndex] = useState([false, false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
@@ -370,7 +370,7 @@ export default function LeftSider() {
             <Box
               onClick={() => {
                 setActiveIndex(() => {
-                  const newItems = [false, false, false, false, false]
+                  const newItems = [false, false, false, false, false, false]
                   newItems[idx] = true
                   return newItems
                 })

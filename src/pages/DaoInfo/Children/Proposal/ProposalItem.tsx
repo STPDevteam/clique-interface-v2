@@ -212,17 +212,19 @@ function ProposalV2Item(props: ProposalListBaseProp) {
           href={getEtherscanLink(props.v1V2ChainId, props.proposer.account || '', 'address')}
           target="_blank"
         >
-          <Box sx={{ width: 115, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Image
               height={20}
               width={20}
               style={{ border: '1px solid #D4DCE2', borderRadius: '50%' }}
               src={props.proposer?.avatar || avatar}
             />
-            <Typography variant="body1" sx={{ lineHeight: '20px' }}>
-              {props.proposer?.nickname || 'unnamed'}
-            </Typography>
-            <AdminIcon className="AdminIcon" />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Typography variant="body1" noWrap sx={{ lineHeight: '20px', maxWidth: 80 }}>
+                {props.proposer?.nickname || 'unnamed'}
+              </Typography>
+              <AdminIcon className="AdminIcon" />
+            </Box>
           </Box>
         </Link>
         <AdminTagBlock daoAddress={props.daoAddress} chainId={props.v1V2ChainId} account={props.proposer.account} />
