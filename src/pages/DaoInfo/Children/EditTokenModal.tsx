@@ -227,7 +227,7 @@ export default function EditTokenModal({
             }}
             value={requirementAmount}
           />
-          <Box
+          {/* <Box
             sx={{
               height: 40,
               width: '100%',
@@ -254,7 +254,7 @@ export default function EditTokenModal({
                 </Typography>
               }
             />
-          </Box>
+          </Box> */}
           {voteBtn.text === 'requirement' && <RedText>{voteBtn.error}</RedText>}
           <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
             <OutlineButton
