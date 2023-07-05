@@ -386,7 +386,7 @@ function BasicTable({
           {rows.map((row, index) => (
             <TableRow key={row.symbol + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableContentStyle sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Image src={row.logo || defaultLogo} width={32} />
+                <Image src={row.logo || defaultLogo} width={32} style={{ borderRadius: '50%' }} />
                 {row.name}({row.symbol})
               </TableContentStyle>
               <TableContentStyle>{ChainListMap[row.id].name}</TableContentStyle>

@@ -65,9 +65,9 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
       >
         {proposalInfo.title}
       </Typography>
-      <Box display={'flex'} flexDirection={'row'} justifyContent={'flex-start'} mt={15}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}>
-          <Image height={20} width={20} src={proposalInfo.proposer?.avatar || avatar} />
+      <Box display={'flex'} mt={15}>
+        <Box sx={{ width: 115, display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}>
+          <Image height={20} width={20} src={proposalInfo.proposer?.avatar || avatar} style={{ borderRadius: '50%' }} />
           <Typography variant="body1" noWrap sx={{ lineHeight: '20px' }}>
             {proposalInfo.proposer?.nickname || 'unnamed'}
           </Typography>

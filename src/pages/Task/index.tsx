@@ -121,7 +121,7 @@ const columns: GridColDef[] = [
           <Tooltip title={params.row?.assignAccount} arrow>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
               <Image src={params.row?.assignAvatar || owl}></Image>
-              <Typography noWrap textAlign={'left'}>
+              <Typography noWrap textAlign={'left'} sx={{ maxWidth: '130px' }}>
                 {params.row?.assignNickname || 'Unnamed'}
               </Typography>
             </Box>
