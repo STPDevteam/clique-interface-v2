@@ -225,17 +225,13 @@ export default function LeftSider() {
 
   const workspaceList = useMemo(
     () =>
-      spaceListData.map((item: any, index: number) => ({
+      spaceListData.map(item => ({
         title: item.title,
-        link:
-          makeRouteLink(routes.DaoTeamTask) +
-          `/${myJoinDaoData.privateSpaces[index]?.isJoin ? true : false}` +
-          '/' +
-          item.spacesId,
+        link: makeRouteLink(routes.DaoTeamTask) + '/' + item.spacesId,
         logo: taskIcon,
         isPublic: item.access === 'public' ? true : false
       })),
-    [makeRouteLink, myJoinDaoData.privateSpaces, spaceListData]
+    [makeRouteLink, spaceListData]
   )
 
   const teamspacesList: LeftSiderMenu[] = useMemo(
@@ -345,7 +341,7 @@ export default function LeftSider() {
           >
             <>
               {account &&
-                myJoinedDaoList.map(option => (
+                myJoinedDaoList?.map(option => (
                   <Box
                     key={option.daoId + option.daoName}
                     onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}

@@ -29,6 +29,7 @@ import { MapPriorityType, MapTaskStatus } from './Children/TaskDetail'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { routes } from 'constants/routes'
 import { useActiveWeb3React } from 'hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 const StatusWrapper = styled(Box)(() => ({
   width: 100,
@@ -303,12 +304,19 @@ const AllTaskTable = function({ priority, status }: { priority: string | undefin
 
 export default function Index() {
   // const isSmDown = useBreakpoint('sm')
-  const { daoId: curDaoId, isPublic: _isPublic, spacesId: spacesId } = useParams<{
+  const { daoId: curDaoId, spacesId: spacesId } = useParams<{
     daoId: string
-    isPublic: string
     spacesId: string
   }>()
-  const isPublic = useMemo(() => _isPublic === 'true', [_isPublic])
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
+  const isJoin = useMemo(() => {
+    if (isJoined && spacesId) {
+      return isJoined.privateSpaces.filter(item => item.spacesId === Number(spacesId)).map(item => item.isJoin)
+    }
+    return false
+  }, [isJoined, spacesId])
+  console.log('info', isJoin)
+
   const daoId = Number(curDaoId)
   const _spacesId = Number(spacesId)
   const history = useHistory()
@@ -317,23 +325,20 @@ export default function Index() {
   const [tabValue, setTabValue] = useState(0)
   const [currentPriority, setCurrentPriority] = useState('')
   const [currentStatus, setCurrentStatus] = useState('')
-  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   // const handleEdit = useCallback(() => {}, [])
-  console.log('info', workspaceInfo, isJoined)
+  const userInfo = useUserInfo()
 
   useEffect(() => {
     if (workspaceInfo) {
       if (
         isJoined.job === 'owner' ||
         (account && account.toLocaleLowerCase() === workspaceInfo.creator.account.toLocaleLowerCase()) ||
-        (workspaceInfo.access === 'private' && isPublic)
+        (workspaceInfo.access === 'private' && isJoin && userInfo?.loggedToken)
       )
         return
-      else if ((workspaceInfo.access === 'private' && !isPublic) || workspaceInfo.access === 'private') {
-        history.replace(routes._DaoInfo + `/${daoId}/proposal`)
-      }
+      history.replace(routes._DaoInfo + `/${daoId}/proposal`)
     }
-  }, [account, daoId, history, isJoined.job, isPublic, workspaceInfo])
+  }, [account, daoId, history, isJoined.job, isJoin, workspaceInfo, userInfo?.loggedToken])
 
   return (
     <DaoContainer>

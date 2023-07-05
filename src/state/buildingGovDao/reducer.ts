@@ -73,7 +73,7 @@ export default createReducer(initialDaoDataState, builder =>
       state.spaceListData = payload.spaceListData
     })
     .addCase(updateDaoListData, (state, { payload }) => {
-      state.createDaoListData = payload.createDaoListData
+      state.createDaoListData = payload.createDaoListData || []
     })
     .addCase(updateJoinDaoModalStatus, (state, { payload }) => {
       state.isShowJoinDaoModal = payload.isShowJoinDaoModal

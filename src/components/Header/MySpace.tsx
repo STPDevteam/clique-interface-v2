@@ -89,7 +89,7 @@ export default function MySpace() {
         }
       >
         <>
-          {myJoinedDaoList.map(option => (
+          {myJoinedDaoList?.map(option => (
             <Box
               key={option.daoName + option.daoId}
               onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
