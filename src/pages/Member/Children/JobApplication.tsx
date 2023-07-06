@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 // import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
@@ -72,25 +72,27 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {timeStampToFormat(item.applyTime)}
       </Typography>,
-      <Box key={item.message} width={'100%'}>
-        <Typography
-          sx={{
-            width: '100%',
-            lineHeight: '20px',
-            whiteSpace: 'normal',
-            wordBreak: 'break-word',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            '-webkit-box-orient': 'vertical',
-            '-webkit-line-clamp': '2'
-          }}
-          fontWeight={400}
-          fontSize={12}
-          color={'#80829F'}
-        >
-          {item.message || '--'}
-        </Typography>
+      <Box key={item.message} width={'100%'} style={{ cursor: 'pointer' }}>
+        <Tooltip title={item.message || '--'} arrow placement="top">
+          <Typography
+            sx={{
+              width: '100%',
+              lineHeight: '20px',
+              whiteSpace: 'normal',
+              wordBreak: 'break-word',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              '-webkit-box-orient': 'vertical',
+              '-webkit-line-clamp': '2'
+            }}
+            fontWeight={400}
+            fontSize={12}
+            color={'#80829F'}
+          >
+            {item.message || '--'}
+          </Typography>
+        </Tooltip>
       </Box>,
       <Box
         key={item.message}
