@@ -248,13 +248,9 @@ export default function General({ daoId }: { daoId: number }) {
                   {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
                 </Row>
               ) : (
-                ''
-                // <InputStyle
-                //   readOnly
-                //   value={''}
-                //   placeholderSize="14px"
-                //   placeholder="Customize the voting time when creating a proposal"
-                // />
+                <Typography color="#B5B7CF" lineHeight="40px" variant="body1" paddingLeft={20}>
+                  Customize the voting time when creating a proposal
+                </Typography>
               )}
             </Row>
           </GridLayoutff>
@@ -383,7 +379,7 @@ function BasicTable({
             <TableContentTitle sx={{ pl: 30 }}>Token</TableContentTitle>
             <TableContentTitle>Network</TableContentTitle>
             <TableContentTitle>Requirement</TableContentTitle>
-            <TableContentTitle>Voting weight</TableContentTitle>
+            {/* <TableContentTitle>Voting weight</TableContentTitle> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -395,7 +391,7 @@ function BasicTable({
               </TableContentStyle>
               <TableContentStyle>{ChainListMap[row.id].name}</TableContentStyle>
               <TableContentStyle>{row.require}</TableContentStyle>
-              <TableContentStyle>{row.weight}</TableContentStyle>
+              {/* <TableContentStyle>{row.weight}</TableContentStyle> */}
               <TableContentStyle sx={{ width: 200 }}>
                 <Box sx={{ display: 'flex', gap: 20, alignItems: 'center', justifyContent: 'center' }}>
                   <TextButtonStyle
