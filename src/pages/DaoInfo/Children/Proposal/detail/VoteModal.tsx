@@ -241,7 +241,7 @@ function MultiVote({
   setFatherVotes
 }: {
   totalVotes: number | undefined
-  myAlreadyVotes: number | undefined
+  myAlreadyVotes: number
   voteProposalSign: govList
   FatherVotes: string
   setFatherVotes: Dispatch<SetStateAction<string>>
@@ -266,7 +266,6 @@ function MultiVote({
           <Typography> / </Typography>
           <Typography color={theme.palette.text.primary}>
             {(totalVotes &&
-              myAlreadyVotes &&
               formatNumberWithCommas(new BigNumber(totalVotes).minus(new BigNumber(myAlreadyVotes)).toString())) ||
               '--'}
           </Typography>
