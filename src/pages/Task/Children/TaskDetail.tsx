@@ -179,8 +179,7 @@ export default function TaskDetail({
     },
     [onDismiss]
   )
-  console.log(identity)
-
+  const [isSubmit, setIsSubmit] = useState(false)
   const isSmDown = useBreakpoint('sm')
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
@@ -202,6 +201,7 @@ export default function TaskDetail({
   }, [taskDetailData?.content])
 
   const createCallback = useCallback(() => {
+    setIsSubmit(true)
     if (!spacesId) return
     create(
       assignees,
@@ -217,11 +217,13 @@ export default function TaskDetail({
       if (res.data.code === 200) {
         onDismiss()
         toast.success('Create task success')
+        setIsSubmit(false)
       } else toast.error('Network error')
     })
   }, [spacesId, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
 
   const updateCallback = useCallback(() => {
+    setIsSubmit(true)
     if (!editData) return
     update(
       assignees,
@@ -243,24 +245,37 @@ export default function TaskDetail({
         return
       }
       toast.success('Update success')
+      setIsSubmit(false)
     })
   }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, update, value])
 
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton width="140px" height="36px" disabled={!value.trim()} color="#0049C6" onClick={updateCallback}>
+        <SaveButton
+          width="140px"
+          height="36px"
+          disabled={isSubmit ? isSubmit : !value.trim()}
+          color="#0049C6"
+          onClick={updateCallback}
+        >
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton width="140px" height="36px" disabled={!value.trim()} color="#ffffff" onClick={createCallback}>
+        <ConfirmButton
+          width="140px"
+          height="36px"
+          disabled={isSubmit ? isSubmit : !value.trim()}
+          color="#ffffff"
+          onClick={createCallback}
+        >
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback, value])
+  }, [createCallback, editData, updateCallback, value, isSubmit])
 
   return (
     <Box maxWidth="608px" width="100%">

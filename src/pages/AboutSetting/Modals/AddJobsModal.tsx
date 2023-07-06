@@ -39,6 +39,7 @@ export default function AddJobsModal({
   const create = useCreateNewJob()
   const deleteFn = useDeleteJob()
   const update = useUpdateNewJob()
+  const [isSubmit, setIsSubmit] = useState(false)
 
   const validationSchema = yup.object().shape({
     title: yup
@@ -57,6 +58,7 @@ export default function AddJobsModal({
   }
 
   const onDelete = useCallback(() => {
+    setIsSubmit(true)
     if (!publishId) return
     deleteFn(publishId)
       .then((res: any) => {
@@ -67,6 +69,7 @@ export default function AddJobsModal({
         toast.success('Delete success')
         hideModal()
         onDimiss()
+        setIsSubmit(false)
       })
       .catch(err => {
         console.log(err)
@@ -75,6 +78,7 @@ export default function AddJobsModal({
   }, [deleteFn, hideModal, onDimiss, publishId])
 
   const handleSubmit = (values: any) => {
+    setIsSubmit(true)
     if (isEdit) {
       if (!publishId) return
       update(values.des, publishId, currentStatus, values.title)
@@ -86,6 +90,7 @@ export default function AddJobsModal({
           toast.success('Update success')
           hideModal()
           onDimiss()
+          setIsSubmit(false)
         })
         .catch(err => {
           console.log(err)
@@ -101,6 +106,7 @@ export default function AddJobsModal({
           toast.success('Create success')
           hideModal()
           onDimiss()
+          setIsSubmit(false)
         })
         .catch(err => {
           console.log(err)
@@ -188,6 +194,7 @@ export default function AddJobsModal({
                       Delete
                     </OutlineButton>
                     <LoadingButton
+                      disabled={isSubmit}
                       loadingPosition="start"
                       startIcon={<></>}
                       variant="contained"
@@ -204,6 +211,7 @@ export default function AddJobsModal({
                       Close
                     </OutlineButton>
                     <LoadingButton
+                      disabled={isSubmit}
                       loadingPosition="start"
                       startIcon={<></>}
                       variant="contained"
