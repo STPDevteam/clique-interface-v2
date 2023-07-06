@@ -31,6 +31,8 @@ import { toast } from 'react-toastify'
 import { ChainListMap } from 'constants/chain'
 import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useTokenByChain } from 'state/wallet/hooks'
+import { isAddress } from 'ethers/lib/utils'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -55,6 +57,7 @@ const Row = styled(Box)(() => ({
 export default function General({ daoId }: { daoId: number }) {
   const { showModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  console.log(daoInfo, 890)
   const [loading, setLoading] = useState(false)
   const [fixTime, setFixtime] = useState((daoInfo.votingPeriod / 3600).toString())
   const PeriodList = [
@@ -77,11 +80,17 @@ export default function General({ daoId }: { daoId: number }) {
       daoInfo.governance.map(item => ({
         createRequire: item.createRequire,
         voteTokenId: item.voteTokenId,
-        votesWeight: item.weight
+        votesWeight: item.weight,
+        chainId: item.chainId,
+        tokenAddress: item.tokenAddress
       })),
     [daoInfo.governance]
   )
-
+  const govToken = useTokenByChain(
+    isAddress(weight[0].tokenAddress) ? weight[0].tokenAddress : undefined,
+    weight[0].chainId ?? undefined
+  )
+  console.log(govToken)
   const cb = useUpdateGovernance()
 
   const saveBtn: {
@@ -207,9 +216,15 @@ export default function General({ daoId }: { daoId: number }) {
                   </Typography>
                 }
                 onChange={e => {
-                  setProposalThreshold(
-                    /^[1-9]\d*$/.test(e.target.value) || !e.target.value ? e.target.value : proposalThreshold
-                  )
+                  if (
+                    (Number(e.target.value) <= Number(govToken?.totalSupply.toSignificant(18)) &&
+                      /^[1-9]\d*$/.test(e.target.value)) ||
+                    !e.target.value
+                  ) {
+                    setProposalThreshold(e.target.value)
+                  } else {
+                    setProposalThreshold(proposalThreshold)
+                  }
                 }}
                 value={proposalThreshold}
               />
