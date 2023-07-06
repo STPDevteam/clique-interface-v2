@@ -20,7 +20,7 @@ import taskIcon from 'assets/images/task.png'
 // import calendarIcon from 'assets/images/calendar.png'
 // import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DaoAvatars } from 'components/Avatars'
 import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
@@ -269,6 +269,14 @@ export default function LeftSider() {
 
     return list
   }, [myJoinDaoData?.job, teamspacesList])
+  useEffect(() => {
+    if (pathname === makeRouteLink(routes.Proposal)) {
+      setActiveIndex(() => {
+        const newItems = [true, false, false, false, false, false]
+        return newItems
+      })
+    }
+  }, [makeRouteLink, pathname])
 
   return (
     <StyledAppBar>
