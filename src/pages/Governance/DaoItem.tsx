@@ -139,7 +139,6 @@ export default function DaoItem({
         </Box>
       </Box>
       <StyledDesc variant="body1">
-        {iodBio}
         {iodBio ? (
           iodBio
         ) : (
