@@ -206,7 +206,11 @@ export default function General({ daoId }: { daoId: number }) {
                     Votes
                   </Typography>
                 }
-                onChange={e => setProposalThreshold(e.target.value)}
+                onChange={e => {
+                  setProposalThreshold(
+                    /^[1-9]\d*$/.test(e.target.value) || !e.target.value ? e.target.value : proposalThreshold
+                  )
+                }}
                 value={proposalThreshold}
               />
               {startValite && saveBtn.text === 'threshold' && (
