@@ -403,7 +403,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
   return (
     <StyledCard
       onClick={() =>
-        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.v1V2DaoAddress}/${proposalInfo.proposalId}`)
+        window.open(myCliqueV1Domain + `cross_detail/${proposalInfo.v1V2DaoAddress}/${proposalInfo.v1V2ProposalNum}`)
       }
     >
       {isSmDown && <Box>{Creator}</Box>}
@@ -423,7 +423,7 @@ function ProposalV1Item(proposalInfo: ProposalListBaseProp) {
             <Typography color={'#97B7EF'} fontSize={14}>
               {proposalInfo.targetTimeString}
             </Typography>
-            <ShowProposalStatusTag status={proposalInfo.status} />
+            <ShowProposalStatusTag status={proposalInfo.isPass} />
           </>
         </RowCenter>
       </RowCenter>

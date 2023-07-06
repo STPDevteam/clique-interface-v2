@@ -19,6 +19,7 @@ export interface ProposalListBaseProp {
   v1V2ChainId: ChainId
   daoAddress: string
   v1V2DaoAddress: string
+  v1V2ProposalNum: number
   proposalId: number
   proposalSIP: number
   introduction: string
@@ -68,6 +69,7 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
       proposalId: item.proposalId,
       proposalSIP: item.proposalSIP,
       v1V2ChainId: item.v1V2ChainId,
+      v1V2ProposalNum: item.v1V2ProposalNum,
       version: item.version,
       title: item.title,
       votes: item.votes,
