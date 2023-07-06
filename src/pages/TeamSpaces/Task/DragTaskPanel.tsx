@@ -388,7 +388,7 @@ export default function DragTaskPanel() {
         sx={{
           position: 'absolute',
           right: 0,
-          top: '145px'
+          top: '-50px'
         }}
       >
         {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (

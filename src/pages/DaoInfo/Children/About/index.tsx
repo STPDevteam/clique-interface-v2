@@ -314,7 +314,7 @@ function BasicTable({ list }: { list: govList[] }) {
                 <TableContentTitle>Network</TableContentTitle>
                 <TableContentTitle>Token contract address</TableContentTitle>
                 <TableContentTitle>Requirement</TableContentTitle>
-                <TableContentTitle>Voting weight</TableContentTitle>
+                {/* <TableContentTitle>Voting weight</TableContentTitle> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -340,7 +340,7 @@ function BasicTable({ list }: { list: govList[] }) {
                     </Box>
                   </TableContentText>
                   <TableContentText>{row?.createRequire}</TableContentText>
-                  <TableContentText>{row?.weight}</TableContentText>
+                  {/* <TableContentText>{row?.weight}</TableContentText> */}
                 </TableRow>
               ))}
             </TableBody>
