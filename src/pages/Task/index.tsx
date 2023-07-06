@@ -331,11 +331,14 @@ export default function Index() {
     if (workspaceInfo) {
       if (
         isJoined.job === 'owner' ||
+        workspaceInfo.access === 'public' ||
         (account && account.toLocaleLowerCase() === workspaceInfo.creator.account.toLocaleLowerCase()) ||
         (workspaceInfo.access === 'private' && isJoin && userInfo?.loggedToken)
-      )
+      ) {
         return
-      history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+      } else {
+        history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+      }
     }
   }, [account, daoId, history, isJoined.job, isJoin, workspaceInfo, userInfo?.loggedToken])
 
@@ -390,8 +393,15 @@ export default function Index() {
           ''
         )} */}
           </Box>
-          <Typography maxWidth={740} sx={{ marginTop: '0!important' }}>
-            {workspaceInfo?.bio ||
+          <Typography
+            maxWidth={740}
+            sx={{
+              marginTop: '0!important',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word'
+            }}
+          >
+            {`${workspaceInfo?.bio}` ||
               'Use this template to track your personal tasks. Click Add New to create a new task directly on this board. Click an existing task to add additional context or subtasks.'}
           </Typography>
           <Box
