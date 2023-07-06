@@ -1,5 +1,5 @@
 import { Box, Typography, styled } from '@mui/material'
-import ShowProposalStatusTag from '../ShowProposalStatusTag'
+import { ShowProposalStatusV3Tag } from '../ShowProposalStatusTag'
 // import ReactHtmlParser from 'react-html-parser'
 import 'react-quill/dist/quill.snow.css'
 // import { escapeAttrValue, filterXSS } from 'xss'
@@ -22,7 +22,7 @@ function createTimeStampStr(startTime: number, endTime: number, status: string) 
   } else if (status === 'Active') {
     targetTimeString = getTargetTimeString(now, endTime)
   } else if (status === 'Cancel') {
-    targetTimeString = 'User Cancel'
+    targetTimeString = 'User Cancelled'
   } else {
     targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
   }
@@ -65,7 +65,7 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
       >
         {proposalInfo.title}
       </Typography>
-      <Box display={'flex'} mt={15}>
+      <Box display={'flex'} mt={15} gap={10}>
         <Box sx={{ width: 'fit-content', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}>
           <Image height={20} width={20} src={proposalInfo.proposer?.avatar || avatar} style={{ borderRadius: '50%' }} />
           <Typography variant="body1" noWrap sx={{ lineHeight: '20px', maxWidth: 80 }}>
@@ -73,7 +73,7 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
           </Typography>
           <AdminIcon />
         </Box>
-        <ShowProposalStatusTag status={proposalInfo.status} />
+        <ShowProposalStatusV3Tag status={proposalInfo.status} />
       </Box>
       {/* <Box
         mt={15}

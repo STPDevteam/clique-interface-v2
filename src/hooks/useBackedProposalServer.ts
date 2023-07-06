@@ -63,7 +63,7 @@ function makeLIstData(data: any): ProposalListBaseProp[] {
     } else {
       targetTimeString = 'Closed ' + getTargetTimeString(now, endTime)
     }
-    if (_status === ProposalStatus.CANCEL) targetTimeString = 'User Cancel'
+    if (_status === ProposalStatus.CANCEL) targetTimeString = 'User Cancelled'
 
     return {
       proposalId: item.proposalId,

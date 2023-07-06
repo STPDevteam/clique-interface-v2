@@ -20,10 +20,9 @@ export const StyledChip = styled(Chip)(
 )
 export const StyledV3Chip = styled(Chip)(({ bgColor, textColor }: { bgColor: string; textColor: string }) => ({
   fontWeight: 600,
-  marginLeft: 10,
   backgroundColor: bgColor,
   color: textColor,
-  width: 70,
+  minWidth: 70,
   height: 20,
   borderRadius: '18px',
   fontSize: 13,
@@ -41,7 +40,7 @@ export default function ShowProposalStatusTag({ status }: { status: ProposalStat
   ) : status === ProposalStatus.OPEN || status === 'Active' ? (
     <StyledChip label="Open" bgColor={'#21C431'} textColor={theme.palette.common.white} />
   ) : status === ProposalStatus.CANCEL || status === 'Cancel' ? (
-    <StyledChip label="Cancel" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
+    <StyledChip label="Cancelled" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
   ) : status === ProposalStatus.SUCCESS || status === 'Success' ? (
     <StyledChip label="Success" bgColor={theme.palette.primary.main} textColor={theme.palette.common.white} />
   ) : (
@@ -49,17 +48,15 @@ export default function ShowProposalStatusTag({ status }: { status: ProposalStat
   )
 }
 
-export function ShowProposalStatusV3Tag({ status }: { status: ProposalStatus }) {
-  console.log(status)
-
+export function ShowProposalStatusV3Tag({ status }: { status: ProposalStatus | string }) {
   const theme = useTheme()
-  return status === ProposalStatus.SOON ? (
+  return status === ProposalStatus.SOON || status === 'Soon' ? (
     <StyledV3Chip label="Soon" variant="outlined" bgColor={theme.palette.common.white} textColor={'#21C331'} />
-  ) : status === ProposalStatus.OPEN ? (
+  ) : status === ProposalStatus.OPEN || status === 'Active' ? (
     <StyledV3Chip label="Open" bgColor={'#21C431'} textColor={theme.palette.common.white} />
-  ) : status === ProposalStatus.CANCEL ? (
-    <StyledV3Chip label="Cancel" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
-  ) : status === ProposalStatus.SUCCESS ? (
+  ) : status === ProposalStatus.CANCEL || status === 'Cancel' ? (
+    <StyledV3Chip label="Cancelled" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
+  ) : status === ProposalStatus.SUCCESS || status === 'Success' ? (
     <StyledV3Chip label="Success" bgColor={theme.palette.primary.main} textColor={theme.palette.common.white} />
   ) : (
     <StyledV3Chip label="Closed" bgColor={'#D4D7E2'} textColor={'#80829F'} />
