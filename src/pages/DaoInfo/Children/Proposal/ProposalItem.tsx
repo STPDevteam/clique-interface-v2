@@ -158,7 +158,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
                   justifyContent: 'center'
                 }}
               >
-                PASSED
+                Success
               </Typography>
             </Box>
           </>
@@ -187,7 +187,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
                 justifyContent: 'center'
               }}
             >
-              FAILED
+              Failed
             </Typography>
           </Box>
         ) : (
@@ -327,7 +327,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
                         justifyContent: 'center'
                       }}
                     >
-                      PASSED
+                      Success
                     </Typography>
                   </Box>
                 </>
@@ -356,7 +356,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
                       justifyContent: 'center'
                     }}
                   >
-                    FAILED
+                    Failed
                   </Typography>
                 </Box>
               ) : (
