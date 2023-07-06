@@ -194,7 +194,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 )}
               </Box>
               <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={JobsType[item.jobsLevel]}>
-                {JobsType[item.jobsLevel] || 'unnamed'}
+                {JobsType[item.jobsLevel] === 'superAdmin' ? 'Super Admin' : JobsType[item.jobsLevel] || 'unnamed'}
               </Button>
             </Box>
             {hoverIndex === index &&

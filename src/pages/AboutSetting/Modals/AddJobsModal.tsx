@@ -13,7 +13,7 @@ import { Form, Formik } from 'formik'
 import { LoadingButton } from '@mui/lab'
 
 const guestList = [
-  { value: 1, label: 'superAdmin' },
+  { value: 1, label: 'Super Admin' },
   { value: 2, label: 'admin' }
 ]
 

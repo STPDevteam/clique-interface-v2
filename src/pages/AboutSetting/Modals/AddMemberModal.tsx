@@ -11,7 +11,7 @@ import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 
 const guestList = [
-  { value: 1, label: 'superAdmin' },
+  { value: 1, label: 'Super Admin' },
   { value: 2, label: 'Admin' }
 ]
 

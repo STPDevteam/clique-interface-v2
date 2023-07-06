@@ -117,7 +117,9 @@ export default function Team() {
         }}
       >
         <Typography width={130} textAlign={'left'}>
-          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp]}
+          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'superAdmin'
+            ? 'Super Admin'
+            : DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp]}
         </Typography>
         <ExpandMoreIcon />
       </Box>
