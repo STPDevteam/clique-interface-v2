@@ -219,10 +219,14 @@ export default function EditTokenModal({
               </Typography>
             }
             onChange={e => {
-              if (Number(e.target.value) > Number(govToken?.totalSupply.toSignificant(18))) {
-                setRequirementAmount(requirementAmount)
-              } else {
+              if (
+                (Number(e.target.value) <= Number(govToken?.totalSupply.toSignificant(18)) &&
+                  /^[1-9]\d*$/.test(e.target.value)) ||
+                !e.target.value
+              ) {
                 setRequirementAmount(e.target.value)
+              } else {
+                setRequirementAmount(requirementAmount)
               }
             }}
             value={requirementAmount}

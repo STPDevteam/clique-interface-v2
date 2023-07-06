@@ -243,7 +243,17 @@ export default function AddTokenModal({
                 {govToken?.token.symbol}
               </Typography>
             }
-            onChange={e => setRequirementAmount(e.target.value)}
+            onChange={e => {
+              if (
+                (Number(e.target.value) <= Number(govToken?.totalSupply.toSignificant(18)) &&
+                  /^[1-9]\d*$/.test(e.target.value)) ||
+                !e.target.value
+              ) {
+                setRequirementAmount(e.target.value)
+              } else {
+                setRequirementAmount(requirementAmount)
+              }
+            }}
             value={requirementAmount}
           />
           {voteBtn.text === 'requirement' && <RedText>{voteBtn.error}</RedText>}
