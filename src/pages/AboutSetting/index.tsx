@@ -168,7 +168,7 @@ export default function AboutSetting() {
         >
           <Image src={Setting} width={38} />
           <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
-            Setting
+            Settings
           </Typography>
         </Box>
         <MenuList
