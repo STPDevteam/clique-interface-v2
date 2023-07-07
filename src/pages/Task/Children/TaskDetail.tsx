@@ -217,8 +217,8 @@ export default function TaskDetail({
       if (res.data.code === 200) {
         onDismiss()
         toast.success('Create task success')
-        setIsSubmit(false)
       } else toast.error('Network error')
+      setIsSubmit(false)
     })
   }, [spacesId, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
 
@@ -242,6 +242,7 @@ export default function TaskDetail({
       onDismiss()
       if (res.data.code !== 200) {
         toast.error(res.data.msg || 'Network error')
+        setIsSubmit(false)
         return
       }
       toast.success('Update success')
