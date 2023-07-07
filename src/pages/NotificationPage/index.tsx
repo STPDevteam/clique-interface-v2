@@ -400,11 +400,11 @@ function MsgItems({
             : ''
           : item.types === 'BecomeOwner' || item.types === 'BecomeSuperAdmin' || item.types === 'BecomeAdmin'
           ? item.daoId
-            ? routes._DaoInfo + `/${item.daoId}/proposal`
+            ? routes._DaoInfo + `/${item.daoId}/member`
             : ''
           : item.types === 'JobReject' || item.types === 'JobApply'
           ? item.daoId
-            ? routes._DaoInfo + `/${item.daoId}/proposal`
+            ? routes._DaoInfo + `/${item.daoId}/member`
             : ''
           : item.types === 'TaskAssigned' || item.types === 'TaskDone'
           ? item.daoId

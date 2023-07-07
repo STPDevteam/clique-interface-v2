@@ -42,8 +42,8 @@ function ContextMenu({
           sx={{
             position: 'absolute',
             zIndex: 9999,
-            top: 0,
-            left: 150,
+            bottom: -25,
+            left: 20,
             width: 150,
             padding: 10,
             backgroundColor: '#fff',
