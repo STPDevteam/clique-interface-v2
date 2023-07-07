@@ -1,4 +1,4 @@
-import { Box, Stack, Typography, MenuItem, Grid } from '@mui/material'
+import { Box, Stack, Typography, MenuItem, Grid, Link } from '@mui/material'
 import Button from 'components/Button/Button'
 import Select from 'components/Select/Select'
 import ProposalItem from './ProposalItem'
@@ -29,7 +29,8 @@ export default function Proposal() {
   const history = useHistory()
   const { showModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  const { updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
+  const { updateMyJoinedDaoListData, myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
+  console.log(isJoined?.job, 90)
   const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
   const {
@@ -85,9 +86,29 @@ export default function Proposal() {
               style={{ fontWeight: 700 }}
               onClick={() => {
                 if (!daoInfo.daoCanCreateProposal) {
-                  showModal(
-                    <MessageBox type="error">Please wait for the administrator to set up governance rules</MessageBox>
-                  )
+                  if (isJoined?.job === 'owner') {
+                    showModal(
+                      <MessageBox type="error">
+                        Please set the governance rules first.
+                        <Link
+                          underline="hover"
+                          style={{
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => {
+                            history.push(routes._DaoInfo + `/${params.daoId}/settings`)
+                          }}
+                        >
+                          to set up
+                        </Link>
+                      </MessageBox>
+                    )
+                  } else {
+                    showModal(
+                      <MessageBox type="error">Please wait for the administrator to set up governance rules</MessageBox>
+                    )
+                  }
+
                   return
                 }
                 history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)

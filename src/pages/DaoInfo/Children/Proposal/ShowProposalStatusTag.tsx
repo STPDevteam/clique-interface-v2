@@ -59,6 +59,6 @@ export function ShowProposalStatusV3Tag({ status }: { status: ProposalStatus | s
   ) : status === ProposalStatus.SUCCESS || status === 'Success' ? (
     <StyledV3Chip label="Success" bgColor={theme.palette.primary.main} textColor={theme.palette.common.white} />
   ) : (
-    <StyledV3Chip label="Closed" bgColor={'#D4D7E2'} textColor={'#80829F'} />
+    <StyledV3Chip label="Failed" bgColor={'#D4D7E2'} textColor={'#80829F'} />
   )
 }

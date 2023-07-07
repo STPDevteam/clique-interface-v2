@@ -33,6 +33,8 @@ import { useDeleteGovToken } from 'hooks/useBackedProposalServer'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useTokenByChain } from 'state/wallet/hooks'
 import { isAddress } from 'ethers/lib/utils'
+import EmptyData from 'components/EmptyData'
+import Tooltip from 'components/Tooltip'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -110,7 +112,7 @@ export default function General({ daoId }: { daoId: number }) {
       return {
         disabled: true,
         text: 'governance',
-        error: 'Mininum token amount is 1'
+        error: 'A governance token needs to be added'
       }
     }
     if (!proposalThreshold || Number(proposalThreshold) < 1) {
@@ -186,6 +188,8 @@ export default function General({ daoId }: { daoId: number }) {
           votingType={createDaoData?.votingType}
         />
       )}
+      {!loading && !createDaoData?.governance.length && <EmptyData sx={{ marginTop: 10 }}>No data</EmptyData>}
+
       <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20 }}>
         <Typography
           sx={{
@@ -193,13 +197,16 @@ export default function General({ daoId }: { daoId: number }) {
             fontWeight: 500,
             fontSize: 14,
             lineHeight: '20px',
-            color: '#B5B7CF'
+            color: '#3f5170'
           }}
         >
           Governance setting
         </Typography>
         <Box>
-          <InputTitleStyle mb={8}>Threshold</InputTitleStyle>
+          <InputTitleStyle mb={8} sx={{ display: 'flex', gap: 5 }}>
+            Threshold <Tooltip value={'Minimum votes needed for proposal to execute'} />
+          </InputTitleStyle>
+
           <GridLayoutff>
             <Row sx={{ gap: 10, flexDirection: 'column' }}>
               <InputTitleStyle style={{ lineHeight: '20px' }}>
