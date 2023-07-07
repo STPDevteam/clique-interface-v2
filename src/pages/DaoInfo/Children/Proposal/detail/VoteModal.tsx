@@ -260,7 +260,7 @@ function MultiVote({
             value={FatherVotes}
             onChange={e => {
               if (totalVotes && myAlreadyVotes && Number(e.target.value) > totalVotes - myAlreadyVotes) return
-              setFatherVotes(e.target.value)
+              setFatherVotes(/^[1-9]\d*$/.test(e.target.value) || !e.target.value ? e.target.value : FatherVotes)
             }}
           />
           <Typography> / </Typography>
