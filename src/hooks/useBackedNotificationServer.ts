@@ -12,6 +12,13 @@ export type NotificationTypes =
   | 'PublicSaleCanceled'
   | 'NewProposal'
   | 'ReserveToken'
+  | 'TaskDone'
+  | 'TaskAssigned'
+  | 'BecomeAdmin'
+  | 'BecomeSuperAdmin'
+  | 'BecomeOwner'
+  | 'JobApply'
+  | 'JobReject'
 
 export interface NotificationInfoProp {
   activityId?: number

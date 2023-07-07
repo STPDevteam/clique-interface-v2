@@ -275,3 +275,120 @@ export default function NotificationPage() {
     </Box>
   )
 }
+
+// function MsgItems({
+//   item,
+//   setReadOnce,
+//   isReadAll,
+//   toBackedReadOnce
+// }: {
+//   item: NotificationProp
+//   setReadOnce: () => void
+//   isReadAll: boolean
+//   toBackedReadOnce: (notificationId: number) => Promise<any>
+// }) {
+//   const [isRead, setIsRead] = useState(item.alreadyRead)
+
+//   const history = useHistory()
+//   const showData: {
+//     text: string
+//     link?: string
+//   } = useMemo(() => {
+//     return {
+//       text:
+//         item.types === 'Airdrop'
+//           ? 'DAO Rewards'
+//           : item.types === 'NewProposal'
+//           ? 'Active Proposal'
+//           : item.types === 'JobReject' || item.types === 'JobApply'
+//           ? 'Open job'
+//           : item.types === 'BecomeOwner' || item.types === 'BecomeSuperAdmin' || item.types === 'BecomeAdmin'
+//           ? 'DAO Members'
+//           : item.types === 'TaskAssigned' || item.types === 'TaskDone'
+//           ? 'Workspace'
+//           : 'message',
+//       link:
+//         item.types === 'Airdrop'
+//           ? item.activityId && item.daoId
+//             ? routes._ActivityAirdropDetail + `/${item.daoId}/${item.activityId}`
+//             : ''
+//           : item.types === 'NewProposal'
+//           ? item.daoId
+//             ? routes._DaoInfo + `/${item.daoId}/proposal/detail/${item.activityId}`
+//             : ''
+//           : item.types === 'ReserveToken'
+//           ? routes._Profile
+//           : item.types === 'PublicSaleCreated' ||
+//             item.types === 'PublicSalePurchased' ||
+//             item.types === 'PublicSaleCanceled'
+//           ? routes._SaleDetails + `/${item.activityId || 0}`
+//           : ''
+//     }
+//   }, [item.activityId, item.daoId, item.types])
+
+//   return (
+//     <Box
+//       sx={{ cursor: isRead || isReadAll ? 'auto' : 'pointer' }}
+//       onClick={() => {
+//         if (!isRead || !isReadAll) {
+//           toBackedReadOnce(item.notificationId).then(() => {
+//             setIsRead(true)
+//             setReadOnce()
+//           })
+//         }
+//       }}
+//     >
+//       <RowCenter mb={16}>
+//         <TypeTitle isRead={isRead || isReadAll} type={item.types} />
+//         <Text>{timeStampToFormat(item.notificationTime)}</Text>
+//       </RowCenter>
+//       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
+//         <Box display={'flex'} alignItems="center">
+//           <DaoAvatars size={64} src={item.daoLogo} />
+//           <Box ml={16}>
+//             <Text>{item.daoName}</Text>
+//             <Text display={'inline-block'}>
+//               {showData.text}
+//               {'. '}
+//               {showData.link && (
+//                 <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+//                   View
+//                 </Link>
+//               )}
+//             </Text>
+//           </Box>
+//         </Box>
+//       ) : item.types === 'PublicSaleCreated' ||
+//         item.types === 'PublicSalePurchased' ||
+//         item.types === 'PublicSaleCanceled' ? (
+//         <Box display={'flex'} alignItems="center">
+//           <DaoAvatars size={64} src={item.daoLogo} />
+//           <Box ml={16}>
+//             <Text>{item.daoName}</Text>
+//             <Text display={'inline-block'}>
+//               {showData.text}
+//               {'. '}
+//               {showData.link && (
+//                 <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+//                   View
+//                 </Link>
+//               )}
+//             </Text>
+//           </Box>
+//         </Box>
+//       ) : (
+//         <Box>
+//           <Text display={'inline-block'}>
+//             {showData.text}
+//             {'. '}
+//             {showData.link && (
+//               <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+//                 View
+//               </Link>
+//             )}
+//           </Text>
+//         </Box>
+//       )}
+//     </Box>
+//   )
+// }

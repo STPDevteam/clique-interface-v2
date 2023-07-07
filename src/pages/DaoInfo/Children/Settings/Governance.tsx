@@ -86,9 +86,10 @@ export default function General({ daoId }: { daoId: number }) {
       })),
     [daoInfo.governance]
   )
+
   const govToken = useTokenByChain(
-    isAddress(weight[0].tokenAddress) ? weight[0].tokenAddress : undefined,
-    weight[0].chainId ?? undefined
+    isAddress(weight[0]?.tokenAddress) ? weight[0]?.tokenAddress : undefined,
+    weight[0]?.chainId ?? undefined
   )
   console.log(govToken)
   const cb = useUpdateGovernance()
