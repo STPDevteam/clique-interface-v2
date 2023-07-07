@@ -49,7 +49,7 @@ export interface CreateDaoListDataProp {
 
 export interface MyJoinDaoDataProp {
   isJoin: boolean
-  job: string
+  job: 'owner' | 'superAdmin' | 'admin' | 'noRole' | 'visitor' | ''
   privateSpaces: PrivateSpacesProp[]
 }
 export interface CreateDaoDataProp {

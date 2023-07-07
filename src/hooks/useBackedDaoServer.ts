@@ -379,7 +379,11 @@ export function useHomeDaoList() {
 
 export function useIsJoined(daoId: number) {
   const [loading, setLoading] = useState(false)
-  const [isJoined, setIsJoined] = useState<{ isJoin: boolean; job: string; privateSpaces: [] }>()
+  const [isJoined, setIsJoined] = useState<{
+    isJoin: boolean
+    job: 'owner' | 'superAdmin' | 'admin' | 'noRole' | 'visitor' | ''
+    privateSpaces: []
+  }>()
   const userInfo = useUserInfo()
 
   useEffect(() => {

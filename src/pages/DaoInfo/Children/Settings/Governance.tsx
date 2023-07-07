@@ -208,10 +208,7 @@ export default function General({ daoId }: { daoId: number }) {
           </InputTitleStyle>
 
           <GridLayoutff>
-            <Row sx={{ gap: 10, flexDirection: 'column' }}>
-              <InputTitleStyle style={{ lineHeight: '20px' }}>
-                Minimum Votes Needed For Proposal To Execute
-              </InputTitleStyle>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
               <InputStyle
                 style={{
                   borderColor: startValite && saveBtn.error && saveBtn.text === 'threshold' ? '#E46767' : '#D4D7E2'
@@ -239,7 +236,7 @@ export default function General({ daoId }: { daoId: number }) {
               {startValite && saveBtn.text === 'threshold' && (
                 <Typography color={'#E46767'}>{saveBtn.error}</Typography>
               )}
-            </Row>
+            </Box>
             <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
               <Row sx={{ justifyContent: 'space-between' }}>
                 <InputTitleStyle>Voting period</InputTitleStyle>

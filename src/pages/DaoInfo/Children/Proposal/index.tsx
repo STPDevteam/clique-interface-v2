@@ -86,7 +86,8 @@ export default function Proposal() {
               style={{ fontWeight: 700 }}
               onClick={() => {
                 if (!daoInfo.daoCanCreateProposal) {
-                  if (isJoined?.job === 'owner') {
+                  console.log(isJoined?.job)
+                  if (isJoined?.job === 'owner' || isJoined?.job === 'superAdmin') {
                     showModal(
                       <MessageBox type="error">
                         Please set the governance rules first.
