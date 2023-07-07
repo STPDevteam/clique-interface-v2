@@ -151,7 +151,7 @@ export default function Index({
       {showUploadBtn && (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
           <Typography sx={{ width: '150px', lineHeight: '17px', fontWeight: 400, color: '#80829F' }}>
-            File types supported: JPG, PNG, GIF.
+            File types supported: JPG, PNG.
           </Typography>
           <Button width="125px" height="40px" style={{ marginTop: 25 }} onClick={handleClick}>
             + Upload

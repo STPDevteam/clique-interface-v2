@@ -145,7 +145,7 @@ export default function Index({
           {logoTitle ? logoTitle : ' '}
         </Typography>
         <Typography sx={{ mb: 25, width: '150px', lineHeight: '17px', fontWeight: 400, color: '#80829F' }}>
-          File types supported: JPG, PNG, GIF.
+          File types supported: JPG, PNG.
         </Typography>
 
         <Button onClick={handleClick} width="125px" height="40px">
