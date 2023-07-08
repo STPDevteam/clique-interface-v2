@@ -2,7 +2,7 @@ import { SxProps, Theme } from '@mui/material'
 import Box from '@mui/material/Box'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Popper from '@mui/material/Popper'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 export default function PopperCard({
   sx,
@@ -18,6 +18,7 @@ export default function PopperCard({
   width?: string
   placement?: 'bottom-end' | 'bottom' | 'bottom-start'
 }) {
+  const popperRef = useRef<any>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = !!anchorEl
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,6 +27,20 @@ export default function PopperCard({
     event.stopPropagation()
   }
 
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (popperRef.current && !popperRef.current.contains(event.target)) {
+        setAnchorEl(null)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   return (
     <ClickAwayListener
       onClickAway={() => {
@@ -33,6 +48,7 @@ export default function PopperCard({
       }}
     >
       <Box
+        ref={popperRef}
         width={width || '100%'}
         sx={{
           // height: '100%',
