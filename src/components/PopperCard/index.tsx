@@ -28,10 +28,8 @@ export default function PopperCard({
   }
 
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (popperRef.current && !popperRef.current.contains(event.target)) {
-        setAnchorEl(null)
-      }
+    const handleClickOutside = () => {
+      popperRef && !popperRef.current && anchorEl && setAnchorEl(null)
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -39,62 +37,63 @@ export default function PopperCard({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [])
+  }, [anchorEl])
 
   return (
-    <ClickAwayListener
-      onClickAway={() => {
-        setAnchorEl(null)
-      }}
-    >
-      <Box
-        ref={popperRef}
-        width={width || '100%'}
-        sx={{
-          // height: '100%',
-          '& .popperCon': {
-            '&::webkit-scrollbar': {
-              width: '0!important',
-              display: 'none!important'
-            }
-          }
+    <Box ref={popperRef}>
+      <ClickAwayListener
+        onClickAway={() => {
+          setAnchorEl(null)
         }}
       >
         <Box
-          onClick={handleClick}
-          onTouchEnd={(e: any) => {
-            handleClick(e)
-          }}
-        >
-          {targetElement}
-        </Box>
-        <Popper
-          onResize={1}
-          onResizeCapture={1}
-          nonce={1}
-          open={open}
-          placement={placement}
-          anchorEl={anchorEl}
-          className="popperCon"
-          style={{
-            zIndex: 99999,
-            borderColor: '#D4D7E2'
+          width={width || '100%'}
+          sx={{
+            // height: '100%',
+            '& .popperCon': {
+              '&::webkit-scrollbar': {
+                width: '0!important',
+                display: 'none!important'
+              }
+            }
           }}
         >
           <Box
-            onClick={() => setAnchorEl(null)}
-            sx={{
-              bgcolor: 'background.paper',
-              border: '1px solid rgba(18, 18, 18, 0.06)',
-              borderRadius: '8px',
-              padding: '6px',
-              ...sx
+            onClick={handleClick}
+            onTouchEnd={(e: any) => {
+              handleClick(e)
             }}
           >
-            {children}
+            {targetElement}
           </Box>
-        </Popper>
-      </Box>
-    </ClickAwayListener>
+          <Popper
+            onResize={1}
+            onResizeCapture={1}
+            nonce={1}
+            open={open}
+            placement={placement}
+            anchorEl={anchorEl}
+            className="popperCon"
+            style={{
+              zIndex: 99999,
+              borderColor: '#D4D7E2'
+            }}
+          >
+            <Box
+              onClick={() => setAnchorEl(null)}
+              sx={{
+                bgcolor: 'background.paper',
+                border: '1px solid rgba(18, 18, 18, 0.06)',
+                borderRadius: '8px',
+                padding: '6px',
+                ...sx
+              }}
+            >
+              {children}
+            </Box>
+          </Popper>
+        </Box>
+      </ClickAwayListener>
+    </Box>
   )
 }
