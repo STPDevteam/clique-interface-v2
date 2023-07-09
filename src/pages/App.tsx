@@ -144,7 +144,7 @@ export default function App() {
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
-            <ToastContainer className={'toast-container'} position="top-center" />
+            <ToastContainer className={'toast-container'} position="top-center" pauseOnFocusLoss={false} />
             <BodyWrapper
               id="body"
               sx={{
