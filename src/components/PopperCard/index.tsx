@@ -19,6 +19,7 @@ export default function PopperCard({
   placement?: 'bottom-end' | 'bottom' | 'bottom-start'
 }) {
   const popperRef = useRef<any>(null)
+  const childRef = useRef<any>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = !!anchorEl
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -28,8 +29,16 @@ export default function PopperCard({
   }
 
   useEffect(() => {
-    const handleClickOutside = () => {
-      popperRef && !popperRef.current && anchorEl && setAnchorEl(null)
+    const handleClickOutside = (event: any) => {
+      if (
+        popperRef.current &&
+        !popperRef.current.contains(event.target) &&
+        childRef.current &&
+        !childRef.current.contains(event.target)
+      ) {
+        setAnchorEl(null)
+        event.stopPropagation()
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -37,10 +46,10 @@ export default function PopperCard({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [anchorEl])
+  }, [])
 
   return (
-    <Box ref={popperRef}>
+    <Box>
       <ClickAwayListener
         onClickAway={() => {
           setAnchorEl(null)
@@ -59,6 +68,7 @@ export default function PopperCard({
           }}
         >
           <Box
+            ref={popperRef}
             onClick={handleClick}
             onTouchEnd={(e: any) => {
               handleClick(e)
@@ -80,6 +90,7 @@ export default function PopperCard({
             }}
           >
             <Box
+              ref={childRef}
               onClick={() => setAnchorEl(null)}
               sx={{
                 bgcolor: 'background.paper',
