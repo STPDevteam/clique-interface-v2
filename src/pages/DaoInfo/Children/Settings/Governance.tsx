@@ -230,7 +230,7 @@ export default function General({ daoId }: { daoId: number }) {
 
           <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
             <Row sx={{ justifyContent: 'space-between' }}>
-              <InputTitleStyle>Voting period</InputTitleStyle>
+              <InputTitleStyle>Voting Period</InputTitleStyle>
               <ToggleButtonGroup
                 initIndex={daoInfo.votingPeriod > 0 ? 0 : 1}
                 Props={PeriodList}

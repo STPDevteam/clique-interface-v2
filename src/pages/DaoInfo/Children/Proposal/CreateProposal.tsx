@@ -319,7 +319,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             <VotingOptions option={voteOption} setOption={setVoteOption} />
             <Box display={'grid'} gridTemplateColumns="150px 1fr" alignItems={'center'}>
               <Typography variant="body1" lineHeight={'16px'} color={'#80829F'}>
-                Voting period
+                Voting Period
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <DateSelectStyle>
