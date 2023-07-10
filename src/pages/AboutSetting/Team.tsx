@@ -19,6 +19,7 @@ import EmptyData from 'components/EmptyData'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
+// import Pagination from 'components/Pagination'
 
 const TopText = styled(Box)({
   display: 'flex',
@@ -129,7 +130,7 @@ export default function Team() {
   return (
     <Box
       sx={{
-        padding: isSmDown ? '20px 16px' : '0 0 20px',
+        padding: isSmDown ? '20px 16px' : '0 0 40px',
         borderRadius: '8px',
         '& table': {
           border: '1px solid #D4D7E2',
@@ -198,6 +199,13 @@ export default function Team() {
           <JobCard key={item.title + index} {...item} onDimiss={() => setRandNum(Math.random())} />
         ))}
       </Box>
+      {/* <Box mt={20} display={'flex'} justifyContent="center">
+        <Pagination
+          count={page.totalPage}
+          page={page.currentPage}
+          onChange={(_, value) => page.setCurrentPage(value)}
+        />
+      </Box> */}
       {tableList.length === 0 ? (
         <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>
       ) : (
