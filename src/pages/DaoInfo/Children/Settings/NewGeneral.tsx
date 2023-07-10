@@ -52,7 +52,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
       .string()
       .trim()
       .required(formCheckValid('description', FormType.Input))
-      .max(200, `*The number of characters exceeds the limit`),
+      .max(1000, `*The number of characters exceeds the limit`),
     category: yup.string().required(formCheckValid('category', FormType.Select)),
     website: yup
       .string()
@@ -168,7 +168,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     }}
                     endAdornment={
                       <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
-                        {values.description.length}/200
+                        {values.description.length}/1000
                       </Typography>
                     }
                     placeholder="Add a brief description about your project."
@@ -189,7 +189,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     label="Twitter"
                     value={values.twitter}
                     style={{
-                      borderColor: errors.description ? '#e46767' : '#D4D7E2'
+                      borderColor: errors.twitter ? '#e46767' : '#D4D7E2'
                     }}
                   />
                 </FormItem>
