@@ -27,7 +27,7 @@ const itemList = [
 
 export default function Proposal() {
   const history = useHistory()
-  const { showModal } = useModal()
+  const { showModal, hideModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { updateMyJoinedDaoListData, myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   console.log(isJoined?.job, 90)
@@ -97,6 +97,7 @@ export default function Proposal() {
                             cursor: 'pointer'
                           }}
                           onClick={() => {
+                            hideModal()
                             history.push(routes._DaoInfo + `/${params.daoId}/settings`)
                           }}
                         >
