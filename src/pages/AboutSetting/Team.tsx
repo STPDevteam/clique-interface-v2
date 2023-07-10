@@ -353,12 +353,19 @@ function JobCard({
             overflow: 'hidden',
             WebkitBoxOrient: 'vertical',
             textOverflow: 'ellipsis',
-            WebkitLineClamp: 5
+            WebkitLineClamp: 3
           }
         }}
       >
-        <Typography fontWeight={500} fontSize={16} width={'100%'}>
-          {jobBio}
+        <Typography fontWeight={500} fontSize={16} width={'100%'} lineHeight={'26px !important'}>
+          {jobBio.split('\n').map(v => {
+            return (
+              <>
+                {v}
+                <br />
+              </>
+            )
+          })}
         </Typography>
       </Box>
     </Box>

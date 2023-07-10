@@ -81,7 +81,7 @@ export default function AddJobsModal({
     setIsSubmit(true)
     if (isEdit) {
       if (!publishId) return
-      update(values.des, publishId, currentStatus, values.title)
+      update(values.des.trim(), publishId, currentStatus, values.title)
         .then((res: any) => {
           if (res.data.code !== 200) {
             toast.error(res.data.msg || 'Network error')
@@ -97,7 +97,7 @@ export default function AddJobsModal({
           toast.error('Update error')
         })
     } else {
-      create(chainId, values.des, currentStatus, values.title)
+      create(chainId, values.des.trim(), currentStatus, values.title)
         .then((res: any) => {
           if (res.data.code !== 200) {
             toast.error(res.data.msg || 'Network error')
