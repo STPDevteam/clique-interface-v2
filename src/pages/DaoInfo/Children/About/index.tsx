@@ -125,7 +125,7 @@ export default function About() {
             <Stack spacing={isSmDown ? 16 : 10}>
               <ContentTitle sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                 Threshold
-                <Tooltip value={'Minimum Votes Needed For Proposal To Execute '} />
+                <Tooltip placement="top-start" value={'Minimum Votes Needed For Proposal To Execute '} />
               </ContentTitle>
               <StyledText>{daoInfo?.proposalThreshold} Votes</StyledText>
             </Stack>

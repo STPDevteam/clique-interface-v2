@@ -101,6 +101,13 @@ export default function General({ daoId }: { daoId: number }) {
     text?: string
     error?: undefined | string | JSX.Element
   } = useMemo(() => {
+    if (!proposalThreshold || Number(proposalThreshold) < 1) {
+      return {
+        disabled: true,
+        text: 'threshold',
+        error: 'Please enter proposalThershold'
+      }
+    }
     if (Number(fixTime) < 72 && PeriodValue === 'Fixtime') {
       return {
         disabled: true,
@@ -115,13 +122,7 @@ export default function General({ daoId }: { daoId: number }) {
         error: 'A governance token needs to be added'
       }
     }
-    if (!proposalThreshold || Number(proposalThreshold) < 1) {
-      return {
-        disabled: true,
-        text: 'threshold',
-        error: 'Please enter proposalThershold'
-      }
-    }
+
     return {
       disabled: false,
       text: ''
@@ -190,98 +191,79 @@ export default function General({ daoId }: { daoId: number }) {
       )}
       {!loading && !createDaoData?.governance.length && <EmptyData sx={{ marginTop: 10 }}>No data</EmptyData>}
 
-      <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20 }}>
-        <Typography
-          sx={{
-            mt: 23,
-            fontWeight: 500,
-            fontSize: 14,
-            lineHeight: '20px',
-            color: '#3f5170'
-          }}
-        >
-          Governance setting
-        </Typography>
-        <Box>
-          <InputTitleStyle mb={8} sx={{ display: 'flex', gap: 5 }}>
-            Threshold <Tooltip value={'Minimum votes needed for proposal to execute'} />
-          </InputTitleStyle>
-
-          <GridLayoutff>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              <InputStyle
-                style={{
-                  borderColor: startValite && saveBtn.error && saveBtn.text === 'threshold' ? '#E46767' : '#D4D7E2'
-                }}
-                placeholderSize="14px"
-                placeholder={'0'}
-                endAdornment={
-                  <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                    Votes
-                  </Typography>
-                }
-                onChange={e => {
-                  if (
-                    (Number(e.target.value) <= Number(govToken?.totalSupply.toSignificant(18)) &&
-                      /^[1-9]\d*$/.test(e.target.value)) ||
-                    !e.target.value
-                  ) {
-                    setProposalThreshold(e.target.value)
-                  } else {
-                    setProposalThreshold(proposalThreshold)
-                  }
-                }}
-                value={proposalThreshold}
-              />
-              {startValite && saveBtn.text === 'threshold' && (
-                <Typography color={'#E46767'}>{saveBtn.error}</Typography>
-              )}
-            </Box>
-            <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
-              <Row sx={{ justifyContent: 'space-between' }}>
-                <InputTitleStyle>Voting period</InputTitleStyle>
-                <ToggleButtonGroup
-                  initIndex={daoInfo.votingPeriod > 0 ? 0 : 1}
-                  Props={PeriodList}
-                  setToggleValue={setPeriodValue}
-                />
-              </Row>
-              {PeriodValue === 'Fixtime' ? (
-                <Row sx={{ flexDirection: 'column' }}>
-                  <InputStyle
-                    placeholderSize="14px"
-                    style={{
-                      borderColor: startValite && saveBtn.error && saveBtn.text === 'time' ? '#E46767' : '#D4D7E2'
-                    }}
-                    placeholder={'0'}
-                    endAdornment={
-                      <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
-                        Hours
-                      </Typography>
-                    }
-                    value={fixTime}
-                    noDecimals
-                    onChange={e => {
-                      setFixtime(e.target.value)
-                    }}
-                  />
-                  {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
-                </Row>
-              ) : (
-                <Typography color="#B5B7CF" lineHeight="40px" variant="body1" paddingLeft={20}>
-                  Customize the voting time when creating a proposal
-                </Typography>
-              )}
-            </Row>
-          </GridLayoutff>
-        </Box>
+      <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20, mt: 25 }}>
         <GridLayoutff>
           <Box>
-            <Row sx={{ maxWidth: 463, justifyContent: 'space-between', mb: 10 }}>
+            <InputTitleStyle mb={10} sx={{ height: 20, display: 'flex', gap: 5 }}>
+              Threshold <Tooltip value={'Minimum votes needed for proposal to execute'} />
+            </InputTitleStyle>
+            <InputStyle
+              style={{
+                borderColor: startValite && saveBtn.error && saveBtn.text === 'threshold' ? '#E46767' : '#D4D7E2'
+              }}
+              placeholderSize="14px"
+              placeholder={'0'}
+              endAdornment={
+                <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                  Votes
+                </Typography>
+              }
+              onChange={e => {
+                if (
+                  (Number(e.target.value) <= Number(govToken?.totalSupply.toSignificant(18)) &&
+                    /^[1-9]\d*$/.test(e.target.value)) ||
+                  !e.target.value
+                ) {
+                  setProposalThreshold(e.target.value)
+                } else {
+                  setProposalThreshold(proposalThreshold)
+                }
+              }}
+              value={proposalThreshold}
+            />
+            {startValite && saveBtn.text === 'threshold' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
+            <Row sx={{ maxWidth: 463, justifyContent: 'space-between', mt: 20 }}>
               <InputTitleStyle>Voting Types</InputTitleStyle>
               <ToggleButtonGroup initIndex={daoInfo.votingType} Props={TypesList} setToggleValue={setTypesValue} />
             </Row>
           </Box>
+
+          <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
+            <Row sx={{ justifyContent: 'space-between' }}>
+              <InputTitleStyle>Voting period</InputTitleStyle>
+              <ToggleButtonGroup
+                initIndex={daoInfo.votingPeriod > 0 ? 0 : 1}
+                Props={PeriodList}
+                setToggleValue={setPeriodValue}
+              />
+            </Row>
+            {PeriodValue === 'Fixtime' ? (
+              <Row sx={{ flexDirection: 'column' }}>
+                <InputStyle
+                  placeholderSize="14px"
+                  style={{
+                    borderColor: startValite && saveBtn.error && saveBtn.text === 'time' ? '#E46767' : '#D4D7E2'
+                  }}
+                  placeholder={'0'}
+                  endAdornment={
+                    <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                      Hours
+                    </Typography>
+                  }
+                  value={fixTime}
+                  noDecimals
+                  onChange={e => {
+                    setFixtime(e.target.value)
+                  }}
+                />
+                {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
+              </Row>
+            ) : (
+              <Typography color="#B5B7CF" lineHeight="40px" variant="body1" paddingLeft={20}>
+                Customize the voting time when creating a proposal
+              </Typography>
+            )}
+          </Row>
         </GridLayoutff>
       </Box>
       {startValite && saveBtn.error && saveBtn.text === 'governance' && (

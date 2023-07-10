@@ -237,7 +237,10 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                       }}
                     >
                       Organize Username
-                      <Tooltip value="Organize username must be between 4-20 characters and contain letters, numbers and underscores only." />
+                      <Tooltip
+                        placement="top-start"
+                        value="Organize username must be between 4-20 characters and contain letters, numbers and underscores only."
+                      />
                     </Typography>
                     <Input
                       readOnly

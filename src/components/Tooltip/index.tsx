@@ -19,15 +19,34 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
   }
 }))
 
-export default function VariableWidth({ value }: { value: string }) {
+export default function VariableWidth({
+  value,
+  placement
+}: {
+  value: string
+  placement?:
+    | 'top'
+    | 'right'
+    | 'bottom'
+    | 'left'
+    | 'bottom-end'
+    | 'bottom-start'
+    | 'left-end'
+    | 'left-start'
+    | 'right-end'
+    | 'right-start'
+    | 'top-end'
+    | 'top-start'
+    | undefined
+}) {
   return (
     <>
       <HtmlTooltip
-        placement="top-start"
+        placement={placement || 'right'}
         title={value}
         sx={{
           zIndex: 999999,
-          '& .css-1fkcro2-MuiTooltip-tooltip': { margin: '0 0 5px 0 !important' },
+          '& .css-1fkcro2-MuiTooltip-tooltip': { marginBottom: placement ? '5px !important' : '' },
           '&:hover': { cursor: 'pointer' }
         }}
       >
