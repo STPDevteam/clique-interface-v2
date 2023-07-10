@@ -383,7 +383,9 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                                 } else {
                                   showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
                                 }
-                              } else toast.error("You don't have permissions")
+                              } else {
+                                toast.error("You don't have permissions")
+                              }
                             }}
                           >
                             {item.label}
