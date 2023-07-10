@@ -26,6 +26,7 @@ export default function VariableWidth({ value }: { value: string }) {
         placement="top-start"
         title={value}
         sx={{
+          zIndex: 999999,
           '& .css-1fkcro2-MuiTooltip-tooltip': { margin: '0 0 5px 0 !important' },
           '&:hover': { cursor: 'pointer' }
         }}

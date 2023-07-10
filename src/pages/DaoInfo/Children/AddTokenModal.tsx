@@ -15,6 +15,7 @@ import { toast } from 'react-toastify'
 import UploadImage from 'components/UploadImage'
 import { getTokenLogo } from 'utils/fetch/server'
 import Image from 'components/Image'
+import Tooltip from 'components/Tooltip'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -230,11 +231,13 @@ export default function AddTokenModal({
             <ContentStyle>{govToken?.totalSupply.toSignificant(18, { groupSeparator: ',' }) || '--'}</ContentStyle>
           </Box>
         </Box>
-        <ContentTitleStyle sx={{ mt: 14 }}>Requirement</ContentTitleStyle>
-        <Box sx={{ mt: 4, display: 'grid', flexDirection: 'column', gap: 8 }}>
-          <Typography variant="body1" color={'#B5B7CF'} lineHeight={'20px'}>
-            Minimum Tokens Needed To Create Proposal
-          </Typography>
+        <ContentTitleStyle sx={{ mt: 14, display: 'flex', gap: 5 }}>
+          Requirement <Tooltip value=" Minimum Tokens Needed To Create Proposal" />
+        </ContentTitleStyle>
+        <Box sx={{ mt: 10, display: 'grid', flexDirection: 'column', gap: 8 }}>
+          {/* <Typography variant="body1" color={'#B5B7CF'} lineHeight={'20px'}>
+          Minimum Tokens Needed To Create Proposal
+          </Typography> */}
           <InputStyle
             placeholderSize="14px"
             placeholder={'--'}
