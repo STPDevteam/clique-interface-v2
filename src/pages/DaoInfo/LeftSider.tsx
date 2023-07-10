@@ -222,7 +222,6 @@ export default function LeftSider() {
   const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [activeIdx, setActiveIdx] = useState(-1)
-
   const workspaceList = useMemo(
     () =>
       spaceListData.map(item => ({
@@ -245,7 +244,12 @@ export default function LeftSider() {
       {
         title: 'Workspace',
         icon: <Workspace />,
-        defaultOpen: false,
+        defaultOpen:
+          pathname !== makeRouteLink(routes.Proposal) &&
+          pathname !== makeRouteLink(routes.DaoInfoActivity) &&
+          pathname !== makeRouteLink(routes.DaoMember) &&
+          pathname !== makeRouteLink(routes.DaoInfoAbout) &&
+          pathname !== makeRouteLink(routes.DaoAboutSetting),
         route: '',
         children: workspaceList
       },
@@ -259,7 +263,7 @@ export default function LeftSider() {
         route: makeRouteLink(routes.DaoAboutSetting)
       }
     ],
-    [makeRouteLink, workspaceList]
+    [makeRouteLink, pathname, workspaceList]
   )
   const currentTabLinks = useMemo(() => {
     const list =
@@ -281,6 +285,7 @@ export default function LeftSider() {
         const newItems = [false, true, false, false, false, false]
         return newItems
       })
+      setActiveIdx(workspaceList.findIndex(item => item.link === pathname))
     } else {
       setActiveIndex(() => {
         const newItems = [
@@ -294,7 +299,7 @@ export default function LeftSider() {
         return newItems
       })
     }
-  }, [makeRouteLink, pathname])
+  }, [makeRouteLink, pathname, workspaceList])
 
   return (
     <StyledAppBar>
