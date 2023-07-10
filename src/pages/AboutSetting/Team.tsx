@@ -181,7 +181,7 @@ export default function Team() {
           Jobs
         </Typography>
         <Box display={'flex'} gap={35} flexDirection={'row'}>
-          <BlueButton actionText="Add Admins" onClick={addMemberCB} />
+          <BlueButton actionText="Add Members" onClick={addMemberCB} />
           <BlueButton actionText="Add Jobs" onClick={addJobsCB} />
         </Box>
       </TopText>

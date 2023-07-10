@@ -1,4 +1,4 @@
-import { Box, styled, Typography, useTheme } from '@mui/material'
+import { Box, styled, Typography, useTheme, Tabs, Tab } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
@@ -6,7 +6,7 @@ import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import { VoteWrapper } from './Vote'
-import { Dispatch, SetStateAction, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
@@ -22,6 +22,66 @@ const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
+const StyledTabs = styled('div')(({ theme }) => ({
+  display: 'flex',
+  fontWeight: 600,
+  fontSize: 14,
+  listStyle: 'none',
+  padding: 0,
+  // height: 60,
+  '&>*': {
+    marginRight: 20,
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+    color: '#0049c6',
+    cursor: 'pointer',
+    '&:hover': {
+      color: '#0049c6'
+    },
+    '&.active': {
+      color: '#0049c6'
+    }
+  },
+  '& .css-1jxw4rn-MuiTabs-indicator': {
+    width: '0!important'
+  },
+  '& button': {
+    display: 'flex',
+    alignItems: 'center',
+    border: 0,
+    paddingLeft: 0,
+    '&:hover': {
+      color: '#0049c6'
+    },
+    '&:hover svg path': {
+      fill: '#0049c6'
+    },
+    '&.active': {
+      fontWeight: 600
+    },
+    '&.active svg path': {
+      fill: '#0049c6'
+    }
+  },
+  [theme.breakpoints.down('sm')]: {
+    justifyContent: 'space-evenly',
+    '&>*': {
+      marginRight: 0,
+      '&:last-child': {
+        marginRight: 0
+      }
+    }
+  }
+}))
+
+const tabList = [
+  {
+    label: 'Description',
+    value: 'Description'
+  },
+  { label: ' Proposal Info', value: ' Proposal Info' }
+]
+
 export default function Info({
   proposalInfo,
   refresh
@@ -34,7 +94,7 @@ export default function Info({
   const { account } = useActiveWeb3React()
   // const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
   const cancelProposalCallback = useCancelProposalCallback()
-
+  const [tabValue, setTabValue] = useState(0)
   const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
   const onCancelProposalCallback = useCallback(() => {
     cancelProposalCallback(proposalInfo.proposalId).then((res: any) => {
@@ -50,48 +110,61 @@ export default function Info({
   return (
     <VoteWrapper>
       <Box pb={40}>
-        <Typography fontSize={14} fontWeight={600} color={'#80829F'} mb={6}>
-          Details
-        </Typography>
+        <StyledTabs>
+          <Tabs value={tabValue}>
+            {tabList.map((item, idx) => (
+              <Tab
+                key={item.label + idx}
+                label={item.label}
+                onClick={() => setTabValue(idx)}
+                sx={{ gap: 10, marginRight: 50 }}
+                className={tabValue === idx ? 'active' : ''}
+              ></Tab>
+            ))}
+          </Tabs>
+        </StyledTabs>
+
         <div className="ql-editor" style={{ borderTop: '1px solid #D4D7E2' }}>
-          {ReactHtmlParser(
-            filterXSS(proposalInfo.content || '', {
-              onIgnoreTagAttr: function(_, name, value) {
-                if (name === 'class') {
-                  return name + '="' + escapeAttrValue(value) + '"'
+          {tabValue === 0 ? (
+            ReactHtmlParser(
+              filterXSS(proposalInfo.content || '', {
+                onIgnoreTagAttr: function(_, name, value) {
+                  if (name === 'class') {
+                    return name + '="' + escapeAttrValue(value) + '"'
+                  }
+                  return undefined
                 }
-                return undefined
-              }
-            })
-          )}
-        </div>
-        <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
-          <LeftText>Minimum Votes Needed To Execute</LeftText>
-          <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
+              })
+            )
+          ) : (
+            <Box>
+              <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
+                <LeftText>Minimum Votes Needed To Execute</LeftText>
+                <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
 
-          <LeftText>Token contract address</LeftText>
-          <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
-            <Typography>{proposalInfo.useVoteBase[0]?.tokenAddress}</Typography>
-            <Copy toCopy={proposalInfo.useVoteBase[0]?.tokenAddress} />
-          </Box>
+                <LeftText>Token contract address</LeftText>
+                <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
+                  <Typography>{proposalInfo.useVoteBase[0]?.tokenAddress}</Typography>
+                  <Copy toCopy={proposalInfo.useVoteBase[0]?.tokenAddress} />
+                </Box>
 
-          <LeftText>Proposer</LeftText>
-          <Box display={'flex'} flexDirection={'row'} gap={10}>
-            <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
-              <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
-                {shortenAddress(proposalInfo.proposer.account, isSmDown ? 3 : 4)}
-              </Typography>
-            </Link>
-            <ShowAdminTag level={proposalInfo.proposer.daoJobs} />
-          </Box>
+                <LeftText>Proposer</LeftText>
+                <Box display={'flex'} flexDirection={'row'} gap={10}>
+                  <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
+                    <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
+                      {shortenAddress(proposalInfo.proposer.account, isSmDown ? 3 : 4)}
+                    </Typography>
+                  </Link>
+                  <ShowAdminTag level={proposalInfo.proposer.daoJobs} />
+                </Box>
 
-          <LeftText>Start Time</LeftText>
-          <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>
+                <LeftText>Start Time</LeftText>
+                <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>
 
-          <LeftText>End Time</LeftText>
-          <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
+                <LeftText>End Time</LeftText>
+                <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
 
-          {/* <LeftText>Snapshot</LeftText>
+                {/* <LeftText>Snapshot</LeftText>
           <MuiLink
             underline="none"
             sx={{ display: 'flex' }}
@@ -108,21 +181,24 @@ export default function Info({
               />
             </svg>
           </MuiLink> */}
-        </Box>
-        {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
-          <Box mt={15}>
-            <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
-              {isCancel ? (
-                <>
-                  Cancel
-                  <Dots />
-                </>
-              ) : (
-                'Cancel proposal'
+              </Box>
+              {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
+                <Box mt={15}>
+                  <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
+                    {isCancel ? (
+                      <>
+                        Cancel
+                        <Dots />
+                      </>
+                    ) : (
+                      'Cancel proposal'
+                    )}
+                  </BlackButton>
+                </Box>
               )}
-            </BlackButton>
-          </Box>
-        )}
+            </Box>
+          )}
+        </div>
       </Box>
     </VoteWrapper>
   )
