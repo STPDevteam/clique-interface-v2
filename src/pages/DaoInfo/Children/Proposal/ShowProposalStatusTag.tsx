@@ -53,12 +53,12 @@ export function ShowProposalStatusV3Tag({ status }: { status: ProposalStatus | s
   return status === ProposalStatus.SOON || status === 'Soon' ? (
     <StyledV3Chip label="Soon" variant="outlined" bgColor={theme.palette.common.white} textColor={'#21C331'} />
   ) : status === ProposalStatus.OPEN || status === 'Active' ? (
-    <StyledV3Chip label="Open" bgColor={'#21C431'} textColor={theme.palette.common.white} />
+    <StyledV3Chip label="Active" bgColor={'#21C431'} textColor={theme.palette.common.white} />
   ) : status === ProposalStatus.CANCEL || status === 'Cancel' ? (
     <StyledV3Chip label="Cancelled" bgColor={theme.bgColor.bg2} textColor={theme.textColor.text1} />
   ) : status === ProposalStatus.SUCCESS || status === 'Success' ? (
     <StyledV3Chip label="Success" bgColor={theme.palette.primary.main} textColor={theme.palette.common.white} />
   ) : (
-    <StyledV3Chip label="Failed" bgColor={'#D4D7E2'} textColor={'#80829F'} />
+    <StyledV3Chip label="Closed" bgColor={'#D4D7E2'} textColor={'#80829F'} />
   )
 }

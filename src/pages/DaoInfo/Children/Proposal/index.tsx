@@ -22,7 +22,8 @@ const itemList = [
   { value: '', label: 'All Proposals' },
   { value: 'Soon', label: 'Soon' },
   { value: 'Active', label: 'Active' },
-  { value: 'Closed', label: 'Closed' }
+  { value: 'Closed', label: 'Closed' },
+  { value: 'Cancel', label: 'Cancelled' }
 ]
 
 export default function Proposal() {
@@ -140,7 +141,7 @@ export default function Proposal() {
             </Select>
           </Stack>
         </Box>
-        <Box minHeight={200}>
+        <Box minHeight={170}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
           <DelayLoading loading={loading}>
             <Box sx={{ height: 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
