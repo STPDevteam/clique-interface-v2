@@ -62,7 +62,7 @@ export default function General({ daoId }: { daoId: number }) {
             color: '#97B7EF'
           }}
         >
-          New workspace
+          New Workspace
         </Typography>
       </Box>
     </Box>

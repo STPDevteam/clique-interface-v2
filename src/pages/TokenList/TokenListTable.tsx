@@ -50,7 +50,7 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
         </>
       ) : (
         <Box>
-          <EmptyData>No Data</EmptyData>
+          <EmptyData>No data</EmptyData>
         </Box>
       )}
     </>

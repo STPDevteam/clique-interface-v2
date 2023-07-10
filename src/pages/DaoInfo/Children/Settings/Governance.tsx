@@ -175,7 +175,7 @@ export default function General({ daoId }: { daoId: number }) {
           style={{ maxWidth: 184, height: 36, color: '#3F5170', border: '1px solid #3F5170' }}
           onClick={() => history.push(routes.CreatorToken)}
         >
-          Create new token
+          Create New Token
         </OutlineButton>
       </Row>
       {createDaoData?.governance && (
