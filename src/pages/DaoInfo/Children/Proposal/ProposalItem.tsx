@@ -334,34 +334,6 @@ function ProposalV2Item(props: ProposalListBaseProp) {
                     </Typography>
                   </Box>
                 </>
-              ) : props.status === 3 && props.isPass === 'Failed' ? (
-                <Box
-                  sx={{
-                    width: 100,
-                    height: 30,
-                    background: '#80829F',
-                    borderRadius: '6px',
-                    padding: 2
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      height: '100%',
-                      fontWeight: 700,
-                      fontSize: 17,
-                      lineHeight: '20px',
-                      border: ' 1px solid #FFFFFF',
-                      borderRadius: '5px',
-                      background: '#80829F',
-                      color: '#FFFFFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    Failed
-                  </Typography>
-                </Box>
               ) : (
                 ''
               )}

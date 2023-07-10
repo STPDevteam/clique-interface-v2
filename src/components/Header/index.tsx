@@ -317,12 +317,19 @@ export default function Header() {
       return []
     }
     const _list = curPath.split('/').map(v => {
-      if (v === 'about_setting') {
-        return 'About & Setting'
+      if (v === 'settings') {
+        return 'Settings'
+      }
+      if (/\d/.test(v)) {
+        return
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
-    return [daoInfo.daoName, ..._list]
+    const listData = _list.filter(v => {
+      console.log(v)
+      return v !== undefined
+    })
+    return [daoInfo.daoName, ...listData]
   }, [curPath, daoInfo?.daoName])
   console.log(makeBreadcrumbs)
 

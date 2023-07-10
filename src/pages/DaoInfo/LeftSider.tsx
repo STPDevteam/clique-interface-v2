@@ -232,7 +232,6 @@ export default function LeftSider() {
       })),
     [makeRouteLink, spaceListData]
   )
-
   const teamspacesList: LeftSiderMenu[] = useMemo(
     () => [
       {
