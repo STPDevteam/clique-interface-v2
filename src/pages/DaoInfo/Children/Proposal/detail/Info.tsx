@@ -117,7 +117,7 @@ export default function Info({
                 key={item.label + idx}
                 label={item.label}
                 onClick={() => setTabValue(idx)}
-                sx={{ gap: 10, marginRight: 50 }}
+                sx={{ gap: 10, marginRight: 50, textTransform: 'none' }}
                 className={tabValue === idx ? 'active' : ''}
               ></Tab>
             ))}
@@ -127,14 +127,16 @@ export default function Info({
         <div className="ql-editor" style={{ borderTop: '1px solid #D4D7E2' }}>
           {tabValue === 0 ? (
             ReactHtmlParser(
-              filterXSS(proposalInfo.content || '', {
-                onIgnoreTagAttr: function(_, name, value) {
-                  if (name === 'class') {
-                    return name + '="' + escapeAttrValue(value) + '"'
-                  }
-                  return undefined
-                }
-              })
+              proposalInfo.introduction
+                ? proposalInfo.introduction
+                : filterXSS(proposalInfo.content || '', {
+                    onIgnoreTagAttr: function(_, name, value) {
+                      if (name === 'class') {
+                        return name + '="' + escapeAttrValue(value) + '"'
+                      }
+                      return undefined
+                    }
+                  })
             )
           ) : (
             <Box>
