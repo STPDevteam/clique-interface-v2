@@ -340,7 +340,11 @@ function MsgItems({
             >
               {item.daoName}
             </LinkStyle>
-            <ContentStyle>You have received a job application, </ContentStyle>
+            {item.types === 'JobApply' ? (
+              <ContentStyle>You have received a job application, </ContentStyle>
+            ) : (
+              <ContentStyle>has declined your job application JobReject, </ContentStyle>
+            )}
           </>
         ) : item.types === 'BecomeOwner' || item.types === 'BecomeSuperAdmin' || item.types === 'BecomeAdmin' ? (
           <>
