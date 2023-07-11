@@ -253,8 +253,8 @@ export default function NotificationPage() {
               onClick={() => {
                 if (unReadCount) {
                   toBackedReadAll().then(() => {
-                    setReadAll()
                     setIsReadAll(true)
+                    setReadAll()
                   })
                 }
               }}
@@ -308,6 +308,7 @@ function MsgItems({
   isReadAll: boolean
   toBackedReadOnce: (notificationId: number) => Promise<any>
 }) {
+  console.log(isReadAll)
   const [isRead, setIsRead] = useState(item.alreadyRead)
   const theme = useTheme()
 
@@ -433,7 +434,9 @@ function MsgItems({
       <RowCenter sx={{ height: 60, borderBottom: '1px solid #D4D7E2' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150 }}>
-            {!isRead && (
+            {isReadAll ? (
+              ''
+            ) : !isRead ? (
               <Box
                 sx={{
                   width: 6,
@@ -443,6 +446,8 @@ function MsgItems({
                   backgroundColor: theme.palette.primary.main
                 }}
               />
+            ) : (
+              ''
             )}
             <TitleStyle>{titleFilter(item.types)}</TitleStyle>
           </Box>
