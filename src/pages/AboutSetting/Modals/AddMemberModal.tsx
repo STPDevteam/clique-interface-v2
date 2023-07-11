@@ -9,6 +9,8 @@ import useModal from 'hooks/useModal'
 import { isAddress } from 'ethers/lib/utils'
 import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 const guestList = [
   { value: 1, label: 'Super Admin' },
@@ -17,16 +19,29 @@ const guestList = [
 
 export default function AddMemberModal({ onClose, daoId }: { onClose: () => void; daoId: number }) {
   const { hideModal } = useModal()
+  const { account } = useActiveWeb3React()
   const [address, setAddress] = useState('')
   const [currentStatus, setCurrentStatus] = useState<number>(1)
   const add = useChangeAdminRole()
   const [btnDisable, setBtnDisable] = useState(false)
-
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const createNewMember = useCallback(() => {
     setBtnDisable(true)
     add(address, currentStatus, daoId)
       .then((res: any) => {
-        if (res.data.code !== 200) {
+        if (
+          res.data.code !== 200 &&
+          account === address &&
+          (isJoined?.job === 'owner' || isJoined?.job === 'superAdmin')
+        ) {
+          if (isJoined?.job === 'owner') {
+            toast.error('Add error You are already a owner.')
+          }
+          if (isJoined?.job === 'superAdmin') {
+            toast.error('Add error You are already a superAdmin.')
+          }
+          return
+        } else if (res.data.code !== 200) {
           toast.error('Add error')
           return
         }
@@ -38,7 +53,7 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
         hideModal()
         toast.error(err?.data?.message || err?.error?.message || err?.message || 'Unknown error')
       })
-  }, [add, address, currentStatus, daoId, hideModal])
+  }, [account, add, address, currentStatus, daoId, hideModal, isJoined?.job])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
