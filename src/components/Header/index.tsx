@@ -33,6 +33,7 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useGetWorkspaceInfo } from 'hooks/useBackedTaskServer'
 
 interface TabContent {
   title: string
@@ -306,6 +307,7 @@ export default function Header() {
   console.log('header', daoId, daoInfo)
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
+  const { result } = useGetWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1]))
   const isShow = useMemo(() => {
     if (curPath === routes.CreateDao) {
       return false
@@ -320,16 +322,18 @@ export default function Header() {
       if (v === 'settings') {
         return 'Settings'
       }
-      if (/\d/.test(v)) {
-        return
+      if (v === 'task') {
+        return result?.title || 'task'
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
-    const listData = _list.filter(v => {
-      return v !== undefined
+    const listData = _list.filter((v, index) => {
+      const isNumber = !/\d/.test(v)
+      const isLastItem = _list.length - 1 !== index
+      return isNumber || isLastItem
     })
     return [daoInfo.daoName, ...listData]
-  }, [curPath, daoInfo?.daoName])
+  }, [curPath, daoInfo.daoName, result?.title])
   console.log(makeBreadcrumbs)
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
