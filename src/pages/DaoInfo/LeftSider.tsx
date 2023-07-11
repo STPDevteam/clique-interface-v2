@@ -226,7 +226,7 @@ export default function LeftSider() {
     () =>
       spaceListData.map(item => ({
         title: item.title,
-        link: makeRouteLink(routes.DaoTeamTask) + '/' + item.spacesId,
+        link: makeRouteLink(routes.DaoTeamTask) + '/' + item.title + '/' + item.spacesId,
         logo: taskIcon,
         isPublic: item.access === 'public' ? true : false
       })),

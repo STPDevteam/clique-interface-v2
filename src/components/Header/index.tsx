@@ -326,7 +326,6 @@ export default function Header() {
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
     const listData = _list.filter(v => {
-      console.log(v)
       return v !== undefined
     })
     return [daoInfo.daoName, ...listData]

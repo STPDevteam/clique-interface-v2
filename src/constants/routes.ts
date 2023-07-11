@@ -20,8 +20,8 @@ export const routes = {
   DaoAboutSetting: '/governance/daoInfo/:daoId/settings',
   DaoTeamMeetings: '/governance/daoInfo/:daoId/meetings',
   DaoTeamDocs: '/governance/daoInfo/:daoId/docs',
-  DaoTeamTask: '/governance/daoInfo/:daoId/workspace/task',
-  _DaoTeamTask: '/governance/daoInfo/:daoId/workspace/task/:spacesId',
+  DaoTeamTask: '/governance/daoInfo/:daoId/workspace',
+  _DaoTeamTask: '/governance/daoInfo/:daoId/workspace/:name/:spacesId',
   DaoTeamCalendar: '/governance/daoInfo/:daoId/calendar',
   DaoTeamTrash: '/governance/daoInfo/:daoId/trash',
 

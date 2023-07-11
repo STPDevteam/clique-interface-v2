@@ -408,7 +408,7 @@ function MsgItems({
             : ''
           : item.types === 'TaskAssigned' || item.types === 'TaskDone'
           ? item.daoId
-            ? routes._DaoInfo + `/${item.daoId}/teamspaces/general/workspace/${item.activityId}`
+            ? routes._DaoInfo + `/${item.daoId}/workspace/${item.activityTitle}/${item.activityId}`
             : ''
           : ''
     }
