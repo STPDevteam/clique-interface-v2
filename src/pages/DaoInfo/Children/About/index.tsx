@@ -339,7 +339,7 @@ function BasicTable({ list }: { list: govList[] }) {
                       <Copy margin="0 0 0 10px" toCopy={row?.tokenAddress} />
                     </Box>
                   </TableContentText>
-                  <TableContentText>{row?.createRequire}</TableContentText>
+                  <TableContentText>{formatNumberWithCommas(row?.createRequire)}</TableContentText>
                   {/* <TableContentText>{row?.weight}</TableContentText> */}
                 </TableRow>
               ))}
