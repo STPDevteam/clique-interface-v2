@@ -83,6 +83,7 @@ export default function AddJobsModal({
       if (!publishId) return
       update(values.des.trim(), publishId, currentStatus, values.title)
         .then((res: any) => {
+          setIsSubmit(false)
           if (res.data.code !== 200) {
             toast.error(res.data.msg || 'Network error')
             return
@@ -90,7 +91,6 @@ export default function AddJobsModal({
           toast.success('Update success')
           hideModal()
           onDimiss()
-          setIsSubmit(false)
         })
         .catch(err => {
           console.log(err)

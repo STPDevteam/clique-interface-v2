@@ -29,6 +29,7 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
     setBtnDisable(true)
     add(address, currentStatus, daoId)
       .then((res: any) => {
+        setBtnDisable(false)
         if (
           res.data.code !== 200 &&
           account === address &&
@@ -46,7 +47,6 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
           return
         }
         hideModal()
-        setBtnDisable(false)
         toast.success('Add member success')
       })
       .catch((err: any) => {
