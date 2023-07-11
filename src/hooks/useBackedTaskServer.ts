@@ -69,6 +69,7 @@ export function useGetWorkspaceInfo(spacesId: number) {
 
   useEffect(() => {
     ;(async () => {
+      if (!spacesId) return
       try {
         const res = await getWorkspaceInfo(spacesId)
         if (res.data.data) {

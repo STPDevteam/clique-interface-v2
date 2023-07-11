@@ -28,6 +28,9 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
+import useModal from 'hooks/useModal'
+import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
+import AddIcon from 'assets/images/add.png'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -219,9 +222,16 @@ export default function LeftSider() {
   const [activeIndex, setActiveIndex] = useState([false, false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  const { createDaoListData: myJoinedDaoList, spaceListData, myJoinDaoData } = useUpdateDaoDataCallback()
+  const {
+    createDaoListData: myJoinedDaoList,
+    spaceListData,
+    myJoinDaoData,
+    updateWrokspaceListData
+  } = useUpdateDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [activeIdx, setActiveIdx] = useState(-1)
+  const { showModal } = useModal()
+
   const workspaceList = useMemo(
     () =>
       spaceListData.map(item => ({
@@ -535,6 +545,47 @@ export default function LeftSider() {
                     </ChildItem>
                   </List>
                 ))}
+
+                {item.title === 'Workspace' &&
+                  (myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]) && (
+                    <Box
+                      sx={{
+                        height: 40,
+                        padding: '0 16px 0 60px',
+                        gap: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        backgroundColor: '#fff',
+                        '&:hover': {
+                          backgroundColor: '#F8FBFF'
+                        }
+                      }}
+                      onClick={() => {
+                        showModal(
+                          <AddTeamspaceModal
+                            isEdit={false}
+                            daoId={Number(daoId)}
+                            onDimiss={() => {
+                              updateWrokspaceListData()
+                            }}
+                          />
+                        )
+                      }}
+                    >
+                      <img src={AddIcon} width={14} />
+                      <Typography
+                        sx={{
+                          fontWeight: 400,
+                          fontSize: 14,
+                          lineHeight: '20px',
+                          color: '#97B7EF'
+                        }}
+                      >
+                        Add Workspace
+                      </Typography>
+                    </Box>
+                  )}
               </MyCollapse>
             </Box>
           ))}
