@@ -17,6 +17,7 @@ import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useEffect, useMemo } from 'react'
+import { formatNumberWithCommas } from 'utils'
 
 const itemList = [
   { value: '', label: 'All Proposals' },
@@ -81,9 +82,10 @@ export default function Proposal() {
               favor is greater than 50%, and the number of valid votes is not less than 2/3 of the total number of
               votes, it will be viewed as passed. */}
               A proposal can be initiated by holding{' '}
-              {governance ? governance?.createRequire + ' ' + governance?.tokenName : '--'} in the wallet. If the number
-              of valid votes exceeds no less than {daoInfo.proposalThreshold || '--'} and is greater than 50%, the
-              proposal will be deemed passed.
+              {governance ? formatNumberWithCommas(governance?.createRequire) + ' ' + governance?.tokenName : '--'} in
+              the wallet. If the number of valid votes exceeds no less than{' '}
+              {formatNumberWithCommas(daoInfo.proposalThreshold) || '--'} and is greater than 50%, the proposal will be
+              deemed passed.
             </Typography>
           </Box>
           <Stack spacing={15} mt={5}>

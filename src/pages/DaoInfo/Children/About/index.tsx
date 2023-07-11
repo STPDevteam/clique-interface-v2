@@ -17,7 +17,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo, useState } from 'react'
 import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import { formatNumberWithCommas, getEtherscanLink, shortenAddress } from 'utils'
 import defaultLogo from 'assets/images/create-token-ball.png'
 import AboutIcon from 'assets/images/about_icon.png'
 
@@ -127,7 +127,7 @@ export default function About() {
                 Threshold
                 <Tooltip placement="top-start" value={'Minimum Votes Needed For Proposal To Execute '} />
               </ContentTitle>
-              <StyledText>{daoInfo?.proposalThreshold} Votes</StyledText>
+              <StyledText>{formatNumberWithCommas(daoInfo?.proposalThreshold)} Votes</StyledText>
             </Stack>
             <Stack spacing={isSmDown ? 16 : 10}>
               <ContentTitle>Voting Period</ContentTitle>
