@@ -169,7 +169,8 @@ export default function JoinDaoFrame() {
             WebkitLineClamp: 2,
             overflow: 'hidden',
             paddingRight: 20,
-            textOverflow: 'ellipsis'
+            textOverflow: 'ellipsis',
+            wordBreak: ' break-all'
           }}
           height={47}
           lineHeight={'22px'}
