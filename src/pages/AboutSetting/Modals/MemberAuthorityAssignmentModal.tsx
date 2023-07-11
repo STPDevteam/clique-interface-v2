@@ -11,15 +11,22 @@ const MemberCard = styled(Box)({
   display: 'flex',
   textAlign: 'center',
   flexDirection: 'column',
-  alignItems: 'center',
+  // alignItems: 'center',
   justifyContent: 'space-between',
   width: '100%',
   height: 100,
   color: '#3F5170',
-  padding: 20,
+  // padding: 20,
   cursor: 'pointer',
-  '&.BannedClass': {
+  '& :hover': {
     backgroundColor: '#005BC60F'
+  },
+  '&.BannedClass': {
+    backgroundColor: '#005BC60F',
+    pointerEvents: 'none',
+    '& p': {
+      color: '#B5B7CF'
+    }
   },
   '& p': {
     width: '100%',
@@ -115,10 +122,22 @@ export default function MemberAuthorityAssignmentModal({
               }
             }}
           >
-            <Typography fontSize={16}>{item.name}</Typography>
-            <Typography fontSize={14} color={'#80829F'}>
-              {item.des}
-            </Typography>
+            <Box
+              sx={{
+                height: 100,
+                padding: 20,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Typography sx={{ pointerEvents: 'none' }} fontSize={16}>
+                {item.name}
+              </Typography>
+              <Typography sx={{ pointerEvents: 'none' }} fontSize={14} color={'#80829F'}>
+                {item.des}
+              </Typography>
+            </Box>
           </MemberCard>
         ))}
         <OutlineButton
