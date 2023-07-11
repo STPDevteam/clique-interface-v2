@@ -253,12 +253,7 @@ export default function LeftSider() {
       {
         title: 'Workspace',
         icon: <Workspace />,
-        defaultOpen:
-          pathname !== makeRouteLink(routes.Proposal) &&
-          pathname !== makeRouteLink(routes.DaoInfoActivity) &&
-          pathname !== makeRouteLink(routes.DaoMember) &&
-          pathname !== makeRouteLink(routes.DaoInfoAbout) &&
-          pathname !== makeRouteLink(routes.DaoAboutSetting),
+        defaultOpen: pathname.includes(makeRouteLink(routes.DaoTeamTask)),
         route: '',
         children: workspaceList
       },
