@@ -1,4 +1,4 @@
-import { Box, Link, styled, Typography } from '@mui/material'
+import { Box, Link, styled, Typography, Tooltip, TooltipProps, tooltipClasses } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
@@ -10,7 +10,7 @@ import { isSocialUrl } from 'utils/dao'
 import { DaoAvatars } from 'components/Avatars'
 import AdminTag from '../DaoInfo/ShowAdminTag'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ReactComponent as AuthIcon } from 'assets/svg/auth_tag_icon.svg'
 import { ReactComponent as QuitIcon } from 'assets/svg/quit_icon.svg'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
@@ -19,7 +19,6 @@ import { useDispatch } from 'react-redux'
 import { updateJoinDaoModalStatus } from 'state/buildingGovDao/actions'
 import Button from 'components/Button/Button'
 import { useActiveWeb3React } from 'hooks'
-
 const StyledHeader = styled(Box)(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   minHeight: 142,
@@ -47,6 +46,22 @@ const LinkStyle = styled(Link)(() => ({
   display: 'flex',
   alignItems: 'center'
 }))
+const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#F8FBFF',
+    color: '#97B7EF',
+    maxWidth: 270,
+    fontFamily: 'Inter',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+    borderRadius: '6px',
+    border: ' 1px solid #97B7EF',
+    padding: '8px  8px 8px 12px'
+  }
+}))
 
 export default function Header() {
   const isSmDown = useBreakpoint('sm')
@@ -55,6 +70,17 @@ export default function Header() {
   const { account } = useActiveWeb3React()
   const { myJoinDaoData, updateDaoMyJoinData, updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const TextRef = useRef<HTMLSpanElement | null>(null)
+  const [isOverflowed, setIsOverflowed] = useState(false)
+  const [open, setOpen] = useState(false)
+
+  const handleTooltipClose = () => {
+    setOpen(false)
+  }
+
+  const handleTooltipOpen = () => {
+    setOpen(true)
+  }
 
   const quit = useGetUserQuitDao()
   const cb = useJoinDAO()
@@ -89,6 +115,15 @@ export default function Header() {
     })
   }, [cb, curDaoId, dispatch, updateDaoMyJoinData, updateMyJoinedDaoListData])
 
+  useEffect(() => {
+    const element = TextRef.current
+    if ((element?.scrollHeight || 0) > (element?.clientHeight || 0)) {
+      setIsOverflowed(true)
+    } else {
+      setIsOverflowed(false)
+    }
+  }, [daoInfo?.bio])
+
   return (
     <Box>
       <ContainerWrapper maxWidth={1180}>
@@ -118,20 +153,53 @@ export default function Header() {
                 </Typography>
                 {daoInfo?.approve && <AuthIcon />}
                 <AdminTag level={myJoinDaoData?.job} />
+                <Typography sx={{ font: ' 500 14px/17px "Inter"', color: '#97B7EF' }}>
+                  @{daoInfo?.handle || '--'}
+                </Typography>
               </Box>
-              <Typography sx={{ mt: 6, font: ' 500 14px/17px "Inter"', color: '#97B7EF' }}>
-                @{daoInfo?.handle}
-              </Typography>
               <Box sx={{ display: 'flex' }}>
+                <Typography
+                  ref={TextRef}
+                  variant="body1"
+                  sx={{
+                    maxWidth: 540,
+                    height: 40,
+                    mt: 8,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    width: '100%',
+                    display: '-webkit-box',
+                    '-webkit-box-orient': 'vertical',
+                    '-webkit-line-clamp': '2',
+                    wordBreak: 'break-all',
+                    lineHeight: '20px'
+                  }}
+                >
+                  {daoInfo?.bio || '--'}
+                </Typography>
+                {isOverflowed && (
+                  <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <TooltipStyle onClose={handleTooltipClose} open={open} title={daoInfo?.bio}>
+                      <Link
+                        onClick={handleTooltipOpen}
+                        variant="body1"
+                        sx={{ cursor: 'pointer', color: '#0049C6', lineHeight: '20px' }}
+                      >
+                        more
+                      </Link>
+                    </TooltipStyle>
+                  </Box>
+                )}
+              </Box>
+              <Box sx={{ display: 'flex', mt: 10 }}>
                 {categoryList.map((name, index) => (
                   <Box
                     key={index}
                     sx={{
                       mr: 6,
-                      mt: 25,
                       padding: '1px 14px',
                       gap: '10px',
-                      height: '22px',
+                      height: '20px',
                       background: ' rgba(0, 91, 198, 0.06)',
                       borderRadius: '30px'
                     }}
