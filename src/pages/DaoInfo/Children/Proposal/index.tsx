@@ -16,7 +16,7 @@ import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const itemList = [
   { value: '', label: 'All Proposals' },
@@ -31,7 +31,6 @@ export default function Proposal() {
   const { showModal, hideModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { updateMyJoinedDaoListData, myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
-  console.log(isJoined?.job, 90)
   const params = useParams<{ daoId: string }>()
   const isSmDown = useBreakpoint('sm')
   const {
@@ -40,7 +39,12 @@ export default function Proposal() {
     result: proposalBaseList,
     page
   } = useProposalBaseList(Number(params.daoId))
-  console.log(proposalBaseList, currentProposalStatus)
+  const governance = useMemo(() => {
+    if (daoInfo?.governance && daoInfo?.governance.length > 0) {
+      return daoInfo?.governance[0]
+    }
+    return undefined
+  }, [daoInfo?.governance])
 
   useEffect(() => {
     updateMyJoinedDaoListData()
@@ -73,9 +77,13 @@ export default function Proposal() {
               </Typography>
             </Stack>
             <Typography variant="body1" lineHeight="20px" mt={12}>
-              Core members can initiate a vote and get the number of votes through tasks. If the number of votes in
+              {/* Core members can initiate a vote and get the number of votes through tasks. If the number of votes in
               favor is greater than 50%, and the number of valid votes is not less than 2/3 of the total number of
-              votes, it will be viewed as passed.
+              votes, it will be viewed as passed. */}
+              A proposal can be initiated by holding{' '}
+              {governance ? governance?.createRequire + ' ' + governance?.tokenName : '--'} in the wallet. If the number
+              of valid votes exceeds no less than {daoInfo.proposalThreshold || '--'} and is greater than 50%, the
+              proposal will be deemed passed.
             </Typography>
           </Box>
           <Stack spacing={15} mt={5}>

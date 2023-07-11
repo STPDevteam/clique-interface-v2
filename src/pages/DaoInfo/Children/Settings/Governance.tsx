@@ -59,7 +59,6 @@ const Row = styled(Box)(() => ({
 export default function General({ daoId }: { daoId: number }) {
   const { showModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  console.log(daoInfo, 890)
   const [loading, setLoading] = useState(false)
   const [fixTime, setFixtime] = useState((daoInfo.votingPeriod / 3600).toString())
   const PeriodList = [
@@ -93,7 +92,6 @@ export default function General({ daoId }: { daoId: number }) {
     isAddress(weight[0]?.tokenAddress) ? weight[0]?.tokenAddress : undefined,
     weight[0]?.chainId ?? undefined
   )
-  console.log(govToken)
   const cb = useUpdateGovernance()
 
   const saveBtn: {
