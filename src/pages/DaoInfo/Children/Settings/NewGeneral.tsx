@@ -98,7 +98,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
     daoLogo: daoInfo.daoLogo || '',
     name: daoInfo.daoName || '',
     description: daoInfo.bio || '',
-    category: daoInfo.category.join(',') || '',
+    category: daoInfo.category?.join(',') || '',
     twitter: daoInfo.twitter || '',
     website: daoInfo.website || '',
     github: daoInfo.github || '',
