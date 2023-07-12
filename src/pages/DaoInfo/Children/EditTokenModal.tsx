@@ -207,14 +207,14 @@ export default function EditTokenModal({
         </Box>
         <ContentTitleStyle sx={{ mt: 14 }}>Requirement</ContentTitleStyle>
         <Box sx={{ mt: 4, display: 'grid', flexDirection: 'column', gap: 8 }}>
-          <Typography variant="body1" color={'#B5B7CF'} lineHeight={'20px'}>
+          <Typography variant="body1" color={'#8D8EA5'} lineHeight={'20px'}>
             Minimum Tokens Needed To Create Proposal
           </Typography>
           <InputStyle
             placeholderSize="14px"
             placeholder={'--'}
             endAdornment={
-              <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+              <Typography color="#8D8EA5" lineHeight="20px" variant="body1">
                 {govToken?.token.symbol}
               </Typography>
             }

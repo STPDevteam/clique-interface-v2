@@ -400,11 +400,11 @@ export default function DragTaskPanel() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#B5B7CF',
+                color: '#8D8EA5',
                 gap: 8,
                 cursor: 'pointer',
                 '& svg circle': {
-                  fill: '#B5B7CF'
+                  fill: '#8D8EA5'
                 }
               }}
             >
@@ -594,12 +594,12 @@ export default function DragTaskPanel() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#B5B7CF',
+                          color: '#8D8EA5',
                           gap: 8,
                           margin: '0 auto',
                           cursor: 'pointer',
                           '& svg circle': {
-                            fill: '#B5B7CF'
+                            fill: '#8D8EA5'
                           }
                         }}
                       >

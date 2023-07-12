@@ -25,7 +25,7 @@ const MemberCard = styled(Box)({
     backgroundColor: '#005BC60F',
     pointerEvents: 'none',
     '& p': {
-      color: '#B5B7CF'
+      color: '#8D8EA5'
     }
   },
   '& p': {

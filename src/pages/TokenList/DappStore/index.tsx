@@ -125,7 +125,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         </Typography>
       </Box>
       <Box padding={'10px 20px'}>
-        <Typography fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+        <Typography fontSize={14} lineHeight={'20px'} color={'#8D8EA5'} textAlign={'left'} width={'100%'}>
           Support Chains
         </Typography>
         {supportChainsIcon === 'all' ? (

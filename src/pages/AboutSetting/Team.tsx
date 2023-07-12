@@ -239,7 +239,7 @@ export function BlueButton({
         gap: 10,
         cursor: 'pointer',
         '& p': {
-          color: disabled ? '#b5b7cf' : '#97B7EF',
+          color: disabled ? '#8D8EA5' : '#97B7EF',
           fontSize: 14,
           lineHeight: '20px',
           fontFamily: 'Inter'

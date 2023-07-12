@@ -147,7 +147,7 @@ export default function Index({
         <Typography variant="body1" color={'#80829F'}>
           Upload file
         </Typography>
-        <Typography sx={{ width: '180px', lineHeight: '21px', fontWeight: 500, color: '#B5B7CF' }}>
+        <Typography sx={{ width: '180px', lineHeight: '21px', fontWeight: 500, color: '#8D8EA5' }}>
           Supported: JPG, PNG, GIF, SVG, MP4, WEBP. Max size:100 MB
         </Typography>
         <Button width="125px" height="40px" style={{ marginTop: 25 }} onClick={handleClick}>

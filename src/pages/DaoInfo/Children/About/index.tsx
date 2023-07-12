@@ -44,7 +44,7 @@ const Title = styled(Typography)(() => ({
   fontWeight: 500,
   fontSize: '14px',
   lineHeight: '20px',
-  color: '#B5B7CF'
+  color: '#8D8EA5'
 }))
 
 // const StyledTitle = styled(Typography)(({}) => ({
@@ -60,7 +60,7 @@ const ContentTitle = styled(Typography)(() => ({
   fontWeight: 500,
   fontSize: '13px',
   lineHeight: '16px',
-  color: '#B5B7CF'
+  color: '#8D8EA5'
 }))
 
 const StyledText = styled(Typography)(
@@ -286,7 +286,7 @@ const TableContentTitle = styled(TableCell)(() => ({
   fontWeight: 500,
   fontSize: '13px',
   lineHeight: ' 16px',
-  color: '#B5B7CF',
+  color: '#8D8EA5',
   padding: '7px 0'
 }))
 const TableContentText = styled(TableCell)(() => ({
