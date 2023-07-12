@@ -1,4 +1,4 @@
-import { Box, Drawer, List, ListItemText, styled, Typography } from '@mui/material'
+import { Box, Drawer, List, ListItemText, styled, Typography, Tooltip } from '@mui/material'
 import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
 import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
 import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
@@ -525,15 +525,17 @@ export default function LeftSider() {
                         </>
                       ) : (
                         <>
-                          <Box
-                            className={'LBox'}
-                            sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
-                          >
-                            <Image src={item.logo || ''}></Image>
-                            <Typography noWrap sx={{ opacity: 0.3 }}>
-                              {item.title}
-                            </Typography>
-                          </Box>
+                          <Tooltip title={'Private space, visible only to those invited.'} arrow placement="top-end">
+                            <Box
+                              className={'LBox'}
+                              sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
+                            >
+                              <Image src={item.logo || ''}></Image>
+                              <Typography noWrap sx={{ opacity: 0.3 }}>
+                                {item.title}
+                              </Typography>
+                            </Box>
+                          </Tooltip>
                           <Typography sx={{ opacity: 0.4 }}>🔒</Typography>
                         </>
                       )}
