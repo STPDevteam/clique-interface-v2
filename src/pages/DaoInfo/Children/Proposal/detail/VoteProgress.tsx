@@ -70,7 +70,7 @@ export default function VoteProgress({
           View all votes ({allVotes && formatNumberWithCommas(allVotes)})
         </Typography>
       </RowCenter> */}
-      <Stack mt={16} spacing={10}>
+      <Stack spacing={10}>
         {proposalOptions.map((item, index) => (
           <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
             <Box

@@ -6,8 +6,12 @@ import 'react-quill/dist/quill.snow.css'
 import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
+import { ReactComponent as ShareIcon } from 'assets/svg/share_icon.svg'
 import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
+import { RowCenter } from '../ProposalItem'
+import useCopyClipboard from 'hooks/useCopyClipboard'
+import { toast } from 'react-toastify'
 
 const AdminIcon = styled(adminIcon)(() => ({
   'path:first-of-type': {
@@ -30,6 +34,9 @@ function createTimeStampStr(startTime: number, endTime: number, status: string) 
 }
 
 export default function Index({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
+  const currentUrl = window.location.href
+
+  const [isCopied, setCopied] = useCopyClipboard()
   // const theme = useTheme()
   return (
     <Box>
@@ -65,16 +72,39 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
       >
         {proposalInfo.title}
       </Typography>
-      <Box display={'flex'} mt={15} gap={10}>
-        <Box sx={{ width: 'fit-content', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}>
-          <Image height={20} width={20} src={proposalInfo.proposer?.avatar || avatar} style={{ borderRadius: '50%' }} />
-          <Typography variant="body1" noWrap sx={{ lineHeight: '20px', maxWidth: 80 }}>
-            {proposalInfo.proposer?.nickname || 'unnamed'}
-          </Typography>
-          <AdminIcon />
+      <RowCenter>
+        <Box display={'flex'} mt={15} gap={10}>
+          <Box
+            sx={{ width: 'fit-content', display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}
+          >
+            <Image
+              height={20}
+              width={20}
+              src={proposalInfo.proposer?.avatar || avatar}
+              style={{ borderRadius: '50%' }}
+            />
+            <Typography variant="body1" noWrap sx={{ lineHeight: '20px', maxWidth: 80 }}>
+              {proposalInfo.proposer?.nickname || 'unnamed'}
+            </Typography>
+            <AdminIcon />
+          </Box>
+          <ShowProposalStatusV3Tag status={proposalInfo.status} />
         </Box>
-        <ShowProposalStatusV3Tag status={proposalInfo.status} />
-      </Box>
+        <Box
+          onClick={() => {
+            setCopied(currentUrl)
+            if (isCopied) {
+              toast.success('Copied success')
+            } else {
+              toast.success('Copied error')
+            }
+          }}
+          sx={{ display: 'flex', gap: 7, alignItems: 'center', cursor: 'pointer' }}
+        >
+          <ShareIcon />
+          <Typography variant="body1">Share</Typography>
+        </Box>
+      </RowCenter>
       {/* <Box
         mt={15}
         sx={{
