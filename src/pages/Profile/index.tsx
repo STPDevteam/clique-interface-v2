@@ -4,13 +4,13 @@ import { useActiveWeb3React } from 'hooks'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getEtherscanLink, isAddress, shortenAddress } from 'utils'
-import { ReactComponent as TwitterGray } from 'assets/svg/twitter_gray.svg'
+// import { ReactComponent as TwitterGray } from 'assets/svg/twitter_gray.svg'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
-import { ReactComponent as DiscordGray } from 'assets/svg/discord_gray.svg'
+// import { ReactComponent as DiscordGray } from 'assets/svg/discord_gray.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
-import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
+// import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
-import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
+// import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import MyTokens from './MyTokens'
 import MyRecords from './MyRecords'
@@ -198,7 +198,8 @@ export default function Profile() {
                         )}
                       </StyledLink>
                     ) : (
-                      <TwitterGray />
+                      // <TwitterGray />
+                      ''
                     )}
 
                     {profileInfo?.discord && isSocialUrl('discord', profileInfo.discord) ? (
@@ -217,7 +218,8 @@ export default function Profile() {
                         )}
                       </StyledLink>
                     ) : (
-                      <DiscordGray />
+                      // <DiscordGray />
+                      ''
                     )}
 
                     {profileInfo?.youtube && isSocialUrl('youtube', profileInfo.youtube) ? (
@@ -236,7 +238,8 @@ export default function Profile() {
                         )}
                       </StyledLink>
                     ) : (
-                      <YoutobeGray />
+                      // <YoutobeGray />
+                      ''
                     )}
 
                     {profileInfo?.opensea && isSocialUrl('opensea', profileInfo.opensea) ? (
@@ -255,7 +258,8 @@ export default function Profile() {
                         )}
                       </StyledLink>
                     ) : (
-                      <OpenseaGray />
+                      // <OpenseaGray />
+                      ''
                     )}
                   </Box>
                 </Box>
