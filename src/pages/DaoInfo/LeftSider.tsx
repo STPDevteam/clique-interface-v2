@@ -1,4 +1,14 @@
-import { Box, Drawer, List, ListItemText, styled, Typography, Tooltip } from '@mui/material'
+import {
+  Box,
+  Drawer,
+  List,
+  ListItemText,
+  styled,
+  TooltipProps,
+  tooltipClasses,
+  Typography,
+  Tooltip
+} from '@mui/material'
 import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
 import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
 import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
@@ -194,6 +204,26 @@ const ChildItem = styled(Box)({
     }
   }
 })
+
+const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#F8FBFF !important',
+    color: '#97B7EF !important',
+    width: 300,
+    fontFamily: 'Inter',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+    borderRadius: '6px',
+    border: ' 1px solid #97B7EF',
+    padding: '8px  8px 8px 12px',
+    '& .MuiTooltip-arrow': {
+      color: '#97B7EF !important'
+    }
+  }
+}))
 
 export interface LeftSiderMenu {
   title: string
@@ -525,7 +555,7 @@ export default function LeftSider() {
                         </>
                       ) : (
                         <>
-                          <Tooltip title={'Private space, visible only to those invited.'} arrow placement="top-end">
+                          <TooltipStyle title={'Private space, visible only to those invited.'} placement="left">
                             <Box
                               className={'LBox'}
                               sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
@@ -535,7 +565,7 @@ export default function LeftSider() {
                                 {item.title}
                               </Typography>
                             </Box>
-                          </Tooltip>
+                          </TooltipStyle>
                           <Typography sx={{ opacity: 0.4 }}>🔒</Typography>
                         </>
                       )}
