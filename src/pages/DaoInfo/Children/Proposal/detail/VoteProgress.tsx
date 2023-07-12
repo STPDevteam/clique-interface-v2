@@ -11,11 +11,11 @@ import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
-import { RowCenter } from '../ProposalItem'
+// import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import { BlackButton } from 'components/Button/Button'
 import { useVoteModalToggle } from 'state/application/hooks'
-import { VotingTypes } from 'state/buildingGovDao/actions'
+// import { VotingTypes } from 'state/buildingGovDao/actions'
 import VoteModal from './VoteModal'
 
 const StyledItem = styled(Box)(({}) => ({
@@ -41,23 +41,23 @@ const StyledListText = styled(Typography)({
 export default function VoteProgress({
   refresh,
   proposalOptions,
-  proposalId,
+  // proposalId,
   proposalInfo
 }: {
   refresh: Dispatch<SetStateAction<number>>
   proposalOptions: ProposalOptionProp[]
-  proposalId: number
+  // proposalId: number
   proposalInfo: useProposalDetailInfoProps
 }) {
   const isSmDown = useBreakpoint('sm')
-  const { showModal } = useModal()
+  // const { showModal } = useModal()
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
-      <RowCenter flexWrap={'wrap'}>
+      {/* <RowCenter flexWrap={'wrap'}>
         <Typography fontSize={14} color={'#80829F'} fontWeight={500}>
           {proposalInfo.votingType === VotingTypes.SINGLE ? 'single-vote' : 'multi-vote'}
         </Typography>
@@ -69,7 +69,7 @@ export default function VoteProgress({
         >
           View all votes ({allVotes && formatNumberWithCommas(allVotes)})
         </Typography>
-      </RowCenter>
+      </RowCenter> */}
       <Stack mt={16} spacing={10}>
         {proposalOptions.map((item, index) => (
           <StyledItem key={index} style={{ padding: isSmDown ? '16px' : '' }}>
@@ -125,7 +125,7 @@ export default function VoteProgress({
   )
 }
 
-function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
+export function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
   const { hideModal } = useModal()
   const { result: proposalVoteList, page } = useProposalVoteList(proposalId)
   const history = useHistory()
