@@ -36,10 +36,10 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
           (isJoined?.job === 'owner' || isJoined?.job === 'superAdmin')
         ) {
           if (isJoined?.job === 'owner') {
-            toast.error('Add error You are already a owner.')
+            toast.error('Add error you are already a owner.')
           }
           if (isJoined?.job === 'superAdmin') {
-            toast.error('Add error You are already a superAdmin.')
+            toast.error('Add error you are already a superAdmin.')
           }
           return
         } else if (res.data.code !== 200) {

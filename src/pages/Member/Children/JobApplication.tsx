@@ -64,7 +64,11 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         }}
       >
         <Image src={item.avatar || avatar}></Image>
-        {item.nickname || 'unnamed'}
+        <Tooltip title={item.nickname || 'unnamed'} arrow placement="top">
+          <Typography noWrap sx={{ width: '100px', fontSize: 16, cursor: 'pointer' }}>
+            {item.nickname || 'unnamed'}
+          </Typography>
+        </Tooltip>
       </Box>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {JobsType[item.applyLevel] === 'superAdmin' ? 'Super Admin' : JobsType[item.applyLevel]}
