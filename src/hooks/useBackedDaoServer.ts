@@ -442,6 +442,7 @@ export function useLogin() {
   // const { account } = useActiveWeb3React()
   // const [loading, setLoading] = useState(false)
   const [loginToken, setLoginToken] = useState('')
+  const [firstSignIn, setFirstSignIn] = useState(-1)
   const login = useCallback(async (account: string, message: string, signature: string) => {
     if (!account) {
       return
@@ -450,17 +451,21 @@ export function useLogin() {
     try {
       const res = await Login(account, message, signature)
       if (res.data.data) {
-        setLoginToken(res.data.data)
+        setLoginToken(res.data.data.jwtToken)
+        setFirstSignIn(res.data.data.openNonce)
         // setLoading(false)
         return res.data.data
       }
     } catch (error) {
       // setLoading(false)
+      setLoginToken('')
+      setFirstSignIn(-1)
     }
   }, [])
   return {
     login,
-    loginToken
+    loginToken,
+    firstSignIn
   }
 }
 

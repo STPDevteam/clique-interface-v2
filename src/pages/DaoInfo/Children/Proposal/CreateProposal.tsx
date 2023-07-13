@@ -201,7 +201,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
         setLoading(false)
         setStartValidate(false)
         if (res.data.code !== 200) {
-          toast.error('Network error')
+          toast.error(res.data.msg || 'Network error')
           return
         }
         toast.success('Create proposal success')

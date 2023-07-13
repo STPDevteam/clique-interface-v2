@@ -49,7 +49,6 @@ import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 // import Home from './Home'
 import Member from './Member'
-// import Task from './Task'
 // const Task = lazy(() => import('./Task'))
 import Task from './Task'
 import ComingSoon from './ComingSoon'

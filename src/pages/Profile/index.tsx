@@ -37,7 +37,6 @@ import Button from 'components/Button/Button'
 // import Loading from 'components/Loading'
 
 import { useWalletModalToggle } from 'state/application/hooks'
-
 import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
