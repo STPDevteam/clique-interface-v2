@@ -1,9 +1,10 @@
-import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel, Alert } from '@mui/material'
+import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel, Alert, MenuItem } from '@mui/material'
 import ConfirmButton from 'components/Button/Button'
 import SaveButton from 'components/Button/OutlineButton'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
-import Select from 'components/Select/SearchSelect'
+// import SearchSelect from 'components/Select/SearchSelect'
+import Select from 'components/Select/Select'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
 import React, { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
@@ -69,12 +70,12 @@ const RowContent = styled(Box)(() => ({
   '& .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
     padding: '0 0 0 20px'
   },
-  '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
-    border: 'none!important'
-  },
+  // '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
+  //   border: 'none!important'
+  // },
   '& input': {
     padding: 0,
-    height: 30,
+    // height: 30,
     '&::placeholder': {
       color: '#97b7ef'
     }
@@ -152,7 +153,6 @@ export default function TaskDetail({
     })
     return _arr
   }, [jobsList])
-
   const proposalList = useMemo(() => {
     if (!proposalBaseList) return []
     const arr: any = []
@@ -290,10 +290,10 @@ export default function TaskDetail({
           '& .title': {
             margin: '10px 0',
             paddingLeft: 0
-          },
-          '& .Mui-focused, & .MuiInputBase-root': {
-            border: 'none!important'
           }
+          // '& .Mui-focused, & .MuiInputBase-root': {
+          //   border: 'none!important'
+          // }
         }}
         anchor={'right'}
         open={open}
@@ -381,7 +381,7 @@ export default function TaskDetail({
                 <Image src={assign}></Image>
                 <Typography>Assignee</Typography>
               </Box>
-              <Select
+              {/* <Select
                 disabled
                 options={assigneeList}
                 placeholder="Empty"
@@ -393,14 +393,40 @@ export default function TaskDetail({
                   console.log('values', value, option)
                   setAssignees(option.value)
                 }}
-              />
+              /> */}
+              <Select
+                disabled
+                noBold
+                placeholder="Empty"
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={assignees}
+                onChange={e => setAssignees(e.target.value)}
+              >
+                {assigneeList.map((item: any) => (
+                  <MenuItem
+                    key={item.label}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.value}
+                    selected={assignees === item.value}
+                  >
+                    {item.nickname
+                      ? item.nickname.length > 7
+                        ? item.nickname.slice(0, 7) + '...'
+                        : item.nickname
+                      : 'unnamed'}
+                    {'(' + shortenAddress(item.account, 3) + ')'}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
                 <Image src={select}></Image>
                 <Typography>Status</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 disabled
                 options={statusList}
                 placeholder="Empty"
@@ -409,7 +435,28 @@ export default function TaskDetail({
                 value={currentStatus}
                 multiple={false}
                 onChange={(value: any) => setCurrentStatus(value)}
-              />
+              /> */}
+              <Select
+                disabled
+                noBold
+                placeholder="Empty"
+                style={{ fontWeight: 500, fontSize: 14, marginTop: 10 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={currentStatus}
+                onChange={e => setCurrentStatus(e.target.value)}
+              >
+                {statusList.map((item: any) => (
+                  <MenuItem
+                    key={item}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item}
+                    selected={currentStatus === item}
+                  >
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
@@ -506,7 +553,7 @@ export default function TaskDetail({
                 <Image src={proposalIcon}></Image>
                 <Typography>Proposal</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 disabled
                 options={proposalList}
                 placeholder="Choose a proposal"
@@ -517,7 +564,28 @@ export default function TaskDetail({
                 onChange={(value: any) => {
                   setProposal(value)
                 }}
-              />
+              /> */}
+              <Select
+                disabled
+                noBold
+                placeholder="Choose a proposal"
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={proposal}
+                onChange={e => setProposal(e.target.value)}
+              >
+                {proposalList.map((item: any) => (
+                  <MenuItem
+                    key={item.proposalId}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.proposalId}
+                    selected={assignees === item}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <EditContent>
               {ReactHtmlParser(
@@ -611,24 +679,37 @@ export default function TaskDetail({
                 <Typography>Assignee</Typography>
               </Box>
               <Select
-                options={assigneeList}
+                noBold
                 placeholder="Empty"
-                width={isSmDown ? 160 : 219}
-                height={isSmDown ? 40 : undefined}
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
                 value={assignees}
-                multiple={false}
-                onChange={(value: any) => {
-                  console.log('change', value)
-                  setAssignees(value)
-                }}
-              />
+                onChange={e => setAssignees(e.target.value)}
+              >
+                {assigneeList.map((item: any) => (
+                  <MenuItem
+                    key={item.label}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.value}
+                    selected={assignees === item.value}
+                  >
+                    {item.nickname
+                      ? item.nickname.length > 7
+                        ? item.nickname.slice(0, 7) + '...'
+                        : item.nickname
+                      : 'unnamed'}
+                    {'(' + shortenAddress(item.account, 3) + ')'}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
                 <Image src={select}></Image>
                 <Typography>Status</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 options={statusList}
                 placeholder="Empty"
                 width={isSmDown ? 160 : 219}
@@ -636,7 +717,27 @@ export default function TaskDetail({
                 value={currentStatus}
                 multiple={false}
                 onChange={(value: any) => setCurrentStatus(value)}
-              />
+              /> */}
+              <Select
+                noBold
+                placeholder="Empty"
+                style={{ fontWeight: 500, fontSize: 14, marginTop: 10 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={currentStatus}
+                onChange={e => setCurrentStatus(e.target.value)}
+              >
+                {statusList.map((item: any) => (
+                  <MenuItem
+                    key={item}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item}
+                    selected={currentStatus === item}
+                  >
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
@@ -729,7 +830,7 @@ export default function TaskDetail({
                 <Image src={proposalIcon}></Image>
                 <Typography>Proposal</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 options={proposalList}
                 placeholder="Choose a proposal"
                 width={isSmDown ? 160 : 219}
@@ -739,7 +840,33 @@ export default function TaskDetail({
                 onChange={(value: any) => {
                   setProposal(value)
                 }}
-              />
+              /> */}
+              <Select
+                placeholder="Choose a proposal"
+                noBold
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={proposal}
+                onChange={e => setProposal(e.target.value)}
+              >
+                {proposalList.length > 0 ? (
+                  proposalList.map((item: any) => (
+                    <MenuItem
+                      key={item.proposalId}
+                      sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                      value={item.proposalId}
+                      selected={assignees === item}
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
+                    No more options are available
+                  </MenuItem>
+                )}
+              </Select>
             </RowContent>
             <RowContent
               sx={{

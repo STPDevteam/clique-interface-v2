@@ -11,7 +11,7 @@ import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import { RowCenter } from '../ProposalItem'
 import useCopyClipboard from 'hooks/useCopyClipboard'
-import { toast } from 'react-toastify'
+// import { toast } from 'react-toastify'
 
 const AdminIcon = styled(adminIcon)(() => ({
   'path:first-of-type': {
@@ -94,12 +94,11 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
         <Box
           onClick={() => {
             setCopied(currentUrl)
-            toast.success('Copied success')
           }}
           sx={{ display: 'flex', gap: 7, alignItems: 'center', cursor: 'pointer' }}
         >
           <ShareIcon />
-          <Typography variant="body1">Share</Typography>
+          <Typography variant="body1">{isCopied ? 'Copied Link' : 'Share'}</Typography>
         </Box>
       </RowCenter>
       {/* <Box
