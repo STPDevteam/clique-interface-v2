@@ -612,7 +612,7 @@ export default function LeftSider() {
                     </Typography>
                   </Box>
                 ) : item.title === 'Workspace' ? (
-                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="bottom">
+                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
                     <Box
                       sx={{
                         height: 40,
