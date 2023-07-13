@@ -13,7 +13,7 @@ import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 
 const guestList = [
-  { value: 1, label: 'Super Admin' },
+  { value: 1, label: 'Owner' },
   { value: 2, label: 'Admin' }
 ]
 

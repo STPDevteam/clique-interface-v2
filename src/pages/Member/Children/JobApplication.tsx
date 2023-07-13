@@ -71,7 +71,7 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         </Tooltip>
       </Box>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {JobsType[item.applyLevel] === 'superAdmin' ? 'Super Admin' : JobsType[item.applyLevel]}
+        {JobsType[item.applyLevel]}
       </Typography>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {timeStampToFormat(item.applyTime)}

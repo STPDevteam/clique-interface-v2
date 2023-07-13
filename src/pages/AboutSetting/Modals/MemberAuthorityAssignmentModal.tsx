@@ -38,12 +38,12 @@ const MemberCard = styled(Box)({
 
 const levelList = [
   {
-    name: 'Owner',
+    name: 'Creator',
     des: 'DAO owner Seed role',
     isDisable: false
   },
   {
-    name: 'Super admin',
+    name: 'Owner',
     des: 'Super administrator can edit workspace settings and invite new members.',
     isDisable: false
   },

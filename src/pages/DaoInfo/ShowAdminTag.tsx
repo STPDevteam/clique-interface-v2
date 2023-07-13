@@ -40,9 +40,9 @@ export function AdminTagListBlock({
 export default function ShowAdminTag({ level }: { level?: string }) {
   // const theme = useTheme()
   return level === 'owner' ? (
-    <StyledChip label="Owner" />
+    <StyledChip label="Creator" />
   ) : level === 'superAdmin' ? (
-    <StyledChip label="Super Admin" />
+    <StyledChip label="Owner" />
   ) : level === 'admin' ? (
     <StyledChip label="Admin" bgColor="#97B7EF" />
   ) : null

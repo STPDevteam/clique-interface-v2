@@ -2,7 +2,7 @@
 import Button from 'components/Button/OutlineButton'
 import { Typography, Box, Avatar, Stack, styled, keyframes } from '@mui/material'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import blueBg from 'assets/images/blueBg.png'
 import close from 'assets/images/closeModal.png'
 import Image from 'components/Image'
@@ -91,7 +91,7 @@ export default function JoinDaoFrame() {
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-  const [disable, setDisable] = useState(false)
+  // const [disable, setDisable] = useState(false)
   const cb = useJoinDAO()
   const dispatch = useDispatch()
   const closeClick = useCallback(() => {
@@ -106,17 +106,17 @@ export default function JoinDaoFrame() {
         cb(Number(daoId)).then((res: any) => {
           if (res.data.code !== 200) {
             toast.error(res.data.msg || 'Network error')
-            setDisable(false)
+            // setDisable(false)
             return
           }
           updateDaoMyJoinData()
           toast.success('Join success')
-          setDisable(false)
+          // setDisable(false)
           dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
         })
       })
     } else {
-      setDisable(true)
+      // setDisable(true)
       cb(Number(daoId)).then((res: any) => {
         if (res.data.code !== 200) {
           toast.error(res.data.msg || 'Network error')
@@ -125,7 +125,7 @@ export default function JoinDaoFrame() {
         updateDaoMyJoinData()
         updateMyJoinedDaoListData()
         toast.success('Join success')
-        setDisable(false)
+        // setDisable(false)
         dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
       })
     }
@@ -184,7 +184,6 @@ export default function JoinDaoFrame() {
       <Box display="grid" width="260px">
         <Button
           onClick={onClickJoinDao}
-          disabled={disable}
           noBold
           style={{ border: 0, color: '#0049C6', backgroundColor: '#fff', fontWeight: 700 }}
           width="87px"

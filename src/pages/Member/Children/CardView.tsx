@@ -20,8 +20,8 @@ import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
 import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
 
 export const JobsType: any = {
-  0: 'Owner',
-  1: 'superAdmin',
+  0: 'Creator',
+  1: 'Owner',
   2: 'Admin'
 }
 
@@ -194,7 +194,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 )}
               </Box>
               <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={JobsType[item.jobsLevel]}>
-                {JobsType[item.jobsLevel] === 'superAdmin' ? 'Super Admin' : JobsType[item.jobsLevel] || 'unnamed'}
+                {JobsType[item.jobsLevel] || 'unnamed'}
               </Button>
             </Box>
             {hoverIndex === index &&
