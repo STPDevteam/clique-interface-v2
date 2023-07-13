@@ -37,6 +37,7 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
   const currentUrl = window.location.href
 
   const [isCopied, setCopied] = useCopyClipboard()
+  console.log(isCopied)
   // const theme = useTheme()
   return (
     <Box>
@@ -93,11 +94,7 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
         <Box
           onClick={() => {
             setCopied(currentUrl)
-            if (isCopied) {
-              toast.success('Copied success')
-            } else {
-              toast.success('Copied error')
-            }
+            toast.success('Copied success')
           }}
           sx={{ display: 'flex', gap: 7, alignItems: 'center', cursor: 'pointer' }}
         >
