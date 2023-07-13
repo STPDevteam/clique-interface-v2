@@ -23,6 +23,7 @@ import { shortenAddress, formatTimestamp } from 'utils'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
+import owl from 'assets/images/owl.png'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   height: 800,
@@ -124,26 +125,6 @@ export default function SoulTokenDetail() {
     }
     return true
   }, [sbtIsClaim, account, userSignature, chainId, sbtDetail, isJoin])
-
-  // const isClaim = useMemo(() => {
-  //   if (!account || !userSignature) {
-  //     return false
-  //   }
-
-  //   if (chainId !== sbtDetail?.tokenChainId || (!isJoin && sbtDetail?.way === ClaimWay.Joined)) {
-  //     return true
-  //   }
-
-  //   if (!sbtIsClaim?.canClaim && !sbtIsClaim?.isWhite && !sbtIsClaim?.signature) {
-  //     return true
-  //   }
-
-  //   if (sbtIsClaim?.canClaim && sbtIsClaim?.signature) {
-  //     return false
-  //   }
-
-  //   return true
-  // }, [sbtIsClaim, account, userSignature, chainId, sbtDetail, isJoin])
 
   useEffect(() => {
     if (isJoined) {
@@ -252,108 +233,113 @@ export default function SoulTokenDetail() {
     <>
       <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
         <Back />
-        {sbtDetail && (
-          <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
-            <ContentBoxStyle>
-              <ContentHeaderStyle>
-                <Typography fontSize={24} fontWeight={700} lineHeight={'29px'} color={'#3F5170'}>
-                  {sbtDetail?.itemName || '--'}
-                </Typography>
-                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
-                  <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
-                  <Box>
-                    <Typography variant="body1" color={'#80829F'}>
-                      Base on
-                    </Typography>
-                    <Typography variant="h6" fontSize={18} lineHeight={'20px'}>
-                      {sbtDetail?.daoName || '--'}
-                    </Typography>
-                  </Box>
-                  <JoInButton disabled={isJoin} onClick={JoinCallback}>
-                    {isJoin ? 'Joined' : 'Join'}
-                  </JoInButton>
-                </Box>
-              </ContentHeaderStyle>
-              <DetailLayoutStyle>
-                <RowCenter>
-                  <Box>
-                    <DetailTitleStyle>Items </DetailTitleStyle>
-                    <DetailStyle>{sbtDetail?.totalSupply}</DetailStyle>
-                  </Box>
-                  <Box>
-                    <DetailTitleStyle>Network</DetailTitleStyle>
-                    <DetailStyle>{ChainListMap[sbtDetail?.chainId]?.name || '--'}</DetailStyle>
-                  </Box>
-                  <Box>
-                    <DetailTitleStyle>Contract Address</DetailTitleStyle>
-                    <DetailStyle>
-                      {sbtDetail?.tokenAddress ? shortenAddress(sbtDetail?.tokenAddress, 3) : '--'}
-                    </DetailStyle>
-                  </Box>
-                </RowCenter>
+        <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
+          <ContentBoxStyle>
+            <ContentHeaderStyle>
+              <Typography noWrap fontSize={24} fontWeight={700} lineHeight={'29px'} color={'#3F5170'}>
+                {sbtDetail?.itemName || '--'}
+              </Typography>
+              <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
+                <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
                 <Box>
-                  <DetailTitleStyle>Claimable Period</DetailTitleStyle>
-                  <DetailStyle fontSize={20}>
-                    {sbtDetail?.startTime ? formatTimestamp(sbtDetail?.startTime) : '--'} -
-                    {sbtDetail?.endTime ? formatTimestamp(sbtDetail?.endTime) : '--'}
+                  <Typography variant="body1" color={'#80829F'}>
+                    Base on
+                  </Typography>
+                  <Typography variant="h6" fontSize={18} lineHeight={'20px'}>
+                    {sbtDetail?.daoName || '--'}
+                  </Typography>
+                </Box>
+                <JoInButton disabled={isJoin} onClick={JoinCallback}>
+                  {isJoin ? 'Joined' : 'Join'}
+                </JoInButton>
+              </Box>
+            </ContentHeaderStyle>
+            <DetailLayoutStyle>
+              <RowCenter>
+                <Box>
+                  <DetailTitleStyle>Items </DetailTitleStyle>
+                  <DetailStyle>{sbtDetail?.totalSupply}</DetailStyle>
+                </Box>
+                <Box>
+                  <DetailTitleStyle>Network</DetailTitleStyle>
+                  <DetailStyle>{sbtDetail?.chainId ? ChainListMap[sbtDetail?.chainId]?.name : '--'}</DetailStyle>
+                </Box>
+                <Box>
+                  <DetailTitleStyle>Contract Address</DetailTitleStyle>
+                  <DetailStyle>
+                    {sbtDetail?.tokenAddress ? shortenAddress(sbtDetail?.tokenAddress, 3) : '--'}
                   </DetailStyle>
                 </Box>
-              </DetailLayoutStyle>
-              <Typography sx={{ padding: '20px 40px' }} variant="body1" lineHeight={'20px'} fontWeight={400}>
+              </RowCenter>
+              <Box>
+                <DetailTitleStyle>Claimable Period</DetailTitleStyle>
+                <DetailStyle fontSize={20}>
+                  {sbtDetail?.startTime ? formatTimestamp(sbtDetail?.startTime) : '--'} -
+                  {sbtDetail?.endTime ? formatTimestamp(sbtDetail?.endTime) : '--'}
+                </DetailStyle>
+              </Box>
+            </DetailLayoutStyle>
+            <Box sx={{ padding: '20px 40px' }}>
+              <Typography
+                sx={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+                variant="body1"
+                lineHeight={'20px'}
+                fontWeight={400}
+              >
                 {sbtDetail?.introduction || '--'}
               </Typography>
-            </ContentBoxStyle>
-            <ContentBoxStyle maxWidth={580}>
+            </Box>
+          </ContentBoxStyle>
+          <ContentBoxStyle maxWidth={580}>
+            <ColumnLayoutStyle
+              sx={{
+                height: 470,
+                pt: '30px',
+                gap: 30,
+                borderBottom: '1px solid #D4D7E2'
+              }}
+            >
+              <Image src={sbtDetail?.fileUrl || owl} style={{ height: 310, width: 310, borderRadius: '10px' }} />
               <ColumnLayoutStyle
                 sx={{
-                  height: 470,
-                  pt: '30px',
-                  gap: 30,
-                  borderBottom: '1px solid #D4D7E2'
+                  gap: 10
                 }}
               >
-                <Image src={sbtDetail?.fileUrl} style={{ height: 310, width: 310, borderRadius: '10px' }} />
-                <ColumnLayoutStyle
-                  sx={{
-                    gap: 10
-                  }}
+                <ClaimButton
+                  disabled={contractQueryIsClaim ? contractQueryIsClaim : isClaim}
+                  onClick={sbtClaimCallback}
                 >
-                  <ClaimButton
-                    disabled={contractQueryIsClaim ? contractQueryIsClaim : isClaim}
-                    onClick={sbtClaimCallback}
+                  {contractQueryIsClaim ? 'Owned' : isClaim ? 'CannotClaim' : 'Claim'}
+                </ClaimButton>
+                {nextHandler?.error && (
+                  <Box
+                    sx={{ display: 'flex', gap: 10, width: '100%', font: '500 14px/24px "Inter"', color: '#E46767' }}
                   >
-                    {contractQueryIsClaim ? 'Owned' : isClaim ? 'CannotClaim' : 'Claim'}
-                  </ClaimButton>
-                  {nextHandler?.error && (
-                    <Box
-                      sx={{ display: 'flex', gap: 10, width: '100%', font: '500 14px/24px "Inter"', color: '#E46767' }}
-                    >
-                      <ErrorOutlineOutlinedIcon />
-                      {nextHandler?.error}
-                    </Box>
-                  )}
-                </ColumnLayoutStyle>
+                    <ErrorOutlineOutlinedIcon />
+                    {nextHandler?.error}
+                  </Box>
+                )}
               </ColumnLayoutStyle>
-              <OwnersStyle>
-                <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'}>
-                  Owners({sbtClaimList ? sbtClaimList.length : 0})
-                </Typography>
-                <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                  {sbtClaimList &&
-                    sbtClaimList?.map((item: any) => (
-                      <Image
-                        key={item.account}
-                        src={item.accountLogo || avatar}
-                        style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
-                      />
-                    ))}
+            </ColumnLayoutStyle>
+            <OwnersStyle>
+              <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'}>
+                Owners({sbtClaimList ? sbtClaimList.length : 0})
+              </Typography>
+              <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
+                {sbtClaimList &&
+                  sbtClaimList?.map((item: any) => (
+                    <Image
+                      key={item.account}
+                      src={item.accountLogo || avatar}
+                      style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
+                    />
+                  ))}
 
-                  {sbtClaimList && sbtClaimList?.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
-                </Box>
-              </OwnersStyle>
-            </ContentBoxStyle>
-          </Box>
-        )}
+                {sbtClaimList && sbtClaimList?.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
+              </Box>
+            </OwnersStyle>
+          </ContentBoxStyle>
+        </Box>
       </ContainerWrapper>
     </>
   )

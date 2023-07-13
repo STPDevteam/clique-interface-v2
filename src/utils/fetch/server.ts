@@ -914,8 +914,7 @@ export function getUserQuitDao(daoId: number) {
 }
 
 export function createSbt(
-  chainId: number,
-  daoAddress: string,
+  daoId: number,
   fileUrl: string,
   itemName: string,
   startTime: number,
@@ -928,8 +927,7 @@ export function createSbt(
   account?: string[]
 ) {
   return Axios.post('/stpdao/v3/sbt/create', {
-    chainId,
-    daoAddress,
+    daoId,
     endTime,
     fileUrl,
     itemName,

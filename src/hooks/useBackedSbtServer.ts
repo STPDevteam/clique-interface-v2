@@ -58,15 +58,6 @@ export interface SbtDetailProp {
   way: string
 }
 
-export interface DaoMemberProp {
-  chainId: ChainId
-  daoId: number
-  daoAddress: string
-  daoLogo: string
-  daoName: string
-  role: string
-}
-
 export interface SbtClaimListProp {
   account: string
   accountLogo: string
@@ -85,9 +76,8 @@ export function useCreateSbtCallback() {
 
   const CreateSbtCallback = useCallback(
     async (
-      chainId: ChainId | undefined,
+      daoId: number | undefined,
       account: string | undefined,
-      daoAddress: string | undefined,
       fileUrl: string,
       itemName: string,
       startTime: number | undefined,
@@ -102,9 +92,8 @@ export function useCreateSbtCallback() {
       if (!contract) throw new Error('none contract')
       let result: any = {}
       if (
-        !chainId ||
+        !daoId ||
         !account ||
-        !daoAddress ||
         !fileUrl ||
         !introduction ||
         !itemName ||
@@ -118,8 +107,7 @@ export function useCreateSbtCallback() {
 
       try {
         const res = await createSbt(
-          chainId,
-          daoAddress,
+          daoId,
           fileUrl,
           itemName,
           startTime,
@@ -180,7 +168,7 @@ export function useCreateSbtCallback() {
 }
 
 export function useMemberDaoList(exceptLevel: string) {
-  const [result, setResult] = useState<DaoMemberProp[]>()
+  const [result, setResult] = useState<any[]>()
   useEffect(() => {
     ;(async () => {
       try {
@@ -318,26 +306,26 @@ export function useSbtClaim() {
 }
 
 export function useSbtQueryIsClaim(sbtId: number) {
+  const { account } = useActiveWeb3React()
+
   const userSignature = useUserInfo()
   const [loading, setLoading] = useState(true)
   const [result, setResult] = useState<SbtIsClaimProp>()
   useEffect(() => {
+    if (!userSignature || !account) return
     ;(async () => {
       try {
         const res = await getSbtIsClaim(sbtId)
-        if (res.data.data) {
-          setResult(res.data.data)
-          setLoading(false)
-          return
-        }
-        throw new Error()
+        if (!res.data.data) return
+        setResult(res.data.data)
+        setLoading(false)
       } catch (error) {
         console.error('SbtClaim', error)
         setLoading(false)
         throw error
       }
     })()
-  }, [sbtId, userSignature])
+  }, [account, sbtId, userSignature])
 
   return { loading, result }
 }

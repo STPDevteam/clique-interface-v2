@@ -10,7 +10,7 @@ import { BlackButton } from 'components/Button/Button'
 import Back from 'components/Back'
 import Image from 'components/Image'
 import { ChainList, ChainListMap } from 'constants/chain'
-import { useMemberDaoList, useCreateSbtCallback, DaoMemberProp, ClaimWay } from 'hooks/useBackedSbtServer'
+import { useCreateSbtCallback, ClaimWay } from 'hooks/useBackedSbtServer'
 import useModal from 'hooks/useModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
@@ -22,6 +22,21 @@ import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
+import { UserProfileAdminProps, useUserProfileInfo } from 'hooks/useBackedProfileServer'
+
+export interface DaoMemberProp {
+  accountLevel: number
+  activeProposals: number
+  bio: string
+  daoId: number
+  daoLogo: string
+  daoName: string
+  handle: string
+  isApprove: boolean
+  members: number
+  totalProposals: number
+}
+
 const InputTitleStyle = styled(Typography)(() => ({
   fontSize: 14,
   lineHeight: '16px',
@@ -104,14 +119,14 @@ export default function Index() {
   const [eventStartTime, setEventStartTime] = useState<number>()
   const [eventEndTime, setEventEndTime] = useState<number>()
   const [fileValue, setFileValue] = useState('')
-  const { result: daoList } = useMemberDaoList('C_member')
-
+  const { result: userInfo } = useUserProfileInfo(account || undefined)
   const daoMemberList = useMemo(() => {
-    if (!daoList) return
+    if (!userInfo?.adminDao) return
+    const daoList = userInfo?.adminDao.filter(v => Number(v.accountLevel) === 1 || Number(v.accountLevel) === 0)
     return daoList
-  }, [daoList])
-
-  const [daoValue, setDaoValue] = useState<DaoMemberProp | null>(null)
+  }, [userInfo?.adminDao])
+  console.log(daoMemberList)
+  const [daoValue, setDaoValue] = useState<UserProfileAdminProps | null>(null)
 
   const [symbolValue, setSymbolValue] = useState('')
   const [itemName, setItemName] = useState('')
@@ -125,9 +140,8 @@ export default function Index() {
   const SubmitCreate = useCallback(() => {
     showModal(<TransacitonPendingModal />)
     CreateSbtCallback(
-      daoValue?.chainId,
+      daoValue?.daoId,
       account || undefined,
-      daoValue?.daoAddress,
       fileValue,
       itemName,
       eventStartTime,
@@ -162,8 +176,6 @@ export default function Index() {
   }, [
     showModal,
     CreateSbtCallback,
-    daoValue?.chainId,
-    daoValue?.daoAddress,
     daoValue?.daoId,
     account,
     fileValue,
@@ -216,6 +228,12 @@ export default function Index() {
       return {
         disabled: true,
         error: 'Total supply required'
+      }
+    }
+    if (Number(totalSupply) > 100000) {
+      return {
+        disabled: true,
+        error: 'Total supply cannot exceed 100,000'
       }
     }
     if (!eligibilityValue) {
@@ -320,216 +338,227 @@ export default function Index() {
         <Typography variant="body1" fontWeight={'400'} fontSize={16}>
           The SBT only represents a status symbol, cannot be transferred, and has no financial attributes.
         </Typography>
-        <Box
-          sx={{
-            mt: 20,
-            display: 'grid',
-            flexDirection: 'column',
-            gap: 10
-          }}
-        >
-          <InputTitleStyle>Select a DAO</InputTitleStyle>
-          <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
-          <Select
-            placeholder="select Dao"
-            noBold
-            value={daoValue?.chainId}
-            onChange={e => {
-              setDaoValue(daoMemberList?.find(v => v.chainId === e.target.value) || null)
+        <Box sx={{ mt: 15, display: 'grid', flexDirection: 'column', maxWidth: '565px' }}>
+          <Box
+            sx={{
+              mt: 20,
+              display: 'grid',
+              flexDirection: 'column',
+              gap: 10
             }}
           >
-            {daoMemberList &&
-              daoMemberList.map((item, index) => (
-                <MenuItem
-                  key={index}
-                  sx={{
-                    fontWeight: 500,
-                    fontSize: '14px !important'
-                  }}
-                  value={item?.chainId}
-                >
-                  <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
-                    <Image
-                      style={{ height: 20, width: 20, backgroundColor: '#f5f5', borderRadius: '50%' }}
-                      src={item.daoLogo}
-                    />
-                    {item.daoName}
-                  </Box>
-                </MenuItem>
-              ))}
-          </Select>
-        </Box>
-        <Box sx={{ mt: 15, display: 'grid', flexDirection: 'column', gap: 10 }}>
-          <Select
-            placeholder="select Chain"
-            noBold
-            label="Blockchain"
-            value={chainId || undefined}
-            onChange={e => {
-              account && triggerSwitchChain(library, e.target.value, account)
-            }}
-          >
-            {ChainList.map(item => (
-              <MenuItem
-                key={item.id}
-                sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                value={item.id}
-              >
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
-        <Box sx={{ mt: 20, mb: 20 }}>
-          <UploadFile
-            size={150}
-            value={fileValue}
-            onChange={e => {
-              setFileValue(e)
-            }}
-          />
-        </Box>
-        <Box sx={{ display: 'grid', flexDirection: 'column', gap: 15, mb: 20 }}>
-          <Input
-            value={itemName}
-            label="Item Name"
-            placeholder="Write a description"
-            onChange={e => setItemName(e.target.value)}
-            maxLength={50}
-            endAdornment={
-              <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
-                {itemName.length}/50
-              </Typography>
-            }
-          />
-
-          <Box sx={{ mb: 40 }}>
-            <InputTitleStyle sx={{ mb: 10 }}>Introduction (Optional)</InputTitleStyle>
-
-            <Editor content={Introduction} setContent={setIntroduction} />
-          </Box>
-          <Input
-            value={symbolValue}
-            onChange={e => {
-              setSymbolValue(e.target.value)
-            }}
-            label="symbol"
-            placeholder="Enter Symbol"
-          />
-
-          <Input
-            value={totalSupply}
-            type="text"
-            onChange={e => {
-              const regex = /^([1-9]\d*|0)$/
-              const value = e.target.value
-              if (!value || (value && value != '0' && regex.test(value))) {
-                setTotalSupply(value)
-              }
-            }}
-            label="Total supply"
-            placeholder="Enter Total"
-          />
-          <Box>
+            <InputTitleStyle>Select a DAO</InputTitleStyle>
+            <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
             <Select
+              placeholder="select Dao"
               noBold
-              label="Set Token Eligibility"
-              value={eligibilityValue}
+              value={daoValue?.daoId}
               onChange={e => {
-                setEligibilityValue(e.target.value)
-                if (e.target.value === 'whitelist') {
-                  setWhitelistBoole(true)
-                } else {
-                  setWhitelistBoole(false)
-                }
+                setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value) || null)
               }}
             >
-              {eligibilityList.map(item => (
+              {daoMemberList &&
+                daoMemberList.map((item, index) => (
+                  <MenuItem
+                    key={index}
+                    sx={{
+                      fontWeight: 500,
+                      fontSize: '14px !important'
+                    }}
+                    value={item?.daoId}
+                  >
+                    <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
+                      <Image
+                        style={{ height: 20, width: 20, backgroundColor: '#f5f5', borderRadius: '50%' }}
+                        src={item.daoLogo}
+                      />
+                      {item.daoName}
+                    </Box>
+                  </MenuItem>
+                ))}
+            </Select>
+          </Box>
+          <Box sx={{ mt: 15, display: 'grid', flexDirection: 'column', gap: 10 }}>
+            <Select
+              placeholder="select Chain"
+              noBold
+              label="Blockchain"
+              value={chainId || undefined}
+              onChange={e => {
+                account && triggerSwitchChain(library, e.target.value, account)
+              }}
+            >
+              {ChainList.map(item => (
                 <MenuItem
                   key={item.id}
                   sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                  value={item.value}
+                  value={item.id}
                 >
-                  {item.label}
+                  {item.name}
                 </MenuItem>
               ))}
             </Select>
-            {whitelistBoole && (
-              <>
-                <UploadBoxStyle>
-                  {accountList.length > 0 ? (
-                    <>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <Typography variant="body1" lineHeight="20px" color="#0049C6">
-                          Filename001
-                        </Typography>
-                        <Typography variant="body1" lineHeight="20px">
-                          Total {accountList.length} addresses
-                        </Typography>
-                      </Box>
-                      <input
-                        accept=".csv"
-                        type="file"
-                        onChange={uploadCSV}
-                        id="upload_CSV"
-                        style={{ width: 0, height: 0 }}
-                      />
-                      <UploadLabel htmlFor="upload_CSV">Re-upload</UploadLabel>
-                    </>
-                  ) : (
-                    <>
-                      <Typography variant="body1" lineHeight={'20px'}>
-                        Download this{' '}
-                        <Link href="/template/sbt-list.csv" sx={{ cursor: 'pointer' }}>
-                          Reference template.
-                        </Link>
-                      </Typography>
+          </Box>
+          <Box sx={{ mt: 20, mb: 20 }}>
+            <UploadFile
+              size={150}
+              value={fileValue}
+              onChange={e => {
+                setFileValue(e)
+              }}
+            />
+          </Box>
+          <Box sx={{ display: 'grid', flexDirection: 'column', gap: 15, mb: 20 }}>
+            <Input
+              value={itemName}
+              label="Item Name"
+              placeholder="Write a description"
+              onChange={e => setItemName(e.target.value)}
+              maxLength={50}
+              endAdornment={
+                <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
+                  {itemName.length}/50
+                </Typography>
+              }
+            />
+            <Box sx={{ mb: 60 }}>
+              <InputTitleStyle sx={{ mb: 10 }}>Introduction (Optional)</InputTitleStyle>
 
-                      <input
-                        accept=".csv"
-                        type="file"
-                        onChange={uploadCSV}
-                        id="upload_CSV"
-                        style={{ width: 0, height: 0 }}
-                      />
-                      <UploadLabel htmlFor="upload_CSV">Upload File </UploadLabel>
-                    </>
-                  )}
-                </UploadBoxStyle>
-              </>
-            )}
+              <Editor content={Introduction} setContent={setIntroduction} />
+            </Box>
+            <Input
+              value={symbolValue}
+              onChange={e => {
+                setSymbolValue(e.target.value)
+              }}
+              label="symbol"
+              placeholder="Enter Symbol"
+              maxLength={50}
+              endAdornment={
+                <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
+                  {symbolValue.length}/50
+                </Typography>
+              }
+            />
+
+            <Input
+              value={totalSupply}
+              type="text"
+              onChange={e => {
+                const regex = /^([1-9]\d*|0)$/
+                const value = e.target.value
+                if (!value || (value && value != '0' && regex.test(value))) {
+                  setTotalSupply(value)
+                }
+              }}
+              label="Total supply"
+              placeholder="Enter Total"
+            />
+            <Box>
+              <Select
+                noBold
+                label="Set Token Eligibility"
+                value={eligibilityValue}
+                onChange={e => {
+                  setEligibilityValue(e.target.value)
+                  if (e.target.value === 'whitelist') {
+                    setWhitelistBoole(true)
+                  } else {
+                    setWhitelistBoole(false)
+                  }
+                }}
+              >
+                {eligibilityList.map(item => (
+                  <MenuItem
+                    key={item.id}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.value}
+                  >
+                    {item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+              {whitelistBoole && (
+                <>
+                  <UploadBoxStyle>
+                    {accountList.length > 0 ? (
+                      <>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <Typography variant="body1" lineHeight="20px" color="#0049C6">
+                            Filename001
+                          </Typography>
+                          <Typography variant="body1" lineHeight="20px">
+                            Total {accountList.length} addresses
+                          </Typography>
+                        </Box>
+                        <input
+                          accept=".csv"
+                          type="file"
+                          onChange={uploadCSV}
+                          id="upload_CSV"
+                          style={{ width: 0, height: 0 }}
+                        />
+                        <UploadLabel htmlFor="upload_CSV">Re-upload</UploadLabel>
+                      </>
+                    ) : (
+                      <>
+                        <Typography variant="body1" lineHeight={'20px'}>
+                          Download this{' '}
+                          <Link href="/template/sbt-list.csv" sx={{ cursor: 'pointer' }}>
+                            Reference template.
+                          </Link>
+                        </Typography>
+
+                        <input
+                          accept=".csv"
+                          type="file"
+                          onChange={uploadCSV}
+                          id="upload_CSV"
+                          style={{ width: 0, height: 0 }}
+                        />
+                        <UploadLabel htmlFor="upload_CSV">Upload File </UploadLabel>
+                      </>
+                    )}
+                  </UploadBoxStyle>
+                </>
+              )}
+            </Box>
+            {openSnackbar && <Alert severity="error">Address format error, please download the template.</Alert>}
+            <Box sx={{ display: 'grid', flexDirection: 'column', gap: 10 }}>
+              <InputTitleStyle>Claimable Period</InputTitleStyle>
+              <ContentHintStyle>Items outside the time frame will stop being claimed</ContentHintStyle>
+              <DateBoxStyle>
+                <CalendarIcon />
+                <DateTimePicker
+                  label={'Start time'}
+                  value={eventStartTime ? new Date(eventStartTime * 1000) : null}
+                  onValue={timestamp => setEventStartTime(timestamp)}
+                />
+                <ContentHintStyle style={{ whiteSpace: 'nowrap' }}>--</ContentHintStyle>
+                <DateTimePicker
+                  disabled={eventStartTime ? false : true}
+                  label={'End time'}
+                  minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
+                  value={eventEndTime ? new Date(eventEndTime * 1000) : null}
+                  onValue={timestamp => setEventEndTime(timestamp)}
+                />
+              </DateBoxStyle>
+            </Box>
           </Box>
-          {openSnackbar && <Alert severity="error">Address format error, please download the template.</Alert>}
-          <Box sx={{ display: 'grid', flexDirection: 'column', gap: 10 }}>
-            <InputTitleStyle>Claimable Period</InputTitleStyle>
-            <ContentHintStyle>Items outside the time frame will stop being claimed</ContentHintStyle>
-            <DateBoxStyle>
-              <CalendarIcon />
-              <DateTimePicker
-                label={'Start time'}
-                value={eventStartTime ? new Date(eventStartTime * 1000) : null}
-                onValue={timestamp => setEventStartTime(timestamp)}
-              />
-              <ContentHintStyle style={{ whiteSpace: 'nowrap' }}>--</ContentHintStyle>
-              <DateTimePicker
-                disabled={eventStartTime ? false : true}
-                label={'End time'}
-                minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
-                value={eventEndTime ? new Date(eventEndTime * 1000) : null}
-                onValue={timestamp => setEventEndTime(timestamp)}
-              />
-            </DateBoxStyle>
+          {nextHandler.error ? (
+            <Alert severity="error">{nextHandler.error}</Alert>
+          ) : (
+            <Alert severity="info">You will create a SBT in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
+          )}
+          <Box sx={{ display: 'flex', mt: 20, justifyContent: 'flex-end' }}>
+            <BlackButton
+              disabled={nextHandler.disabled}
+              onClick={nextHandler.handler}
+              style={{ width: 270, height: 40 }}
+            >
+              Create Now
+            </BlackButton>
           </Box>
-        </Box>
-        {nextHandler.error ? (
-          <Alert severity="error">{nextHandler.error}</Alert>
-        ) : (
-          <Alert severity="info">You will create a SBT in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
-        )}
-        <Box sx={{ display: 'flex', mt: 20, justifyContent: 'flex-end' }}>
-          <BlackButton disabled={nextHandler.disabled} onClick={nextHandler.handler} style={{ width: 270, height: 40 }}>
-            Create Now
-          </BlackButton>
         </Box>
       </ContentBoxStyle>
     </Box>
