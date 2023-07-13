@@ -205,7 +205,7 @@ const ChildItem = styled(Box)({
   }
 })
 
-const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+export const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(() => ({
   [`& .${tooltipClasses.tooltip}`]: {
@@ -572,9 +572,47 @@ export default function LeftSider() {
                     </ChildItem>
                   </List>
                 ))}
-
                 {item.title === 'Workspace' &&
-                  (myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]) && (
+                (myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]) ? (
+                  <Box
+                    sx={{
+                      height: 40,
+                      padding: '0 16px 0 60px',
+                      gap: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      backgroundColor: '#fff',
+                      '&:hover': {
+                        backgroundColor: '#F8FBFF'
+                      }
+                    }}
+                    onClick={() => {
+                      showModal(
+                        <AddTeamspaceModal
+                          isEdit={false}
+                          daoId={Number(daoId)}
+                          onDimiss={() => {
+                            updateWrokspaceListData()
+                          }}
+                        />
+                      )
+                    }}
+                  >
+                    <img src={AddIcon} width={14} />
+                    <Typography
+                      sx={{
+                        fontWeight: 400,
+                        fontSize: 14,
+                        lineHeight: '20px',
+                        color: '#97B7EF'
+                      }}
+                    >
+                      Add Workspace
+                    </Typography>
+                  </Box>
+                ) : item.title === 'Workspace' ? (
+                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
                     <Box
                       sx={{
                         height: 40,
@@ -583,21 +621,7 @@ export default function LeftSider() {
                         display: 'flex',
                         alignItems: 'center',
                         cursor: 'pointer',
-                        backgroundColor: '#fff',
-                        '&:hover': {
-                          backgroundColor: '#F8FBFF'
-                        }
-                      }}
-                      onClick={() => {
-                        showModal(
-                          <AddTeamspaceModal
-                            isEdit={false}
-                            daoId={Number(daoId)}
-                            onDimiss={() => {
-                              updateWrokspaceListData()
-                            }}
-                          />
-                        )
+                        backgroundColor: '#fff'
                       }}
                     >
                       <img src={AddIcon} width={14} />
@@ -612,7 +636,8 @@ export default function LeftSider() {
                         Add Workspace
                       </Typography>
                     </Box>
-                  )}
+                  </TooltipStyle>
+                ) : null}
               </MyCollapse>
             </Box>
           ))}

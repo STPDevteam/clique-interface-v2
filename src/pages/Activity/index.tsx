@@ -66,10 +66,10 @@ const TabStyle = styled(Tabs)(({ theme }) => ({
 }))
 
 const statusItemList = [
-  { value: '', label: 'All status' },
+  { value: '', label: 'All' },
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
-  { value: ActivityStatus.OPEN, label: ActivityStatus.OPEN },
-  { value: ActivityStatus.ENDED, label: 'Open' },
+  { value: ActivityStatus.OPEN, label: 'Open' },
+  { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
   { value: ActivityStatus.AIRDROP, label: 'DAO Rewards' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
 ]

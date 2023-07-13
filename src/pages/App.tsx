@@ -49,7 +49,6 @@ import { fetchUserLocation } from 'utils/fetch/location'
 import store from 'state'
 // import Home from './Home'
 import Member from './Member'
-// import Task from './Task'
 // const Task = lazy(() => import('./Task'))
 import Task from './Task'
 import ComingSoon from './ComingSoon'
@@ -144,7 +143,12 @@ export default function App() {
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
-            <ToastContainer className={'toast-container'} position="top-center" pauseOnFocusLoss={false} />
+            <ToastContainer
+              className={'toast-container'}
+              hideProgressBar
+              position="top-center"
+              pauseOnFocusLoss={false}
+            />
             <BodyWrapper
               id="body"
               sx={{

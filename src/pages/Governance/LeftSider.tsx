@@ -86,7 +86,6 @@ export default function LeftSider() {
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   return (

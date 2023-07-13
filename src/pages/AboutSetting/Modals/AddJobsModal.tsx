@@ -13,8 +13,8 @@ import { Form, Formik } from 'formik'
 import { LoadingButton } from '@mui/lab'
 
 const guestList = [
-  { value: 1, label: 'Super Admin' },
-  { value: 2, label: 'admin' }
+  { value: 1, label: 'Owner' },
+  { value: 2, label: 'Admin' }
 ]
 
 export default function AddJobsModal({

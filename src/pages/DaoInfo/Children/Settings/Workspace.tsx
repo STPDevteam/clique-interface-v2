@@ -174,7 +174,7 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                 <StyledTableCell className="firstColumn">Name</StyledTableCell>
                 <StyledTableCell>Created by</StyledTableCell>
                 <StyledTableCell>Member</StyledTableCell>
-                <StyledTableCell>Access (Super admin)</StyledTableCell>
+                <StyledTableCell>Access (Owner)</StyledTableCell>
                 <StyledTableCell />
               </TableRow>
             </TableHead>

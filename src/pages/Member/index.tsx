@@ -1,6 +1,6 @@
 import { Box, Typography, styled, Tabs, Tab, Divider } from '@mui/material'
 import { ReactComponent as MemberIcon } from 'assets/svg/member.svg'
-// import Button from 'components/Button/Button'
+import Button from 'components/Button/Button'
 import { ReactComponent as View } from 'assets/svg/view.svg'
 import { ReactComponent as Job } from 'assets/svg/job.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
@@ -14,6 +14,10 @@ import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import EmptyPage from 'pages/DaoInfo/Children/emptyPage'
+import useModal from 'hooks/useModal'
+import AddJobsModal from 'pages/AboutSetting/Modals/AddJobsModal'
+import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
+import AddMemberModal from 'pages/AboutSetting/Modals/AddMemberModal'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -67,15 +71,40 @@ const StyledTabs = styled('div')(({ theme }) => ({
   }
 }))
 
+const DisabledBtn = styled(Box)({
+  cursor: 'no-drop',
+  width: 125,
+  height: 36,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: '8px',
+  backgroundColor: '#97B7EF',
+  color: '#fff',
+  fontFamily: 'Inter',
+  fontSize: '14px',
+  fontWeight: 700,
+  lineHeight: '20px'
+})
+
 export default function Member() {
   const [rand, setRand] = useState(Math.random())
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const curDaoId = Number(daoId)
-  useCallback(() => {}, [])
+  const { showModal, hideModal } = useModal()
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
   const { result: jobsList } = useJobsList(curDaoId)
+  const addJobsCB = useCallback(() => {
+    showModal(
+      <AddJobsModal isEdit={false} chainId={curDaoId} onDimiss={() => setRand(Math.random())} originLevel={1} />
+    )
+  }, [curDaoId, showModal])
+
+  const addMemberCB = useCallback(() => {
+    showModal(<AddMemberModal onClose={hideModal} daoId={curDaoId} />)
+  }, [curDaoId, hideModal, showModal])
 
   const tabList = !isJoined
     ? []
@@ -139,7 +168,21 @@ export default function Member() {
               <MemberIcon width={38} height={38} />
               <Typography>Member</Typography>
             </Box>
-            {/* <Button onClick={addMemberCallback}>+ Add Member</Button> */}
+            {isJoined.job === 'owner' || isJoined.job === 'superAdmin' ? (
+              <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
+                <Button onClick={addJobsCB}>+ Add Job</Button>
+                <Button onClick={addMemberCB}>+ Add Member</Button>
+              </Box>
+            ) : (
+              <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
+                <TooltipStyle title={"This feature is only available to DAO's owner."} placement="left">
+                  <DisabledBtn>+ Add Job</DisabledBtn>
+                </TooltipStyle>
+                <TooltipStyle title={"This feature is only available to DAO's owner."} placement="top">
+                  <DisabledBtn>+ Add Member</DisabledBtn>
+                </TooltipStyle>
+              </Box>
+            )}
           </Box>
           <Typography
             variant="h5"
