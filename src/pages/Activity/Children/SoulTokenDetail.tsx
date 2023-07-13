@@ -63,7 +63,7 @@ const DetailTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
   fontSize: '14px',
   lineHeight: '20px',
-  color: '#B5B7CF'
+  color: '#8D8EA5'
 }))
 const DetailStyle = styled(Typography)(() => ({
   fontWeight: 600,
@@ -335,7 +335,7 @@ export default function SoulTokenDetail() {
                 </ColumnLayoutStyle>
               </ColumnLayoutStyle>
               <OwnersStyle>
-                <Typography variant="body1" color="#B5B7CF" lineHeight={'20px'}>
+                <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'}>
                   Owners({sbtClaimList ? sbtClaimList.length : 0})
                 </Typography>
                 <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>

@@ -56,12 +56,12 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
   fontWeight: 600,
   fontSize: 12,
   lineHeight: '18px',
-  color: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#B5B7CF',
+  color: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#8D8EA5',
   '&:before': {
     content: `''`,
     width: 5,
     height: 5,
-    background: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#B5B7CF',
+    background: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#8D8EA5',
     borderRadius: '50%'
   }
 }))

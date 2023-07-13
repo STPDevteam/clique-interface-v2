@@ -154,7 +154,7 @@ export default function JoinDaoFrame() {
             {createDaoData?.daoName}
           </Typography>
           <CategoryWrapper>
-            {createDaoData?.category.map((item: any, index: number) => (
+            {createDaoData?.category?.map((item: any, index: number) => (
               <span key={item} className={'colorItem' + index}>
                 {item}
               </span>

@@ -126,18 +126,21 @@ export default function Info({
 
         <div className="ql-editor" style={{ borderTop: '1px solid #D4D7E2' }}>
           {tabValue === 0 ? (
-            ReactHtmlParser(
-              proposalInfo.introduction
-                ? proposalInfo.introduction
-                : filterXSS(proposalInfo.content || '', {
-                    onIgnoreTagAttr: function(_, name, value) {
-                      if (name === 'class') {
-                        return name + '="' + escapeAttrValue(value) + '"'
+            <>
+              <Typography>{proposalInfo.introduction}</Typography>
+              {ReactHtmlParser(
+                proposalInfo.content
+                  ? proposalInfo.content
+                  : filterXSS(proposalInfo.content || '', {
+                      onIgnoreTagAttr: function(_, name, value) {
+                        if (name === 'class') {
+                          return name + '="' + escapeAttrValue(value) + '"'
+                        }
+                        return undefined
                       }
-                      return undefined
-                    }
-                  })
-            )
+                    })
+              )}
+            </>
           ) : (
             <Box>
               <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>

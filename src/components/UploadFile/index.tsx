@@ -1,6 +1,6 @@
 import { styled, Box, Theme, Snackbar, Alert, Typography } from '@mui/material'
 import { SxProps } from '@mui/system'
-import { Axios } from 'utils/axios'
+import axios from 'axios'
 import { useCallback, useState } from 'react'
 import { serverUploadImage } from '../../constants'
 import Image from '../Image'
@@ -39,20 +39,24 @@ async function save(
   data: string
   result: boolean
 }> {
-  if (file.size > 1024 * 1024 * 2) {
+  if (file.size > 1024 * 1024 * 100) {
     return {
-      data: 'Image must smaller than 2M!',
+      data: 'Image must smaller than 100M!',
       result: false
     }
   }
   const params = new FormData()
   params.append('file', file)
   try {
-    const res = await Axios.post(serverUploadImage, params)
+    const res = await axios.post(serverUploadImage, params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
     if (!res.data.data) {
       throw res
     }
-    const data = res.data.data as string
+    const data = res.data.data.path as string
     return {
       data: data,
       result: true
@@ -112,7 +116,7 @@ export default function Index({
         id="upload"
         type="file"
         // accept="image/png,image/jpg,image/jpeg"
-        accept=".jpg, .jpeg, .png"
+        accept=".jpg, .jpeg, .png, .gif, .svg, .mp4, .webp"
         onChange={async event => {
           const file = event.target?.files?.[0]
           if (file) {
@@ -139,12 +143,12 @@ export default function Index({
           </svg>
         )}
       </label>
-      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
         <Typography variant="body1" color={'#80829F'}>
           Upload file
         </Typography>
-        <Typography sx={{ width: '180px', lineHeight: '21px', fontWeight: 500, color: '#B5B7CF' }}>
-          Supported: JPG, PNG, Max size:100 MB
+        <Typography sx={{ width: '180px', lineHeight: '21px', fontWeight: 500, color: '#8D8EA5' }}>
+          Supported: JPG, PNG, GIF, SVG, MP4, WEBP. Max size:100 MB
         </Typography>
         <Button width="125px" height="40px" style={{ marginTop: 25 }} onClick={handleClick}>
           + Upload

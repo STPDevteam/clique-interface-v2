@@ -30,7 +30,7 @@ const InputTitleStyle = styled(Typography)(() => ({
 const ContentHintStyle = styled(Typography)(() => ({
   fontSize: 14,
   lineHeight: '16px',
-  color: '#B5B7CF'
+  color: '#8D8EA5'
 }))
 const ContentBoxStyle = styled(Box)(() => ({
   padding: '30px 120px 70px 70px'

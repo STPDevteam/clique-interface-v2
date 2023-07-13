@@ -299,15 +299,18 @@ export default function Header() {
     setMobileMenuOpen(false)
   }, [])
   const { pathname } = useLocation()
+
   const daoId = useMemo(() => {
     const path = pathname.split('/')
     return path[3]
   }, [pathname])
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
+
   console.log('header', daoId, daoInfo)
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
-  const { result } = useGetWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1]))
+  const { result: WorkspaceInfo } = useGetWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1]))
   const isShow = useMemo(() => {
     if (curPath === routes.CreateDao) {
       return false
@@ -323,7 +326,7 @@ export default function Header() {
         return 'Settings'
       }
       if (v === 'task') {
-        return result?.title || 'task'
+        return WorkspaceInfo?.title || 'task'
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
@@ -333,8 +336,8 @@ export default function Header() {
       return isNumber || isLastItem
     })
     return [daoInfo.daoName, ...listData]
-  }, [curPath, daoInfo.daoName, result?.title])
-  console.log(makeBreadcrumbs)
+  }, [WorkspaceInfo?.title, curPath, daoInfo.daoName])
+  console.log(makeBreadcrumbs, pathname.includes(makeRouteLink(routes.Proposal)))
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 
@@ -375,7 +378,11 @@ export default function Header() {
                   color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
                   fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
                 >
-                  {v}
+                  {pathname.includes(makeRouteLink(routes.Proposal)) && i !== makeBreadcrumbs.length - 1 && i !== 0 ? (
+                    <NavLink to={makeRouteLink(routes.Proposal)}>{v}</NavLink>
+                  ) : (
+                    v
+                  )}
                 </Typography>
               ))}
             </Breadcrumbs>

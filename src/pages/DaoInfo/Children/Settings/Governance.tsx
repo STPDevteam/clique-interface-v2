@@ -202,7 +202,7 @@ export default function General({ daoId }: { daoId: number }) {
               placeholderSize="14px"
               placeholder={'0'}
               endAdornment={
-                <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                <Typography color="#8D8EA5" lineHeight="20px" variant="body1">
                   Votes
                 </Typography>
               }
@@ -244,7 +244,7 @@ export default function General({ daoId }: { daoId: number }) {
                   }}
                   placeholder={'0'}
                   endAdornment={
-                    <Typography color="#B5B7CF" lineHeight="20px" variant="body1">
+                    <Typography color="#8D8EA5" lineHeight="20px" variant="body1">
                       Hours
                     </Typography>
                   }
@@ -257,7 +257,7 @@ export default function General({ daoId }: { daoId: number }) {
                 {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
               </Row>
             ) : (
-              <Typography color="#B5B7CF" lineHeight="40px" variant="body1" paddingLeft={20}>
+              <Typography color="#8D8EA5" lineHeight="40px" variant="body1" paddingLeft={20}>
                 Customize the voting time when creating a proposal
               </Typography>
             )}
@@ -291,7 +291,7 @@ const TableContentTitle = styled(TableCell)(() => ({
   fontWeight: 500,
   fontSize: '13px',
   lineHeight: ' 16px',
-  color: '#B5B7CF',
+  color: '#8D8EA5',
   padding: '7px 0',
   borderBottom: 'none'
 }))

@@ -87,7 +87,7 @@ function VoteModalFunc({
     ])
       .then(res => {
         if (res.data.code !== 200) {
-          toast.error('Vote error')
+          toast.error(res.data.msg || 'Vote error')
           return
         }
         refresh(Math.random())

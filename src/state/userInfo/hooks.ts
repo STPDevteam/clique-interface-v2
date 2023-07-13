@@ -34,7 +34,7 @@ export function useUserInfo(): UserInfo | undefined | null {
 }
 
 export function useLoginSignature() {
-  const login = useLogin()
+  const { login } = useLogin()
   const web3 = useWeb3Instance()
   const { account } = useActiveWeb3React()
   const dispatch = useDispatch()
@@ -43,10 +43,10 @@ export function useLoginSignature() {
     if (!account || !web3) return
 
     return web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
-      const res = await login.login(account, signMessage, signStr)
+      const res = await login(account, signMessage, signStr)
       toast.success('Welcome to Clique')
-      dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res } }))
-      return signStr
+      dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res.jwtToken } }))
+      return res.openNonce
     })
   }, [account, web3, login, dispatch])
 }

@@ -2,7 +2,6 @@ import { isAddress } from 'utils'
 import { Axios } from 'utils/axios'
 import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
 import { VoteParamsProp } from 'hooks/useBackedProposalServer'
-import { ChainId } from 'constants/chain'
 
 export function getHomeContributorsList(offset: number, count: number) {
   return Axios.get('stpdao/v2/account/top/list', {
@@ -915,7 +914,7 @@ export function getUserQuitDao(daoId: number) {
 }
 
 export function createSbt(
-  chainId: ChainId,
+  chainId: number,
   daoAddress: string,
   fileUrl: string,
   itemName: string,
@@ -952,7 +951,7 @@ export function getMemberDaoList(exceptLevel: string) {
   })
 }
 
-export function getSbtList(offset: number, limit: number, chainId?: ChainId, status?: string) {
+export function getSbtList(offset: number, limit: number, chainId?: number, status?: string) {
   return Axios.get('stpdao/v3/sbt/list', {
     offset,
     limit,

@@ -182,7 +182,7 @@ export function useActivityList() {
     }
     setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [types, status, chainId])
+  }, [types, status])
 
   useEffect(() => {
     ;(async () => {

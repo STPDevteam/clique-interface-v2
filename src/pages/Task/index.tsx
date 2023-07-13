@@ -84,7 +84,9 @@ const columns: GridColDef[] = [
             }
           }}
         >
-          <Typography noWrap>{params.value}</Typography>
+          <Typography noWrap maxWidth="200px" width="100%">
+            {params.value}
+          </Typography>
           <StatusWrapper className={params.row.priority} sx={{ width: '88px!important' }}>
             {MapPriorityType[params.row.priority]}
           </StatusWrapper>

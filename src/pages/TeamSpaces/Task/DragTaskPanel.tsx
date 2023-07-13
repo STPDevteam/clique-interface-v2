@@ -15,6 +15,7 @@ import TaskDetail from 'pages/Task/Children/TaskDetail'
 import { toast } from 'react-toastify'
 import { useProposalBaseList } from 'hooks/useBackedProposalServer'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import owl from 'assets/images/owl.png'
 
 function ContextMenu({
   children,
@@ -400,11 +401,11 @@ export default function DragTaskPanel() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#B5B7CF',
+                color: '#8D8EA5',
                 gap: 8,
                 cursor: 'pointer',
                 '& svg circle': {
-                  fill: '#B5B7CF'
+                  fill: '#8D8EA5'
                 }
               }}
             >
@@ -573,9 +574,9 @@ export default function DragTaskPanel() {
                                   }
                                 }}
                               >
-                                {item.assignAvatar && <Image src={item.assignAvatar}></Image>}
+                                {item.assignAccount && <Image src={item.assignAvatar || owl}></Image>}
                                 <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
-                                  {item.assignNickname}
+                                  {item.assignAccount ? (item.assignNickname ? item.assignNickname : 'unnamed') : '--'}
                                 </Typography>
                               </Box>
                             </Box>
@@ -594,12 +595,12 @@ export default function DragTaskPanel() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#B5B7CF',
+                          color: '#8D8EA5',
                           gap: 8,
                           margin: '0 auto',
                           cursor: 'pointer',
                           '& svg circle': {
-                            fill: '#B5B7CF'
+                            fill: '#8D8EA5'
                           }
                         }}
                       >

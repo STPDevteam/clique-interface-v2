@@ -9,6 +9,8 @@ import { useActiveWeb3React } from 'hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import logo from '../../assets/svg/logo.svg'
 import Image from 'components/Image'
+import useModal from 'hooks/useModal'
+import UpdateProfileModal from 'pages/Profile/UpdateProfileModal'
 
 export default function LoginModal() {
   const [btnDisable, setBtnDisable] = useState(false)
@@ -16,8 +18,15 @@ export default function LoginModal() {
   const { account } = useActiveWeb3React()
   const walletModalOpen = useModalOpen(ApplicationModal.SIGN_LOGIN)
   const { open, close } = useSignLoginModalControl()
+  const { showModal, hideModal } = useModal()
   const login = useLoginSignature()
   const userInfo = useUserInfo()
+
+  const loginClick = useCallback(() => {
+    login().then(res => {
+      if (Number(res) === 1) showModal(<UpdateProfileModal refreshProfile={hideModal} />)
+    })
+  }, [hideModal, login, showModal])
 
   const closeModal = useCallback(() => {
     if (userInfo?.loggedToken && walletModalOpen) {
@@ -79,7 +88,7 @@ export default function LoginModal() {
           <Button variant="outlined" onClick={cancel}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={login} disabled={btnDisable}>
+          <Button variant="contained" color="primary" onClick={loginClick} disabled={btnDisable}>
             Accept and sign
           </Button>
         </Box>
