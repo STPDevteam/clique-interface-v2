@@ -60,7 +60,7 @@ const StyledListRightText = styled(Typography)({
   justifyContent: 'flex-end'
 })
 
-export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
+export default function ManageMemberModal({ spacesId, creator }: { spacesId: number; creator: string }) {
   const [rand, setRand] = useState(Math.random())
   const [isBtnDisable, setIsBtnDisable] = useState(false)
   const { account } = useActiveWeb3React()
@@ -147,6 +147,9 @@ export default function ManageMemberModal({ spacesId }: { spacesId: number }) {
                   onClick={() => {
                     if (account && item.account.toLocaleLowerCase() === account.toLocaleLowerCase()) {
                       toast.error('Unable to remove yourself')
+                      return
+                    } else if (item.account.toLocaleLowerCase() === creator.toLocaleLowerCase()) {
+                      toast.error('Unable to remove workspace creator')
                       return
                     }
                     removeMemberClick(item.id)

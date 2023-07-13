@@ -27,7 +27,11 @@ const Wrapper = styled(Box)({
 export default function EmptyPage() {
   const dispatch = useDispatch()
   const joinDaoClick = useCallback(() => {
-    dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
+    //TODO can be better
+    dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
+    setTimeout(() => {
+      dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
+    })
   }, [dispatch])
 
   return (
