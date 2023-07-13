@@ -28,6 +28,7 @@ export enum ClaimWay {
 export interface SbtListProp {
   SBTId: number
   chainId: ChainId
+  daoId: number
   daoAddress: string
   daoLogo: string
   daoName: string
@@ -59,6 +60,7 @@ export interface SbtDetailProp {
 
 export interface DaoMemberProp {
   chainId: ChainId
+  daoId: number
   daoAddress: string
   daoLogo: string
   daoName: string

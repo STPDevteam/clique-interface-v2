@@ -1,17 +1,15 @@
 import { ButtonGroup, styled, Tooltip, Box, useTheme } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
-import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
-import { useActiveWeb3React } from 'hooks'
-import { DaoAdminLevelProp, useDaoAdminLevel } from 'hooks/useDaoInfo'
+import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 import { useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
 import { AirdropList, PublicSaleList } from './List'
 import { useDaoActivityList } from 'hooks/useBackedActivityServer'
-import { useBackedDaoInfo } from 'hooks/useBackedDaoServer'
 import { ErrorOutline } from '@mui/icons-material'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   display: 'grid',
@@ -44,16 +42,13 @@ export const activityTypeText = {
 
 export default function Activity() {
   const theme = useTheme()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const { account } = useActiveWeb3React()
-  const daoAdminLevel = useDaoAdminLevel(daoAddress, curDaoChainId, account || undefined)
-
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoId = Number(curDaoId)
+  const { myJoinDaoData: daoAdminLevel } = useUpdateDaoDataCallback()
   const history = useHistory()
   const [activityType] = useState<ActivityType>(ActivityType.AIRDROP)
-  const { result: backedDaoInfo } = useBackedDaoInfo(daoAddress, curDaoChainId)
-
-  const airdropData = useDaoActivityList(curDaoChainId, daoAddress, ActivityType.AIRDROP)
+  const { buildingDaoData: backedDaoInfo } = useBuildingDaoDataCallback()
+  const airdropData = useDaoActivityList(daoId, ActivityType.AIRDROP)
   const isSmDown = useBreakpoint('sm')
 
   return (
@@ -73,9 +68,9 @@ export default function Activity() {
             {activityTypeText[ActivityType.AIRDROP]}
           </MuiButton> */}
         </StyledButtonGroup>
-        {(daoAdminLevel === DaoAdminLevelProp.SUPER_ADMIN || daoAdminLevel === DaoAdminLevelProp.ADMIN) && (
+        {(daoAdminLevel.job === DaoAdminLevelProp[0] || daoAdminLevel.job === DaoAdminLevelProp[1]) && (
           <>
-            {backedDaoInfo?.verified ? (
+            {backedDaoInfo?.approve ? (
               <BlackButton
                 width={isSmDown ? '146px' : '252px'}
                 fontSize={isSmDown ? 10 : 14}
@@ -84,7 +79,7 @@ export default function Activity() {
                 onClick={() =>
                   history.push(
                     routes._DaoInfo +
-                      `/${curDaoChainId}/${daoAddress}/DAO_Rewards/${
+                      `/${daoId}/DAO_Rewards/${
                         activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_DAO_Rewards'
                       }`
                   )
@@ -117,7 +112,7 @@ export default function Activity() {
         )}
       </RowCenter>
       {activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}
-      {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList {...airdropData} />}
+      {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList />}
     </div>
   )
 }

@@ -66,7 +66,7 @@ const TabStyle = styled(Tabs)(({ theme }) => ({
 }))
 
 const statusItemList = [
-  { value: undefined, label: 'All status' },
+  { value: '', label: 'All status' },
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
   { value: ActivityStatus.OPEN, label: ActivityStatus.OPEN },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
@@ -85,8 +85,8 @@ export default function Activity() {
   const isSmDown = useBreakpoint('sm')
   const [tabValue, setTabValue] = useState(searchSbt.category || 0)
 
-  const [chainIdVal, setChainId] = useState<number>()
-  const [statusVal, setStatus] = useState<ActivityStatus>()
+  const [chainIdVal, setChainId] = useState<number | string>('')
+  const [statusVal, setStatus] = useState<string>('')
 
   const handleChange = (event: any, newValue: any) => {
     searchSbt.setCategory(newValue)
@@ -153,17 +153,15 @@ export default function Activity() {
                   setChainId(e.target.value)
                 }}
               >
-                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}>All chain</MenuItem>
+                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }} value={''}>
+                  All chain
+                </MenuItem>
                 {ChainList.map(item => (
                   <MenuItem
                     key={item.id}
                     sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                     value={item.id}
-                    selected={
-                      tabValue === 0
-                        ? search.chainId && search.chainId === item.id
-                        : searchSbt.chainId && searchSbt.chainId === item.id
-                    }
+                    selected={tabValue === 0 ? search.chainId === item.id : searchSbt.chainId === item.id}
                   >
                     {item.name}
                   </MenuItem>
@@ -186,11 +184,7 @@ export default function Activity() {
                     key={index}
                     sx={{ fontWeight: 500 }}
                     value={item.value}
-                    selected={
-                      tabValue === 0
-                        ? search.status && search.status === item.value
-                        : searchSbt.status && searchSbt.status === item.value
-                    }
+                    selected={tabValue === 0 ? search.status === item.value : searchSbt.status === item.value}
                   >
                     {item.label}
                   </MenuItem>

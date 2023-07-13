@@ -1,6 +1,5 @@
 import { ActivityStatus } from 'hooks/useActivityInfo'
 import { ActivityType } from 'pages/DaoInfo/Children/Activity'
-import { ChainId } from 'constants/chain'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from '../index'
@@ -11,9 +10,10 @@ import {
   updateActivityListPagination,
   NotificationListPaginationProp,
   updateNotificationListPagination,
-  updateSbtListPagination,
-  SbtListPaginationProp
+  SbtListPaginationProp,
+  updateSbtListPagination
 } from './actions'
+import { ChainId } from 'constants/chain'
 
 export function useHomeListPaginationCallback() {
   const data = useSelector((state: AppState) => state.pagination.homeListPagination)
@@ -69,7 +69,6 @@ export function useActivityListPaginationCallback() {
     },
     [data, updateActivityListPaginationCallback]
   )
-
   const setCurrentPage = useCallback(
     (currentPage: number) => {
       updateActivityListPaginationCallback({ ...data, currentPage })

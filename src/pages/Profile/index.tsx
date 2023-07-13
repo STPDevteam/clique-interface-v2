@@ -17,8 +17,8 @@ import MyRecords from './MyRecords'
 import AccountNFTs from './AccountNFTs'
 import { useHistory, useParams } from 'react-router-dom'
 import {
-  useAccountFollowersList,
-  useAccountFollowingList,
+  // useAccountFollowersList,
+  // useAccountFollowingList,
   useUserFollowStatus,
   useUserProfileInfo
 } from 'hooks/useBackedProfileServer'
@@ -30,12 +30,14 @@ import useModal from 'hooks/useModal'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { BlackButton } from 'components/Button/Button'
 import Button from 'components/Button/Button'
-import Modal from 'components/Modal'
-import Pagination from 'components/Pagination'
-import EmptyData from 'components/EmptyData'
-import { routes } from 'constants/routes'
+// import Modal from 'components/Modal'
+// import Pagination from 'components/Pagination'
+// import EmptyData from 'components/EmptyData'
+// import { routes } from 'constants/routes'
+// import Loading from 'components/Loading'
+
 import { useWalletModalToggle } from 'state/application/hooks'
-import Loading from 'components/Loading'
+
 import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
@@ -56,22 +58,22 @@ const StyledHeader = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledBody = styled(Box)(({ theme }) => ({
-  minHeight: 200,
-  padding: '40px 32px',
-  [theme.breakpoints.down('sm')]: {
-    gridTemplateColumns: 'unset',
-    padding: '20px 16px'
-  }
-}))
+// const StyledBody = styled(Box)(({ theme }) => ({
+//   minHeight: 200,
+//   padding: '40px 32px',
+//   [theme.breakpoints.down('sm')]: {
+//     gridTemplateColumns: 'unset',
+//     padding: '20px 16px'
+//   }
+// }))
 
-const StyledListText = styled(Typography)(({ theme }) => ({
-  fontSize: 13,
-  fontWeight: 600,
-  [theme.breakpoints.down('sm')]: {
-    fontSize: 10
-  }
-}))
+// const StyledListText = styled(Typography)(({ theme }) => ({
+//   fontSize: 13,
+//   fontWeight: 600,
+//   [theme.breakpoints.down('sm')]: {
+//     fontSize: 10
+//   }
+// }))
 
 const StyledLink = styled(Link)(({ borderColor, bgColor }: { borderColor?: string; bgColor?: string }) => ({
   maxWidth: 120,
@@ -100,20 +102,39 @@ export default function Profile() {
     account || undefined,
     currentAccount && currentAccount !== account ? currentAccount : undefined
   )
+
   const [rand, setRand] = useState(Math.random())
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
+  const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand, isFollowed)
 
-  const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand)
+  // const { result: accountFollowersList } = useAccountFollowersList(profileInfo?.userId)
+  // const { result: accountFollowingList } = useAccountFollowingList(profileInfo?.userId)
+
+  // const FollowersNum = useMemo(() => {
+  //   if (!accountFollowersList) return 0
+  //   return accountFollowersList.length
+  // }, [accountFollowersList])
+
+  // const FollowingNum = useMemo(() => {
+  //   if (!accountFollowingList) return 0
+  //   return accountFollowingList.length
+  // }, [accountFollowingList])
+
+  const isFollow = useMemo(() => {
+    if (!account) return false
+    return profileInfo?.isFollow
+  }, [account, profileInfo])
+
   const refreshProfile = useCallback(() => {
     setRand(Math.random())
     hideModal()
   }, [hideModal])
 
   useEffect(() => {
-    if (!currentAccount) history.replace('/')
+    if (!currentAccount || !account) history.replace('/')
     hideModal()
-  }, [currentAccount, hideModal, history])
+  }, [currentAccount, hideModal, history, account])
 
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
@@ -242,6 +263,7 @@ export default function Profile() {
                   <RowCenter
                     mt={{ xs: 10 }}
                     sx={{
+                      justifyContent: 'flex-end',
                       '& svg': {
                         marginRight: 5
                       },
@@ -250,7 +272,6 @@ export default function Profile() {
                       }
                     }}
                   >
-                    <div></div>
                     <OutlineButton
                       style={{ border: 'none' }}
                       noBold
@@ -272,7 +293,7 @@ export default function Profile() {
                   </RowCenter>
                 ) : (
                   <Box mt={{ xs: 10 }}>
-                    {isFollowed ? (
+                    {isFollow ? (
                       <Button
                         onClick={() => toggleFollow(false)}
                         width={isSmDown ? '100px' : '200px'}
@@ -325,16 +346,16 @@ export default function Profile() {
                 </Link>
                 <Copy toCopy={currentAccount || ''} />
               </Box>
-              <Stack mt={10} direction={'row'} alignItems="center" spacing={isSmDown ? 10 : 20}>
+              {/* <Stack mt={10} direction={'row'} alignItems="center" spacing={isSmDown ? 10 : 20}>
                 <Typography
                   fontWeight={600}
                   fontSize={16}
                   sx={{
                     cursor: 'pointer'
                   }}
-                  onClick={() => showModal(<AccountFollowersList currentAccount={currentAccount || ''} />)}
+                  onClick={() => showModal(<AccountFollowersList userId={profileInfo?.userId} />)}
                 >
-                  {profileInfo?.followers || 0} Followers
+                  {FollowersNum || 0} Followers
                 </Typography>
                 <Box
                   sx={{
@@ -349,11 +370,11 @@ export default function Profile() {
                   sx={{
                     cursor: 'pointer'
                   }}
-                  onClick={() => showModal(<AccountFollowingList currentAccount={currentAccount || ''} />)}
+                  onClick={() => showModal(<AccountFollowingList userId={profileInfo?.userId} />)}
                 >
-                  {profileInfo?.following || 0} Following
+                  {FollowingNum || 0} Following
                 </Typography>
-              </Stack>
+              </Stack> */}
               <Stack
                 mt={10}
                 direction={'row'}
@@ -406,7 +427,7 @@ export default function Profile() {
       <Box display={'grid'} gap="48px">
         <AccountNFTs account={currentAccount || ''} />
 
-        {isSelf && <MyTokens account={currentAccount || ''} />}
+        {isSelf && <MyTokens account={currentAccount || ''} chainId={chainId} />}
 
         <MyDaos adminDao={profileInfo?.adminDao} />
 
@@ -416,110 +437,111 @@ export default function Profile() {
   )
 }
 
-function AccountFollowersList({ currentAccount }: { currentAccount: string }) {
-  const { result: accountFollowersList, page, loading } = useAccountFollowersList(currentAccount)
-  const { hideModal } = useModal()
-  const history = useHistory()
-  const isSmDown = useBreakpoint('sm')
-  return (
-    <Modal maxWidth="600px" closeIcon width="100%">
-      <StyledBody>
-        <Typography variant="h5">Followers</Typography>
-        <Stack spacing={isSmDown ? 10 : 19} mt={20}>
-          {accountFollowersList.map(item => (
-            <Box
-              display={'grid'}
-              gridTemplateColumns="1fr 1fr 1.3fr"
-              gap={'10px 5px'}
-              alignItems={'center'}
-              justifyContent="center"
-              key={item.followers}
-            >
-              <>
-                <Link
-                  underline="none"
-                  target={'_blank'}
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    hideModal()
-                    history.push(routes._Profile + `/${item.followers}`)
-                  }}
-                >
-                  <Box display={'flex'} alignItems="center">
-                    <Avatar src={item.accountLogo} sx={{ width: { xs: 20, sm: 30 }, height: { xs: 20, sm: 30 } }} />
-                    <StyledListText ml={4}>{item.nickname || 'unnamed'}</StyledListText>
-                  </Box>
-                </Link>
-                <StyledListText>{shortenAddress(item.followers)}</StyledListText>
-                <StyledListText textAlign={'right'}>{item.followTime}</StyledListText>
-              </>
-            </Box>
-          ))}
-          {loading && <Loading />}
-          {!accountFollowersList.length && !loading && <EmptyData />}
-          <Box display={'flex'} justifyContent="center">
-            <Pagination
-              count={page.totalPage}
-              page={page.currentPage}
-              onChange={(_, value) => page.setCurrentPage(value)}
-            />
-          </Box>
-        </Stack>
-      </StyledBody>
-    </Modal>
-  )
-}
+// function AccountFollowersList({ userId }: { userId: number | undefined }) {
+//   const { result: accountFollowersList, page, loading } = useAccountFollowersList(userId)
+//   const { hideModal } = useModal()
+//   const history = useHistory()
+//   const isSmDown = useBreakpoint('sm')
+//   console.log(accountFollowersList, 90)
+//   return (
+//     <Modal maxWidth="600px" closeIcon width="100%">
+//       <StyledBody>
+//         <Typography variant="h5">Followers</Typography>
+//         <Stack spacing={isSmDown ? 10 : 19} mt={20}>
+//           {accountFollowersList?.map(item => (
+//             <Box
+//               display={'grid'}
+//               gridTemplateColumns="1fr 1fr 1.3fr"
+//               gap={'10px 5px'}
+//               alignItems={'center'}
+//               justifyContent="center"
+//               key={item.userId}
+//             >
+//               <>
+//                 <Link
+//                   underline="none"
+//                   target={'_blank'}
+//                   sx={{ cursor: 'pointer' }}
+//                   onClick={() => {
+//                     hideModal()
+//                     history.push(routes._Profile + `/${item.account}`)
+//                   }}
+//                 >
+//                   <Box display={'flex'} alignItems="center">
+//                     <Avatar src={item.accountLogo} sx={{ width: { xs: 20, sm: 30 }, height: { xs: 20, sm: 30 } }} />
+//                     <StyledListText ml={4}>{item.nickname || 'unnamed'}</StyledListText>
+//                   </Box>
+//                 </Link>
+//                 <StyledListText>{shortenAddress(item.account)}</StyledListText>
+//                 <StyledListText textAlign={'right'}>{item.relation}</StyledListText>
+//               </>
+//             </Box>
+//           ))}
+//           {loading && <Loading />}
+//           {!accountFollowersList.length && !loading && <EmptyData />}
+//           <Box display={'flex'} justifyContent="center">
+//             <Pagination
+//               count={page.totalPage}
+//               page={page.currentPage}
+//               onChange={(_, value) => page.setCurrentPage(value)}
+//             />
+//           </Box>
+//         </Stack>
+//       </StyledBody>
+//     </Modal>
+//   )
+// }
 
-function AccountFollowingList({ currentAccount }: { currentAccount: string }) {
-  const { result: accountFollowingList, page, loading } = useAccountFollowingList(currentAccount)
-  const { hideModal } = useModal()
-  const history = useHistory()
-  const isSmDown = useBreakpoint('sm')
-  return (
-    <Modal maxWidth="600px" closeIcon width="100%">
-      <StyledBody>
-        <Typography variant="h5">Following</Typography>
-        <Stack spacing={isSmDown ? 10 : 19} mt={20}>
-          {accountFollowingList.map(item => (
-            <Box
-              display={'grid'}
-              gridTemplateColumns="1fr 1fr 1.3fr"
-              gap={'10px 5px'}
-              alignItems={'center'}
-              justifyContent="center"
-              key={item.following}
-            >
-              <>
-                <Link
-                  underline="none"
-                  target={'_blank'}
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    hideModal()
-                    history.push(routes._Profile + `/${item.following}`)
-                  }}
-                >
-                  <Box display={'flex'} alignItems="center">
-                    <Avatar src={item.accountLogo} sx={{ width: { xs: 20, sm: 30 }, height: { xs: 20, sm: 30 } }} />
-                    <StyledListText ml={4}>{item.nickname || 'unnamed'}</StyledListText>
-                  </Box>
-                </Link>
-                <StyledListText>{shortenAddress(item.following)}</StyledListText>
-                <StyledListText textAlign={'right'}>{item.followTime}</StyledListText>
-              </>
-            </Box>
-          ))}
-          {loading && <Loading />}
-          {!accountFollowingList.length && !loading && <EmptyData />}
-          <Box display={'flex'} justifyContent="center">
-            <Pagination
-              count={page.totalPage}
-              page={page.currentPage}
-              onChange={(_, value) => page.setCurrentPage(value)}
-            />
-          </Box>
-        </Stack>
-      </StyledBody>
-    </Modal>
-  )
-}
+// function AccountFollowingList({ userId }: { userId: number | undefined }) {
+//   const { result: accountFollowingList, page, loading } = useAccountFollowingList(userId)
+//   const { hideModal } = useModal()
+//   const history = useHistory()
+//   const isSmDown = useBreakpoint('sm')
+//   return (
+//     <Modal maxWidth="600px" closeIcon width="100%">
+//       <StyledBody>
+//         <Typography variant="h5">Following</Typography>
+//         <Stack spacing={isSmDown ? 10 : 19} mt={20}>
+//           {accountFollowingList.map(item => (
+//             <Box
+//               display={'grid'}
+//               gridTemplateColumns="1fr 1fr 1.3fr"
+//               gap={'10px 5px'}
+//               alignItems={'center'}
+//               justifyContent="center"
+//               key={item.userId}
+//             >
+//               <>
+//                 <Link
+//                   underline="none"
+//                   target={'_blank'}
+//                   sx={{ cursor: 'pointer' }}
+//                   onClick={() => {
+//                     hideModal()
+//                     history.push(routes._Profile + `/${item.account}`)
+//                   }}
+//                 >
+//                   <Box display={'flex'} alignItems="center">
+//                     <Avatar src={item.accountLogo} sx={{ width: { xs: 20, sm: 30 }, height: { xs: 20, sm: 30 } }} />
+//                     <StyledListText ml={4}>{item.nickname || 'unnamed'}</StyledListText>
+//                   </Box>
+//                 </Link>
+//                 <StyledListText>{shortenAddress(item.account)}</StyledListText>
+//                 <StyledListText textAlign={'right'}>{item.relation}</StyledListText>
+//               </>
+//             </Box>
+//           ))}
+//           {loading && <Loading />}
+//           {!accountFollowingList.length && !loading && <EmptyData />}
+//           <Box display={'flex'} justifyContent="center">
+//             <Pagination
+//               count={page.totalPage}
+//               page={page.currentPage}
+//               onChange={(_, value) => page.setCurrentPage(value)}
+//             />
+//           </Box>
+//         </Stack>
+//       </StyledBody>
+//     </Modal>
+//   )
+// }

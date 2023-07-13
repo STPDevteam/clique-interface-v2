@@ -62,7 +62,7 @@ export default function Index() {
                 toggleWalletModal()
                 return
               }
-              history.push(routes.CreatorDao)
+              history.push(routes.CreateDao)
             }}
           >
             <Image src={addDaoIcon} width={isSmDown ? 82 : 182}></Image>

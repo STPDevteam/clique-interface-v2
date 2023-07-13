@@ -92,10 +92,20 @@ export function useDaoInfo(daoAddress?: string, chainId?: ChainId): DaoInfoProp 
   }, [daoAddress, daoBaseInfo, daoGovernanceRes.result, token])
 }
 
-export enum DaoAdminLevelProp {
+export enum DaoAdminLevel {
+  OWNER,
   SUPER_ADMIN,
   ADMIN,
-  NORMAL
+  VISITOR,
+  NOROLE
+}
+
+export const DaoAdminLevelProp = {
+  [DaoAdminLevel.OWNER]: 'owner',
+  [DaoAdminLevel.SUPER_ADMIN]: 'superAdmin',
+  [DaoAdminLevel.ADMIN]: 'admin',
+  [DaoAdminLevel.VISITOR]: 'visitor',
+  [DaoAdminLevel.NOROLE]: 'noRole'
 }
 
 export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account?: string) {
@@ -108,12 +118,12 @@ export function useDaoAdminLevel(daoAddress?: string, chainId?: ChainId, account
   return useMemo(() => {
     if (!account || ownerRes === undefined || adminsRes === undefined) return undefined
     if (account && ownerRes && ownerRes.toLowerCase() === account.toLowerCase()) {
-      return DaoAdminLevelProp.SUPER_ADMIN
+      return DaoAdminLevelProp[DaoAdminLevel.SUPER_ADMIN]
     }
     if (adminsRes) {
-      return DaoAdminLevelProp.ADMIN
+      return DaoAdminLevelProp[DaoAdminLevel.ADMIN]
     }
-    return DaoAdminLevelProp.NORMAL
+    return DaoAdminLevelProp[DaoAdminLevel.NOROLE]
   }, [ownerRes, adminsRes, account])
 }
 
@@ -125,13 +135,13 @@ export function useDaoAdminLevelList(daoAddress?: string, chainId?: ChainId, acc
   const ownerRes = useSingleCallResult(daoContract, 'owner', [], undefined, chainId).result?.[0]
 
   return useMemo(() => {
-    const retArr: DaoAdminLevelProp[] = []
+    const retArr = []
     if (!account || ownerRes === undefined || adminsRes === undefined) return undefined
     if (account && ownerRes && ownerRes.toLowerCase() === account.toLowerCase()) {
-      retArr.push(DaoAdminLevelProp.SUPER_ADMIN)
+      retArr.push(DaoAdminLevelProp[DaoAdminLevel.SUPER_ADMIN])
     }
     if (adminsRes) {
-      retArr.push(DaoAdminLevelProp.ADMIN)
+      retArr.push(DaoAdminLevelProp[DaoAdminLevel.ADMIN])
     }
     return retArr
   }, [ownerRes, adminsRes, account])

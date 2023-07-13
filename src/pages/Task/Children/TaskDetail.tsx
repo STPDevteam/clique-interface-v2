@@ -1,4 +1,4 @@
-import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel } from '@mui/material'
+import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel, Alert } from '@mui/material'
 import ConfirmButton from 'components/Button/Button'
 import SaveButton from 'components/Button/OutlineButton'
 import Image from 'components/Image'
@@ -15,21 +15,15 @@ import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import ReactHtmlParser from 'react-html-parser'
-import {
-  ProposalListBaseProp,
-  useCreateTask,
-  useGetTaskDetail,
-  useJobsList,
-  useUpdateTask
-} from 'hooks/useBackedTaskServer'
+import { useCreateTask, useGetTaskDetail, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
-import useModal from 'hooks/useModal'
 import { shortenAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { ReactComponent as ViewDtailIcon } from 'assets/svg/viewDetailIcon.svg'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { escapeAttrValue } from 'xss'
 import useCopyClipboard from 'hooks/useCopyClipboard'
+import { toast } from 'react-toastify'
+import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -127,7 +121,8 @@ export default function TaskDetail({
   open,
   onDismiss,
   proposalBaseList,
-  TeamSpacesInfo,
+  daoId,
+  spacesId,
   editData,
   identity,
   initStatus
@@ -135,7 +130,8 @@ export default function TaskDetail({
   open: boolean
   onDismiss: () => void
   proposalBaseList: ProposalListBaseProp[]
-  TeamSpacesInfo: any
+  daoId: number
+  spacesId: number
   editData: ITaskQuote
   identity: string
   initStatus: string
@@ -145,7 +141,7 @@ export default function TaskDetail({
     return status
   }, [editData, initStatus])
 
-  const { result: jobsList } = useJobsList('C_member', TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
+  const { result: jobsList } = useJobsList(daoId)
   const assigneeList = useMemo(() => {
     if (!jobsList) return []
     const _arr: any = []
@@ -183,19 +179,18 @@ export default function TaskDetail({
     },
     [onDismiss]
   )
-
+  const [isSubmit, setIsSubmit] = useState(false)
   const isSmDown = useBreakpoint('sm')
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
   const [currentStatus, setCurrentStatus] = useState(preStatus ?? '')
-  const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
+  const [assignees, setAssignees] = useState<any>(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
   const [proposal, setProposal] = useState(updateProposal ?? '')
   const [value, setValue] = useState(editData?.taskName ?? '')
   const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
   const [content, setContent] = useState<any>(taskDetailData?.content ?? '')
-  const { showModal } = useModal()
   const create = useCreateTask()
   const update = useUpdateTask()
   const link = useMemo(() => {
@@ -206,7 +201,8 @@ export default function TaskDetail({
   }, [taskDetailData?.content])
 
   const createCallback = useCallback(() => {
-    if (!TeamSpacesInfo) return
+    setIsSubmit(true)
+    if (!spacesId) return
     create(
       assignees,
       content,
@@ -214,30 +210,20 @@ export default function TaskDetail({
       priority,
       Number(proposal),
       '0',
-      TeamSpacesInfo.teamSpacesId,
+      spacesId,
       currentStatus ? TaskStatus[currentStatus] : 'A_notStarted',
       value
     ).then((res: any) => {
       if (res.data.code === 200) {
         onDismiss()
-        showModal(<MessageBox type="success">Create task success</MessageBox>)
-      } else showModal(<MessageBox type="failure">Something wrong</MessageBox>)
+        toast.success('Create task success')
+      } else toast.error('Network error')
+      setIsSubmit(false)
     })
-  }, [
-    TeamSpacesInfo,
-    assignees,
-    content,
-    create,
-    currentStatus,
-    endTime,
-    onDismiss,
-    priority,
-    proposal,
-    showModal,
-    value
-  ])
+  }, [spacesId, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
 
   const updateCallback = useCallback(() => {
+    setIsSubmit(true)
     if (!editData) return
     update(
       assignees,
@@ -252,28 +238,45 @@ export default function TaskDetail({
       editData.taskId,
       value,
       editData.weight
-    ).then(res => {
+    ).then((res: any) => {
       onDismiss()
-      showModal(<MessageBox type="success">Update success</MessageBox>)
-      console.log(res)
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Network error')
+        setIsSubmit(false)
+        return
+      }
+      toast.success('Update success')
+      setIsSubmit(false)
     })
-  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, showModal, update, value])
+  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, update, value])
 
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
+        <SaveButton
+          width="140px"
+          height="36px"
+          disabled={isSubmit ? isSubmit : !value.trim()}
+          color="#0049C6"
+          onClick={updateCallback}
+        >
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
+        <ConfirmButton
+          width="140px"
+          height="36px"
+          disabled={isSubmit ? isSubmit : !value.trim()}
+          color="#ffffff"
+          onClick={createCallback}
+        >
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback])
+  }, [createCallback, editData, updateCallback, value, isSubmit])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -296,7 +299,7 @@ export default function TaskDetail({
         open={open}
         onClose={toggleDrawer}
       >
-        {(identity && identity === 'C_member') || isEdit === true ? (
+        {(identity && identity === 'visitor') || isEdit === true ? (
           <>
             <Box
               display={'flex'}
@@ -319,7 +322,7 @@ export default function TaskDetail({
                 Back
               </Typography>
               <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
-                {isEdit && identity !== 'C_member' ? (
+                {isEdit && identity !== 'visitor' ? (
                   <>
                     <Box
                       onClick={() => setCopied(link)}
@@ -387,7 +390,7 @@ export default function TaskDetail({
                 value={assignees}
                 multiple={false}
                 onChange={(value: any, option: any) => {
-                  console.log(value)
+                  console.log('values', value, option)
                   setAssignees(option.value)
                 }}
               />
@@ -614,9 +617,9 @@ export default function TaskDetail({
                 height={isSmDown ? 40 : undefined}
                 value={assignees}
                 multiple={false}
-                onChange={(value: any, option: any) => {
-                  console.log(value)
-                  setAssignees(option.value)
+                onChange={(value: any) => {
+                  console.log('change', value)
+                  setAssignees(value)
                 }}
               />
             </RowContent>
@@ -747,6 +750,11 @@ export default function TaskDetail({
             >
               <Editor content={content} setContent={setContent} />
             </RowContent>
+            {!value.trim() && (
+              <Alert style={{ marginTop: 20 }} severity="error">
+                Task title required
+              </Alert>
+            )}
             <ColSentence>{getActions()}</ColSentence>
           </>
         )}

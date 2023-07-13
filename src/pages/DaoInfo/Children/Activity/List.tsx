@@ -33,7 +33,7 @@ export function AirdropList({
         </DelayLoading>
         <Stack spacing={24}>
           {result.map(item => (
-            <AirdropItem key={item.activityId} item={item} />
+            <AirdropItem key={item.airdropId} item={item} />
           ))}
         </Stack>
       </Box>
@@ -51,41 +51,12 @@ export function AirdropList({
   )
 }
 
-export function PublicSaleList({
-  loading,
-  page,
-  result
-}: {
-  loading: boolean
-  page: {
-    setCurrentPage: Dispatch<SetStateAction<number>>
-    currentPage: number
-    total: number
-    totalPage: number
-    pageSize: number
-  }
-  result: ActivityListProp[]
-}) {
+export function PublicSaleList() {
   return (
-    <>
-      <Box minHeight={150}>
-        {!loading && !result.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
-        <DelayLoading loading={loading}>
-          <Loading sx={{ marginTop: 30 }} />
-        </DelayLoading>
-        <Stack spacing={40}>
-          {result.map((item, idx) => (
-            <PublicSaleItem key={idx} item={item} />
-          ))}
-        </Stack>
-      </Box>
-      <Box mt={20} display={'flex'} justifyContent="center">
-        <Pagination
-          count={page.totalPage}
-          page={page.currentPage}
-          onChange={(_, value) => page.setCurrentPage(value)}
-        />
-      </Box>
-    </>
+    <Stack spacing={24}>
+      <PublicSaleItem />
+      <PublicSaleItem />
+      <PublicSaleItem />
+    </Stack>
   )
 }

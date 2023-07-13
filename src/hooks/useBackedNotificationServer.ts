@@ -3,6 +3,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { getNotificationListInfo, getNotificationUnreadTotal, notificationToRead } from '../utils/fetch/server'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 export type NotificationTypes =
   | 'Airdrop'
@@ -11,6 +12,13 @@ export type NotificationTypes =
   | 'PublicSaleCanceled'
   | 'NewProposal'
   | 'ReserveToken'
+  | 'TaskDone'
+  | 'TaskAssigned'
+  | 'BecomeAdmin'
+  | 'BecomeSuperAdmin'
+  | 'BecomeOwner'
+  | 'JobApply'
+  | 'JobReject'
 
 export interface NotificationInfoProp {
   activityId?: number
@@ -29,17 +37,25 @@ export interface NotificationInfoProp {
 
 export interface NotificationProp {
   account: string
+  activityId: number
+  activityTitle: string
   alreadyRead: boolean
+  avatar: string
+  daoId: number
+  daoLogo: string
+  daoName: string
   notificationId: number
   notificationTime: number
+  startTime: number
+  tokenAddress: string
+  tokenChainId: number
   types: NotificationTypes
-  info: NotificationInfoProp
 }
 
 export function useNotificationListInfo() {
   const {
     data: { currentPage },
-    setUnReadCount,
+    // setUnReadCount,
     setCurrentPage
   } = useNotificationListPaginationCallback()
   const { account } = useActiveWeb3React()
@@ -57,21 +73,21 @@ export function useNotificationListInfo() {
     ;(async () => {
       if (!account) {
         setResult([])
-        setUnReadCount(0)
+        // setUnReadCount(0)
         return
       }
       setLoading(true)
       try {
         const res = await getNotificationListInfo(account, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           return
         }
         setTotal(data.total)
-        setUnReadCount(data.unreadTotal)
-        setResult(data.list)
+        // setUnReadCount(data.unreadTotal)
+        setResult(data.data)
       } catch (error) {
         setResult([])
         setTotal(0)
@@ -100,16 +116,16 @@ export function useNotificationListInfo() {
 
 export function useUpdateNotificationUnReadCount() {
   const { setUnReadCount } = useNotificationListPaginationCallback()
-  const { account } = useActiveWeb3React()
+  const userInfo = useUserInfo()
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!userInfo?.loggedToken) {
         setUnReadCount(0)
         return
       }
       try {
-        const res = await getNotificationUnreadTotal(account)
+        const res = await getNotificationUnreadTotal()
         const data = res.data.data as any
         if (!data) {
           return
@@ -120,7 +136,7 @@ export function useUpdateNotificationUnReadCount() {
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [userInfo?.loggedToken])
 }
 
 export function useNotificationToRead() {
@@ -129,14 +145,14 @@ export function useNotificationToRead() {
   const toBackedReadOnce = useCallback(
     async (notificationId: number) => {
       if (!account) return
-      return notificationToRead(account, notificationId, false)
+      return notificationToRead(notificationId, false)
     },
     [account]
   )
 
   const toBackedReadAll = useCallback(async () => {
     if (!account) return
-    return notificationToRead(account, 0, true)
+    return notificationToRead(0, true)
   }, [account])
 
   return {

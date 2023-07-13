@@ -1,5 +1,4 @@
 import { Token, TokenAmount } from 'constants/token'
-import { useActiveWeb3React } from 'hooks'
 import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { useEffect, useMemo, useState } from 'react'
 import { useActivityListPaginationCallback } from 'state/pagination/hooks'
@@ -9,17 +8,17 @@ import { getActivityList, getAirdropDescData, getAirdropProof, getAirdropAccount
 import { ActivityStatus } from './useActivityInfo'
 
 export interface ActivityListProp {
-  activityId: number
+  airdropId: number
+  daoId: number
   amount: string
-  chainId: ChainId
   tokenChainId: ChainId
   creator: string
-  daoAddress: string
+  daoLogo: string
+  daoName: string
   eventStartTime: number
   eventEndTime: number
   airdropStartTime: number
   airdropEndTime: number
-  price: string
   title: string
   tokenAddress: string
   airdropNumber: number
@@ -30,7 +29,7 @@ export interface ActivityListProp {
 }
 
 function daoActivityListHandler(data: any) {
-  return data.list.map((item: any) => {
+  return data.data.map((item: any) => {
     const eventStartTime = item.startTime
     const eventEndTime = item.endTime
     const airdropStartTime = item.airdropStartTime
@@ -47,17 +46,17 @@ function daoActivityListHandler(data: any) {
         ? ActivityStatus.AIRDROP
         : ActivityStatus.CLOSED
     return {
-      activityId: item.activityId,
+      airdropId: item.airdropId,
+      daoId: item.daoId,
       amount: item.stakingAmount,
-      chainId: item.chainId,
       tokenChainId: item.tokenChainId,
       creator: item.creator,
-      daoAddress: item.daoAddress,
+      daoLogo: item.daoLogo,
+      daoName: item.daoName,
       eventStartTime,
       eventEndTime,
       airdropStartTime,
       airdropEndTime,
-      price: item.price,
       title: item.title,
       tokenAddress: item.tokenAddress,
       airdropNumber: item.airdropNumber,
@@ -69,10 +68,9 @@ function daoActivityListHandler(data: any) {
   })
 }
 
-export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, activityType?: ActivityType) {
+export function useDaoActivityList(daoId: ChainId, activityType?: ActivityType) {
   const [currentPage, setCurrentPage] = useState(1)
   const status = ''
-
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -91,23 +89,16 @@ export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, acti
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
+      if (!daoId) {
         setResult([])
         setTotal(0)
         return
       }
       setLoading(true)
       try {
-        const res = await getActivityList(
-          daoChainId,
-          daoAddress,
-          status,
-          activityType === ActivityType.PUBLIC_SALE ? 'PublicSale' : activityType || '',
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
+        const res = await getActivityList(daoId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
@@ -123,11 +114,11 @@ export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, acti
         console.error('getActivityList', error)
       }
     })()
-  }, [currentPage, daoAddress, daoChainId, activityType])
+  }, [currentPage, activityType, daoId])
 
   useEffect(() => {
     ;(async () => {
-      if (!daoChainId || !daoAddress) {
+      if (!daoId) {
         setResult([])
         setTotal(0)
         return
@@ -137,15 +128,8 @@ export function useDaoActivityList(daoChainId: ChainId, daoAddress: string, acti
         return
       }
       try {
-        const res = await getActivityList(
-          daoChainId,
-          daoAddress,
-          status,
-          activityType === ActivityType.PUBLIC_SALE ? 'PublicSale' : activityType || '',
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
-        const data = res.data.data as any
+        const res = await getActivityList(daoId, status, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
         if (!data) {
           return
         }
@@ -190,6 +174,7 @@ export function useActivityList() {
   const [result, setResult] = useState<ActivityListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+
   useEffect(() => {
     if (firstLoadData) {
       setFirstLoadData(false)
@@ -203,16 +188,9 @@ export function useActivityList() {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getActivityList(
-          chainId,
-          '',
-          status,
-          types === ActivityType.PUBLIC_SALE ? 'PublicSale' : types || '',
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
+        const res = await getActivityList(chainId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
@@ -228,7 +206,7 @@ export function useActivityList() {
         console.error('getActivityList', error)
       }
     })()
-  }, [currentPage, status, types, chainId])
+  }, [chainId, currentPage, status, types])
 
   useEffect(() => {
     ;(async () => {
@@ -237,15 +215,8 @@ export function useActivityList() {
         return
       }
       try {
-        const res = await getActivityList(
-          chainId,
-          '',
-          status,
-          types === ActivityType.PUBLIC_SALE ? 'PublicSale' : types || '',
-          (currentPage - 1) * pageSize,
-          pageSize
-        )
-        const data = res.data.data as any
+        const res = await getActivityList(chainId, status, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
         if (!data) {
           return
         }
@@ -282,31 +253,36 @@ export function useActivityList() {
   }
 }
 
-export function useGetAirdropProof(activityId: number | undefined, token: Token | undefined) {
-  const { account } = useActiveWeb3React()
+export function useGetAirdropProof(airdropId: number | undefined, token: Token | undefined) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<{
+    airdropNumber: number
+    airdropTotalAmount: string
+    amount: string
     index: number
     proof: string[]
-    amount: string
+    title: string
   }>()
 
   useEffect(() => {
     ;(async () => {
-      if (!account || !activityId) {
+      if (!airdropId) {
         setResult(undefined)
         return
       }
       setLoading(true)
       try {
-        const res = await getAirdropProof(account, activityId)
+        const res = await getAirdropProof(airdropId)
         setLoading(false)
         const data = res.data.data
 
         setResult({
+          airdropNumber: data.airdropNumber,
+          airdropTotalAmount: data.airdropTotalAmount,
           index: data.index,
           proof: data.proof,
-          amount: data.amount
+          amount: data.amount,
+          title: data.title
         })
       } catch (error) {
         setResult(undefined)
@@ -314,11 +290,14 @@ export function useGetAirdropProof(activityId: number | undefined, token: Token 
         console.error('useGetAirdropProof', error)
       }
     })()
-  }, [account, activityId])
+  }, [airdropId])
 
   const ret = useMemo(() => {
     if (!token || !result) return undefined
     return {
+      airdropNumber: result.airdropNumber,
+      airdropTotalAmount: result.airdropTotalAmount,
+      title: result.title,
       index: result.index,
       proof: result.proof,
       amount: new TokenAmount(token, result.amount || '0')
@@ -347,7 +326,7 @@ export interface AirdropDescDataProp {
   status: ActivityStatus
 }
 
-export function useGetAirdropDescData(activityId: number) {
+export function useGetAirdropDescData(airdropId: number) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<AirdropDescDataProp>()
 
@@ -355,7 +334,7 @@ export function useGetAirdropDescData(activityId: number) {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getAirdropDescData(activityId)
+        const res = await getAirdropDescData(airdropId)
         setLoading(false)
         const data = res.data.data
         if (!data) return
@@ -397,7 +376,7 @@ export function useGetAirdropDescData(activityId: number) {
         console.error('useGetAirdropDescData', error)
       }
     })()
-  }, [activityId])
+  }, [airdropId])
 
   return {
     loading,
@@ -420,7 +399,6 @@ export function useAirdropAccountListById(activityId: number, token: Token) {
           setResult([])
           return
         }
-
         setResult(
           data.map((item: any) => ({
             address: item.address,

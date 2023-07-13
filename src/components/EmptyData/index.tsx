@@ -11,7 +11,7 @@ export default function EmptyData({ sx, children }: { sx?: SxProps; children?: a
       textAlign={'center'}
       sx={{ backgroundColor: '#F8FBFF', ...sx }}
     >
-      {children || 'No Data'}
+      {children || 'No data'}
     </Typography>
   )
 }

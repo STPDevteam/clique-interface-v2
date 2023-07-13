@@ -6,8 +6,8 @@ import {
   ActivityListPaginationProp,
   updateActivityListPagination,
   updateNotificationListPagination,
-  updateSbtListPagination,
   NotificationListPaginationProp,
+  updateSbtListPagination,
   SbtListPaginationProp
 } from './actions'
 
@@ -27,7 +27,7 @@ export const initialState: SysPagination = {
   activityListPagination: {
     chainId: undefined,
     types: undefined,
-    status: undefined,
+    status: '',
     currentPage: 1
   },
   notificationListPagination: {
@@ -36,7 +36,7 @@ export const initialState: SysPagination = {
   },
   sbtListPagination: {
     chainId: undefined,
-    status: undefined,
+    status: '',
     currentPage: 1,
     category: 0
   }

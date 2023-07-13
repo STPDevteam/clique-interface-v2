@@ -143,6 +143,7 @@ export function usePublicSaleContract(queryChainId?: ChainId): Contract | null {
     queryChainId
   )
 }
+
 export function useSbtContract(queryChainId?: ChainId): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(

@@ -109,7 +109,7 @@ function ItemCard(item: SbtListProp) {
   return (
     <StyledItem
       onClick={() => {
-        history.push(routes._SoulTokenDetail + '/' + item.chainId + '/' + item.daoAddress + '/' + item.SBTId)
+        history.push(routes._SoulTokenDetail + '/' + item.daoId + '/' + item.SBTId)
       }}
     >
       <Image

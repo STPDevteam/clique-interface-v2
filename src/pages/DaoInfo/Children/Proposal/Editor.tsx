@@ -3,6 +3,7 @@ import ReactQuill, { Quill } from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import ImageUploader from 'quill-image-uploader'
 import { serverUploadImage } from '../../../../constants'
+import { Axios } from 'utils/axios'
 
 Quill.register('modules/imageUploader', ImageUploader)
 
@@ -16,23 +17,17 @@ const modules = {
   ],
   imageUploader: {
     upload: (file: string | Blob) => {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         const formData = new FormData()
         formData.append('file', file)
-
-        fetch(serverUploadImage, {
-          method: 'POST',
-          body: formData
-        })
-          .then(response => response.json())
-          .then(result => {
-            console.log(result)
-            resolve(result.data.path)
-          })
-          .catch(error => {
-            reject('Upload failed')
-            console.error('Error:', error)
-          })
+        try {
+          const res = (await Axios.post(serverUploadImage, formData)) as any
+          console.log(res)
+          resolve(res.data.data)
+        } catch (err) {
+          reject('Upload failed')
+          console.error('Error:', err)
+        }
       })
     }
   }

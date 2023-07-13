@@ -14,10 +14,17 @@ import {
   createNewJob,
   deleteJob,
   publishList,
-  updateNewJob
+  updateNewJob,
+  leftSpacesList,
+  getSpacesList,
+  deleteSpace,
+  getWorkspaceInfo
 } from '../utils/fetch/server'
 import { ProposalStatus } from './useProposalInfo'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
+import { JobsListProps } from './useBackedDaoServer'
+import { useDispatch } from 'react-redux'
+import { updateSpaceListData } from 'state/buildingGovDao/actions'
 
 export interface SpaceInfoProp {
   access: string
@@ -51,6 +58,29 @@ export function useGetMembersInfo(daoAddress: string, chainId: ChainId) {
       }
     })()
   }, [chainId, daoAddress])
+
+  return {
+    result
+  }
+}
+
+export function useGetWorkspaceInfo(spacesId: number) {
+  const [result, setResult] = useState<LeftTaskDataProps | null>()
+
+  useEffect(() => {
+    ;(async () => {
+      if (!spacesId) return
+      try {
+        const res = await getWorkspaceInfo(spacesId)
+        if (res.data.data) {
+          setResult(res.data.data)
+        }
+      } catch (error) {
+        console.log(error)
+        setResult(null)
+      }
+    })()
+  }, [spacesId])
 
   return {
     result
@@ -133,8 +163,8 @@ export function useRemoveTask() {
 }
 
 export function useCreateNewJob() {
-  return useCallback((access: string, chainId: number, daoAddress: string, jobBio: string, title: string) => {
-    return createNewJob(access, chainId, daoAddress, jobBio, title)
+  return useCallback((daoId: number, jobBio: string, level: number, title: string) => {
+    return createNewJob(daoId, jobBio, level, title)
       .then(res => res)
       .catch(err => console.log(err))
   }, [])
@@ -149,28 +179,99 @@ export function useDeleteJob() {
 }
 
 export function useUpdateNewJob() {
-  return useCallback((jobBio: string, publishId: number, title: string) => {
-    return updateNewJob(jobBio, publishId, title)
+  return useCallback((jobBio: string, publishId: number, level: number, title: string) => {
+    return updateNewJob(jobBio, publishId, level, title)
       .then(res => res)
       .catch(err => console.log(err))
   }, [])
 }
 
 interface PublishItemProp {
-  access: string
-  chainId: number
-  daoAddress: string
+  daoId: number
   jobBio: string
   jobPublishId: number
+  level: number
   title: string
-  message?: string
 }
 
-export function useGetPublishJobList(chainId: number, daoAddress: string, refresh?: number) {
+export interface LeftTaskDataProps {
+  access: string
+  bio: string
+  creator: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  daoId: number
+  lastEditBy: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  lastEditTime: number
+  spacesId: number
+  title: string
+  types: string
+}
+
+export function useGetLeftTaskList(daoId: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
-  const pageSize = 8
+  const pageSize = 20
+  const [result, setResult] = useState<LeftTaskDataProps[]>([])
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      if (!daoId) return
+      setLoading(true)
+      try {
+        const res = await leftSpacesList(daoId, (currentPage - 1) * pageSize, pageSize)
+        setLoading(false)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: LeftTaskDataProps[] = data.data
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useGetSpacesList', error)
+      }
+    })()
+  }, [currentPage, daoId])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
+}
+
+export function useGetPublishJobList(daoId: number, refresh?: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 50
   const [result, setResult] = useState<PublishItemProp[]>([])
 
   useEffect(() => {
@@ -182,21 +283,20 @@ export function useGetPublishJobList(chainId: number, daoAddress: string, refres
     ;(async () => {
       setLoading(true)
       try {
-        const res = await publishList(chainId, daoAddress)
+        const res = await publishList(daoId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: PublishItemProp[] = data.map((item: any) => ({
-          access: item.access,
-          chainId: item.chainId,
-          daoAddress: item.daoAddress,
+        const list: PublishItemProp[] = data.data.map((item: any) => ({
+          daoId: item.daoId,
           jobBio: item.jobBio,
           jobPublishId: item.jobPublishId,
+          level: item.level,
           title: item.title
         }))
         setResult(list)
@@ -207,7 +307,7 @@ export function useGetPublishJobList(chainId: number, daoAddress: string, refres
         console.error('useGetPublishList', error)
       }
     })()
-  }, [currentPage, chainId, daoAddress, refresh])
+  }, [currentPage, refresh, daoId])
 
   return useMemo(
     () => ({
@@ -284,8 +384,8 @@ export function useUpdateTask() {
 }
 
 export function useReviewApply() {
-  return useCallback((chainId: ChainId, daoAddress: string, isPass: boolean, jobsApplyId: number) => {
-    return applyReview(chainId, daoAddress, isPass, jobsApplyId)
+  return useCallback((isPass: boolean, jobsApplyId: number) => {
+    return applyReview(isPass, jobsApplyId)
       .then(res => res)
       .catch(err => console.log(err))
   }, [])
@@ -377,7 +477,7 @@ export function useGetTaskList(
   )
 }
 
-export interface ProposalListBaseProp {
+export interface ProposalListBasev2Prop {
   daoChainId: ChainId
   daoAddress: string
   daoAddressV1: string
@@ -392,7 +492,7 @@ export interface ProposalListBaseProp {
   targetTimeString: string
 }
 
-function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
+function makeLIstData(daoChainId: ChainId, list: any): ProposalListBasev2Prop[] {
   const now = currentTimeStamp()
   return list.map((item: any) => {
     const startTime = item.startTime
@@ -434,13 +534,13 @@ function makeLIstData(daoChainId: ChainId, list: any): ProposalListBaseProp[] {
 }
 
 export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
-  const [status, setStatus] = useState<ProposalStatus>()
+  const [status, setStatus] = useState<string>()
   const [currentPage, setCurrentPage] = useState(1)
   const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 20
-  const [result, setResult] = useState<ProposalListBaseProp[]>([])
+  const [result, setResult] = useState<ProposalListBasev2Prop[]>([])
 
   useEffect(() => {
     if (firstLoadData) {
@@ -460,7 +560,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
       }
       setLoading(true)
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalList(daoChainId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -469,7 +569,7 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBasev2Prop[] = makeLIstData(daoChainId, data.list)
         setResult(list)
       } catch (error) {
         setResult([])
@@ -489,13 +589,13 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
       }
 
       try {
-        const res = await getProposalList(daoChainId, daoAddress, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalList(daoChainId, status, (currentPage - 1) * pageSize, pageSize)
         const data = res.data.data as any
         if (!data) {
           return
         }
         setTotal(data.total)
-        const list: ProposalListBaseProp[] = makeLIstData(daoChainId, data.list)
+        const list: ProposalListBasev2Prop[] = makeLIstData(daoChainId, data.list)
         setResult(list)
       } catch (error) {
         console.error('getProposalList', error)
@@ -521,64 +621,40 @@ export function useTaskProposalList(daoChainId: ChainId, daoAddress: string) {
   }
 }
 
-export function useJobsList(exceptLevel: string, daoAddress: string, chainId: number, refresh?: number) {
+export function useJobsList(daoId: number, refresh?: number) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
-  const [result, setResult] = useState<
-    {
-      account: string
-      avatar: string
-      chainId: ChainId
-      daoAddress: string
-      discord: string
-      jobId: number
-      nickname: string
-      opensea: string
-      twitter: string
-      youtobe: string
-    }[]
-  >([])
+  const [result, setResult] = useState<JobsListProps[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
 
   useEffect(() => {
     setCurrentPage(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [daoAddress, chainId])
+  }, [daoId])
 
   useEffect(() => {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
+        const res = await getJobsList(daoId, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: {
-          account: string
-          avatar: string
-          chainId: ChainId
-          daoAddress: string
-          discord: string
-          jobId: number
-          nickname: string
-          opensea: string
-          twitter: string
-          youtobe: string
-        }[] = data.map((item: any) => ({
+        const list: JobsListProps[] = data.data.map((item: any) => ({
           account: item.account,
           avatar: item.avatar,
-          chainId: item.chainId,
-          daoAddress: item.daoAddress,
+          daoId: item.daoId,
           discord: item.discord,
           jobId: item.jobId,
+          jobsLevel: item.jobsLevel,
           nickname: item.nickname,
           opensea: item.opensea,
           twitter: item.twitter,
@@ -592,7 +668,7 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
         console.error('useJobsList', error)
       }
     })()
-  }, [chainId, currentPage, daoAddress, exceptLevel, refresh])
+  }, [currentPage, daoId, refresh])
 
   useEffect(() => {
     ;(async () => {
@@ -601,32 +677,21 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
         return
       }
       try {
-        const res = await getJobsList(exceptLevel, (currentPage - 1) * pageSize, pageSize, chainId, daoAddress)
-        const data = res.data.data as any
+        const res = await getJobsList(daoId, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        const list: {
-          account: string
-          avatar: string
-          chainId: ChainId
-          daoAddress: string
-          discord: string
-          jobId: number
-          nickname: string
-          opensea: string
-          twitter: string
-          youtobe: string
-        }[] = data.map((item: any) => ({
+        const list: JobsListProps[] = data.data.map((item: any) => ({
           account: item.account,
           avatar: item.avatar,
-          chainId: item.chainId,
-          daoAddress: item.daoAddress,
+          daoId: item.daoId,
           discord: item.discord,
           jobId: item.jobId,
+          jobsLevel: item.jobsLevel,
           nickname: item.nickname,
           opensea: item.opensea,
           twitter: item.twitter,
@@ -640,6 +705,120 @@ export function useJobsList(exceptLevel: string, daoAddress: string, chainId: nu
         setLoading(false)
         toTimeRefresh()
         console.error('useJobsList', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
+
+  return useMemo(
+    () => ({
+      loading,
+      page: {
+        setCurrentPage,
+        currentPage,
+        total,
+        totalPage: Math.ceil(total / pageSize),
+        pageSize
+      },
+      result
+    }),
+    [currentPage, loading, total, result]
+  )
+}
+
+export interface SpacesListProp {
+  access: string
+  bio: string
+  creator: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  daoId: number
+  lastEditBy: {
+    account: string
+    avatar: string
+    nickname: string
+  }
+  lastEditTime: number
+  members: number
+  spacesId: number
+  title: string
+  types: string
+}
+
+export function useDeleteSpace() {
+  return useCallback((spacesId: number) => {
+    return deleteSpace(spacesId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
+}
+
+export function useGetSpacesList(daoId: number, refresh?: number) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [total, setTotal] = useState<number>(0)
+  const pageSize = 50
+  const dispatch = useDispatch()
+  const [result, setResult] = useState<SpacesListProp[]>([])
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+
+  useEffect(() => {
+    setCurrentPage(1)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daoId])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      try {
+        const res = await getSpacesList(daoId, (currentPage - 1) * pageSize, pageSize)
+        setLoading(false)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: SpacesListProp[] = data.data
+        dispatch(updateSpaceListData({ spaceListData: list }))
+        setResult(list)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('useGetSpacesList', error)
+      }
+    })()
+  }, [currentPage, daoId, dispatch, refresh])
+
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1) {
+        toTimeRefresh()
+        return
+      }
+      try {
+        const res = await getSpacesList(daoId, (currentPage - 1) * pageSize, pageSize)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        const list: SpacesListProp[] = data.data
+        setResult(list)
+        toTimeRefresh()
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        toTimeRefresh()
+        console.error('useGetSpacesList', error)
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -21,8 +21,6 @@ import logo from '../../assets/svg/logo.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
-import { useDaoInfo } from 'hooks/useDaoInfo'
-import { ChainId } from 'constants/chain'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
 import { useUserInfo } from 'state/userInfo/hooks'
@@ -34,6 +32,8 @@ import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useGetWorkspaceInfo } from 'hooks/useBackedTaskServer'
 
 interface TabContent {
   title: string
@@ -67,7 +67,7 @@ export const Tabs: Tab[] = [
       // },
       {
         title: 'Create DAO',
-        route: routes.CreatorDao,
+        route: routes.CreateDao,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
             <DaosIcon />
@@ -298,94 +298,116 @@ export default function Header() {
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
   }, [])
-
   const { pathname } = useLocation()
-  const [daoChainId, daoAddress] = useMemo(() => {
+  const daoId = useMemo(() => {
     const path = pathname.split('/')
-    return [path[3], path[4]]
+    return path[3]
   }, [pathname])
-  const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  console.log('header', daoId, daoInfo)
 
-  const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\/0x[\da-zA-Z]+\//, ''), [pathname])
+  const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
+  const { result } = useGetWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1]))
+  const isShow = useMemo(() => {
+    if (curPath === routes.CreateDao) {
+      return false
+    }
+    return true
+  }, [curPath])
   const makeBreadcrumbs = useMemo(() => {
-    if (!daoInfo?.name) {
+    if (!daoInfo?.daoName) {
       return []
     }
     const _list = curPath.split('/').map(v => {
-      if (v === 'about_setting') {
-        return 'About & Setting'
+      if (v === 'settings') {
+        return 'Settings'
+      }
+      if (v === 'task') {
+        return result?.title || 'task'
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
-    return [daoInfo.name, ..._list]
-  }, [curPath, daoInfo?.name])
+    const listData = _list.filter((v, index) => {
+      const isNumber = !/\d/.test(v)
+      const isLastItem = _list.length - 1 !== index
+      return isNumber || isLastItem
+    })
+    return [daoInfo.daoName, ...listData]
+  }, [curPath, daoInfo.daoName, result?.title])
+  console.log(makeBreadcrumbs)
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 
   if (isGovernance) {
     return (
-      <StyledAppBar
-        sx={{
-          paddingLeft: '292px !important'
-        }}
-      >
-        <Box
-          width={'100%'}
-          display={'flex'}
-          alignItems={'center'}
-          justifyContent={'space-between'}
+      <>
+        <StyledAppBar
           sx={{
-            fontWeight: 500,
-            '& li a svg path': {
-              fill: '#0049C6'
-            },
-            '& li a': {
-              color: '#3F5170',
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none'
-            }
+            paddingLeft: '292px !important'
           }}
         >
-          <Breadcrumbs aria-label="breadcrumb">
-            <NavLink to="/">
-              <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
-              DAOs
-            </NavLink>
-            {makeBreadcrumbs.map((v, i) => (
-              <Typography
-                key={v}
-                color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
-                fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
-              >
-                {v}
-              </Typography>
-            ))}
-          </Breadcrumbs>
-          <HeaderRight />
-        </Box>
-      </StyledAppBar>
+          <Box
+            width={'100%'}
+            display={'flex'}
+            alignItems={'center'}
+            justifyContent={'space-between'}
+            sx={{
+              fontWeight: 500,
+              '& li a svg path': {
+                fill: '#0049C6'
+              },
+              '& li a': {
+                color: '#3F5170',
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none'
+              }
+            }}
+          >
+            <Breadcrumbs aria-label="breadcrumb">
+              <NavLink to="/">
+                <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
+                DAOs
+              </NavLink>
+              {makeBreadcrumbs.map((v, i) => (
+                <Typography
+                  key={v}
+                  color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
+                  fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
+                >
+                  {v}
+                </Typography>
+              ))}
+            </Breadcrumbs>
+            <HeaderRight />
+          </Box>
+        </StyledAppBar>
+      </>
     )
   }
   return (
     <>
-      <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
-      <Filler />
-      <StyledMobileAppBar>
-        <TabsBox />
-      </StyledMobileAppBar>
-
-      <StyledAppBar>
-        <Box display="flex" alignItems="center">
-          <MainLogo to={routes.Governance}>
-            <Image src={logo} alt={'logo'} />
-          </MainLogo>
-          <HideOnMobile breakpoint="md">
+      {isShow && (
+        <>
+          <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
+          <Filler />
+          <StyledMobileAppBar>
             <TabsBox />
-          </HideOnMobile>
-        </Box>
-        <HeaderRight />
-      </StyledAppBar>
+          </StyledMobileAppBar>
+
+          <StyledAppBar>
+            <Box display="flex" alignItems="center">
+              <MainLogo to={routes.Governance}>
+                <Image src={logo} alt={'logo'} />
+              </MainLogo>
+              <HideOnMobile breakpoint="md">
+                <TabsBox />
+              </HideOnMobile>
+            </Box>
+            <HeaderRight />
+          </StyledAppBar>
+        </>
+      )}
     </>
   )
 }

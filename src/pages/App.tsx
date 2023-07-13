@@ -1,8 +1,8 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
-import { Redirect, Route, Switch } from 'react-router-dom'
-import { styled } from '@mui/material'
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
+import { styled, useTheme } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
@@ -15,8 +15,10 @@ import Governance from 'pages/Governance/GovernanceContainer'
 import GovernanceHome from 'pages/Governance'
 import DaoInfoLayout from 'pages/DaoInfo/DaoInfoLayout'
 import ProposalList from 'pages/DaoInfo/Children/Proposal'
-import Creator from 'pages/Creator'
-import CreatorDao from 'pages/Creator/CreatorDao'
+// import Creator from 'pages/Creator'
+// import CreatorDao from 'pages/Creator/CreatorDao'
+import CreateDao from 'pages/Creator/CreateDao'
+import { useDispatch } from 'react-redux'
 import CreatorToken from 'pages/Creator/CreatorToken'
 // import AiChat from 'pages/AiChat'
 
@@ -36,6 +38,7 @@ import Profile from 'pages/Profile'
 import CreateProposal from 'pages/DaoInfo/Children/Proposal/CreateProposal'
 import ProposalDetail from 'pages/DaoInfo/Children/Proposal/ProposalDetail'
 import CreateAirdrop from 'pages/DaoInfo/Children/Activity/CreateAirdrop'
+import About from 'pages/DaoInfo/Children/About'
 // import CreatePublicSale from 'pages/DaoInfo/Children/Activity/CreatePublicSale'
 import ActivityAirdropDetail from 'pages/Activity/Children/Airdrop'
 // import ActivitySaleDetail from 'pages/Activity/Children/PublicSale'
@@ -47,13 +50,17 @@ import store from 'state'
 // import Home from './Home'
 import Member from './Member'
 // import Task from './Task'
-const Task = lazy(() => import('./Task'))
+// const Task = lazy(() => import('./Task'))
+import Task from './Task'
 import ComingSoon from './ComingSoon'
-import Page from './RedirectPage'
 import AboutSetting from './AboutSetting'
 import DaoBounty from './daoBounty'
 import DappStore from './TokenList/DappStore'
 import LoginModal from 'components/Header/LoginModal'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import DaoInfoUpdater from '../state/buildingGovDao/updater'
+import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -85,18 +92,34 @@ const ContentWrapper = styled('div')({
   width: '100%',
   maxHeight: '100vh',
   overflow: 'auto',
-  alignItems: 'center'
+  alignItems: 'center',
+  '& .toast-container': {
+    width: 446,
+    '& .Toastify__toast': {
+      borderRadius: '10px',
+      border: '1px solid #97B7EF'
+    },
+    '& .Toastify__toast-body': {
+      justifyContent: 'center',
+      color: '#3F5170',
+      fontWeight: 500,
+      fontSize: 14
+    }
+  }
 })
 
-const BodyWrapper = styled('div')(({ theme }) => ({
-  paddingTop: theme.height.header,
-  minHeight: '100vh',
-  [theme.breakpoints.down('md')]: {
-    minHeight: `${theme.height.mobileHeader} - 50px)`
-  }
+const BodyWrapper = styled('div')(({}) => ({
+  // paddingTop: theme.height.header,
+  minHeight: '100vh'
+  // [theme.breakpoints.down('md')]: {
+  //   minHeight: `${theme.height.mobileHeader} - 50px)`
+  // }
 }))
 
 export default function App() {
+  const { pathname } = useLocation()
+  const theme = useTheme()
+  const dispatch = useDispatch()
   useEffect(() => {
     fetchUserLocation().then(res => {
       store.dispatch({
@@ -106,17 +129,31 @@ export default function App() {
     })
   }, [])
 
+  useEffect(() => {
+    if (!pathname.includes('/governance/daoInfo')) {
+      dispatch(removeCreateDaoData())
+    }
+  }, [dispatch, pathname])
+
   return (
     <Suspense fallback={null}>
       <ModalProvider>
         <AppWrapper id="app">
           <LoginModal />
           <Route component={GoogleAnalyticsReporter} />
-          <Route path={routes.Page} component={Page} />
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
-            <BodyWrapper id="body">
+            <ToastContainer className={'toast-container'} position="top-center" pauseOnFocusLoss={false} />
+            <BodyWrapper
+              id="body"
+              sx={{
+                paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
+                [theme.breakpoints.down('md')]: {
+                  minHeight: `${theme.height.mobileHeader} - 50px`
+                }
+              }}
+            >
               <Popups />
               <Polling />
               {/* <WarningModal /> */}
@@ -127,7 +164,9 @@ export default function App() {
                     path={routes.DaoInfo}
                     render={() => (
                       <DaoInfoLayout>
+                        <DaoInfoUpdater />
                         <Switch>
+                          <Route path={routes.DaoInfoAbout} exact strict component={About} />
                           <Route path={routes.DaoMember} exact strict component={Member} />
                           <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
                           <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
@@ -135,14 +174,13 @@ export default function App() {
                           <Route path={routes.DaoAboutSetting} exact strict component={AboutSetting} />
                           <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoTeamTask} exact strict component={Task} />
+                          <Route path={routes._DaoTeamTask} exact strict component={Task} />
                           <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
                           <Route path={routes.DaoTeamTrash} exact strict component={ComingSoon} />
                           <Route path={routes.Proposal} exact strict component={ProposalList} />
                           <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
                           <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
                           <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
-
                           <Route
                             exact
                             path={routes.DaoInfo}
@@ -168,8 +206,9 @@ export default function App() {
                   <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
                   {/* <Route exact strict path={routes.ActivitySaleDetail} component={ActivitySaleDetail} /> */}
                   {/* <Route exact strict path={routes.Tokens} component={TokenList} /> */}
-                  <Route exact strict path={routes.Creator} component={Creator} />
-                  <Route exact strict path={routes.CreatorDao} component={CreatorDao} />
+                  {/* <Route exact strict path={routes.Creator} component={Creator} /> */}
+                  {/* <Route exact strict path={routes.CreatorDao} component={CreatorDao} /> */}
+                  <Route exact strict path={routes.CreateDao} component={CreateDao} />
                   <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
                   <Route exact strict path={routes.Notification} component={Notification} />
                   {/* <Route exact strict path={routes.PushList} component={PushList} /> */}

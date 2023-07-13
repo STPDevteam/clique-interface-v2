@@ -12,12 +12,12 @@ export interface HomeListPaginationProp {
 export interface ActivityListPaginationProp {
   chainId: ChainId | undefined
   types: ActivityType | undefined
-  status: ActivityStatus | undefined
+  status: ActivityStatus | undefined | string
   currentPage: number
 }
 export interface SbtListPaginationProp {
   chainId: ChainId | undefined
-  status: ActivityStatus | undefined
+  status: ActivityStatus | undefined | string
   currentPage: number
   category: number
 }
@@ -34,6 +34,7 @@ export const updateHomeListPagination = createAction<{ homeListPagination: HomeL
 export const updateActivityListPagination = createAction<{ activityListPagination: ActivityListPaginationProp }>(
   'pagination/updateActivityListPagination'
 )
+
 export const updateSbtListPagination = createAction<{ sbtListPagination: SbtListPaginationProp }>(
   'pagination/updateSbtListPagination'
 )

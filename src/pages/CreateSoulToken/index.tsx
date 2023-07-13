@@ -145,9 +145,7 @@ export default function Index() {
         showModal(
           <TransactionSubmittedModal
             hideFunc={() => {
-              history.push(
-                routes._SoulTokenDetail + '/' + daoValue?.chainId + '/' + daoValue?.daoAddress + '/' + res.sbtId
-              )
+              history.push(routes._SoulTokenDetail + '/' + daoValue?.daoId + '/' + res.sbtId)
             }}
             hash={res.hash}
           />
@@ -166,6 +164,7 @@ export default function Index() {
     CreateSbtCallback,
     daoValue?.chainId,
     daoValue?.daoAddress,
+    daoValue?.daoId,
     account,
     fileValue,
     itemName,

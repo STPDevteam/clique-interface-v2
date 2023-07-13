@@ -13,27 +13,38 @@ import { routes } from 'constants/routes'
 import { useCallback, useState } from 'react'
 import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
+import { toast } from 'react-toastify'
+import { ReactComponent as TwitterGray } from 'assets/svg/twitter_gray.svg'
+import { ReactComponent as DiscordGray } from 'assets/svg/discord_gray.svg'
+import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
+import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
 
 export const JobsType: any = {
-  A_superAdmin: 'Super Admin',
-  B_admin: 'Admin',
-  C_member: 'Member'
+  0: 'Owner',
+  1: 'superAdmin',
+  2: 'Admin'
 }
 
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoId = Number(curDaoId) as ChainId
   const [hoverIndex, setHoverIndex] = useState<any>(null)
-  const { changeRole } = useChangeAdminRole()
+  const changeRole = useChangeAdminRole()
 
   const onRemove = useCallback(
-    async (e: any, id) => {
-      changeRole(curDaoChainId, daoAddress, id)
+    async (e: any, address: string) => {
+      changeRole(address, 100, daoId).then((res: any) => {
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'Network error')
+          return
+        }
+        toast.success('Remove success')
+      })
       e.stopPropagation()
     },
-    [changeRole, curDaoChainId, daoAddress]
+    [changeRole, daoId]
   )
   return (
     <Box
@@ -114,21 +125,21 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 '& button': {
                   fontWeight: 500
                 },
-                '& .A_superAdmin': {
+                '& .Owner': {
                   backgroundColor: '#0049C6'
                 },
-                '& .B_admin': {
+                '& .superAdmin': {
                   backgroundColor: '#97B7EF'
                 },
-                '& .C_member': {
+                '& .Admin': {
                   backgroundColor: '#EBF0F7',
                   color: '#80829F'
                 }
               }}
             >
               <Image src={item.avatar || owl}></Image>
-              <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24}>
-                {item.nickname}
+              <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24} padding={'0 10px'}>
+                {item.nickname || 'unnamed'}
               </Typography>
               <Box
                 sx={{
@@ -157,20 +168,37 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                   alignItems: 'center',
                   margin: '10px 0',
                   cursor: 'pointer',
+                  height: 16,
                   gap: 10
                 }}
               >
-                <Twitter onClick={() => window.open(item.twitter, '_blank')}></Twitter>
-                <Youtobe onClick={() => window.open(item.youtobe, '_blank')}></Youtobe>
-                <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
-                <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
+                {item.twitter ? (
+                  <Twitter onClick={() => window.open(item.twitter, '_blank')}></Twitter>
+                ) : (
+                  <TwitterGray />
+                )}
+                {item.youtobe ? (
+                  <Youtobe onClick={() => window.open(item.youtobe, '_blank')}></Youtobe>
+                ) : (
+                  <YoutobeGray />
+                )}
+                {item.discord ? (
+                  <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
+                ) : (
+                  <DiscordGray />
+                )}
+                {item.opensea ? (
+                  <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
+                ) : (
+                  <OpenseaGray />
+                )}
               </Box>
-              <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={item.jobs}>
-                {JobsType[item.jobs] || 'unnamed'}
+              <Button width="98px" height="22px" borderRadius="30px" fontSize={13} className={JobsType[item.jobsLevel]}>
+                {JobsType[item.jobsLevel] === 'superAdmin' ? 'Super Admin' : JobsType[item.jobsLevel] || 'unnamed'}
               </Button>
             </Box>
             {hoverIndex === index &&
-              role === 'A_superAdmin' &&
+              (role === 'superAdmin' || role === 'owner') &&
               account &&
               account.toLowerCase() !== item.account.toLowerCase() && (
                 <Box
@@ -187,7 +215,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                     height="22px"
                     borderRadius="30px"
                     fontSize={13}
-                    onClick={e => onRemove(e, item.jobId)}
+                    onClick={e => onRemove(e, item.account)}
                   >
                     Remove
                   </Button>

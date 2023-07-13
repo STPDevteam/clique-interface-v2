@@ -95,6 +95,7 @@ export default function Basic({ next }: { next: () => void }) {
             >{`Supports JPG, PNG, and size <2MB.`}</Typography>
           </Box>
           <ChainSelect
+            height={40}
             chainList={ChainList}
             selectedChain={currentBaseChain}
             onChange={e => updateTokenBasicKeyData('baseChainId', e?.id || null)}

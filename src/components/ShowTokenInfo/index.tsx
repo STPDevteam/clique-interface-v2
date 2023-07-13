@@ -14,7 +14,12 @@ export function ShowTokenInfo({ address, chainId }: { address: string; chainId: 
     <Stack direction={'row'} spacing={4} justifyContent="center" alignItems={'center'}>
       <CurrencyLogo currency={token} size={isSmDown ? '30px' : '40px'} />
       <Stack>
-        <Typography fontSize={14} fontWeight={600} textAlign="left">
+        <Typography
+          sx={{ width: 200, whiteSpace: ' nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
+          fontSize={14}
+          fontWeight={600}
+          textAlign="left"
+        >
           {token.name}
         </Typography>
         <Typography variant="body2" fontWeight={500} alignSelf="baseline" textAlign="left">

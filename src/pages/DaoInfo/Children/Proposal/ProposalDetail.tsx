@@ -1,80 +1,99 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import Back from 'components/Back'
 import Loading from 'components/Loading'
-import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
-import { DaoInfoProp, useDaoInfo } from 'hooks/useDaoInfo'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import DetailContent from './detail'
-import DetailVote from './detail/Vote'
+// import DetailVote from './detail/Vote'
 import VoteProgress from './detail/VoteProgress'
 import VoteInfo from './detail/Info'
-import { useProposalDetailInfo } from 'hooks/useProposalInfo'
-import { useActiveWeb3React } from 'hooks'
 import DaoContainer from 'components/DaoContainer'
+import { useProposalDetailsInfo } from 'hooks/useBackedProposalServer'
+import { VotingTypes } from 'state/buildingGovDao/actions'
+import { formatNumberWithCommas } from 'utils'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 export default function ProposalDetail() {
-  const { chainId: daoChainId, address: daoAddress, proposalId } = useParams<{
-    chainId: string
-    address: string
+  const { daoId: daoId, proposalId } = useParams<{
+    daoId: string
     proposalId: string
   }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
+  const curDaoId = Number(daoId)
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   return daoInfo ? (
     <DaoContainer>
-      <DetailBox daoChainId={curDaoChainId} daoInfo={daoInfo} proposalId={Number(proposalId)} />
+      <DetailBox daoId={curDaoId} proposalId={Number(proposalId)} />
     </DaoContainer>
   ) : (
     <Loading />
   )
 }
 
-function DetailBox({
-  daoInfo,
-  daoChainId,
-  proposalId
-}: {
-  daoInfo: DaoInfoProp
-  daoChainId: ChainId
-  proposalId: number
-}) {
+function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
-
-  const proposalDetailInfo = useProposalDetailInfo(daoInfo.daoAddress, daoChainId, proposalId, account || undefined)
+  const [rand, setRand] = useState<number>(Math.random())
+  const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
 
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/proposal`)
-  }, [daoChainId, daoInfo.daoAddress, history])
+    history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+  }, [daoId, history])
+
+  useEffect(() => {
+    setRand(Math.random())
+  }, [account])
 
   return proposalDetailInfo ? (
     <Box>
-      <Back sx={{ margin: 0 }} text="All Proposals" event={toList} />
-      <Box mt={30}>
-        <Grid container spacing={40}>
-          <Grid item md={8} xs={12}>
+      <Back sx={{ marginLeft: 0 }} text="All Proposals" event={toList} />
+      <Box mt={20}>
+        <Grid container spacing={20}>
+          <Grid item md={12} xs={12}>
             <DetailContent proposalInfo={proposalDetailInfo} />
           </Grid>
-          <Grid item md={4} xs={12}>
-            <DetailVote proposalInfo={proposalDetailInfo} daoAddress={daoInfo.daoAddress} daoChainId={daoChainId} />
-          </Grid>
+          {/* <Grid item md={12} xs={12}>
+            <DetailVote proposalInfo={proposalDetailInfo} />
+          </Grid> */}
         </Grid>
       </Box>
-      <Box mt={40}>
-        <Grid container spacing={40}>
-          <Grid item md={8} xs={12}>
+      <Box mt={20}>
+        <Grid container spacing={20}>
+          <Grid item md={12} xs={12}>
             <VoteProgress
-              proposalOptions={proposalDetailInfo.proposalOptions}
-              daoAddress={daoInfo.daoAddress}
-              daoChainId={daoChainId}
+              refresh={setRand}
+              proposalOptions={proposalDetailInfo.options}
               proposalId={proposalId}
+              proposalInfo={proposalDetailInfo}
             />
           </Grid>
-          <Grid item md={4} xs={12}>
-            <VoteInfo proposalInfo={proposalDetailInfo} daoAddress={daoInfo.daoAddress} daoChainId={daoChainId} />
+          <Grid item md={12} xs={12}>
+            <Box
+              display={'flex'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
+              sx={{
+                backgroundColor: '#F8FBFF',
+                height: 80,
+                borderRadius: '8px',
+                padding: 30,
+                color: '#80829F'
+              }}
+            >
+              <Typography>
+                Voting types: {proposalDetailInfo.votingType === VotingTypes.SINGLE ? 'Single-voting' : 'Multi-voting'}
+              </Typography>
+              <Typography>
+                Your votes:{' '}
+                {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes - proposalDetailInfo.alreadyVoted)) ||
+                  '--'}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item md={12} xs={12}>
+            <VoteInfo proposalInfo={proposalDetailInfo} refresh={setRand} />
           </Grid>
         </Grid>
       </Box>

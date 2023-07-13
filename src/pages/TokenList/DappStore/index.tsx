@@ -4,7 +4,7 @@ import banner from 'assets/images/store_banner.png'
 // import nftIcon from 'assets/images/nftIcon.png'
 // import swapIcon from 'assets/images/swapIcon.png'
 import rewardsIcon from 'assets/images/rewardsIcon.png'
-import soulboundIcon from 'assets/images/soulboundIcon.png'
+import sbtIcon from 'assets/images/soulboundIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
@@ -16,9 +16,7 @@ import chainLogo2 from 'assets/images/chainLogo2.png'
 import chainLogo3 from 'assets/images/chainLogo3.png'
 import chainLogo4 from 'assets/images/chainLogo4.png'
 import chainLogo5 from 'assets/images/chainLogo5.png'
-import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
-import { useActiveWeb3React } from 'hooks'
-import { useWalletModalToggle } from 'state/application/hooks'
+
 const cardsData = [
   // {
   //   title: 'Clique NFT Pass',
@@ -50,7 +48,7 @@ const cardsData = [
     des: 'Add a DAO on Clique',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #F5F1FF 27.66%, #FEFEFF 99.85%)',
-    route: routes.CreatorDao
+    route: routes.CreateDao
   },
   {
     title: 'Create Token',
@@ -70,7 +68,7 @@ const cardsData = [
   },
   {
     title: 'Create Soulbound Token of DAO',
-    icon: soulboundIcon,
+    icon: sbtIcon,
     des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: 'all',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
@@ -79,12 +77,7 @@ const cardsData = [
 ]
 
 function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }: any) {
-  const loginSignature = useLoginSignature()
-  const userSignature = useUserInfo()
   const history = useHistory()
-  const { account } = useActiveWeb3React()
-
-  const toggleWalletModal = useWalletModalToggle()
 
   return (
     <Box
@@ -117,27 +110,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
       }}
       onClick={() => {
         if (!route && !link) return
-        if (route) {
-          if (route === routes.CreateSoulToken) {
-            if (!account) return toggleWalletModal()
-            if (!userSignature) {
-              loginSignature()
-                .then(() => {
-                  history.push(route)
-                })
-                .catch(err => {
-                  console.log(err)
-                })
-            } else {
-              history.push(route)
-            }
-          } else {
-            history.push(route)
-          }
-        } else {
-          window.open(link, '_blank')
-        }
-        // route ? history.push(route) : window.open(link, '_blank')
+        route ? history.push(route) : window.open(link, '_blank')
       }}
     >
       <Box className="headerCon">
@@ -156,11 +129,19 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           Support Chains
         </Typography>
         {supportChainsIcon === 'all' ? (
-          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+          <Typography
+            mt={10}
+            fontWeight={400}
+            fontSize={14}
+            lineHeight={'20px'}
+            color={'#3F5170'}
+            textAlign={'left'}
+            width={'100%'}
+          >
             All Chain
           </Typography>
         ) : supportChainsIcon === '' ? (
-          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
             -
           </Typography>
         ) : (

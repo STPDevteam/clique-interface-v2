@@ -45,7 +45,11 @@ const StyledSelect = styled(SingleSelect)(({ theme }) => ({
   position: 'relative',
   padding: '0 10px',
   '& .MuiFormLabel-root': {
-    paddingLeft: 5
+    paddingLeft: 5,
+    maxWidth: 180,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   },
   '& .MuiSelect-icon': {
     color: theme.palette.primary.contrastText,

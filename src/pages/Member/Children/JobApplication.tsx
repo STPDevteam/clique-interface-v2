@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 // import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
@@ -6,53 +6,44 @@ import Table from 'components/Table'
 import { useCallback, useMemo } from 'react'
 import { JobsApplyListProp } from 'hooks/useBackedDaoServer'
 import { useReviewApply } from 'hooks/useBackedTaskServer'
-import { ChainId } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
-import useModal from 'hooks/useModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { JobsType } from './CardView'
 import avatar from 'assets/images/avatar.png'
+import { toast } from 'react-toastify'
 // import Button from 'components/Button/Button'
 
-export default function JobApplication({
-  result,
-  daoChainId,
-  daoAddress,
-  reFetch
-}: {
-  result: JobsApplyListProp[]
-  daoChainId: ChainId
-  daoAddress: string
-  reFetch: () => void
-}) {
-  const { showModal } = useModal()
+export default function JobApplication({ result, reFetch }: { result: JobsApplyListProp[]; reFetch: () => void }) {
   const { account } = useActiveWeb3React()
   const reviewApply = useReviewApply()
   const opTypeCallback = useCallback(
     (op: string, applyId: number) => {
       if (!account) return
       if (op === 'agree') {
-        reviewApply(daoChainId, daoAddress, true, applyId)
-          .then(res => {
-            showModal(<MessageBox type="success">Agree success</MessageBox>)
+        reviewApply(true, applyId)
+          .then((res: any) => {
+            if (res.data.code !== 200) {
+              toast.error(res.data.msg || 'Network error')
+              return
+            }
             reFetch()
-            console.log(res)
+            toast.success('Agree success')
           })
           .catch(e => console.log(e))
       } else {
-        reviewApply(daoChainId, daoAddress, false, applyId)
-          .then(res => {
-            showModal(<MessageBox type="success">Reject success</MessageBox>)
+        reviewApply(false, applyId)
+          .then((res: any) => {
+            if (res.data.code !== 200) {
+              toast.error(res.data.msg || 'Network error')
+              return
+            }
             reFetch()
-            console.log(res)
+            toast.success('Reject success')
           })
           .catch(e => console.log(e))
       }
     },
-    [account, daoAddress, daoChainId, reFetch, reviewApply, showModal]
+    [account, reFetch, reviewApply]
   )
-
-  console.log(result)
 
   const tableList = useMemo(() => {
     return result.map((item: JobsApplyListProp) => [
@@ -76,25 +67,32 @@ export default function JobApplication({
         {item.nickname || 'unnamed'}
       </Box>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
-        {JobsType[item.applyRole]}
+        {JobsType[item.applyLevel] === 'superAdmin' ? 'Super Admin' : JobsType[item.applyLevel]}
       </Typography>,
       <Typography key={item.message} fontWeight={400} fontSize={13} color={'#80829F'}>
         {timeStampToFormat(item.applyTime)}
       </Typography>,
-      <Box key={item.message} width={'100%'}>
-        <Typography
-          noWrap
-          sx={{
-            width: '100%',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis'
-          }}
-          fontWeight={400}
-          fontSize={12}
-          color={'#80829F'}
-        >
-          {item.message || '--'}
-        </Typography>
+      <Box key={item.message} width={'100%'} style={{ cursor: 'pointer' }}>
+        <Tooltip title={item.message || '--'} arrow placement="top">
+          <Typography
+            sx={{
+              width: '100%',
+              lineHeight: '20px',
+              whiteSpace: 'normal',
+              wordBreak: 'break-word',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              '-webkit-box-orient': 'vertical',
+              '-webkit-line-clamp': '2'
+            }}
+            fontWeight={400}
+            fontSize={12}
+            color={'#80829F'}
+          >
+            {item.message || '--'}
+          </Typography>
+        </Tooltip>
       </Box>,
       <Box
         key={item.message}
@@ -143,6 +141,9 @@ export default function JobApplication({
       sx={{
         '& table tbody tr td:nth-of-type(4)': {
           maxWidth: '173px !important'
+        },
+        '& .MuiTableCell-root:last-child, .MuiTableCell-root:first-of-type': {
+          borderRadius: 0
         }
       }}
     >

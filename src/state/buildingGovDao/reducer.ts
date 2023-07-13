@@ -1,28 +1,55 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { updateCreateDaoData, removeCreateDaoData, CreateDaoDataProp, VotingTypes } from './actions'
+import {
+  updateCreateDaoData,
+  removeCreateDaoData,
+  CreateDaoDataProp,
+  VotingTypes,
+  CreateDaoListDataProp,
+  updateDaoListData,
+  MyJoinDaoDataProp,
+  updateMyJoinDaoData,
+  updateSpaceListData,
+  updateJoinDaoModalStatus
+} from './actions'
+import { LeftTaskDataProps } from 'hooks/useBackedTaskServer'
 
 interface BuildingDaoData {
   createDaoData: CreateDaoDataProp
+  myJoinDaoData: MyJoinDaoDataProp
+  createDaoListData: CreateDaoListDataProp[]
+  spaceListData: LeftTaskDataProps[]
+  isShowJoinDaoModal: boolean
 }
 
 const initialDaoDataState: BuildingDaoData = {
   createDaoData: {
+    approve: true,
+    bio: '',
+    daoCanCreateProposal: true,
     daoName: '',
-    daoHandle: '',
-    description: '',
-    daoImage: '',
-    githubLink: '',
-    websiteLink: '',
-    twitterLink: '',
-    discordLink: '',
-    category: '',
-    baseChainId: undefined,
-    tokenAddress: '',
+    handle: '',
+    daoLogo: '',
+    github: '',
+    website: '',
+    twitter: '',
+    discord: '',
+    category: [],
+    daoId: 0,
+    governance: [],
+    proposalThreshold: '',
     createProposalMinimum: '',
     executeMinimum: '',
-    defaultVotingPeriod: 86400 * 3,
-    votingTypes: VotingTypes.ANY
-  }
+    votingPeriod: 0,
+    votingType: VotingTypes.ANY
+  },
+  myJoinDaoData: {
+    isJoin: false,
+    job: '',
+    privateSpaces: []
+  },
+  createDaoListData: [],
+  spaceListData: [],
+  isShowJoinDaoModal: false
 }
 
 export default createReducer(initialDaoDataState, builder =>
@@ -35,5 +62,20 @@ export default createReducer(initialDaoDataState, builder =>
         ...state.createDaoData,
         ...payload.createDaoData
       }
+    })
+    .addCase(updateMyJoinDaoData, (state, { payload }) => {
+      state.myJoinDaoData = {
+        ...state.myJoinDaoData,
+        ...payload.myJoinDaoData
+      }
+    })
+    .addCase(updateSpaceListData, (state, { payload }) => {
+      state.spaceListData = payload.spaceListData
+    })
+    .addCase(updateDaoListData, (state, { payload }) => {
+      state.createDaoListData = payload.createDaoListData || []
+    })
+    .addCase(updateJoinDaoModalStatus, (state, { payload }) => {
+      state.isShowJoinDaoModal = payload.isShowJoinDaoModal
     })
 )

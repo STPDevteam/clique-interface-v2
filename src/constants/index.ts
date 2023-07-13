@@ -152,22 +152,22 @@ export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
 }
 
 export const CREATE_SBT: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '',
-  [ChainId.POLYGON]: '',
-  [ChainId.KLAYTN]: '',
-  [ChainId.BSC]: '',
-  [ChainId.GOERLI]: '',
-  [ChainId.POLYGON_MUMBAI]: '',
-  [ChainId.KLAYTN_BAOBAB]: '',
-  [ChainId.BSCTEST]: '',
-  [ChainId.POLYGON_MANGO]: '',
-  [ChainId.COINBASE_TESTNET]: '',
+  [ChainId.MAINNET]: process.env.REACT_APP_ETH_PUBLICSALE_ADDRESS || '',
+  [ChainId.POLYGON]: process.env.REACT_APP_POLYGON_PUBLICSALE_ADDRESS || '',
+  [ChainId.KLAYTN]: process.env.REACT_APP_KLAYTN_PUBLICSALE_ADDRESS || '',
+  [ChainId.BSC]: process.env.REACT_APP_BSC_PUBLICSALE_ADDRESS || '',
+  [ChainId.GOERLI]: process.env.REACT_APP_GOERLI_PUBLICSALE_ADDRESS || '',
+  [ChainId.POLYGON_MUMBAI]: process.env.REACT_APP_POLYGON_MUMBAI_PUBLICSALE_ADDRESS || '',
+  [ChainId.KLAYTN_BAOBAB]: process.env.REACT_APP_KLAYTN_BAOBAB_PUBLICSALE_ADDRESS || '',
+  [ChainId.BSCTEST]: process.env.REACT_APP_BSC_TESTNET_PUBLICSALE_ADDRESS || '',
+  [ChainId.POLYGON_MANGO]: process.env.REACT_APP_POLYGON_ZKEVM_TESTNET_PUBLICSALE_ADDRESS || '',
+  [ChainId.COINBASE_TESTNET]: process.env.REACT_APP_COINBASE_TESTNET_PUBLICSALE_ADDRESS || '',
   [ChainId.SEPOLIA]: '0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272'
 }
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
-export const serverUploadImage = serverBaseUrl + 'stpdao/v2/img/upload'
-export const signMessage = 'Welcome come Clique'
+export const serverUploadImage = serverBaseUrl + 'stpdao/v3/img/upload'
+export const signMessage = 'Welcome to Clique'
 export const myCliqueV1Domain = 'https://v1.myclique.io/'
 
 enum ENV {

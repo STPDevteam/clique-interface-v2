@@ -8,13 +8,16 @@ import { UserProfileProp } from 'hooks/useBackedProfileServer'
 import { useCallback, useMemo, useState } from 'react'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { userProfileUpdate } from 'utils/fetch/server'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-import useModal from 'hooks/useModal'
+import { toast } from 'react-toastify'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
   padding: '32px'
+})
+
+const TextareaStyle = styled(Input)({
+  height: '138px',
+  lineHeight: '20px'
 })
 
 export default function UpdateProfileModal({
@@ -24,7 +27,6 @@ export default function UpdateProfileModal({
   userProfile: UserProfileProp
   refreshProfile: () => void
 }) {
-  const { showModal } = useModal()
   const theme = useTheme()
   const { account } = useActiveWeb3React()
   const [avatar, setAvatar] = useState(userProfile.accountLogo)
@@ -47,17 +49,18 @@ export default function UpdateProfileModal({
       signatureStr = await loginSignature()
     }
     if (!signatureStr) return
-    try {
-      await userProfileUpdate(avatar, name, bio, discord, twitter, country, email, opensea, youtube)
-      showModal(<TransactiontionSubmittedModal header="Update success!" hideFunc={refreshProfile} />)
-    } catch (error) {
-      const err: any = error
-      showModal(
-        <MessageBox type="error">
-          {err?.data?.message || err?.error?.message || err?.message || 'Update error'}
-        </MessageBox>
-      )
-    }
+    userProfileUpdate(avatar, country, discord, email, bio, name, opensea, twitter, youtube)
+      .then((res: any) => {
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'network error')
+          return
+        }
+        refreshProfile()
+        toast.success('Update success')
+      })
+      .catch(err => {
+        toast.error(err?.data?.message || err?.error?.message || err?.message || 'Update error')
+      })
   }, [
     account,
     avatar,
@@ -69,7 +72,6 @@ export default function UpdateProfileModal({
     name,
     opensea,
     refreshProfile,
-    showModal,
     twitter,
     userSignature?.signature,
     youtube
@@ -114,7 +116,7 @@ export default function UpdateProfileModal({
             </Typography>
           </Box>
           <Input value={name} label="User Name" placeholder="nickname" onChange={e => setName(e.target.value)} />
-          <Input
+          <TextareaStyle
             value={bio}
             multiline
             placeholder="Tell us about yourself!"

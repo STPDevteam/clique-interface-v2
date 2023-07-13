@@ -1,42 +1,60 @@
-import { Stack, styled, Typography, Link as MuiLink, useTheme } from '@mui/material'
-import { Box } from '@mui/system'
+import {
+  Stack,
+  styled,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Box
+} from '@mui/material'
 import EmptyData from 'components/EmptyData'
-import CurrencyLogo from 'components/essential/CurrencyLogo'
-import Loading from 'components/Loading'
-import { ChainId, ChainListMap } from 'constants/chain'
-import { routes } from 'constants/routes'
-import { useBackedDaoAdmins } from 'hooks/useBackedDaoServer'
-import useBreakpoint from 'hooks/useBreakpoint'
-import { useDaoInfo } from 'hooks/useDaoInfo'
-import { AdminTagListBlock } from 'pages/DaoInfo/ShowAdminTag'
-import { ShowDaoToken } from 'pages/Governance/DaoItem'
-import { useMemo } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { VotingTypesName } from 'state/buildingGovDao/actions'
-import { getEtherscanLink } from 'utils'
-import { getVotingNumberByTimestamp } from 'utils/dao'
 import Image from 'components/Image'
-import avatar from 'assets/images/avatar.png'
+import Tooltip from 'components/Tooltip'
+import useBreakpoint from 'hooks/useBreakpoint'
+import { useMemo, useState } from 'react'
+import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
+import { getVotingNumberByTimestamp } from 'utils/dao'
+import { formatNumberWithCommas, getEtherscanLink, shortenAddress } from 'utils'
+import defaultLogo from 'assets/images/create-token-ball.png'
+import AboutIcon from 'assets/images/about_icon.png'
+
+import { ChainListMap } from 'constants/chain'
+import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useParams } from 'react-router-dom'
+import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
+import Copy from 'components/essential/Copy'
+import { ExternalLink } from 'theme/components'
+import Header from 'pages/AboutSetting/AboutHeader'
+import DaoContainer from 'components/DaoContainer'
 
 export const StyledItem = styled(Stack)(({ theme }) => ({
   border: `1px solid #D4D7E2`,
   padding: '24px 47px 26px 24px',
   borderRadius: theme.borderRadius.default,
-  // boxShadow: theme.boxShadow.bs1,
   marginBottom: 30,
   [theme.breakpoints.down('sm')]: {
     padding: '20px'
   }
 }))
 
-const StyledTitle = styled(Typography)(({}) => ({
-  fontFamily: 'Poppins',
-  fontWeight: 600,
+const Title = styled(Typography)(() => ({
+  fontWeight: 500,
   fontSize: '14px',
-  lineHeight: '21px',
-  color: '#80829F',
-  marginBottom: 14
+  lineHeight: '20px',
+  color: '#B5B7CF'
 }))
+
+// const StyledTitle = styled(Typography)(({}) => ({
+//   fontFamily: 'Poppins',
+//   fontWeight: 600,
+//   fontSize: '14px',
+//   lineHeight: '21px',
+//   color: '#80829F',
+//   marginBottom: 14
+// }))
 const ContentTitle = styled(Typography)(() => ({
   fontFamily: 'Inter',
   fontWeight: 500,
@@ -66,20 +84,65 @@ const StyledText = styled(Typography)(
 )
 
 export default function About() {
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
   const isSmDown = useBreakpoint('sm')
-  const theme = useTheme()
-  const daoInfo = useDaoInfo(daoAddress, curDaoChainId)
-  const { result: daoAdminList, loading: daoAdminLoading } = useBackedDaoAdmins(daoAddress, curDaoChainId)
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const [rand] = useState(Math.random())
+  const createDaoData = useGetDaoInfo(Number(daoId), rand)
   const votingPeriodDate = useMemo(
     () => (daoInfo?.votingPeriod ? getVotingNumberByTimestamp(daoInfo.votingPeriod) : undefined),
     [daoInfo?.votingPeriod]
   )
 
   return (
-    <div>
-      <StyledTitle variant="h5">Token info</StyledTitle>
+    <DaoContainer>
+      <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6
+          }}
+        >
+          <Image src={AboutIcon} width={38} />
+          <Typography fontSize={30} lineHeight={'20px'} color={'#3f5170'} fontWeight={600}>
+            About
+          </Typography>
+        </Box>
+
+        <Header />
+        <div>
+          <Title sx={{ mb: 18 }}>Governance</Title>
+          {createDaoData && <BasicTable list={createDaoData.governance} />}
+          <StyledItem
+            direction={isSmDown ? 'column' : 'row'}
+            gap={isSmDown ? 20 : 10}
+            sx={{
+              mt: 20,
+              justifyContent: { sm: 'space-between', xs: 'unset' }
+            }}
+          >
+            <Stack spacing={isSmDown ? 16 : 10}>
+              <ContentTitle sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                Threshold
+                <Tooltip placement="top-start" value={'Minimum Votes Needed For Proposal To Execute '} />
+              </ContentTitle>
+              <StyledText>{formatNumberWithCommas(daoInfo?.proposalThreshold)} Votes</StyledText>
+            </Stack>
+            <Stack spacing={isSmDown ? 16 : 10}>
+              <ContentTitle>Voting Period</ContentTitle>
+              <StyledText>
+                {votingPeriodDate
+                  ? `${votingPeriodDate.day} Days, ${votingPeriodDate.hour} Hours, ${votingPeriodDate.minute} Minutes`
+                  : 'Customization'}
+              </StyledText>
+            </Stack>
+            <Stack spacing={isSmDown ? 16 : 10}>
+              <ContentTitle>Voting Types</ContentTitle>
+              <StyledText>{daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}</StyledText>
+            </Stack>
+          </StyledItem>
+          {/* <StyledTitle variant="h5">Token info</StyledTitle>
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
         gap={isSmDown ? 20 : 10}
@@ -89,22 +152,22 @@ export default function About() {
       >
         <Stack spacing={isSmDown ? 10 : 12}>
           <ContentTitle>Network</ContentTitle>
-          <StyledText>{daoInfo ? ChainListMap[daoInfo.daoTokenChainId]?.name : '--'}</StyledText>
+          <StyledText>{daoInfo ? ChainListMap[daoInfo.governance[0]?.chainId ?? 0]?.name : '--'}</StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 10 : 12}>
           <ContentTitle>Token</ContentTitle>
           <StyledText>
             <Stack direction={'row'} alignItems="center">
-              <CurrencyLogo currency={daoInfo?.token || undefined} size="24px" style={{ marginRight: '5px' }} />
+              <CurrencyLogo currency={undefined} size="24px" style={{ marginRight: '5px' }} />
               <MuiLink
                 href={
-                  daoInfo ? getEtherscanLink(daoInfo.daoTokenChainId, daoInfo.daoTokenAddress, 'address') : undefined
+                  daoInfo ? getEtherscanLink(ChainId.GOERLI, daoInfo.governance[0]?.tokenAddress, 'address') : undefined
                 }
                 underline="hover"
                 target="_blank"
               >
                 <StyledText>
-                  <ShowDaoToken token={daoInfo?.token} />
+                  <ShowDaoToken token={undefined} />
                 </StyledText>
               </MuiLink>
             </Stack>
@@ -122,11 +185,10 @@ export default function About() {
               wordBreak: 'break-all'
             }}
           >
-            {daoInfo?.token?.address || '--'}
+            {daoInfo?.governance[0]?.tokenAddress || '--'}
           </StyledText>
         </Stack>
       </StyledItem>
-
       <StyledTitle variant="h5">Governance settings</StyledTitle>
       <StyledItem
         direction={isSmDown ? 'column' : 'row'}
@@ -137,13 +199,11 @@ export default function About() {
       >
         <Stack spacing={isSmDown ? 16 : 10}>
           <ContentTitle>Min. holding for proposal</ContentTitle>
-          <StyledText>{`${daoInfo?.proposalThreshold?.toSignificant(6, {
-            groupSeparator: ','
-          })} ${daoInfo?.token?.symbol || '-'}`}</StyledText>
+          <StyledText>{`${daoInfo?.proposalThreshold} ${daoInfo?.governance[0]?.symbol || '-'}`}</StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
           <ContentTitle>Min. votes for proposal execution</ContentTitle>
-          <StyledText>{daoInfo?.votingThreshold?.toSignificant(6, { groupSeparator: ',' })} Votes</StyledText>
+          <StyledText>{daoInfo?.proposalThreshold} Votes</StyledText>
         </Stack>
         <Stack spacing={isSmDown ? 16 : 10}>
           <ContentTitle>Default voting period</ContentTitle>
@@ -158,7 +218,6 @@ export default function About() {
           <StyledText>{daoInfo?.votingType !== undefined ? VotingTypesName[daoInfo.votingType] : '--'}</StyledText>
         </Stack>
       </StyledItem>
-
       <StyledTitle variant="h5">Member</StyledTitle>
       <Box
         sx={{
@@ -214,7 +273,80 @@ export default function About() {
           </>
         )}
         {!daoAdminLoading && !daoAdminList?.length && <EmptyData />}
+      </Box> */}
+        </div>
       </Box>
-    </div>
+    </DaoContainer>
+  )
+}
+
+const TableContentTitle = styled(TableCell)(() => ({
+  fontFamily: 'Inter',
+  fontStyle: 'normal',
+  fontWeight: 500,
+  fontSize: '13px',
+  lineHeight: ' 16px',
+  color: '#B5B7CF',
+  padding: '7px 0'
+}))
+const TableContentText = styled(TableCell)(() => ({
+  height: 60,
+  padding: 0,
+  fontFamily: 'Inter',
+  fontStyle: 'normal',
+  fontWeight: 600,
+  fontSize: '14px',
+  lineHeight: ' 20px',
+  color: '#3F5170'
+}))
+
+function BasicTable({ list }: { list: govList[] }) {
+  return (
+    <>
+      {list.length === 0 ? (
+        <EmptyData />
+      ) : (
+        <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px' }}>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow>
+                <TableContentTitle sx={{ pl: 30 }}>Token</TableContentTitle>
+                <TableContentTitle>Network</TableContentTitle>
+                <TableContentTitle>Token contract address</TableContentTitle>
+                <TableContentTitle>Requirement</TableContentTitle>
+                {/* <TableContentTitle>Voting weight</TableContentTitle> */}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {list.map((row, index) => (
+                <TableRow key={row?.symbol + index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableContentText sx={{ pl: 30, display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <Image src={row.tokenLogo || defaultLogo} width={32} height={32} style={{ borderRadius: '50%' }} />
+                    {row.tokenName}({row.symbol})
+                  </TableContentText>
+                  <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>
+                  <TableContentText>
+                    <Box
+                      display={'flex'}
+                      flexDirection={'row'}
+                      sx={{
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenAddress, 'address')}>
+                        {shortenAddress(row?.tokenAddress, 3)}
+                      </ExternalLink>
+                      <Copy margin="0 0 0 10px" toCopy={row?.tokenAddress} />
+                    </Box>
+                  </TableContentText>
+                  <TableContentText>{formatNumberWithCommas(row?.createRequire)}</TableContentText>
+                  {/* <TableContentText>{row?.weight}</TableContentText> */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </>
   )
 }

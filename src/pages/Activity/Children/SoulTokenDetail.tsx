@@ -18,7 +18,7 @@ import TransacitonPendingModal from 'components/Modal/TransactionModals/Transact
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import { ChainId, ChainListMap } from 'constants/chain'
+import { ChainListMap } from 'constants/chain'
 import { shortenAddress, formatTimestamp } from 'utils'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
@@ -94,17 +94,16 @@ export default function SoulTokenDetail() {
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
 
-  const { chainId: daoChainId, address: daoAddress, sbtId } = useParams<{
-    chainId: string
-    address: string
+  const { daoId, sbtId } = useParams<{
+    daoId: string
     sbtId: string
   }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
+  // const curDaoChainId = Number(daoChainId) as ChainId
 
   const { result: sbtDetail, contractQueryIsClaim } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(Number(sbtId))
   const { result: sbtIsClaim } = useSbtQueryIsClaim(Number(sbtId))
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
+  const { isJoined } = useIsJoined(Number(daoId))
   const { SbtClaimCallback } = useSbtClaim()
   const joinDAO = useJoinDAO()
 
@@ -211,7 +210,7 @@ export default function SoulTokenDetail() {
   const JoinCallback = useCallback(async () => {
     if (!account) return toggleWalletModal()
     if (!userSignature) return loginSignature()
-    await joinDAO(curDaoChainId, daoAddress)
+    await joinDAO(Number(daoId))
       .then(() => {
         setIsJoin(true)
       })
@@ -219,7 +218,7 @@ export default function SoulTokenDetail() {
         setIsJoin(false)
         console.log('error')
       })
-  }, [curDaoChainId, daoAddress, joinDAO, account, userSignature, toggleWalletModal, loginSignature])
+  }, [account, toggleWalletModal, userSignature, loginSignature, joinDAO, daoId])
 
   const sbtClaimCallback = useCallback(() => {
     if (!account) return toggleWalletModal()
@@ -301,7 +300,7 @@ export default function SoulTokenDetail() {
                 </Box>
               </DetailLayoutStyle>
               <Typography sx={{ padding: '20px 40px' }} variant="body1" lineHeight={'20px'} fontWeight={400}>
-                {sbtDetail?.introduction}
+                {sbtDetail?.introduction || '--'}
               </Typography>
             </ContentBoxStyle>
             <ContentBoxStyle maxWidth={580}>
