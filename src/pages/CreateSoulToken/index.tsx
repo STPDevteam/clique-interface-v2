@@ -352,12 +352,12 @@ export default function Index() {
             <Select
               placeholder="select Dao"
               noBold
-              value={daoValue?.daoId}
+              value={daoValue?.daoId || ''}
               onChange={e => {
                 setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value) || null)
               }}
             >
-              {daoMemberList &&
+              {daoMemberList && daoMemberList?.length > 0 ? (
                 daoMemberList.map((item, index) => (
                   <MenuItem
                     key={index}
@@ -366,6 +366,7 @@ export default function Index() {
                       fontSize: '14px !important'
                     }}
                     value={item?.daoId}
+                    selected={daoValue?.daoId === item?.daoId}
                   >
                     <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
                       <Image
@@ -375,7 +376,12 @@ export default function Index() {
                       {item.daoName}
                     </Box>
                   </MenuItem>
-                ))}
+                ))
+              ) : (
+                <MenuItem disabled sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
+                  No more options are available
+                </MenuItem>
+              )}
             </Select>
           </Box>
           <Box sx={{ mt: 15, display: 'grid', flexDirection: 'column', gap: 10 }}>
@@ -421,7 +427,7 @@ export default function Index() {
                 </Typography>
               }
             />
-            <Box sx={{ mb: 60 }}>
+            <Box sx={{ mb: 60, maxWidth: '565px' }}>
               <InputTitleStyle sx={{ mb: 10 }}>Introduction (Optional)</InputTitleStyle>
 
               <Editor content={Introduction} setContent={setIntroduction} />

@@ -108,7 +108,7 @@ const StyledStatusText = styled(StyledText)(({ color, theme }: { color?: string;
 
 export const activityStatusText = {
   [ActivityStatus.SOON]: 'Soon',
-  [ActivityStatus.OPEN]: 'Open',
+  [ActivityStatus.ACTIVE]: 'Active',
   [ActivityStatus.ENDED]: 'Ended',
   [ActivityStatus.AIRDROP]: 'DAO Rewards',
   [ActivityStatus.CLOSED]: 'Closed'
@@ -119,7 +119,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
   let targetTimeString = ''
   if (item.status === ActivityStatus.SOON) {
     targetTimeString = getTargetTimeString(now, item.eventStartTime)
-  } else if (item.status === ActivityStatus.OPEN) {
+  } else if (item.status === ActivityStatus.ACTIVE) {
     targetTimeString = getTargetTimeString(now, item.eventEndTime)
   } else if (item.status === ActivityStatus.ENDED) {
     targetTimeString = getTargetTimeString(now, item.airdropStartTime)
@@ -131,7 +131,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
     <>
       <StyledStatusText
         color={
-          [ActivityStatus.OPEN, ActivityStatus.AIRDROP].includes(item.status)
+          [ActivityStatus.ACTIVE, ActivityStatus.AIRDROP].includes(item.status)
             ? 'active'
             : [ActivityStatus.SOON, ActivityStatus.ENDED].includes(item.status)
             ? 'soon'

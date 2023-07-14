@@ -23,7 +23,10 @@ import { shortenAddress, formatTimestamp } from 'utils'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
-import owl from 'assets/images/owl.png'
+import ReactHtmlParser from 'react-html-parser'
+import { escapeAttrValue } from 'xss'
+
+// import owl from 'assets/images/owl.png'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   height: 800,
@@ -101,7 +104,7 @@ export default function SoulTokenDetail() {
   }>()
   // const curDaoChainId = Number(daoChainId) as ChainId
 
-  const { result: sbtDetail, contractQueryIsClaim } = useSbtDetail(sbtId)
+  const { result: sbtDetail, contractQueryIsClaim, loading } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(Number(sbtId))
   const { result: sbtIsClaim } = useSbtQueryIsClaim(Number(sbtId))
   const { isJoined } = useIsJoined(Number(daoId))
@@ -127,21 +130,22 @@ export default function SoulTokenDetail() {
   }, [sbtIsClaim, account, userSignature, chainId, sbtDetail, isJoin])
 
   useEffect(() => {
-    if (isJoined) {
+    if (isJoined?.isJoin) {
       setIsJoin(true)
     } else {
       setIsJoin(false)
     }
-  }, [isJoined])
+  }, [isJoined?.isJoin])
 
   const nextHandler = useMemo(() => {
-    if (!sbtDetail) {
+    if (!sbtDetail && !loading) {
       return {
         error: 'Query data is null.'
       }
     }
     if (
       !contractQueryIsClaim &&
+      sbtDetail &&
       (Math.floor(Date.now() / 1000) < sbtDetail?.startTime || Math.floor(Date.now() / 1000) > sbtDetail?.endTime)
     ) {
       return {
@@ -155,7 +159,7 @@ export default function SoulTokenDetail() {
       }
     }
 
-    if (chainId !== sbtDetail?.tokenChainId) {
+    if (sbtDetail && chainId !== sbtDetail?.tokenChainId) {
       return {
         error: (
           <Box>
@@ -186,7 +190,7 @@ export default function SoulTokenDetail() {
     }
 
     return
-  }, [account, userSignature, chainId, isJoin, contractQueryIsClaim, sbtIsClaim, library, sbtDetail])
+  }, [sbtDetail, loading, contractQueryIsClaim, account, chainId, userSignature, isJoin, sbtIsClaim?.canClaim, library])
 
   const JoinCallback = useCallback(async () => {
     if (!account) return toggleWalletModal()
@@ -262,7 +266,9 @@ export default function SoulTokenDetail() {
                 </Box>
                 <Box>
                   <DetailTitleStyle>Network</DetailTitleStyle>
-                  <DetailStyle>{sbtDetail?.chainId ? ChainListMap[sbtDetail?.chainId]?.name : '--'}</DetailStyle>
+                  <DetailStyle>
+                    {sbtDetail?.tokenChainId ? ChainListMap[sbtDetail?.tokenChainId]?.name : '--'}
+                  </DetailStyle>
                 </Box>
                 <Box>
                   <DetailTitleStyle>Contract Address</DetailTitleStyle>
@@ -286,7 +292,19 @@ export default function SoulTokenDetail() {
                 lineHeight={'20px'}
                 fontWeight={400}
               >
-                {sbtDetail?.introduction || '--'}
+                {/* {sbtDetail?.introduction || '--'} */}
+                {ReactHtmlParser(
+                  sbtDetail?.introduction
+                    ? sbtDetail?.introduction
+                    : filterXSS(sbtDetail?.introduction || '', {
+                        onIgnoreTagAttr: function(_, name, value) {
+                          if (name === 'class') {
+                            return name + '="' + escapeAttrValue(value) + '"'
+                          }
+                          return undefined
+                        }
+                      })
+                )}
               </Typography>
             </Box>
           </ContentBoxStyle>
@@ -299,7 +317,7 @@ export default function SoulTokenDetail() {
                 borderBottom: '1px solid #D4D7E2'
               }}
             >
-              <Image src={sbtDetail?.fileUrl || owl} style={{ height: 310, width: 310, borderRadius: '10px' }} />
+              <Image src={sbtDetail?.fileUrl || ''} style={{ height: 310, width: 310, borderRadius: '10px' }} />
               <ColumnLayoutStyle
                 sx={{
                   gap: 10

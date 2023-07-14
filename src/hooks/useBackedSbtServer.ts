@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo } from 'react'
-import { ChainId } from '../constants/chain'
+// import { ChainId } from '../constants/chain'
 import {
   createSbt,
   getMemberDaoList,
@@ -27,9 +27,7 @@ export enum ClaimWay {
 
 export interface SbtListProp {
   SBTId: number
-  chainId: ChainId
   daoId: number
-  daoAddress: string
   daoLogo: string
   daoName: string
   endTime: number
@@ -38,12 +36,14 @@ export interface SbtListProp {
   startTime: number
   status: string
   symbol: string
+  totalSupply: number
   tokenChainId: number
 }
 
 export interface SbtDetailProp {
-  chainId: ChainId
-  daoAddress: string
+  // chainId: ChainId
+  // daoAddress: string
+  daoId: number
   daoLogo: string
   daoName: string
   endTime: number
@@ -212,7 +212,9 @@ export function useSbtDetail(sbtId: string) {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const contract = useSbtContract()
-  const [result, setResult] = useState<SbtDetailProp>()
+  const [loading, setLoading] = useState(true)
+
+  const [result, setResult] = useState<SbtDetailProp | null>()
   const whetherClaim = useSingleCallResult(
     contract,
     'minted',
@@ -222,13 +224,16 @@ export function useSbtDetail(sbtId: string) {
   ).result?.[0]
   useEffect(() => {
     ;(async () => {
+      setLoading(true)
       try {
         const res = await getSbtDetail(Number(sbtId))
         const data = res.data.data
+        setLoading(false)
         setResult(data)
       } catch (error) {
         console.log(error)
         setResult(undefined)
+        setLoading(false)
       }
     })()
   }, [sbtId, userSignature])
@@ -241,6 +246,7 @@ export function useSbtDetail(sbtId: string) {
   }, [whetherClaim])
   return {
     result,
+    loading,
     contractQueryIsClaim
   }
 }
@@ -265,7 +271,7 @@ export function useSbtClaim() {
         console.error('Purchase', error)
         throw error
       }
-      const signature = '0x' + result.signature
+      const signature = result.signature
       const args = [parseFloat(sbtId), signature]
       const method = 'mintSBT'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)

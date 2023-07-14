@@ -10,6 +10,7 @@ import DelayLoading from 'components/DelayLoading'
 import { SbtListProp } from 'hooks/useBackedSbtServer'
 import { ChainListMap } from 'constants/chain'
 import { formatTimestamp } from 'utils/index'
+import { formatNumberWithCommas } from 'utils'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -130,18 +131,19 @@ function ItemCard(item: SbtListProp) {
         </Box>
         <Box>
           <Typography variant="h6" lineHeight={'27px'}>
-            The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
-            with interacting with all projects on the protocol...
+            {/* The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
+            with interacting with all projects on the protocol... */}
+            {item?.itemName}
           </Typography>
         </Box>
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 300px' }}>
           <ContentLayout>
             <ContentTitleStyle>Items</ContentTitleStyle>
-            <ContentStyle>999</ContentStyle>
+            <ContentStyle>{formatNumberWithCommas(item?.totalSupply)}</ContentStyle>
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Network</ContentTitleStyle>
-            <ContentStyle>{ChainListMap[item.chainId]?.name || '--'}</ContentStyle>
+            <ContentStyle>{ChainListMap[item.tokenChainId]?.name || '--'}</ContentStyle>
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Status</ContentTitleStyle>

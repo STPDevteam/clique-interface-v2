@@ -66,9 +66,9 @@ const TabStyle = styled(Tabs)(({ theme }) => ({
 }))
 
 const statusItemList = [
-  { value: '', label: 'All' },
+  { value: '', label: 'All Status' },
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
-  { value: ActivityStatus.OPEN, label: 'Open' },
+  { value: ActivityStatus.ACTIVE, label: 'Active' },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
   { value: ActivityStatus.AIRDROP, label: 'DAO Rewards' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
@@ -154,7 +154,7 @@ export default function Activity() {
                 }}
               >
                 <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }} value={''}>
-                  All chain
+                  All Chain
                 </MenuItem>
                 {ChainList.map(item => (
                   <MenuItem

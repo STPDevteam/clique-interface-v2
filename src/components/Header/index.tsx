@@ -33,7 +33,7 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
-import { useGetWorkspaceInfo } from 'hooks/useBackedTaskServer'
+import { getWorkspaceInfo } from 'utils/fetch/server'
 
 interface TabContent {
   title: string
@@ -299,18 +299,15 @@ export default function Header() {
     setMobileMenuOpen(false)
   }, [])
   const { pathname } = useLocation()
-
   const daoId = useMemo(() => {
     const path = pathname.split('/')
     return path[3]
   }, [pathname])
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
-
-  console.log('header', daoId, daoInfo)
+  const [workspaceTitle, setWorkspaceTitle] = useState('')
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
-  const { result: WorkspaceInfo } = useGetWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1]))
   const isShow = useMemo(() => {
     if (curPath === routes.CreateDao) {
       return false
@@ -326,7 +323,12 @@ export default function Header() {
         return 'Settings'
       }
       if (v === 'task') {
-        return WorkspaceInfo?.title || 'task'
+        getWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1])).then(res => {
+          if (res.data.data) {
+            setWorkspaceTitle(res.data.data.title)
+          }
+        })
+        return workspaceTitle || 'task'
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
@@ -336,8 +338,7 @@ export default function Header() {
       return isNumber || isLastItem
     })
     return [daoInfo.daoName, ...listData]
-  }, [WorkspaceInfo?.title, curPath, daoInfo.daoName])
-  console.log(makeBreadcrumbs, pathname.includes(makeRouteLink(routes.Proposal)))
+  }, [curPath, daoInfo.daoName, workspaceTitle])
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 

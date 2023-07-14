@@ -308,13 +308,7 @@ export default function LeftSider() {
     return list
   }, [myJoinDaoData?.job, teamspacesList])
   useEffect(() => {
-    if (
-      pathname !== makeRouteLink(routes.Proposal) &&
-      pathname !== makeRouteLink(routes.DaoInfoActivity) &&
-      pathname !== makeRouteLink(routes.DaoMember) &&
-      pathname !== makeRouteLink(routes.DaoInfoAbout) &&
-      pathname !== makeRouteLink(routes.DaoAboutSetting)
-    ) {
+    if (pathname.includes(makeRouteLink(routes.DaoTeamTask))) {
       setActiveIndex(() => {
         const newItems = [false, true, false, false, false, false]
         return newItems
@@ -323,7 +317,7 @@ export default function LeftSider() {
     } else {
       setActiveIndex(() => {
         const newItems = [
-          pathname === makeRouteLink(routes.Proposal),
+          pathname.includes(makeRouteLink(routes.Proposal)),
           false,
           pathname === makeRouteLink(routes.DaoInfoActivity),
           pathname === makeRouteLink(routes.DaoMember),
@@ -465,7 +459,7 @@ export default function LeftSider() {
                         key={item.title + idx}
                         id={`${item.route}-nav-link`}
                         to={item.route ?? ''}
-                        className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
+                        className={(item?.route && pathname.includes(item?.route) ? 'active' : '') + 'menuLink'}
                         style={{
                           display: 'flex',
                           justifyContent: 'flex-start',
