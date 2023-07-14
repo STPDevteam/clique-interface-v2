@@ -94,6 +94,7 @@ const ContentWrapper = styled('div')({
   alignItems: 'center',
   '& .toast-container': {
     width: 446,
+    zIndex: 199999,
     '& .Toastify__toast': {
       borderRadius: '10px',
       border: '1px solid #97B7EF'
