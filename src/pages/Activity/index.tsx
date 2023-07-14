@@ -85,8 +85,8 @@ export default function Activity() {
   const isSmDown = useBreakpoint('sm')
   const [tabValue, setTabValue] = useState(searchSbt.category || 0)
 
-  const [chainIdVal, setChainId] = useState<number | string>('')
-  const [statusVal, setStatus] = useState<string>('')
+  const [chainIdVal, setChainId] = useState<number | string>(search.chainId || searchSbt.chainId || '')
+  const [statusVal, setStatus] = useState<string>(search.status || searchSbt.status || '')
 
   const handleChange = (event: any, newValue: any) => {
     searchSbt.setCategory(newValue)
