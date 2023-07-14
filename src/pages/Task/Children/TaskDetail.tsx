@@ -578,20 +578,34 @@ export default function TaskDetail({
                   borderRadius: '10px'
                 }}
               >
-                <Typography
-                  noWrap
-                  sx={{
-                    textOverflow: 'ellipsis',
-                    overflow: 'hidden',
-                    maxWidth: 246,
-                    paddingLeft: 16,
-                    fontSize: 14,
-                    color: '#3f5170',
-                    fontWeight: 500
-                  }}
-                >
-                  {taskDetailData?.proposalTitle}
-                </Typography>
+                {taskDetailData?.proposalTitle ? (
+                  <Typography
+                    noWrap
+                    sx={{
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      maxWidth: 246,
+                      paddingLeft: 16,
+                      fontSize: 14,
+                      color: '#3f5170',
+                      fontWeight: 500
+                    }}
+                  >
+                    {taskDetailData?.proposalTitle}
+                  </Typography>
+                ) : (
+                  <Typography
+                    sx={{
+                      maxWidth: 246,
+                      paddingLeft: 16,
+                      fontSize: 14,
+                      color: '#808191',
+                      fontWeight: 400
+                    }}
+                  >
+                    Empty
+                  </Typography>
+                )}
               </Box>
             </RowContent>
             <EditContent>
