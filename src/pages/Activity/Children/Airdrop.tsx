@@ -82,6 +82,7 @@ export default function Airdrop() {
   const [showManage, setShowManage] = useState(false)
   const { loading: airdropDescDataLoading, result: airdropDescData } = useGetAirdropDescData(airdropId)
   const airdropInfos = useAirdropInfos(airdropId, airdropDescData?.tokenChainId)
+  console.log('🚀 ~ file: Airdrop.tsx:85 ~ Airdrop ~ airdropInfos:', airdropId, airdropDescData?.tokenChainId)
   const isClaimed = useAirdropClaimed(airdropId, airdropDescData?.tokenChainId)
 
   useEffect(() => {

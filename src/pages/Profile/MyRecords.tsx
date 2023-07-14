@@ -1,10 +1,9 @@
-import { Box, Link as MuiLink, Typography, useTheme, styled, Stack } from '@mui/material'
+import { Box, Typography, useTheme, styled, Stack } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
-import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import {
   AccountBackedSendRecordTypesProp,
@@ -15,8 +14,6 @@ import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useMemo } from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { useToken } from 'state/wallet/hooks'
-import { getEtherscanLink } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -93,14 +90,6 @@ const accountBackedSendRecordTypesText = {
 
 function RecordItem({ item }: { item: AccountSendRecordProp }) {
   const history = useHistory()
-  const isAboutToken = useMemo(
-    () =>
-      [AccountBackedSendRecordTypesProp.EvCreateERC20, AccountBackedSendRecordTypesProp.EvClaimReserve].includes(
-        item.types
-      ),
-    [item.types]
-  )
-
   const link = useMemo(() => {
     if (
       [
@@ -109,7 +98,7 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
         AccountBackedSendRecordTypesProp.EvCancelProposal
       ].includes(item.types)
     ) {
-      return routes._DaoInfo + `/${item.chainId}/${item.address}/proposal/detail/${item.activityId}`
+      return routes._DaoInfo + `/${item.daoId}/proposal/detail/${item.proposalId}`
     }
     if (
       [
@@ -118,19 +107,10 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
         AccountBackedSendRecordTypesProp.EvOwnershipTransferred
       ].includes(item.types)
     ) {
-      return routes._DaoInfo + `/${item.chainId}/${item.address}`
-    }
-    if (
-      [
-        AccountBackedSendRecordTypesProp.EvCreateAirdrop,
-        AccountBackedSendRecordTypesProp.EvSettleAirdrop,
-        AccountBackedSendRecordTypesProp.EvClaimed
-      ].includes(item.types)
-    ) {
-      return routes._ActivityAirdropDetail + `/${item.chainId}/${item.address}/${item.activityId}`
+      return routes._DaoInfo + `/${item.daoId}/proposal`
     }
     return undefined
-  }, [item.activityId, item.address, item.chainId, item.types])
+  }, [item.daoId, item.proposalId, item.types])
 
   const theme = useTheme()
   return (
@@ -140,43 +120,24 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
           {accountBackedSendRecordTypesText[item.types]}
         </Typography>
         <Typography fontSize={13} fontWeight={600} color={theme.palette.text.secondary}>
-          {timeStampToFormat(item.time)}
+          {timeStampToFormat(item.timestamp || item.time)}
         </Typography>
       </RowCenter>
       <RowCenter mt={4}>
         <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} src={item.avatar} />
+          <DaoAvatars size={64} src={item.daoLogo} />
           <Typography fontSize={14} fontWeight={600} color={theme.palette.text.secondary} ml={16}>
-            {isAboutToken ? (
-              <ShowTokenName chainId={item.chainId} address={item.address} />
-            ) : (
-              <span style={{ cursor: link ? 'pointer' : 'auto' }} onClick={() => link && history.push(link)}>
-                {item.titles || item.daoName}
-              </span>
-            )}
+            <span style={{ cursor: link ? 'pointer' : 'auto' }} onClick={() => link && history.push(link)}>
+              {item.titles || item.daoName}
+            </span>
           </Typography>
         </Box>
-        {!isAboutToken && item.daoName && (
-          <Link to={routes._DaoInfo + `/${item.chainId}/${item.address}`} style={{ fontSize: 12 }}>
+        {item.daoName && (
+          <Link to={routes._DaoInfo + `/${item.daoId}/proposal`} style={{ fontSize: 12 }}>
             {item.daoName}
           </Link>
         )}
       </RowCenter>
     </div>
-  )
-}
-
-function ShowTokenName({ chainId, address }: { chainId: ChainId; address: string }) {
-  const theme = useTheme()
-  const token = useToken(address, chainId)
-  return (
-    <MuiLink
-      underline="none"
-      color={theme.palette.text.secondary}
-      href={getEtherscanLink(chainId, address, 'token')}
-      target="_blank"
-    >
-      {token ? `${token.name}(${token.symbol})` : '--'}
-    </MuiLink>
   )
 }
