@@ -19,12 +19,15 @@ import TransactionSubmittedModal from 'components/Modal/TransactionModals/Transa
 import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { ChainListMap } from 'constants/chain'
-import { shortenAddress, formatTimestamp } from 'utils'
+import { shortenAddress, getEtherscanLink, formatTimestamp } from 'utils'
+
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
 import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
+import Copy from 'components/essential/Copy'
+import { ExternalLink } from 'theme/components'
 
 // import owl from 'assets/images/owl.png'
 
@@ -104,10 +107,10 @@ export default function SoulTokenDetail() {
   }>()
   // const curDaoChainId = Number(daoChainId) as ChainId
 
-  const { result: sbtDetail, contractQueryIsClaim, loading } = useSbtDetail(sbtId)
+  const { result: sbtDetail, contractQueryIsClaim, loading, ContractQueryLoading } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(Number(sbtId))
   const { result: sbtIsClaim } = useSbtQueryIsClaim(Number(sbtId))
-  const { isJoined } = useIsJoined(Number(daoId))
+  const { isJoined, loading: JoinedLoading } = useIsJoined(Number(daoId))
   const { SbtClaimCallback } = useSbtClaim()
   const joinDAO = useJoinDAO()
 
@@ -117,17 +120,30 @@ export default function SoulTokenDetail() {
     if (
       !account ||
       !userSignature ||
+      !sbtDetail ||
       chainId !== sbtDetail?.tokenChainId ||
+      (sbtClaimList && sbtClaimList?.length >= sbtDetail?.totalSupply) ||
       (!isJoin && ClaimWay.Joined === sbtDetail?.way) ||
       (!sbtIsClaim?.canClaim && !sbtIsClaim?.isWhite && !sbtIsClaim?.signature)
     ) {
       return true
     }
+
     if (sbtIsClaim?.canClaim && sbtIsClaim?.signature) {
       return false
     }
     return true
-  }, [sbtIsClaim, account, userSignature, chainId, sbtDetail, isJoin])
+  }, [
+    account,
+    userSignature,
+    chainId,
+    sbtDetail,
+    isJoin,
+    sbtIsClaim?.canClaim,
+    sbtIsClaim?.isWhite,
+    sbtIsClaim?.signature,
+    sbtClaimList
+  ])
 
   useEffect(() => {
     if (isJoined?.isJoin) {
@@ -177,7 +193,19 @@ export default function SoulTokenDetail() {
       }
     }
 
-    if (!isJoin && ClaimWay.Joined === sbtDetail?.way) {
+    if (
+      !ContractQueryLoading &&
+      !contractQueryIsClaim &&
+      sbtClaimList &&
+      sbtDetail &&
+      sbtClaimList?.length >= sbtDetail?.totalSupply
+    ) {
+      return {
+        error: 'Total quantity has been fully claimed.'
+      }
+    }
+
+    if (!isJoin && !JoinedLoading && ClaimWay.Joined === sbtDetail?.way) {
       return {
         error: 'Please join the DAO first.'
       }
@@ -190,7 +218,20 @@ export default function SoulTokenDetail() {
     }
 
     return
-  }, [sbtDetail, loading, contractQueryIsClaim, account, chainId, userSignature, isJoin, sbtIsClaim?.canClaim, library])
+  }, [
+    sbtDetail,
+    loading,
+    contractQueryIsClaim,
+    account,
+    chainId,
+    userSignature,
+    isJoin,
+    JoinedLoading,
+    sbtIsClaim?.canClaim,
+    ContractQueryLoading,
+    sbtClaimList,
+    library
+  ])
 
   const JoinCallback = useCallback(async () => {
     if (!account) return toggleWalletModal()
@@ -272,8 +313,21 @@ export default function SoulTokenDetail() {
                 </Box>
                 <Box>
                   <DetailTitleStyle>Contract Address</DetailTitleStyle>
-                  <DetailStyle>
-                    {sbtDetail?.tokenAddress ? shortenAddress(sbtDetail?.tokenAddress, 3) : '--'}
+                  <DetailStyle sx={{ display: 'flex', justifyContent: 'center' }}>
+                    {sbtDetail?.tokenAddress ? (
+                      <ExternalLink
+                        href={getEtherscanLink(
+                          sbtDetail?.tokenChainId ? sbtDetail?.tokenChainId : 1,
+                          sbtDetail?.tokenAddress || '',
+                          'address'
+                        )}
+                      >
+                        {shortenAddress(sbtDetail?.tokenAddress, 3)}
+                      </ExternalLink>
+                    ) : (
+                      '--'
+                    )}
+                    <Copy margin="0 0 0 10px" toCopy={sbtDetail?.tokenAddress || ''} />
                   </DetailStyle>
                 </Box>
               </RowCenter>

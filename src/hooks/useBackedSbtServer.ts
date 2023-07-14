@@ -127,7 +127,7 @@ export function useCreateSbtCallback() {
         throw error
       }
 
-      const args = [result.SBTId, itemName, symbol, result.tokenURI, result.signature]
+      const args = [result.SBTId, totalSupply, itemName, symbol, result.tokenURI, result.signature]
       const method = 'createSBT'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
       return contract[method](...args, {
@@ -213,6 +213,7 @@ export function useSbtDetail(sbtId: string) {
   const userSignature = useUserInfo()
   const contract = useSbtContract()
   const [loading, setLoading] = useState(true)
+  const [ContractQueryLoading, setContractQueryLoading] = useState(true)
 
   const [result, setResult] = useState<SbtDetailProp | null>()
   const whetherClaim = useSingleCallResult(
@@ -244,9 +245,14 @@ export function useSbtDetail(sbtId: string) {
 
     return whetherClaim
   }, [whetherClaim])
+  useEffect(() => {
+    if (whetherClaim === undefined) return
+    setContractQueryLoading(false)
+  }, [whetherClaim])
   return {
     result,
     loading,
+    ContractQueryLoading,
     contractQueryIsClaim
   }
 }
@@ -315,11 +321,12 @@ export function useSbtQueryIsClaim(sbtId: number) {
   const { account } = useActiveWeb3React()
 
   const userSignature = useUserInfo()
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<SbtIsClaimProp>()
   useEffect(() => {
     if (!userSignature || !account) return
     ;(async () => {
+      setLoading(true)
       try {
         const res = await getSbtIsClaim(sbtId)
         if (!res.data.data) return
