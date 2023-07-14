@@ -161,6 +161,8 @@ export default function TaskDetail({
     })
     return arr
   }, [proposalBaseList])
+  console.log('list', editData, proposalList)
+
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
@@ -184,6 +186,7 @@ export default function TaskDetail({
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
+  console.log('🚀 ~ file: TaskDetail.tsx:189 ~ taskDetailData:', taskDetailData)
   const [currentStatus, setCurrentStatus] = useState(preStatus ?? '')
   const [assignees, setAssignees] = useState<any>(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
@@ -565,27 +568,31 @@ export default function TaskDetail({
                   setProposal(value)
                 }}
               /> */}
-              <Select
-                disabled
-                noBold
-                placeholder="Choose a proposal"
-                style={{ fontWeight: 500, fontSize: 14 }}
-                width={isSmDown ? 160 : 248}
-                height={isSmDown ? '30px' : '40px'}
-                value={proposal}
-                onChange={e => setProposal(e.target.value)}
+              <Box
+                width={'246.88px'}
+                sx={{
+                  height: 40,
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: '1px solid #D4D7E2',
+                  borderRadius: '10px'
+                }}
               >
-                {proposalList.map((item: any) => (
-                  <MenuItem
-                    key={item.proposalId}
-                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                    value={item.proposalId}
-                    selected={assignees === item}
-                  >
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
+                <Typography
+                  noWrap
+                  sx={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    maxWidth: 246,
+                    paddingLeft: 16,
+                    fontSize: 14,
+                    color: '#3f5170',
+                    fontWeight: 500
+                  }}
+                >
+                  {taskDetailData?.proposalTitle}
+                </Typography>
+              </Box>
             </RowContent>
             <EditContent>
               {ReactHtmlParser(
