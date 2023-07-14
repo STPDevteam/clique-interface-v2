@@ -142,8 +142,8 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
   )
 
   const handleManageClick = useCallback(
-    (spacesId: number) => {
-      showModal(<ManageMemberModal spacesId={spacesId} />)
+    (spacesId: number, creator: string) => {
+      showModal(<ManageMemberModal spacesId={spacesId} creator={creator} />)
     },
     [showModal]
   )
@@ -239,7 +239,7 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
                             adminLevel.job === 'owner' ||
                             (account && account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
                           ) {
-                            handleManageClick(row.data.spacesId)
+                            handleManageClick(row.data.spacesId, row.data.creator.account)
                           } else {
                             toast.error("You don't have permissions")
                           }

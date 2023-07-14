@@ -118,9 +118,9 @@ export default function Team() {
         }}
       >
         <Typography width={130} textAlign={'left'}>
-          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'superAdmin' ? 'owner' : ''}
-          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'owner' ? 'creator' : ''}
-          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'admin' ? 'admin' : ''}
+          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'superAdmin' ? 'Owner' : ''}
+          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'owner' ? 'Creator' : ''}
+          {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'admin' ? 'Admin' : ''}
         </Typography>
         <ExpandMoreIcon />
       </Box>

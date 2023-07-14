@@ -121,6 +121,10 @@ export enum AccountBackedSendRecordTypesProp {
 }
 
 export interface AccountSendRecordProp {
+  daoId: number
+  daoLogo: string
+  timestamp: number
+  proposalId: number
   activityId: number
   address: string
   avatar: string
@@ -148,16 +152,17 @@ export function useAccountSendRecordList(account: string) {
       }
       setLoading(true)
       try {
-        const res = await getAccountSendRecordList(account, (currentPage - 1) * pageSize, pageSize)
+        const res = await getAccountSendRecordList((currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
+        console.log(data)
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        setResult(data.list)
+        setResult(data.data)
       } catch (error) {
         setResult([])
         setTotal(0)

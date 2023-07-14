@@ -1,8 +1,6 @@
 import { Box, Typography, styled } from '@mui/material'
 import { ShowProposalStatusV3Tag } from '../ShowProposalStatusTag'
-// import ReactHtmlParser from 'react-html-parser'
 import 'react-quill/dist/quill.snow.css'
-// import { escapeAttrValue, filterXSS } from 'xss'
 import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
@@ -11,7 +9,6 @@ import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import { RowCenter } from '../ProposalItem'
 import useCopyClipboard from 'hooks/useCopyClipboard'
-// import { toast } from 'react-toastify'
 
 const AdminIcon = styled(adminIcon)(() => ({
   'path:first-of-type': {
@@ -35,9 +32,7 @@ function createTimeStampStr(startTime: number, endTime: number, status: string) 
 
 export default function Index({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
   const currentUrl = window.location.href
-
   const [isCopied, setCopied] = useCopyClipboard()
-  // const theme = useTheme()
   return (
     <Box>
       <Box sx={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -97,35 +92,9 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
           sx={{ display: 'flex', gap: 7, alignItems: 'center', cursor: 'pointer' }}
         >
           <ShareIcon />
-          <Typography variant="body1">{isCopied ? 'Copied Link' : 'Share'}</Typography>
+          <Typography variant="body1">{isCopied ? 'Link Copied' : 'Share'}</Typography>
         </Box>
       </RowCenter>
-      {/* <Box
-        mt={15}
-        sx={{
-          '& img': { maxWidth: '50%' },
-          '& .ql-editor': {
-            paddingLeft: 0,
-            paddingRight: 0
-          }
-        }}
-      >
-        <Typography mb={10} color={theme.palette.text.secondary} fontSize={14}>
-          {proposalInfo.introduction}
-        </Typography>
-        <div className="ql-editor">
-          {ReactHtmlParser(
-            filterXSS(proposalInfo.content || '', {
-              onIgnoreTagAttr: function(_, name, value) {
-                if (name === 'class') {
-                  return name + '="' + escapeAttrValue(value) + '"'
-                }
-                return undefined
-              }
-            })
-          )}
-        </div>
-      </Box> */}
     </Box>
   )
 }

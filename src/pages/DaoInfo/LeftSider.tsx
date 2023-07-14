@@ -7,7 +7,8 @@ import {
   TooltipProps,
   tooltipClasses,
   Typography,
-  Tooltip
+  Tooltip,
+  Stack
 } from '@mui/material'
 import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
 import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
@@ -606,31 +607,33 @@ export default function LeftSider() {
                     </Typography>
                   </Box>
                 ) : item.title === 'Workspace' ? (
-                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
-                    <Box
-                      sx={{
-                        height: 40,
-                        padding: '0 16px 0 60px',
-                        gap: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        backgroundColor: '#fff'
-                      }}
-                    >
-                      <img src={AddIcon} width={14} />
-                      <Typography
-                        sx={{
-                          fontWeight: 400,
-                          fontSize: 14,
-                          lineHeight: '20px',
-                          color: '#97B7EF'
-                        }}
-                      >
-                        Add Workspace
-                      </Typography>
-                    </Box>
-                  </TooltipStyle>
+                  <Box
+                    sx={{
+                      height: 40,
+                      padding: '0 16px 0 60px',
+                      gap: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      backgroundColor: '#fff'
+                    }}
+                  >
+                    <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
+                      <Stack flexDirection={'row'} alignItems={'center'} gap={10}>
+                        <img src={AddIcon} width={14} height={14} />
+                        <Typography
+                          sx={{
+                            fontWeight: 400,
+                            fontSize: 14,
+                            lineHeight: '20px',
+                            color: '#97B7EF'
+                          }}
+                        >
+                          Add Workspace
+                        </Typography>
+                      </Stack>
+                    </TooltipStyle>
+                  </Box>
                 ) : null}
               </MyCollapse>
             </Box>

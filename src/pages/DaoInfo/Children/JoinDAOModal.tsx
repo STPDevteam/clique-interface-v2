@@ -24,6 +24,13 @@ const slideIn = keyframes`
   }
 `
 
+const shake = keyframes`
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-10px); }
+  75% { transform: translateY(10px); }
+  100% { transform: translateY(0); }
+`
+
 const Wrapper = styled(Stack)({
   position: 'fixed',
   bottom: 0,
@@ -49,6 +56,9 @@ const Wrapper = styled(Stack)({
   '&.bottom-popup.out': {
     display: 'none',
     bottom: -200
+  },
+  '&.shake-animation': {
+    animation: `${shake} 0.5s`
   }
 })
 
@@ -142,7 +152,7 @@ export default function JoinDaoFrame() {
   ])
 
   return (
-    <Wrapper className={`bottom-popup ${isOpen ? '' : 'out'}`}>
+    <Wrapper className={`bottom-popup ${isOpen ? '' : 'out'} ${isOpen ? 'shake-animation' : ''}`}>
       <Box display="grid" width="260px">
         <Box display={'flex'} justifyContent={'center'}>
           <Avatar sx={{ width: 88, height: 88 }} src={createDaoData?.daoLogo || ''}></Avatar>

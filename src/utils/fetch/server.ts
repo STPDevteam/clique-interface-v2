@@ -549,11 +549,10 @@ export function getAccountFollowingList(userId: number | undefined, limit: numbe
 }
 
 // 'stpdao/v3/user/top/list'
-export function getAccountSendRecordList(account: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/account/record', {
-    account,
+export function getAccountSendRecordList(offset: number, limit: number) {
+  return Axios.get('stpdao/v3/user/record/list', {
     offset,
-    count
+    limit
   })
 }
 

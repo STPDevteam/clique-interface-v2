@@ -1,6 +1,6 @@
 import { Box, Card, Typography } from '@mui/material'
 import Image from 'components/Image'
-import owl from 'assets/images/owl.png'
+import Avatar from 'assets/images/avatar.png'
 import { shortenAddress } from 'utils'
 import Button from 'components/Button/Button'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
@@ -103,7 +103,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 height: 60,
                 backgroundSize: '130% auto',
                 backgroundPosition: 'center center',
-                backgroundImage: `url(${item.avatar || owl})`,
+                backgroundImage: `url(${item.avatar || Avatar})`,
                 backgroundRepeat: 'no-repeat'
               }}
             >
@@ -137,7 +137,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 }
               }}
             >
-              <Image src={item.avatar || owl}></Image>
+              <Image src={item.avatar || Avatar}></Image>
               <Typography noWrap maxWidth={'100%'} color="#3f5170" fontSize={18} minHeight={24} padding={'0 10px'}>
                 {item.nickname || 'unnamed'}
               </Typography>
