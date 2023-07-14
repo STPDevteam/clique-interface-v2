@@ -28,6 +28,7 @@ import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
 import Copy from 'components/essential/Copy'
 import { ExternalLink } from 'theme/components'
+import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
 
 // import owl from 'assets/images/owl.png'
 
@@ -100,7 +101,7 @@ export default function SoulTokenDetail() {
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
-
+  const { result: profileInfo } = useUserProfileInfo(account || undefined)
   const { daoId, sbtId } = useParams<{
     daoId: string
     sbtId: string
@@ -395,17 +396,25 @@ export default function SoulTokenDetail() {
             </ColumnLayoutStyle>
             <OwnersStyle>
               <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'}>
-                Owners({sbtClaimList ? sbtClaimList.length : 0})
+                Owners({sbtClaimList && sbtClaimList?.length > 0 ? sbtClaimList?.length : contractQueryIsClaim ? 1 : 0})
               </Typography>
               <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                {sbtClaimList &&
+                {sbtClaimList && sbtClaimList?.length > 0 ? (
                   sbtClaimList?.map((item: any) => (
                     <Image
                       key={item.account}
                       src={item.accountLogo || avatar}
                       style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
                     />
-                  ))}
+                  ))
+                ) : contractQueryIsClaim ? (
+                  <Image
+                    src={profileInfo?.accountLogo || avatar}
+                    style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
+                  />
+                ) : (
+                  ''
+                )}
 
                 {sbtClaimList && sbtClaimList?.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
               </Box>

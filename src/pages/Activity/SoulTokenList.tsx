@@ -57,7 +57,7 @@ const StatusStyle = styled(Box)(({ color }: { color?: string }) => ({
   fontWeight: 600,
   fontSize: 12,
   lineHeight: '18px',
-  color: color == 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#8D8EA5',
+  color: color === 'active' ? '#21C431' : color === 'soon' ? '#0049C6' : '#8D8EA5',
   '&:before': {
     content: `''`,
     width: 5,
@@ -85,7 +85,7 @@ export default function SoulTokenList({
   return (
     <>
       <Box minHeight={150}>
-        {!loading && !result.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+        {!loading && !result && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
         <DelayLoading loading={loading}>
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>

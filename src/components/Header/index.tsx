@@ -23,7 +23,6 @@ import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
-import { useUserInfo } from 'state/userInfo/hooks'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 // import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
 // import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
@@ -34,6 +33,9 @@ import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { getWorkspaceInfo } from 'utils/fetch/server'
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 
 interface TabContent {
   title: string
@@ -423,7 +425,10 @@ export default function Header() {
 function TabsBox() {
   const { pathname } = useLocation()
   const history = useHistory()
-
+  const toggleWalletModal = useWalletModalToggle()
+  const loginSignature = useLoginSignature()
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   return (
     <LinksWrapper>
       {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
@@ -506,7 +511,11 @@ function TabsBox() {
                       }
                     }}
                     key={option.title}
-                    onClick={() => (option.route ? history.push(option.route) : window.open(option.link, '_blank'))}
+                    onClick={() => {
+                      if (!account) return toggleWalletModal()
+                      if (!userSignature) return loginSignature()
+                      option.route ? history.push(option.route) : window.open(option.link, '_blank')
+                    }}
                   >
                     {option.titleContent ?? option.title}
                   </Box>

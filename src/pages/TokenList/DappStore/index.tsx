@@ -16,6 +16,17 @@ import chainLogo2 from 'assets/images/chainLogo2.png'
 import chainLogo3 from 'assets/images/chainLogo3.png'
 import chainLogo4 from 'assets/images/chainLogo4.png'
 import chainLogo5 from 'assets/images/chainLogo5.png'
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+
+export enum ToolsCardsTitle {
+  DAORewards = 'DAO Rewards',
+  CreateDAO = 'Create DAO',
+  CreateToken = 'Create Token',
+  SDK = 'SDK',
+  CreateSBT = 'Create Soulbound Token of DAO'
+}
 
 const cardsData = [
   // {
@@ -35,7 +46,7 @@ const cardsData = [
   //   route: ''
   // },
   {
-    title: 'DAO Rewards',
+    title: ToolsCardsTitle.DAORewards,
     icon: rewardsIcon,
     des: 'DAO airdrop event list page, where you can create events and receive rewards.',
     supportChainsIcon: 'all',
@@ -43,7 +54,7 @@ const cardsData = [
     route: routes.Activity
   },
   {
-    title: 'Create DAO',
+    title: ToolsCardsTitle.CreateDAO,
     icon: createDaoIcon,
     des: 'Add a DAO on Clique',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
@@ -51,7 +62,7 @@ const cardsData = [
     route: routes.CreateDao
   },
   {
-    title: 'Create Token',
+    title: ToolsCardsTitle.CreateToken,
     icon: createTokenIcon,
     des: 'You can use this function to create special tokens.',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
@@ -59,7 +70,7 @@ const cardsData = [
     route: routes.CreatorToken
   },
   {
-    title: 'SDK',
+    title: ToolsCardsTitle.SDK,
     icon: sdkIcon,
     des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: '',
@@ -67,7 +78,7 @@ const cardsData = [
     link: 'https://www.npmjs.com/package/@myclique/governance-sdk'
   },
   {
-    title: 'Create Soulbound Token of DAO',
+    title: ToolsCardsTitle.CreateSBT,
     icon: sbtIcon,
     des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: 'all',
@@ -78,7 +89,10 @@ const cardsData = [
 
 function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }: any) {
   const history = useHistory()
-
+  const toggleWalletModal = useWalletModalToggle()
+  const loginSignature = useLoginSignature()
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   return (
     <Box
       sx={{
@@ -110,6 +124,14 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
       }}
       onClick={() => {
         if (!route && !link) return
+        if (
+          title === ToolsCardsTitle.CreateSBT ||
+          title === ToolsCardsTitle.CreateDAO ||
+          title === ToolsCardsTitle.CreateToken
+        ) {
+          if (!account) return toggleWalletModal()
+          if (!userSignature) return loginSignature()
+        }
         route ? history.push(route) : window.open(link, '_blank')
       }}
     >
