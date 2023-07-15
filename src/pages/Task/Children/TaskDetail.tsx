@@ -186,7 +186,6 @@ export default function TaskDetail({
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
-  console.log('🚀 ~ file: TaskDetail.tsx:189 ~ taskDetailData:', taskDetailData)
   const [currentStatus, setCurrentStatus] = useState(preStatus ?? '')
   const [assignees, setAssignees] = useState<any>(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
@@ -205,6 +204,7 @@ export default function TaskDetail({
 
   const createCallback = useCallback(() => {
     setIsSubmit(true)
+    if (!value.trim()) return
     if (!spacesId) return
     create(
       assignees,
@@ -227,6 +227,7 @@ export default function TaskDetail({
 
   const updateCallback = useCallback(() => {
     setIsSubmit(true)
+    if (!value.trim()) return
     if (!editData) return
     update(
       assignees,
@@ -256,30 +257,18 @@ export default function TaskDetail({
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton
-          width="140px"
-          height="36px"
-          disabled={isSubmit ? isSubmit : !value.trim()}
-          color="#0049C6"
-          onClick={updateCallback}
-        >
+        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton
-          width="140px"
-          height="36px"
-          disabled={isSubmit ? isSubmit : !value.trim()}
-          color="#ffffff"
-          onClick={createCallback}
-        >
+        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback, value, isSubmit])
+  }, [createCallback, editData, updateCallback])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -898,7 +887,7 @@ export default function TaskDetail({
             >
               <Editor content={content} setContent={setContent} />
             </RowContent>
-            {!value.trim() && (
+            {!value.trim() && isSubmit && (
               <Alert style={{ marginTop: 20 }} severity="error">
                 Task title required
               </Alert>
