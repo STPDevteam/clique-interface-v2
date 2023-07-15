@@ -1,4 +1,4 @@
-# STP DAO - Clique V2
+# STP DAO - Clique V3
 
 ---
 
