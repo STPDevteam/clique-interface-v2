@@ -20,7 +20,8 @@ import useModal from 'hooks/useModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { ChainListMap } from 'constants/chain'
 import { shortenAddress, getEtherscanLink, formatTimestamp } from 'utils'
-
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { Dots } from 'theme/components'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
@@ -28,9 +29,8 @@ import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
 import Copy from 'components/essential/Copy'
 import { ExternalLink } from 'theme/components'
-import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
-
-// import owl from 'assets/images/owl.png'
+import { toast } from 'react-toastify'
+import isZero from 'utils/isZero'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   height: 800,
@@ -101,21 +101,19 @@ export default function SoulTokenDetail() {
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
-  const { result: profileInfo } = useUserProfileInfo(account || undefined)
   const { daoId, sbtId } = useParams<{
     daoId: string
     sbtId: string
   }>()
-  // const curDaoChainId = Number(daoChainId) as ChainId
+  const [isJoin, setIsJoin] = useState(false)
 
-  const { result: sbtDetail, contractQueryIsClaim, loading, ContractQueryLoading } = useSbtDetail(sbtId)
+  const { result: sbtDetail, contractQueryIsClaim, ContractQueryLoading } = useSbtDetail(sbtId)
   const { result: sbtClaimList } = useSbtClaimList(Number(sbtId))
-  const { result: sbtIsClaim } = useSbtQueryIsClaim(Number(sbtId))
+  const { result: sbtIsClaim } = useSbtQueryIsClaim(Number(sbtId), isJoin)
   const { isJoined, loading: JoinedLoading } = useIsJoined(Number(daoId))
   const { SbtClaimCallback } = useSbtClaim()
+  const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_claim_sbt_${Number(sbtId)}`)
   const joinDAO = useJoinDAO()
-
-  const [isJoin, setIsJoin] = useState(false)
 
   const isClaim = useMemo(() => {
     if (
@@ -155,18 +153,22 @@ export default function SoulTokenDetail() {
   }, [isJoined?.isJoin])
 
   const nextHandler = useMemo(() => {
-    if (!sbtDetail && !loading) {
+    if (!sbtDetail) return
+
+    if (!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress)) {
       return {
-        error: 'Query data is null.'
+        error: 'The SBT is still in the process of being deployed to the blockchain.'
       }
     }
-    if (
-      !contractQueryIsClaim &&
-      sbtDetail &&
-      (Math.floor(Date.now() / 1000) < sbtDetail?.startTime || Math.floor(Date.now() / 1000) > sbtDetail?.endTime)
-    ) {
+    if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime) {
       return {
-        error: 'The claiming period has either ended or has not yet started.'
+        error: 'The claiming period has not yet started.'
+      }
+    }
+
+    if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) > sbtDetail?.endTime) {
+      return {
+        error: 'The claiming period has either ended.'
       }
     }
 
@@ -176,7 +178,7 @@ export default function SoulTokenDetail() {
       }
     }
 
-    if (sbtDetail && chainId !== sbtDetail?.tokenChainId) {
+    if (chainId !== sbtDetail?.tokenChainId) {
       return {
         error: (
           <Box>
@@ -198,7 +200,6 @@ export default function SoulTokenDetail() {
       !ContractQueryLoading &&
       !contractQueryIsClaim &&
       sbtClaimList &&
-      sbtDetail &&
       sbtClaimList?.length >= sbtDetail?.totalSupply
     ) {
       return {
@@ -221,7 +222,6 @@ export default function SoulTokenDetail() {
     return
   }, [
     sbtDetail,
-    loading,
     contractQueryIsClaim,
     account,
     chainId,
@@ -240,6 +240,7 @@ export default function SoulTokenDetail() {
     await joinDAO(Number(daoId))
       .then(() => {
         setIsJoin(true)
+        toast.success('Join success')
       })
       .catch(() => {
         setIsJoin(false)
@@ -251,7 +252,7 @@ export default function SoulTokenDetail() {
     if (!account) return toggleWalletModal()
     if (!userSignature) return loginSignature()
     showModal(<TransacitonPendingModal />)
-    SbtClaimCallback(sbtId, account)
+    SbtClaimCallback(sbtId)
       .then(res => {
         hideModal()
         console.log(res)
@@ -304,7 +305,7 @@ export default function SoulTokenDetail() {
               <RowCenter>
                 <Box>
                   <DetailTitleStyle>Items </DetailTitleStyle>
-                  <DetailStyle>{sbtDetail?.totalSupply}</DetailStyle>
+                  <DetailStyle>{sbtDetail?.totalSupply || '--'}</DetailStyle>
                 </Box>
                 <Box>
                   <DetailTitleStyle>Network</DetailTitleStyle>
@@ -379,10 +380,11 @@ export default function SoulTokenDetail() {
                 }}
               >
                 <ClaimButton
-                  disabled={contractQueryIsClaim ? contractQueryIsClaim : isClaim}
+                  disabled={isClaiming ? isClaiming : contractQueryIsClaim ? contractQueryIsClaim : isClaim}
                   onClick={sbtClaimCallback}
                 >
-                  {contractQueryIsClaim ? 'Owned' : isClaim ? 'CannotClaim' : 'Claim'}
+                  {isClaiming ? 'Claiming' : contractQueryIsClaim ? 'Owned' : isClaim ? 'Not Claim' : 'Claim'}
+                  {isClaiming && <Dots />}
                 </ClaimButton>
                 {nextHandler?.error && (
                   <Box
@@ -396,25 +398,18 @@ export default function SoulTokenDetail() {
             </ColumnLayoutStyle>
             <OwnersStyle>
               <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'}>
-                Owners({sbtClaimList && sbtClaimList?.length > 0 ? sbtClaimList?.length : contractQueryIsClaim ? 1 : 0})
+                Owners({sbtClaimList && sbtClaimList?.length > 0 ? sbtClaimList?.length : 0})
               </Typography>
               <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                {sbtClaimList && sbtClaimList?.length > 0 ? (
+                {sbtClaimList &&
+                  sbtClaimList?.length > 0 &&
                   sbtClaimList?.map((item: any) => (
                     <Image
                       key={item.account}
                       src={item.accountLogo || avatar}
                       style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
                     />
-                  ))
-                ) : contractQueryIsClaim ? (
-                  <Image
-                    src={profileInfo?.accountLogo || avatar}
-                    style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
-                  />
-                ) : (
-                  ''
-                )}
+                  ))}
 
                 {sbtClaimList && sbtClaimList?.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
               </Box>

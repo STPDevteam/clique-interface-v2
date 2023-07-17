@@ -123,7 +123,7 @@ export function useCreateSbtCallback() {
         if (!res.data.data) throw new Error(res.data.msg || 'Network error')
         result = res.data.data as any
       } catch (error) {
-        console.error('Purchase', error)
+        console.error('createSBT', error)
         throw error
       }
 
@@ -137,8 +137,8 @@ export function useCreateSbtCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Purchased a swap`,
-            claim: { recipient: `${account}_purchase_swap_${result.SBTId}` }
+            summary: `Create SBT`,
+            claim: { recipient: `${account}_create_sbt` }
           })
           return {
             hash: response.hash,
@@ -261,9 +261,10 @@ export function useSbtClaim() {
   const contract = useSbtContract()
   const gasPriceInfoCallback = useGasPriceInfo()
   const addTransaction = useTransactionAdder()
+  const { account } = useActiveWeb3React()
 
   const SbtClaimCallback = useCallback(
-    async (sbtId: string, account: string | undefined) => {
+    async (sbtId: string) => {
       if (!contract) throw new Error('none contract')
 
       let result: any = {}
@@ -272,9 +273,10 @@ export function useSbtClaim() {
       try {
         const res = await getSbtIsClaim(parseFloat(sbtId))
         result = res.data.data as any
+        console.log(result)
         if (!result.signature) throw new Error('sbt signature is null')
       } catch (error) {
-        console.error('Purchase', error)
+        console.error('ClaimSBT', error)
         throw error
       }
       const signature = result.signature
@@ -288,8 +290,8 @@ export function useSbtClaim() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Purchased a swap`,
-            claim: { recipient: `${account}_purchase_swap_${result.SBTId}` }
+            summary: `Claim SBT`,
+            claim: { recipient: `${account}_claim_sbt_${sbtId}` }
           })
           return {
             hash: response.hash
@@ -298,7 +300,7 @@ export function useSbtClaim() {
         .catch((err: any) => {
           if (err.code !== 4001) {
             commitErrorMsg(
-              'useCreatePublicSaleCallback',
+              'useClaimSBTCallback',
               JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
               method,
               JSON.stringify(args)
@@ -312,12 +314,12 @@ export function useSbtClaim() {
           throw err
         })
     },
-    [addTransaction, contract, gasPriceInfoCallback]
+    [account, addTransaction, contract, gasPriceInfoCallback]
   )
   return { SbtClaimCallback }
 }
 
-export function useSbtQueryIsClaim(sbtId: number) {
+export function useSbtQueryIsClaim(sbtId: number, isJoin?: boolean) {
   const { account } = useActiveWeb3React()
 
   const userSignature = useUserInfo()
@@ -338,7 +340,7 @@ export function useSbtQueryIsClaim(sbtId: number) {
         throw error
       }
     })()
-  }, [account, sbtId, userSignature])
+  }, [account, sbtId, userSignature, isJoin])
 
   return { loading, result }
 }
