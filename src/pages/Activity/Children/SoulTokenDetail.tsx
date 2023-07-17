@@ -33,7 +33,8 @@ import { toast } from 'react-toastify'
 import isZero from 'utils/isZero'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
-  height: 800,
+  minHeight: 800,
+  marginBottom: 40,
   maxWidth: maxWidth ? maxWidth : 600,
   width: '100%',
   border: '1px solid #D4D7E2',
@@ -160,7 +161,7 @@ export default function SoulTokenDetail() {
         error: 'The SBT is still in the process of being deployed to the blockchain.'
       }
     }
-    if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime) {
+    if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime && sbtDetail?.status === 'soon') {
       return {
         error: 'The claiming period has not yet started.'
       }
@@ -182,7 +183,7 @@ export default function SoulTokenDetail() {
       return {
         error: (
           <Box>
-            Please{' '}
+            Query Failed,{' '}
             <Link
               sx={{ cursor: 'pointer', color: '#E46767', textDecorationColor: '#E46767' }}
               onClick={() => {
@@ -343,7 +344,16 @@ export default function SoulTokenDetail() {
             </DetailLayoutStyle>
             <Box sx={{ padding: '20px 40px' }}>
               <Typography
-                sx={{ wordWrap: 'break-word', overflowWrap: 'break-word' }}
+                sx={{
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word',
+                  // '& span': {
+                  //   background: 'transparent !important'
+                  // },
+                  '& img': {
+                    maxWidth: '100%'
+                  }
+                }}
                 variant="body1"
                 lineHeight={'20px'}
                 fontWeight={400}
@@ -364,7 +374,7 @@ export default function SoulTokenDetail() {
               </Typography>
             </Box>
           </ContentBoxStyle>
-          <ContentBoxStyle maxWidth={580}>
+          <ContentBoxStyle maxWidth={580} maxHeight={800}>
             <ColumnLayoutStyle
               sx={{
                 height: 470,
@@ -403,15 +413,17 @@ export default function SoulTokenDetail() {
               <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
                 {sbtClaimList &&
                   sbtClaimList?.length > 0 &&
-                  sbtClaimList?.map((item: any) => (
-                    <Image
-                      key={item.account}
-                      src={item.accountLogo || avatar}
-                      style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
-                    />
-                  ))}
-
-                {sbtClaimList && sbtClaimList?.length > 32 ? <Image src={EllipsisIcon} width={50} /> : ''}
+                  sbtClaimList?.map((item: any, index: number) =>
+                    index < 32 ? (
+                      <Image
+                        key={item.account}
+                        src={item.accountLogo || avatar}
+                        style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
+                      />
+                    ) : (
+                      <Image src={EllipsisIcon} width={50} />
+                    )
+                  )}
               </Box>
             </OwnersStyle>
           </ContentBoxStyle>

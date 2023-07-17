@@ -291,7 +291,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
 //   }
 // }) as typeof Chip
 
-function capitalizeFirstLetter(str: string) {
+export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 

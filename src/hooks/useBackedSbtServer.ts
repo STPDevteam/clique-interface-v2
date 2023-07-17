@@ -190,21 +190,24 @@ export function useSbtClaimList(sbtId: number) {
   const offset = 0
   const limit = 32
   const [result, setResult] = useState<SbtClaimListProp[]>()
+  const [total, setTotal] = useState<number>(0)
   useEffect(() => {
     ;(async () => {
       try {
         const res = await getSbtClaimList(offset, limit, sbtId)
         const data = res.data.data
         setResult(data)
+        setTotal(total)
       } catch (error) {
         console.log(error)
         setResult(undefined)
       }
     })()
-  }, [offset, limit, sbtId])
+  }, [offset, limit, sbtId, total])
 
   return {
-    result
+    result,
+    total
   }
 }
 
@@ -273,7 +276,6 @@ export function useSbtClaim() {
       try {
         const res = await getSbtIsClaim(parseFloat(sbtId))
         result = res.data.data as any
-        console.log(result)
         if (!result.signature) throw new Error('sbt signature is null')
       } catch (error) {
         console.error('ClaimSBT', error)

@@ -11,6 +11,7 @@ import { SbtListProp } from 'hooks/useBackedSbtServer'
 import { ChainListMap } from 'constants/chain'
 import { formatTimestamp } from 'utils/index'
 import { formatNumberWithCommas } from 'utils'
+import { capitalizeFirstLetter } from 'components/Header'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -85,7 +86,7 @@ export default function SoulTokenList({
   return (
     <>
       <Box minHeight={150}>
-        {!loading && !result && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+        {!loading && result.length === 0 && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
         <DelayLoading loading={loading}>
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
@@ -147,7 +148,7 @@ function ItemCard(item: SbtListProp) {
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Status</ContentTitleStyle>
-            <StatusStyle color={item?.status}>{item?.status}</StatusStyle>
+            <StatusStyle color={item?.status}>{capitalizeFirstLetter(item?.status)}</StatusStyle>
           </ContentLayout>
           <ContentLayout>
             <ContentTitleStyle>Claimable Period</ContentTitleStyle>

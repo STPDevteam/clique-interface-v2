@@ -81,11 +81,10 @@ const tabList = [
 export default function Activity() {
   const { search, loading, result, page } = useActivityList()
   const { search: searchSbt, loading: loadingSbt, result: resultSbt, page: pageSbt } = useSbtList()
-
   const isSmDown = useBreakpoint('sm')
   const [tabValue, setTabValue] = useState(searchSbt.category || 0)
 
-  const [chainIdVal, setChainId] = useState<number | string>(search.chainId || searchSbt.chainId || '')
+  const [chainIdVal, setChainId] = useState<number | string>(searchSbt.chainId || '')
   const [statusVal, setStatus] = useState<string>(search.status || searchSbt.status || '')
 
   const handleChange = (event: any, newValue: any) => {
@@ -141,32 +140,35 @@ export default function Activity() {
               ))}
             </TabStyle>
             <Box sx={{ display: 'flex', gap: isSmDown ? 10 : 16 }}>
-              <Select
-                placeholder=""
-                noBold
-                width={isSmDown ? '175px' : '250px'}
-                height={isSmDown ? '36px' : '40px'}
-                value={chainIdVal}
-                onChange={e => {
-                  search.setChainId(e.target.value)
-                  searchSbt.setChainId(e.target.value)
-                  setChainId(e.target.value)
-                }}
-              >
-                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }} value={''}>
-                  All Chain
-                </MenuItem>
-                {ChainList.map(item => (
-                  <MenuItem
-                    key={item.id}
-                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                    value={item.id}
-                    selected={tabValue === 0 ? search.chainId === item.id : searchSbt.chainId === item.id}
-                  >
-                    {item.name}
+              {tabValue === 1 && (
+                <Select
+                  placeholder=""
+                  noBold
+                  width={isSmDown ? '175px' : '250px'}
+                  height={isSmDown ? '36px' : '40px'}
+                  value={chainIdVal}
+                  onChange={e => {
+                    // search.setChainId(e.target.value)
+                    searchSbt.setChainId(e.target.value)
+                    setChainId(e.target.value)
+                  }}
+                >
+                  <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }} value={''}>
+                    All Chain
                   </MenuItem>
-                ))}
-              </Select>
+                  {ChainList.map(item => (
+                    <MenuItem
+                      key={item.id}
+                      sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                      value={item.id}
+                      selected={searchSbt.chainId === item.id}
+                    >
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+
               <Select
                 placeholder=""
                 noBold

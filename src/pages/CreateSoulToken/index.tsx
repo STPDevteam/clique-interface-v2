@@ -219,6 +219,12 @@ export default function Index() {
         error: 'Item Name required'
       }
     }
+    if (Introduction.trim().length > 2000) {
+      return {
+        disabled: true,
+        error: 'Introduction is too long'
+      }
+    }
 
     if (!symbolValue.trim()) {
       return {
@@ -267,6 +273,7 @@ export default function Index() {
     itemName,
     symbolValue,
     totalSupply,
+    Introduction,
     eligibilityValue,
     eventEndTime,
     eventStartTime,
