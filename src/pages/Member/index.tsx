@@ -19,6 +19,7 @@ import AddJobsModal from 'pages/AboutSetting/Modals/AddJobsModal'
 import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import AddMemberModal from 'pages/AboutSetting/Modals/AddMemberModal'
 import { routes } from 'constants/routes'
+import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -90,6 +91,7 @@ const DisabledBtn = styled(Box)({
 
 export default function Member() {
   const [rand, setRand] = useState(Math.random())
+  const [randNum] = useState(Math.random())
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const curDaoId = Number(daoId)
@@ -98,6 +100,7 @@ export default function Member() {
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
   const { result: jobsList } = useJobsList(curDaoId)
+  const { result: jobsNum } = useGetPublishJobList(curDaoId, randNum)
   const addJobsCB = useCallback(() => {
     showModal(
       <AddJobsModal isEdit={false} chainId={curDaoId} onDimiss={() => setRand(Math.random())} originLevel={1} />
@@ -239,7 +242,7 @@ export default function Member() {
                   history.push(routes._DaoInfo + `/${daoId}/settings?tab=3`)
                 }}
               >
-                View open jobs({jobsList.length})&gt;
+                View open jobs({jobsNum.length})&gt;
               </Typography>
             ) : (
               <></>

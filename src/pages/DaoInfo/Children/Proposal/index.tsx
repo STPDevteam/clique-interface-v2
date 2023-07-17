@@ -109,7 +109,7 @@ export default function Proposal() {
                           }}
                           onClick={() => {
                             hideModal()
-                            history.push(routes._DaoInfo + `/${params.daoId}/settings`)
+                            history.push(routes._DaoInfo + `/${params.daoId}/settings?tab=1`)
                           }}
                         >
                           to set up
