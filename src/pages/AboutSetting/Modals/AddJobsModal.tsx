@@ -168,7 +168,7 @@ export default function AddJobsModal({
                 width={'422px'}
                 height={40}
                 noBold
-                label="Guests"
+                label="Apply for"
                 value={currentStatus}
                 style={{ borderRadius: '8px', borderColor: '#D4D7E2' }}
                 onChange={e => {

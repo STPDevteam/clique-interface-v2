@@ -1,6 +1,6 @@
 import { Box, Typography, styled, Divider, MenuList, MenuItem } from '@mui/material'
 import { useState, useMemo, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 // import DaoInfoAbout from 'pages/DaoInfo/Children/About'
 // import Header from './AboutHeader'
 // import GovernanceSetting from 'pages/DaoInfo/Children/Settings/GovernanceSetting'
@@ -52,6 +52,9 @@ const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
 
 export default function AboutSetting() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const location = useLocation()
+  const searchParams = new URLSearchParams(location.search)
+  const paramName = searchParams.get('tab')
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const history = useHistory()
@@ -143,9 +146,9 @@ export default function AboutSetting() {
       myJoinDaoData?.job !== DaoAdminLevelProp[0] ||
       myJoinDaoData?.job !== DaoAdminLevelProp[2]
     ) {
-      return setTabValue(0)
+      return setTabValue(paramName ? Number(paramName) : 0)
     }
-  }, [myJoinDaoData?.job])
+  }, [myJoinDaoData?.job, paramName])
   useEffect(() => {
     if (
       !account ||

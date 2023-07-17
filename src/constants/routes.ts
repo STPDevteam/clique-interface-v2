@@ -12,7 +12,6 @@ export const routes = {
   CreatePublicSale: '/governance/daoInfo/:daoId/DAO_Rewards/create_sale',
   CreateAirdrop: '/governance/daoInfo/:daoId/DAO_Rewards/create_DAO_Rewards',
   DaoInfoAbout: '/governance/daoInfo/:daoId/about',
-  DaoInfoSettings: '/governance/daoInfo/:daoId/settings',
   DaoMember: '/governance/daoInfo/:daoId/member',
   DaoTreasury: '/governance/daoInfo/:daoId/treasury',
   DaoIdea: '/governance/daoInfo/:daoId/idea',

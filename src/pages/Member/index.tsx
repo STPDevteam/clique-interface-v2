@@ -9,7 +9,7 @@ import CardView from './Children/CardView'
 import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
 import { useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
@@ -18,6 +18,7 @@ import useModal from 'hooks/useModal'
 import AddJobsModal from 'pages/AboutSetting/Modals/AddJobsModal'
 import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import AddMemberModal from 'pages/AboutSetting/Modals/AddMemberModal'
+import { routes } from 'constants/routes'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -92,6 +93,7 @@ export default function Member() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const curDaoId = Number(daoId)
+  const history = useHistory()
   const { showModal, hideModal } = useModal()
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
@@ -135,7 +137,9 @@ export default function Member() {
       ]
   return (
     <DaoContainer>
-      {isJoined.isJoin ? (
+      {!isJoined.isJoin && jobsList && jobsList.length !== 0 ? (
+        <EmptyPage />
+      ) : (
         <Box>
           <Box
             sx={{
@@ -199,21 +203,48 @@ export default function Member() {
             Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
             to receive information about new openings.
           </Typography>
-          <StyledTabs>
-            <Tabs value={tabValue}>
-              {tabList.map((item, idx) => (
-                <Tab
-                  key={item.label + idx}
-                  icon={item.icon}
-                  iconPosition="start"
-                  label={item.label}
-                  onClick={() => setTabValue(idx)}
-                  sx={{ gap: 10, marginRight: 50 }}
-                  className={tabValue === idx ? 'active' : ''}
-                ></Tab>
-              ))}
-            </Tabs>
-          </StyledTabs>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              '& p': {
+                cursor: 'pointer',
+                color: '#0049C6',
+                fontWeight: 500,
+                padding: '12px 16px',
+                marginBottom: '-12px'
+              }
+            }}
+          >
+            <StyledTabs>
+              <Tabs value={tabValue}>
+                {tabList.map((item, idx) => (
+                  <Tab
+                    key={item.label + idx}
+                    icon={item.icon}
+                    iconPosition="start"
+                    label={item.label}
+                    onClick={() => setTabValue(idx)}
+                    sx={{ gap: 10, marginRight: 50 }}
+                    className={tabValue === idx ? 'active' : ''}
+                  ></Tab>
+                ))}
+              </Tabs>
+            </StyledTabs>
+            {tabList.length === 3 && tabValue === 1 ? (
+              <Typography
+                onClick={() => {
+                  history.push(routes._DaoInfo + `/${daoId}/settings?tab=3`)
+                }}
+              >
+                View open jobs({jobsList.length})&gt;
+              </Typography>
+            ) : (
+              <></>
+            )}
+          </Box>
           <Divider />
           {tabList.length === 2 ? (
             tabValue === 0 ? (
@@ -229,8 +260,6 @@ export default function Member() {
             <InviteUser />
           )}
         </Box>
-      ) : (
-        <EmptyPage />
       )}
     </DaoContainer>
   )
