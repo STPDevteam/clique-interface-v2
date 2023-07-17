@@ -92,6 +92,7 @@ export interface TaskDetailProps {
   assignAvatar: string
   assignNickname: string
   content: string
+  proposalTitle: string
   createTime: number
   deadline: number
   priority: string
@@ -415,7 +416,7 @@ export function useGetTaskList(
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
-  const pageSize = 8
+  const pageSize = 20
   const [result, setResult] = useState<ITaskItem[]>([])
 
   useEffect(() => {

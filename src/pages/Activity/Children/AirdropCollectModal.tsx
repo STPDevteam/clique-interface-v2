@@ -75,9 +75,7 @@ export default function AirdropCollectModal({
         </Typography>
         <Stack spacing={16} mt={20}>
           <Input value={account || ''} readOnly label="Your address" />
-
           <InputBox collectInputs={inputs} updateCollectInputs={updateCollectInputs} />
-
           <Box display={'flex'} pt={10} justifyContent="center">
             <BlackButton
               width="166px"

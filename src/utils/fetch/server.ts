@@ -152,14 +152,14 @@ export function getJobsList(daoId: number, offset: number, limit: number) {
 
 export function getTaskList(
   offset: number,
-  count: number,
+  limit: number,
   spacesId: number | undefined,
   status: string | undefined,
   priority: string | undefined
 ) {
   return Axios.get('stpdao/v3/task/list', {
     offset,
-    count,
+    limit,
     spacesId,
     status,
     priority

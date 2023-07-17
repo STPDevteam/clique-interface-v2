@@ -43,7 +43,7 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
           }
           return
         } else if (res.data.code !== 200) {
-          toast.error('Add error')
+          toast.error(res.data.msg || 'Add error')
           return
         }
         hideModal()

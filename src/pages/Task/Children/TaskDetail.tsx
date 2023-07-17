@@ -161,6 +161,8 @@ export default function TaskDetail({
     })
     return arr
   }, [proposalBaseList])
+  console.log('list', editData, proposalList)
+
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
@@ -202,6 +204,7 @@ export default function TaskDetail({
 
   const createCallback = useCallback(() => {
     setIsSubmit(true)
+    if (!value.trim()) return
     if (!spacesId) return
     create(
       assignees,
@@ -224,6 +227,7 @@ export default function TaskDetail({
 
   const updateCallback = useCallback(() => {
     setIsSubmit(true)
+    if (!value.trim()) return
     if (!editData) return
     update(
       assignees,
@@ -253,30 +257,18 @@ export default function TaskDetail({
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton
-          width="140px"
-          height="36px"
-          disabled={isSubmit ? isSubmit : !value.trim()}
-          color="#0049C6"
-          onClick={updateCallback}
-        >
+        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton
-          width="140px"
-          height="36px"
-          disabled={isSubmit ? isSubmit : !value.trim()}
-          color="#ffffff"
-          onClick={createCallback}
-        >
+        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback, value, isSubmit])
+  }, [createCallback, editData, updateCallback])
 
   return (
     <Box maxWidth="608px" width="100%">
@@ -565,27 +557,45 @@ export default function TaskDetail({
                   setProposal(value)
                 }}
               /> */}
-              <Select
-                disabled
-                noBold
-                placeholder="Choose a proposal"
-                style={{ fontWeight: 500, fontSize: 14 }}
-                width={isSmDown ? 160 : 248}
-                height={isSmDown ? '30px' : '40px'}
-                value={proposal}
-                onChange={e => setProposal(e.target.value)}
+              <Box
+                width={'246.88px'}
+                sx={{
+                  height: 40,
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: '1px solid #D4D7E2',
+                  borderRadius: '10px'
+                }}
               >
-                {proposalList.map((item: any) => (
-                  <MenuItem
-                    key={item.proposalId}
-                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                    value={item.proposalId}
-                    selected={assignees === item}
+                {taskDetailData?.proposalTitle ? (
+                  <Typography
+                    noWrap
+                    sx={{
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      maxWidth: 246,
+                      paddingLeft: 16,
+                      fontSize: 14,
+                      color: '#3f5170',
+                      fontWeight: 500
+                    }}
                   >
-                    {item.label}
-                  </MenuItem>
-                ))}
-              </Select>
+                    {taskDetailData?.proposalTitle}
+                  </Typography>
+                ) : (
+                  <Typography
+                    sx={{
+                      maxWidth: 246,
+                      paddingLeft: 16,
+                      fontSize: 14,
+                      color: '#808191',
+                      fontWeight: 400
+                    }}
+                  >
+                    Empty
+                  </Typography>
+                )}
+              </Box>
             </RowContent>
             <EditContent>
               {ReactHtmlParser(
@@ -877,7 +887,7 @@ export default function TaskDetail({
             >
               <Editor content={content} setContent={setContent} />
             </RowContent>
-            {!value.trim() && (
+            {!value.trim() && isSubmit && (
               <Alert style={{ marginTop: 20 }} severity="error">
                 Task title required
               </Alert>
