@@ -22,7 +22,7 @@ const Wrapper = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     '& .dao-box': {
       overflowY: 'auto',
-      height: `calc(100vh - ${theme.height.header} - 210px)`,
+      height: `calc(100vh - ${theme.height.header} - 210px - 54px)`,
       '&::-webkit-scrollbar': {
         display: 'none'
       }

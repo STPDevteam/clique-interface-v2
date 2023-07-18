@@ -139,7 +139,6 @@ export const Tabs: Tab[] = [
 // const StyledNavLink = styled(NavLink)(navLinkSX)
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  top: 54,
   position: 'fixed',
   height: theme.height.header,
   backgroundColor: theme.palette.background.paper,
@@ -323,7 +322,6 @@ export default function Header() {
   }, [curPath, daoInfo?.name])
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
-
   if (isGovernance) {
     return (
       <StyledAppBar
@@ -377,13 +375,12 @@ export default function Header() {
           position: 'fixed',
           top: 0,
           left: 0,
-
           width: '100%',
           zIndex: 999
         }}
       >
         <a href="https://myclique.io/" target="_blank" style={{ textDecoration: 'none' }} rel="noreferrer">
-          <Alert severity="warning" sx={{ height: 54 }}>
+          <Alert severity="warning" sx={{ height: 54, backgroundColor: '#e6f7ff' }}>
             The V2 version is only for view during the transition period. All the changes to the V2 version will be not
             recorded on V3 and will be lost when V2 is closed. Please move to V3 for any changes or operations.
           </Alert>
@@ -396,7 +393,11 @@ export default function Header() {
         <TabsBox />
       </StyledMobileAppBar>
 
-      <StyledAppBar>
+      <StyledAppBar
+        sx={{
+          top: pathname === '/daos' ? 54 : 0
+        }}
+      >
         <Box display="flex" alignItems="center">
           <MainLogo to={routes.Governance}>
             <Image src={logo} alt={'logo'} />

@@ -17,7 +17,8 @@ export enum ProposalStatus {
   OPEN = 2,
   CLOSED = 3,
   CANCEL = 4,
-  SUCCESS = 5
+  SUCCESS = 5,
+  FAILED = 6
 }
 
 export interface ProposalSignProp {
@@ -222,9 +223,14 @@ export function useProposalDetailInfo(
   }, [proposalOptionRes, daoInfo?.token, totalVoteAmount])
 
   const isSuccess = useMemo(() => {
-    if (!votingThreshold || !totalVoteAmount) return undefined
-    return !votingThreshold.greaterThan(totalVoteAmount)
-  }, [votingThreshold, totalVoteAmount])
+    if (!votingThreshold || !proposalOptions) return undefined
+    for (let i = 0; i < proposalOptions.length; i++) {
+      if (!votingThreshold.greaterThan(proposalOptions[i].amount)) {
+        return true
+      }
+    }
+    return false
+  }, [votingThreshold, proposalOptions])
 
   useEffect(() => {
     ;(async () => {

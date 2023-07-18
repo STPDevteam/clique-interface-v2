@@ -43,8 +43,8 @@ function DetailBox({
 }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
-
   const proposalDetailInfo = useProposalDetailInfo(daoInfo.daoAddress, daoChainId, proposalId, account || undefined)
+  console.log('🚀 ~ file: ProposalDetail.tsx:47 ~ proposalDetailInfo:', proposalDetailInfo?.votingThreshold?.toExact())
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoChainId}/${daoInfo.daoAddress}/proposal`)
