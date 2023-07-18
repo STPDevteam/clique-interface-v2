@@ -105,6 +105,8 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       : VotingTypes.SINGLE
   )
   const createProposalCallback = useCreateProposalCallback()
+  console.log('period', daoInfo.votingPeriod)
+
   const createToken = useMemo(() => {
     if (!daoInfo.governance[0] || !daoInfo.governance[0].createRequire) {
       return undefined
@@ -334,9 +336,11 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                     onValue={timestamp => {
                       if (!timestamp) return
                       setStarttime(startTime ? timestamp : timestamp + 5 * 60)
-
                       if (daoInfo.votingPeriod) {
                         setEndtime((startTime ? timestamp : timestamp + 5 * 60) + daoInfo.votingPeriod)
+                      }
+                      if (daoInfo.votingPeriod === 0) {
+                        setEndtime((startTime ? timestamp : timestamp) + 86400 * 3 + 300)
                       }
                     }}
                   ></DateTimePicker>
@@ -357,7 +361,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   <DateTimePicker
                     label=" "
                     disabled={daoInfo.votingPeriod !== 0}
-                    minDateTime={startTime ? new Date(startTime * 1000) : undefined}
+                    minDateTime={
+                      startTime
+                        ? daoInfo.votingPeriod === 0
+                          ? new Date(startTime * 1000 + 86400000 * 3)
+                          : new Date(startTime * 1000)
+                        : undefined
+                    }
                     value={endTime ? new Date(endTime * 1000) : null}
                     onValue={timestamp => {
                       if (!timestamp) return
