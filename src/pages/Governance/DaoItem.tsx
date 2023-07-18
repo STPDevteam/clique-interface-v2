@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom'
 // import useModal from 'hooks/useModal'
 // import MembersModal from 'pages/DaoInfo/MembersModal'
 import { Token } from 'constants/token'
-import { toFormatGroup } from 'utils/dao'
+import { formatMillion, toFormatGroup } from 'utils/dao'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import useBreakpoint from 'hooks/useBreakpoint'
 
@@ -155,7 +155,7 @@ export default function DaoItem({
             Members
           </Typography>
           <Typography fontSize={16} fontWeight={600}>
-            {memberCount}
+            {formatMillion(memberCount)}
           </Typography>
         </div>
         {/* <div
@@ -177,7 +177,7 @@ export default function DaoItem({
             Proposals
           </Typography>
           <Typography fontSize={16} fontWeight={600}>
-            {proposalCount}
+            {formatMillion(proposalCount)}
           </Typography>
         </div>
       </StyledTextNumber>
