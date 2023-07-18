@@ -138,7 +138,6 @@ export const Tabs: Tab[] = [
 // const StyledNavLink = styled(NavLink)(navLinkSX)
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  top: 54,
   position: 'fixed',
   height: theme.height.header,
   backgroundColor: theme.palette.background.paper,
