@@ -274,7 +274,7 @@ export default function Airdrop() {
                         <RowCenter>
                           <StyledText1>Blockchain</StyledText1>
                           <StyledText2>
-                            {airdropDescData?.tokenChainId ? ChainListMap[airdropDescData.tokenChainId].name : '--'}
+                            {airdropDescData?.tokenChainId ? ChainListMap[airdropDescData.tokenChainId]?.name : '--'}
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
