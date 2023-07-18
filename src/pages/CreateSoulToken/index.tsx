@@ -259,7 +259,7 @@ export default function Index() {
     if (eventEndTime && eventEndTime < eventStartTime) {
       return {
         disabled: true,
-        error: 'Date error'
+        error: 'Date format error'
       }
     }
     return {
