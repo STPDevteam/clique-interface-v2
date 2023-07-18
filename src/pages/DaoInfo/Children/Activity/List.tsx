@@ -33,7 +33,7 @@ export function AirdropList({
         </DelayLoading>
         <Stack spacing={24}>
           {result.map(item => (
-            <AirdropItem key={item.activityId} item={item} />
+            <AirdropItem key={item.airdropId} item={item} />
           ))}
         </Stack>
       </Box>

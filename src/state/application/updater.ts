@@ -11,6 +11,7 @@ import { useUserLocation } from './hooks'
 import { useLogin } from 'hooks/useBackedDaoServer'
 import { useWeb3Instance } from 'hooks/useWeb3Instance'
 import { saveUserInfo } from 'state/userInfo/actions'
+import { useGlobalUpdateMyJoinList } from 'state/buildingGovDao/hooks'
 
 export default function Updater(): null {
   // add NotificationUnRead
@@ -20,6 +21,8 @@ export default function Updater(): null {
   const { library, chainId, account } = useActiveWeb3React()
   const dispatch = useDispatch()
   const windowVisible = useIsWindowVisible()
+
+  useGlobalUpdateMyJoinList()
 
   const [state, setState] = useState<{ chainId: number | undefined; blockNumber: number | null }>({
     chainId,
@@ -70,7 +73,7 @@ export default function Updater(): null {
   )
   const [timeInt, setTimeInt] = useState(0)
   useEffect(() => {
-    setTimeout(() => setTimeInt(timeInt + 1), 10000)
+    setTimeout(() => setTimeInt(timeInt + 1), 60000)
     providers.map((provider, index) =>
       provider
         ?.getBlockNumber()

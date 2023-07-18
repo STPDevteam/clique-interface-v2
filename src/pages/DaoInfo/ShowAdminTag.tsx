@@ -1,7 +1,7 @@
 import { Stack } from '@mui/material'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { DaoAdminLevelProp, useDaoAdminLevel, useDaoAdminLevelList } from 'hooks/useDaoInfo'
+import { useDaoAdminLevel, useDaoAdminLevelList } from 'hooks/useDaoInfo'
 import { StyledChip } from './CategoryChips'
 
 export function AdminTagBlock({
@@ -37,11 +37,13 @@ export function AdminTagListBlock({
   )
 }
 
-export default function ShowAdminTag({ level }: { level?: DaoAdminLevelProp }) {
+export default function ShowAdminTag({ level }: { level?: string }) {
   // const theme = useTheme()
-  return level === DaoAdminLevelProp.SUPER_ADMIN ? (
-    <StyledChip label="Super Admin" />
-  ) : level === DaoAdminLevelProp.ADMIN ? (
+  return level === 'owner' ? (
+    <StyledChip label="Creator" />
+  ) : level === 'superAdmin' ? (
+    <StyledChip label="Owner" />
+  ) : level === 'admin' ? (
     <StyledChip label="Admin" bgColor="#97B7EF" />
   ) : null
 }

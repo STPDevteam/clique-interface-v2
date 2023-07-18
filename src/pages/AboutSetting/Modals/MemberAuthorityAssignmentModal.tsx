@@ -1,23 +1,32 @@
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import Modal from '../../../components/Modal/index'
 import { Box, Typography, styled } from '@mui/material'
-import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import useModal from 'hooks/useModal'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
+import OutlineButton from 'components/Button/OutlineButton'
+import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
+import { toast } from 'react-toastify'
+import DoubleCheckModal from './DoubleCheckModal'
 
 const MemberCard = styled(Box)({
   display: 'flex',
   textAlign: 'center',
   flexDirection: 'column',
-  alignItems: 'center',
+  // alignItems: 'center',
   justifyContent: 'space-between',
   width: '100%',
   height: 100,
   color: '#3F5170',
-  padding: 20,
+  // padding: 20,
   cursor: 'pointer',
-  '&.BannedClass': {
+  '& :hover': {
     backgroundColor: '#005BC60F'
+  },
+  '&.BannedClass': {
+    backgroundColor: '#005BC60F',
+    pointerEvents: 'none',
+    '& p': {
+      color: '#8D8EA5'
+    }
   },
   '& p': {
     width: '100%',
@@ -27,58 +36,120 @@ const MemberCard = styled(Box)({
   }
 })
 
+const levelList = [
+  {
+    name: 'Creator',
+    des: 'DAO creator Seed role',
+    isDisable: false
+  },
+  {
+    name: 'Owner',
+    des: 'Dao owner can edit workspace settings and invite new members.',
+    isDisable: false
+  },
+  {
+    name: 'Admin',
+    des: 'DAO core members that can create and edit workspace.',
+    isDisable: false
+  }
+]
+
 export default function MemberAuthorityAssignmentModal({
-  chainId,
-  daoAddress,
-  id,
+  myLevel,
+  account,
+  daoId,
+  level,
   onDimiss
 }: {
-  chainId: number
-  daoAddress: string
-  id: number
+  myLevel: number
+  account: string
+  daoId: number
+  level: number
   onDimiss: () => void
 }) {
   const { showModal, hideModal } = useModal()
-  const { changeRole } = useChangeAdminRole()
+  const changeRole = useChangeAdminRole()
+  const btnDisabledList = useMemo(() => {
+    if (myLevel === 1) {
+      return [false, true, true]
+    } else if (myLevel === 2) {
+      return [false, false, true]
+    }
+    return [true, true, true]
+  }, [myLevel])
+  console.log(myLevel, level)
 
-  const clickMember = useCallback(() => {
-    changeRole(chainId, daoAddress, id)
-      .then(res => {
-        console.log(res)
+  const removeMemberClick = useCallback(
+    (level: number) => {
+      changeRole(account, level, daoId).then((res: any) => {
+        if (res.data.code !== 200) {
+          toast.error(res.data.msg || 'Network error')
+          return
+        }
+        toast.success('Change success')
         hideModal()
-        showModal(<MessageBox type="success">Modify success</MessageBox>)
         onDimiss()
       })
-      .catch(err => console.log(err))
-  }, [chainId, changeRole, daoAddress, hideModal, id, onDimiss, showModal])
+    },
+    [account, changeRole, daoId, hideModal, onDimiss]
+  )
+
+  const changeAdminLevelClick = useCallback(
+    (index: number) => {
+      hideModal()
+      showModal(<DoubleCheckModal action={() => removeMemberClick(index)} />)
+    },
+    [hideModal, removeMemberClick, showModal]
+  )
 
   return (
     <Modal maxWidth="371px" width="100%" padding="10px 0">
-      <Box display="flex" textAlign={'center'} width="100%" height="190px" flexDirection={'column'}>
-        {/* <MemberCard className={'BannedClass'}>
-          <Typography fontSize={16}>Owner</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            DAO owner Seed role
-          </Typography>
-        </MemberCard>
-        <MemberCard className={'BannedClass'}>
-          <Typography fontSize={16}>Super admin</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            Super administrator can edit workspace settings and invite new members.
-          </Typography>
-        </MemberCard> */}
-        <MemberCard className={'BannedClass'}>
-          <Typography fontSize={16}>Admin</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            DAO core members that can create and edit workspace.
-          </Typography>
-        </MemberCard>
-        <MemberCard className={'Member'} onClick={clickMember}>
-          <Typography fontSize={16}>Member</Typography>
-          <Typography fontSize={14} color={'#80829F'}>
-            Browse workspace and settings
-          </Typography>
-        </MemberCard>
+      <Box
+        display="flex"
+        textAlign={'center'}
+        justifyContent={'center'}
+        width="100%"
+        height="378px"
+        flexDirection={'column'}
+      >
+        {levelList.map((item: any, index: number) => (
+          <MemberCard
+            key={item.name + index}
+            className={btnDisabledList[index] ? '' : 'BannedClass'}
+            onClick={() => {
+              if (btnDisabledList[index]) {
+                changeAdminLevelClick(index)
+              }
+            }}
+          >
+            <Box
+              sx={{
+                height: 100,
+                padding: 20,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              }}
+            >
+              <Typography sx={{ pointerEvents: 'none' }} fontSize={16}>
+                {item.name}
+              </Typography>
+              <Typography sx={{ pointerEvents: 'none' }} fontSize={14} color={'#80829F'}>
+                {item.des}
+              </Typography>
+            </Box>
+          </MemberCard>
+        ))}
+        <OutlineButton
+          style={{ margin: '12px auto 0' }}
+          onClick={() => removeMemberClick(100)}
+          noBold
+          color="#E46767"
+          width={'340px'}
+          height="40px"
+        >
+          Remove
+        </OutlineButton>
       </Box>
     </Modal>
   )

@@ -35,14 +35,14 @@ const StyledTitle = styled(Typography)(({ theme }) => ({
   lineHeight: '16px'
 }))
 
-export const StyledDelButton = styled('button')(({ theme }) => ({
-  border: `2px solid ${theme.palette.text.primary}`,
+export const StyledDelButton = styled('button')(({}) => ({
+  borderColor: 'transparent',
   borderRadius: '8px',
   width: 54,
   height: 44,
   cursor: 'pointer',
   position: 'relative',
-  background: theme.palette.common.white,
+  background: 'rgba(228, 103, 103, 0.2)',
   '&:disabled': {
     opacity: 0.2
   },
@@ -52,9 +52,10 @@ export const StyledDelButton = styled('button')(({ theme }) => ({
     right: 0,
     bottom: 0,
     left: 0,
-    background: theme.palette.text.primary,
-    width: '15px',
-    height: '2px',
+    background: '#E46767',
+    width: '13px',
+    height: '3px',
+    borderRadius: '5px',
     position: 'absolute',
     margin: 'auto'
   }
@@ -348,7 +349,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
             </>
           ))}
         </Box>
-        <OutlineButton width={isSmDown ? 120 : 250} height={isSmDown ? 40 : 56} onClick={addReservedRowCallback}>
+        <OutlineButton noBold width={isSmDown ? 120 : 250} height={isSmDown ? 40 : 56} onClick={addReservedRowCallback}>
           + Add
         </OutlineButton>
       </CreatorBox>
@@ -371,7 +372,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
       )}
 
       <Box mt={30} display="flex" justifyContent={'center'} gap="40px">
-        <OutlineButton width="166px" onClick={back}>
+        <OutlineButton width="252px" height={36} onClick={back} noBold>
           Back
         </OutlineButton>
         <BlackButton width="252px" disabled={nextHandler.disabled} onClick={nextHandler.handler}>

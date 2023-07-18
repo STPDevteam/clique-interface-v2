@@ -1,6 +1,6 @@
 import { styled, Box, Theme, Snackbar, Alert, Typography } from '@mui/material'
 import { SxProps } from '@mui/system'
-import axios from 'axios'
+import { Axios } from 'utils/axios'
 import { useCallback, useState } from 'react'
 import { serverUploadImage } from '../../constants'
 import Image from '../Image'
@@ -48,15 +48,11 @@ async function save(
   const params = new FormData()
   params.append('file', file)
   try {
-    const res = await axios.post(serverUploadImage, params, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    })
+    const res = await Axios.post(serverUploadImage, params)
     if (!res.data.data) {
       throw res
     }
-    const data = res.data.data.path as string
+    const data = res.data.data as string
     return {
       data: data,
       result: true
@@ -155,7 +151,7 @@ export default function Index({
       {showUploadBtn && (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
           <Typography sx={{ width: '150px', lineHeight: '17px', fontWeight: 400, color: '#80829F' }}>
-            File types supported: JPG, PNG, GIF.
+            File types supported: JPG, PNG.
           </Typography>
           <Button width="125px" height="40px" style={{ marginTop: 25 }} onClick={handleClick}>
             + Upload

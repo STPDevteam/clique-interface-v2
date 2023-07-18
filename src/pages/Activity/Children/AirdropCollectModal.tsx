@@ -75,9 +75,7 @@ export default function AirdropCollectModal({
         </Typography>
         <Stack spacing={16} mt={20}>
           <Input value={account || ''} readOnly label="Your address" />
-
           <InputBox collectInputs={inputs} updateCollectInputs={updateCollectInputs} />
-
           <Box display={'flex'} pt={10} justifyContent="center">
             <BlackButton
               width="166px"
@@ -118,7 +116,7 @@ function InputBox({
               updateCollectInputs(index, Object.assign(item, { error: false }))
             }
           }}
-          placeholder="Please enter the required fields"
+          placeholder={item.required ? `Please enter the required fields` : `This field is optional`}
           label={`${item.required ? '*' : ''}${item.name}`}
         />
       ))}

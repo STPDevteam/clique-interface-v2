@@ -5,41 +5,43 @@ import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
-import { ChainId } from 'constants/chain'
+// import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
-import { PublicSaleItem, AirdropItem } from 'pages/Activity/ActivityItem'
+import { AirdropItem } from 'pages/Activity/ActivityItem'
+// import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 function ItemWrapper({
   children,
   type,
   publishTime,
-  daoChainId,
-  daoAddress
+  daoId,
+  daoLogo,
+  daoName
 }: {
   children: any
   type: ActivityType
   publishTime: number
-  daoChainId: ChainId
-  daoAddress: string
+  daoId: number
+  daoLogo: string
+  daoName: string
 }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, daoChainId)
+  // const { buildingDaoData: daoBaseInfo } = useBuildingDaoDataCallback()
   return (
     <Stack spacing={24}>
       <Stack direction={'row'} alignItems="center" spacing={16}>
-        <Link href={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}>
-          <DaoAvatars size={isSmDown ? 40 : 64} src={daoBaseInfo?.daoLogo} alt={''} />
+        <Link href={routes._DaoInfo + `/${daoId}/proposal`}>
+          <DaoAvatars size={isSmDown ? 40 : 64} src={daoLogo} alt={''} />
         </Link>
         <RowCenter flexWrap={'wrap'}>
           <Typography variant="h6" mr={10}>
-            {daoBaseInfo?.name || '--'}
+            {daoName || '--'}
           </Typography>
           <Typography
             fontSize={isSmDown ? 12 : 14}
@@ -94,13 +96,16 @@ export default function List({
         <Stack mt={40} spacing={40}>
           {result.map(item => (
             <ItemWrapper
-              daoAddress={item.daoAddress}
-              daoChainId={item.chainId}
-              key={item.activityId}
+              daoId={item.daoId}
+              daoLogo={item.daoLogo}
+              daoName={item.daoName}
+              key={item.airdropId}
               publishTime={item.publishTime}
               type={ActivityType.AIRDROP}
             >
-              {item.types === ActivityType.AIRDROP ? <AirdropItem item={item} /> : <PublicSaleItem />}
+              {/* {item.types === ActivityType.AIRDROP ? <AirdropItem item={item} /> : <PublicSaleItem />}
+               */}
+              <AirdropItem item={item} />
             </ItemWrapper>
           ))}
         </Stack>

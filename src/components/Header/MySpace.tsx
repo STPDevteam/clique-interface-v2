@@ -1,12 +1,10 @@
 import { Box, styled, Typography } from '@mui/material'
-import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 import Image from 'components/Image'
 import { routes } from 'constants/routes'
-import { ChainId } from 'constants/chain'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import { useHistory } from 'react-router-dom'
 import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -48,7 +46,7 @@ const Item = styled(Box)(({}) => ({
 }))
 
 export default function MySpace() {
-  const { result: myJoinedDaoList } = useMyJoinedDao()
+  const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const history = useHistory()
 
   return (
@@ -84,19 +82,19 @@ export default function MySpace() {
             alignItems={'center'}
           >
             <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
-              My Space
+              My DAOs
             </Typography>
             <ArrowIcon />
           </Box>
         }
       >
         <>
-          {myJoinedDaoList.map(option => (
+          {myJoinedDaoList?.map(option => (
             <Box
-              key={option.daoAddress + option.chainId}
-              onClick={() => history.push(`${routes._DaoInfo}/${option.chainId}/${option.daoAddress}`)}
+              key={option.daoName + option.daoId}
+              onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
             >
-              <DaoItem chainId={option.chainId} daoName={option.daoName} daoAddress={option.daoAddress} />
+              <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
             </Box>
           ))}
         </>
@@ -105,21 +103,11 @@ export default function MySpace() {
   )
 }
 
-function DaoItem({
-  chainId,
-  daoAddress,
-  daoName
-}: {
-  chainId: ChainId | undefined
-  daoAddress: string
-  daoName: string
-}) {
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
-
+function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
   return (
     <Item>
-      <Image src={daoBaseInfo?.daoLogo || ''} alt={daoBaseInfo?.name || daoName} />
-      <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
+      <Image src={daoLogo || ''} alt={daoName} />
+      <Text noWrap>{daoName || ''}</Text>
     </Item>
   )
 }

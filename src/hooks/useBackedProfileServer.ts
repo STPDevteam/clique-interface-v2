@@ -7,13 +7,13 @@ import {
   getAccountNFTs,
   getAccountSendRecordList,
   userFollowAccount,
-  userFollowStatus,
+  // userFollowStatus,
   userProfile
 } from '../utils/fetch/server'
 import { DaoAdminLevelProp } from './useDaoInfo'
 
 export interface UserProfileDaoProp {
-  accountLevel: DaoAdminLevelProp
+  accountLevel: typeof DaoAdminLevelProp
   chainId: ChainId
   daoAddress: string
   daoLogo: string
@@ -22,11 +22,10 @@ export interface UserProfileDaoProp {
 
 export interface UserProfileAdminProps {
   accountLevel: string
-  chainId: number
-  daoAddress: string
+  bio: string
+  daoId: number
   daoName: string
   daoLogo: string
-  description: string
   handle: string
   activeProposals: number
   totalProposals: number
@@ -34,25 +33,44 @@ export interface UserProfileAdminProps {
   members: number
 }
 
+// export interface UserProfileProp {
+//   account: string
+//   accountLogo: string
+//   introduction: string
+//   nickname: string
+//   github: string
+//   discord: string
+//   email: string
+//   country: string
+//   youtube: string
+//   opensea: string
+//   followers: number
+//   following: number
+//   twitter: string
+//   adminDao: UserProfileAdminProps[]
+//   memberDao: UserProfileDaoProp[]
+// }
+
 export interface UserProfileProp {
   account: string
   accountLogo: string
-  introduction: string
-  nickname: string
-  github: string
+  country: string
   discord: string
   email: string
-  country: string
-  youtube: string
+  followNum: number
+  funcNum: number
+  github: string
+  introduction: string
+  nickname: string
   opensea: string
-  followers: number
-  following: number
   twitter: string
+  userId: number
+  youtube: string
+  isFollow: boolean
   adminDao: UserProfileAdminProps[]
-  memberDao: UserProfileDaoProp[]
 }
 
-export function useUserProfileInfo(account: string | undefined, refresh?: number) {
+export function useUserProfileInfo(account: string | undefined, refresh?: number, isFollowed?: boolean) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<UserProfileProp>()
   const userSignature = useUserInfo()
@@ -80,7 +98,7 @@ export function useUserProfileInfo(account: string | undefined, refresh?: number
         console.error('useUserProfileInfo', error)
       }
     })()
-  }, [account, refresh, userSignature])
+  }, [account, refresh, userSignature, isFollowed])
 
   return {
     loading,
@@ -103,6 +121,10 @@ export enum AccountBackedSendRecordTypesProp {
 }
 
 export interface AccountSendRecordProp {
+  daoId: number
+  daoLogo: string
+  timestamp: number
+  proposalId: number
   activityId: number
   address: string
   avatar: string
@@ -130,16 +152,17 @@ export function useAccountSendRecordList(account: string) {
       }
       setLoading(true)
       try {
-        const res = await getAccountSendRecordList(account, (currentPage - 1) * pageSize, pageSize)
+        const res = await getAccountSendRecordList((currentPage - 1) * pageSize, pageSize)
         setLoading(false)
-        const data = res.data.data as any
+        const data = res.data as any
+        console.log(data)
         if (!data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        setResult(data.list)
+        setResult(data.data)
       } catch (error) {
         setResult([])
         setTotal(0)
@@ -198,7 +221,7 @@ export function useAccountNFTsList(account: string, searchChainId: number) {
       }
       setLoading(true)
       try {
-        const res = await getAccountNFTs(searchChainId, account, currentPage, pageSize)
+        const res = await getAccountNFTs(searchChainId, pageSize, currentPage)
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -231,26 +254,26 @@ export function useAccountNFTsList(account: string, searchChainId: number) {
 }
 
 export function useUserFollowStatus(account: string | undefined, followAccount: string | undefined) {
-  const [isFollowed, setIsFollowed] = useState<boolean>(false)
+  const [isFollowed, setIsFollowed] = useState<boolean>()
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
 
-  useEffect(() => {
-    ;(async () => {
-      if (!account || !followAccount) {
-        setIsFollowed(false)
-        return
-      }
-      try {
-        const res = await userFollowStatus(account, followAccount)
-        const data = res.data.data
-        setIsFollowed(data)
-      } catch (error) {
-        setIsFollowed(false)
-        console.error('useUserFollowStatus', error)
-      }
-    })()
-  }, [account, followAccount])
+  // useEffect(() => {
+  //   ;(async () => {
+  //     if (!account || !followAccount) {
+  //       setIsFollowed(false)
+  //       return
+  //     }
+  //     try {
+  //       const res = await userFollowStatus(account, followAccount)
+  //       const data = res.data.data
+  //       setIsFollowed(data)
+  //     } catch (error) {
+  //       setIsFollowed(false)
+  //       console.error('useUserFollowStatus', error)
+  //     }
+  //   })()
+  // }, [account, followAccount])
 
   const toggleFollow = useCallback(
     async (status: boolean) => {
@@ -261,7 +284,7 @@ export function useUserFollowStatus(account: string | undefined, followAccount: 
       }
       if (!signatureStr || !followAccount) return
       try {
-        await userFollowAccount(followAccount, status)
+        await userFollowAccount(status, followAccount)
         setIsFollowed(status)
       } catch (error) {
         console.log(error)
@@ -276,17 +299,18 @@ export function useUserFollowStatus(account: string | undefined, followAccount: 
   }
 }
 
-export function useAccountFollowersList(account: string) {
+export function useAccountFollowersList(userId: number | undefined) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 5
   const [result, setResult] = useState<
     {
+      userId: number
       account: string
       accountLogo: string
-      followTime: string
-      followers: string
+      // followTime: string
+      // followers: string
       nickname: string
       relation: string
     }[]
@@ -294,27 +318,27 @@ export function useAccountFollowersList(account: string) {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [account])
+  }, [userId])
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!userId) {
         setResult([])
         setTotal(0)
         return
       }
       setLoading(true)
       try {
-        const res = await getAccountFollowersList(account, (currentPage - 1) * pageSize, pageSize)
+        const res = await getAccountFollowersList(userId, pageSize, (currentPage - 1) * pageSize)
         setLoading(false)
-        const data = res.data.data as any
-        if (!data) {
+        const data = res as any
+        if (!data.data.data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        setResult(data.list)
+        setResult(data.data.data)
       } catch (error) {
         setResult([])
         setTotal(0)
@@ -322,7 +346,7 @@ export function useAccountFollowersList(account: string) {
         console.error('useAccountFollowersList', error)
       }
     })()
-  }, [currentPage, account])
+  }, [currentPage, userId])
 
   return {
     loading: loading,
@@ -337,17 +361,18 @@ export function useAccountFollowersList(account: string) {
   }
 }
 
-export function useAccountFollowingList(account: string) {
+export function useAccountFollowingList(userId: number | undefined) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 5
   const [result, setResult] = useState<
     {
+      userId: number
       account: string
       accountLogo: string
-      followTime: string
-      following: string
+      // followTime: string
+      // followers: string
       nickname: string
       relation: string
     }[]
@@ -355,27 +380,27 @@ export function useAccountFollowingList(account: string) {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [account])
+  }, [userId])
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!userId) {
         setResult([])
         setTotal(0)
         return
       }
       setLoading(true)
       try {
-        const res = await getAccountFollowingList(account, (currentPage - 1) * pageSize, pageSize)
+        const res = await getAccountFollowingList(userId, pageSize, (currentPage - 1) * pageSize)
         setLoading(false)
-        const data = res.data.data as any
-        if (!data) {
+        const data = res as any
+        if (!data.data.data) {
           setResult([])
           setTotal(0)
           return
         }
         setTotal(data.total)
-        setResult(data.list)
+        setResult(data.data.data)
       } catch (error) {
         setResult([])
         setTotal(0)
@@ -383,7 +408,7 @@ export function useAccountFollowingList(account: string) {
         console.error('useAccountFollowingList', error)
       }
     })()
-  }, [currentPage, account])
+  }, [currentPage, userId])
 
   return {
     loading: loading,

@@ -4,8 +4,8 @@ import { DaoAvatars } from 'components/Avatars'
 // import { BlackButton } from 'components/Button/Button'
 // import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { routes } from 'constants/routes'
-import { HomeListProp, useMemberJoinDao } from 'hooks/useBackedDaoServer'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
+import { ListProp } from 'hooks/useBackedDaoServer'
+// import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 // import { useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 // import { useToken } from 'state/wallet/hooks'
@@ -64,7 +64,7 @@ const StyledTextNumber = styled(Box)(() => ({
   justifyContent: 'space-between',
   '& .item': {
     display: 'flex',
-    '&>*:first-child': {
+    '&>*:first-of-type': {
       marginRight: 16
     }
   }
@@ -75,23 +75,23 @@ export function ShowDaoToken({ token }: { token: Token | undefined }) {
 }
 
 export default function DaoItem({
-  daoAddress,
-  chainId,
+  daoId,
   daoName,
   daoLogo,
-  members,
-  verified,
-  activeProposals,
-  proposals,
-  joinSwitch
-}: HomeListProp) {
+  hanDle,
+  iodBio,
+  memberCount,
+  proposalCount,
+  activityProposalCount,
+  approve
+}: ListProp) {
   const theme = useTheme()
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
   // const { showModal } = useModal()
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
+  // const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
   // const token = useToken(daoBaseInfo?.daoTokenAddress || '', daoBaseInfo?.daoTokenChainId)
-  const { curMembers } = useMemberJoinDao(joinSwitch, members)
+  // const { curMembers } = useMemberJoinDao(joinSwitch, members)
   // const { account } = useActiveWeb3React()
   // const walletModalToggle = useWalletModalToggle()
 
@@ -107,15 +107,15 @@ export default function DaoItem({
   // )
 
   return (
-    <StyledCard onClick={() => history.push(`${routes._DaoInfo}/${chainId}/${daoAddress}`)}>
+    <StyledCard onClick={() => history.push(`${routes._DaoInfo}/${daoId}`)}>
       <Box display={'grid'} gap="12px" gridTemplateColumns={'48px calc(100%)'}>
-        <DaoAvatars size={48} src={daoBaseInfo?.daoLogo || daoLogo} alt={daoBaseInfo?.name || daoName} />
+        <DaoAvatars size={48} src={daoLogo} alt={daoName} />
         <Box>
           <Box display={'flex'} alignItems="center">
             <Typography variant="h6" noWrap fontSize={20} marginRight="8px" maxWidth={'calc(100% - 80px)'}>
-              {daoBaseInfo?.name || daoName || '--'}
+              {daoName || '--'}
             </Typography>
-            {verified && <AuthIcon />}
+            {approve && <AuthIcon />}
           </Box>
           {/* {token ? (
             <Box display={'flex'} alignItems="center">
@@ -127,10 +127,10 @@ export default function DaoItem({
           ) : (
             <Skeleton animation="wave" width={'30%'}></Skeleton>
           )} */}
-          {daoBaseInfo ? (
+          {hanDle ? (
             <Box display={'flex'} alignItems="center">
               <Typography fontSize={16} variant="body2" noWrap maxWidth={isSmDown ? '200px' : 'calc(100% - 90px)'}>
-                @{daoBaseInfo?.handle}
+                @{hanDle}
               </Typography>
             </Box>
           ) : (
@@ -139,8 +139,8 @@ export default function DaoItem({
         </Box>
       </Box>
       <StyledDesc variant="body1">
-        {daoBaseInfo?.description ? (
-          daoBaseInfo.description
+        {iodBio ? (
+          iodBio
         ) : (
           <>
             <Skeleton animation="wave" />
@@ -155,7 +155,7 @@ export default function DaoItem({
             Members
           </Typography>
           <Typography fontSize={16} fontWeight={600}>
-            {formatMillion(curMembers)}
+            {formatMillion(memberCount)}
           </Typography>
         </div>
         {/* <div
@@ -177,7 +177,7 @@ export default function DaoItem({
             Proposals
           </Typography>
           <Typography fontSize={16} fontWeight={600}>
-            {proposals}
+            {formatMillion(proposalCount)}
           </Typography>
         </div>
       </StyledTextNumber>
@@ -215,7 +215,7 @@ export default function DaoItem({
             <span> Active proposal</span>
           </Typography>
           <Typography color={theme.palette.text.secondary} fontSize={12} fontWeight={500}>
-            {toFormatGroup(activeProposals || 0)}
+            {toFormatGroup(activityProposalCount || 0)}
           </Typography>
         </RowCenter>
       </Box>

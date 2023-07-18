@@ -21,13 +21,11 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
       </Box>,
       <ChainText key={tokenAddress} chainId={chainId} />,
       <ShowCopyTokenAddress key={2} address={tokenAddress} chainId={chainId} />,
-      <Typography key={tokenAddress} fontWeight={600} fontSize={13}>
+      <Typography sx={{ whiteSpace: 'normal' }} key={tokenAddress} fontWeight={600} fontSize={13}>
         <ShowTokenSupply address={tokenAddress} chainId={chainId} />
       </Typography>
     ])
   }, [loading, tokenList])
-
-  console.log(tableList)
 
   return (
     <>
@@ -42,7 +40,7 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
           <DelayLoading loading={loading}>
             <Loading sx={{ marginTop: 30 }} />
           </DelayLoading>
-          <Box mt={40} display={'flex'} justifyContent="center">
+          <Box mt={20} display={'flex'} justifyContent="center">
             <Pagination
               count={page.totalPage}
               page={page.currentPage}
@@ -51,8 +49,8 @@ export default function TokenListTable({ chainId, account }: { chainId?: ChainId
           </Box>
         </>
       ) : (
-        <Box mt={-25}>
-          <EmptyData>No Data</EmptyData>
+        <Box>
+          <EmptyData>No data</EmptyData>
         </Box>
       )}
     </>

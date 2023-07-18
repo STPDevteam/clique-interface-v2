@@ -48,7 +48,7 @@ const cardsData = [
     des: 'Add a DAO on Clique',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #F5F1FF 27.66%, #FEFEFF 99.85%)',
-    route: routes.CreatorDao
+    route: routes.CreateDao
   },
   {
     title: 'Create Token',
@@ -125,15 +125,23 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         </Typography>
       </Box>
       <Box padding={'10px 20px'}>
-        <Typography fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+        <Typography fontSize={14} lineHeight={'20px'} color={'#8D8EA5'} textAlign={'left'} width={'100%'}>
           Support Chains
         </Typography>
         {supportChainsIcon === 'all' ? (
-          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+          <Typography
+            mt={10}
+            fontWeight={400}
+            fontSize={14}
+            lineHeight={'20px'}
+            color={'#3F5170'}
+            textAlign={'left'}
+            width={'100%'}
+          >
             All Chain
           </Typography>
         ) : supportChainsIcon === '' ? (
-          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#B5B7CF'} textAlign={'left'} width={'100%'}>
+          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
             -
           </Typography>
         ) : (

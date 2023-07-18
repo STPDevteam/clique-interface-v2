@@ -1,6 +1,5 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
 import { save, load } from 'redux-localstorage-simple'
-
 import application from './application/reducer'
 import { updateVersion } from './global/actions'
 import user from './user/reducer'
@@ -12,7 +11,7 @@ import chatHistory from './chatHistory/reducer'
 import createTokenData from './createToken/reducer'
 import localUserInfo from './userInfo/reducer'
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'buildingGovernanceDao', 'createTokenData']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'createTokenData']
 
 const store = configureStore({
   reducer: {

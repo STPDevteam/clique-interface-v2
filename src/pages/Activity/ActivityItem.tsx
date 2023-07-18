@@ -34,12 +34,12 @@ const AirdropStyledItem = styled(StyledItem)({
 
 const StyledTitle = styled(Typography)(({}) => ({
   overflow: 'hidden',
-  // height: 26,
-  // textOverflow: 'ellipsis',
-  // display: '-webkit-box',
-  // '-webkit-box-orient': 'vertical',
-  // '-webkit-line-clamp': '2',
-  // wordBreak: 'break-all',
+  height: 54,
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  '-webkit-box-orient': 'vertical',
+  '-webkit-line-clamp': '2',
+  wordBreak: 'break-all',
   fontSize: 18,
   fontWeight: 600,
   lineHeight: '27px'
@@ -156,11 +156,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
   }, [item.amount, token])
 
   return (
-    <AirdropStyledItem
-      onClick={() =>
-        history.push(routes._ActivityAirdropDetail + `/${item.chainId}/${item.daoAddress}/${item.activityId}`)
-      }
-    >
+    <AirdropStyledItem onClick={() => history.push(routes._ActivityAirdropDetail + `/${item.daoId}/${item.airdropId}`)}>
       <StyledStatusBox direction={'row'} spacing={24}>
         <ShowStatus item={item} />
       </StyledStatusBox>
@@ -179,7 +175,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
             <StyledText>
               <Stack direction={'row'} alignItems="center">
                 <CurrencyLogo currency={token || undefined} size="22px" style={{ marginRight: '5px' }} />
-                <StyledBoldText noWrap>{token ? `${token.name}(${token.symbol})` : '--'}</StyledBoldText>
+                <StyledBoldText noWrap>{token ? `${token?.name}(${token?.symbol})` : '--'}</StyledBoldText>
               </Stack>
             </StyledText>
           </Stack>

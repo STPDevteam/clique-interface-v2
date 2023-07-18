@@ -2,13 +2,14 @@ import { Box, styled, Typography, useTheme } from '@mui/material'
 import { ReactComponent as AddIcon } from 'assets/svg/add_icon.svg'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import { routes } from 'constants/routes'
-import useModal from 'hooks/useModal'
+// import useModal from 'hooks/useModal'
 import { useHistory } from 'react-router-dom'
-import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
+// import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
-import { ChainId } from 'constants/chain'
 import { DaoAvatars } from 'components/Avatars'
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 
 const Wrapper = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -80,10 +81,13 @@ const Item = styled(Box)(({ theme }) => ({
 
 export default function LeftSider() {
   const theme = useTheme()
-  const { showModal } = useModal()
+  // const { showModal } = useModal()
   const history = useHistory()
   const { result: myJoinedDaoList } = useMyJoinedDao()
-
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
+  const toggleWalletModal = useWalletModalToggle()
+  const loginSignature = useLoginSignature()
   return (
     <Wrapper>
       <Box
@@ -92,8 +96,8 @@ export default function LeftSider() {
           display: { sm: 'block', xs: 'inline-flex' }
         }}
       >
-        {myJoinedDaoList.map(({ daoAddress, chainId, daoName }) => (
-          <DaoItem key={daoAddress + chainId} chainId={chainId} daoName={daoName} daoAddress={daoAddress} />
+        {myJoinedDaoList.map(({ daoLogo, daoId, daoName }) => (
+          <DaoItem key={daoName + daoId} daoId={daoId} daoName={daoName} daoLogo={daoLogo} />
         ))}
       </Box>
       <Box
@@ -114,7 +118,13 @@ export default function LeftSider() {
             Search
           </Text>
         </Item>
-        <Item onClick={() => showModal(<CreateGovernanceModal />)}>
+        <Item
+          onClick={() => {
+            if (!account) return toggleWalletModal()
+            if (!userSignature) return loginSignature()
+            history.push(routes.CreateDao)
+          }}
+        >
           <div className="action">
             <AddIcon width={16}></AddIcon>
           </div>
@@ -127,14 +137,13 @@ export default function LeftSider() {
   )
 }
 
-function DaoItem({ chainId, daoAddress, daoName }: { chainId: ChainId; daoAddress: string; daoName: string }) {
+function DaoItem({ daoId, daoLogo, daoName }: { daoId: number; daoLogo: string; daoName: string }) {
   const history = useHistory()
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
 
   return (
-    <Item onClick={() => history.push(`${routes._DaoInfo}/${chainId}/${daoAddress}`)}>
-      <DaoAvatars src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.name || daoName} />
-      <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
+    <Item onClick={() => history.push(`${routes._DaoInfo}/${daoId}/proposal`)}>
+      <DaoAvatars src={daoLogo} alt={'daoName'} />
+      <Text noWrap>{daoName || 'daoName'}</Text>
     </Item>
   )
 }

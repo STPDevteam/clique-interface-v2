@@ -7,6 +7,7 @@ import { CurrencyAmount, Percent } from '../constants/token/fractions'
 import JSBI from 'jsbi'
 import { ChainId } from '../constants/chain'
 import emojiRegex from 'emoji-regex'
+import { FormType } from 'pages/DaoInfo/Children/Settings/type'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -263,4 +264,26 @@ export function getAllTargetTimeString(fromTime: number, toTime: number) {
       return `${hours} h ${mins} m ${secs} s`
     }
   }
+}
+
+export const formCheckValid = (label: string, type: FormType, text?: string | '') => {
+  if (type === FormType.Custom) {
+    return text
+  }
+  if (type === FormType.Input) {
+    return `Please enter your ${label.toLocaleLowerCase()}`
+  }
+  if (type === FormType.Select) {
+    return `Please select your ${label.toLocaleLowerCase()}`
+  }
+  return text
+}
+
+export const formatNumberWithCommas = (number: number | string) => {
+  const strNum = String(number)
+  const parts = strNum.split('.')
+  const intPart = parts[0]
+  const decimalsPart = parts[1] || ''
+  const commas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return decimalsPart.length > 0 ? `${commas}.${decimalsPart}` : commas
 }

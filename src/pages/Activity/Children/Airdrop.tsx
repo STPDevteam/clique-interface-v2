@@ -5,7 +5,6 @@ import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { useParams } from 'react-router'
 import { useAirdropAccountListById, useGetAirdropDescData, useGetAirdropProof } from 'hooks/useBackedActivityServer'
-import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import ReactHtmlParser from 'react-html-parser'
@@ -46,6 +45,7 @@ import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/Tr
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { TokenAmount } from 'constants/token'
 import { activityStatusText } from '../ActivityItem'
+import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
 
 const PanelWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
@@ -74,13 +74,15 @@ export default function Airdrop() {
   const theme = useTheme()
   const { account, chainId, library } = useActiveWeb3React()
   const { showModal, hideModal } = useModal()
-  const { address: daoAddress, chainId: daoChainId, id } = useParams<{ address: string; chainId: string; id: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, curDaoChainId)
+  const { daoId: curDaoId, id } = useParams<{ daoId: string; id: string }>()
   const airdropId = Number(id)
+  const daoId = Number(curDaoId)
+  const createDaoData = useGetDaoInfo(daoId)
+
   const [showManage, setShowManage] = useState(false)
   const { loading: airdropDescDataLoading, result: airdropDescData } = useGetAirdropDescData(airdropId)
   const airdropInfos = useAirdropInfos(airdropId, airdropDescData?.tokenChainId)
+  console.log('🚀 ~ file: Airdrop.tsx:85 ~ Airdrop ~ airdropInfos:', airdropId, airdropDescData?.tokenChainId)
   const isClaimed = useAirdropClaimed(airdropId, airdropDescData?.tokenChainId)
 
   useEffect(() => {
@@ -211,12 +213,12 @@ export default function Airdrop() {
         <ContainerWrapper maxWidth={1150}>
           {!showManage ? (
             <Stack spacing={40}>
-              <Back sx={{ margin: 0 }} />
+              <Back sx={{ margin: '0 !important' }} />
               <Box>
                 <Grid container spacing={40}>
                   <Grid item md={7} xs={12}>
                     <Box>
-                      <Typography fontSize={20} fontWeight={600}>
+                      <Typography sx={{ width: '100%', wordWrap: 'break-word' }} fontSize={20} fontWeight={600}>
                         {airdropDescData?.title}
                       </Typography>
                       <Box mt={20} className="ql-editor">
@@ -235,7 +237,12 @@ export default function Airdrop() {
                   </Grid>
                   <Grid item md={5} xs={12}>
                     {account && account === airdropInfos?.creator && (
-                      <OutlineButton style={{ marginBottom: 16 }} height={48} onClick={() => setShowManage(true)}>
+                      <OutlineButton
+                        noBold
+                        style={{ marginBottom: 16 }}
+                        height={48}
+                        onClick={() => setShowManage(true)}
+                      >
                         Manage
                       </OutlineButton>
                     )}
@@ -267,7 +274,7 @@ export default function Airdrop() {
                         <RowCenter>
                           <StyledText1>Blockchain</StyledText1>
                           <StyledText2>
-                            {airdropDescData?.tokenChainId ? ChainListMap[airdropDescData.tokenChainId].name : '--'}
+                            {airdropDescData?.tokenChainId ? ChainListMap[airdropDescData.tokenChainId]?.name : '--'}
                           </StyledText2>
                         </RowCenter>
                         <RowCenter>
@@ -298,11 +305,8 @@ export default function Airdrop() {
                         <RowCenter>
                           <StyledText1>DAO</StyledText1>
                           <StyledText2>
-                            <Link
-                              style={{ textDecoration: 'none' }}
-                              to={routes._DaoInfo + `/${daoChainId}/${daoAddress}`}
-                            >
-                              {daoBaseInfo?.name || '--'}
+                            <Link style={{ textDecoration: 'none' }} to={routes._DaoInfo + `/${daoId}/proposal`}>
+                              {createDaoData?.daoName || '--'}
                             </Link>
                           </StyledText2>
                         </RowCenter>
@@ -430,13 +434,12 @@ export default function Airdrop() {
             </Stack>
           ) : (
             <Box>
-              <Back sx={{ margin: 0 }} event={() => setShowManage(false)} />
+              <Back sx={{ margin: '0 !important' }} event={() => setShowManage(false)} />
               {airdropInfos && airdropDescData && (
                 <ManageLoading
                   airdropInfo={airdropInfos}
                   airdropChainId={airdropDescData.tokenChainId}
-                  daoChainId={curDaoChainId}
-                  daoAddress={daoAddress}
+                  daoId={daoId}
                   collectCount={airdropDescData.collectCount}
                 />
               )}
@@ -451,13 +454,11 @@ export default function Airdrop() {
 function ManageLoading({
   airdropInfo,
   airdropChainId,
-  daoChainId,
-  daoAddress,
+  daoId,
   collectCount
 }: {
   airdropInfo: AirdropInfoProp
-  daoAddress: string
-  daoChainId: ChainId
+  daoId: number
   airdropChainId: ChainId
   collectCount: number
 }) {
@@ -479,8 +480,7 @@ function ManageLoading({
       defaultList={list}
       airdropInfo={airdropInfo}
       airdropChainId={airdropChainId}
-      daoChainId={daoChainId}
-      daoAddress={daoAddress}
+      daoId={daoId}
       collectCount={collectCount}
     />
   )
@@ -489,14 +489,12 @@ function ManageLoading({
 function Manage({
   airdropInfo,
   airdropChainId,
-  daoChainId,
-  daoAddress,
+  daoId,
   collectCount,
   defaultList
 }: {
   airdropInfo: AirdropInfoProp
-  daoAddress: string
-  daoChainId: ChainId
+  daoId: number
   airdropChainId: ChainId
   collectCount: number
   defaultList: { address: string; amount: string }[]
@@ -540,8 +538,7 @@ function Manage({
       airdropInfo.airdropToken,
       needStake,
       airdropList,
-      daoChainId,
-      daoAddress
+      daoId
     )
       .then(hash => {
         hideModal()
@@ -561,8 +558,7 @@ function Manage({
     airdropInfo.airdropToken,
     airdropList,
     airdropTotalAmount,
-    daoAddress,
-    daoChainId,
+    daoId,
     hideModal,
     isEth,
     needStake,

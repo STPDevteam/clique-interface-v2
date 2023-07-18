@@ -1,31 +1,47 @@
-import { Box, Drawer, List, ListItemText, styled, Typography } from '@mui/material'
+import {
+  Box,
+  Drawer,
+  List,
+  ListItemText,
+  styled,
+  TooltipProps,
+  tooltipClasses,
+  Typography,
+  Tooltip,
+  Stack
+} from '@mui/material'
 import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
-import { ReactComponent as proposal } from 'assets/svg/proposal.svg'
-import { ReactComponent as workspace } from 'assets/svg/workspace.svg'
+import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
+import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
 // import { ReactComponent as treasury } from 'assets/svg/treasury.svg'
 // import { ReactComponent as Idea } from 'assets/svg/Idea.svg'
-import { ReactComponent as bounty } from 'assets/svg/bounty.svg'
-import { ReactComponent as member } from 'assets/svg/member.svg'
-import { ReactComponent as setting } from 'assets/svg/setting.svg'
+import { ReactComponent as Bounty } from 'assets/svg/bounty.svg'
+import { ReactComponent as Member } from 'assets/svg/member.svg'
+import { ReactComponent as About } from 'assets/svg/about.svg'
+import { ReactComponent as Setting } from 'assets/svg/setting.svg'
 // import { ReactComponent as Add } from 'assets/svg/add.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import { routes } from 'constants/routes'
-// import Image from 'components/Image'
+import Image from 'components/Image'
 // import robot from 'assets/images/robot.png'
 // import ele from 'assets/images/ele.png'
 // import trash from 'assets/images/trash.png'
 // import meetingIcon from 'assets/images/meeting.png'
-// import taskIcon from 'assets/images/task.png'
+import taskIcon from 'assets/images/task.png'
 // import calendarIcon from 'assets/images/calendar.png'
 // import docsIcon from 'assets/images/docs.png'
 // import { ExternalLink } from 'theme/components'
-import { useCallback, useMemo } from 'react'
-import { useDaoBaseInfo, useDaoInfo } from 'hooks/useDaoInfo'
-import { ChainId } from 'constants/chain'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DaoAvatars } from 'components/Avatars'
-// import MyCollapse from 'components/Collapse'
+import MyCollapse from 'components/Collapse'
 import PopperCard from 'components/PopperCard'
-import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
+import useModal from 'hooks/useModal'
+import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
+import AddIcon from 'assets/images/add.png'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -39,7 +55,12 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   '& .menuLink:hover svg path': {
     fill: 'rgba(0, 73, 198, 1)'
   },
+  '& .menuLink svg': {
+    width: 30,
+    height: 30
+  },
   '& .menuLink': {
+    width: '100%',
     textDecoration: 'none',
     fontSize: 14,
     lineHeight: '20px',
@@ -61,12 +82,21 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   },
   '.activemenuLink': {
     textDecoration: 'none',
-    padding: '9px 16px',
     color: theme.palette.primary.main,
     backgroundColor: 'rgba(0, 91, 198, 0.06)'
   },
-  '.activemenuLink svg path': {
+  '.activemenuLink ul': {
+    backgroundColor: '#fff'
+  },
+  '.activemenuLink ul:hover': {
+    backgroundColor: '#F8FBFF'
+  },
+  '.activemenuLink>svg path': {
     fill: 'rgba(0, 73, 198, 1)'
+  },
+  '.activemenuLink>svg': {
+    width: 30,
+    height: 30
   },
   '& .collapse': {
     textDecoration: 'none',
@@ -90,22 +120,27 @@ const StyledAppBar = styled(Box)(({ theme }) => ({
   }
 }))
 
-// const StyledTeamMenu = styled(Box)({
-//   paddingLeft: 30,
-//   display: 'flex',
-//   justifyContent: 'flex-start',
-//   flexDirection: 'row',
-//   alignItems: 'center',
-//   gap: 10,
-//   color: '#3f5170',
-//   cursor: 'pointer',
-//   '& img': {
-//     width: 14
-//   },
-//   '& svg path': {
-//     fill: '#d4d7e2'
-//   }
-// })
+const StyledTeamMenu = styled(Box)({
+  display: 'flex',
+  justifyContent: 'space-between',
+  flexDirection: 'row',
+  alignItems: 'center',
+  gap: 10,
+  color: '#3f5170',
+  cursor: 'pointer',
+  padding: '0 20px',
+  '& img': {
+    width: 14
+  },
+  '& .ParentTitle': {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    '& svg path': {
+      fill: '#97B7EF'
+    }
+  }
+})
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -146,112 +181,160 @@ const Item = styled(Box)(({}) => ({
   }
 }))
 
+const ChildItem = styled(Box)({
+  height: 40,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  padding: '0 16px 0 60px',
+  '& .LBox': {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    '& img': {
+      width: 14
+    },
+    '& p': {
+      width: 100,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      color: '#3F5170',
+      fontSize: 14,
+      fontWeight: 500
+    }
+  }
+})
+
+export const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#F8FBFF !important',
+    color: '#97B7EF !important',
+    width: 300,
+    fontFamily: 'Inter',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+    borderRadius: '6px',
+    border: ' 1px solid #97B7EF',
+    padding: '8px  8px 8px 12px',
+    '& .MuiTooltip-arrow': {
+      color: '#97B7EF !important'
+    }
+  }
+}))
+
 export interface LeftSiderMenu {
   title: string
   link?: string
-  icon: string
+  icon?: ReactJSXElement
+  route?: string
+  logo?: string
+  isPublic?: boolean
   defaultOpen?: boolean
   children?: LeftSiderMenu[]
 }
 
-export function DaoItem({
-  chainId,
-  daoAddress,
-  daoName
-}: {
-  chainId: ChainId | undefined
-  daoAddress: string
-  daoName: string
-}) {
-  const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
-
+export function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
   return (
     <Item>
-      <DaoAvatars size={24} src={daoBaseInfo?.daoLogo} alt={daoBaseInfo?.name || daoName} />
-      <Text noWrap>{daoBaseInfo?.name || daoName}</Text>
+      <DaoAvatars size={24} src={daoLogo} alt={daoName || '-'} />
+      <Text noWrap>{daoName || '-'}</Text>
     </Item>
   )
 }
 
 export default function LeftSider() {
   const { pathname } = useLocation()
+  const { account } = useActiveWeb3React()
   const history = useHistory()
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const daoInfo = useDaoInfo(daoAddress, (daoChainId as unknown) as ChainId)
-  const { result: myJoinedDaoList } = useMyJoinedDao()
-  const makeRouteLink = useCallback(
-    (route: string) => {
-      return route.replace(':chainId', daoChainId).replace(':address', daoAddress)
-    },
-    [daoAddress, daoChainId]
-  )
+  const [activeIndex, setActiveIndex] = useState([false, false, false, false, false, false])
+  const { daoId: daoId } = useParams<{ daoId: string }>()
+  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  const {
+    createDaoListData: myJoinedDaoList,
+    spaceListData,
+    myJoinDaoData,
+    updateWrokspaceListData
+  } = useUpdateDaoDataCallback()
+  const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
+  const [activeIdx, setActiveIdx] = useState(-1)
+  const { showModal } = useModal()
 
-  const menuList = useMemo(
+  const workspaceList = useMemo(
+    () =>
+      spaceListData.map(item => ({
+        title: item.title,
+        link: makeRouteLink(routes.DaoTeamTask) + '/task/' + item.spacesId,
+        logo: taskIcon,
+        isPublic: item.access === 'public' ? true : false
+      })),
+    [makeRouteLink, spaceListData]
+  )
+  const teamspacesList: LeftSiderMenu[] = useMemo(
     () => [
       {
-        text: 'Proposal',
-        icon: proposal,
-        route: makeRouteLink(routes.Proposal)
+        title: 'Proposal',
+        icon: <Proposal />,
+        route: makeRouteLink(routes.Proposal),
+        defaultOpen: false
       },
       {
-        text: 'Workspace',
-        icon: workspace,
-        route: makeRouteLink(routes.DaoTeamTask)
+        title: 'Workspace',
+        icon: <Workspace />,
+        defaultOpen: pathname.includes(makeRouteLink(routes.DaoTeamTask)),
+        route: '',
+        children: workspaceList
       },
-      // {
-      //   text: 'Treasury',
-      //   icon: treasury,
-      //   route: makeRouteLink(routes.DaoTreasury)
-      // },
-      // {
-      //   text: 'Idea',
-      //   icon: Idea,
-      //   route: makeRouteLink(routes.DaoIdea)
-      // },
+      { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
+      { title: 'Member', icon: <Member />, defaultOpen: false, route: makeRouteLink(routes.DaoMember) },
+      { title: 'About', icon: <About />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoAbout) },
       {
-        text: 'DAO Rewards',
-        icon: bounty,
-        route: makeRouteLink(routes.DaoInfoActivity)
-      },
-      {
-        text: 'Member',
-        icon: member,
-        route: makeRouteLink(routes.DaoMember)
-      },
-      {
-        text: 'About & Settings',
-        icon: setting,
+        title: 'Settings',
+        icon: <Setting />,
+        defaultOpen: false,
         route: makeRouteLink(routes.DaoAboutSetting)
       }
     ],
-    [makeRouteLink]
+    [makeRouteLink, pathname, workspaceList]
   )
+  const currentTabLinks = useMemo(() => {
+    const list =
+      myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]
+        ? teamspacesList
+        : teamspacesList.filter(i => i.title !== 'Settings')
 
-  // const teamspacesList: LeftSiderMenu[] = useMemo(
-  //   () => [
-  //     {
-  //       title: 'Genernal',
-  //       icon: robot,
-  //       defaultOpen: true,
-  //       children: [
-  //         // {
-  //         //   title: 'Meetings',
-  //         //   link: makeRouteLink(routes.DaoTeamMeetings),
-  //         //   icon: meetingIcon
-  //         // },
-  //         // { title: 'Docs', link: makeRouteLink(routes.DaoTeamDocs), icon: docsIcon },
-  //         { title: 'Task', link: makeRouteLink(routes.DaoTeamTask), icon: taskIcon }
-  //         // { title: 'Calendar', link: makeRouteLink(routes.DaoTeamCalendar), icon: calendarIcon }
-  //       ]
-  //     }
-  //     // {
-  //     //   title: 'Game',
-  //     //   icon: ele,
-  //     //   children: []
-  //     // }
-  //   ],
-  //   [makeRouteLink]
-  // )
+    return list
+  }, [myJoinDaoData?.job, teamspacesList])
+  useEffect(() => {
+    if (
+      pathname !== makeRouteLink(routes.Proposal) &&
+      pathname !== makeRouteLink(routes.DaoInfoActivity) &&
+      pathname !== makeRouteLink(routes.DaoMember) &&
+      pathname !== makeRouteLink(routes.DaoInfoAbout) &&
+      pathname !== makeRouteLink(routes.DaoAboutSetting)
+    ) {
+      setActiveIndex(() => {
+        const newItems = [false, true, false, false, false, false]
+        return newItems
+      })
+      setActiveIdx(workspaceList.findIndex(item => item.link === pathname))
+    } else {
+      setActiveIndex(() => {
+        const newItems = [
+          pathname === makeRouteLink(routes.Proposal),
+          false,
+          pathname === makeRouteLink(routes.DaoInfoActivity),
+          pathname === makeRouteLink(routes.DaoMember),
+          pathname === makeRouteLink(routes.DaoInfoAbout),
+          pathname === makeRouteLink(routes.DaoAboutSetting)
+        ]
+        return newItems
+      })
+    }
+  }, [makeRouteLink, pathname, workspaceList])
 
   return (
     <StyledAppBar>
@@ -316,54 +399,29 @@ export default function LeftSider() {
                     textAlign: 'left'
                   }}
                 >
-                  {daoInfo?.name || '-'}
+                  {daoInfo?.daoName || '-'}
                 </Typography>
                 <ArrowIcon />
               </Box>
             }
           >
             <>
-              {myJoinedDaoList.map(option => (
-                <Box
-                  key={option.daoAddress + option.chainId}
-                  onClick={() => history.push(`${routes._DaoInfo}/${option.chainId}/${option.daoAddress}`)}
-                >
-                  <DaoItem chainId={option.chainId} daoName={option.daoName} daoAddress={option.daoAddress} />
-                </Box>
-              ))}
+              {account &&
+                myJoinedDaoList?.map(option => (
+                  <Box
+                    key={option.daoId + option.daoName}
+                    onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+                  >
+                    <DaoItem {...option} />
+                  </Box>
+                ))}
             </>
           </PopperCard>
         </Box>
         <div />
-        <List>
-          {menuList.map((item, idx) => (
-            <NavLink
-              key={item.text + idx}
-              id={`${item.route}-nav-link`}
-              to={item.route ?? ''}
-              className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-start',
-                flexDirection: 'row',
-                gap: 10,
-                outline: 'none',
-                marginRight: 0,
-                paddingLeft: 20
-              }}
-            >
-              <item.icon width={30} height={30} />
-              <ListItemText primary={item.text} />
-            </NavLink>
-          ))}
-        </List>
-        {/* <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'}>
-          <Typography variant="h5" textAlign={'left'} fontSize={16} sx={{ color: '#3F5170', padding: '6px 24px 16px' }}>
-            Teamspaces
-          </Typography>
-        </Box> */}
         <Box
           gap={10}
+          mt={8}
           sx={{
             '& li a': {
               paddingLeft: 80
@@ -374,17 +432,57 @@ export default function LeftSider() {
             }
           }}
         >
-          {/* {teamspacesList.map((item, idx) => (
-            <Box key={idx}>
+          {currentTabLinks.map((item, idx) => (
+            <Box
+              onClick={() => {
+                setActiveIdx(-1)
+                setActiveIndex(() => {
+                  const newItems = [false, false, false, false, false, false]
+                  newItems[idx] = true
+                  return newItems
+                })
+              }}
+              key={idx}
+              minHeight={50}
+              className={activeIndex[idx] ? 'activemenuLink' : ' '}
+            >
               <MyCollapse
                 hiddenArrow
                 bodyPl={0}
                 defaultOpen={item.defaultOpen}
+                height={50}
                 title={
-                  <StyledTeamMenu>
-                    <Image src={item.icon}></Image>
-                    <p>{item.title}</p>
-                  </StyledTeamMenu>
+                  <>
+                    {item.children ? (
+                      <StyledTeamMenu>
+                        <Box className={item.route && pathname === item.route ? 'active ParentTitle' : 'ParentTitle'}>
+                          {item.icon}
+                          <ListItemText primary={item.title} />
+                        </Box>
+                        <ArrowIcon />
+                      </StyledTeamMenu>
+                    ) : (
+                      <NavLink
+                        key={item.title + idx}
+                        id={`${item.route}-nav-link`}
+                        to={item.route ?? ''}
+                        className={(item.route && pathname === item.route ? 'active' : '') + 'menuLink'}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-start',
+                          flexDirection: 'row',
+                          gap: 10,
+                          outline: 'none',
+                          marginRight: 0,
+                          padding: 10,
+                          paddingLeft: 20
+                        }}
+                      >
+                        {item.icon}
+                        <ListItemText primary={item.title} />
+                      </NavLink>
+                    )}
+                  </>
                 }
               >
                 {item?.children?.map((item, idx1) => (
@@ -393,8 +491,12 @@ export default function LeftSider() {
                     disablePadding
                     style={{ marginRight: 0 }}
                     sx={{
+                      cursor: 'pointer',
+                      '& .activeChild': {
+                        backgroundColor: '#005BC60F'
+                      },
                       '&:hover': {
-                        backgroundColor: 'rgba(0, 91, 198, 0.06)'
+                        backgroundColor: '#F8FBFF'
                       },
                       '& a': {
                         color: theme => theme.palette.text.secondary,
@@ -418,15 +520,130 @@ export default function LeftSider() {
                       }
                     }}
                   >
-                    <NavLink to={item.link || ''}>
-                      <Image src={item.icon}></Image>
-                      <p>{item.title}</p>
-                    </NavLink>
+                    <ChildItem
+                      className={activeIdx === idx1 ? 'activeChild' : ''}
+                      onClick={(e: any) => {
+                        if (
+                          myJoinDaoData.job === 'owner' ||
+                          item.isPublic ||
+                          (account &&
+                            account.toLocaleLowerCase() === spaceListData[idx1].creator.account.toLocaleLowerCase()) ||
+                          (!item.isPublic && myJoinDaoData.privateSpaces[idx1]?.isJoin)
+                        ) {
+                          setActiveIdx(idx1)
+                          history.push(item.link || '')
+                          e.stopPropagation()
+                        } else if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) {
+                          return
+                        }
+                      }}
+                    >
+                      {item.isPublic ? (
+                        <>
+                          <Box className={'LBox'}>
+                            <Image src={item.logo || ''}></Image>
+                            <Typography noWrap>{item.title}</Typography>
+                          </Box>
+                          <Typography></Typography>
+                        </>
+                      ) : myJoinDaoData && myJoinDaoData.privateSpaces[idx1]?.isJoin ? (
+                        <>
+                          <Box className={'LBox'}>
+                            <Image src={item.logo || ''}></Image>
+                            <Typography noWrap>{item.title}</Typography>
+                          </Box>
+                          <Typography>🔒</Typography>
+                        </>
+                      ) : (
+                        <>
+                          <TooltipStyle title={'Private space, visible only to those invited.'} placement="left">
+                            <Box
+                              className={'LBox'}
+                              sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
+                            >
+                              <Image src={item.logo || ''}></Image>
+                              <Typography noWrap sx={{ opacity: 0.3 }}>
+                                {item.title}
+                              </Typography>
+                            </Box>
+                          </TooltipStyle>
+                          <Typography sx={{ opacity: 0.4 }}>🔒</Typography>
+                        </>
+                      )}
+                    </ChildItem>
                   </List>
                 ))}
+                {item.title === 'Workspace' &&
+                (myJoinDaoData?.job === DaoAdminLevelProp[1] || myJoinDaoData?.job === DaoAdminLevelProp[0]) ? (
+                  <Box
+                    sx={{
+                      height: 40,
+                      padding: '0 16px 0 60px',
+                      gap: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      backgroundColor: '#fff',
+                      '&:hover': {
+                        backgroundColor: '#F8FBFF'
+                      }
+                    }}
+                    onClick={() => {
+                      showModal(
+                        <AddTeamspaceModal
+                          isEdit={false}
+                          daoId={Number(daoId)}
+                          onDimiss={() => {
+                            updateWrokspaceListData()
+                          }}
+                        />
+                      )
+                    }}
+                  >
+                    <img src={AddIcon} width={14} />
+                    <Typography
+                      sx={{
+                        fontWeight: 400,
+                        fontSize: 14,
+                        lineHeight: '20px',
+                        color: '#97B7EF'
+                      }}
+                    >
+                      Add Workspace
+                    </Typography>
+                  </Box>
+                ) : item.title === 'Workspace' ? (
+                  <Box
+                    sx={{
+                      height: 40,
+                      padding: '0 16px 0 60px',
+                      gap: 10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      backgroundColor: '#fff'
+                    }}
+                  >
+                    <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
+                      <Stack flexDirection={'row'} alignItems={'center'} gap={10}>
+                        <img src={AddIcon} width={14} height={14} />
+                        <Typography
+                          sx={{
+                            fontWeight: 400,
+                            fontSize: 14,
+                            lineHeight: '20px',
+                            color: '#97B7EF'
+                          }}
+                        >
+                          Add Workspace
+                        </Typography>
+                      </Stack>
+                    </TooltipStyle>
+                  </Box>
+                ) : null}
               </MyCollapse>
             </Box>
-          ))} */}
+          ))}
           {/* <List
             disablePadding
             style={{ marginRight: 0 }}

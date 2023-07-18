@@ -1,93 +1,175 @@
-import { Box, Link as MuiLink, styled, Typography, useTheme } from '@mui/material'
+import { Box, styled, Typography, useTheme, Tabs, Tab } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
-import { ChainId } from 'constants/chain'
-import { useProposalSnapshot } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
-import { ProposalDetailProp, ProposalStatus } from 'hooks/useProposalInfo'
-import { AdminTagBlock } from 'pages/DaoInfo/ShowAdminTag'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
+import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import { VoteWrapper } from './Vote'
-import useModal from 'hooks/useModal'
-import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import TransactiontionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-import { useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
-import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 import { routes } from 'constants/routes'
 import { Link } from 'react-router-dom'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { toast } from 'react-toastify'
+import ReactHtmlParser from 'react-html-parser'
+import { escapeAttrValue } from 'xss'
+import Copy from 'components/essential/Copy'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
 
+const StyledTabs = styled('div')(({ theme }) => ({
+  display: 'flex',
+  fontWeight: 600,
+  fontSize: 14,
+  listStyle: 'none',
+  padding: 0,
+  // height: 60,
+  '&>*': {
+    marginRight: 20,
+    textDecoration: 'none',
+    whiteSpace: 'nowrap',
+    color: '#0049c6',
+    cursor: 'pointer',
+    '&:hover': {
+      color: '#0049c6'
+    },
+    '&.active': {
+      color: '#0049c6'
+    }
+  },
+  '& .css-1jxw4rn-MuiTabs-indicator': {
+    width: '0!important'
+  },
+  '& button': {
+    display: 'flex',
+    alignItems: 'center',
+    border: 0,
+    paddingLeft: 0,
+    '&:hover': {
+      color: '#0049c6'
+    },
+    '&:hover svg path': {
+      fill: '#0049c6'
+    },
+    '&.active': {
+      fontWeight: 600
+    },
+    '&.active svg path': {
+      fill: '#0049c6'
+    }
+  },
+  [theme.breakpoints.down('sm')]: {
+    justifyContent: 'space-evenly',
+    '&>*': {
+      marginRight: 0,
+      '&:last-child': {
+        marginRight: 0
+      }
+    }
+  }
+}))
+
+const tabList = [
+  {
+    label: 'Description',
+    value: 'Description'
+  },
+  { label: ' Proposal Info', value: ' Proposal Info' }
+]
+
 export default function Info({
   proposalInfo,
-  daoAddress,
-  daoChainId
+  refresh
 }: {
-  proposalInfo: ProposalDetailProp
-  daoChainId: ChainId
-  daoAddress: string
+  proposalInfo: useProposalDetailInfoProps
+  refresh: Dispatch<SetStateAction<number>>
 }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const { account, library, chainId } = useActiveWeb3React()
-  const proposalSnapshot = useProposalSnapshot(daoChainId, daoAddress, proposalInfo.proposalId)
-  const cancelProposalCallback = useCancelProposalCallback(daoAddress)
-
-  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`${daoAddress}_cancelProposal`)
-  const { showModal, hideModal } = useModal()
+  const { account } = useActiveWeb3React()
+  // const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
+  const cancelProposalCallback = useCancelProposalCallback()
+  const [tabValue, setTabValue] = useState(0)
+  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
   const onCancelProposalCallback = useCallback(() => {
-    showModal(<TransacitonPendingModal />)
-    cancelProposalCallback(proposalInfo.proposalId)
-      .then(hash => {
-        hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} />)
-      })
-      .catch((err: any) => {
-        hideModal()
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
-      })
-  }, [cancelProposalCallback, hideModal, proposalInfo.proposalId, showModal])
-
-  const switchNetwork = useCallback(() => {
-    triggerSwitchChain(library, daoChainId, account || '')
-  }, [account, daoChainId, library])
+    cancelProposalCallback(proposalInfo.proposalId).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Network error')
+        return
+      }
+      refresh(Math.random())
+      toast.success('Cancel success')
+    })
+  }, [cancelProposalCallback, proposalInfo.proposalId, refresh])
 
   return (
     <VoteWrapper>
-      <Box>
-        <Typography variant="h6" mb={19} fontWeight={500}>
-          Details
-        </Typography>
-        <Box display={'grid'} gridTemplateColumns="86px 1fr" rowGap={15} alignItems={'center'}>
-          <LeftText>Proposer</LeftText>
-          <Box display={'flex'} flexDirection={'column'}>
-            <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.creator}`}>
-              <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
-                {shortenAddress(proposalInfo.creator, isSmDown ? 3 : 4)}
-              </Typography>
-            </Link>
-            <AdminTagBlock daoAddress={daoAddress} chainId={daoChainId} account={proposalInfo.creator} />
-          </Box>
+      <Box pb={40}>
+        <StyledTabs>
+          <Tabs value={tabValue}>
+            {tabList.map((item, idx) => (
+              <Tab
+                key={item.label + idx}
+                label={item.label}
+                onClick={() => setTabValue(idx)}
+                sx={{ gap: 10, marginRight: 50, textTransform: 'none' }}
+                className={tabValue === idx ? 'active' : ''}
+              ></Tab>
+            ))}
+          </Tabs>
+        </StyledTabs>
 
-          <LeftText>Start Time</LeftText>
-          <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>
+        <div className="ql-editor" style={{ borderTop: '1px solid #D4D7E2' }}>
+          {tabValue === 0 ? (
+            <>
+              <Typography>{proposalInfo.introduction}</Typography>
+              {ReactHtmlParser(
+                proposalInfo.content
+                  ? proposalInfo.content
+                  : filterXSS(proposalInfo.content || '', {
+                      onIgnoreTagAttr: function(_, name, value) {
+                        if (name === 'class') {
+                          return name + '="' + escapeAttrValue(value) + '"'
+                        }
+                        return undefined
+                      }
+                    })
+              )}
+            </>
+          ) : (
+            <Box>
+              <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
+                <LeftText>Minimum Votes Needed To Execute</LeftText>
+                <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
 
-          <LeftText>End Time</LeftText>
-          <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
+                <LeftText>Token contract address</LeftText>
+                <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
+                  <Typography>{proposalInfo.useVoteBase[0]?.tokenAddress}</Typography>
+                  <Copy toCopy={proposalInfo.useVoteBase[0]?.tokenAddress} />
+                </Box>
 
-          <LeftText>Snapshot</LeftText>
+                <LeftText>Proposer</LeftText>
+                <Box display={'flex'} flexDirection={'row'} gap={10}>
+                  <Link style={{ textDecoration: 'none' }} to={routes._Profile + `/${proposalInfo.proposer.account}`}>
+                    <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
+                      {shortenAddress(proposalInfo.proposer.account, isSmDown ? 3 : 4)}
+                    </Typography>
+                  </Link>
+                  <ShowAdminTag level={proposalInfo.proposer.daoJobs} />
+                </Box>
+
+                <LeftText>Start Time</LeftText>
+                <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>
+
+                <LeftText>End Time</LeftText>
+                <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
+
+                {/* <LeftText>Snapshot</LeftText>
           <MuiLink
             underline="none"
             sx={{ display: 'flex' }}
@@ -103,27 +185,25 @@ export default function Info({
                 fill={theme.palette.primary.light}
               />
             </svg>
-          </MuiLink>
-        </Box>
-        {account === proposalInfo.creator && proposalInfo.status === ProposalStatus.SOON && (
-          <Box mt={15}>
-            <BlackButton
-              height="44px"
-              width="160px"
-              disabled={isCancel}
-              onClick={chainId !== daoChainId ? switchNetwork : onCancelProposalCallback}
-            >
-              {isCancel ? (
-                <>
-                  Cancel
-                  <Dots />
-                </>
-              ) : (
-                'Cancel proposal'
+          </MuiLink> */}
+              </Box>
+              {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
+                <Box mt={15}>
+                  <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
+                    {isCancel ? (
+                      <>
+                        Cancel
+                        <Dots />
+                      </>
+                    ) : (
+                      'Cancel proposal'
+                    )}
+                  </BlackButton>
+                </Box>
               )}
-            </BlackButton>
-          </Box>
-        )}
+            </Box>
+          )}
+        </div>
       </Box>
     </VoteWrapper>
   )

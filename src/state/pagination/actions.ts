@@ -10,7 +10,7 @@ export interface HomeListPaginationProp {
 
 export interface ActivityListPaginationProp {
   types: ActivityType | undefined
-  status: ActivityStatus | undefined
+  status: ActivityStatus | undefined | string
   currentPage: number
 }
 

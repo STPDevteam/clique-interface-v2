@@ -1,9 +1,10 @@
-import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel } from '@mui/material'
+import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel, Alert, MenuItem } from '@mui/material'
 import ConfirmButton from 'components/Button/Button'
 import SaveButton from 'components/Button/OutlineButton'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
-import Select from 'components/Select/SearchSelect'
+// import SearchSelect from 'components/Select/SearchSelect'
+import Select from 'components/Select/Select'
 import DateTimePicker from 'components/DateTimePicker'
 import Input from 'components/Input'
 import React, { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
@@ -15,21 +16,15 @@ import { ReactComponent as ArrowBackIcon } from 'assets/svg/arrow_back.svg'
 import { ReactComponent as Invite } from 'assets/svg/invite.svg'
 import useBreakpoint from 'hooks/useBreakpoint'
 import ReactHtmlParser from 'react-html-parser'
-import {
-  ProposalListBaseProp,
-  useCreateTask,
-  useGetTaskDetail,
-  useJobsList,
-  useUpdateTask
-} from 'hooks/useBackedTaskServer'
+import { useCreateTask, useGetTaskDetail, useJobsList, useUpdateTask } from 'hooks/useBackedTaskServer'
 import { ITaskQuote } from 'pages/TeamSpaces/Task/DragTaskPanel'
-import useModal from 'hooks/useModal'
 import { shortenAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { ReactComponent as ViewDtailIcon } from 'assets/svg/viewDetailIcon.svg'
-import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { escapeAttrValue } from 'xss'
 import useCopyClipboard from 'hooks/useCopyClipboard'
+import { toast } from 'react-toastify'
+import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -75,12 +70,12 @@ const RowContent = styled(Box)(() => ({
   '& .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
     padding: '0 0 0 20px'
   },
-  '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
-    border: 'none!important'
-  },
+  // '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
+  //   border: 'none!important'
+  // },
   '& input': {
     padding: 0,
-    height: 30,
+    // height: 30,
     '&::placeholder': {
       color: '#97b7ef'
     }
@@ -127,7 +122,8 @@ export default function TaskDetail({
   open,
   onDismiss,
   proposalBaseList,
-  TeamSpacesInfo,
+  daoId,
+  spacesId,
   editData,
   identity,
   initStatus
@@ -135,7 +131,8 @@ export default function TaskDetail({
   open: boolean
   onDismiss: () => void
   proposalBaseList: ProposalListBaseProp[]
-  TeamSpacesInfo: any
+  daoId: number
+  spacesId: number
   editData: ITaskQuote
   identity: string
   initStatus: string
@@ -145,7 +142,7 @@ export default function TaskDetail({
     return status
   }, [editData, initStatus])
 
-  const { result: jobsList } = useJobsList('C_member', TeamSpacesInfo?.daoAddress, Number(TeamSpacesInfo?.chainId))
+  const { result: jobsList } = useJobsList(daoId)
   const assigneeList = useMemo(() => {
     if (!jobsList) return []
     const _arr: any = []
@@ -156,7 +153,6 @@ export default function TaskDetail({
     })
     return _arr
   }, [jobsList])
-
   const proposalList = useMemo(() => {
     if (!proposalBaseList) return []
     const arr: any = []
@@ -165,6 +161,8 @@ export default function TaskDetail({
     })
     return arr
   }, [proposalBaseList])
+  console.log('list', editData, proposalList)
+
   const updateProposal = useMemo(() => {
     if (!editData || !proposalBaseList) return
     const res = proposalBaseList.filter((item: any) => editData.proposalId === item.proposalId)[0]
@@ -183,19 +181,18 @@ export default function TaskDetail({
     },
     [onDismiss]
   )
-
+  const [isSubmit, setIsSubmit] = useState(false)
   const isSmDown = useBreakpoint('sm')
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
   const [currentStatus, setCurrentStatus] = useState(preStatus ?? '')
-  const [assignees, setAssignees] = useState(editData?.assignAccount ?? '')
+  const [assignees, setAssignees] = useState<any>(editData?.assignAccount ?? '')
   const [priority, setPriority] = useState<any>(editData?.priority ?? '')
   const [proposal, setProposal] = useState(updateProposal ?? '')
   const [value, setValue] = useState(editData?.taskName ?? '')
   const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
   const [content, setContent] = useState<any>(taskDetailData?.content ?? '')
-  const { showModal } = useModal()
   const create = useCreateTask()
   const update = useUpdateTask()
   const link = useMemo(() => {
@@ -206,7 +203,9 @@ export default function TaskDetail({
   }, [taskDetailData?.content])
 
   const createCallback = useCallback(() => {
-    if (!TeamSpacesInfo) return
+    setIsSubmit(true)
+    if (!value.trim()) return
+    if (!spacesId) return
     create(
       assignees,
       content,
@@ -214,30 +213,21 @@ export default function TaskDetail({
       priority,
       Number(proposal),
       '0',
-      TeamSpacesInfo.teamSpacesId,
+      spacesId,
       currentStatus ? TaskStatus[currentStatus] : 'A_notStarted',
       value
     ).then((res: any) => {
       if (res.data.code === 200) {
         onDismiss()
-        showModal(<MessageBox type="success">Create task success</MessageBox>)
-      } else showModal(<MessageBox type="failure">Something wrong</MessageBox>)
+        toast.success('Create task success')
+      } else toast.error('Network error')
+      setIsSubmit(false)
     })
-  }, [
-    TeamSpacesInfo,
-    assignees,
-    content,
-    create,
-    currentStatus,
-    endTime,
-    onDismiss,
-    priority,
-    proposal,
-    showModal,
-    value
-  ])
+  }, [spacesId, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
 
   const updateCallback = useCallback(() => {
+    setIsSubmit(true)
+    if (!value.trim()) return
     if (!editData) return
     update(
       assignees,
@@ -252,12 +242,17 @@ export default function TaskDetail({
       editData.taskId,
       value,
       editData.weight
-    ).then(res => {
+    ).then((res: any) => {
       onDismiss()
-      showModal(<MessageBox type="success">Update success</MessageBox>)
-      console.log(res)
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Network error')
+        setIsSubmit(false)
+        return
+      }
+      toast.success('Update success')
+      setIsSubmit(false)
     })
-  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, showModal, update, value])
+  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, update, value])
 
   const getActions = useCallback(() => {
     if (editData) {
@@ -287,16 +282,16 @@ export default function TaskDetail({
           '& .title': {
             margin: '10px 0',
             paddingLeft: 0
-          },
-          '& .Mui-focused, & .MuiInputBase-root': {
-            border: 'none!important'
           }
+          // '& .Mui-focused, & .MuiInputBase-root': {
+          //   border: 'none!important'
+          // }
         }}
         anchor={'right'}
         open={open}
         onClose={toggleDrawer}
       >
-        {(identity && identity === 'C_member') || isEdit === true ? (
+        {(identity && identity === 'visitor') || isEdit === true ? (
           <>
             <Box
               display={'flex'}
@@ -319,7 +314,7 @@ export default function TaskDetail({
                 Back
               </Typography>
               <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={20}>
-                {isEdit && identity !== 'C_member' ? (
+                {isEdit && identity !== 'visitor' ? (
                   <>
                     <Box
                       onClick={() => setCopied(link)}
@@ -378,7 +373,7 @@ export default function TaskDetail({
                 <Image src={assign}></Image>
                 <Typography>Assignee</Typography>
               </Box>
-              <Select
+              {/* <Select
                 disabled
                 options={assigneeList}
                 placeholder="Empty"
@@ -387,17 +382,43 @@ export default function TaskDetail({
                 value={assignees}
                 multiple={false}
                 onChange={(value: any, option: any) => {
-                  console.log(value)
+                  console.log('values', value, option)
                   setAssignees(option.value)
                 }}
-              />
+              /> */}
+              <Select
+                disabled
+                noBold
+                placeholder="Empty"
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={assignees}
+                onChange={e => setAssignees(e.target.value)}
+              >
+                {assigneeList.map((item: any) => (
+                  <MenuItem
+                    key={item.label}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.value}
+                    selected={assignees === item.value}
+                  >
+                    {item.nickname
+                      ? item.nickname.length > 7
+                        ? item.nickname.slice(0, 7) + '...'
+                        : item.nickname
+                      : 'unnamed'}
+                    {'(' + shortenAddress(item.account, 3) + ')'}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
                 <Image src={select}></Image>
                 <Typography>Status</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 disabled
                 options={statusList}
                 placeholder="Empty"
@@ -406,7 +427,28 @@ export default function TaskDetail({
                 value={currentStatus}
                 multiple={false}
                 onChange={(value: any) => setCurrentStatus(value)}
-              />
+              /> */}
+              <Select
+                disabled
+                noBold
+                placeholder="Empty"
+                style={{ fontWeight: 500, fontSize: 14, marginTop: 10 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={currentStatus}
+                onChange={e => setCurrentStatus(e.target.value)}
+              >
+                {statusList.map((item: any) => (
+                  <MenuItem
+                    key={item}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item}
+                    selected={currentStatus === item}
+                  >
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
@@ -503,7 +545,7 @@ export default function TaskDetail({
                 <Image src={proposalIcon}></Image>
                 <Typography>Proposal</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 disabled
                 options={proposalList}
                 placeholder="Choose a proposal"
@@ -514,7 +556,46 @@ export default function TaskDetail({
                 onChange={(value: any) => {
                   setProposal(value)
                 }}
-              />
+              /> */}
+              <Box
+                width={'246.88px'}
+                sx={{
+                  height: 40,
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: '1px solid #D4D7E2',
+                  borderRadius: '10px'
+                }}
+              >
+                {taskDetailData?.proposalTitle ? (
+                  <Typography
+                    noWrap
+                    sx={{
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      maxWidth: 246,
+                      paddingLeft: 16,
+                      fontSize: 14,
+                      color: '#3f5170',
+                      fontWeight: 500
+                    }}
+                  >
+                    {taskDetailData?.proposalTitle}
+                  </Typography>
+                ) : (
+                  <Typography
+                    sx={{
+                      maxWidth: 246,
+                      paddingLeft: 16,
+                      fontSize: 14,
+                      color: '#808191',
+                      fontWeight: 400
+                    }}
+                  >
+                    Empty
+                  </Typography>
+                )}
+              </Box>
             </RowContent>
             <EditContent>
               {ReactHtmlParser(
@@ -608,24 +689,37 @@ export default function TaskDetail({
                 <Typography>Assignee</Typography>
               </Box>
               <Select
-                options={assigneeList}
+                noBold
                 placeholder="Empty"
-                width={isSmDown ? 160 : 219}
-                height={isSmDown ? 40 : undefined}
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
                 value={assignees}
-                multiple={false}
-                onChange={(value: any, option: any) => {
-                  console.log(value)
-                  setAssignees(option.value)
-                }}
-              />
+                onChange={e => setAssignees(e.target.value)}
+              >
+                {assigneeList.map((item: any) => (
+                  <MenuItem
+                    key={item.label}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item.value}
+                    selected={assignees === item.value}
+                  >
+                    {item.nickname
+                      ? item.nickname.length > 7
+                        ? item.nickname.slice(0, 7) + '...'
+                        : item.nickname
+                      : 'unnamed'}
+                    {'(' + shortenAddress(item.account, 3) + ')'}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
                 <Image src={select}></Image>
                 <Typography>Status</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 options={statusList}
                 placeholder="Empty"
                 width={isSmDown ? 160 : 219}
@@ -633,7 +727,27 @@ export default function TaskDetail({
                 value={currentStatus}
                 multiple={false}
                 onChange={(value: any) => setCurrentStatus(value)}
-              />
+              /> */}
+              <Select
+                noBold
+                placeholder="Empty"
+                style={{ fontWeight: 500, fontSize: 14, marginTop: 10 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={currentStatus}
+                onChange={e => setCurrentStatus(e.target.value)}
+              >
+                {statusList.map((item: any) => (
+                  <MenuItem
+                    key={item}
+                    sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                    value={item}
+                    selected={currentStatus === item}
+                  >
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
             </RowContent>
             <RowContent>
               <Box className={'lContent'}>
@@ -726,7 +840,7 @@ export default function TaskDetail({
                 <Image src={proposalIcon}></Image>
                 <Typography>Proposal</Typography>
               </Box>
-              <Select
+              {/* <SearchSelect
                 options={proposalList}
                 placeholder="Choose a proposal"
                 width={isSmDown ? 160 : 219}
@@ -736,7 +850,33 @@ export default function TaskDetail({
                 onChange={(value: any) => {
                   setProposal(value)
                 }}
-              />
+              /> */}
+              <Select
+                placeholder="Choose a proposal"
+                noBold
+                style={{ fontWeight: 500, fontSize: 14 }}
+                width={isSmDown ? 160 : 248}
+                height={isSmDown ? '30px' : '40px'}
+                value={proposal}
+                onChange={e => setProposal(e.target.value)}
+              >
+                {proposalList.length > 0 ? (
+                  proposalList.map((item: any) => (
+                    <MenuItem
+                      key={item.proposalId}
+                      sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                      value={item.proposalId}
+                      selected={assignees === item}
+                    >
+                      {item.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
+                    No more options are available
+                  </MenuItem>
+                )}
+              </Select>
             </RowContent>
             <RowContent
               sx={{
@@ -747,6 +887,11 @@ export default function TaskDetail({
             >
               <Editor content={content} setContent={setContent} />
             </RowContent>
+            {!value.trim() && isSubmit && (
+              <Alert style={{ marginTop: 20 }} severity="error">
+                Task title required
+              </Alert>
+            )}
             <ColSentence>{getActions()}</ColSentence>
           </>
         )}

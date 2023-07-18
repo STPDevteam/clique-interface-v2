@@ -23,7 +23,7 @@ export const initialState: SysPagination = {
   },
   activityListPagination: {
     types: undefined,
-    status: undefined,
+    status: '',
     currentPage: 1
   },
   notificationListPagination: {

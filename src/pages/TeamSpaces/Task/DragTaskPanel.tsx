@@ -1,14 +1,6 @@
 // import AddButton from 'components/Button/Button'
 import { Box, Tooltip, Typography } from '@mui/material'
-import { ChainId } from 'constants/chain'
-import {
-  ITaskItem,
-  useGetTaskList,
-  useRemoveTask,
-  useSpacesInfo,
-  useTaskProposalList,
-  useUpdateTask
-} from 'hooks/useBackedTaskServer'
+import { ITaskItem, useGetTaskList, useRemoveTask, useUpdateTask } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import { timeStampToFormat } from 'utils/dao'
 import Image from 'components/Image'
@@ -18,9 +10,12 @@ import { ReactComponent as DelIcon } from 'assets/svg/del.svg'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DragDropContext, Droppable, Draggable, DropResult, DraggableLocation } from 'react-beautiful-dnd'
 import { useParams } from 'react-router-dom'
-import { useIsJoined } from 'hooks/useBackedDaoServer'
 // import PopperCard from 'components/PopperCard'
 import TaskDetail from 'pages/Task/Children/TaskDetail'
+import { toast } from 'react-toastify'
+import { useProposalBaseList } from 'hooks/useBackedProposalServer'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import owl from 'assets/images/owl.png'
 
 function ContextMenu({
   children,
@@ -43,13 +38,13 @@ function ContextMenu({
   return (
     <Box sx={{ position: 'relative' }}>
       <Box>{children}</Box>
-      {isShow && !hideMenu && isJoined !== 'C_member' && (
+      {isShow && !hideMenu && isJoined !== 'visitor' && (
         <Box
           sx={{
             position: 'absolute',
             zIndex: 9999,
-            top: 0,
-            left: 150,
+            bottom: -25,
+            left: 20,
             width: 150,
             padding: 10,
             backgroundColor: '#fff',
@@ -70,7 +65,7 @@ function ContextMenu({
               }
             }}
             onClick={() => {
-              if (isJoined === 'C_member') return
+              if (isJoined === 'visitor') return
               const newState = [...taskList]
               const del = newState[ind].splice(index, 1)
               remove(del[0].spacesId, [del[0].taskId])
@@ -162,17 +157,17 @@ const taskTypeList = [
 ]
 
 export default function DragTaskPanel() {
+  const { spacesId: spacesId } = useParams<{ spacesId: string }>()
   const [rand, setRand] = useState(Math.random())
   const { showModal, hideModal } = useModal()
   const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
-  const { address: daoAddress, chainId: daoChainId } = useParams<{ address: string; chainId: string }>()
-  const curDaoChainId = Number(daoChainId) as ChainId
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
+  const daoId = Number(curDaoId)
   const update = useUpdateTask()
   const remove = useRemoveTask()
-  const { isJoined } = useIsJoined(curDaoChainId, daoAddress)
-  const { result } = useTaskProposalList(curDaoChainId, daoAddress)
-  const { result: TeamSpacesInfo } = useSpacesInfo(Number(daoChainId), daoAddress)
-  const { result: taskTypeListRes } = useGetTaskList(TeamSpacesInfo?.teamSpacesId, '', '', rand)
+  const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
+  const { result } = useProposalBaseList(daoId)
+  const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), '', '', rand)
 
   const showSidePanel = useCallback(
     (editData, initStatus) => {
@@ -185,13 +180,14 @@ export default function DragTaskPanel() {
           }}
           initStatus={initStatus}
           proposalBaseList={result}
-          TeamSpacesInfo={TeamSpacesInfo}
+          daoId={daoId}
+          spacesId={Number(spacesId)}
           editData={editData}
-          identity={isJoined || ''}
+          identity={isJoined?.job || ''}
         />
       )
     },
-    [TeamSpacesInfo, hideModal, isJoined, result, showModal]
+    [daoId, hideModal, isJoined?.job, result, showModal, spacesId]
   )
 
   const taskAllTypeList = useMemo(() => {
@@ -265,7 +261,12 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].taskName,
           taskList[sInd][source.index].weight
         )
-          .then(res => {
+          .then((res: any) => {
+            if (res.data.code !== 200) {
+              toast.error(res.msg || 'Network error')
+              return
+            }
+            toast.success('Update success')
             setRand(Math.random())
             console.log(res)
           })
@@ -305,7 +306,12 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].taskName,
           taskList[sInd][source.index].weight
         )
-          .then(res => {
+          .then((res: any) => {
+            if (res.data.code !== 200) {
+              toast.error(res.msg || 'Network error')
+              return
+            }
+            toast.success('Update success')
             setRand(Math.random())
             console.log(res)
           })
@@ -383,10 +389,10 @@ export default function DragTaskPanel() {
         sx={{
           position: 'absolute',
           right: 0,
-          top: '145px'
+          top: '-50px'
         }}
       >
-        {isJoined === 'C_member' ? (
+        {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
           <Tooltip title="Only administrators are allowed to create tasks" arrow>
             <Box
               sx={{
@@ -395,11 +401,11 @@ export default function DragTaskPanel() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#B5B7CF',
+                color: '#8D8EA5',
                 gap: 8,
                 cursor: 'pointer',
                 '& svg circle': {
-                  fill: '#B5B7CF'
+                  fill: '#8D8EA5'
                 }
               }}
             >
@@ -445,14 +451,14 @@ export default function DragTaskPanel() {
                         ind={ind}
                         index={index}
                         remove={remove}
-                        isJoined={isJoined}
+                        isJoined={isJoined?.job}
                         taskList={taskList}
                         isShow={item.taskId === showMenuId}
                       >
                         <Draggable
                           draggableId={item.taskId.toString()}
                           index={index}
-                          isDragDisabled={isJoined === 'C_member' || isJoined === 'noRole'}
+                          isDragDisabled={isJoined?.job === 'visitor' || isJoined?.job === 'noRole'}
                         >
                           {(provided, snapshot) => (
                             <Box
@@ -494,7 +500,7 @@ export default function DragTaskPanel() {
                                 <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
                                   {item.taskName}
                                 </Typography>
-                                {/* {isJoined === 'C_member' ? (
+                                {/* {isJoined === 'visitor' ? (
                                 ''
                               ) : (
                                 <PopperCard
@@ -529,7 +535,7 @@ export default function DragTaskPanel() {
                                         }
                                       }}
                                       onClick={e => {
-                                        if (isJoined === 'C_member') return
+                                        if (isJoined === 'visitor') return
                                         const newState = [...taskList]
                                         const del = newState[ind].splice(index, 1)
                                         remove(del[0].spacesId, [del[0].taskId])
@@ -568,9 +574,9 @@ export default function DragTaskPanel() {
                                   }
                                 }}
                               >
-                                {item.assignAvatar && <Image src={item.assignAvatar}></Image>}
+                                {item.assignAccount && <Image src={item.assignAvatar || owl}></Image>}
                                 <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
-                                  {item.assignNickname}
+                                  {item.assignAccount ? (item.assignNickname ? item.assignNickname : 'unnamed') : '--'}
                                 </Typography>
                               </Box>
                             </Box>
@@ -580,7 +586,7 @@ export default function DragTaskPanel() {
                     </Box>
                   ))}
                   {provided.placeholder}
-                  {isJoined === 'C_member' ? (
+                  {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
                     <Tooltip title="Only administrators are allowed to create tasks" arrow>
                       <Box
                         sx={{
@@ -589,12 +595,12 @@ export default function DragTaskPanel() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#B5B7CF',
+                          color: '#8D8EA5',
                           gap: 8,
                           margin: '0 auto',
                           cursor: 'pointer',
                           '& svg circle': {
-                            fill: '#B5B7CF'
+                            fill: '#8D8EA5'
                           }
                         }}
                       >
