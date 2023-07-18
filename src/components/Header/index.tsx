@@ -381,7 +381,12 @@ export default function Header() {
           zIndex: 999
         }}
       >
-        <Alert severity="warning">
+        <Alert
+          severity="warning"
+          sx={{
+            height: 54
+          }}
+        >
           Clique V2 will undergo an upgrade during UTC 8:00 to 11:00 July 18, 2023. During this period, website
           functionalities will be temporarily unavailable. We apologize for any inconvenience caused.{' '}
         </Alert>
