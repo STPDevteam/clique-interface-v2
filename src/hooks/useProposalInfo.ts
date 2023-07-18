@@ -224,12 +224,7 @@ export function useProposalDetailInfo(
 
   const isSuccess = useMemo(() => {
     if (!votingThreshold || !proposalOptions) return undefined
-    for (let i = 0; i < proposalOptions.length; i++) {
-      if (!votingThreshold.greaterThan(proposalOptions[i].amount)) {
-        return true
-      }
-    }
-    return false
+    return proposalOptions.some(item => !votingThreshold.greaterThan(item.amount))
   }, [votingThreshold, proposalOptions])
 
   useEffect(() => {
