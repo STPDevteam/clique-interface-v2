@@ -120,8 +120,8 @@ export const Tabs: Tab[] = [
   },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
-  { title: 'Tools', route: routes.DappStore },
-  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
+  { title: 'Tools', route: routes.DappStore }
+  // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
 // const navLinkSX = () => ({
@@ -377,14 +377,17 @@ export default function Header() {
           position: 'fixed',
           top: 0,
           left: 0,
+
           width: '100%',
           zIndex: 999
         }}
       >
-        <Alert severity="warning">
-          Clique V2 will undergo an upgrade during UTC 8:00 to 11:00 July 18, 2023. During this period, website
-          functionalities will be temporarily unavailable. We apologize for any inconvenience caused.{' '}
-        </Alert>
+        <a href="https://myclique.io/" target="_blank" style={{ textDecoration: 'none' }} rel="noreferrer">
+          <Alert severity="warning" sx={{ height: 54 }}>
+            The V2 version is only for view during the transition period. All the changes to the V2 version will be not
+            recorded on V3 and will be lost when V2 is closed. Please move to V3 for any changes or operations.
+          </Alert>
+        </a>
       </Box>
 
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
