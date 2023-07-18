@@ -119,8 +119,8 @@ export const Tabs: Tab[] = [
   },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
-  { title: 'Tools', route: routes.DappStore },
-  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
+  { title: 'Tools', route: routes.DappStore }
+  // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
 // const navLinkSX = () => ({

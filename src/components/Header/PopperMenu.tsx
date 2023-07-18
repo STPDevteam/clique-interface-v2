@@ -3,7 +3,7 @@ import { ReactComponent as ShowDropDown } from 'assets/svg/moreMenuIcon.svg'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
 import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
-import { ReactComponent as BugIcon } from 'assets/svg/bugIcon.svg'
+// import { ReactComponent as BugIcon } from 'assets/svg/bugIcon.svg'
 import { ReactComponent as LearnMoreIcon } from 'assets/svg/learnMore.svg'
 import { ReactComponent as ScopeIcon } from 'assets/svg/scope.svg'
 import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
@@ -29,11 +29,11 @@ const menuList = [
     icon: <SdkIcon />,
     route: routes.DappStore
   },
-  {
-    title: 'Bug Bounty',
-    icon: <BugIcon />,
-    link: 'https://immunefi.com/bounty/stp/'
-  },
+  // {
+  //   title: 'Bug Bounty',
+  //   icon: <BugIcon />,
+  //   link: 'https://immunefi.com/bounty/stp/'
+  // },
   {
     title: 'Learn More',
     icon: <LearnMoreIcon />,
