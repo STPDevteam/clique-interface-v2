@@ -197,13 +197,13 @@ export function useSbtClaimList(sbtId: number) {
         const res = await getSbtClaimList(offset, limit, sbtId)
         const data = res.data.data
         setResult(data)
-        setTotal(total)
+        setTotal(res.data.total)
       } catch (error) {
         console.log(error)
         setResult(undefined)
       }
     })()
-  }, [offset, limit, sbtId, total])
+  }, [offset, limit, sbtId])
 
   return {
     result,
@@ -216,7 +216,7 @@ export function useSbtDetail(sbtId: string) {
   const userSignature = useUserInfo()
   const contract = useSbtContract()
   const [loading, setLoading] = useState(true)
-  const [ContractQueryLoading, setContractQueryLoading] = useState(true)
+  const [contractQueryLoading, setContractQueryLoading] = useState(true)
 
   const [result, setResult] = useState<SbtDetailProp | null>()
   const whetherClaim = useSingleCallResult(
@@ -255,7 +255,7 @@ export function useSbtDetail(sbtId: string) {
   return {
     result,
     loading,
-    ContractQueryLoading,
+    contractQueryLoading,
     contractQueryIsClaim
   }
 }
@@ -321,12 +321,13 @@ export function useSbtClaim() {
   return { SbtClaimCallback }
 }
 
-export function useSbtQueryIsClaim(sbtId: number, isJoin?: boolean) {
+export function useSbtQueryIsClaim(sbtId: number) {
   const { account } = useActiveWeb3React()
 
   const userSignature = useUserInfo()
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<SbtIsClaimProp>()
+  const [updateIsClaim, setUpdateIsClaim] = useState<boolean>(false)
   useEffect(() => {
     if (!userSignature || !account) return
     ;(async () => {
@@ -342,9 +343,9 @@ export function useSbtQueryIsClaim(sbtId: number, isJoin?: boolean) {
         throw error
       }
     })()
-  }, [account, sbtId, userSignature, isJoin])
+  }, [account, sbtId, userSignature, updateIsClaim])
 
-  return { loading, result }
+  return { loading, result, setUpdateIsClaim }
 }
 
 export function useSbtList() {
@@ -355,24 +356,25 @@ export function useSbtList() {
     setChainId,
     setCurrentPage
   } = useSbtListPaginationCallback()
-  const [firstLoadData, setFirstLoadData] = useState(true)
+  // const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
   const [result, setResult] = useState<SbtListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
-  useEffect(() => {
-    if (firstLoadData) {
-      setFirstLoadData(false)
-      return
-    }
-    setCurrentPage(1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId, status])
+  // useEffect(() => {
+  //   if (firstLoadData) {
+  //     setFirstLoadData(false)
+  //     return
+  //   }
+  // setCurrentPage(1)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [chainId, status])
 
   useEffect(() => {
     ;(async () => {
+      if (loading) return
       setLoading(true)
       try {
         const res = await getSbtList((currentPage - 1) * pageSize, pageSize, chainId, status)
@@ -392,7 +394,33 @@ export function useSbtList() {
         console.error('getSbtList', error)
       }
     })()
-  }, [currentPage, status, chainId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage])
+
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      setCurrentPage(1)
+      try {
+        const res = await getSbtList(0, pageSize, chainId, status)
+        setLoading(false)
+        const data = res.data as any
+        if (!data) {
+          setResult([])
+          setTotal(0)
+          return
+        }
+        setTotal(data.total)
+        setResult(data.data)
+      } catch (error) {
+        setResult([])
+        setTotal(0)
+        setLoading(false)
+        console.error('getSbtList', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, chainId])
 
   useEffect(() => {
     ;(async () => {

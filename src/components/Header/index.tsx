@@ -86,6 +86,16 @@ export const Tabs: Tab[] = [
             <Typography color={'#3F5170'}>Create Token</Typography>
           </Box>
         )
+      },
+      {
+        title: 'Create SBT',
+        route: routes.CreateSoulToken,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <TokenIcon />
+            <Typography color={'#3F5170'}>Create SBT</Typography>
+          </Box>
+        )
       }
       // {
       //   title: 'SDK',
