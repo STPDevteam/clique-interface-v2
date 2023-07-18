@@ -9,7 +9,8 @@ import {
   styled,
   Tooltip,
   TooltipProps,
-  tooltipClasses
+  tooltipClasses,
+  Alert
 } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
@@ -138,6 +139,7 @@ export const Tabs: Tab[] = [
 // const StyledNavLink = styled(NavLink)(navLinkSX)
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  top: 54,
   position: 'fixed',
   height: theme.height.header,
   backgroundColor: theme.palette.background.paper,
@@ -369,6 +371,22 @@ export default function Header() {
   }
   return (
     <>
+      <Box sx={{ height: 54 }} />
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          zIndex: 999
+        }}
+      >
+        <Alert severity="warning">
+          Clique V2 will undergo an upgrade during UTC 8:00 to 11:00 July 18, 2023. During this period, website
+          functionalities will be temporarily unavailable. We apologize for any inconvenience caused.{' '}
+        </Alert>
+      </Box>
+
       <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
       <Filler />
       <StyledMobileAppBar>
