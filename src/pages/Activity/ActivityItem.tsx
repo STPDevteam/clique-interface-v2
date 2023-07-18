@@ -149,7 +149,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
   const history = useHistory()
   const isSmDown = useBreakpoint('sm')
 
-  const token = useNativeAndToken('0xDe7D85157d9714EADf595045CC12Ca4A5f3E2aDb', 1)
+  const token = useNativeAndToken(item.tokenAddress, item.tokenChainId)
   const amount = useMemo(() => {
     if (!token) return undefined
     return new TokenAmount(token, item.amount)
@@ -181,7 +181,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
           </Stack>
           <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Network</StyledText>
-            <StyledBoldText noWrap>{ChainListMap[item?.tokenChainId]?.name || '--'}</StyledBoldText>
+            <StyledBoldText noWrap>{ChainListMap[item.tokenChainId]?.name || '--'}</StyledBoldText>
           </Stack>
           <Stack spacing={isSmDown ? 10 : 16}>
             <StyledText>Amount</StyledText>
