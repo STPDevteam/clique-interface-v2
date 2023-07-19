@@ -116,8 +116,7 @@ export default function Index() {
   const [whitelistBoole, setWhitelistBoole] = useState<boolean>(false)
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [accountList, setAccountList] = useState<string[]>([])
-  const [eligibilityValue, setEligibilityValue] = useState(eligibilityList[0].value)
-
+  const [eligibilityValue, setEligibilityValue] = useState<'anyone' | 'joined' | 'whitelist'>(ClaimWay.AnyOne)
   const [eventStartTime, setEventStartTime] = useState<number>()
   const [eventEndTime, setEventEndTime] = useState<number>()
   const [fileValue, setFileValue] = useState('')
@@ -153,7 +152,7 @@ export default function Index() {
       symbolValue,
       eventEndTime,
       Introduction,
-      accountList
+      eligibilityValue === ClaimWay.WhiteList ? accountList : undefined
     )
       .then(res => {
         hideModal()
@@ -245,7 +244,7 @@ export default function Index() {
         error: 'Total supply cannot exceed 100,000'
       }
     }
-    if (!eligibilityValue) {
+    if (eligibilityValue === ClaimWay.WhiteList && !accountList.length) {
       return {
         disabled: true,
         error: 'Token Eligibility required'
@@ -272,12 +271,13 @@ export default function Index() {
     chainId,
     fileValue,
     itemName,
+    Introduction,
     symbolValue,
     totalSupply,
-    Introduction,
     eligibilityValue,
-    eventEndTime,
+    accountList.length,
     eventStartTime,
+    eventEndTime,
     SubmitCreate
   ])
   useEffect(() => {
@@ -291,6 +291,12 @@ export default function Index() {
     _ret.push(newItem)
     return _ret
   }, [])
+
+  useEffect(() => {
+    if (openSnackbar) {
+      setAccountList([])
+    }
+  }, [openSnackbar])
 
   const uploadCSV = useCallback(() => {
     const el = document.getElementById('upload_CSV') as HTMLInputElement
@@ -317,6 +323,7 @@ export default function Index() {
       for (const item of ret) {
         newList = insertLine(newList, item)
         setAccountList(newList)
+        setOpenSnackbar(false)
       }
     }
     reader.readAsBinaryString(el.files[0])
@@ -477,6 +484,7 @@ export default function Index() {
                 value={eligibilityValue}
                 onChange={e => {
                   setEligibilityValue(e.target.value)
+                  setOpenSnackbar(false)
                   if (e.target.value === 'whitelist') {
                     setWhitelistBoole(true)
                   } else {
