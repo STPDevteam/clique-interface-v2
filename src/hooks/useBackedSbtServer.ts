@@ -356,7 +356,7 @@ export function useSbtList() {
     setChainId,
     setCurrentPage
   } = useSbtListPaginationCallback()
-  // const [firstLoadData, setFirstLoadData] = useState(true)
+  const [firstLoadData, setFirstLoadData] = useState(true)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
@@ -374,6 +374,10 @@ export function useSbtList() {
 
   useEffect(() => {
     ;(async () => {
+      if (firstLoadData) {
+        setFirstLoadData(false)
+        return
+      }
       if (loading) return
       setLoading(true)
       try {
@@ -399,8 +403,8 @@ export function useSbtList() {
 
   useEffect(() => {
     ;(async () => {
-      setLoading(true)
       setCurrentPage(1)
+      setLoading(true)
       try {
         const res = await getSbtList(0, pageSize, chainId, status)
         setLoading(false)

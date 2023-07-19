@@ -160,6 +160,7 @@ export default function Index() {
         console.log(res)
         showModal(
           <TransactionSubmittedModal
+            BackdropClick={true}
             hideFunc={() => {
               history.push(routes._SoulTokenDetail + '/' + daoValue?.daoId + '/' + res.sbtId)
             }}
@@ -572,7 +573,7 @@ export default function Index() {
                 onClick={nextHandler.handler}
                 style={{ width: 270, height: 40, display: 'flex' }}
               >
-                CreateIng
+                Create
                 <Dots />
               </BlackButton>
             ) : (

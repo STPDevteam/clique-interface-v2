@@ -59,7 +59,6 @@ const DetailLayoutStyle = styled(Box)(() => ({
   background: '#F8FBFF',
   padding: '13px 40px',
   height: 150,
-  marginTop: 25,
   display: 'grid',
   flexDirection: 'column',
   gap: 20
@@ -403,7 +402,7 @@ export default function SoulTokenDetail() {
                     disabled={isClaiming ? isClaiming : contractQueryIsClaim ? contractQueryIsClaim : isClaim}
                     onClick={sbtClaimCallback}
                   >
-                    {isClaiming ? 'Claiming' : contractQueryIsClaim ? 'Owned' : isClaim ? 'Not Claim' : 'Claim'}
+                    {isClaiming ? 'Claiming' : contractQueryIsClaim ? 'Owned' : 'Claim'}
                     {isClaiming && <Dots />}
                   </ClaimButton>
                   {nextHandler?.error && (

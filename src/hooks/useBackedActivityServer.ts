@@ -68,7 +68,7 @@ function daoActivityListHandler(data: any) {
   })
 }
 
-export function useDaoActivityList(daoId: ChainId, activityType?: ActivityType) {
+export function useDaoActivityList(daoId: number, activityType?: ActivityType) {
   const [currentPage, setCurrentPage] = useState(1)
   const status = ''
   const [firstLoadData, setFirstLoadData] = useState(true)
