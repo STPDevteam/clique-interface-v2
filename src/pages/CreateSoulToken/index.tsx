@@ -253,10 +253,10 @@ export default function Index() {
     if (!eventStartTime || !eventEndTime) {
       return {
         disabled: true,
-        error: 'StartTime required'
+        error: 'Claimable Period required'
       }
     }
-    if (eventEndTime && eventEndTime < eventStartTime) {
+    if ((eventEndTime && eventEndTime < eventStartTime) || eventEndTime < Math.round(Date.now() / 1000)) {
       return {
         disabled: true,
         error: 'Date format error'
@@ -556,7 +556,14 @@ export default function Index() {
                 <DateTimePicker
                   label={'Start time'}
                   value={eventStartTime ? new Date(eventStartTime * 1000) : null}
-                  onValue={timestamp => setEventStartTime(timestamp)}
+                  minDateTime={Date.now() as any}
+                  onValue={timestamp => {
+                    if (timestamp && timestamp < Math.round(Date.now() / 1000)) {
+                      setEventStartTime(Math.round(Date.now() / 1000))
+                      return
+                    }
+                    setEventStartTime(timestamp)
+                  }}
                 />
                 <ContentHintStyle style={{ whiteSpace: 'nowrap' }}>--</ContentHintStyle>
                 <DateTimePicker
@@ -564,7 +571,9 @@ export default function Index() {
                   label={'End time'}
                   minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
                   value={eventEndTime ? new Date(eventEndTime * 1000) : null}
-                  onValue={timestamp => setEventEndTime(timestamp)}
+                  onValue={timestamp => {
+                    setEventEndTime(timestamp)
+                  }}
                 />
               </DateBoxStyle>
             </Box>
