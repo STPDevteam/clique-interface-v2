@@ -86,7 +86,7 @@ export default function SoulTokenList({
   return (
     <>
       <Box minHeight={150}>
-        {!loading && result.length === 0 && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
+        {!loading && !result && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
         <DelayLoading loading={loading}>
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
