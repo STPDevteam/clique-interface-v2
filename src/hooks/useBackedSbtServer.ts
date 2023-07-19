@@ -10,7 +10,7 @@ import {
   getSbtClaimList
 } from '../utils/fetch/server'
 import ReactGA from 'react-ga4'
-import { useSbtContract } from 'hooks/useContract'
+import { useSbtFactoryContract, useSbtContract } from 'hooks/useContract'
 import { useSingleCallResult } from 'state/multicall/hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -18,6 +18,7 @@ import { useGasPriceInfo } from './useGasPrice'
 import { useSbtListPaginationCallback } from 'state/pagination/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
+import { ChainId } from 'constants/chain'
 
 export enum ClaimWay {
   AnyOne = 'anyone',
@@ -69,9 +70,22 @@ export interface SbtIsClaimProp {
   signature: string
 }
 
+export function useSbtContractClaim(address?: string, chainId?: ChainId) {
+  const contract = useSbtContract(address, chainId)
+  const totalRes = useSingleCallResult(contract, 'totalSupply', [], undefined, chainId)
+  const capRes = useSingleCallResult(contract, 'cap', [], undefined, chainId)
+
+  const total = useMemo(() => (totalRes.result?.[0] ? Number(totalRes.result?.[0]) : undefined), [totalRes.result])
+  const cap = useMemo(() => (capRes.result?.[0] ? Number(capRes.result?.[0]) : undefined), [capRes.result])
+  return {
+    total,
+    cap
+  }
+}
+
 export function useCreateSbtCallback() {
   const addTransaction = useTransactionAdder()
-  const contract = useSbtContract()
+  const contract = useSbtFactoryContract()
   const gasPriceInfoCallback = useGasPriceInfo()
 
   const CreateSbtCallback = useCallback(
@@ -214,7 +228,7 @@ export function useSbtClaimList(sbtId: number) {
 export function useSbtDetail(sbtId: string) {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-  const contract = useSbtContract()
+  const contract = useSbtFactoryContract()
   const [loading, setLoading] = useState(true)
   const [contractQueryLoading, setContractQueryLoading] = useState(true)
 
@@ -261,7 +275,7 @@ export function useSbtDetail(sbtId: string) {
 }
 
 export function useSbtClaim() {
-  const contract = useSbtContract()
+  const contract = useSbtFactoryContract()
   const gasPriceInfoCallback = useGasPriceInfo()
   const addTransaction = useTransactionAdder()
   const { account } = useActiveWeb3React()

@@ -7,7 +7,14 @@ import Image from 'components/Image'
 import avatar from 'assets/images/avatar.png'
 import EllipsisIcon from 'assets/images/ellipsis_icon.png'
 import Back from 'components/Back'
-import { useSbtDetail, useSbtClaim, useSbtClaimList, useSbtQueryIsClaim, ClaimWay } from 'hooks/useBackedSbtServer'
+import {
+  useSbtDetail,
+  useSbtClaim,
+  useSbtClaimList,
+  useSbtQueryIsClaim,
+  ClaimWay,
+  useSbtContractClaim
+} from 'hooks/useBackedSbtServer'
 import { useParams } from 'react-router-dom'
 import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
@@ -119,11 +126,18 @@ export default function SoulTokenDetail() {
   const { SbtClaimCallback } = useSbtClaim()
   const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_claim_sbt_${Number(sbtId)}`)
   const joinDAO = useJoinDAO()
-
+  const { cap, total } = useSbtContractClaim(sbtDetail?.tokenAddress, sbtDetail?.tokenChainId)
+  const isClaimed = useMemo(() => {
+    if (total && cap && total >= cap) {
+      return true
+    }
+    return false
+  }, [cap, total])
   const isClaim = useMemo(() => {
     if (
       !account ||
       !userSignature ||
+      isClaimed ||
       chainId !== sbtDetail?.tokenChainId ||
       !sbtDetail?.tokenAddress ||
       isZero(sbtDetail?.tokenAddress) ||
@@ -141,6 +155,7 @@ export default function SoulTokenDetail() {
   }, [
     account,
     userSignature,
+    isClaimed,
     chainId,
     sbtDetail?.tokenChainId,
     sbtDetail?.tokenAddress,
@@ -160,6 +175,49 @@ export default function SoulTokenDetail() {
       setIsJoin(false)
     }
   }, [isJoined?.isJoin])
+
+  const JoinCallback = useCallback(async () => {
+    if (!account) return toggleWalletModal()
+    if (!userSignature) return loginSignature()
+    await joinDAO(Number(daoId))
+      .then(() => {
+        setIsJoin(true)
+        setUpdateIsClaim(true)
+        toast.success('Join success')
+      })
+      .catch(() => {
+        setIsJoin(false)
+        console.log('error')
+      })
+  }, [account, toggleWalletModal, userSignature, loginSignature, joinDAO, daoId, setUpdateIsClaim])
+
+  const sbtClaimCallback = useCallback(() => {
+    if (!account) return toggleWalletModal()
+    if (!userSignature) return loginSignature()
+    showModal(<TransacitonPendingModal />)
+    SbtClaimCallback(sbtId)
+      .then(res => {
+        hideModal()
+        console.log(res)
+        showModal(
+          <TransactionSubmittedModal
+            hideFunc={() => {
+              console.log('next=>')
+            }}
+            hash={res.hash}
+          />
+        )
+      })
+      .catch((err: any) => {
+        console.log(err)
+        showModal(
+          <MessageBox type="error">
+            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+          </MessageBox>
+        )
+        console.error(err)
+      })
+  }, [SbtClaimCallback, sbtId, account, userSignature, hideModal, showModal, toggleWalletModal, loginSignature])
 
   const nextHandler = useMemo(() => {
     if (!sbtDetail) return
@@ -205,7 +263,7 @@ export default function SoulTokenDetail() {
       }
     }
 
-    if (!contractQueryLoading && !contractQueryIsClaim && ClaimTotal >= sbtDetail?.totalSupply) {
+    if (!contractQueryLoading && !contractQueryIsClaim && isClaimed) {
       return {
         error: 'Total quantity has been fully claimed.'
       }
@@ -231,55 +289,12 @@ export default function SoulTokenDetail() {
     chainId,
     userSignature,
     contractQueryLoading,
-    ClaimTotal,
+    isClaimed,
     isJoin,
     JoinedLoading,
     sbtIsClaim?.canClaim,
     library
   ])
-
-  const JoinCallback = useCallback(async () => {
-    if (!account) return toggleWalletModal()
-    if (!userSignature) return loginSignature()
-    await joinDAO(Number(daoId))
-      .then(() => {
-        setIsJoin(true)
-        setUpdateIsClaim(true)
-        toast.success('Join success')
-      })
-      .catch(() => {
-        setIsJoin(false)
-        console.log('error')
-      })
-  }, [account, toggleWalletModal, userSignature, loginSignature, joinDAO, daoId, setUpdateIsClaim])
-
-  const sbtClaimCallback = useCallback(() => {
-    if (!account) return toggleWalletModal()
-    if (!userSignature) return loginSignature()
-    showModal(<TransacitonPendingModal />)
-    SbtClaimCallback(sbtId)
-      .then(res => {
-        hideModal()
-        console.log(res)
-        showModal(
-          <TransactionSubmittedModal
-            hideFunc={() => {
-              console.log('next=>')
-            }}
-            hash={res.hash}
-          />
-        )
-      })
-      .catch((err: any) => {
-        console.log(err)
-        showModal(
-          <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
-          </MessageBox>
-        )
-        console.error(err)
-      })
-  }, [SbtClaimCallback, sbtId, account, userSignature, hideModal, showModal, toggleWalletModal, loginSignature])
 
   return (
     <>
