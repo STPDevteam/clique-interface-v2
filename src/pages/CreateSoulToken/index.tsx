@@ -156,7 +156,6 @@ export default function Index() {
     )
       .then(res => {
         hideModal()
-        console.log(res)
         showModal(
           <TransactionSubmittedModal
             BackdropClick={true}
@@ -247,7 +246,7 @@ export default function Index() {
     if (eligibilityValue === ClaimWay.WhiteList && !accountList.length) {
       return {
         disabled: true,
-        error: 'Token Eligibility required'
+        error: 'The name list address must be uploaded'
       }
     }
     if (!eventStartTime || !eventEndTime) {
