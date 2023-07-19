@@ -20,7 +20,7 @@ import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import useModal from 'hooks/useModal'
@@ -43,6 +43,7 @@ import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: 800,
@@ -130,6 +131,26 @@ export default function SoulTokenDetail() {
   const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_claim_sbt_${Number(sbtId)}`)
   const joinDAO = useJoinDAO()
   const { cap, total } = useSbtContractClaimTotal(sbtDetail?.tokenAddress, sbtDetail?.tokenChainId)
+  const TextRef = useRef<HTMLSpanElement | null>(null)
+  const [open, setOpen] = useState(false)
+  const [isOverflowed, setIsOverflowed] = useState(false)
+  const handleTooltipClose = () => {
+    setOpen(false)
+  }
+
+  const handleTooltipOpen = () => {
+    setOpen(true)
+  }
+
+  useEffect(() => {
+    const element = TextRef.current
+    if ((element?.scrollWidth || 0) > (element?.clientWidth || 0)) {
+      setIsOverflowed(true)
+    } else {
+      setIsOverflowed(false)
+    }
+  }, [sbtDetail?.itemName])
+
   const isClaimed = useMemo(() => {
     if (total && cap && total >= cap) {
       return true
@@ -150,7 +171,6 @@ export default function SoulTokenDetail() {
     ) {
       return true
     }
-    console.log(ClaimTotal, sbtDetail?.totalSupply)
     if (sbtIsClaim?.canClaim && sbtIsClaim?.signature) {
       return false
     }
@@ -201,7 +221,6 @@ export default function SoulTokenDetail() {
     SbtClaimCallback(sbtId)
       .then(res => {
         hideModal()
-        console.log(res)
         showModal(
           <TransactionSubmittedModal
             hideFunc={() => {
@@ -315,9 +334,30 @@ export default function SoulTokenDetail() {
           <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
             <ContentBoxStyle>
               <ContentHeaderStyle>
-                <Typography noWrap fontSize={24} fontWeight={700} lineHeight={'29px'} color={'#3F5170'}>
-                  {sbtDetail?.itemName || '--'}
-                </Typography>
+                <TooltipStyle
+                  onClose={handleTooltipClose}
+                  open={open}
+                  title={sbtDetail?.itemName}
+                  placement="top-end"
+                  sx={{
+                    '& .MuiTooltip-tooltip': {
+                      marginBottom: '5px !important'
+                    }
+                  }}
+                >
+                  <Typography
+                    ref={TextRef}
+                    onClick={isOverflowed ? handleTooltipOpen : undefined}
+                    noWrap
+                    fontSize={24}
+                    fontWeight={700}
+                    lineHeight={'29px'}
+                    color={'#3F5170'}
+                    sx={{ cursor: isOverflowed ? 'pointer' : 'auto' }}
+                  >
+                    {sbtDetail?.itemName || '--'}
+                  </Typography>
+                </TooltipStyle>
                 <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
                   <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
                   <Box>
