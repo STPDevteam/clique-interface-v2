@@ -70,7 +70,7 @@ export interface SbtIsClaimProp {
   signature: string
 }
 
-export function useSbtContractClaim(address?: string, chainId?: ChainId) {
+export function useSbtContractClaimTotal(address?: string, chainId?: ChainId) {
   const contract = useSbtContract(address, chainId)
   const totalRes = useSingleCallResult(contract, 'totalSupply', [], undefined, chainId)
   const capRes = useSingleCallResult(contract, 'cap', [], undefined, chainId)

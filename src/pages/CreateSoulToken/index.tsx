@@ -508,9 +508,9 @@ export default function Index() {
                     {accountList.length > 0 ? (
                       <>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                          <Typography variant="body1" lineHeight="20px" color="#0049C6">
+                          {/* <Typography variant="body1" lineHeight="20px" color="#0049C6">
                             Filename001
-                          </Typography>
+                          </Typography> */}
                           <Typography variant="body1" lineHeight="20px">
                             Total {accountList.length} addresses
                           </Typography>
@@ -572,6 +572,10 @@ export default function Index() {
                   minDateTime={eventStartTime ? new Date(eventStartTime * 1000) : undefined}
                   value={eventEndTime ? new Date(eventEndTime * 1000) : null}
                   onValue={timestamp => {
+                    if (timestamp && timestamp < (eventStartTime || 0)) {
+                      setEventEndTime(eventStartTime)
+                      return
+                    }
                     setEventEndTime(timestamp)
                   }}
                 />

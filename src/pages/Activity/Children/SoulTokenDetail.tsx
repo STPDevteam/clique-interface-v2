@@ -13,7 +13,7 @@ import {
   useSbtClaimList,
   useSbtQueryIsClaim,
   ClaimWay,
-  useSbtContractClaim
+  useSbtContractClaimTotal
 } from 'hooks/useBackedSbtServer'
 import { useParams } from 'react-router-dom'
 import { useJoinDAO } from 'hooks/useBackedDaoServer'
@@ -129,7 +129,7 @@ export default function SoulTokenDetail() {
   const { SbtClaimCallback } = useSbtClaim()
   const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}_claim_sbt_${Number(sbtId)}`)
   const joinDAO = useJoinDAO()
-  const { cap, total } = useSbtContractClaim(sbtDetail?.tokenAddress, sbtDetail?.tokenChainId)
+  const { cap, total } = useSbtContractClaimTotal(sbtDetail?.tokenAddress, sbtDetail?.tokenChainId)
   const isClaimed = useMemo(() => {
     if (total && cap && total >= cap) {
       return true
