@@ -41,6 +41,8 @@ import isZero from 'utils/isZero'
 import Tooltip from 'components/Tooltip'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
+import { useHistory } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: 800,
@@ -110,6 +112,7 @@ export default function SoulTokenDetail() {
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
+  const history = useHistory()
   const { showModal, hideModal } = useModal()
   const { daoId, sbtId } = useParams<{
     daoId: string
@@ -304,7 +307,11 @@ export default function SoulTokenDetail() {
         </DelayLoading>
       ) : (
         <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
-          <Back />
+          <Back
+            event={() => {
+              history.push(routes.Activity)
+            }}
+          />
           <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
             <ContentBoxStyle>
               <ContentHeaderStyle>
