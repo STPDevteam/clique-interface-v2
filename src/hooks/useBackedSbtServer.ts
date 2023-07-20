@@ -388,10 +388,6 @@ export function useSbtList() {
 
   useEffect(() => {
     ;(async () => {
-      if (firstLoadData) {
-        setFirstLoadData(false)
-        return
-      }
       if (loading) return
       setLoading(true)
       try {
@@ -417,6 +413,10 @@ export function useSbtList() {
 
   useEffect(() => {
     ;(async () => {
+      if (firstLoadData) {
+        setFirstLoadData(false)
+        return
+      }
       setCurrentPage(1)
       setLoading(true)
       try {

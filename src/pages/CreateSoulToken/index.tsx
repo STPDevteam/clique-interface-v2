@@ -25,6 +25,7 @@ import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { UserProfileAdminProps, useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
+import { timeStampToFormat } from 'utils/dao'
 
 export interface DaoMemberProp {
   accountLevel: number
@@ -253,6 +254,12 @@ export default function Index() {
       return {
         disabled: true,
         error: 'Claimable Period required'
+      }
+    }
+    if (timeStampToFormat(eventStartTime, 'Y-MM-DD HH:mm') === timeStampToFormat(eventEndTime, 'Y-MM-DD HH:mm')) {
+      return {
+        disabled: true,
+        error: 'Start time cannot be the same as end time'
       }
     }
     if ((eventEndTime && eventEndTime < eventStartTime) || eventEndTime < Math.round(Date.now() / 1000)) {
