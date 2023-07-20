@@ -100,6 +100,11 @@ export default function Index({
           if (ret.result) {
             onChange && onChange(ret.data)
           } else {
+            if (ret.data.match(/429/g)) {
+              setErrorMsg('Image upload limit exceeded. Retry after 5 minutes')
+              setOpenSnackbar(true)
+              return
+            }
             setErrorMsg(ret.data)
             setOpenSnackbar(true)
           }
@@ -119,6 +124,12 @@ export default function Index({
             if (ret.result) {
               onChange && onChange(ret.data)
             } else {
+              if (ret.data.match(/429/g)) {
+                setErrorMsg('Image upload limit exceeded. Retry after 5 minutes')
+                setOpenSnackbar(true)
+                return
+              }
+
               setErrorMsg(ret.data)
               setOpenSnackbar(true)
             }
