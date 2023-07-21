@@ -460,6 +460,7 @@ export function useLogin() {
       // setLoading(false)
       setLoginToken('')
       setFirstSignIn(-1)
+      throw error
     }
   }, [])
   return {
