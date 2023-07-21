@@ -604,7 +604,7 @@ export default function Details() {
               {ReactHtmlParser(
                 filterXSS(SwapData?.about || '', {
                   onIgnoreTagAttr: function(_, name, value) {
-                    if (name === 'class') {
+                    if (name === 'class' || name === 'style') {
                       return name + '="' + escapeAttrValue(value) + '"'
                     }
                     return undefined
