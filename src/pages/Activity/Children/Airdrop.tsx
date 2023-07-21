@@ -225,7 +225,7 @@ export default function Airdrop() {
                         {ReactHtmlParser(
                           filterXSS(airdropDescData?.description || '', {
                             onIgnoreTagAttr: function(_, name, value) {
-                              if (name === 'class') {
+                              if (name === 'class' || name === 'style') {
                                 return name + '="' + escapeAttrValue(value) + '"'
                               }
                               return undefined
