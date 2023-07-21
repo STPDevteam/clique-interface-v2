@@ -129,16 +129,14 @@ export default function Info({
             <>
               <Typography>{proposalInfo.introduction}</Typography>
               {ReactHtmlParser(
-                proposalInfo.content
-                  ? proposalInfo.content
-                  : filterXSS(proposalInfo.content || '', {
-                      onIgnoreTagAttr: function(_, name, value) {
-                        if (name === 'class') {
-                          return name + '="' + escapeAttrValue(value) + '"'
-                        }
-                        return undefined
-                      }
-                    })
+                filterXSS(proposalInfo.content || '', {
+                  onIgnoreTagAttr: function(_, name, value) {
+                    if (name === 'class') {
+                      return name + '="' + escapeAttrValue(value) + '"'
+                    }
+                    return undefined
+                  }
+                })
               )}
             </>
           ) : (

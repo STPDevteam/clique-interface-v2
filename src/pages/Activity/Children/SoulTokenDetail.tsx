@@ -431,16 +431,14 @@ export default function SoulTokenDetail() {
                 >
                   {/* {sbtDetail?.introduction || '--'} */}
                   {ReactHtmlParser(
-                    sbtDetail?.introduction
-                      ? sbtDetail?.introduction
-                      : filterXSS(sbtDetail?.introduction || '', {
-                          onIgnoreTagAttr: function(_, name, value) {
-                            if (name === 'class') {
-                              return name + '="' + escapeAttrValue(value) + '"'
-                            }
-                            return undefined
-                          }
-                        })
+                    filterXSS(sbtDetail?.introduction || '', {
+                      onIgnoreTagAttr: function(_, name, value) {
+                        if (name === 'class') {
+                          return name + '="' + escapeAttrValue(value) + '"'
+                        }
+                        return undefined
+                      }
+                    })
                   )}
                 </Typography>
               </Box>
