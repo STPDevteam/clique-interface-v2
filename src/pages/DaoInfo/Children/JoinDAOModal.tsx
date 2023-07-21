@@ -13,7 +13,7 @@ import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useDispatch } from 'react-redux'
-import { updateJoinDaoModalStatus } from 'state/buildingGovDao/actions'
+import { updateJoinDaoModalStatus, updateJoinDaoModalShakeStatus } from 'state/buildingGovDao/actions'
 
 const slideIn = keyframes`
   from {
@@ -26,8 +26,8 @@ const slideIn = keyframes`
 
 const shake = keyframes`
   0% { transform: translateY(0); }
-  25% { transform: translateY(-10px); }
-  75% { transform: translateY(10px); }
+  25% { transform: translateY(-5px); }
+  75% { transform: translateY(5px); }
   100% { transform: translateY(0); }
 `
 
@@ -44,7 +44,7 @@ const Wrapper = styled(Stack)({
   background: `url(${blueBg})`,
   backgroundRepeat: 'no-repeat',
   backgroundSize: '100% 100%',
-  animation: `${slideIn} 1s ease`,
+  // animation: `${slideIn} 1s ease`,
   '& .close': {
     width: 18,
     height: 18,
@@ -56,10 +56,10 @@ const Wrapper = styled(Stack)({
   '&.bottom-popup.out': {
     display: 'none',
     bottom: -200
-  },
-  '&.shake-animation': {
-    animation: `${shake} 0.5s`
   }
+  // '&.shake-animation': {
+  //   animation: `${shake} 0.5s`
+  // }
 })
 
 const CategoryWrapper = styled(Box)({
@@ -96,7 +96,7 @@ const CategoryWrapper = styled(Box)({
 
 export default function JoinDaoFrame() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
-  const { createDaoData, updateDaoMyJoinData, isOpen, updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
+  const { createDaoData, updateDaoMyJoinData, isOpen, isShake, updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
@@ -106,6 +106,7 @@ export default function JoinDaoFrame() {
   const dispatch = useDispatch()
   const closeClick = useCallback(() => {
     dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
+    dispatch(updateJoinDaoModalShakeStatus({ isShakeJoinDaoModal: undefined }))
   }, [dispatch])
   const onClickJoinDao = useCallback(() => {
     if (!daoId) return
@@ -123,6 +124,7 @@ export default function JoinDaoFrame() {
           toast.success('Join success')
           // setDisable(false)
           dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
+          dispatch(updateJoinDaoModalShakeStatus({ isShakeJoinDaoModal: undefined }))
         })
       })
     } else {
@@ -137,6 +139,7 @@ export default function JoinDaoFrame() {
         toast.success('Join success')
         // setDisable(false)
         dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
+        dispatch(updateJoinDaoModalShakeStatus({ isShakeJoinDaoModal: undefined }))
       })
     }
   }, [
@@ -152,7 +155,12 @@ export default function JoinDaoFrame() {
   ])
 
   return (
-    <Wrapper className={`bottom-popup ${isOpen ? '' : 'out'} ${isOpen ? 'shake-animation' : ''}`}>
+    <Wrapper
+      className={`bottom-popup ${isOpen ? '' : 'out'}`}
+      sx={{
+        animation: `${isOpen && isShake ? shake : isOpen && isShake === undefined && slideIn} .5s ease`
+      }}
+    >
       <Box display="grid" width="260px">
         <Box display={'flex'} justifyContent={'center'}>
           <Avatar sx={{ width: 88, height: 88 }} src={createDaoData?.daoLogo || ''}></Avatar>
