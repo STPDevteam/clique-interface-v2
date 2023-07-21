@@ -129,22 +129,20 @@ export default function Info({
             <>
               <Typography>{proposalInfo.introduction}</Typography>
               {ReactHtmlParser(
-                proposalInfo.content
-                  ? proposalInfo.content
-                  : filterXSS(proposalInfo.content || '', {
-                      onIgnoreTagAttr: function(_, name, value) {
-                        if (name === 'class') {
-                          return name + '="' + escapeAttrValue(value) + '"'
-                        }
-                        return undefined
-                      }
-                    })
+                filterXSS(proposalInfo.content || '', {
+                  onIgnoreTagAttr: function(_, name, value) {
+                    if (name === 'class') {
+                      return name + '="' + escapeAttrValue(value) + '"'
+                    }
+                    return undefined
+                  }
+                })
               )}
             </>
           ) : (
             <Box>
               <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
-                <LeftText>Minimum Votes Needed To Execute</LeftText>
+                <LeftText>Minimum votes needed to execute</LeftText>
                 <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
 
                 <LeftText>Token contract address</LeftText>
@@ -163,10 +161,10 @@ export default function Info({
                   <ShowAdminTag level={proposalInfo.proposer.daoJobs} />
                 </Box>
 
-                <LeftText>Start Time</LeftText>
+                <LeftText>Start time</LeftText>
                 <Typography>{timeStampToFormat(proposalInfo.startTime)}</Typography>
 
-                <LeftText>End Time</LeftText>
+                <LeftText>End time</LeftText>
                 <Typography>{timeStampToFormat(proposalInfo.endTime)}</Typography>
 
                 {/* <LeftText>Snapshot</LeftText>
