@@ -42,6 +42,7 @@ import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 import useModal from 'hooks/useModal'
 import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
 import AddIcon from 'assets/images/add.png'
+import { EmptyDaoItem } from 'components/Header/MySpace'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -406,6 +407,7 @@ export default function LeftSider() {
             }
           >
             <>
+              {myJoinedDaoList.length === 0 && <EmptyDaoItem />}
               {account &&
                 myJoinedDaoList?.map(option => (
                   <Box

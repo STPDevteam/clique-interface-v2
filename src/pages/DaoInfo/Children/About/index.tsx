@@ -318,7 +318,7 @@ function BasicTable({ list }: { list: govList[] }) {
                     <Image src={row.tokenLogo || defaultLogo} width={32} height={32} style={{ borderRadius: '50%' }} />
                     {row.tokenName}({row.symbol})
                   </TableContentText>
-                  <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>
+                  <TableContentText>{ChainListMap[row.chainId]?.name || 'Ethereum'}</TableContentText>
                   <TableContentText>
                     <Box
                       display={'flex'}
