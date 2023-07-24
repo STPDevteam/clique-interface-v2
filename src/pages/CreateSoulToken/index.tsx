@@ -373,7 +373,7 @@ export default function Index() {
             <InputTitleStyle>Select a DAO</InputTitleStyle>
             <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
             <Select
-              placeholder="select Dao"
+              placeholder="Select Dao"
               noBold
               value={daoValue?.daoId || ''}
               onChange={e => {
