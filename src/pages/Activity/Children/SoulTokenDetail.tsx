@@ -44,7 +44,7 @@ import Loading from 'components/Loading'
 import { useHistory } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
-
+import JoinDaoClaimModal from './JoinDaoClaimModal'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: 800,
   marginBottom: 40,
@@ -133,7 +133,6 @@ export default function SoulTokenDetail() {
     sbtId: string
   }>()
   const [isJoin, setIsJoin] = useState(false)
-
   const { result: sbtDetail, contractQueryIsClaim, contractQueryLoading, loading: sbtDetailLoading } = useSbtDetail(
     sbtId
   )
@@ -323,8 +322,23 @@ export default function SoulTokenDetail() {
 
     if (!isJoin && !JoinedLoading && ClaimWay.Joined === sbtDetail?.way) {
       return {
-        buttonText: '',
-        error: 'Please join the DAO first.'
+        buttonText: (
+          <ClaimButton
+            onClick={() => {
+              showModal(
+                <JoinDaoClaimModal
+                  onClose={hideModal}
+                  daoId={sbtDetail.daoId}
+                  setIsJoin={setIsJoin}
+                  setUpdateIsClaim={setUpdateIsClaim}
+                />
+              )
+            }}
+          >
+            Claim
+          </ClaimButton>
+        ),
+        error: ''
       }
     }
 
@@ -376,7 +390,10 @@ export default function SoulTokenDetail() {
     isClaim,
     sbtClaimCallback,
     toggleWalletModal,
-    library
+    library,
+    showModal,
+    hideModal,
+    setUpdateIsClaim
   ])
 
   return (
