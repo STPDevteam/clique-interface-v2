@@ -23,8 +23,6 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { UserProfileAdminProps, useUserProfileInfo } from 'hooks/useBackedProfileServer'
-import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
-import { Dots } from 'theme/components'
 import { timeStampToFormat } from 'utils/dao'
 
 export interface DaoMemberProp {
@@ -127,7 +125,6 @@ export default function Index() {
     const daoList = userInfo?.adminDao.filter(v => Number(v.accountLevel) === 1 || Number(v.accountLevel) === 0)
     return daoList
   }, [userInfo?.adminDao])
-  const { claimSubmitted: createIng } = useUserHasSubmittedClaim(`${account}_create_sbt`)
   const [daoValue, setDaoValue] = useState<UserProfileAdminProps | null>(null)
 
   const [symbolValue, setSymbolValue] = useState('')
@@ -594,24 +591,13 @@ export default function Index() {
             <Alert severity="info">You will create a SBT in {chainId ? ChainListMap[chainId]?.name : '--'}</Alert>
           )}
           <Box sx={{ display: 'flex', mt: 20, justifyContent: 'flex-end' }}>
-            {createIng ? (
-              <BlackButton
-                disabled={createIng}
-                onClick={nextHandler.handler}
-                style={{ width: 270, height: 40, display: 'flex' }}
-              >
-                Create
-                <Dots />
-              </BlackButton>
-            ) : (
-              <BlackButton
-                disabled={nextHandler.disabled}
-                onClick={nextHandler.handler}
-                style={{ width: 270, height: 40 }}
-              >
-                Create Now
-              </BlackButton>
-            )}
+            <BlackButton
+              disabled={nextHandler.disabled}
+              onClick={nextHandler.handler}
+              style={{ width: 270, height: 40 }}
+            >
+              Create Now
+            </BlackButton>
           </Box>
         </Box>
       </ContentBoxStyle>

@@ -344,7 +344,7 @@ export default function SoulTokenDetail() {
 
     if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way && sbtDetail.status === 'active') {
       return {
-        buttonText: <ClaimButton disabled>Not eligible</ClaimButton>,
+        buttonText: <ClaimButton disabled>Not Eligible</ClaimButton>,
         error: ''
       }
     }
