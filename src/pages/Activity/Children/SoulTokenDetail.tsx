@@ -257,7 +257,7 @@ export default function SoulTokenDetail() {
 
     if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) > sbtDetail?.endTime) {
       return {
-        error: 'The claiming period has either ended.'
+        error: 'Time ended'
       }
     }
 
@@ -287,7 +287,7 @@ export default function SoulTokenDetail() {
 
     if (!contractQueryLoading && !contractQueryIsClaim && isClaimed) {
       return {
-        error: 'Total quantity has been fully claimed.'
+        error: 'The SBT have been fully claimed.'
       }
     }
 
@@ -478,7 +478,7 @@ export default function SoulTokenDetail() {
               <OwnersStyle>
                 <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'} sx={{ display: 'flex', gap: 5 }}>
                   Owners({sbtClaimList && sbtClaimList?.length > 0 ? sbtClaimList?.length : 0})
-                  <Tooltip value="Due to blockchain network issues, it is possible that the list may not update immediately after claiming, Please be patient and wait for the update" />
+                  <Tooltip value="The owners will appear here in a few minutes." />
                 </Typography>
                 <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
                   {sbtClaimList &&
