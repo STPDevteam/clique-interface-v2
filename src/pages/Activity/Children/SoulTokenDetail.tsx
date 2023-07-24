@@ -31,7 +31,6 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined'
 import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
 import Copy from 'components/essential/Copy'
@@ -262,8 +261,7 @@ export default function SoulTokenDetail() {
           <DeployButton disabled>
             Deploy <Dots />
           </DeployButton>
-        ),
-        error: ''
+        )
       }
     }
     if (
@@ -271,15 +269,13 @@ export default function SoulTokenDetail() {
       sbtDetail?.status === 'soon'
     ) {
       return {
-        buttonText: '',
-        error: 'The claiming period has not yet started.'
+        buttonText: <ClaimButton disabled>Not Start</ClaimButton>
       }
     }
 
     if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) > sbtDetail?.endTime) {
       return {
-        buttonText: <ClaimButton disabled>Expired</ClaimButton>,
-        error: ''
+        buttonText: <ClaimButton disabled>Expired</ClaimButton>
       }
     }
 
@@ -293,8 +289,7 @@ export default function SoulTokenDetail() {
           >
             Claim
           </ClaimButton>
-        ),
-        error: ''
+        )
       }
     }
 
@@ -308,15 +303,13 @@ export default function SoulTokenDetail() {
           >
             Claim
           </ClaimButton>
-        ),
-        error: ''
+        )
       }
     }
 
     if (!contractQueryLoading && !contractQueryIsClaim && isClaimed) {
       return {
-        buttonText: <ClaimButton disabled>Expired</ClaimButton>,
-        error: ''
+        buttonText: <ClaimButton disabled>Expired</ClaimButton>
       }
     }
 
@@ -337,15 +330,13 @@ export default function SoulTokenDetail() {
           >
             Claim
           </ClaimButton>
-        ),
-        error: ''
+        )
       }
     }
 
     if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way && sbtDetail.status === 'active') {
       return {
-        buttonText: <ClaimButton disabled>Not Eligible</ClaimButton>,
-        error: ''
+        buttonText: <ClaimButton disabled>Not Eligible</ClaimButton>
       }
     }
     if (isClaiming) {
@@ -355,25 +346,21 @@ export default function SoulTokenDetail() {
             Claiming
             <Dots />
           </ClaimButton>
-        ),
-        error: ''
+        )
       }
     }
     if (contractQueryIsClaim) {
       return {
-        buttonText: <ClaimButton disabled>Owned</ClaimButton>,
-        error: ''
+        buttonText: <ClaimButton disabled>Owned</ClaimButton>
       }
     }
     if (isClaim) {
       return {
-        buttonText: <ClaimButton disabled>Claim</ClaimButton>,
-        error: ''
+        buttonText: <ClaimButton disabled>Claim</ClaimButton>
       }
     }
     return {
-      buttonText: <ClaimButton onClick={sbtClaimCallback}>Claim</ClaimButton>,
-      error: ''
+      buttonText: <ClaimButton onClick={sbtClaimCallback}>Claim</ClaimButton>
     }
   }, [
     sbtDetail,
@@ -537,15 +524,6 @@ export default function SoulTokenDetail() {
                   }}
                 >
                   {nextHandler?.buttonText ? nextHandler?.buttonText : <ClaimButton disabled>{'Claim'}</ClaimButton>}
-
-                  {nextHandler?.error && (
-                    <Box
-                      sx={{ display: 'flex', gap: 10, width: '100%', font: '500 14px/24px "Inter"', color: '#E46767' }}
-                    >
-                      <ErrorOutlineOutlinedIcon />
-                      {nextHandler?.error}
-                    </Box>
-                  )}
                 </ColumnLayoutStyle>
               </ColumnLayoutStyle>
               <OwnersStyle>

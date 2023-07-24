@@ -244,7 +244,7 @@ export default function Index() {
     if (eligibilityValue === ClaimWay.WhiteList && !accountList.length) {
       return {
         disabled: true,
-        error: 'The name list address must be uploaded'
+        error: 'Whitelist address must be uploaded'
       }
     }
     if (!eventStartTime || !eventEndTime) {
