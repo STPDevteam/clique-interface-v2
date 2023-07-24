@@ -257,7 +257,10 @@ export default function SoulTokenDetail() {
   const nextHandler = useMemo(() => {
     if (!sbtDetail) return
 
-    if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime && sbtDetail?.status === 'soon') {
+    if (
+      (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime) ||
+      sbtDetail?.status === 'soon'
+    ) {
       return {
         buttonText: '',
         error: 'The claiming period has not yet started.'
@@ -311,7 +314,7 @@ export default function SoulTokenDetail() {
       }
     }
 
-    if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way) {
+    if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way && sbtDetail.status === 'active') {
       return {
         buttonText: '',
         error: 'Not within the whitelist range.'
@@ -474,7 +477,9 @@ export default function SoulTokenDetail() {
                   }}
                 >
                   {!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress) ? (
-                    <DeployButton disabled>Deploy...</DeployButton>
+                    <DeployButton disabled>
+                      Deploy <Dots />
+                    </DeployButton>
                   ) : (
                     <ClaimButton
                       disabled={isClaiming ? isClaiming : contractQueryIsClaim ? contractQueryIsClaim : isClaim}

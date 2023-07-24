@@ -367,6 +367,8 @@ export function useSbtQueryIsClaim(sbtId: number) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<SbtIsClaimProp>()
   const [updateIsClaim, setUpdateIsClaim] = useState<boolean>(false)
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
   useEffect(() => {
     if (!userSignature || !account) return
     ;(async () => {
@@ -383,6 +385,27 @@ export function useSbtQueryIsClaim(sbtId: number) {
     })()
   }, [account, sbtId, userSignature, updateIsClaim])
 
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1 || result?.signature) {
+        toTimeRefresh()
+        return
+      }
+
+      try {
+        const res = await getSbtIsClaim(sbtId)
+        if (!res.data.data) return
+        setResult(res.data.data)
+        setLoading(false)
+        toTimeRefresh()
+      } catch (error) {
+        console.error('SbtClaim', error)
+        toTimeRefresh()
+        setLoading(false)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
   return { loading, result, setUpdateIsClaim }
 }
 
