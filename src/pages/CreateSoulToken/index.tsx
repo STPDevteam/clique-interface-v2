@@ -373,7 +373,7 @@ export default function Index() {
             <InputTitleStyle>Select a DAO</InputTitleStyle>
             <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
             <Select
-              placeholder="Select Dao"
+              placeholder="Select DAO"
               noBold
               value={daoValue?.daoId || ''}
               onChange={e => {
@@ -402,7 +402,7 @@ export default function Index() {
                 ))
               ) : (
                 <MenuItem disabled sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
-                  No more options are available
+                  No options
                 </MenuItem>
               )}
             </Select>
