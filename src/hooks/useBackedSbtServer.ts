@@ -231,7 +231,8 @@ export function useSbtDetail(sbtId: string) {
   const contract = useSbtFactoryContract()
   const [loading, setLoading] = useState(true)
   const [contractQueryLoading, setContractQueryLoading] = useState(true)
-
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
   const [result, setResult] = useState<SbtDetailProp | null>()
   const whetherClaim = useSingleCallResult(
     contract,
@@ -266,6 +267,30 @@ export function useSbtDetail(sbtId: string) {
     if (whetherClaim === undefined) return
     setContractQueryLoading(false)
   }, [whetherClaim])
+
+  useEffect(() => {
+    ;(async () => {
+      if (timeRefresh === -1) {
+        toTimeRefresh()
+        return
+      }
+      try {
+        const res = await getSbtDetail(Number(sbtId))
+        const data = res.data.data
+        if (!data) {
+          return
+        }
+        setLoading(false)
+        setResult(data)
+        toTimeRefresh()
+      } catch (error) {
+        toTimeRefresh()
+        setLoading(false)
+        console.error('getSbtList', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
   return {
     result,
     loading,
@@ -354,7 +379,6 @@ export function useSbtQueryIsClaim(sbtId: number) {
       } catch (error) {
         console.error('SbtClaim', error)
         setLoading(false)
-        throw error
       }
     })()
   }, [account, sbtId, userSignature, updateIsClaim])

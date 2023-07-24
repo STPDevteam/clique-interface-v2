@@ -104,6 +104,19 @@ const ClaimButton = styled(Button)(() => ({
     color: '#97B7EF'
   }
 }))
+
+const DeployButton = styled(Button)(() => ({
+  width: 270,
+  height: 40,
+  backgroundColor: '#FFFAEE',
+  borderRadius: '8px',
+  color: '#EABE56',
+  '&:disabled': {
+    backgroundColor: '#FFFAEE',
+    color: '#EABE56'
+  }
+}))
+
 const OwnersStyle = styled(Box)(() => ({
   padding: '20px 25px'
 }))
@@ -244,31 +257,30 @@ export default function SoulTokenDetail() {
   const nextHandler = useMemo(() => {
     if (!sbtDetail) return
 
-    if (!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress)) {
-      return {
-        error: 'The SBT is still in the process of being deployed to the blockchain.'
-      }
-    }
     if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime && sbtDetail?.status === 'soon') {
       return {
+        buttonText: '',
         error: 'The claiming period has not yet started.'
       }
     }
 
     if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) > sbtDetail?.endTime) {
       return {
-        error: 'Time ended'
+        buttonText: 'Expired',
+        error: ''
       }
     }
 
     if (!account || !chainId || !userSignature) {
       return {
+        buttonText: '',
         error: 'Please log in first.'
       }
     }
 
     if (chainId !== sbtDetail?.tokenChainId) {
       return {
+        buttonText: '',
         error: (
           <Box>
             Query Failed,{' '}
@@ -287,18 +299,21 @@ export default function SoulTokenDetail() {
 
     if (!contractQueryLoading && !contractQueryIsClaim && isClaimed) {
       return {
-        error: 'The SBT have been fully claimed.'
+        buttonText: 'All claimed',
+        error: ''
       }
     }
 
     if (!isJoin && !JoinedLoading && ClaimWay.Joined === sbtDetail?.way) {
       return {
+        buttonText: '',
         error: 'Please join the DAO first.'
       }
     }
 
     if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way) {
       return {
+        buttonText: '',
         error: 'Not within the whitelist range.'
       }
     }
@@ -408,7 +423,7 @@ export default function SoulTokenDetail() {
                 <Box>
                   <DetailTitleStyle>Claimable Period</DetailTitleStyle>
                   <DetailStyle fontSize={20}>
-                    {sbtDetail?.startTime ? formatTimestamp(sbtDetail?.startTime) : '--'} -
+                    {sbtDetail?.startTime ? formatTimestamp(sbtDetail?.startTime) : '--'} -{' '}
                     {sbtDetail?.endTime ? formatTimestamp(sbtDetail?.endTime) : '--'}
                   </DetailStyle>
                 </Box>
@@ -458,13 +473,18 @@ export default function SoulTokenDetail() {
                     gap: 10
                   }}
                 >
-                  <ClaimButton
-                    disabled={isClaiming ? isClaiming : contractQueryIsClaim ? contractQueryIsClaim : isClaim}
-                    onClick={sbtClaimCallback}
-                  >
-                    {isClaiming ? 'Claiming' : contractQueryIsClaim ? 'Owned' : 'Claim'}
-                    {isClaiming && <Dots />}
-                  </ClaimButton>
+                  {!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress) ? (
+                    <DeployButton disabled>Deploy...</DeployButton>
+                  ) : (
+                    <ClaimButton
+                      disabled={isClaiming ? isClaiming : contractQueryIsClaim ? contractQueryIsClaim : isClaim}
+                      onClick={sbtClaimCallback}
+                    >
+                      {isClaiming ? 'Claiming' : contractQueryIsClaim ? 'Owned' : nextHandler?.buttonText || 'Claim'}
+                      {isClaiming && <Dots />}
+                    </ClaimButton>
+                  )}
+
                   {nextHandler?.error && (
                     <Box
                       sx={{ display: 'flex', gap: 10, width: '100%', font: '500 14px/24px "Inter"', color: '#E46767' }}
