@@ -52,6 +52,8 @@ export default function VariableWidth({
       >
         <Box
           sx={{
+            display: 'flex',
+            alignItems: 'center',
             '&:hover': { cursor: 'pointer' }
           }}
         >
