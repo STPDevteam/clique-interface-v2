@@ -158,7 +158,7 @@ export default function Index() {
           <TransactionSubmittedModal
             BackdropClick={true}
             hideFunc={() => {
-              history.push(routes._SoulTokenDetail + '/' + daoValue?.daoId + '/' + res.sbtId)
+              history.replace(routes._SoulTokenDetail + '/' + daoValue?.daoId + '/' + res.sbtId)
             }}
             hash={res.hash}
           />

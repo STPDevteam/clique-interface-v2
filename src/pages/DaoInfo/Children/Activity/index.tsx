@@ -1,4 +1,4 @@
-import { ButtonGroup, styled, Tooltip, Box, useTheme } from '@mui/material'
+import { styled, Tooltip, Box, useTheme, Tabs, Tab } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { routes } from 'constants/routes'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
@@ -10,22 +10,55 @@ import { useDaoActivityList } from 'hooks/useBackedActivityServer'
 import { ErrorOutline } from '@mui/icons-material'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useDaoSbtList } from 'hooks/useBackedSbtServer'
+import DaoSbtList from './DaoSbtList'
 
-const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  '& button': {
-    borderWidth: '2px',
-    color: theme.palette.text.primary,
-    fontWeight: 600,
-    height: 48,
-    width: 185,
-    '&:hover': {
-      borderWidth: '2px'
+// const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+//   display: 'grid',
+//   gridTemplateColumns: '1fr 1fr',
+//   '& button': {
+//     borderWidth: '2px',
+//     color: theme.palette.text.primary,
+//     fontWeight: 600,
+//     height: 48,
+//     width: 185,
+//     '&:hover': {
+//       borderWidth: '2px'
+//     },
+//     '&.active': {
+//       backgroundColor: theme.palette.primary.main,
+//       color: theme.palette.common.white
+//     }
+//   }
+// }))
+
+const TabStyle = styled(Tabs)(({ theme }) => ({
+  '& .MuiButtonBase-root': {
+    fontWeight: 500,
+    fontSize: 18,
+    lineHeight: '22px',
+    color: '#3F5170',
+    textTransform: 'none',
+    padding: 0
+  },
+  '& .MuiTabs-indicator': {
+    height: 4,
+    background: '#0049C6',
+    borderRadius: '2px',
+    margin: 'auto'
+  },
+  '& .active': {
+    fontWeight: 700,
+    fontSize: 18,
+    lineHeight: '22px',
+    color: '#0049C6'
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .MuiButtonBase-root': {
+      fontSize: 16
     },
-    '&.active': {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white
+    '& .active': {
+      fontSize: 16
     }
   }
 }))
@@ -40,6 +73,11 @@ export const activityTypeText = {
   [ActivityType.AIRDROP]: 'DAO Rewards'
 }
 
+const tabList = [
+  { value: 'DAO Rewards', label: 'DAO Rewards' },
+  { value: 'Soulbound Token on DAO', label: 'Soulbound Token on DAO' }
+]
+
 export default function Activity() {
   const theme = useTheme()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
@@ -49,26 +87,30 @@ export default function Activity() {
   const [activityType] = useState<ActivityType>(ActivityType.AIRDROP)
   const { buildingDaoData: backedDaoInfo } = useBuildingDaoDataCallback()
   const airdropData = useDaoActivityList(daoId, ActivityType.AIRDROP)
+  const { search, loading, result, page } = useDaoSbtList(daoId)
   const isSmDown = useBreakpoint('sm')
+  const [tabValue, setTabValue] = useState(search.category || 0)
+  const handleChange = (event: any, newValue: any) => {
+    search.setCategory(newValue)
+  }
 
   return (
     <div>
       <RowCenter mb={25}>
-        <StyledButtonGroup variant="outlined">
-          {/* <MuiButton
-            className={activityType === ActivityType.PUBLIC_SALE ? 'active' : ''}
-            onClick={() => setActivityType(ActivityType.PUBLIC_SALE)}
-          >
-            {ActivityType.PUBLIC_SALE}
-          </MuiButton> */}
-          {/* <MuiButton
-            className={activityType === ActivityType.AIRDROP ? 'active' : ''}
-            onClick={() => setActivityType(ActivityType.AIRDROP)}
-          >
-            {activityTypeText[ActivityType.AIRDROP]}
-          </MuiButton> */}
-        </StyledButtonGroup>
-        {(daoAdminLevel.job === DaoAdminLevelProp[0] || daoAdminLevel.job === DaoAdminLevelProp[1]) && (
+        <TabStyle value={tabValue} onChange={handleChange}>
+          {tabList.map((item, idx) => (
+            <Tab
+              key={item.label + idx}
+              label={item.label}
+              onClick={() => {
+                setTabValue(idx)
+              }}
+              sx={{ gap: 10, marginRight: 50 }}
+              className={tabValue === idx ? 'active' : ''}
+            ></Tab>
+          ))}
+        </TabStyle>
+        {tabValue === 0 && (daoAdminLevel.job === DaoAdminLevelProp[0] || daoAdminLevel.job === DaoAdminLevelProp[1]) && (
           <>
             {backedDaoInfo?.approve ? (
               <BlackButton
@@ -111,8 +153,9 @@ export default function Activity() {
           </>
         )}
       </RowCenter>
-      {activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}
-      {activityType === ActivityType.PUBLIC_SALE && <PublicSaleList />}
+      {tabValue === 0 && activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}
+      {tabValue === 0 && activityType === ActivityType.PUBLIC_SALE && <PublicSaleList />}
+      {tabValue === 1 && <DaoSbtList loading={loading} page={page} result={result} />}
     </div>
   )
 }
