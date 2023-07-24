@@ -1,4 +1,4 @@
-import { Box, styled, Typography, Link } from '@mui/material'
+import { Box, styled, Typography } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Button from 'components/Button/Button'
@@ -257,6 +257,16 @@ export default function SoulTokenDetail() {
   const nextHandler = useMemo(() => {
     if (!sbtDetail) return
 
+    if (!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress)) {
+      return {
+        buttonText: (
+          <DeployButton disabled>
+            Deploy <Dots />
+          </DeployButton>
+        ),
+        error: ''
+      }
+    }
     if (
       (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime) ||
       sbtDetail?.status === 'soon'
@@ -269,40 +279,44 @@ export default function SoulTokenDetail() {
 
     if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) > sbtDetail?.endTime) {
       return {
-        buttonText: 'Expired',
+        buttonText: <ClaimButton disabled>Expired</ClaimButton>,
         error: ''
       }
     }
 
     if (!account || !chainId || !userSignature) {
       return {
-        buttonText: '',
-        error: 'Please log in first.'
+        buttonText: (
+          <ClaimButton
+            onClick={() => {
+              toggleWalletModal()
+            }}
+          >
+            Claim
+          </ClaimButton>
+        ),
+        error: ''
       }
     }
 
     if (chainId !== sbtDetail?.tokenChainId) {
       return {
-        buttonText: '',
-        error: (
-          <Box>
-            Query Failed,{' '}
-            <Link
-              sx={{ cursor: 'pointer', color: '#E46767', textDecorationColor: '#E46767' }}
-              onClick={() => {
-                triggerSwitchChain(library, sbtDetail?.tokenChainId, account)
-              }}
-            >
-              Click Switch Chain
-            </Link>
-          </Box>
-        )
+        buttonText: (
+          <ClaimButton
+            onClick={() => {
+              triggerSwitchChain(library, sbtDetail?.tokenChainId, account)
+            }}
+          >
+            Claim
+          </ClaimButton>
+        ),
+        error: ''
       }
     }
 
     if (!contractQueryLoading && !contractQueryIsClaim && isClaimed) {
       return {
-        buttonText: 'All claimed',
+        buttonText: <ClaimButton disabled>Expired</ClaimButton>,
         error: ''
       }
     }
@@ -316,12 +330,37 @@ export default function SoulTokenDetail() {
 
     if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way && sbtDetail.status === 'active') {
       return {
-        buttonText: '',
-        error: 'Not within the whitelist range.'
+        buttonText: <ClaimButton disabled>Not eligible</ClaimButton>,
+        error: ''
       }
     }
-
-    return
+    if (isClaiming) {
+      return {
+        buttonText: (
+          <ClaimButton disabled>
+            Claiming
+            <Dots />
+          </ClaimButton>
+        ),
+        error: ''
+      }
+    }
+    if (contractQueryIsClaim) {
+      return {
+        buttonText: <ClaimButton disabled>Owned</ClaimButton>,
+        error: ''
+      }
+    }
+    if (isClaim) {
+      return {
+        buttonText: <ClaimButton disabled>Claim</ClaimButton>,
+        error: ''
+      }
+    }
+    return {
+      buttonText: <ClaimButton onClick={sbtClaimCallback}>Claim</ClaimButton>,
+      error: ''
+    }
   }, [
     sbtDetail,
     contractQueryIsClaim,
@@ -333,6 +372,10 @@ export default function SoulTokenDetail() {
     isJoin,
     JoinedLoading,
     sbtIsClaim?.canClaim,
+    isClaiming,
+    isClaim,
+    sbtClaimCallback,
+    toggleWalletModal,
     library
   ])
 
@@ -476,19 +519,7 @@ export default function SoulTokenDetail() {
                     gap: 10
                   }}
                 >
-                  {!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress) ? (
-                    <DeployButton disabled>
-                      Deploy <Dots />
-                    </DeployButton>
-                  ) : (
-                    <ClaimButton
-                      disabled={isClaiming ? isClaiming : contractQueryIsClaim ? contractQueryIsClaim : isClaim}
-                      onClick={sbtClaimCallback}
-                    >
-                      {isClaiming ? 'Claiming' : contractQueryIsClaim ? 'Owned' : nextHandler?.buttonText || 'Claim'}
-                      {isClaiming && <Dots />}
-                    </ClaimButton>
-                  )}
+                  {nextHandler?.buttonText ? nextHandler?.buttonText : <ClaimButton disabled>{'Claim'}</ClaimButton>}
 
                   {nextHandler?.error && (
                     <Box
