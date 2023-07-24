@@ -109,15 +109,16 @@ export function useCreateSbtCallback() {
         !daoId ||
         !account ||
         !fileUrl ||
-        !introduction ||
         !itemName ||
         !startTime ||
         !tokenChainId ||
         !endTime ||
         !totalSupply ||
         !way
-      )
-        return
+      ) {
+        console.log('log', daoId, account, fileUrl, itemName, startTime, tokenChainId, endTime, totalSupply, way)
+        return Promise.reject('Params Error')
+      }
 
       try {
         const res = await createSbt(
