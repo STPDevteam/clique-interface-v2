@@ -128,8 +128,8 @@ export function EmptyDaoItem() {
     <EmptyWrapper>
       <Image src={HateIcon} width={36} />
       <Typography noWrap width={'100%'} lineHeight={'20px'} color={'#3F5170'}>
-        <span style={{ fontWeight: 700 }}>opps!</span>
-        <span style={{ fontWeight: 400 }}> You don&apos;t have to join any DAOs yet.</span>
+        <span style={{ fontWeight: 700 }}>Oops!</span>
+        <span style={{ fontWeight: 400 }}> You haven&apos;t join any DAOs yet.</span>
       </Typography>
       <ButtonGroup>
         <Button variant="contained" onClick={() => history.push(routes.CreateDao)}>
