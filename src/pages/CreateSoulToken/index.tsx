@@ -469,7 +469,7 @@ export default function Index() {
             <Input
               value={symbolValue}
               onChange={e => {
-                if (/^[A-Za-z]+$/.test(e.target.value)) {
+                if (/^[A-Za-z]+$/.test(e.target.value) || !e.target.value) {
                   setSymbolValue(e.target.value.toUpperCase())
                 }
               }}
