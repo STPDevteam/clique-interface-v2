@@ -15,7 +15,7 @@ import {
   ClaimWay,
   useSbtContractClaimTotal
 } from 'hooks/useBackedSbtServer'
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -42,6 +42,7 @@ import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import JoinDaoClaimModal from './JoinDaoClaimModal'
+import { routes } from 'constants/routes'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: 800,
   marginBottom: 40,
@@ -65,7 +66,7 @@ const JoInButton = styled(Button)(() => ({
 const DetailLayoutStyle = styled(Box)(() => ({
   background: '#F8FBFF',
   padding: '13px 40px',
-  height: 150,
+  height: 215,
   display: 'grid',
   flexDirection: 'column',
   gap: 20
@@ -121,6 +122,7 @@ const OwnersStyle = styled(Box)(() => ({
 export default function SoulTokenDetail() {
   const { library, account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const history = useHistory()
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
@@ -483,6 +485,18 @@ export default function SoulTokenDetail() {
                     {sbtDetail?.endTime ? formatTimestamp(sbtDetail?.endTime) : '--'}
                   </DetailStyle>
                 </Box>
+                <Box>
+                  <DetailTitleStyle>Claimable Eligibility</DetailTitleStyle>
+                  <DetailStyle>
+                    {sbtDetail.way === ClaimWay.AnyOne
+                      ? 'AnyOne'
+                      : sbtDetail.way === ClaimWay.Joined
+                      ? 'DAO members'
+                      : sbtDetail.way === ClaimWay.WhiteList
+                      ? 'Whitelist user'
+                      : '--'}
+                  </DetailStyle>
+                </Box>
               </DetailLayoutStyle>
               <Box sx={{ padding: '20px 40px' }}>
                 <Typography
@@ -543,9 +557,16 @@ export default function SoulTokenDetail() {
                     sbtClaimList?.map((item: any, index: number) =>
                       index < 32 ? (
                         <Image
+                          onClick={() => history.push(routes._Profile + `/${item.account}`)}
                           key={item.account}
                           src={item.accountLogo || avatar}
-                          style={{ height: 50, width: 50, borderRadius: '50%', backgroundColor: '#bfbf' }}
+                          style={{
+                            height: 50,
+                            width: 50,
+                            borderRadius: '50%',
+                            backgroundColor: '#bfbf',
+                            cursor: 'pointer'
+                          }}
                         />
                       ) : (
                         <Image src={EllipsisIcon} width={50} />
