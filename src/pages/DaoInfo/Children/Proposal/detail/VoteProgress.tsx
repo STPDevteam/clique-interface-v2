@@ -8,7 +8,7 @@ import { useProposalDetailInfoProps, useProposalVoteList } from 'hooks/useBacked
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
@@ -17,6 +17,8 @@ import { BlackButton } from 'components/Button/Button'
 import { useVoteModalToggle } from 'state/application/hooks'
 // import { VotingTypes } from 'state/buildingGovDao/actions'
 import VoteModal from './VoteModal'
+import { formatMillion } from 'utils/dao'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -41,20 +43,26 @@ const StyledListText = styled(Typography)({
 export default function VoteProgress({
   refresh,
   proposalOptions,
-  // proposalId,
+  proposalId,
   proposalInfo
 }: {
   refresh: Dispatch<SetStateAction<number>>
   proposalOptions: ProposalOptionProp[]
-  // proposalId: number
+  proposalId: number
   proposalInfo: useProposalDetailInfoProps
 }) {
+  const { account } = useActiveWeb3React()
+
   const isSmDown = useBreakpoint('sm')
   // const { showModal } = useModal()
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-
+  const { result: proposalVoteList } = useProposalVoteList(proposalId, account)
+  const userVote = useMemo(() => {
+    if (!proposalVoteList.length) return
+    return proposalVoteList[0]
+  }, [proposalVoteList])
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
       {/* <RowCenter flexWrap={'wrap'}>
@@ -76,19 +84,18 @@ export default function VoteProgress({
             <Box
               display={'grid'}
               sx={{
-                gridTemplateColumns: { sm: '1fr 125px', xs: '1fr' }
+                gridTemplateColumns: { sm: '1fr 150px', xs: '1fr' }
               }}
               justifyContent={'space-between'}
               alignItems={'center'}
               columnGap="24px"
               rowGap={'5px'}
             >
-              <Box display={'grid'}>
+              <Box display={'grid'} maxWidth={600}>
                 <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
                   <Typography mb={5}>{item.optionContent}</Typography>
                   <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
-                    {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%({formatNumberWithCommas(item.votes)}{' '}
-                    Votes)
+                    {formatMillion(item.votes)}, {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
                 {item.votes === 0 ? (
@@ -97,25 +104,41 @@ export default function VoteProgress({
                   <SimpleProgress width="100%" per={Math.floor((item.votes / allVotes) * 100)} />
                 )}
               </Box>
-              <BlackButton
-                height="36px"
-                disabled={
-                  proposalInfo.yourVotes === 0 ||
-                  proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
-                  proposalInfo.status === 'Soon' ||
-                  proposalInfo.status === 'Cancel' ||
-                  proposalInfo.status === 'Failed' ||
-                  proposalInfo.status === 'Success' ||
-                  (proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1)
-                }
-                onClick={() => {
-                  setOptionId(proposalOptions[index].optionId)
-                  voteModalToggle()
-                }}
-                width="125px"
-              >
-                {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
-              </BlackButton>
+
+              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 ? (
+                <Typography
+                  sx={{
+                    fontFamily: 'Inter',
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    lineHeight: '20px',
+                    color: '#97B7EF'
+                  }}
+                >
+                  {userVote?.optionContent === item.optionContent &&
+                    'You voted ' + formatNumberWithCommas(proposalInfo.alreadyVoted)}
+                </Typography>
+              ) : (
+                <BlackButton
+                  height="36px"
+                  disabled={
+                    proposalInfo.yourVotes === 0 ||
+                    proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
+                    proposalInfo.status === 'Soon' ||
+                    proposalInfo.status === 'Cancel' ||
+                    proposalInfo.status === 'Failed' ||
+                    proposalInfo.status === 'Success' ||
+                    (proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1)
+                  }
+                  onClick={() => {
+                    setOptionId(proposalOptions[index].optionId)
+                    voteModalToggle()
+                  }}
+                  width="125px"
+                >
+                  {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
+                </BlackButton>
+              )}
             </Box>
           </StyledItem>
         ))}

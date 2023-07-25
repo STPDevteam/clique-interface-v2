@@ -1,7 +1,7 @@
 import { Box, Typography, styled } from '@mui/material'
 import { ShowProposalStatusV3Tag } from '../ShowProposalStatusTag'
 import 'react-quill/dist/quill.snow.css'
-import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps, CreateType } from 'hooks/useBackedProposalServer'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { ReactComponent as adminIcon } from 'assets/svg/admin_icon.svg'
 import { ReactComponent as ShareIcon } from 'assets/svg/share_icon.svg'
@@ -45,7 +45,25 @@ export default function Index({ proposalInfo }: { proposalInfo: useProposalDetai
             color: '#97B7EF'
           }}
         >
-          {proposalInfo.proposalSIP}
+          SIP {proposalInfo.proposalSIP}
+        </Typography>
+        <Box
+          sx={{
+            width: 0,
+            height: 14,
+            border: ' 1px solid #D4D7E2'
+          }}
+        ></Box>
+        <Typography
+          sx={{
+            fontFamily: 'Inter',
+            fontWeight: 600,
+            fontSize: '14px',
+            lineHeight: '16px',
+            color: '#97B7EF'
+          }}
+        >
+          {proposalInfo.isChain ? CreateType.ONCHAIN : CreateType.GASLESS}
         </Typography>
         <Box
           sx={{

@@ -39,6 +39,11 @@ export interface ProposalListBaseProp {
   targetTimeString: string
 }
 
+export enum CreateType {
+  GASLESS = 'Gasless voting',
+  ONCHAIN = 'Onchain voting'
+}
+
 function makeLIstData(data: any): ProposalListBaseProp[] {
   const now = currentTimeStamp()
   return data.map((item: any) => {
@@ -191,6 +196,7 @@ export interface useProposalDetailInfoProps {
   content: string
   endTime: number
   introduction: string
+  isChain: boolean
   options: ProposalDetailInfoOptionProps[]
   proposalId: number
   proposalSIP: number
@@ -322,19 +328,19 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(proposalId: number) {
+export function useProposalVoteList(proposalId: number, account?: string | undefined | null) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<{ optionContent: string; voter: string; votes: number }[]>([])
+  const [result, setResult] = useState<{ optionContent: string; voter: string; votes: number; status: string }[]>([])
 
   useEffect(() => {
     ;(async () => {
       if (!proposalId) return
       setLoading(true)
       try {
-        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize, account)
         setLoading(false)
         const data = res.data as any
         if (!data) {
@@ -346,7 +352,8 @@ export function useProposalVoteList(proposalId: number) {
         const list = data.data.map((item: any) => ({
           optionContent: item.optionContent,
           voter: item.voter,
-          votes: item.votes
+          votes: item.votes,
+          status: item.status
         }))
         setResult(list)
       } catch (error) {
@@ -356,7 +363,7 @@ export function useProposalVoteList(proposalId: number) {
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [currentPage, proposalId])
+  }, [account, currentPage, proposalId])
 
   return {
     loading: loading,

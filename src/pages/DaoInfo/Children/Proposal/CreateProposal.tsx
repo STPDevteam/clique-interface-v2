@@ -14,6 +14,7 @@ import { StyledDelButton } from 'pages/Creator/CreatorToken/Governance'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useCreateProposalCallback } from 'hooks/useProposalCallback'
+import { CreateType } from 'hooks/useBackedProposalServer'
 import { Token } from 'constants/token'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import Editor from './Editor'
@@ -97,6 +98,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   const [startTime, setStarttime] = useState<number>()
   const [endTime, setEndtime] = useState<number>()
   const [startValidate, setStartValidate] = useState(false)
+  const [isUpChain, setIsUpChain] = useState<boolean>(false)
   const [voteType, setVoteType] = useState<VotingTypes>(
     daoInfo.votingType === VotingTypes.ANY
       ? VotingTypes.SINGLE
@@ -191,6 +193,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       daoId,
       endTime,
       '',
+      isUpChain,
       voteOption.filter((i: any) => i),
       startTime,
       title,
@@ -220,6 +223,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     description,
     endTime,
     errors.text,
+    isUpChain,
     startTime,
     title,
     toList,
@@ -295,8 +299,22 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
           <Stack spacing={'20px'}>
             <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
               <LabelText mb={6} width={150} textAlign={'left'}>
+                Voting Mode
+              </LabelText>
+              <StyledButtonGroup variant="outlined">
+                <MuiButton className={!isUpChain ? 'active' : ''} onClick={() => setIsUpChain(false)}>
+                  {CreateType.GASLESS}
+                </MuiButton>
+                <MuiButton className={isUpChain ? 'active' : ''} onClick={() => setIsUpChain(true)}>
+                  {CreateType.ONCHAIN}
+                </MuiButton>
+              </StyledButtonGroup>
+            </Stack>
+            <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
+              <LabelText mb={6} textAlign={'left'} width={'150px'}>
                 Voting Type
               </LabelText>
+
               {daoInfo.votingType === VotingTypes.ANY ? (
                 <StyledButtonGroup variant="outlined">
                   <MuiButton
@@ -313,7 +331,9 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   </MuiButton>
                 </StyledButtonGroup>
               ) : (
-                <Button height="36px">{VotingTypesName[daoInfo.votingType]}</Button>
+                <Button style={{ maxWidth: '794px' }} height="36px">
+                  {VotingTypesName[daoInfo.votingType]}
+                </Button>
               )}
             </Stack>
             <VotingOptions option={voteOption} setOption={setVoteOption} />

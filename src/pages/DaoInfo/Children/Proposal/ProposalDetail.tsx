@@ -69,7 +69,7 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
             <VoteProgress
               refresh={setRand}
               proposalOptions={proposalDetailInfo.options}
-              // proposalId={proposalId}
+              proposalId={proposalId}
               proposalInfo={proposalDetailInfo}
             />
           </Grid>
