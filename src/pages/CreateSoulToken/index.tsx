@@ -235,6 +235,14 @@ export default function Index() {
         error: 'Symbol required'
       }
     }
+
+    if (/\s/g.test(symbolValue) || !/^[A-Z]+$/.test(symbolValue)) {
+      return {
+        disabled: true,
+        error: 'Symbol format error'
+      }
+    }
+
     if (!totalSupply.trim()) {
       return {
         disabled: true,
@@ -461,14 +469,16 @@ export default function Index() {
             <Input
               value={symbolValue}
               onChange={e => {
-                setSymbolValue(e.target.value)
+                if (/^[A-Za-z]+$/.test(e.target.value)) {
+                  setSymbolValue(e.target.value.toUpperCase())
+                }
               }}
               label="symbol"
               placeholder="Enter Symbol"
-              maxLength={25}
+              maxLength={26}
               endAdornment={
                 <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
-                  {symbolValue.length}/25
+                  {symbolValue.length}/26
                 </Typography>
               }
             />
