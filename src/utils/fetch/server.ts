@@ -532,6 +532,15 @@ export function getAccountNFTs(chainId: number, index: number, size: number) {
     index
   })
 }
+export function getAccountNFTsByScan(account: string, chainId: number, index: number, size: number, ercType) {
+  return Axios.get('stpdao/v3/user/nftscan', {
+    chainId,
+    cursor: (index - 1) * size + 1,
+    limit: size,
+    account,
+    ercType
+  })
+}
 
 export function getAccountFollowersList(userId: number, limit: number, offset: number) {
   return Axios.get('stpdao/v3/user/followers/list', {

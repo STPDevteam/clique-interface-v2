@@ -4,7 +4,7 @@ import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import {
   getAccountFollowersList,
   getAccountFollowingList,
-  getAccountNFTs,
+  getAccountNFTsByScan,
   getAccountSendRecordList,
   userFollowAccount,
   // userFollowStatus,
@@ -200,17 +200,33 @@ export interface BVNFTInfo {
     collectionName: string
   }
 }
+export interface ScanNFTInfo {
+  amount: string
+  contract_address: string
+  contract_name: string
+  description: string
+  erc_type: 'erc721' | 'erc1155'
+  external_link: string | null
+  image_uri: string | null
+  mint_timestamp: number
+  minter: string
+  name: string
+  own_timestamp: number
+  owner: string
+  token_id: string
+  token_uri: string
+}
 
-export function useAccountNFTsList(account: string, searchChainId: number) {
+export function useAccountNFTsList(account: string, searchChainId: number, ercType: 'erc721' | 'erc1155') {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 8
-  const [result, setResult] = useState<BVNFTInfo[]>([])
+  const [result, setResult] = useState<ScanNFTInfo[]>([])
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [account, searchChainId])
+  }, [account, searchChainId, ercType])
 
   useEffect(() => {
     ;(async () => {
@@ -221,7 +237,7 @@ export function useAccountNFTsList(account: string, searchChainId: number) {
       }
       setLoading(true)
       try {
-        const res = await getAccountNFTs(searchChainId, pageSize, currentPage)
+        const res = await getAccountNFTsByScan(account, searchChainId, currentPage, pageSize, ercType)
         setLoading(false)
         const data = res.data.data as any
         if (!data) {
@@ -230,7 +246,7 @@ export function useAccountNFTsList(account: string, searchChainId: number) {
           return
         }
         setTotal(data.total)
-        setResult(data.data || [])
+        setResult(data.content || [])
       } catch (error) {
         setResult([])
         setTotal(0)
@@ -238,7 +254,7 @@ export function useAccountNFTsList(account: string, searchChainId: number) {
         console.error('useAccountNFTsList', error)
       }
     })()
-  }, [currentPage, account, searchChainId])
+  }, [currentPage, account, searchChainId, ercType])
 
   return {
     loading: loading,
