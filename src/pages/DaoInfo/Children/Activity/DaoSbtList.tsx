@@ -156,7 +156,7 @@ function ItemCard(item: SbtListProp) {
           <ContentLayout>
             <ContentTitleStyle>Claimable Period</ContentTitleStyle>
             <ContentStyle>
-              {item?.startTime ? formatTimestamp(item?.startTime) : '--'} -
+              {item?.startTime ? formatTimestamp(item?.startTime) : '--'} -{' '}
               {item?.endTime ? formatTimestamp(item?.endTime) : '--'}
             </ContentStyle>
           </ContentLayout>
