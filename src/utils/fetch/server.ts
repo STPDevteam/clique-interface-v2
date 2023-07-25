@@ -532,7 +532,13 @@ export function getAccountNFTs(chainId: number, index: number, size: number) {
     index
   })
 }
-export function getAccountNFTsByScan(account: string, chainId: number, index: number, size: number, ercType) {
+export function getAccountNFTsByScan(
+  account: string,
+  chainId: number,
+  index: number,
+  size: number,
+  ercType: 'erc721' | 'erc1155'
+) {
   return Axios.get('stpdao/v3/user/nftscan', {
     chainId,
     cursor: (index - 1) * size + 1,
