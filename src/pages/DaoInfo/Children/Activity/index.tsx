@@ -97,7 +97,7 @@ export default function Activity() {
   return (
     <div>
       <RowCenter mb={25}>
-        <TabStyle value={tabValue} onChange={handleChange}>
+        <TabStyle value={tabValue} onChange={handleChange} style={{ maxWidth: 440 }}>
           {tabList.map((item, idx) => (
             <Tab
               key={item.label + idx}
@@ -151,6 +151,17 @@ export default function Activity() {
               </Box>
             )}
           </>
+        )}
+        {tabValue === 1 && (
+          <BlackButton
+            width={isSmDown ? '146px' : '252px'}
+            fontSize={isSmDown ? 10 : 14}
+            height={isSmDown ? '40px' : '36px'}
+            borderRadius={isSmDown ? '8px' : undefined}
+            onClick={() => history.push(routes.CreateSoulToken)}
+          >
+            Create SBT
+          </BlackButton>
         )}
       </RowCenter>
       {tabValue === 0 && activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}
