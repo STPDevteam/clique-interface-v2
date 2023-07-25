@@ -252,7 +252,11 @@ export default function SoulTokenDetail() {
   const nextHandler = useMemo(() => {
     if (!sbtDetail) return
 
-    if (!sbtDetail?.tokenAddress || isZero(sbtDetail?.tokenAddress)) {
+    if (
+      !sbtDetail?.tokenAddress ||
+      isZero(sbtDetail?.tokenAddress) ||
+      (sbtDetail?.startTime < Math.floor(Date.now() / 1000) && sbtDetail?.status === 'soon')
+    ) {
       return {
         buttonText: (
           <DeployButton disabled>
@@ -261,10 +265,7 @@ export default function SoulTokenDetail() {
         )
       }
     }
-    if (
-      (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime) ||
-      sbtDetail?.status === 'soon'
-    ) {
+    if (!contractQueryIsClaim && Math.floor(Date.now() / 1000) < sbtDetail?.startTime && sbtDetail?.status === 'soon') {
       return {
         buttonText: <ClaimButton disabled>Not Start</ClaimButton>
       }
@@ -333,7 +334,19 @@ export default function SoulTokenDetail() {
 
     if (!sbtIsClaim?.canClaim && ClaimWay.WhiteList === sbtDetail?.way && sbtDetail.status === 'active') {
       return {
-        buttonText: <ClaimButton disabled>Not Eligible</ClaimButton>
+        buttonText: (
+          <ClaimButton
+            disabled
+            sx={{
+              '&:disabled': {
+                background: '#F1F4F8',
+                color: '#C6CEDA'
+              }
+            }}
+          >
+            Not Eligible
+          </ClaimButton>
+        )
       }
     }
     if (isClaiming) {
