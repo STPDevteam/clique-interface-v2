@@ -216,6 +216,12 @@ export default function Index() {
         error: 'Item Name required'
       }
     }
+    if (!Introduction.trim() || (Introduction.includes('<p><br></p>') && Introduction.length < 12)) {
+      return {
+        disabled: true,
+        error: 'Introduction required'
+      }
+    }
     if (Introduction.trim().length > 2000) {
       return {
         disabled: true,
@@ -448,7 +454,7 @@ export default function Index() {
               }
             />
             <Box sx={{ mb: 60, maxWidth: '565px' }}>
-              <InputTitleStyle sx={{ mb: 10 }}>Introduction (Optional)</InputTitleStyle>
+              <InputTitleStyle sx={{ mb: 10 }}>Introduction</InputTitleStyle>
 
               <Editor content={Introduction} setContent={setIntroduction} />
             </Box>
@@ -459,10 +465,10 @@ export default function Index() {
               }}
               label="symbol"
               placeholder="Enter Symbol"
-              maxLength={50}
+              maxLength={25}
               endAdornment={
                 <Typography color={theme.palette.text.secondary} lineHeight={'20px'} variant="body1">
-                  {symbolValue.length}/50
+                  {symbolValue.length}/25
                 </Typography>
               }
             />
