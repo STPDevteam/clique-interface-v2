@@ -119,6 +119,12 @@ const OwnersStyle = styled(Box)(() => ({
   padding: '20px 25px'
 }))
 
+const ClaimWayMapText = {
+  [ClaimWay.AnyOne]: 'Anyone',
+  [ClaimWay.Joined]: 'DAO members',
+  [ClaimWay.WhiteList]: 'Whitelisted'
+}
+
 export default function SoulTokenDetail() {
   const { library, account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
@@ -487,15 +493,7 @@ export default function SoulTokenDetail() {
                 </Box>
                 <Box>
                   <DetailTitleStyle>Claimable Eligibility</DetailTitleStyle>
-                  <DetailStyle>
-                    {sbtDetail.way === ClaimWay.AnyOne
-                      ? 'Anyone'
-                      : sbtDetail.way === ClaimWay.Joined
-                      ? 'DAO members'
-                      : sbtDetail.way === ClaimWay.WhiteList
-                      ? 'Whitelisted'
-                      : '--'}
-                  </DetailStyle>
+                  <DetailStyle>{ClaimWayMapText[sbtDetail.way as ClaimWay] || '--'}</DetailStyle>
                 </Box>
               </DetailLayoutStyle>
               <Box sx={{ padding: '20px 40px' }}>
@@ -518,7 +516,7 @@ export default function SoulTokenDetail() {
                   {ReactHtmlParser(
                     filterXSS(sbtDetail?.introduction || '', {
                       onIgnoreTagAttr: function(_, name, value) {
-                        if (name === 'class') {
+                        if (name === 'class' || name === 'style') {
                           return name + '="' + escapeAttrValue(value) + '"'
                         }
                         return undefined
