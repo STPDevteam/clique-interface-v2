@@ -154,7 +154,8 @@ export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
 
 export const CREATE_SBT: { [chainId in ChainId]?: string } = {
   [ChainId.GOERLI]: '0xE7D3553e20fE2f41569456EE8980b49C6Da3A27b',
-  [ChainId.SEPOLIA]: '0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272'
+  [ChainId.SEPOLIA]: '0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272',
+  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS || ''
 }
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
