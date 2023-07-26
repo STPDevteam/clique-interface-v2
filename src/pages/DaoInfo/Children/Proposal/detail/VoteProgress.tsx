@@ -8,7 +8,7 @@ import { useProposalDetailInfoProps, useProposalVoteList } from 'hooks/useBacked
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
@@ -58,11 +58,18 @@ export default function VoteProgress({
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  const { result: proposalVoteList } = useProposalVoteList(proposalId, account)
+  const { result: proposalVoteList, setUpDate } = useProposalVoteList(proposalId, account)
   const userVote = useMemo(() => {
     if (!proposalVoteList.length) return
     return proposalVoteList[0]
   }, [proposalVoteList])
+
+  useEffect(() => {
+    if (proposalInfo.alreadyVoted) {
+      setUpDate(true)
+    }
+  }, [proposalInfo.alreadyVoted, setUpDate])
+
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
       {/* <RowCenter flexWrap={'wrap'}>
@@ -105,7 +112,7 @@ export default function VoteProgress({
                 )}
               </Box>
 
-              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 ? (
+              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.status !== 'Pending' ? (
                 <Typography
                   sx={{
                     fontFamily: 'Inter',
@@ -115,7 +122,7 @@ export default function VoteProgress({
                     color: '#97B7EF'
                   }}
                 >
-                  {userVote?.optionContent === item.optionContent &&
+                  {userVote?.optionId === item.optionId &&
                     'You voted ' + formatNumberWithCommas(proposalInfo.alreadyVoted)}
                 </Typography>
               ) : (

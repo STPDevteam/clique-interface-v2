@@ -2,7 +2,7 @@ import { Alert, Box, Link, Stack, styled, Typography, Slider } from '@mui/materi
 import { BlackButton } from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import Modal from 'components/Modal'
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
 import { govList, VotingTypes } from 'state/buildingGovDao/actions'
@@ -10,7 +10,11 @@ import { RowCenter } from '../ProposalItem'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { Dots } from 'theme/components'
-import { useProposalDetailInfoProps, useProposalVoteCallback } from 'hooks/useBackedProposalServer'
+import {
+  useProposalDetailInfoProps,
+  useProposalVoteCallback,
+  useUpChainProposalVoteCallback
+} from 'hooks/useBackedProposalServer'
 import { toast } from 'react-toastify'
 // import NumericalInput from 'components/Input/InputNumerical'
 import { formatNumberWithCommas } from 'utils'
@@ -78,37 +82,83 @@ function VoteModalFunc({
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
   const proposalVoteCallback = useProposalVoteCallback()
+  const upChainProposalCallBack = useUpChainProposalVoteCallback()
 
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_proposalVote`)
   const [injectVotes, setInjectVotes] = useState('')
-  const [index, setIndex] = useState<number | number[]>(0)
+  const [vote, setVote] = useState<number[]>([])
+  const [isTotalVote, setIsTotalVote] = useState<number>(0)
   console.log(voteProposalSign)
 
+  useEffect(() => {
+    console.log(vote, myVotes, isTotalVote)
+  }, [isTotalVote, myVotes, vote])
   // const handleVotesChange = (e: any) => {
   //   setInjectVotes(e)
   // }
 
   const onProposalVoteCallback = useCallback(() => {
-    proposalVoteCallback([
-      {
-        optionId: proposalOptions,
-        votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
-      }
-    ])
-      .then(res => {
-        if (res.data.code !== 200) {
-          toast.error(res.data.msg || 'Vote error')
-          return
-        }
-        refresh(Math.random())
-        setInjectVotes('')
-        voteModalToggle()
-        toast.success('Vote success')
-      })
-      .catch(err => {
-        toast.error(err.msg || 'Network error')
-      })
-  }, [injectVotes, myVotes, proposalInfo.votingType, proposalOptions, proposalVoteCallback, refresh, voteModalToggle])
+    console.log(proposalOptions, isTotalVote)
+    {
+      !proposalInfo.isChain
+        ? proposalVoteCallback([
+            {
+              optionId: proposalOptions,
+              votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
+            }
+          ])
+            .then(res => {
+              if (res.data.code !== 200) {
+                toast.error(res.data.msg || 'Vote error')
+                return
+              }
+              refresh(Math.random())
+              setInjectVotes('')
+              voteModalToggle()
+              toast.success('Vote success')
+            })
+            .catch(err => {
+              toast.error(err.msg || 'Network error')
+            })
+        : upChainProposalCallBack(
+            [
+              {
+                optionId: proposalOptions,
+                votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
+              }
+            ],
+            proposalInfo.proposalId,
+            proposalInfo.votingType === VotingTypes.SINGLE ? [proposalOptions] : vote,
+            proposalInfo.votingType === VotingTypes.SINGLE ? [myVotes] : vote
+          )
+            .then(res => {
+              if (res.data.code !== 200) {
+                toast.error(res.data.msg || 'Vote error')
+                return
+              }
+              refresh(Math.random())
+              setInjectVotes('')
+              voteModalToggle()
+              toast.success('Vote success')
+            })
+            .catch(err => {
+              toast.error(err.msg || 'Network error')
+            })
+    }
+  }, [
+    injectVotes,
+    isTotalVote,
+    myVotes,
+    proposalInfo.isChain,
+    proposalInfo.proposalId,
+    proposalInfo.votingType,
+    proposalOptions,
+    proposalVoteCallback,
+    refresh,
+    upChainProposalCallBack,
+    vote,
+    voteModalToggle
+  ])
 
   const voteBtn: {
     disabled: boolean
@@ -173,7 +223,6 @@ function VoteModalFunc({
     proposalInfo.votingType,
     toggleWalletModal
   ])
-
   return (
     <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
       <StyledBody>
@@ -228,35 +277,59 @@ function VoteModalFunc({
                 There is only one opportunity to vote and unused votes cannot be re-voted!
               </Typography>
             </Box>
-            <Box sx={{ mt: 15 }}>
-              <TitleStyle>Agree me</TitleStyle>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
-                <Slider
-                  value={index}
-                  onChange={(_, newValue) => {
-                    setIndex(newValue)
-                    setInjectVotes(((newValue as number) * (myVotes / 100)).toString())
-                  }}
-                  sx={{ height: 7 }}
-                />
-                <Input
-                  type="number"
-                  value={((index as number) * (myVotes / 100)).toString()}
-                  maxWidth={90}
-                  height={34}
-                  onChange={(e: any) => {
-                    if ((e.target.value - 0 <= myVotes && /^[0-9]\d*$/.test(e.target.value)) || !e.target.value) {
-                      const val = e.target.value - 0
-                      setIndex(val / (myVotes / 100))
-                      setInjectVotes(e.target.value)
-                    } else {
-                      setIndex(index)
-                      setInjectVotes(((index as number) * (myVotes / 100)).toString())
-                    }
-                  }}
-                />
+
+            {proposalInfo.options.map((item, index) => (
+              <Box sx={{ mt: 15 }} key={item.optionId}>
+                <TitleStyle>{item.optionContent}</TitleStyle>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
+                  <Slider
+                    step={1}
+                    value={vote[index] || 0}
+                    onChange={(_, newValue) => {
+                      const arr = vote
+                      arr[index] = Math.floor(newValue as number)
+                      const val = arr.reduce((accumulator, currentValue) => {
+                        return accumulator + currentValue
+                      }, 0)
+                      setIsTotalVote(val)
+                      if (isTotalVote > myVotes) {
+                        setVote(() => {
+                          return vote
+                        })
+                      }
+                    }}
+                    max={myVotes}
+                    sx={{ height: 7 }}
+                  />
+                  <Input
+                    type="number"
+                    value={vote[index] ? vote[index].toString() : '0'}
+                    maxWidth={90}
+                    height={34}
+                    onChange={(e: any) => {
+                      if (
+                        (e.target.value - 0 <= myVotes - (isTotalVote - (vote[index] || 0)) &&
+                          /^[0-9]\d*$/.test(e.target.value)) ||
+                        !e.target.value
+                      ) {
+                        const arr = vote
+                        arr[index] = Math.floor(e.target.value as number)
+                        const val = arr.reduce((accumulator, currentValue) => {
+                          return accumulator + currentValue
+                        }, 0)
+                        setIsTotalVote(val)
+                        const valData = e.target.value - 0
+                        setVote(() => {
+                          const newArr = vote
+                          newArr[index] = valData
+                          return newArr
+                        })
+                      }
+                    }}
+                  />
+                </Box>
               </Box>
-            </Box>
+            ))}
           </>
         )}
 

@@ -157,6 +157,11 @@ export const CREATE_SBT: { [chainId in ChainId]?: string } = {
   [ChainId.SEPOLIA]: '0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272'
 }
 
+export const PROPOSAL_VOTING: { [chainId in ChainId]?: string } = {
+  [ChainId.GOERLI]: '',
+  [ChainId.SEPOLIA]: '0x21AD787Fb35d30293F6F9F83Ebf61Ab50f800275'
+}
+
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v3/img/upload'
 export const signMessage = 'Welcome to Clique'

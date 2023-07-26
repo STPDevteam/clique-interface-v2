@@ -7,6 +7,7 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import DAO_FACTORY_ABI from '../constants/abis/daoFactory.json'
 import SBT_FACTORY_ABI from '../constants/abis/sbt_factory.json'
 import SBT_ABI from '../constants/abis/sbt.json'
+import PROPOSAL_ABI from '../constants/abis/proposal.json'
 import AIRDROP_ABI from '../constants/abis/airdrop.json'
 import PUBLICSALE_ABI from '../constants/abis/publicsale.json'
 import GOVERNANCE_DAO_ABI from '../constants/abis/governanceDao.json'
@@ -17,7 +18,7 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { ChainId } from '../constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
-import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS, CREATE_SBT } from '../constants'
+import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS, CREATE_SBT, PROPOSAL_VOTING } from '../constants'
 import { useUserLocation } from 'state/application/hooks'
 
 // returns null on errors
@@ -154,6 +155,17 @@ export function useSbtFactoryContract(queryChainId?: ChainId): Contract | null {
     queryChainId
   )
 }
+
 export function useSbtContract(address?: string, queryChainId?: ChainId): Contract | null {
   return useContract(address, SBT_ABI.abi, true, queryChainId)
+}
+
+export function useProposalContract(queryChainId?: ChainId): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(
+    queryChainId || chainId ? PROPOSAL_VOTING[(queryChainId || chainId) as ChainId] : undefined,
+    PROPOSAL_ABI,
+    true,
+    queryChainId
+  )
 }

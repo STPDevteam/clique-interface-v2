@@ -4,6 +4,7 @@ import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
 import {
   addGovToken,
+  commitErrorMsg,
   deleteGovToken,
   getProposalDetail,
   getProposalList,
@@ -14,6 +15,12 @@ import {
 import { ProposalStatus } from './useProposalInfo'
 // import { useActiveWeb3React } from 'hooks'
 import { govList } from 'state/buildingGovDao/actions'
+import { useProposalContract } from './useContract'
+import { useGasPriceInfo } from './useGasPrice'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { TransactionResponse } from '@ethersproject/providers'
+import ReactGA from 'react-ga4'
 
 export interface ProposalListBaseProp {
   v1V2ChainId: ChainId
@@ -223,9 +230,68 @@ export interface VoteParamsProp {
 export function useProposalVoteCallback() {
   return useCallback(async (voteParams: VoteParamsProp[]) => {
     return toVote(voteParams)
-      .then(res => res)
+      .then(res => {
+        res
+      })
       .catch(err => err)
   }, [])
+}
+
+export function useUpChainProposalVoteCallback() {
+  const { account } = useActiveWeb3React()
+  const contract = useProposalContract()
+  const gasPriceInfoCallback = useGasPriceInfo()
+  const addTransaction = useTransactionAdder()
+
+  return useCallback(
+    async (voteParams: VoteParamsProp[], proposalId: number, optionIds: number[], amounts: number[]) => {
+      toVote(voteParams)
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => err)
+
+      if (!contract) throw new Error('none contract')
+      const args = [proposalId, optionIds, amounts]
+
+      const method = 'voting'
+      console.log(args, method, contract)
+
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        from: account
+      })
+        .then((response: TransactionResponse) => {
+          addTransaction(response, {
+            summary: `ChainProposal`,
+            claim: { recipient: `${account}Chain_Proposal${proposalId}` }
+          })
+          return {
+            hash: response.hash
+          }
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001) {
+            commitErrorMsg(
+              'useClaimSBTCallback',
+              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [account, addTransaction, contract, gasPriceInfoCallback]
+  )
 }
 
 export function useDeleteGovToken() {
@@ -333,7 +399,10 @@ export function useProposalVoteList(proposalId: number, account?: string | undef
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<{ optionContent: string; voter: string; votes: number; status: string }[]>([])
+  const [result, setResult] = useState<
+    { optionContent: string; voter: string; votes: number; status: string; optionId: number }[]
+  >([])
+  const [upDate, setUpDate] = useState<boolean>(false)
 
   useEffect(() => {
     ;(async () => {
@@ -353,7 +422,8 @@ export function useProposalVoteList(proposalId: number, account?: string | undef
           optionContent: item.optionContent,
           voter: item.voter,
           votes: item.votes,
-          status: item.status
+          status: item.status,
+          optionId: item.optionId
         }))
         setResult(list)
       } catch (error) {
@@ -363,10 +433,11 @@ export function useProposalVoteList(proposalId: number, account?: string | undef
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [account, currentPage, proposalId])
+  }, [account, currentPage, proposalId, upDate])
 
   return {
     loading: loading,
+    setUpDate,
     page: {
       setCurrentPage,
       currentPage,
