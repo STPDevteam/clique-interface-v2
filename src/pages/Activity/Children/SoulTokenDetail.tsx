@@ -489,11 +489,11 @@ export default function SoulTokenDetail() {
                   <DetailTitleStyle>Claimable Eligibility</DetailTitleStyle>
                   <DetailStyle>
                     {sbtDetail.way === ClaimWay.AnyOne
-                      ? 'AnyOne'
+                      ? 'Anyone'
                       : sbtDetail.way === ClaimWay.Joined
                       ? 'DAO members'
                       : sbtDetail.way === ClaimWay.WhiteList
-                      ? 'Whitelist user'
+                      ? 'Whitelisted'
                       : '--'}
                   </DetailStyle>
                 </Box>
