@@ -24,7 +24,6 @@ import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
-import { useUserInfo } from 'state/userInfo/hooks'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 // import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
 // import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
@@ -35,6 +34,9 @@ import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { getWorkspaceInfo } from 'utils/fetch/server'
+import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 
 interface TabContent {
   title: string
@@ -83,6 +85,16 @@ export const Tabs: Tab[] = [
           <Box display={'flex'} flexDirection={'row'}>
             <TokenIcon />
             <Typography color={'#3F5170'}>Create Token</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Create SBT',
+        route: routes.CreateSoulToken,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <TokenIcon />
+            <Typography color={'#3F5170'}>Create SBT</Typography>
           </Box>
         )
       }
@@ -290,7 +302,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
 //   }
 // }) as typeof Chip
 
-function capitalizeFirstLetter(str: string) {
+export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
@@ -300,16 +312,14 @@ export default function Header() {
     setMobileMenuOpen(false)
   }, [])
   const { pathname } = useLocation()
-
   const daoId = useMemo(() => {
     const path = pathname.split('/')
     return path[3]
   }, [pathname])
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
+  const [workspaceTitle, setWorkspaceTitle] = useState('')
 
-  console.log('header', daoId, daoInfo)
-  const [title, setTitle] = useState('')
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
   const isShow = useMemo(() => {
     if (curPath === routes.CreateDao) {
@@ -326,12 +336,12 @@ export default function Header() {
         return 'Settings'
       }
       if (v === 'task') {
-        getWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1])).then((res: any) => {
+        getWorkspaceInfo(Number(curPath.split('/')[curPath.split('/').length - 1])).then(res => {
           if (res.data.data) {
-            setTitle(res.data.data.title)
+            setWorkspaceTitle(res.data.data.title)
           }
         })
-        return title || 'task'
+        return workspaceTitle || 'task'
       }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
@@ -341,8 +351,7 @@ export default function Header() {
       return isNumber || isLastItem
     })
     return [daoInfo.daoName, ...listData]
-  }, [curPath, daoInfo.daoName, title])
-  console.log(makeBreadcrumbs, pathname.includes(makeRouteLink(routes.Proposal)))
+  }, [curPath, daoInfo.daoName, workspaceTitle])
 
   const isGovernance = useMemo(() => pathname.includes('/governance'), [pathname])
 
@@ -446,7 +455,10 @@ export default function Header() {
 function TabsBox() {
   const { pathname } = useLocation()
   const history = useHistory()
-
+  const toggleWalletModal = useWalletModalToggle()
+  const loginSignature = useLoginSignature()
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   return (
     <LinksWrapper>
       {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
@@ -529,7 +541,11 @@ function TabsBox() {
                       }
                     }}
                     key={option.title}
-                    onClick={() => (option.route ? history.push(option.route) : window.open(option.link, '_blank'))}
+                    onClick={() => {
+                      if (!account) return toggleWalletModal()
+                      if (!userSignature) return loginSignature()
+                      option.route ? history.push(option.route) : window.open(option.link, '_blank')
+                    }}
                   >
                     {option.titleContent ?? option.title}
                   </Box>

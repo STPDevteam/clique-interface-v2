@@ -441,7 +441,7 @@ export function saveAirdropAddress(
 export function getActivityList(daoId: number | undefined, status: string | undefined, offset: number, limit: number) {
   return Axios.get('stpdao/v3/airdrop/list', {
     daoId,
-    status: status || '',
+    status,
     offset,
     limit
   })
@@ -530,6 +530,21 @@ export function getAccountNFTs(chainId: number, index: number, size: number) {
     chainId,
     size,
     index
+  })
+}
+export function getAccountNFTsByScan(
+  account: string,
+  chainId: number,
+  index: number,
+  size: number,
+  ercType: 'erc721' | 'erc1155'
+) {
+  return Axios.get('stpdao/v3/user/nftscan', {
+    chainId,
+    cursor: (index - 1) * size + 1,
+    limit: size,
+    account,
+    ercType
   })
 }
 
@@ -913,44 +928,63 @@ export function getUserQuitDao(daoId: number) {
 }
 
 export function createSbt(
-  chainId: number,
-  daoAddress: string,
-  endTime: number,
+  daoId: number,
   fileUrl: string,
-  introduction: string,
   itemName: string,
   startTime: number,
   tokenChainId: number,
   totalSupply: number,
   way: string,
-  whitelist?: string[]
+  symbol: string,
+  endTime: number,
+  introduction?: string,
+  account?: string[]
 ) {
-  return Axios.post('/stpdao/v2/sbt/create', {
-    chainId,
-    daoAddress,
+  return Axios.post('/stpdao/v3/sbt/create', {
+    daoId,
     endTime,
     fileUrl,
-    introduction,
     itemName,
     startTime,
     tokenChainId,
     totalSupply,
     way,
-    whitelist
+    symbol,
+    introduction,
+    whitelist: {
+      account
+    }
   })
 }
 
-export function getmemberDaoList(exceptLevel: string) {
-  return Axios.get('stpdao/v2/jobs/left', {
+export function getMemberDaoList(exceptLevel: string) {
+  return Axios.get('stpdao/v3/jobs/left', {
     exceptLevel
   })
 }
 
-// export function getSbtList(offset: number, limit: number, chainId: ChainId, status?: string) {
-//   return Axios.get('stpdao/v2/sbt/list', {
-//     offset,
-//     limit,
-//     chainId,
-//     status
-//   })
-// }
+export function getSbtList(offset: number, limit: number, daoId?: number, chainId?: number, status?: string) {
+  return Axios.get('stpdao/v3/sbt/list', {
+    daoId,
+    offset,
+    limit,
+    chainId,
+    status
+  })
+}
+
+export function getSbtDetail(sbtId: number) {
+  return Axios.get(`stpdao/v3/sbt/detail/${sbtId}`)
+}
+
+export function getSbtIsClaim(sbtId: number) {
+  return Axios.get(`stpdao/v3/sbt/claim/${sbtId}`)
+}
+
+export function getSbtClaimList(offset: number, limit: number, sbtId: number) {
+  return Axios.get(`stpdao/v3/sbt/claim/list`, {
+    offset,
+    limit,
+    sbtId
+  })
+}

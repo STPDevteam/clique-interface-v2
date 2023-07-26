@@ -16,10 +16,20 @@ interface Props {
   header?: string
   action?: () => void
   actionText?: string
+  BackdropClick?: boolean
   hideFunc?: () => void
 }
 
-export default function MessageBox({ type, children, width = '480px', header, action, actionText, hideFunc }: Props) {
+export default function MessageBox({
+  BackdropClick,
+  type,
+  children,
+  width = '480px',
+  header,
+  action,
+  actionText,
+  hideFunc
+}: Props) {
   const { hideModal } = useModal()
 
   const icon =
@@ -36,7 +46,7 @@ export default function MessageBox({ type, children, width = '480px', header, ac
     )
 
   return (
-    <Modal width={width}>
+    <Modal width={width} BackdropClick={BackdropClick}>
       <Box display={'grid'} alignItems={'center'} padding={'40px'} justifyItems="center" gap="20px">
         <Box>{icon}</Box>
         {header && <Typography variant="h6">{header}</Typography>}

@@ -9,18 +9,25 @@ export default function TransactionSubmittedModal({
   children,
   hash,
   header,
+  BackdropClick,
   hideFunc
 }: {
   hash?: string
   header?: string
   children?: React.ReactNode
+  BackdropClick?: boolean
   hideFunc?: () => void
 }) {
   const { chainId } = useActiveWeb3React()
   const theme = useTheme()
 
   return (
-    <MessageBox type={'success'} hideFunc={hideFunc} header={header || 'Transaction Submitted'}>
+    <MessageBox
+      type={'success'}
+      hideFunc={hideFunc}
+      header={header || 'Transaction Submitted'}
+      BackdropClick={BackdropClick}
+    >
       <Box display="grid" gap="20px" justifyContent="center">
         {children}
         {chainId && hash && (

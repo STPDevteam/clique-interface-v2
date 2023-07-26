@@ -136,7 +136,7 @@ export default function MyTokens({ account, chainId }: { account: string; chainI
     <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
       <Box display={'flex'} justifyContent="space-between">
         <Typography variant="h6" fontSize={16} fontWeight={600}>
-          My Tokens
+          My Created Token
         </Typography>
         <Typography fontSize={16} fontWeight={500} color={theme.palette.text.secondary}>
           Only Visible To Yourself

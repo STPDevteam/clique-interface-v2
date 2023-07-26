@@ -2,9 +2,10 @@ import { Box, Typography, styled } from '@mui/material'
 import Image from 'components/Image'
 import ReadBook from 'assets/images/readBook.png'
 import Button from 'components/Button/Button'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { updateJoinDaoModalStatus } from 'state/buildingGovDao/actions'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { updateJoinDaoModalStatus, updateJoinDaoModalShakeStatus } from 'state/buildingGovDao/actions'
 
 const Wrapper = styled(Box)({
   marginTop: 169,
@@ -26,13 +27,24 @@ const Wrapper = styled(Box)({
 
 export default function EmptyPage() {
   const dispatch = useDispatch()
+  const { isOpen } = useUpdateDaoDataCallback()
+  const [isEndTime, setIsEndTime] = useState<boolean>(false)
+
   const joinDaoClick = useCallback(() => {
+    if (isOpen && !isEndTime) {
+      setIsEndTime(true)
+      dispatch(updateJoinDaoModalShakeStatus({ isShakeJoinDaoModal: true }))
+      setTimeout(() => {
+        dispatch(updateJoinDaoModalShakeStatus({ isShakeJoinDaoModal: false }))
+        setIsEndTime(false)
+      }, 500)
+      return
+    }
     //TODO can be better
-    dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: false }))
     setTimeout(() => {
       dispatch(updateJoinDaoModalStatus({ isShowJoinDaoModal: true }))
     })
-  }, [dispatch])
+  }, [dispatch, isEndTime, isOpen])
 
   return (
     <Wrapper>

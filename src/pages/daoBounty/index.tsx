@@ -15,11 +15,11 @@ export default function DaoBounty() {
           }}
           direction={'row'}
           alignItems={'center'}
-          mb={10}
+          mb={20}
         >
           <BountyIcon width={38} height={38} />
           <Typography ml={10} fontWeight={600} fontSize={30}>
-            DAO Rewards
+            DAO Rewards & SBT
           </Typography>
         </Stack>
         <DaoInfoActivity />

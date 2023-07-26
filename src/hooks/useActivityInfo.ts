@@ -9,8 +9,8 @@ import { useAirdropContract } from './useContract'
 
 export enum ActivityStatus {
   SOON = 'Soon',
-  OPEN = 'Open',
-  // Active = 'Active',
+  // OPEN = 'Open',
+  ACTIVE = 'Active',
   ENDED = 'Ended',
   AIRDROP = 'Airdrop',
   CLOSED = 'Closed'

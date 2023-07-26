@@ -51,9 +51,9 @@ const ActivityStatusShowLabel: {
     color: 'warning',
     label: ActivityStatus.SOON
   },
-  [ActivityStatus.OPEN]: {
+  [ActivityStatus.ACTIVE]: {
     color: 'primary',
-    label: ActivityStatus.OPEN
+    label: ActivityStatus.ACTIVE
   },
   [ActivityStatus.ENDED]: {
     color: 'warning',
@@ -113,8 +113,8 @@ export default function PublicSale() {
                   <RowCenter>
                     <StyledText1>Status:</StyledText1>
                     <Chip
-                      color={ActivityStatusShowLabel[ActivityStatus.OPEN].color}
-                      label={ActivityStatusShowLabel[ActivityStatus.OPEN].label}
+                      color={ActivityStatusShowLabel[ActivityStatus.ACTIVE].color}
+                      label={ActivityStatusShowLabel[ActivityStatus.ACTIVE].label}
                     />
                   </RowCenter>
                   <RowCenter>

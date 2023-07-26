@@ -66,6 +66,7 @@ export function useUpdateDaoDataCallback() {
   const dispatch = useDispatch()
   const spaceListData = useSelector((state: AppState) => state.buildingGovernanceDao.spaceListData)
   const isOpen = useSelector((state: AppState) => state.buildingGovernanceDao.isShowJoinDaoModal)
+  const isShake = useSelector((state: AppState) => state.buildingGovernanceDao.isShakeJoinDaoModal)
   const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
   const createDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
   const createDaoListData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoListData)
@@ -115,6 +116,7 @@ export function useUpdateDaoDataCallback() {
       updateMyJoinedDaoListData,
       updateJoinDaoDataStatus,
       isOpen,
+      isShake,
       createDaoData,
       spaceListData,
       myJoinDaoData,
@@ -127,6 +129,7 @@ export function useUpdateDaoDataCallback() {
       updateMyJoinedDaoListData,
       updateJoinDaoDataStatus,
       isOpen,
+      isShake,
       createDaoData,
       spaceListData,
       myJoinDaoData,
