@@ -158,7 +158,7 @@ export default function Activity() {
             fontSize={isSmDown ? 10 : 14}
             height={isSmDown ? '40px' : '36px'}
             borderRadius={isSmDown ? '8px' : undefined}
-            onClick={() => history.push(routes.CreateSoulToken)}
+            onClick={() => history.push(routes.CreateSoulToken + `/${daoId}`)}
           >
             Create SBT
           </BlackButton>

@@ -17,7 +17,7 @@ import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useActiveWeb3React } from 'hooks'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
@@ -110,6 +110,7 @@ const eligibilityList = [
 ]
 
 export default function Index() {
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const { library, account, chainId } = useActiveWeb3React()
   const theme = useTheme()
   const [whitelistBoole, setWhitelistBoole] = useState<boolean>(false)
@@ -386,7 +387,7 @@ export default function Index() {
             <Select
               placeholder="Select DAO"
               noBold
-              value={daoValue?.daoId || ''}
+              value={Number(curDaoId) || daoValue?.daoId}
               onChange={e => {
                 setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value) || null)
               }}
