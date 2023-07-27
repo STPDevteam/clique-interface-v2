@@ -6,6 +6,7 @@ import {
   getAccountFollowingList,
   getAccountNFTsByScan,
   getAccountSendRecordList,
+  getNftRefresh,
   userFollowAccount,
   // userFollowStatus,
   userProfile
@@ -437,4 +438,12 @@ export function useAccountFollowingList(userId: number | undefined) {
     },
     result
   }
+}
+
+export function useRefreshNft() {
+  return useCallback((contractAddress: string, tokenId: number) => {
+    return getNftRefresh(contractAddress, tokenId)
+      .then(res => res)
+      .catch(err => err)
+  }, [])
 }

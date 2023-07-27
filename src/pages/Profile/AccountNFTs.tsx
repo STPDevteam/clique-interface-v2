@@ -4,15 +4,17 @@ import Image from 'components/Image'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import { AllChainList, ChainId, ChainListMap } from 'constants/chain'
-import { ScanNFTInfo, useAccountNFTsList } from 'hooks/useBackedProfileServer'
+import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import placeholderImage from 'assets/images/placeholder.png'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
 import { getEtherscanLink } from 'utils'
+import LoopIcon from '@mui/icons-material/Loop'
+import { toast } from 'react-toastify'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   borderRadius: '16px',
@@ -172,11 +174,26 @@ export default function AccountNFTs({ account }: { account: string }) {
 
 function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId }) {
   const isSmDown = useBreakpoint('sm')
+  const refreshCb = useRefreshNft()
+
+  const refresh = useCallback(() => {
+    refreshCb(nft.contract_address, Number(nft.token_id)).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Refresh error')
+        return
+      }
+      toast.success('Refresh success')
+    })
+  }, [nft.contract_address, nft.token_id, refreshCb])
+
   return (
     <StyledItems>
-      <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
-        {nft.name || nft.contract_name || '-'}
-      </Typography>
+      <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
+        <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
+          {nft.name || nft.contract_name || '-'}
+        </Typography>
+        <LoopIcon sx={{ cursor: 'pointer', marginRight: 10 }} onClick={refresh}></LoopIcon>
+      </Box>
       <Image
         altSrc={placeholderImage}
         style={{
