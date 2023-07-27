@@ -124,7 +124,7 @@ export default function AccountNFTs({ account }: { account: string }) {
         }}
       >
         {showAccountNFTsList.map((item, index) => (
-          <NFTItem key={index} nft={item} nftChainId={currentChainId}></NFTItem>
+          <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
         ))}
         {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
           <StyledItems
@@ -173,8 +173,9 @@ export default function AccountNFTs({ account }: { account: string }) {
   )
 }
 
-function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId }) {
+function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftChainId: ChainId }) {
   const isSmDown = useBreakpoint('sm')
+  const [hoverIndex, setHoverIndex] = useState<any>(null)
   const refreshCb = useRefreshNft()
 
   const refresh = useCallback(() => {
@@ -188,13 +189,22 @@ function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId })
   }, [nft.contract_address, nft.token_id, refreshCb])
 
   return (
-    <StyledItems>
-      <Box sx={{ position: 'absolute', right: 10, top: 10 }}>
-        <LoopIcon
-          sx={{ cursor: 'pointer', display: 'inline-block', marginLeft: 'auto', width: '24px', height: '24px' }}
-          onClick={refresh}
-        ></LoopIcon>
-      </Box>
+    <StyledItems
+      onMouseEnter={() => {
+        setHoverIndex(idx)
+      }}
+      onMouseLeave={() => {
+        setHoverIndex(null)
+      }}
+    >
+      {hoverIndex === idx && (
+        <Box sx={{ position: 'absolute', right: 10, top: 10 }}>
+          <LoopIcon
+            sx={{ cursor: 'pointer', display: 'inline-block', marginLeft: 'auto', width: '24px', height: '24px' }}
+            onClick={refresh}
+          ></LoopIcon>
+        </Box>
+      )}
       <Image
         altSrc={placeholderImage}
         style={{
