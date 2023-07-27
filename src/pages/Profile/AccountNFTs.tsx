@@ -188,11 +188,16 @@ function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId })
 
   return (
     <StyledItems>
-      <Box display={'flex'} flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
-        <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
+      <Box display={'flex'} alignItems={'center'} justifyContent={'flex-end'}>
+        {/* <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
           {nft.name || nft.contract_name || '-'}
-        </Typography>
-        <LoopIcon sx={{ cursor: 'pointer', marginRight: 10 }} onClick={refresh}></LoopIcon>
+        </Typography> */}
+        <Box padding="5px 16px 0" height={'fit-content'}>
+          <LoopIcon
+            sx={{ cursor: 'pointer', display: 'inline-block', marginLeft: 'auto', width: '24px', height: '24px' }}
+            onClick={refresh}
+          ></LoopIcon>
+        </Box>
       </Box>
       <Image
         altSrc={placeholderImage}
@@ -204,8 +209,8 @@ function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId })
         src={nft.image_uri || placeholderImage}
       />
       <RowCenter padding="5px 16px">
-        <Typography noWrap maxWidth={100}>
-          #{nft.token_id}
+        <Typography noWrap maxWidth={160}>
+          {nft.name || nft.contract_name || '-'}#{nft.token_id}
         </Typography>
         {/* {nftChainId === ChainId.MAINNET && ( */}
         <Link
