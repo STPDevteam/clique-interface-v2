@@ -13,6 +13,7 @@ import { Dots } from 'theme/components'
 import {
   useProposalDetailInfoProps,
   useProposalVoteCallback,
+  useProposalVoteList,
   useUpChainProposalVoteCallback
 } from 'hooks/useBackedProposalServer'
 import { toast } from 'react-toastify'
@@ -21,6 +22,10 @@ import { formatNumberWithCommas } from 'utils'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import BigNumber from 'bignumber.js'
 import Input from 'components/Input'
+import useModal from 'hooks/useModal'
+import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -42,17 +47,20 @@ const TitleStyle = styled(Typography)(() => ({
 export default function VoteModal({
   refresh,
   proposalInfo,
-  proposalOptions
+  proposalOptions,
+  setUpDateVoteList
 }: {
   proposalInfo: useProposalDetailInfoProps
   proposalOptions: number
   refresh: Dispatch<SetStateAction<number>>
+  setUpDateVoteList: Dispatch<SetStateAction<number>>
 }) {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
   return !daoInfo.governance[0] || !proposalInfo ? null : (
     <VoteModalFunc
       refresh={refresh}
+      setUpDateVoteList={setUpDateVoteList}
       myVotes={proposalInfo.yourVotes}
       myAlreadyVotes={proposalInfo.alreadyVoted}
       voteProposalSign={daoInfo.governance[0]}
@@ -64,6 +72,7 @@ export default function VoteModal({
 
 function VoteModalFunc({
   refresh,
+  setUpDateVoteList,
   proposalInfo,
   myVotes,
   myAlreadyVotes,
@@ -71,6 +80,7 @@ function VoteModalFunc({
   proposalOptions
 }: {
   refresh: Dispatch<SetStateAction<number>>
+  setUpDateVoteList: Dispatch<SetStateAction<number>>
   proposalInfo: useProposalDetailInfoProps
   voteProposalSign: govList
   myVotes: number
@@ -82,81 +92,174 @@ function VoteModalFunc({
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
   const proposalVoteCallback = useProposalVoteCallback()
-  const upChainProposalCallBack = useUpChainProposalVoteCallback()
 
+  const { result: proposalVoteList, setUpDateVoteList: setCurUpDateVoteList } = useProposalVoteList(
+    proposalInfo.proposalId,
+    account
+  )
+  const refreshCallback = useCallback(() => {
+    setTimeout(() => {
+      setUpDateVoteList(Math.random())
+      refresh(Math.random())
+      setCurUpDateVoteList(Math.random())
+    })
+  }, [refresh, setCurUpDateVoteList, setUpDateVoteList])
+
+  const { upChainProposalCallBack } = useUpChainProposalVoteCallback(refreshCallback)
+  const userVote = useMemo(() => {
+    console.log(proposalVoteList)
+
+    if (!proposalVoteList.length) return
+    return proposalVoteList
+  }, [proposalVoteList])
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_proposalVote`)
-  const [injectVotes, setInjectVotes] = useState('')
   const [vote, setVote] = useState<number[]>([])
+  const [voteId, setVoteId] = useState<number[]>([])
+  const [voteList, setVoteList] = useState<{ optionId: number; votes: number }[]>([])
   const [isTotalVote, setIsTotalVote] = useState<number>(0)
+  const [singLe, setSingLe] = useState<boolean>(false)
+  const { showModal, hideModal } = useModal()
+
   console.log(voteProposalSign)
 
+  const perArrCallback = useCallback(
+    (index: number, value: number) => {
+      const _val = Object.assign({}, vote)
+      _val[index] = Number(value)
+      setVote(_val)
+    },
+    [vote]
+  )
+
   useEffect(() => {
-    console.log(vote, myVotes, isTotalVote)
-  }, [isTotalVote, myVotes, vote])
-  // const handleVotesChange = (e: any) => {
-  //   setInjectVotes(e)
-  // }
+    let val = 0
+    for (const key in vote) {
+      if (Object.prototype.hasOwnProperty.call(vote, key)) {
+        val = val + vote[key]
+      }
+    }
+    setIsTotalVote(val)
+
+    setVoteId(() => {
+      return voteList
+        .filter(item => item.votes !== 0)
+        .map(item => {
+          return item.optionId
+        })
+    })
+  }, [vote, voteList, userVote])
+
+  useEffect(() => {
+    if (proposalInfo.votingType === VotingTypes.SINGLE) {
+      setSingLe(true)
+    }
+  }, [proposalInfo.votingType])
 
   const onProposalVoteCallback = useCallback(() => {
-    console.log(proposalOptions, isTotalVote)
     {
-      !proposalInfo.isChain
-        ? proposalVoteCallback([
-            {
-              optionId: proposalOptions,
-              votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
-            }
-          ])
-            .then(res => {
-              if (res.data.code !== 200) {
-                toast.error(res.data.msg || 'Vote error')
-                return
-              }
-              refresh(Math.random())
-              setInjectVotes('')
-              voteModalToggle()
-              toast.success('Vote success')
-            })
-            .catch(err => {
-              toast.error(err.msg || 'Network error')
-            })
-        : upChainProposalCallBack(
-            [
+      proposalVoteCallback(
+        singLe
+          ? [
               {
                 optionId: proposalOptions,
-                votes: proposalInfo.votingType === VotingTypes.SINGLE ? myVotes : Number(injectVotes)
+                votes: myVotes
               }
-            ],
-            proposalInfo.proposalId,
-            proposalInfo.votingType === VotingTypes.SINGLE ? [proposalOptions] : vote,
-            proposalInfo.votingType === VotingTypes.SINGLE ? [myVotes] : vote
-          )
-            .then(res => {
-              if (res.data.code !== 200) {
-                toast.error(res.data.msg || 'Vote error')
+            ]
+          : voteList.filter(item => item.votes !== 0)
+      )
+        .then(res => {
+          if (res.data.code !== 200) {
+            toast.error(res.data.msg || 'Vote error')
+            return
+          }
+          refresh(Math.random())
+          voteModalToggle()
+          toast.success('Vote success')
+        })
+        .catch(err => {
+          toast.error(err.msg || 'Network error')
+        })
+    }
+  }, [myVotes, proposalOptions, proposalVoteCallback, refresh, singLe, voteList, voteModalToggle])
+
+  const upChainProposalVoteCallback = useCallback(() => {
+    {
+      voteModalToggle()
+      showModal(<TransacitonPendingModal />)
+      upChainProposalCallBack(
+        singLe
+          ? [
+              {
+                optionId: proposalOptions,
+                votes: myVotes
+              }
+            ]
+          : userVote?.length
+          ? (userVote
+              .map(v => {
+                return { proposalId: v.optionId, votes: v.votes }
+              })
+              .filter(val => val !== undefined) as any)
+          : voteList.filter(item => item.votes !== 0),
+        proposalInfo.proposalId,
+        singLe
+          ? [proposalOptions]
+          : userVote?.length
+          ? userVote.map(v => {
+              return v.optionId
+            })
+          : voteId,
+        singLe
+          ? [myVotes]
+          : userVote?.length
+          ? userVote.map(v => {
+              return v.votes
+            })
+          : (voteList
+              .map(v => {
+                if (v.votes !== 0) {
+                  return v.votes
+                }
                 return
-              }
-              refresh(Math.random())
-              setInjectVotes('')
-              voteModalToggle()
-              toast.success('Vote success')
-            })
-            .catch(err => {
-              toast.error(err.msg || 'Network error')
-            })
+              })
+              .filter(val => val !== undefined) as number[]),
+        userVote?.length ? true : false
+      )
+        .then(res => {
+          hideModal()
+          showModal(
+            <TransactionSubmittedModal
+              hideFunc={() => {
+                console.log('next=>')
+              }}
+              hash={res.hash}
+            />
+          )
+
+          refresh(Math.random())
+        })
+        .catch(err => {
+          console.log(err)
+          showModal(
+            <MessageBox type="error">
+              {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            </MessageBox>
+          )
+          console.error(err)
+        })
     }
   }, [
-    injectVotes,
-    isTotalVote,
+    hideModal,
     myVotes,
-    proposalInfo.isChain,
     proposalInfo.proposalId,
-    proposalInfo.votingType,
     proposalOptions,
-    proposalVoteCallback,
     refresh,
+    showModal,
+    singLe,
     upChainProposalCallBack,
-    vote,
+    userVote,
+    voteId,
+    voteList,
     voteModalToggle
   ])
 
@@ -171,19 +274,27 @@ function VoteModalFunc({
         error: 'Proposal voting is not opened'
       }
     }
+    if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1 && userVote?.length) {
+      return {
+        disabled: true,
+        error: 'You have already voted, Please confirm the on-chain transaction.'
+      }
+    }
+
     if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1) {
       return {
         disabled: true,
         error: 'You have already voted'
       }
     }
-    if (Number(injectVotes) === 0 && injectVotes) {
+
+    if (userVote?.length && proposalInfo.votingType === 2) {
       return {
         disabled: true,
-        error: 'Vote amount must greater than 0'
+        error: 'You have already voted, Please confirm the on-chain transaction.'
       }
     }
-    if (!injectVotes && proposalInfo.votingType === 2) {
+    if (!isTotalVote && proposalInfo.votingType === 2) {
       return {
         disabled: true,
         error: 'Please enter your votes'
@@ -203,7 +314,7 @@ function VoteModalFunc({
         )
       }
     }
-    if (!myVotes || myVotes <= 0 || myVotes < Number(injectVotes)) {
+    if (!myVotes || myVotes <= 0) {
       return {
         disabled: true,
         error: 'Insufficient votes'
@@ -211,17 +322,20 @@ function VoteModalFunc({
     }
     return {
       disabled: false,
-      handler: onProposalVoteCallback
+      handler: proposalInfo.isChain ? upChainProposalVoteCallback : onProposalVoteCallback
     }
   }, [
     account,
-    injectVotes,
+    isTotalVote,
     myVotes,
     onProposalVoteCallback,
     proposalInfo.alreadyVoted,
+    proposalInfo.isChain,
     proposalInfo.status,
     proposalInfo.votingType,
-    toggleWalletModal
+    toggleWalletModal,
+    upChainProposalVoteCallback,
+    userVote?.length
   ])
   return (
     <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
@@ -237,9 +351,13 @@ function VoteModalFunc({
                   Your votes
                 </Typography>
                 <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
-                  {(myVotes &&
-                    formatNumberWithCommas(new BigNumber(myVotes).minus(new BigNumber(myAlreadyVotes)).toString())) ||
-                    '--'}
+                  {userVote?.length
+                    ? formatNumberWithCommas(userVote[0].votes.toString() || 0)
+                    : (myVotes &&
+                        formatNumberWithCommas(
+                          new BigNumber(myVotes).minus(new BigNumber(myAlreadyVotes)).toString()
+                        )) ||
+                      '--'}
                 </Typography>
               </Box>
             </Stack>
@@ -283,27 +401,52 @@ function VoteModalFunc({
                 <TitleStyle>{item.optionContent}</TitleStyle>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
                   <Slider
+                    disabled={userVote?.length ? true : false}
                     step={1}
-                    value={vote[index] || 0}
+                    value={
+                      userVote?.map(v => {
+                        if (v.optionId === item.optionId) {
+                          return v.votes
+                        }
+                        return 0
+                      }) ||
+                      vote[index] ||
+                      0
+                    }
                     onChange={(_, newValue) => {
-                      const arr = vote
-                      arr[index] = Math.floor(newValue as number)
-                      const val = arr.reduce((accumulator, currentValue) => {
-                        return accumulator + currentValue
-                      }, 0)
-                      setIsTotalVote(val)
-                      if (isTotalVote > myVotes) {
-                        setVote(() => {
-                          return vote
-                        })
+                      const _newValue = newValue as number
+                      let used = 0
+                      for (const key in vote) {
+                        if (Object.prototype.hasOwnProperty.call(vote, key)) {
+                          if (index !== Number(key)) used = used + vote[key]
+                        }
                       }
+                      const maxPer = myVotes - used
+                      const curPer = maxPer < _newValue ? maxPer : _newValue
+                      setVoteList(() => {
+                        const newArr = voteList
+                        newArr[index] = { votes: maxPer < _newValue ? maxPer : _newValue, optionId: item.optionId }
+                        return newArr
+                      })
+                      perArrCallback(index, curPer)
                     }}
                     max={myVotes}
                     sx={{ height: 7 }}
                   />
                   <Input
                     type="number"
-                    value={vote[index] ? vote[index].toString() : '0'}
+                    disabled={userVote?.length ? true : false}
+                    value={
+                      userVote
+                        ?.map(v => {
+                          if (v.optionId === item.optionId) {
+                            return v.votes
+                          }
+                          return
+                        })
+                        .filter(val => val !== undefined)[0]
+                        ?.toString() || (vote[index] ? vote[index].toString() : '0')
+                    }
                     maxWidth={90}
                     height={34}
                     onChange={(e: any) => {
@@ -312,16 +455,17 @@ function VoteModalFunc({
                           /^[0-9]\d*$/.test(e.target.value)) ||
                         !e.target.value
                       ) {
-                        const arr = vote
-                        arr[index] = Math.floor(e.target.value as number)
-                        const val = arr.reduce((accumulator, currentValue) => {
-                          return accumulator + currentValue
-                        }, 0)
-                        setIsTotalVote(val)
                         const valData = e.target.value - 0
-                        setVote(() => {
-                          const newArr = vote
-                          newArr[index] = valData
+                        let used = 0
+                        for (const key in vote) {
+                          if (Object.prototype.hasOwnProperty.call(vote, key)) {
+                            if (index !== Number(key)) used = used + vote[key]
+                          }
+                        }
+                        perArrCallback(index, valData)
+                        setVoteList(() => {
+                          const newArr = voteList
+                          newArr[index] = { votes: valData, optionId: item.optionId }
                           return newArr
                         })
                       }
@@ -352,22 +496,42 @@ function VoteModalFunc({
           >
             Cancel
           </OutlineButton>
-          <BlackButton
-            width="200px"
-            height="40px"
-            disabled={voteBtn.disabled || isVoting}
-            onClick={voteBtn.handler}
-            borderRadius="8px"
-          >
-            {isVoting ? (
-              <>
-                Voting
-                <Dots />
-              </>
-            ) : (
-              'Confirm'
-            )}
-          </BlackButton>
+
+          {userVote?.length ? (
+            <BlackButton
+              width="200px"
+              height="40px"
+              disabled={isVoting}
+              onClick={upChainProposalVoteCallback}
+              borderRadius="8px"
+            >
+              {isVoting ? (
+                <>
+                  Voting
+                  <Dots />
+                </>
+              ) : (
+                'Confirm'
+              )}
+            </BlackButton>
+          ) : (
+            <BlackButton
+              width="200px"
+              height="40px"
+              disabled={voteBtn.disabled || isVoting}
+              onClick={voteBtn.handler}
+              borderRadius="8px"
+            >
+              {isVoting ? (
+                <>
+                  Voting
+                  <Dots />
+                </>
+              ) : (
+                'Confirm'
+              )}
+            </BlackButton>
+          )}
         </RowCenter>
       </StyledBody>
     </Modal>

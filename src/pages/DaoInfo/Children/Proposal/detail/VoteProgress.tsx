@@ -14,11 +14,14 @@ import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import { BlackButton } from 'components/Button/Button'
-import { useVoteModalToggle } from 'state/application/hooks'
+import { useModalOpen, useVoteModalToggle } from 'state/application/hooks'
 // import { VotingTypes } from 'state/buildingGovDao/actions'
 import VoteModal from './VoteModal'
 import { formatMillion } from 'utils/dao'
 import { useActiveWeb3React } from 'hooks'
+import { ApplicationModal } from 'state/application/actions'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { Dots } from 'theme/components'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -52,23 +55,24 @@ export default function VoteProgress({
   proposalInfo: useProposalDetailInfoProps
 }) {
   const { account } = useActiveWeb3React()
-
   const isSmDown = useBreakpoint('sm')
-  // const { showModal } = useModal()
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
+  const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
+  const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}Chain_Proposal${proposalId}`)
+
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  const { result: proposalVoteList, setUpDate } = useProposalVoteList(proposalId, account)
+  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId, account)
   const userVote = useMemo(() => {
     if (!proposalVoteList.length) return
-    return proposalVoteList[0]
+    return proposalVoteList
   }, [proposalVoteList])
 
   useEffect(() => {
     if (proposalInfo.alreadyVoted) {
-      setUpDate(true)
+      setUpDateVoteList(Math.random())
     }
-  }, [proposalInfo.alreadyVoted, setUpDate])
+  }, [proposalInfo.alreadyVoted, setUpDateVoteList])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -112,19 +116,38 @@ export default function VoteProgress({
                 )}
               </Box>
 
-              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.status !== 'Pending' ? (
-                <Typography
-                  sx={{
-                    fontFamily: 'Inter',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    lineHeight: '20px',
-                    color: '#97B7EF'
-                  }}
-                >
-                  {userVote?.optionId === item.optionId &&
-                    'You voted ' + formatNumberWithCommas(proposalInfo.alreadyVoted)}
-                </Typography>
+              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.length ? (
+                userVote.filter(v => v.optionId === item.optionId && v.status === 'Success').length ? (
+                  <Typography
+                    sx={{
+                      fontFamily: 'Inter',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      lineHeight: '20px',
+                      color: '#97B7EF'
+                    }}
+                  >
+                    {userVote?.map(val => {
+                      if (val.optionId === item.optionId) {
+                        return 'You voted ' + formatNumberWithCommas(val.votes)
+                      }
+                      return null
+                    })}
+                  </Typography>
+                ) : userVote.filter(v => v.optionId === item.optionId && v.status === 'Pending').length ? (
+                  <BlackButton
+                    height="36px"
+                    disabled={isClaiming}
+                    onClick={() => {
+                      setOptionId(proposalOptions[index].optionId)
+                      voteModalToggle()
+                    }}
+                    width="125px"
+                  >
+                    {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
+                    {isClaiming && <Dots />}
+                  </BlackButton>
+                ) : null
               ) : (
                 <BlackButton
                   height="36px"
@@ -150,7 +173,14 @@ export default function VoteProgress({
           </StyledItem>
         ))}
       </Stack>
-      <VoteModal refresh={refresh} proposalInfo={proposalInfo} proposalOptions={optionId} />
+      {voteModalOpen && (
+        <VoteModal
+          refresh={refresh}
+          proposalInfo={proposalInfo}
+          proposalOptions={optionId}
+          setUpDateVoteList={setUpDateVoteList}
+        />
+      )}
     </VoteWrapper>
   )
 }
