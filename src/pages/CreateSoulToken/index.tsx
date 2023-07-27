@@ -22,7 +22,7 @@ import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
-import { UserProfileAdminProps, useUserProfileInfo } from 'hooks/useBackedProfileServer'
+import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { timeStampToFormat } from 'utils/dao'
 
 export interface DaoMemberProp {
@@ -126,21 +126,20 @@ export default function Index() {
     const daoList = userInfo?.adminDao.filter(v => Number(v.accountLevel) === 1 || Number(v.accountLevel) === 0)
     return daoList
   }, [userInfo?.adminDao])
-  const [daoValue, setDaoValue] = useState<UserProfileAdminProps | null>(null)
-
+  const [daoValue, setDaoValue] = useState<number | null>(Number(curDaoId) || null)
   const [symbolValue, setSymbolValue] = useState('')
   const [itemName, setItemName] = useState('')
   const [Introduction, setIntroduction] = useState('')
   const [totalSupply, setTotalSupply] = useState<string>('')
   const { CreateSbtCallback } = useCreateSbtCallback()
-
   const { showModal, hideModal } = useModal()
   const history = useHistory()
   const userSignature = useUserInfo()
   const SubmitCreate = useCallback(() => {
+    if (!daoValue) return
     showModal(<TransacitonPendingModal />)
     CreateSbtCallback(
-      daoValue?.daoId,
+      daoValue,
       account || undefined,
       fileValue,
       itemName,
@@ -159,7 +158,7 @@ export default function Index() {
           <TransactionSubmittedModal
             BackdropClick={true}
             hideFunc={() => {
-              history.replace(routes._SoulTokenDetail + '/' + daoValue?.daoId + '/' + res.sbtId)
+              history.replace(routes._SoulTokenDetail + '/' + daoValue + '/' + res.sbtId)
             }}
             hash={res.hash}
           />
@@ -176,7 +175,7 @@ export default function Index() {
   }, [
     showModal,
     CreateSbtCallback,
-    daoValue?.daoId,
+    daoValue,
     account,
     fileValue,
     itemName,
@@ -385,11 +384,11 @@ export default function Index() {
             <InputTitleStyle>Select a DAO</InputTitleStyle>
             <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
             <Select
-              placeholder="Select DAO"
+              placeholder={daoMemberList?.length === 0 ? '' : 'Select DAO'}
               noBold
-              value={Number(curDaoId) || daoValue?.daoId}
+              value={daoValue || undefined}
               onChange={e => {
-                setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value) || null)
+                setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value)?.daoId || null)
               }}
             >
               {daoMemberList && daoMemberList?.length > 0 ? (
@@ -401,7 +400,7 @@ export default function Index() {
                       fontSize: '14px !important'
                     }}
                     value={item?.daoId}
-                    selected={daoValue?.daoId === item?.daoId}
+                    selected={daoValue === item?.daoId}
                   >
                     <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
                       <Image
