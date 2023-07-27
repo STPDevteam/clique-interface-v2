@@ -449,10 +449,10 @@ function VoteModalFunc({
                     }
                     maxWidth={90}
                     height={34}
+                    max={myVotes}
                     onChange={(e: any) => {
                       if (
-                        (e.target.value - 0 <= myVotes - (isTotalVote - (vote[index] || 0)) &&
-                          /^[0-9]\d*$/.test(e.target.value)) ||
+                        (e.target.value - 0 <= myVotes - isTotalVote && /^[0-9]\d*$/.test(e.target.value)) ||
                         !e.target.value
                       ) {
                         const valData = e.target.value - 0
