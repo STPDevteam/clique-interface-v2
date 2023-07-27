@@ -2,7 +2,7 @@ import { Alert, Box, Link, Stack, styled, Typography, Slider } from '@mui/materi
 import { BlackButton } from 'components/Button/Button'
 import OutlineButton from 'components/Button/OutlineButton'
 import Modal from 'components/Modal'
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
 import { govList, VotingTypes } from 'state/buildingGovDao/actions'
@@ -83,22 +83,27 @@ function VoteModalFunc({
   const voteModalToggle = useVoteModalToggle()
   const proposalVoteCallback = useProposalVoteCallback()
   const upChainProposalCallBack = useUpChainProposalVoteCallback()
-
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_proposalVote`)
   const [injectVotes, setInjectVotes] = useState('')
   const [vote, setVote] = useState<number[]>([])
   const [isTotalVote, setIsTotalVote] = useState<number>(0)
   console.log(voteProposalSign)
 
-  useEffect(() => {
-    console.log(vote, myVotes, isTotalVote)
-  }, [isTotalVote, myVotes, vote])
   // const handleVotesChange = (e: any) => {
   //   setInjectVotes(e)
   // }
 
+  const perArrCallback = useCallback(
+    (index: number, value: number) => {
+      const _val = Object.assign({}, vote)
+      _val[index] = Number(value)
+      setVote(_val)
+    },
+    [vote]
+  )
+
   const onProposalVoteCallback = useCallback(() => {
-    console.log(proposalOptions, isTotalVote)
+    console.log(proposalOptions)
     {
       !proposalInfo.isChain
         ? proposalVoteCallback([
@@ -147,7 +152,6 @@ function VoteModalFunc({
     }
   }, [
     injectVotes,
-    isTotalVote,
     myVotes,
     proposalInfo.isChain,
     proposalInfo.proposalId,
@@ -283,20 +287,21 @@ function VoteModalFunc({
                 <TitleStyle>{item.optionContent}</TitleStyle>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
                   <Slider
+                    aria-labelledby={'slider ' + index}
                     step={1}
                     value={vote[index] || 0}
                     onChange={(_, newValue) => {
-                      const arr = vote
-                      arr[index] = Math.floor(newValue as number)
-                      const val = arr.reduce((accumulator, currentValue) => {
-                        return accumulator + currentValue
-                      }, 0)
-                      setIsTotalVote(val)
-                      if (isTotalVote > myVotes) {
-                        setVote(() => {
-                          return vote
-                        })
+                      const _newValue = newValue as number
+                      let used = 0
+                      for (const key in vote) {
+                        if (Object.prototype.hasOwnProperty.call(vote, key)) {
+                          if (index !== Number(key)) used = used + vote[key]
+                        }
                       }
+                      setIsTotalVote(used)
+                      const maxPer = myVotes - used
+                      const curPer = maxPer < _newValue ? maxPer : _newValue
+                      perArrCallback(index, curPer)
                     }}
                     max={myVotes}
                     sx={{ height: 7 }}
@@ -306,24 +311,22 @@ function VoteModalFunc({
                     value={vote[index] ? vote[index].toString() : '0'}
                     maxWidth={90}
                     height={34}
+                    max={myVotes}
                     onChange={(e: any) => {
                       if (
-                        (e.target.value - 0 <= myVotes - (isTotalVote - (vote[index] || 0)) &&
-                          /^[0-9]\d*$/.test(e.target.value)) ||
+                        (e.target.value - 0 <= myVotes - isTotalVote && /^[0-9]\d*$/.test(e.target.value)) ||
                         !e.target.value
                       ) {
-                        const arr = vote
-                        arr[index] = Math.floor(e.target.value as number)
-                        const val = arr.reduce((accumulator, currentValue) => {
-                          return accumulator + currentValue
-                        }, 0)
-                        setIsTotalVote(val)
                         const valData = e.target.value - 0
-                        setVote(() => {
-                          const newArr = vote
-                          newArr[index] = valData
-                          return newArr
-                        })
+                        let used = 0
+                        for (const key in vote) {
+                          if (Object.prototype.hasOwnProperty.call(vote, key)) {
+                            if (index !== Number(key)) used = used + vote[key]
+                          }
+                        }
+                        setIsTotalVote(used)
+                        perArrCallback(index, valData)
+                        console.log('vote', vote[index], valData)
                       }
                     }}
                   />
