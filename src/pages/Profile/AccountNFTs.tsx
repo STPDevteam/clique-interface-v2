@@ -200,7 +200,17 @@ function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftC
       {hoverIndex === idx && (
         <Box sx={{ position: 'absolute', right: 10, top: 10 }}>
           <LoopIcon
-            sx={{ cursor: 'pointer', display: 'inline-block', marginLeft: 'auto', width: '24px', height: '24px' }}
+            sx={{
+              cursor: 'pointer',
+              display: 'inline-block',
+              marginLeft: 'auto',
+              width: '24px',
+              height: '24px',
+              mixBlendMode: 'difference',
+              '& path': {
+                fill: '#fff'
+              }
+            }}
             onClick={refresh}
           ></LoopIcon>
         </Box>
