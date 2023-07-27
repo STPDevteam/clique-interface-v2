@@ -441,7 +441,7 @@ export function useAccountFollowingList(userId: number | undefined) {
 }
 
 export function useRefreshNft() {
-  return useCallback((contractAddress: string, tokenId: number) => {
+  return useCallback((contractAddress: string, tokenId: string) => {
     return getNftRefresh(contractAddress, tokenId)
       .then(res => res)
       .catch(err => err)

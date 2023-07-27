@@ -37,10 +37,11 @@ import { toast } from 'react-toastify'
 // }))
 
 const StyledItems = styled(Box)(({ theme }) => ({
-  height: 328,
+  height: 298,
   background: '#F9F9F9',
   border: '1px solid #E4E4E4',
   borderRadius: '10px',
+  position: 'relative',
   [theme.breakpoints.down('sm')]: {
     height: 200
   }
@@ -177,7 +178,7 @@ function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId })
   const refreshCb = useRefreshNft()
 
   const refresh = useCallback(() => {
-    refreshCb(nft.contract_address, Number(nft.token_id)).then((res: any) => {
+    refreshCb(nft.contract_address, nft.token_id).then((res: any) => {
       if (res.data.code !== 200) {
         toast.error(res.data.msg || 'Refresh error')
         return
@@ -188,22 +189,18 @@ function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId })
 
   return (
     <StyledItems>
-      <Box display={'flex'} alignItems={'center'} justifyContent={'flex-end'}>
-        {/* <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
-          {nft.name || nft.contract_name || '-'}
-        </Typography> */}
-        <Box padding="5px 16px 0" height={'fit-content'}>
-          <LoopIcon
-            sx={{ cursor: 'pointer', display: 'inline-block', marginLeft: 'auto', width: '24px', height: '24px' }}
-            onClick={refresh}
-          ></LoopIcon>
-        </Box>
+      <Box sx={{ position: 'absolute', right: 10, top: 10 }}>
+        <LoopIcon
+          sx={{ cursor: 'pointer', display: 'inline-block', marginLeft: 'auto', width: '24px', height: '24px' }}
+          onClick={refresh}
+        ></LoopIcon>
       </Box>
       <Image
         altSrc={placeholderImage}
         style={{
           width: '100%',
           height: isSmDown ? 124 : 248,
+          borderRadius: '10px 10px 0 0',
           objectFit: 'cover'
         }}
         src={nft.image_uri || placeholderImage}
