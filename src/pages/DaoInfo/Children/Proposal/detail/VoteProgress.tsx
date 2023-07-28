@@ -144,10 +144,21 @@ export default function VoteProgress({
                     }}
                     width="125px"
                   >
-                    Vote
-                    {isVoting && <Dots />}
+                    {isVoting ? (
+                      <>
+                        Vote
+                        <Dots />
+                      </>
+                    ) : (
+                      <>
+                        Confirm
+                        <Dots />
+                      </>
+                    )}
                   </BlackButton>
-                ) : null
+                ) : (
+                  'Vote'
+                )
               ) : (
                 <BlackButton
                   height="36px"
