@@ -271,7 +271,7 @@ function VoteModalFunc({
     }
     if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1 && isVoted) {
       return {
-        disabled: true,
+        disabled: false,
         error: 'You have already voted, Please confirm the on-chain transaction.'
       }
     }
@@ -285,7 +285,7 @@ function VoteModalFunc({
 
     if (isVoted && proposalInfo.votingType === 2) {
       return {
-        disabled: true,
+        disabled: false,
         error: 'You have already voted, Please confirm the on-chain transaction.'
       }
     }
@@ -478,7 +478,7 @@ function VoteModalFunc({
             <BlackButton
               width="200px"
               height="40px"
-              disabled={isVoting || isVoteSuccess || (!singLe && !isTotalVote)}
+              disabled={isVoting || isVoteSuccess || voteBtn.disabled}
               onClick={() => {
                 voteModalToggle()
                 if (myVotes - isTotalVote > 0 && !singLe && !isVoted) {
