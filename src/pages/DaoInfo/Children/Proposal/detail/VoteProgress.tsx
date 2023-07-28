@@ -149,16 +149,16 @@ export default function VoteProgress({
                         Vote
                         <Dots />
                       </>
-                    ) : (
+                    ) : isVoteSuccess ? (
                       <>
                         Confirm
                         <Dots />
                       </>
+                    ) : (
+                      'Vote'
                     )}
                   </BlackButton>
-                ) : (
-                  'Vote'
-                )
+                ) : null
               ) : (
                 <BlackButton
                   height="36px"
