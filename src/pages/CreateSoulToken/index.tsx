@@ -420,7 +420,7 @@ export default function Index() {
                 ))
               ) : (
                 <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
-                  No available DAO, only the creator or owner of DAO can create it,
+                  No available DAO, only the creator or owner of DAO can create SBT,
                   <Link href={routes.CreateDao} sx={{ cursor: 'pointer' }}>
                     to create DAO
                   </Link>
