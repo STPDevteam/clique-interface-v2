@@ -100,7 +100,7 @@ export default function MySpace() {
             alignItems={'center'}
           >
             <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
-              My DAOs
+              My Space
             </Typography>
             <ArrowIcon />
           </Box>

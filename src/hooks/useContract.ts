@@ -5,7 +5,8 @@ import ENS_ABI from '../constants/abis/ens-registrar.json'
 import { ERC20_BYTES32_ABI } from '../constants/abis/erc20'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import DAO_FACTORY_ABI from '../constants/abis/daoFactory.json'
-import CREATE_SBT_ABI from '../constants/abis/sbt.json'
+import SBT_FACTORY_ABI from '../constants/abis/sbt_factory.json'
+import SBT_ABI from '../constants/abis/sbt.json'
 import AIRDROP_ABI from '../constants/abis/airdrop.json'
 import PUBLICSALE_ABI from '../constants/abis/publicsale.json'
 import GOVERNANCE_DAO_ABI from '../constants/abis/governanceDao.json'
@@ -143,13 +144,17 @@ export function usePublicSaleContract(queryChainId?: ChainId): Contract | null {
     queryChainId
   )
 }
-export function useCreateSbtContract(queryChainId?: ChainId): Contract | null {
-  const { chainId } = useActiveWeb3React()
 
+export function useSbtFactoryContract(queryChainId?: ChainId): Contract | null {
+  const { chainId } = useActiveWeb3React()
   return useContract(
     queryChainId || chainId ? CREATE_SBT[(queryChainId || chainId) as ChainId] : undefined,
-    CREATE_SBT_ABI,
+    SBT_FACTORY_ABI,
     true,
     queryChainId
   )
+}
+
+export function useSbtContract(address?: string, queryChainId?: ChainId): Contract | null {
+  return useContract(address, SBT_ABI, true, queryChainId)
 }

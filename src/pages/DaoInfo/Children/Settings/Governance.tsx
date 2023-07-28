@@ -192,7 +192,7 @@ export default function General({ daoId }: { daoId: number }) {
       <Box sx={{ display: 'grid', flexDirection: 'column', gap: 20, mt: 25 }}>
         <GridLayoutff>
           <Box>
-            <InputTitleStyle mb={10} sx={{ height: 20, display: 'flex', gap: 5 }}>
+            <InputTitleStyle mb={10} sx={{ height: 20, display: 'flex', gap: 5, lineHeight: '20px' }}>
               Threshold <Tooltip value={'Minimum votes needed for proposal to execute'} />
             </InputTitleStyle>
             <InputStyle

@@ -357,7 +357,7 @@ export default function Airdrop() {
                           <StyledText2>{airdropDescData?.addressNum || '--'}</StyledText2>
                         </RowCenter>
 
-                        {airdropDescData?.status === ActivityStatus.OPEN ||
+                        {airdropDescData?.status === ActivityStatus.ACTIVE ||
                         airdropDescData?.status === ActivityStatus.ENDED ? (
                           <Box display={'flex'} flexDirection="row-reverse">
                             <BlackButton

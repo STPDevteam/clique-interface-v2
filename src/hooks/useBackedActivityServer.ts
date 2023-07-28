@@ -39,7 +39,7 @@ function daoActivityListHandler(data: any) {
       eventStartTime > curTime
         ? ActivityStatus.SOON
         : eventStartTime <= curTime && curTime <= eventEndTime
-        ? ActivityStatus.OPEN
+        ? ActivityStatus.ACTIVE
         : airdropStartTime > curTime
         ? ActivityStatus.ENDED
         : airdropStartTime <= curTime && curTime <= airdropEndTime
@@ -68,7 +68,7 @@ function daoActivityListHandler(data: any) {
   })
 }
 
-export function useDaoActivityList(daoId: ChainId, activityType?: ActivityType) {
+export function useDaoActivityList(daoId: number, activityType?: ActivityType) {
   const [currentPage, setCurrentPage] = useState(1)
   const status = ''
   const [firstLoadData, setFirstLoadData] = useState(true)
@@ -160,9 +160,10 @@ export function useDaoActivityList(daoId: ChainId, activityType?: ActivityType) 
 
 export function useActivityList() {
   const {
-    data: { types, status, currentPage },
+    data: { chainId, types, status, currentPage },
     setTypes,
     setStatus,
+    setChainId,
     setCurrentPage
   } = useActivityListPaginationCallback()
 
@@ -187,7 +188,7 @@ export function useActivityList() {
     ;(async () => {
       setLoading(true)
       try {
-        const res = await getActivityList(undefined, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getActivityList(chainId, status, (currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data as any
         if (!data) {
@@ -205,7 +206,7 @@ export function useActivityList() {
         console.error('getActivityList', error)
       }
     })()
-  }, [currentPage, status, types])
+  }, [chainId, currentPage, status, types])
 
   useEffect(() => {
     ;(async () => {
@@ -214,7 +215,7 @@ export function useActivityList() {
         return
       }
       try {
-        const res = await getActivityList(undefined, status, (currentPage - 1) * pageSize, pageSize)
+        const res = await getActivityList(chainId, status, (currentPage - 1) * pageSize, pageSize)
         const data = res.data as any
         if (!data) {
           return
@@ -243,6 +244,8 @@ export function useActivityList() {
     search: {
       types,
       status,
+      chainId,
+      setChainId,
       setStatus,
       setTypes
     },
@@ -345,7 +348,7 @@ export function useGetAirdropDescData(airdropId: number) {
           eventStartTime > curTime
             ? ActivityStatus.SOON
             : eventStartTime <= curTime && curTime <= eventEndTime
-            ? ActivityStatus.OPEN
+            ? ActivityStatus.ACTIVE
             : airdropStartTime > curTime
             ? ActivityStatus.ENDED
             : airdropStartTime <= curTime && curTime <= airdropEndTime

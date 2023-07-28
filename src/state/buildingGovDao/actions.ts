@@ -84,4 +84,7 @@ export const updateSpaceListData = createAction<{ spaceListData: LeftTaskDataPro
 export const updateJoinDaoModalStatus = createAction<{ isShowJoinDaoModal: boolean }>(
   'buildingDao/updateJoinDaoModalStatus'
 )
+export const updateJoinDaoModalShakeStatus = createAction<{ isShakeJoinDaoModal: boolean | undefined }>(
+  'buildingDao/updateJoinDaoModalShakeStatus'
+)
 export const removeCreateDaoData = createAction('buildingDao/removeCreateDaoData')

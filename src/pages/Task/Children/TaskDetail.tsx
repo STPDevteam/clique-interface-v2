@@ -866,7 +866,7 @@ export default function TaskDetail({
                       key={item.proposalId}
                       sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
                       value={item.proposalId}
-                      selected={assignees === item}
+                      selected={proposal === item.proposalId}
                     >
                       {item.label}
                     </MenuItem>
