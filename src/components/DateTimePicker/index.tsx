@@ -42,6 +42,10 @@ export default function DateTimePicker({
           }
         }}
         onChange={(date: Date | null) => {
+          if (date && Number(date) < Math.round(Date.now())) {
+            onValue(Math.round(Date.now() / 1000))
+            return
+          }
           onValue(date ? Number((date.getTime() / 1000).toFixed()) : undefined)
         }}
         renderInput={params => {

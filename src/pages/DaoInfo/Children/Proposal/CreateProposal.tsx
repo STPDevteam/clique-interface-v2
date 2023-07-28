@@ -353,8 +353,11 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                     value={startTime ? new Date(startTime * 1000) : null}
                     onValue={timestamp => {
                       if (!timestamp) return
+                      if (timestamp && Number(timestamp) < Math.round(Date.now() / 1000) + 5 * 60) {
+                        setStarttime(Math.round(Date.now() / 1000) + 5 * 60)
+                        return
+                      }
                       setStarttime(startTime ? timestamp : timestamp + 5 * 60)
-
                       if (daoInfo.votingPeriod) {
                         setEndtime((startTime ? timestamp : timestamp + 5 * 60) + daoInfo.votingPeriod)
                       }
@@ -376,11 +379,15 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   </LabelText>
                   <DateTimePicker
                     label=" "
-                    disabled={daoInfo.votingPeriod !== 0}
+                    disabled={daoInfo.votingPeriod !== 0 || !startTime}
                     minDateTime={startTime ? new Date(startTime * 1000) : undefined}
                     value={endTime ? new Date(endTime * 1000) : null}
                     onValue={timestamp => {
                       if (!timestamp) return
+                      if (timestamp && Number(timestamp) < (startTime || 0)) {
+                        setEndtime(startTime)
+                        return
+                      }
                       setEndtime(endTime ? timestamp : timestamp + 5 * 60)
                     }}
                   ></DateTimePicker>

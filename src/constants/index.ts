@@ -159,7 +159,7 @@ export const CREATE_SBT: { [chainId in ChainId]?: string } = {
 }
 
 export const PROPOSAL_VOTING: { [chainId in ChainId]?: string } = {
-  [ChainId.GOERLI]: '',
+  [ChainId.POLYGON_MUMBAI]: '0x525a9b685d78e65C58584e466aF459303fDF346E',
   [ChainId.SEPOLIA]: '0x21AD787Fb35d30293F6F9F83Ebf61Ab50f800275'
 }
 
