@@ -478,7 +478,7 @@ function VoteModalFunc({
             <BlackButton
               width="200px"
               height="40px"
-              disabled={isVoting || isVoteSuccess || !isTotalVote}
+              disabled={isVoting || isVoteSuccess || (!singLe && !isTotalVote)}
               onClick={() => {
                 voteModalToggle()
                 if (myVotes - isTotalVote > 0 && !singLe && !isVoted) {
