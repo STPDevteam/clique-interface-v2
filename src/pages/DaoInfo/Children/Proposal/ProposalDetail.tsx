@@ -69,7 +69,7 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
             <VoteProgress
               refresh={setRand}
               proposalOptions={proposalDetailInfo.options}
-              // proposalId={proposalId}
+              proposalId={proposalId}
               proposalInfo={proposalDetailInfo}
             />
           </Grid>
@@ -92,10 +92,7 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
                   {proposalDetailInfo.votingType === VotingTypes.SINGLE ? 'Single-voting' : 'Multi-voting'}
                 </Typography>
                 <Typography>
-                  Your votes:{' '}
-                  {(account &&
-                    formatNumberWithCommas(proposalDetailInfo.yourVotes - proposalDetailInfo.alreadyVoted)) ||
-                    '--'}
+                  Your votes: {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes)) || '--'}
                 </Typography>
               </Box>
               <Typography

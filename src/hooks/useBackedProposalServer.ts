@@ -4,6 +4,7 @@ import { retry } from 'utils/retry'
 import { ChainId } from '../constants/chain'
 import {
   addGovToken,
+  commitErrorMsg,
   deleteGovToken,
   getProposalDetail,
   getProposalList,
@@ -14,6 +15,13 @@ import {
 import { ProposalStatus } from './useProposalInfo'
 // import { useActiveWeb3React } from 'hooks'
 import { govList } from 'state/buildingGovDao/actions'
+import { useProposalContract } from './useContract'
+import { useGasPriceInfo } from './useGasPrice'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { TransactionResponse } from '@ethersproject/providers'
+import ReactGA from 'react-ga4'
+import { toast } from 'react-toastify'
 
 export interface ProposalListBaseProp {
   v1V2ChainId: ChainId
@@ -37,6 +45,16 @@ export interface ProposalListBaseProp {
   status: ProposalStatus
   isPass: string
   targetTimeString: string
+}
+
+export enum CreateType {
+  GASLESS = 'Gasless voting',
+  ONCHAIN = 'Onchain voting'
+}
+
+export enum VoteStatus {
+  PENDING = 'Pending',
+  SUCCESS = 'Success'
 }
 
 function makeLIstData(data: any): ProposalListBaseProp[] {
@@ -191,6 +209,7 @@ export interface useProposalDetailInfoProps {
   content: string
   endTime: number
   introduction: string
+  isChain: boolean
   options: ProposalDetailInfoOptionProps[]
   proposalId: number
   proposalSIP: number
@@ -220,6 +239,74 @@ export function useProposalVoteCallback() {
       .then(res => res)
       .catch(err => err)
   }, [])
+}
+
+export function useUpChainProposalVoteCallback(callback?: () => void) {
+  const { account } = useActiveWeb3React()
+  const contract = useProposalContract()
+  const gasPriceInfoCallback = useGasPriceInfo()
+  const addTransaction = useTransactionAdder()
+  const [result, setResult] = useState<any>()
+  const upChainProposalCallBack = useCallback(
+    async (
+      voteParams: VoteParamsProp[],
+      proposalId: number,
+      optionIds: number[],
+      amounts: number[],
+      isVoted: boolean
+    ) => {
+      if (!isVoted) {
+        toVote(voteParams)
+          .then(res => {
+            setResult(res)
+          })
+          .catch(err => err)
+      }
+      if (result && result.data.code !== 200 && !isVoted) return toast.error(result.data.msg || 'Vote error')
+
+      callback && callback()
+
+      if (!contract) throw new Error('none contract')
+      const args = [proposalId, optionIds, amounts]
+      const method = 'voting'
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        from: account
+      })
+        .then((response: TransactionResponse) => {
+          console.log(`${account}_Chain_proposal${proposalId}`)
+
+          addTransaction(response, {
+            summary: `ChainProposal`,
+            claim: { recipient: `${account}_Chain_proposal${proposalId}` }
+          })
+          return {
+            hash: response.hash
+          }
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001) {
+            commitErrorMsg(
+              'upChainProposal',
+              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [account, addTransaction, callback, contract, gasPriceInfoCallback, result]
+  )
+  return { upChainProposalCallBack, result }
 }
 
 export function useDeleteGovToken() {
@@ -322,19 +409,22 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(proposalId: number) {
+export function useProposalVoteList(proposalId: number, account?: string | undefined | null) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<{ optionContent: string; voter: string; votes: number }[]>([])
+  const [result, setResult] = useState<
+    { optionContent: string; voter: string; votes: number; status: string; optionId: number }[]
+  >([])
+  const [upDate, setUpDateVoteList] = useState<number>(0)
 
   useEffect(() => {
     ;(async () => {
       if (!proposalId) return
       setLoading(true)
       try {
-        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize)
+        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize, account)
         setLoading(false)
         const data = res.data as any
         if (!data) {
@@ -346,7 +436,9 @@ export function useProposalVoteList(proposalId: number) {
         const list = data.data.map((item: any) => ({
           optionContent: item.optionContent,
           voter: item.voter,
-          votes: item.votes
+          votes: item.votes,
+          status: item.status,
+          optionId: item.optionId
         }))
         setResult(list)
       } catch (error) {
@@ -356,10 +448,11 @@ export function useProposalVoteList(proposalId: number) {
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [currentPage, proposalId])
+  }, [account, currentPage, proposalId, upDate])
 
   return {
     loading: loading,
+    setUpDateVoteList,
     page: {
       setCurrentPage,
       currentPage,

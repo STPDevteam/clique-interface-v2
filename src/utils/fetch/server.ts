@@ -323,11 +323,17 @@ export function getProposalSnapshot(chainId: number, daoAddress: string, proposa
   })
 }
 
-export function getProposalVotesList(proposalId: number, offset: number, limit: number) {
+export function getProposalVotesList(
+  proposalId: number,
+  offset: number,
+  limit: number,
+  account?: string | undefined | null
+) {
   return Axios.get('stpdao/v3/vote/list', {
     proposalId,
     offset,
-    limit
+    limit,
+    account
   })
 }
 
@@ -792,6 +798,7 @@ export function createProposal(
   daoId: number,
   endTime: number,
   introduction: string,
+  isChain: boolean,
   options: string[],
   startTime: number,
   title: string,
@@ -803,6 +810,7 @@ export function createProposal(
     daoId,
     endTime,
     introduction,
+    isChain,
     options,
     startTime,
     title,
