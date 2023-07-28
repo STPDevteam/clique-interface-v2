@@ -109,6 +109,11 @@ const eligibilityList = [
   { id: 3, value: ClaimWay.WhiteList, label: 'Upload Addresses' }
 ]
 
+export enum AccountLevel {
+  CREATOR = 0,
+  OWNER = 1
+}
+
 export default function Index() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const { library, account, chainId } = useActiveWeb3React()
@@ -123,7 +128,9 @@ export default function Index() {
   const { result: userInfo } = useUserProfileInfo(account || undefined)
   const daoMemberList = useMemo(() => {
     if (!userInfo?.adminDao) return
-    const daoList = userInfo?.adminDao.filter(v => Number(v.accountLevel) === 1 || Number(v.accountLevel) === 0)
+    const daoList = userInfo?.adminDao.filter(
+      v => Number(v.accountLevel) === AccountLevel.OWNER || Number(v.accountLevel) === AccountLevel.CREATOR
+    )
     return daoList
   }, [userInfo?.adminDao])
   const [daoValue, setDaoValue] = useState<number | null>(Number(curDaoId) || null)
@@ -384,9 +391,9 @@ export default function Index() {
             <InputTitleStyle>Select a DAO</InputTitleStyle>
             <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
             <Select
-              placeholder={daoMemberList?.length === 0 ? '' : 'Select DAO'}
+              placeholder={'Select DAO'}
               noBold
-              value={daoValue || undefined}
+              value={daoValue || 0}
               onChange={e => {
                 setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value)?.daoId || null)
               }}
@@ -412,8 +419,12 @@ export default function Index() {
                   </MenuItem>
                 ))
               ) : (
-                <MenuItem disabled sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
-                  No options
+                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
+                  No available DAO, only the creator or owner of DAO can create it,
+                  <Link href={routes.CreateDao} sx={{ cursor: 'pointer' }}>
+                    to create DAO
+                  </Link>
+                  .
                 </MenuItem>
               )}
             </Select>

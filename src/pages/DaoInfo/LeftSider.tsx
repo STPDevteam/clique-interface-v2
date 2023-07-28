@@ -288,7 +288,12 @@ export default function LeftSider() {
         route: '',
         children: workspaceList
       },
-      { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
+      {
+        title: 'DAO Rewards & SBT',
+        icon: <Bounty />,
+        defaultOpen: false,
+        route: makeRouteLink(routes.DaoInfoActivity)
+      },
       { title: 'Member', icon: <Member />, defaultOpen: false, route: makeRouteLink(routes.DaoMember) },
       { title: 'About', icon: <About />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoAbout) },
       {
