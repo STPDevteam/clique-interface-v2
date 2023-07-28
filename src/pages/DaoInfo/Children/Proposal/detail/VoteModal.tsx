@@ -5,7 +5,7 @@ import Modal from 'components/Modal'
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
-import { govList, VotingTypes } from 'state/buildingGovDao/actions'
+import { VotingTypes } from 'state/buildingGovDao/actions'
 import { RowCenter } from '../ProposalItem'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -63,7 +63,7 @@ export default function VoteModal({
       setUpDateVoteList={setUpDateVoteList}
       myVotes={proposalInfo.yourVotes}
       myAlreadyVotes={proposalInfo.alreadyVoted}
-      voteProposalSign={daoInfo.governance[0]}
+      // voteProposalSign={daoInfo.governance[0]}
       proposalInfo={proposalInfo}
       proposalOptions={proposalOptions}
     />
@@ -76,13 +76,13 @@ function VoteModalFunc({
   proposalInfo,
   myVotes,
   myAlreadyVotes,
-  voteProposalSign,
+  // voteProposalSign,
   proposalOptions
 }: {
   refresh: Dispatch<SetStateAction<number>>
   setUpDateVoteList: Dispatch<SetStateAction<number>>
   proposalInfo: useProposalDetailInfoProps
-  voteProposalSign: govList
+  // voteProposalSign: govList
   myVotes: number
   myAlreadyVotes: number
   proposalOptions: number
@@ -91,9 +91,10 @@ function VoteModalFunc({
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
+  const voteApplicationModal = useModalOpen(ApplicationModal.VOTE)
   const proposalVoteCallback = useProposalVoteCallback()
 
-  const { result: proposalVoteList, setUpDateVoteList: setCurUpDateVoteList } = useProposalVoteList(
+  const { result: userVote, setUpDateVoteList: setCurUpDateVoteList } = useProposalVoteList(
     proposalInfo.proposalId,
     account
   )
@@ -106,13 +107,26 @@ function VoteModalFunc({
   }, [refresh, setCurUpDateVoteList, setUpDateVoteList])
 
   const { upChainProposalCallBack } = useUpChainProposalVoteCallback(refreshCallback)
-  const userVote = useMemo(() => {
-    console.log(proposalVoteList)
 
-    if (!proposalVoteList.length) return
-    return proposalVoteList
-  }, [proposalVoteList])
-  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_proposalVote`)
+  useEffect(() => {
+    if (voteApplicationModal) {
+      setCurUpDateVoteList(Math.random())
+    }
+  }, [setCurUpDateVoteList, voteApplicationModal, voteModalToggle])
+
+  const isVoted = useMemo(() => {
+    if (userVote?.length) return true
+    return false
+  }, [userVote])
+
+  const isUpChain = useMemo(() => {
+    return proposalInfo.isChain
+  }, [proposalInfo.isChain])
+
+  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
+  const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
+    `${account}_Chain_Proposal${proposalInfo.proposalId}`
+  )
   const [vote, setVote] = useState<number[]>([])
   const [voteId, setVoteId] = useState<number[]>([])
   const [voteList, setVoteList] = useState<{ optionId: number; votes: number }[]>([])
@@ -120,7 +134,7 @@ function VoteModalFunc({
   const [singLe, setSingLe] = useState<boolean>(false)
   const { showModal, hideModal } = useModal()
 
-  console.log(voteProposalSign)
+  // console.log(voteProposalSign)
 
   const perArrCallback = useCallback(
     (index: number, value: number) => {
@@ -165,7 +179,7 @@ function VoteModalFunc({
                 votes: myVotes
               }
             ]
-          : voteList.filter(item => item.votes !== 0)
+          : voteList.filter(v => v.votes !== 0)
       )
         .then(res => {
           if (res.data.code !== 200) {
@@ -184,8 +198,8 @@ function VoteModalFunc({
 
   const upChainProposalVoteCallback = useCallback(() => {
     {
-      voteModalToggle()
       showModal(<TransacitonPendingModal />)
+
       upChainProposalCallBack(
         singLe
           ? [
@@ -194,36 +208,17 @@ function VoteModalFunc({
                 votes: myVotes
               }
             ]
-          : userVote?.length
-          ? (userVote
-              .map(v => {
-                return { proposalId: v.optionId, votes: v.votes }
-              })
-              .filter(val => val !== undefined) as any)
-          : voteList.filter(item => item.votes !== 0),
+          : isVoted
+          ? (userVote?.map(v => ({ proposalId: v.optionId, votes: v.votes })).filter(Boolean) as any)
+          : voteList.filter(v => v.votes !== 0),
         proposalInfo.proposalId,
-        singLe
-          ? [proposalOptions]
-          : userVote?.length
-          ? userVote.map(v => {
-              return v.optionId
-            })
-          : voteId,
+        singLe ? [proposalOptions] : isVoted ? (userVote?.map(v => v.optionId) as number[]) : voteId,
         singLe
           ? [myVotes]
-          : userVote?.length
-          ? userVote.map(v => {
-              return v.votes
-            })
-          : (voteList
-              .map(v => {
-                if (v.votes !== 0) {
-                  return v.votes
-                }
-                return
-              })
-              .filter(val => val !== undefined) as number[]),
-        userVote?.length ? true : false
+          : isVoted
+          ? (userVote?.map(v => v.votes) as number[])
+          : voteList.map(v => v.votes).filter(v => v !== 0),
+        isVoted
       )
         .then(res => {
           hideModal()
@@ -250,6 +245,7 @@ function VoteModalFunc({
     }
   }, [
     hideModal,
+    isVoted,
     myVotes,
     proposalInfo.proposalId,
     proposalOptions,
@@ -259,8 +255,7 @@ function VoteModalFunc({
     upChainProposalCallBack,
     userVote,
     voteId,
-    voteList,
-    voteModalToggle
+    voteList
   ])
 
   const voteBtn: {
@@ -274,7 +269,7 @@ function VoteModalFunc({
         error: 'Proposal voting is not opened'
       }
     }
-    if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1 && userVote?.length) {
+    if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1 && isVoted) {
       return {
         disabled: true,
         error: 'You have already voted, Please confirm the on-chain transaction.'
@@ -288,7 +283,7 @@ function VoteModalFunc({
       }
     }
 
-    if (userVote?.length && proposalInfo.votingType === 2) {
+    if (isVoted && proposalInfo.votingType === 2) {
       return {
         disabled: true,
         error: 'You have already voted, Please confirm the on-chain transaction.'
@@ -322,20 +317,18 @@ function VoteModalFunc({
     }
     return {
       disabled: false,
-      handler: proposalInfo.isChain ? upChainProposalVoteCallback : onProposalVoteCallback
+      handler: onProposalVoteCallback
     }
   }, [
     account,
     isTotalVote,
+    isVoted,
     myVotes,
     onProposalVoteCallback,
     proposalInfo.alreadyVoted,
-    proposalInfo.isChain,
     proposalInfo.status,
     proposalInfo.votingType,
-    toggleWalletModal,
-    upChainProposalVoteCallback,
-    userVote?.length
+    toggleWalletModal
   ])
   return (
     <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
@@ -351,8 +344,8 @@ function VoteModalFunc({
                   Your votes
                 </Typography>
                 <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
-                  {userVote?.length
-                    ? formatNumberWithCommas(userVote[0].votes.toString() || 0)
+                  {isVoted
+                    ? formatNumberWithCommas((userVote?.length && userVote[0].votes.toString()) || 0)
                     : (myVotes &&
                         formatNumberWithCommas(
                           new BigNumber(myVotes).minus(new BigNumber(myAlreadyVotes)).toString()
@@ -401,18 +394,9 @@ function VoteModalFunc({
                 <TitleStyle>{item.optionContent}</TitleStyle>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
                   <Slider
-                    disabled={userVote?.length ? true : false}
+                    disabled={isVoted}
                     step={1}
-                    value={
-                      userVote?.map(v => {
-                        if (v.optionId === item.optionId) {
-                          return v.votes
-                        }
-                        return 0
-                      }) ||
-                      vote[index] ||
-                      0
-                    }
+                    value={userVote?.find(v => v.optionId === item.optionId)?.votes || vote[index] || 0}
                     onChange={(_, newValue) => {
                       const _newValue = newValue as number
                       let used = 0
@@ -435,26 +419,16 @@ function VoteModalFunc({
                   />
                   <Input
                     type="number"
-                    disabled={userVote?.length ? true : false}
+                    disabled={isVoted}
                     value={
-                      userVote
-                        ?.map(v => {
-                          if (v.optionId === item.optionId) {
-                            return v.votes
-                          }
-                          return
-                        })
-                        .filter(val => val !== undefined)[0]
-                        ?.toString() || (vote[index] ? vote[index].toString() : '0')
+                      userVote?.find(v => v.optionId === item.optionId)?.votes?.toString() ||
+                      (vote[index] ? vote[index].toString() : '0')
                     }
                     maxWidth={90}
                     height={34}
                     max={myVotes}
                     onChange={(e: any) => {
-                      if (
-                        (e.target.value - 0 <= myVotes - isTotalVote && /^[0-9]\d*$/.test(e.target.value)) ||
-                        !e.target.value
-                      ) {
+                      if (/^[0-9]\d*$/.test(e.target.value) || !e.target.value) {
                         const valData = e.target.value - 0
                         let used = 0
                         for (const key in vote) {
@@ -462,10 +436,13 @@ function VoteModalFunc({
                             if (index !== Number(key)) used = used + vote[key]
                           }
                         }
-                        perArrCallback(index, valData)
+                        const maxPer = myVotes - used
+                        const curPer = maxPer < valData ? maxPer : valData
+
+                        perArrCallback(index, curPer)
                         setVoteList(() => {
                           const newArr = voteList
-                          newArr[index] = { votes: valData, optionId: item.optionId }
+                          newArr[index] = { votes: curPer, optionId: item.optionId }
                           return newArr
                         })
                       }
@@ -485,9 +462,9 @@ function VoteModalFunc({
         <RowCenter mt={19}>
           <OutlineButton
             width={200}
-            color="#80829F"
+            color="#0049C6"
             style={{
-              borderColor: '#D4D7E2'
+              borderColor: '#0049C6'
             }}
             noBold
             height={40}
@@ -497,12 +474,20 @@ function VoteModalFunc({
             Cancel
           </OutlineButton>
 
-          {userVote?.length ? (
+          {isUpChain ? (
             <BlackButton
               width="200px"
               height="40px"
-              disabled={isVoting}
-              onClick={upChainProposalVoteCallback}
+              disabled={isVoting || isVoteSuccess || !isTotalVote}
+              onClick={() => {
+                voteModalToggle()
+                if (myVotes - isTotalVote > 0 && !singLe && !isVoted) {
+                  showModal(<ModifyModal upChainCallback={upChainProposalVoteCallback} />)
+                  return
+                } else {
+                  upChainProposalVoteCallback()
+                }
+              }}
               borderRadius="8px"
             >
               {isVoting ? (
@@ -511,14 +496,14 @@ function VoteModalFunc({
                   <Dots />
                 </>
               ) : (
-                'Confirm'
+                'Vote'
               )}
             </BlackButton>
           ) : (
             <BlackButton
               width="200px"
               height="40px"
-              disabled={voteBtn.disabled || isVoting}
+              disabled={voteBtn.disabled}
               onClick={voteBtn.handler}
               borderRadius="8px"
             >
@@ -528,7 +513,7 @@ function VoteModalFunc({
                   <Dots />
                 </>
               ) : (
-                'Confirm'
+                'Vote'
               )}
             </BlackButton>
           )}
@@ -579,3 +564,57 @@ function VoteModalFunc({
 //     </Stack>
 //   )
 // }
+
+function ModifyModal({ upChainCallback }: { upChainCallback: () => void }) {
+  const { hideModal } = useModal()
+  const voteModalToggle = useVoteModalToggle()
+  return (
+    <Modal maxWidth="480px" closeIcon width="100%">
+      <StyledBody sx={{ paddingTop: 55, paddingBottom: 30 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography
+            sx={{
+              fontSize: 14,
+              fontWeight: 500,
+              lineHeight: '20px',
+              color: '#3F5170',
+              width: 350
+            }}
+          >
+            You have <b style={{ fontWeight: 600 }}>EXTRA VOTES</b>, unused votes will not be able to be voted again, do
+            you want to continue?
+          </Typography>
+        </Box>
+        <RowCenter mt={30}>
+          <OutlineButton
+            width={200}
+            color="#0049C6"
+            style={{
+              borderColor: '#0049C6'
+            }}
+            noBold
+            height={40}
+            borderRadius="8px"
+            onClick={() => {
+              hideModal()
+              voteModalToggle()
+            }}
+          >
+            Modify votes
+          </OutlineButton>
+          <BlackButton
+            width="200px"
+            height="40px"
+            borderRadius="8px"
+            onClick={() => {
+              hideModal()
+              upChainCallback()
+            }}
+          >
+            Continue
+          </BlackButton>
+        </RowCenter>
+      </StyledBody>
+    </Modal>
+  )
+}

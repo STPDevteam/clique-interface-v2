@@ -52,6 +52,11 @@ export enum CreateType {
   ONCHAIN = 'Onchain voting'
 }
 
+export enum VoteStatus {
+  PENDING = 'Pending',
+  SUCCESS = 'Success'
+}
+
 function makeLIstData(data: any): ProposalListBaseProp[] {
   const now = currentTimeStamp()
   return data.map((item: any) => {
@@ -250,8 +255,6 @@ export function useUpChainProposalVoteCallback(callback?: () => void) {
       amounts: number[],
       isVoted: boolean
     ) => {
-      console.log(voteParams, proposalId, optionIds, amounts, isVoted)
-
       if (!isVoted) {
         toVote(voteParams)
           .then(res => {
@@ -274,9 +277,11 @@ export function useUpChainProposalVoteCallback(callback?: () => void) {
         from: account
       })
         .then((response: TransactionResponse) => {
+          console.log(`${account}_Chain_proposal${proposalId}`)
+
           addTransaction(response, {
             summary: `ChainProposal`,
-            claim: { recipient: `${account}Chain_Proposal${proposalId}` }
+            claim: { recipient: `${account}_Chain_proposal${proposalId}` }
           })
           return {
             hash: response.hash

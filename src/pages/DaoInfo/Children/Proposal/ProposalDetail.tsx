@@ -92,10 +92,7 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
                   {proposalDetailInfo.votingType === VotingTypes.SINGLE ? 'Single-voting' : 'Multi-voting'}
                 </Typography>
                 <Typography>
-                  Your votes:{' '}
-                  {(account &&
-                    formatNumberWithCommas(proposalDetailInfo.yourVotes - proposalDetailInfo.alreadyVoted)) ||
-                    '--'}
+                  Your votes: {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes)) || '--'}
                 </Typography>
               </Box>
               <Typography

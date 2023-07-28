@@ -4,7 +4,7 @@ import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
 import { routes } from 'constants/routes'
-import { useProposalDetailInfoProps, useProposalVoteList } from 'hooks/useBackedProposalServer'
+import { useProposalDetailInfoProps, useProposalVoteList, VoteStatus } from 'hooks/useBackedProposalServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
@@ -14,12 +14,11 @@ import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import { BlackButton } from 'components/Button/Button'
-import { useModalOpen, useVoteModalToggle } from 'state/application/hooks'
+import { useVoteModalToggle } from 'state/application/hooks'
 // import { VotingTypes } from 'state/buildingGovDao/actions'
 import VoteModal from './VoteModal'
 import { formatMillion } from 'utils/dao'
 import { useActiveWeb3React } from 'hooks'
-import { ApplicationModal } from 'state/application/actions'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 
@@ -58,9 +57,10 @@ export default function VoteProgress({
   const isSmDown = useBreakpoint('sm')
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
-  const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
-  const { claimSubmitted: isClaiming } = useUserHasSubmittedClaim(`${account}Chain_Proposal${proposalId}`)
-
+  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
+  const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
+    `${account}_Chain_Proposal${proposalInfo.proposalId}`
+  )
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
   const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId, account)
   const userVote = useMemo(() => {
@@ -116,8 +116,8 @@ export default function VoteProgress({
                 )}
               </Box>
 
-              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.length ? (
-                userVote.filter(v => v.optionId === item.optionId && v.status === 'Success').length ? (
+              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.length && account ? (
+                userVote.filter(v => v.optionId === item.optionId && v.status === VoteStatus.SUCCESS).length ? (
                   <Typography
                     sx={{
                       fontFamily: 'Inter',
@@ -134,18 +134,18 @@ export default function VoteProgress({
                       return null
                     })}
                   </Typography>
-                ) : userVote.filter(v => v.optionId === item.optionId && v.status === 'Pending').length ? (
+                ) : userVote.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
                   <BlackButton
                     height="36px"
-                    disabled={isClaiming}
+                    disabled={isVoting || isVoteSuccess}
                     onClick={() => {
                       setOptionId(proposalOptions[index].optionId)
                       voteModalToggle()
                     }}
                     width="125px"
                   >
-                    {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
-                    {isClaiming && <Dots />}
+                    Vote
+                    {isVoting && <Dots />}
                   </BlackButton>
                 ) : null
               ) : (
@@ -166,21 +166,19 @@ export default function VoteProgress({
                   }}
                   width="125px"
                 >
-                  {proposalInfo.alreadyVoted > 0 && proposalInfo.votingType === 1 ? 'Voted' : 'Vote'}
+                  Vote
                 </BlackButton>
               )}
             </Box>
           </StyledItem>
         ))}
       </Stack>
-      {voteModalOpen && (
-        <VoteModal
-          refresh={refresh}
-          proposalInfo={proposalInfo}
-          proposalOptions={optionId}
-          setUpDateVoteList={setUpDateVoteList}
-        />
-      )}
+      <VoteModal
+        refresh={refresh}
+        proposalInfo={proposalInfo}
+        proposalOptions={optionId}
+        setUpDateVoteList={setUpDateVoteList}
+      />
     </VoteWrapper>
   )
 }
@@ -189,6 +187,12 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
   const { hideModal } = useModal()
   const { result: proposalVoteList, page } = useProposalVoteList(proposalId)
   const history = useHistory()
+
+  const userVoteList = useMemo(() => {
+    if (!proposalVoteList) return
+    const list = proposalVoteList.filter(item => item.status !== VoteStatus.PENDING)
+    return list
+  }, [proposalVoteList])
 
   return (
     <Modal maxWidth="460px" closeIcon width="100%">
@@ -204,7 +208,7 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
             alignItems={'center'}
             justifyContent="center"
           >
-            {proposalVoteList.map(item => (
+            {userVoteList?.map(item => (
               <>
                 {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
                 <Link
@@ -225,7 +229,7 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
               </>
             ))}
           </Box>
-          {!proposalVoteList.length && <EmptyData />}
+          {!userVoteList?.length && <EmptyData />}
           <Box
             display={'flex'}
             justifyContent="center"
@@ -239,7 +243,7 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
             }}
           >
             <Pagination
-              count={page.totalPage}
+              count={!userVoteList?.length ? 0 : page.totalPage}
               page={page.currentPage}
               onChange={(_, value) => page.setCurrentPage(value)}
             />
