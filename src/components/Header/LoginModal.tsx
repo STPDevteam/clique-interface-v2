@@ -12,6 +12,10 @@ import Image from 'components/Image'
 import useModal from 'hooks/useModal'
 import UpdateProfileModal from 'pages/Profile/UpdateProfileModal'
 
+export const UserType = {
+  NEW_ENTER: 1
+}
+
 export default function LoginModal() {
   const [btnDisable, setBtnDisable] = useState(false)
   const { connector, deactivate } = useWeb3React()
@@ -24,7 +28,7 @@ export default function LoginModal() {
 
   const loginClick = useCallback(() => {
     login().then(res => {
-      if (Number(res) === 1) showModal(<UpdateProfileModal refreshProfile={hideModal} />)
+      if (Number(res) === UserType.NEW_ENTER) showModal(<UpdateProfileModal refreshProfile={hideModal} />)
     })
   }, [hideModal, login, showModal])
 
