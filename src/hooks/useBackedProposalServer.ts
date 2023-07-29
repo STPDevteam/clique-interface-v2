@@ -410,7 +410,7 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(proposalId: number) {
+export function useProposalVoteList(proposalId: number, getAll?: boolean) {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
 
@@ -428,7 +428,12 @@ export function useProposalVoteList(proposalId: number) {
       if (!proposalId) return
       setLoading(true)
       try {
-        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize, account)
+        const res = await getProposalVotesList(
+          proposalId,
+          (currentPage - 1) * pageSize,
+          pageSize,
+          getAll ? undefined : account
+        )
         setLoading(false)
         const data = res.data as any
         if (!data) {
@@ -452,7 +457,7 @@ export function useProposalVoteList(proposalId: number) {
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [account, currentPage, proposalId, upDate, userSignature])
+  }, [account, currentPage, getAll, proposalId, upDate, userSignature])
 
   return {
     loading: loading,
