@@ -355,9 +355,9 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                       if (!timestamp) return
                       if (timestamp && Number(timestamp) < Math.round(Date.now() / 1000) + 5 * 60) {
                         setStarttime(Math.round(Date.now() / 1000) + 5 * 60)
-                        return
+                      } else {
+                        setStarttime(startTime ? timestamp : timestamp + 5 * 60)
                       }
-                      setStarttime(startTime ? timestamp : timestamp + 5 * 60)
                       if (daoInfo.votingPeriod) {
                         setEndtime((startTime ? timestamp : timestamp + 5 * 60) + daoInfo.votingPeriod)
                       }

@@ -110,7 +110,7 @@ export default function General({ daoId }: { daoId: number }) {
       return {
         disabled: true,
         text: 'time',
-        error: 'Mininum voting period is 72 hours'
+        error: 'Minium voting period is 72 hours'
       }
     }
     if (createDaoData && createDaoData.governance.length < 1) {
