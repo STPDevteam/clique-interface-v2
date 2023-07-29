@@ -21,6 +21,7 @@ import { formatMillion } from 'utils/dao'
 import { useActiveWeb3React } from 'hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -54,6 +55,7 @@ export default function VoteProgress({
   proposalInfo: useProposalDetailInfoProps
 }) {
   const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   const isSmDown = useBreakpoint('sm')
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
@@ -179,13 +181,16 @@ export default function VoteProgress({
           </StyledItem>
         ))}
       </Stack>
-      <VoteModal
-        refresh={refresh}
-        proposalInfo={proposalInfo}
-        proposalOptions={optionId}
-        setUpDateVoteList={setUpDateVoteList}
-        proposalVoteList={proposalVoteList}
-      />
+
+      {userSignature && (
+        <VoteModal
+          refresh={refresh}
+          proposalInfo={proposalInfo}
+          proposalOptions={optionId}
+          setUpDateVoteList={setUpDateVoteList}
+          proposalVoteList={proposalVoteList}
+        />
+      )}
     </VoteWrapper>
   )
 }
