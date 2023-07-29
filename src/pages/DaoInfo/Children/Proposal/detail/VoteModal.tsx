@@ -11,7 +11,6 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { Dots } from 'theme/components'
 import {
-  VoteListProp,
   useProposalDetailInfoProps,
   useProposalVoteCallback,
   // useProposalVoteList,
@@ -39,6 +38,14 @@ const TitleStyle = styled(Typography)(() => ({
   color: '#3F5170',
   lineHeight: '16px'
 }))
+
+export interface VoteListProp {
+  optionContent: string
+  voter: string
+  votes: number
+  status: string
+  optionId: number
+}
 
 export default function VoteModal({
   refresh,

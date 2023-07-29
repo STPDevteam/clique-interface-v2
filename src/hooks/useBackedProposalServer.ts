@@ -234,14 +234,6 @@ export interface VoteParamsProp {
   votes: number
 }
 
-export interface VoteListProp {
-  optionContent: string
-  voter: string
-  votes: number
-  status: string
-  optionId: number
-}
-
 export function useProposalVoteCallback() {
   return useCallback(async (voteParams: VoteParamsProp[]) => {
     return toVote(voteParams)
@@ -426,7 +418,9 @@ export function useProposalVoteList(proposalId: number) {
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<VoteListProp[]>([])
+  const [result, setResult] = useState<
+    { optionContent: string; voter: string; votes: number; status: string; optionId: number }[]
+  >([])
   const [upDate, setUpDateVoteList] = useState<number>(0)
 
   useEffect(() => {
