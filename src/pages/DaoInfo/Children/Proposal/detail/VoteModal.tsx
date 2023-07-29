@@ -7,7 +7,7 @@ import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle, useWalletModalToggle } from 'state/application/hooks'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { RowCenter } from '../ProposalItem'
-import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { useUserHasSubmittedClaim, useUserVoteHasSubmitted } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { Dots } from 'theme/components'
 import {
@@ -120,6 +120,7 @@ function VoteModalFunc({
   }, [proposalInfo.isChain])
 
   const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
+  const isUpChainVoteSuccess = useUserVoteHasSubmitted(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
   const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
     `${account}_Chain_Proposal${proposalInfo.proposalId}`
   )
@@ -266,6 +267,14 @@ function VoteModalFunc({
         error: 'Proposal voting is not opened'
       }
     }
+
+    if (isUpChainVoteSuccess) {
+      return {
+        disabled: false,
+        error: 'You seem to vote on the other chain, Please confirm whether to continue.'
+      }
+    }
+
     if (proposalInfo.alreadyVoted && proposalInfo.votingType === 1 && isVoted) {
       return {
         disabled: false,
@@ -319,6 +328,7 @@ function VoteModalFunc({
   }, [
     account,
     isTotalVote,
+    isUpChainVoteSuccess,
     isVoted,
     myVotes,
     onProposalVoteCallback,

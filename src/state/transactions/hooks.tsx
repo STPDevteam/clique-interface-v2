@@ -138,6 +138,7 @@ export function useUserVoteHasSubmitted(key?: string): boolean | undefined {
   const summitted = useMemo(() => {
     for (const chainId of SUPPORT_NETWORK_CHAIN_IDS) {
       const transactions = allTransactions[chainId]
+      if (!transactions) continue
       const txnIndex = Object.keys(transactions).find(hash => {
         const tx = transactions[hash]
         return tx.claim && tx.claim.recipient.toLowerCase() === key?.toLowerCase()
