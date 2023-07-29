@@ -22,6 +22,7 @@ import { useActiveWeb3React } from 'hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import ReactGA from 'react-ga4'
 import { toast } from 'react-toastify'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 export interface ProposalListBaseProp {
   v1V2ChainId: ChainId
@@ -280,7 +281,7 @@ export function useUpChainProposalVoteCallback(callback?: () => void) {
           console.log(`${account}_Chain_proposal${proposalId}`)
 
           addTransaction(response, {
-            summary: `ChainProposal`,
+            summary: `Chain Proposal`,
             claim: { recipient: `${account}_Chain_proposal${proposalId}` }
           })
           return {
@@ -353,7 +354,7 @@ export function useAddGovToken() {
 }
 
 export function useProposalDetailsInfo(proposalId: number, refresh: number) {
-  // const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<useProposalDetailInfoProps>()
 
@@ -375,7 +376,7 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
         console.error('useGetProposalDetail', error)
       }
     })()
-  }, [proposalId, refresh])
+  }, [proposalId, refresh, userSignature])
 
   const ret = useMemo(() => {
     if (!result) return undefined
@@ -409,7 +410,10 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(proposalId: number, account?: string | undefined | null) {
+export function useProposalVoteList(proposalId: number, status?: string, getAll?: boolean) {
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
+
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -424,7 +428,13 @@ export function useProposalVoteList(proposalId: number, account?: string | undef
       if (!proposalId) return
       setLoading(true)
       try {
-        const res = await getProposalVotesList(proposalId, (currentPage - 1) * pageSize, pageSize, account)
+        const res = await getProposalVotesList(
+          proposalId,
+          (currentPage - 1) * pageSize,
+          pageSize,
+          status || undefined,
+          getAll ? undefined : account
+        )
         setLoading(false)
         const data = res.data as any
         if (!data) {
@@ -448,7 +458,7 @@ export function useProposalVoteList(proposalId: number, account?: string | undef
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [account, currentPage, proposalId, upDate])
+  }, [account, currentPage, getAll, proposalId, status, upDate, userSignature])
 
   return {
     loading: loading,

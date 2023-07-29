@@ -8,7 +8,7 @@ import { useProposalDetailInfoProps, useProposalVoteList, VoteStatus } from 'hoo
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
@@ -62,17 +62,11 @@ export default function VoteProgress({
     `${account}_Chain_Proposal${proposalInfo.proposalId}`
   )
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId, account)
+  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId)
   const userVote = useMemo(() => {
     if (!proposalVoteList.length) return
     return proposalVoteList
   }, [proposalVoteList])
-
-  useEffect(() => {
-    if (proposalInfo.alreadyVoted) {
-      setUpDateVoteList(Math.random())
-    }
-  }, [proposalInfo.alreadyVoted, setUpDateVoteList])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -116,8 +110,8 @@ export default function VoteProgress({
                 )}
               </Box>
 
-              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.length && account ? (
-                userVote.filter(v => v.optionId === item.optionId && v.status === VoteStatus.SUCCESS).length ? (
+              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && account ? (
+                userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.SUCCESS).length ? (
                   <Typography
                     sx={{
                       fontFamily: 'Inter',
@@ -134,7 +128,7 @@ export default function VoteProgress({
                       return null
                     })}
                   </Typography>
-                ) : userVote.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
+                ) : userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
                   <BlackButton
                     height="36px"
                     disabled={isVoting || isVoteSuccess}
@@ -163,6 +157,7 @@ export default function VoteProgress({
                 <BlackButton
                   height="36px"
                   disabled={
+                    !account ||
                     proposalInfo.yourVotes === 0 ||
                     proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
                     proposalInfo.status === 'Soon' ||
@@ -189,6 +184,7 @@ export default function VoteProgress({
         proposalInfo={proposalInfo}
         proposalOptions={optionId}
         setUpDateVoteList={setUpDateVoteList}
+        proposalVoteList={proposalVoteList}
       />
     </VoteWrapper>
   )
@@ -196,7 +192,7 @@ export default function VoteProgress({
 
 export function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
   const { hideModal } = useModal()
-  const { result: proposalVoteList, page } = useProposalVoteList(proposalId)
+  const { result: proposalVoteList, page } = useProposalVoteList(proposalId, VoteStatus.SUCCESS, true)
   const history = useHistory()
 
   const userVoteList = useMemo(() => {

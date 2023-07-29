@@ -327,13 +327,15 @@ export function getProposalVotesList(
   proposalId: number,
   offset: number,
   limit: number,
-  account?: string | undefined | null
+  status?: string,
+  voter?: string | undefined | null
 ) {
   return Axios.get('stpdao/v3/vote/list', {
+    voter,
+    status,
     proposalId,
     offset,
-    limit,
-    account
+    limit
   })
 }
 

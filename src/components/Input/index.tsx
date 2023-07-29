@@ -227,6 +227,9 @@ export default function Input({
           placeholder={placeholder}
           inputRef={input => input && focused && input.focus()}
           onChange={handleChange}
+          onKeyDown={(event: any) => {
+            if (event.key === 'Enter') event.preventDefault()
+          }}
           onBlur={e => {
             setHideFormatWrapper(false)
             if (type === 'url' && errSet) {
