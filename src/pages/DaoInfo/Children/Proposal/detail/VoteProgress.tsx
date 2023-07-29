@@ -163,6 +163,7 @@ export default function VoteProgress({
                 <BlackButton
                   height="36px"
                   disabled={
+                    !account ||
                     proposalInfo.yourVotes === 0 ||
                     proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
                     proposalInfo.status === 'Soon' ||
