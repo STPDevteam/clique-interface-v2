@@ -62,7 +62,7 @@ export default function VoteProgress({
     `${account}_Chain_Proposal${proposalInfo.proposalId}`
   )
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId, account)
+  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId)
   const userVote = useMemo(() => {
     if (!proposalVoteList.length) return
     return proposalVoteList
@@ -116,8 +116,8 @@ export default function VoteProgress({
                 )}
               </Box>
 
-              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && userVote?.length && account ? (
-                userVote.filter(v => v.optionId === item.optionId && v.status === VoteStatus.SUCCESS).length ? (
+              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && account ? (
+                userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.SUCCESS).length ? (
                   <Typography
                     sx={{
                       fontFamily: 'Inter',
@@ -134,7 +134,7 @@ export default function VoteProgress({
                       return null
                     })}
                   </Typography>
-                ) : userVote.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
+                ) : userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
                   <BlackButton
                     height="36px"
                     disabled={isVoting || isVoteSuccess}
@@ -163,6 +163,7 @@ export default function VoteProgress({
                 <BlackButton
                   height="36px"
                   disabled={
+                    !account ||
                     proposalInfo.yourVotes === 0 ||
                     proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
                     proposalInfo.status === 'Soon' ||

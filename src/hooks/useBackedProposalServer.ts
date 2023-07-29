@@ -22,6 +22,7 @@ import { useActiveWeb3React } from 'hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import ReactGA from 'react-ga4'
 import { toast } from 'react-toastify'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 export interface ProposalListBaseProp {
   v1V2ChainId: ChainId
@@ -353,7 +354,7 @@ export function useAddGovToken() {
 }
 
 export function useProposalDetailsInfo(proposalId: number, refresh: number) {
-  // const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<useProposalDetailInfoProps>()
 
@@ -375,7 +376,7 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
         console.error('useGetProposalDetail', error)
       }
     })()
-  }, [proposalId, refresh])
+  }, [proposalId, refresh, userSignature])
 
   const ret = useMemo(() => {
     if (!result) return undefined
@@ -409,7 +410,10 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
   return snapshot
 }
 
-export function useProposalVoteList(proposalId: number, account?: string | undefined | null) {
+export function useProposalVoteList(proposalId: number) {
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
+
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -448,7 +452,7 @@ export function useProposalVoteList(proposalId: number, account?: string | undef
         console.error('useProposalVoteList', error)
       }
     })()
-  }, [account, currentPage, proposalId, upDate])
+  }, [account, currentPage, proposalId, upDate, userSignature])
 
   return {
     loading: loading,
