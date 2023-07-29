@@ -192,7 +192,7 @@ export default function VoteProgress({
 
 export function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
   const { hideModal } = useModal()
-  const { result: proposalVoteList, page } = useProposalVoteList(proposalId, true)
+  const { result: proposalVoteList, page } = useProposalVoteList(proposalId, VoteStatus.SUCCESS, true)
   const history = useHistory()
 
   const userVoteList = useMemo(() => {
