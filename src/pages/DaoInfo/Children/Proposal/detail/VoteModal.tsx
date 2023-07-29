@@ -94,10 +94,7 @@ function VoteModalFunc({
   const voteApplicationModal = useModalOpen(ApplicationModal.VOTE)
   const proposalVoteCallback = useProposalVoteCallback()
 
-  const { result: userVote, setUpDateVoteList: setCurUpDateVoteList } = useProposalVoteList(
-    proposalInfo.proposalId,
-    account
-  )
+  const { result: userVote, setUpDateVoteList: setCurUpDateVoteList } = useProposalVoteList(proposalInfo.proposalId)
   const refreshCallback = useCallback(() => {
     setTimeout(() => {
       setUpDateVoteList(Math.random())
