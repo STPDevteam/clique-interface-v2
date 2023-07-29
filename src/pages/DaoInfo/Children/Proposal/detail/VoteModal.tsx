@@ -11,9 +11,10 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { Dots } from 'theme/components'
 import {
+  VoteListProp,
   useProposalDetailInfoProps,
   useProposalVoteCallback,
-  useProposalVoteList,
+  // useProposalVoteList,
   useUpChainProposalVoteCallback
 } from 'hooks/useBackedProposalServer'
 import { toast } from 'react-toastify'
@@ -32,11 +33,6 @@ const StyledBody = styled(Box)({
   padding: '40px 32px'
 })
 
-// const Text = styled(Typography)(({ color }: { color?: string }) => ({
-//   fontSize: 14,
-//   fontWeight: 600,
-//   color: color || '#3F5170'
-// }))
 const TitleStyle = styled(Typography)(() => ({
   fontSize: 14,
   fontWeight: 500,
@@ -48,12 +44,14 @@ export default function VoteModal({
   refresh,
   proposalInfo,
   proposalOptions,
-  setUpDateVoteList
+  setUpDateVoteList,
+  proposalVoteList
 }: {
   proposalInfo: useProposalDetailInfoProps
   proposalOptions: number
   refresh: Dispatch<SetStateAction<number>>
   setUpDateVoteList: Dispatch<SetStateAction<number>>
+  proposalVoteList: VoteListProp[]
 }) {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
@@ -66,6 +64,7 @@ export default function VoteModal({
       // voteProposalSign={daoInfo.governance[0]}
       proposalInfo={proposalInfo}
       proposalOptions={proposalOptions}
+      userVoteList={proposalVoteList}
     />
   )
 }
@@ -77,7 +76,8 @@ function VoteModalFunc({
   myVotes,
   myAlreadyVotes,
   // voteProposalSign,
-  proposalOptions
+  proposalOptions,
+  userVoteList
 }: {
   refresh: Dispatch<SetStateAction<number>>
   setUpDateVoteList: Dispatch<SetStateAction<number>>
@@ -86,35 +86,27 @@ function VoteModalFunc({
   myVotes: number
   myAlreadyVotes: number
   proposalOptions: number
+  userVoteList?: VoteListProp[]
 }) {
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const voteModalToggle = useVoteModalToggle()
-  const voteApplicationModal = useModalOpen(ApplicationModal.VOTE)
   const proposalVoteCallback = useProposalVoteCallback()
 
-  const { result: userVote, setUpDateVoteList: setCurUpDateVoteList } = useProposalVoteList(proposalInfo.proposalId)
   const refreshCallback = useCallback(() => {
     setTimeout(() => {
       setUpDateVoteList(Math.random())
       refresh(Math.random())
-      setCurUpDateVoteList(Math.random())
     })
-  }, [refresh, setCurUpDateVoteList, setUpDateVoteList])
+  }, [refresh, setUpDateVoteList])
 
   const { upChainProposalCallBack } = useUpChainProposalVoteCallback(refreshCallback)
 
-  useEffect(() => {
-    if (voteApplicationModal) {
-      setCurUpDateVoteList(Math.random())
-    }
-  }, [setCurUpDateVoteList, voteApplicationModal, voteModalToggle])
-
   const isVoted = useMemo(() => {
-    if (userVote?.length) return true
+    if (userVoteList?.length) return true
     return false
-  }, [userVote])
+  }, [userVoteList])
 
   const isUpChain = useMemo(() => {
     return proposalInfo.isChain
@@ -158,7 +150,7 @@ function VoteModalFunc({
           return item.optionId
         })
     })
-  }, [vote, voteList, userVote])
+  }, [vote, voteList, userVoteList])
 
   useEffect(() => {
     if (proposalInfo.votingType === VotingTypes.SINGLE) {
@@ -185,13 +177,14 @@ function VoteModalFunc({
           }
           refresh(Math.random())
           voteModalToggle()
+          refreshCallback()
           toast.success('Vote success')
         })
         .catch(err => {
           toast.error(err.msg || 'Network error')
         })
     }
-  }, [myVotes, proposalOptions, proposalVoteCallback, refresh, singLe, voteList, voteModalToggle])
+  }, [myVotes, proposalOptions, proposalVoteCallback, refresh, refreshCallback, singLe, voteList, voteModalToggle])
 
   const upChainProposalVoteCallback = useCallback(() => {
     {
@@ -206,14 +199,14 @@ function VoteModalFunc({
               }
             ]
           : isVoted
-          ? (userVote?.map(v => ({ proposalId: v.optionId, votes: v.votes })).filter(Boolean) as any)
+          ? (userVoteList?.map(v => ({ proposalId: v.optionId, votes: v.votes })).filter(Boolean) as any)
           : voteList.filter(v => v.votes !== 0),
         proposalInfo.proposalId,
-        singLe ? [proposalOptions] : isVoted ? (userVote?.map(v => v.optionId) as number[]) : voteId,
+        singLe ? [proposalOptions] : isVoted ? (userVoteList?.map(v => v.optionId) as number[]) : voteId,
         singLe
           ? [myVotes]
           : isVoted
-          ? (userVote?.map(v => v.votes) as number[])
+          ? (userVoteList?.map(v => v.votes) as number[])
           : voteList.map(v => v.votes).filter(v => v !== 0),
         isVoted
       )
@@ -250,7 +243,7 @@ function VoteModalFunc({
     showModal,
     singLe,
     upChainProposalCallBack,
-    userVote,
+    userVoteList,
     voteId,
     voteList
   ])
@@ -342,7 +335,7 @@ function VoteModalFunc({
                 </Typography>
                 <Typography color={'#3F5170'} fontSize={20} fontWeight={700} mt={8}>
                   {isVoted
-                    ? formatNumberWithCommas((userVote?.length && userVote[0].votes.toString()) || 0)
+                    ? formatNumberWithCommas((userVoteList?.length && userVoteList[0].votes.toString()) || 0)
                     : (myVotes &&
                         formatNumberWithCommas(
                           new BigNumber(myVotes).minus(new BigNumber(myAlreadyVotes)).toString()
@@ -393,7 +386,7 @@ function VoteModalFunc({
                   <Slider
                     disabled={isVoted}
                     step={1}
-                    value={userVote?.find(v => v.optionId === item.optionId)?.votes || vote[index] || 0}
+                    value={userVoteList?.find(v => v.optionId === item.optionId)?.votes || vote[index] || 0}
                     onChange={(_, newValue) => {
                       const _newValue = newValue as number
                       let used = 0
@@ -418,7 +411,7 @@ function VoteModalFunc({
                     type="number"
                     disabled={isVoted}
                     value={
-                      userVote?.find(v => v.optionId === item.optionId)?.votes?.toString() ||
+                      userVoteList?.find(v => v.optionId === item.optionId)?.votes?.toString() ||
                       (vote[index] ? vote[index].toString() : '0')
                     }
                     maxWidth={90}

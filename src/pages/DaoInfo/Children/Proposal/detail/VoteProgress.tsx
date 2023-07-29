@@ -8,7 +8,7 @@ import { useProposalDetailInfoProps, useProposalVoteList, VoteStatus } from 'hoo
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
@@ -67,12 +67,6 @@ export default function VoteProgress({
     if (!proposalVoteList.length) return
     return proposalVoteList
   }, [proposalVoteList])
-
-  useEffect(() => {
-    if (proposalInfo.alreadyVoted) {
-      setUpDateVoteList(Math.random())
-    }
-  }, [proposalInfo.alreadyVoted, setUpDateVoteList])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -190,6 +184,7 @@ export default function VoteProgress({
         proposalInfo={proposalInfo}
         proposalOptions={optionId}
         setUpDateVoteList={setUpDateVoteList}
+        proposalVoteList={proposalVoteList}
       />
     </VoteWrapper>
   )
