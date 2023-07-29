@@ -6,6 +6,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
 import { addTransaction } from './actions'
 import { TransactionDetails } from './reducer'
+import { SUPPORT_NETWORK_CHAIN_IDS } from 'constants/chain'
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
@@ -44,6 +45,11 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
 
   return chainId ? state[chainId] ?? {} : {}
+}
+
+export function useAllChainTransactions() {
+  const state = useSelector<AppState, AppState['transactions']>(state => state.transactions)
+  return state
 }
 
 export function useIsTransactionPending(transactionHash?: string): boolean {
@@ -124,4 +130,22 @@ export function useUserHasSubmittedClaim(
     claimedSubmitSuccess: Boolean(claimedSuccess),
     claimedSuccess
   }
+}
+
+export function useUserVoteHasSubmitted(key?: string): boolean | undefined {
+  const allTransactions = useAllChainTransactions()
+
+  const summitted = useMemo(() => {
+    for (const chainId of SUPPORT_NETWORK_CHAIN_IDS) {
+      const transactions = allTransactions[chainId]
+      const txnIndex = Object.keys(transactions).find(hash => {
+        const tx = transactions[hash]
+        return tx.claim && tx.claim.recipient.toLowerCase() === key?.toLowerCase()
+      })
+      if (txnIndex) return true
+    }
+    return false
+  }, [allTransactions, key])
+
+  return summitted
 }
