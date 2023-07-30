@@ -281,7 +281,7 @@ export function useUpChainProposalVoteCallback(callback?: () => void) {
           console.log(`${account}_Chain_proposal${proposalId}`)
 
           addTransaction(response, {
-            summary: `Create on chain proposal`,
+            summary: `On-chain success`,
             claim: { recipient: `${account}_Chain_proposal${proposalId}` }
           })
           return {
