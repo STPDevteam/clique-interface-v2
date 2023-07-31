@@ -462,7 +462,7 @@ function VoteModalFunc({
         )}
 
         {voteBtn.error && (
-          <Alert sx={{ marginTop: 15 }} severity="error">
+          <Alert sx={{ marginTop: 15 }} severity={voteBtn.disabled ? 'error' : 'warning'}>
             {voteBtn.error}
           </Alert>
         )}
