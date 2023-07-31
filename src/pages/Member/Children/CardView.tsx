@@ -25,6 +25,12 @@ export const JobsType: any = {
   2: 'Admin'
 }
 
+export enum DaoLevel {
+  CREATOR = 0,
+  OWNER = 1,
+  ADMIN = 2
+}
+
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
@@ -199,6 +205,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
             </Box>
             {hoverIndex === index &&
               (role === 'superAdmin' || role === 'owner') &&
+              item.jobsLevel !== DaoLevel.CREATOR &&
               account &&
               account.toLowerCase() !== item.account.toLowerCase() && (
                 <Box

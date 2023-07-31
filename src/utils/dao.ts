@@ -159,6 +159,24 @@ export function formatMillion(value: number, fractionDigits = 1) {
   return Number(value.toFixed(fractionDigits)).toLocaleString()
 }
 
+export function formatNumber(num: string | number) {
+  const bigNum = new BigNumber(num)
+
+  if (bigNum.isGreaterThan(1_000_000)) {
+    return `${bigNum
+      .div(1_000_000)
+      .toString()
+      .slice(0, 4)}M`
+  } else if (bigNum.isGreaterThan(1_000)) {
+    return `${bigNum
+      .div(1_000)
+      .toString()
+      .slice(0, 4)}K`
+  } else {
+    return bigNum.toString()
+  }
+}
+
 export function getSocialUrlEnd(link: string) {
   const arr = link.split('/').reverse()
   return arr[0] || arr[1] || ''
