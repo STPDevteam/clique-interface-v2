@@ -105,7 +105,7 @@ function VoteModalFunc({
     setTimeout(() => {
       setUpDateVoteList(Math.random())
       refresh(Math.random())
-    }, 1000)
+    })
   }, [refresh, setUpDateVoteList])
 
   const { upChainProposalCallBack } = useUpChainProposalVoteCallback(refreshCallback)
