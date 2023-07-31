@@ -163,9 +163,9 @@ export function formatNumber(num: string | number) {
   const bigNum = new BigNumber(num.toString())
   const formattedNumber = bigNum.decimalPlaces(2, BigNumber.ROUND_DOWN)
 
-  if (bigNum.isGreaterThan(1_000_000)) {
+  if (bigNum.isGreaterThan(1_000_000) || bigNum.isEqualTo(1_000_000)) {
     return formattedNumber.div(1_000_000).toFormat(2, BigNumber.ROUND_DOWN) + 'M'
-  } else if (bigNum.isGreaterThan(1_000)) {
+  } else if (bigNum.isGreaterThan(1_000) || bigNum.isEqualTo(1_000)) {
     return formattedNumber.div(1_000).toFormat(2, BigNumber.ROUND_DOWN) + 'K'
   } else {
     return formattedNumber.toFixed()
