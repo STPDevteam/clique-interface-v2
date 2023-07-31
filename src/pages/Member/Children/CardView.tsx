@@ -19,16 +19,16 @@ import { ReactComponent as DiscordGray } from 'assets/svg/discord_gray.svg'
 import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
 import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
 
-export const JobsType: any = {
+export const JobsType: { [key: number]: string } = {
   0: 'Creator',
   1: 'Owner',
   2: 'Admin'
 }
 
 export enum DaoLevel {
-  CREATOR = 0,
-  OWNER = 1,
-  ADMIN = 2
+  CREATOR,
+  OWNER,
+  ADMIN
 }
 
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
@@ -131,10 +131,10 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 '& button': {
                   fontWeight: 500
                 },
-                '& .Owner': {
+                '& .Creator': {
                   backgroundColor: '#0049C6'
                 },
-                '& .superAdmin': {
+                '& .Owner': {
                   backgroundColor: '#97B7EF'
                 },
                 '& .Admin': {
