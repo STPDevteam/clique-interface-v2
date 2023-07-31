@@ -151,7 +151,7 @@ export function isValidAmount(value: string | number | undefined) {
 
 export function formatMillion(value: number, fractionDigits = 1) {
   if (value / 1_000_000 >= 1) {
-    return Number((value / 1_000_000).toFixed(fractionDigits)).toLocaleString() + 'm'
+    return Number((value / 1_000_000).toFixed(fractionDigits)).toLocaleString() + 'M'
   }
   if (value / 1_000 >= 1) {
     return Number((value / 1_000).toFixed(fractionDigits)).toLocaleString() + 'k'
