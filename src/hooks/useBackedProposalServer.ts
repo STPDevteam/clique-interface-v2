@@ -260,12 +260,11 @@ export function useUpChainProposalVoteCallback(callback?: () => void) {
         toVote(voteParams)
           .then(res => {
             setResult(res)
+            callback && callback()
           })
           .catch(err => err)
       }
       if (result && result.data.code !== 200 && !isVoted) return toast.error(result.data.msg || 'Vote error')
-
-      callback && callback()
 
       if (!contract) throw new Error('none contract')
       const args = [proposalId, optionIds, amounts]
@@ -413,7 +412,6 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
 export function useProposalVoteList(proposalId: number, status?: string, getAll?: boolean) {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)

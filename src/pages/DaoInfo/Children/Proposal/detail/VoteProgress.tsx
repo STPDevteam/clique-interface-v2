@@ -1,4 +1,4 @@
-import { Box, Link, Stack, styled, Typography } from '@mui/material'
+import { Box, Link, Stack, styled, Typography, Tooltip } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
@@ -8,7 +8,7 @@ import { useProposalDetailInfoProps, useProposalVoteList, VoteStatus } from 'hoo
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
@@ -17,7 +17,7 @@ import { BlackButton } from 'components/Button/Button'
 import { useVoteModalToggle } from 'state/application/hooks'
 // import { VotingTypes } from 'state/buildingGovDao/actions'
 import VoteModal from './VoteModal'
-import { formatMillion } from 'utils/dao'
+import { formatNumber } from 'utils/dao'
 import { useActiveWeb3React } from 'hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
@@ -63,12 +63,28 @@ export default function VoteProgress({
   const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
     `${account}_Chain_Proposal${proposalInfo.proposalId}`
   )
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
   const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId)
   const userVote = useMemo(() => {
     if (!proposalVoteList.length) return
     return proposalVoteList
   }, [proposalVoteList])
+
+  useEffect(() => {
+    if (timeRefresh === -1) {
+      toTimeRefresh()
+      return
+    }
+    if (isVoteSuccess && !proposalVoteList.find(v => v.status === VoteStatus.SUCCESS)) {
+      setUpDateVoteList(Math.random())
+      refresh(Math.random())
+      toTimeRefresh()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh, isVoteSuccess])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -102,7 +118,7 @@ export default function VoteProgress({
                 <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
                   <Typography mb={5}>{item.optionContent}</Typography>
                   <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
-                    {formatMillion(item.votes, 2)}, {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%
+                    {formatNumber(item.votes)}, {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
                 {item.votes === 0 ? (
@@ -131,36 +147,75 @@ export default function VoteProgress({
                     })}
                   </Typography>
                 ) : userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
-                  <BlackButton
-                    height="36px"
-                    disabled={isVoting || isVoteSuccess}
-                    onClick={() => {
-                      setOptionId(proposalOptions[index].optionId)
-                      voteModalToggle()
-                    }}
-                    width="125px"
-                  >
+                  <>
                     {isVoting ? (
-                      <>
+                      <BlackButton disabled height="36px" width="125px">
                         Vote
                         <Dots />
-                      </>
+                      </BlackButton>
                     ) : isVoteSuccess ? (
-                      <>
-                        Confirm
-                        <Dots />
-                      </>
+                      <Tooltip title="Processing...Please wait" placement="top">
+                        <Box
+                          sx={{
+                            height: 36,
+                            width: 125,
+                            backgroundColor: '#b4b2b2',
+                            color: '#fff',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            font: '700 14px/20px "Inter"',
+                            borderRadius: '8px',
+                            userSelect: 'none'
+                          }}
+                        >
+                          Confirm
+                          <Dots />
+                        </Box>
+                      </Tooltip>
                     ) : (
-                      'Vote'
+                      <BlackButton
+                        height="36px"
+                        disabled={
+                          proposalInfo.status === 'Soon' ||
+                          proposalInfo.status === 'Cancel' ||
+                          proposalInfo.status === 'Failed' ||
+                          proposalInfo.status === 'Success'
+                        }
+                        onClick={() => {
+                          setOptionId(proposalOptions[index].optionId)
+                          voteModalToggle()
+                        }}
+                        width="125px"
+                      >
+                        Vote
+                      </BlackButton>
                     )}
-                  </BlackButton>
+                  </>
                 ) : null
+              ) : !account || proposalInfo.yourVotes === 0 ? (
+                <Tooltip title="No available votes" placement="top">
+                  <Box
+                    sx={{
+                      height: 36,
+                      width: 125,
+                      backgroundColor: '#b4b2b2',
+                      color: '#fff',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      font: '700 14px/20px "Inter"',
+                      borderRadius: '8px',
+                      userSelect: 'none'
+                    }}
+                  >
+                    Vote
+                  </Box>
+                </Tooltip>
               ) : (
                 <BlackButton
                   height="36px"
                   disabled={
-                    !account ||
-                    proposalInfo.yourVotes === 0 ||
                     proposalInfo.yourVotes === proposalInfo.alreadyVoted ||
                     proposalInfo.status === 'Soon' ||
                     proposalInfo.status === 'Cancel' ||
