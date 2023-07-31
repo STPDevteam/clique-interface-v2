@@ -160,20 +160,15 @@ export function formatMillion(value: number, fractionDigits = 1) {
 }
 
 export function formatNumber(num: string | number) {
-  const bigNum = new BigNumber(num)
+  const bigNum = new BigNumber(num.toString())
+  const formattedNumber = bigNum.decimalPlaces(2, BigNumber.ROUND_DOWN)
 
   if (bigNum.isGreaterThan(1_000_000)) {
-    return `${bigNum
-      .div(1_000_000)
-      .toString()
-      .slice(0, 4)}M`
+    return formattedNumber.div(1_000_000).toFormat(2, BigNumber.ROUND_DOWN) + 'M'
   } else if (bigNum.isGreaterThan(1_000)) {
-    return `${bigNum
-      .div(1_000)
-      .toString()
-      .slice(0, 4)}K`
+    return formattedNumber.div(1_000).toFormat(2, BigNumber.ROUND_DOWN) + 'K'
   } else {
-    return bigNum.toString()
+    return formattedNumber.toFixed()
   }
 }
 
