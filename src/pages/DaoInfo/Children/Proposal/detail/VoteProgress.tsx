@@ -8,7 +8,7 @@ import { useProposalDetailInfoProps, useProposalVoteList, VoteStatus } from 'hoo
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
-import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
@@ -63,12 +63,28 @@ export default function VoteProgress({
   const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
     `${account}_Chain_Proposal${proposalInfo.proposalId}`
   )
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
+
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
   const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId)
   const userVote = useMemo(() => {
     if (!proposalVoteList.length) return
     return proposalVoteList
   }, [proposalVoteList])
+
+  useEffect(() => {
+    if (timeRefresh === -1) {
+      toTimeRefresh()
+      return
+    }
+    if (isVoteSuccess && !proposalVoteList.find(v => v.status === VoteStatus.SUCCESS)) {
+      setUpDateVoteList(Math.random())
+      refresh(Math.random())
+      toTimeRefresh()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh, isVoteSuccess])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>

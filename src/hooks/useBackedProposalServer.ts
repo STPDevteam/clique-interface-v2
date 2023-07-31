@@ -413,7 +413,6 @@ export function useProposalSnapshot(chainId: ChainId, daoAddress: string, propos
 export function useProposalVoteList(proposalId: number, status?: string, getAll?: boolean) {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
