@@ -133,7 +133,14 @@ export default function VoteProgress({
                 ) : userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
                   <BlackButton
                     height="36px"
-                    disabled={isVoting || isVoteSuccess}
+                    disabled={
+                      isVoting ||
+                      isVoteSuccess ||
+                      proposalInfo.status === 'Soon' ||
+                      proposalInfo.status === 'Cancel' ||
+                      proposalInfo.status === 'Failed' ||
+                      proposalInfo.status === 'Success'
+                    }
                     onClick={() => {
                       setOptionId(proposalOptions[index].optionId)
                       voteModalToggle()
