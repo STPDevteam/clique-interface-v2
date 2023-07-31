@@ -102,7 +102,7 @@ export default function VoteProgress({
                 <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
                   <Typography mb={5}>{item.optionContent}</Typography>
                   <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
-                    {formatMillion(item.votes)}, {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%
+                    {formatMillion(item.votes, 2)}, {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
                 {item.votes === 0 ? (

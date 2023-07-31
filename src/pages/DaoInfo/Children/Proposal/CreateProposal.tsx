@@ -24,6 +24,7 @@ import { toast } from 'react-toastify'
 import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
 // import { ChainListMap } from 'constants/chain'
 // import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
@@ -89,6 +90,7 @@ export default function CreateProposal() {
 function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
   const theme = useTheme()
   const history = useHistory()
+  const userSignature = useUserInfo()
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const [loading, setLoading] = useState(false)
@@ -125,7 +127,13 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
     text: string
     name: string
   } = useMemo(() => {
-    console.log(description)
+    if (!userSignature) {
+      return {
+        text: 'Please Connect wallet first',
+        name: ''
+      }
+    }
+
     if (!title.trim()) {
       return {
         text: 'Title required',
@@ -178,7 +186,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       text: '',
       name: ''
     }
-  }, [daoInfo.governance, description, endTime, myBalance, startTime, title, voteOption])
+  }, [daoInfo.governance, description, endTime, myBalance, startTime, title, userSignature, voteOption])
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoId}/proposal`)
