@@ -136,7 +136,7 @@ function VoteModalFunc({
   const [isTotalVote, setIsTotalVote] = useState<number>(0)
   const [singLe, setSingLe] = useState<boolean>(false)
   const { showModal, hideModal } = useModal()
-
+  const [voteLoading, setVoteLoading] = useState<boolean>(false)
   // console.log(voteProposalSign)
 
   const perArrCallback = useCallback(
@@ -193,9 +193,11 @@ function VoteModalFunc({
           voteModalToggle()
           refreshCallback()
           toast.success('Vote success')
+          setVoteLoading(false)
         })
         .catch(err => {
           toast.error(err.msg || 'Network error')
+          setVoteLoading(false)
         })
     }
   }, [myVotes, proposalOptionId, proposalVoteCallback, refresh, refreshCallback, singLe, voteList, voteModalToggle])
@@ -492,7 +494,7 @@ function VoteModalFunc({
               onClick={() => {
                 voteModalToggle()
                 if (myVotes - isTotalVote > 0 && !singLe && !isVoted) {
-                  showModal(<ModifyModal upChainCallback={upChainProposalVoteCallback} />)
+                  showModal(<ModifyModal Callback={upChainProposalVoteCallback} />)
                   return
                 } else {
                   upChainProposalVoteCallback()
@@ -513,11 +515,20 @@ function VoteModalFunc({
             <BlackButton
               width="200px"
               height="40px"
-              disabled={voteBtn.disabled}
-              onClick={voteBtn.handler}
+              disabled={voteBtn.disabled || voteLoading}
+              onClick={() => {
+                if (myVotes - isTotalVote > 0 && !singLe && !isVoted) {
+                  voteModalToggle()
+                  showModal(<ModifyModal Callback={onProposalVoteCallback} />)
+                  return
+                } else {
+                  onProposalVoteCallback()
+                  setVoteLoading(true)
+                }
+              }}
               borderRadius="8px"
             >
-              {isVoting ? (
+              {voteLoading ? (
                 <>
                   Voting
                   <Dots />
@@ -575,7 +586,7 @@ function VoteModalFunc({
 //   )
 // }
 
-function ModifyModal({ upChainCallback }: { upChainCallback: () => void }) {
+function ModifyModal({ Callback }: { Callback: () => void }) {
   const { hideModal } = useModal()
   const voteModalToggle = useVoteModalToggle()
   return (
@@ -618,7 +629,7 @@ function ModifyModal({ upChainCallback }: { upChainCallback: () => void }) {
             borderRadius="8px"
             onClick={() => {
               hideModal()
-              upChainCallback()
+              Callback()
             }}
           >
             Continue
