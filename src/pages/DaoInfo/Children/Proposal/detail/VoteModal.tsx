@@ -26,6 +26,7 @@ import useModal from 'hooks/useModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import { ProposalOptionProp } from 'hooks/useProposalInfo'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -51,11 +52,13 @@ export default function VoteModal({
   refresh,
   proposalInfo,
   proposalOptions,
+  proposalOptionId,
   setUpDateVoteList,
   proposalVoteList
 }: {
   proposalInfo: useProposalDetailInfoProps
-  proposalOptions: number
+  proposalOptions: ProposalOptionProp[]
+  proposalOptionId: number
   refresh: Dispatch<SetStateAction<number>>
   setUpDateVoteList: Dispatch<SetStateAction<number>>
   proposalVoteList: VoteListProp[]
@@ -69,8 +72,9 @@ export default function VoteModal({
       myVotes={proposalInfo.yourVotes}
       myAlreadyVotes={proposalInfo.alreadyVoted}
       // voteProposalSign={daoInfo.governance[0]}
-      proposalInfo={proposalInfo}
       proposalOptions={proposalOptions}
+      proposalInfo={proposalInfo}
+      proposalOptionId={proposalOptionId}
       userVoteList={proposalVoteList}
     />
   )
@@ -79,20 +83,22 @@ export default function VoteModal({
 function VoteModalFunc({
   refresh,
   setUpDateVoteList,
-  proposalInfo,
   myVotes,
   myAlreadyVotes,
-  // voteProposalSign,
   proposalOptions,
+  proposalInfo,
+  // voteProposalSign,
+  proposalOptionId,
   userVoteList
 }: {
   refresh: Dispatch<SetStateAction<number>>
   setUpDateVoteList: Dispatch<SetStateAction<number>>
-  proposalInfo: useProposalDetailInfoProps
   // voteProposalSign: govList
   myVotes: number
   myAlreadyVotes: number
-  proposalOptions: number
+  proposalOptions: ProposalOptionProp[]
+  proposalInfo: useProposalDetailInfoProps
+  proposalOptionId: number
   userVoteList?: VoteListProp[]
 }) {
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
@@ -172,7 +178,7 @@ function VoteModalFunc({
         singLe
           ? [
               {
-                optionId: proposalOptions,
+                optionId: proposalOptionId,
                 votes: myVotes
               }
             ]
@@ -192,32 +198,32 @@ function VoteModalFunc({
           toast.error(err.msg || 'Network error')
         })
     }
-  }, [myVotes, proposalOptions, proposalVoteCallback, refresh, refreshCallback, singLe, voteList, voteModalToggle])
+  }, [myVotes, proposalOptionId, proposalVoteCallback, refresh, refreshCallback, singLe, voteList, voteModalToggle])
 
   const upChainProposalVoteCallback = useCallback(() => {
+    const voteParams = singLe
+      ? [
+          {
+            optionId: proposalOptionId,
+            votes: myVotes
+          }
+        ]
+      : isVoted
+      ? (userVoteList?.map(v => ({ proposalId: v.optionId, votes: v.votes })).filter(Boolean) as any)
+      : voteList.filter(v => v.votes !== 0)
+
+    const optionIds = singLe ? [proposalOptionId] : isVoted ? (userVoteList?.map(v => v.optionId) as number[]) : voteId
+
+    const amounts = singLe
+      ? [myVotes]
+      : isVoted
+      ? (userVoteList?.map(v => v.votes) as number[])
+      : voteList.map(v => v.votes).filter(v => v !== 0)
+
     {
       showModal(<TransacitonPendingModal />)
 
-      upChainProposalCallBack(
-        singLe
-          ? [
-              {
-                optionId: proposalOptions,
-                votes: myVotes
-              }
-            ]
-          : isVoted
-          ? (userVoteList?.map(v => ({ proposalId: v.optionId, votes: v.votes })).filter(Boolean) as any)
-          : voteList.filter(v => v.votes !== 0),
-        proposalInfo.proposalId,
-        singLe ? [proposalOptions] : isVoted ? (userVoteList?.map(v => v.optionId) as number[]) : voteId,
-        singLe
-          ? [myVotes]
-          : isVoted
-          ? (userVoteList?.map(v => v.votes) as number[])
-          : voteList.map(v => v.votes).filter(v => v !== 0),
-        isVoted
-      )
+      upChainProposalCallBack(voteParams, proposalInfo.proposalId, optionIds, amounts, isVoted)
         .then(res => {
           hideModal()
           showModal(
@@ -246,7 +252,7 @@ function VoteModalFunc({
     isVoted,
     myVotes,
     proposalInfo.proposalId,
-    proposalOptions,
+    proposalOptionId,
     refresh,
     showModal,
     singLe,
@@ -396,14 +402,14 @@ function VoteModalFunc({
               </Typography>
             </Box>
 
-            {proposalInfo.options.map((item, index) => (
+            {proposalOptions.map((item, index) => (
               <Box sx={{ mt: 15 }} key={item.optionId}>
                 <TitleStyle>{item.optionContent}</TitleStyle>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
                   <Slider
                     disabled={isVoted}
                     step={1}
-                    value={userVoteList?.find(v => v.optionId === item.optionId)?.votes || vote[index] || 0}
+                    value={item.userVote.votes || vote[index] || 0}
                     onChange={(_, newValue) => {
                       const _newValue = newValue as number
                       let used = 0
@@ -427,10 +433,7 @@ function VoteModalFunc({
                   <Input
                     type="number"
                     disabled={isVoted}
-                    value={
-                      userVoteList?.find(v => v.optionId === item.optionId)?.votes?.toString() ||
-                      (vote[index] ? vote[index].toString() : '0')
-                    }
+                    value={item.userVote.votes?.toString() || (vote[index] ? vote[index].toString() : '0')}
                     maxWidth={90}
                     height={34}
                     max={myVotes}

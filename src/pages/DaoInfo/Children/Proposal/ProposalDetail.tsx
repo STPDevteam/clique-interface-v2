@@ -2,14 +2,14 @@ import { Box, Grid, Typography } from '@mui/material'
 import Back from 'components/Back'
 import Loading from 'components/Loading'
 import { routes } from 'constants/routes'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import DetailContent from './detail'
 // import DetailVote from './detail/Vote'
 import VoteProgress, { VoteListModal } from './detail/VoteProgress'
 import VoteInfo from './detail/Info'
 import DaoContainer from 'components/DaoContainer'
-import { useProposalDetailsInfo } from 'hooks/useBackedProposalServer'
+import { useProposalDetailsInfo, useProposalVoteList } from 'hooks/useBackedProposalServer'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { formatNumberWithCommas } from 'utils'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
@@ -47,8 +47,29 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
   useEffect(() => {
     setRand(Math.random())
   }, [account])
+  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId)
 
   const allVotes = proposalDetailInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
+
+  const userVoteList = useMemo(() => {
+    const arr = [] as any
+
+    proposalDetailInfo?.options.map(item => {
+      arr.push({
+        optionContent: item.optionContent,
+        optionId: item.optionId,
+        optionIndex: item.optionIndex,
+        votes: item.votes,
+        userVote: {
+          optionContent: proposalVoteList.find(v => v.optionId == item.optionId)?.optionContent,
+          account: proposalVoteList.find(v => v.optionId == item.optionId)?.voter,
+          votes: proposalVoteList.find(v => v.optionId == item.optionId)?.votes,
+          status: proposalVoteList.find(v => v.optionId == item.optionId)?.status
+        }
+      })
+    })
+    return arr
+  }, [proposalDetailInfo?.options, proposalVoteList])
 
   return proposalDetailInfo ? (
     <Box>
@@ -68,7 +89,9 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
           <Grid item md={12} xs={12}>
             <VoteProgress
               refresh={setRand}
-              proposalOptions={proposalDetailInfo.options}
+              setUpDateVoteList={setUpDateVoteList}
+              proposalOptions={userVoteList}
+              voteList={proposalVoteList}
               proposalId={proposalId}
               proposalInfo={proposalDetailInfo}
             />

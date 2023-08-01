@@ -4,7 +4,12 @@ import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
 import { SimpleProgress } from 'components/Progress'
 import { routes } from 'constants/routes'
-import { useProposalDetailInfoProps, useProposalVoteList, VoteStatus } from 'hooks/useBackedProposalServer'
+import {
+  useProposalDetailInfoProps,
+  useProposalVoteList,
+  VoteListProp,
+  VoteStatus
+} from 'hooks/useBackedProposalServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
@@ -45,12 +50,16 @@ const StyledListText = styled(Typography)({
 
 export default function VoteProgress({
   refresh,
+  setUpDateVoteList,
   proposalOptions,
+  voteList,
   proposalId,
   proposalInfo
 }: {
   refresh: Dispatch<SetStateAction<number>>
+  setUpDateVoteList: Dispatch<SetStateAction<number>>
   proposalOptions: ProposalOptionProp[]
+  voteList: VoteListProp[]
   proposalId: number
   proposalInfo: useProposalDetailInfoProps
 }) {
@@ -59,26 +68,23 @@ export default function VoteProgress({
   const isSmDown = useBreakpoint('sm')
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
-  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
-  const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
-    `${account}_Chain_Proposal${proposalInfo.proposalId}`
-  )
+  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalId}`)
+  const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalId}`)
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
 
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  const { result: proposalVoteList, setUpDateVoteList } = useProposalVoteList(proposalId)
   const userVote = useMemo(() => {
-    if (!proposalVoteList.length) return
-    return proposalVoteList
-  }, [proposalVoteList])
+    if (!voteList.length) return
+    return voteList
+  }, [voteList])
 
   useEffect(() => {
     if (timeRefresh === -1) {
       toTimeRefresh()
       return
     }
-    if (isVoteSuccess && !proposalVoteList.find(v => v.status === VoteStatus.SUCCESS)) {
+    if (isVoteSuccess && !voteList.find(v => v.status === VoteStatus.SUCCESS)) {
       setUpDateVoteList(Math.random())
       refresh(Math.random())
       toTimeRefresh()
@@ -128,8 +134,8 @@ export default function VoteProgress({
                 )}
               </Box>
 
-              {proposalInfo.yourVotes !== 0 && proposalInfo.alreadyVoted !== 0 && account ? (
-                userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.SUCCESS).length ? (
+              {proposalInfo.alreadyVoted !== 0 && account && voteList.length ? (
+                item.userVote.status === VoteStatus.SUCCESS ? (
                   <Typography
                     sx={{
                       fontFamily: 'Inter',
@@ -146,7 +152,7 @@ export default function VoteProgress({
                       return null
                     })}
                   </Typography>
-                ) : userVote?.filter(v => v.optionId === item.optionId && v.status === VoteStatus.PENDING).length ? (
+                ) : item.userVote.status === VoteStatus.PENDING ? (
                   <>
                     {isVoting ? (
                       <BlackButton disabled height="36px" width="125px">
@@ -241,9 +247,10 @@ export default function VoteProgress({
         <VoteModal
           refresh={refresh}
           proposalInfo={proposalInfo}
-          proposalOptions={optionId}
+          proposalOptions={proposalOptions}
+          proposalOptionId={optionId}
           setUpDateVoteList={setUpDateVoteList}
-          proposalVoteList={proposalVoteList}
+          proposalVoteList={voteList}
         />
       )}
     </VoteWrapper>

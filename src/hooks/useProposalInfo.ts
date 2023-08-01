@@ -47,6 +47,12 @@ export interface ProposalOptionProp {
   optionId: number
   optionIndex: number
   votes: number
+  userVote: {
+    optionContent: string
+    account: string
+    votes: number
+    status: string
+  }
 }
 export interface ProposalDetailProp {
   status: ProposalStatus

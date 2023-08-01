@@ -234,6 +234,14 @@ export interface VoteParamsProp {
   votes: number
 }
 
+export interface VoteListProp {
+  optionContent: string
+  optionId: number
+  status: string
+  voter: string
+  votes: number
+}
+
 export function useProposalVoteCallback() {
   return useCallback(async (voteParams: VoteParamsProp[]) => {
     return toVote(voteParams)
