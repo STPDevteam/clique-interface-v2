@@ -7,7 +7,7 @@ import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVoteModalToggle } from 'state/application/hooks'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { RowCenter } from '../ProposalItem'
-import { useUserHasSubmittedClaim, useUserVoteHasSubmitted } from 'state/transactions/hooks'
+import { useUserVoteHasSubmitted } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import {
   VoteListProp,
@@ -153,11 +153,8 @@ export default function ChainVoteModal({
     return false
   }, [userVoteList])
 
-  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
   const isUpChainVoteSuccess = useUserVoteHasSubmitted(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
-  const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(
-    `${account}_Chain_Proposal${proposalInfo.proposalId}`
-  )
+
   const [vote, setVote] = useState<number[]>([])
   const [voteList, setVoteList] = useState<{ optionId: number; votes: number }[]>([])
   const [isTotalVote, setIsTotalVote] = useState<number>(0)
@@ -447,7 +444,7 @@ export default function ChainVoteModal({
               <BlackButton
                 width="200px"
                 height="40px"
-                disabled={isVoting || isVoteSuccess || voteBtn.disabled}
+                disabled={voteBtn.disabled}
                 onClick={() => {
                   voteModalToggle()
                   upChainProposalVoteCallback()
@@ -518,7 +515,9 @@ function MultiVoteSpeedOne({
 
       {proposalOptions.map((item, index) => (
         <Box sx={{ mt: 15 }} key={item.optionId}>
-          <TitleStyle>{item.optionContent}</TitleStyle>
+          <TitleStyle noWrap sx={{ maxWidth: 300 }}>
+            {item.optionContent}
+          </TitleStyle>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
             <Slider
               disabled={isVoted}
@@ -672,10 +671,10 @@ function SingleVoteSpeedOne({
           {proposalOptions.map(item => (
             <MenuItem
               key={item.optionId}
-              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170', maxWidth: 342, overflow: 'hidden' }}
               value={item.optionId}
             >
-              {item.optionContent}
+              {item.optionContent.length > 30 ? item.optionContent.slice(0, 30) + '...' : item.optionContent}
             </MenuItem>
           ))}
         </Select>

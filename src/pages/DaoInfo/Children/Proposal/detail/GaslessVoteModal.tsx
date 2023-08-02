@@ -245,7 +245,9 @@ export default function GaslessVoteModal({
 
             {proposalOptions.map((item, index) => (
               <Box sx={{ mt: 15 }} key={item.optionId}>
-                <TitleStyle>{item.optionContent}</TitleStyle>
+                <TitleStyle noWrap sx={{ maxWidth: 300 }}>
+                  {item.optionContent}
+                </TitleStyle>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 16 }}>
                   <Slider
                     step={1}

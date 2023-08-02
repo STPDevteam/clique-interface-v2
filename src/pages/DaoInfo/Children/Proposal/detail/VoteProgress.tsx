@@ -25,7 +25,7 @@ import VoteModal from './VoteModal'
 import { formatNumber } from 'utils/dao'
 import { useActiveWeb3React } from 'hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
-import { Dots } from 'theme/components'
+// import { Dots } from 'theme/components'
 import { useUserInfo } from 'state/userInfo/hooks'
 import TooltipStyle from 'components/Tooltip'
 
@@ -69,7 +69,6 @@ export default function VoteProgress({
   const isSmDown = useBreakpoint('sm')
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
-  const { claimSubmitted: isVoting } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalId}`)
   const { claimedSubmitSuccess: isVoteSuccess } = useUserHasSubmittedClaim(`${account}_Chain_Proposal${proposalId}`)
   const [timeRefresh, setTimeRefresh] = useState(-1)
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
@@ -118,9 +117,25 @@ export default function VoteProgress({
               rowGap={'5px'}
             >
               <Box display={'grid'} maxWidth={600}>
-                <Box display={'flex'} justifyContent={'space-between'} justifyItems={'center'}>
-                  <Typography mb={5}>{item.optionContent}</Typography>
-                  <Typography color={'#3F5170'} fontSize={14} fontWeight={600}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', maxWidth: 600, gap: 10 }}>
+                  <Typography
+                    mb={5}
+                    sx={{
+                      maxWidth: '440px',
+                      wordWrap: 'break-word'
+                    }}
+                  >
+                    {item.optionContent}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      textAlign: 'right'
+                    }}
+                    color={'#3F5170'}
+                    fontSize={14}
+                    fontWeight={600}
+                    whiteSpace={'nowrap'}
+                  >
                     {formatNumber(item.votes)}, {allVotes && ((item.votes / allVotes) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
@@ -223,55 +238,29 @@ export default function VoteProgress({
           }}
         >
           <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
-            You have votes pending to be on-chain and the vote takes effect after on the chain.
+            {isVoteSuccess
+              ? 'It seems that you have a voting transaction on the blockchain in progress.'
+              : 'You have votes pending to be on-chain and the vote takes effect after on the chain.'}
           </Typography>
-
-          {isVoting ? (
-            <BlackButton disabled height="36px" width="85px">
-              Vote
-              <Dots />
-            </BlackButton>
-          ) : isVoteSuccess ? (
-            <Tooltip title="Processing...Please wait" placement="top">
-              <Box
-                sx={{
-                  height: 36,
-                  width: 85,
-                  backgroundColor: '#b4b2b2',
-                  color: '#fff',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  font: '700 14px/20px "Inter"',
-                  borderRadius: '8px',
-                  userSelect: 'none'
-                }}
-              >
-                Confirm
-                <Dots />
-              </Box>
-            </Tooltip>
-          ) : (
-            <BlackButton
-              style={{
-                height: 36,
-                width: 85,
-                fontWeight: 500,
-                color: '#C5954F',
-                backgroundColor: '#fff !important',
-                border: '1px solid #F1DEAB !important',
-                ':hover': {
-                  backgroundColor: '#F5F5F5 !important',
-                  color: '#9F8644'
-                }
-              }}
-              onClick={() => {
-                voteModalToggle()
-              }}
-            >
-              PUSH
-            </BlackButton>
-          )}
+          <BlackButton
+            style={{
+              height: 36,
+              width: 85,
+              fontWeight: 500,
+              color: '#C5954F',
+              backgroundColor: '#fff !important',
+              border: '1px solid #F1DEAB !important',
+              ':hover': {
+                backgroundColor: '#F5F5F5 !important',
+                color: '#9F8644'
+              }
+            }}
+            onClick={() => {
+              voteModalToggle()
+            }}
+          >
+            PUSH
+          </BlackButton>
         </Box>
       )}
       {userSignature && (
