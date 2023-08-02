@@ -369,6 +369,9 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
   const [loading, setLoading] = useState<boolean>(false)
   const [result, setResult] = useState<useProposalDetailInfoProps>()
 
+  const [timeRefresh, setTimeRefresh] = useState(-1)
+  const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 30000)
+
   useEffect(() => {
     ;(async () => {
       if (!proposalId) {
@@ -388,6 +391,33 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
       }
     })()
   }, [proposalId, refresh, userSignature])
+
+  useEffect(() => {
+    if (timeRefresh === -1) {
+      toTimeRefresh()
+      return
+    }
+    ;(async () => {
+      if (!proposalId) {
+        setResult(undefined)
+        return
+      }
+      setLoading(true)
+      try {
+        const res = await getProposalDetail(proposalId)
+        setLoading(false)
+        const data = res.data.data as any
+        setResult(data)
+        toTimeRefresh()
+      } catch (error) {
+        setResult(undefined)
+        setLoading(false)
+        toTimeRefresh()
+        console.error('useGetProposalDetail', error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeRefresh])
 
   const ret = useMemo(() => {
     if (!result) return undefined

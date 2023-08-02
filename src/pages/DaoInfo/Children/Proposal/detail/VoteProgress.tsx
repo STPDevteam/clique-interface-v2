@@ -273,7 +273,7 @@ export default function VoteProgress({
           </BlackButton>
         </Box>
       )}
-      {userSignature && (
+      {userSignature && proposalInfo.status === 'Active' && (
         <VoteModal
           refresh={refresh}
           proposalInfo={proposalInfo}

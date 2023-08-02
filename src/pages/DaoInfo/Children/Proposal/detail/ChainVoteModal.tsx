@@ -420,13 +420,23 @@ export default function ChainVoteModal({
                           }
                         ]
                       : voteList.filter(v => v.votes !== 0)
-                  ).then(res => {
-                    if (res.data.code === 200) {
-                      setSpeed(1)
+                  )
+                    .then(res => {
+                      if (res.data.code === 200) {
+                        setSpeed(1)
+                        refreshCallback()
+                        setLoading(false)
+                      }
+                    })
+                    .catch(err => {
                       refreshCallback()
                       setLoading(false)
-                    }
-                  })
+                      showModal(
+                        <MessageBox type="error">
+                          {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+                        </MessageBox>
+                      )
+                    })
                 }}
                 borderRadius="8px"
                 style={{ fontWeight: 700 }}
