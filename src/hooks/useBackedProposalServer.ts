@@ -21,7 +21,6 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { TransactionResponse } from '@ethersproject/providers'
 import ReactGA from 'react-ga4'
-import { toast } from 'react-toastify'
 import { useUserInfo } from 'state/userInfo/hooks'
 
 export interface ProposalListBaseProp {
@@ -56,6 +55,11 @@ export enum CreateType {
 export enum VoteStatus {
   PENDING = 'Pending',
   SUCCESS = 'Success'
+}
+
+export enum VoteSpeed {
+  SpeedOne = 0,
+  SpeedTwo = 1
 }
 
 function makeLIstData(data: any): ProposalListBaseProp[] {
@@ -250,29 +254,29 @@ export function useProposalVoteCallback() {
   }, [])
 }
 
-export function useUpChainProposalVoteCallback(callback?: () => void) {
+export function useUpChainProposalVoteCallback() {
   const { account } = useActiveWeb3React()
   const contract = useProposalContract()
   const gasPriceInfoCallback = useGasPriceInfo()
   const addTransaction = useTransactionAdder()
-  const [result, setResult] = useState<any>()
+  // const [result, setResult] = useState<any>()
   const upChainProposalCallBack = useCallback(
     async (
-      voteParams: VoteParamsProp[],
+      // voteParams: VoteParamsProp[],
       proposalId: number,
       optionIds: number[],
-      amounts: number[],
-      isVoted: boolean
+      amounts: number[]
+      // isVoted: boolean
     ) => {
-      if (!isVoted) {
-        toVote(voteParams)
-          .then(res => {
-            setResult(res)
-            callback && callback()
-          })
-          .catch(err => err)
-      }
-      if (result && result.data.code !== 200 && !isVoted) return toast.error(result.data.msg || 'Vote error')
+      // if (!isVoted) {
+      //   toVote(voteParams)
+      //     .then(res => {
+      //       setResult(res)
+      //       callback && callback()
+      //     })
+      //     .catch(err => err)
+      // }
+      // if (result && result.data.code !== 200 && !isVoted) return toast.error(result.data.msg || 'Vote error')
 
       if (!contract) throw new Error('none contract')
       const args = [proposalId, optionIds, amounts]
@@ -312,9 +316,9 @@ export function useUpChainProposalVoteCallback(callback?: () => void) {
           throw err
         })
     },
-    [account, addTransaction, callback, contract, gasPriceInfoCallback, result]
+    [account, addTransaction, contract, gasPriceInfoCallback]
   )
-  return { upChainProposalCallBack, result }
+  return { upChainProposalCallBack }
 }
 
 export function useDeleteGovToken() {

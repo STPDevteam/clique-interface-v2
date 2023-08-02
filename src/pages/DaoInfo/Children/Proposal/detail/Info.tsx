@@ -1,6 +1,6 @@
 import { Box, styled, Typography, useTheme, Tabs, Tab } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
-import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
+import { CreateType, useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
 import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
@@ -144,6 +144,8 @@ export default function Info({
               <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
                 <LeftText>Minimum Votes Needed To Execute</LeftText>
                 <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
+                <LeftText>Voting mode</LeftText>
+                <Typography>{proposalInfo.isChain ? CreateType.ONCHAIN : CreateType.GASLESS}</Typography>
 
                 <LeftText>Token contract address</LeftText>
                 <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>

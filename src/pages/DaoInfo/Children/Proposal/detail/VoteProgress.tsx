@@ -27,6 +27,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { Dots } from 'theme/components'
 import { useUserInfo } from 'state/userInfo/hooks'
+import TooltipStyle from 'components/Tooltip'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -74,10 +75,6 @@ export default function VoteProgress({
   const toTimeRefresh = () => setTimeout(() => setTimeRefresh(Math.random()), 15000)
 
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
-  const userVote = useMemo(() => {
-    if (!voteList.length) return
-    return voteList
-  }, [voteList])
 
   useEffect(() => {
     if (timeRefresh === -1) {
@@ -145,58 +142,27 @@ export default function VoteProgress({
                       color: '#97B7EF'
                     }}
                   >
-                    {userVote?.map(val => {
-                      if (val.optionId === item.optionId) {
-                        return 'You voted ' + formatNumberWithCommas(val.votes)
-                      }
-                      return null
-                    })}
+                    {'You voted ' + formatNumberWithCommas(item.userVote.votes)}
                   </Typography>
                 ) : item.userVote.status === VoteStatus.PENDING ? (
                   <>
-                    {isVoting ? (
-                      <BlackButton disabled height="36px" width="125px">
-                        Vote
-                        <Dots />
-                      </BlackButton>
-                    ) : isVoteSuccess ? (
-                      <Tooltip title="Processing...Please wait" placement="top">
-                        <Box
-                          sx={{
-                            height: 36,
-                            width: 125,
-                            backgroundColor: '#b4b2b2',
-                            color: '#fff',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            font: '700 14px/20px "Inter"',
-                            borderRadius: '8px',
-                            userSelect: 'none'
-                          }}
-                        >
-                          Confirm
-                          <Dots />
-                        </Box>
-                      </Tooltip>
-                    ) : (
-                      <BlackButton
-                        height="36px"
-                        disabled={
-                          proposalInfo.status === 'Soon' ||
-                          proposalInfo.status === 'Cancel' ||
-                          proposalInfo.status === 'Failed' ||
-                          proposalInfo.status === 'Success'
-                        }
-                        onClick={() => {
-                          setOptionId(proposalOptions[index].optionId)
-                          voteModalToggle()
-                        }}
-                        width="125px"
-                      >
-                        Vote
-                      </BlackButton>
-                    )}
+                    <Typography
+                      sx={{
+                        fontFamily: 'Inter',
+                        fontWeight: 700,
+                        fontSize: '14px',
+                        lineHeight: '20px',
+                        color: '#97B7EF',
+                        display: 'flex',
+                        gap: 6
+                      }}
+                    >
+                      <TooltipStyle
+                        placement="top"
+                        value="This voting information is not yet on the chain, the vote will take effect after successful synchronization on the chain."
+                      />
+                      {'You voted ' + formatNumberWithCommas(item.userVote.votes)}
+                    </Typography>
                   </>
                 ) : null
               ) : !account || proposalInfo.yourVotes === 0 ? (
@@ -242,7 +208,72 @@ export default function VoteProgress({
           </StyledItem>
         ))}
       </Stack>
+      {voteList.find(v => v.status === VoteStatus.PENDING) && account && (
+        <Box
+          sx={{
+            width: '100%',
+            height: 65,
+            mt: 15,
+            backgroundColor: 'rgba(255, 186, 10, 0.18)',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderRadius: '8px',
+            padding: '15px 20px'
+          }}
+        >
+          <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+            You have votes pending to be on-chain and the vote takes effect after on the chain.
+          </Typography>
 
+          {isVoting ? (
+            <BlackButton disabled height="36px" width="85px">
+              Vote
+              <Dots />
+            </BlackButton>
+          ) : isVoteSuccess ? (
+            <Tooltip title="Processing...Please wait" placement="top">
+              <Box
+                sx={{
+                  height: 36,
+                  width: 85,
+                  backgroundColor: '#b4b2b2',
+                  color: '#fff',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  font: '700 14px/20px "Inter"',
+                  borderRadius: '8px',
+                  userSelect: 'none'
+                }}
+              >
+                Confirm
+                <Dots />
+              </Box>
+            </Tooltip>
+          ) : (
+            <BlackButton
+              style={{
+                height: 36,
+                width: 85,
+                fontWeight: 500,
+                color: '#C5954F',
+                backgroundColor: '#fff !important',
+                border: '1px solid #F1DEAB !important',
+                ':hover': {
+                  backgroundColor: '#F5F5F5 !important',
+                  color: '#9F8644'
+                }
+              }}
+              onClick={() => {
+                voteModalToggle()
+              }}
+            >
+              PUSH
+            </BlackButton>
+          )}
+        </Box>
+      )}
       {userSignature && (
         <VoteModal
           refresh={refresh}
