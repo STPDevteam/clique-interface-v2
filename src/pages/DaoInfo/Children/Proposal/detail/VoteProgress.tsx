@@ -19,7 +19,7 @@ import { formatNumberWithCommas, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import { BlackButton } from 'components/Button/Button'
-import { useVoteModalToggle } from 'state/application/hooks'
+import { useModalOpen, useVoteModalToggle } from 'state/application/hooks'
 // import { VotingTypes } from 'state/buildingGovDao/actions'
 import VoteModal from './VoteModal'
 import { formatNumber } from 'utils/dao'
@@ -28,6 +28,7 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 // import { Dots } from 'theme/components'
 import { useUserInfo } from 'state/userInfo/hooks'
 import TooltipStyle from 'components/Tooltip'
+import { ApplicationModal } from 'state/application/actions'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -64,6 +65,7 @@ export default function VoteProgress({
   proposalId: number
   proposalInfo: useProposalDetailInfoProps
 }) {
+  const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const isSmDown = useBreakpoint('sm')
@@ -85,8 +87,16 @@ export default function VoteProgress({
       refresh(Math.random())
       toTimeRefresh()
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRefresh, isVoteSuccess])
+
+  useEffect(() => {
+    if (isVoteSuccess && timeRefresh !== -1 && voteList.find(v => v.status === VoteStatus.SUCCESS) && voteModalOpen) {
+      voteModalToggle()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [voteList])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -117,7 +127,7 @@ export default function VoteProgress({
               rowGap={'5px'}
             >
               <Box display={'grid'} maxWidth={600}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', maxWidth: 600, gap: 10 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   <Typography
                     mb={5}
                     sx={{
