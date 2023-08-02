@@ -233,7 +233,9 @@ export default function VoteProgress({
           </StyledItem>
         ))}
       </Stack>
-      {voteList.find(v => v.status === VoteStatus.PENDING) && account && (
+      {((voteList.find(v => v.status === VoteStatus.PENDING)?.voter === account && account) ||
+        !account ||
+        proposalInfo.yourVotes === 0) && (
         <Box
           sx={{
             width: '100%',
@@ -248,29 +250,35 @@ export default function VoteProgress({
           }}
         >
           <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
-            {isVoteSuccess
+            {!account
+              ? 'Please connect your wallet first.'
+              : proposalInfo.yourVotes === 0
+              ? 'Insufficient votes.'
+              : isVoteSuccess
               ? 'It seems that you have a voting transaction on the blockchain in progress.'
               : 'You have votes pending to be on-chain and the vote takes effect after on the chain.'}
           </Typography>
-          <BlackButton
-            style={{
-              height: 36,
-              width: 85,
-              fontWeight: 500,
-              color: '#C5954F',
-              backgroundColor: '#fff !important',
-              border: '1px solid #F1DEAB !important',
-              ':hover': {
-                backgroundColor: '#F5F5F5 !important',
-                color: '#9F8644'
-              }
-            }}
-            onClick={() => {
-              voteModalToggle()
-            }}
-          >
-            PUSH
-          </BlackButton>
+          {voteList.find(v => v.status === VoteStatus.PENDING)?.voter === account && account && (
+            <BlackButton
+              style={{
+                height: 36,
+                width: 85,
+                fontWeight: 500,
+                color: '#C5954F',
+                backgroundColor: '#fff !important',
+                border: '1px solid #F1DEAB !important',
+                ':hover': {
+                  backgroundColor: '#F5F5F5 !important',
+                  color: '#9F8644'
+                }
+              }}
+              onClick={() => {
+                voteModalToggle()
+              }}
+            >
+              PUSH
+            </BlackButton>
+          )}
         </Box>
       )}
       {userSignature && proposalInfo.status === 'Active' && (

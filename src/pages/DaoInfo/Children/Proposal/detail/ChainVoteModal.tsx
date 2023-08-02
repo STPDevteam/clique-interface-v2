@@ -162,7 +162,8 @@ export default function ChainVoteModal({
   const [voteId, setVoteId] = useState<number[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const { showModal, hideModal } = useModal()
-  const [speed, setSpeed] = useState<number | string>(userVoteList?.length ? 1 : 0)
+  const [speed, setSpeed] = useState<number | string>(0)
+
   const perArrCallback = useCallback(
     (index: number, value: number) => {
       const _val = Object.assign({}, vote)
@@ -171,6 +172,10 @@ export default function ChainVoteModal({
     },
     [vote]
   )
+
+  useEffect(() => {
+    setSpeed(isVoted ? 1 : 0)
+  }, [isVoted])
 
   useEffect(() => {
     let val = 0
