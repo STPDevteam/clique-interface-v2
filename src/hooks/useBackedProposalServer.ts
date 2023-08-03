@@ -244,6 +244,9 @@ export interface VoteListProp {
   status: string
   voter: string
   votes: number
+  chainId: number
+  proposalId: number
+  txHash: string
 }
 
 export function useProposalVoteCallback() {
@@ -378,6 +381,9 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
         setResult(undefined)
         return
       }
+      if (refresh === -1) {
+        return
+      }
       setLoading(true)
       try {
         const res = await getProposalDetail(proposalId)
@@ -393,6 +399,7 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
   }, [proposalId, refresh, userSignature])
 
   useEffect(() => {
+    if (timeRefresh === -2) return
     if (timeRefresh === -1) {
       toTimeRefresh()
       return
@@ -425,6 +432,7 @@ export function useProposalDetailsInfo(proposalId: number, refresh: number) {
   }, [result])
 
   return {
+    setTimeRefresh,
     loading,
     result: ret
   }
@@ -458,9 +466,7 @@ export function useProposalVoteList(proposalId: number, status?: string, getAll?
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 10
-  const [result, setResult] = useState<
-    { optionContent: string; voter: string; votes: number; status: string; optionId: number }[]
-  >([])
+  const [result, setResult] = useState<VoteListProp[]>([])
   const [upDate, setUpDateVoteList] = useState<number>(0)
 
   useEffect(() => {
@@ -483,14 +489,14 @@ export function useProposalVoteList(proposalId: number, status?: string, getAll?
           return
         }
         setTotal(data.total)
-        const list = data.data.map((item: any) => ({
-          optionContent: item.optionContent,
-          voter: item.voter,
-          votes: item.votes,
-          status: item.status,
-          optionId: item.optionId
-        }))
-        setResult(list)
+        // const list = data.data.map((item: any) => ({
+        //   optionContent: item.optionContent,
+        //   voter: item.voter,
+        //   votes: item.votes,
+        //   status: item.status,
+        //   optionId: item.optionId
+        // }))
+        setResult(data.data)
       } catch (error) {
         setResult([])
         setTotal(0)

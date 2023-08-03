@@ -1,17 +1,9 @@
 import { Dispatch, SetStateAction } from 'react'
-import { useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
+import { VoteListProp, useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import GaslessVoteModal from './GaslessVoteModal'
 import ChainVoteModal from './ChainVoteModal'
-
-export interface VoteListProp {
-  optionContent: string
-  voter: string
-  votes: number
-  status: string
-  optionId: number
-}
 
 export default function VoteModal({
   refresh,

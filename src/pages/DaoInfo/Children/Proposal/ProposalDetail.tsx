@@ -36,7 +36,7 @@ export default function ProposalDetail() {
 function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
   const history = useHistory()
   const { account } = useActiveWeb3React()
-  const [rand, setRand] = useState<number>(Math.random())
+  const [rand, setRand] = useState<number>(-1)
   const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
   const { showModal } = useModal()
 

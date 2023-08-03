@@ -15,7 +15,7 @@ import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router'
-import { formatNumberWithCommas, shortenAddress } from 'utils'
+import { formatNumberWithCommas, getEtherscanLink, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
 import { BlackButton } from 'components/Button/Button'
@@ -38,7 +38,7 @@ const StyledItem = styled(Box)(({}) => ({
 
 const StyledBody = styled(Box)(({ theme }) => ({
   minHeight: 200,
-  padding: '40px 32px',
+  padding: '30px',
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
     padding: '20px 16px'
@@ -97,6 +97,16 @@ export default function VoteProgress({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voteList])
+
+  const isPending = useMemo(() => {
+    if (
+      voteList.find(v => v.status === VoteStatus.PENDING)?.voter.toLowerCase() === account?.toLowerCase() &&
+      account
+    ) {
+      return true
+    }
+    return false
+  }, [account, voteList])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -233,9 +243,7 @@ export default function VoteProgress({
           </StyledItem>
         ))}
       </Stack>
-      {((voteList.find(v => v.status === VoteStatus.PENDING)?.voter === account && account) ||
-        !account ||
-        proposalInfo.yourVotes === 0) && (
+      {(isPending || !account || proposalInfo.yourVotes === 0) && (
         <Box
           sx={{
             width: '100%',
@@ -258,7 +266,7 @@ export default function VoteProgress({
               ? 'It seems that you have a voting transaction on the blockchain in progress.'
               : 'You have votes pending to be on-chain and the vote takes effect after on the chain.'}
           </Typography>
-          {voteList.find(v => v.status === VoteStatus.PENDING)?.voter === account && account && (
+          {isPending && (
             <BlackButton
               style={{
                 height: 36,
@@ -307,40 +315,51 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
   }, [proposalVoteList])
 
   return (
-    <Modal maxWidth="460px" closeIcon width="100%">
+    <Modal maxWidth="480px" closeIcon width="100%">
       <StyledBody>
         <Stack spacing={19}>
           <Typography variant="h6" fontWeight={500}>
             Votes ({(allVotes && formatNumberWithCommas(allVotes)) || '--'})
           </Typography>
-          <Box
-            display={'grid'}
-            gridTemplateColumns="1fr 1fr 0.8fr"
-            gap={'10px 5px'}
-            alignItems={'center'}
-            justifyContent="center"
-          >
-            {userVoteList?.map(item => (
-              <>
-                {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
+
+          {userVoteList?.map(item => (
+            <Box
+              key={item.optionId}
+              display={'grid'}
+              gridTemplateColumns={item.chainId && item.txHash ? '1fr 1fr 0.8fr 1fr' : '1fr 1fr 0.8fr'}
+              gap={'10px 5px'}
+              alignItems={'center'}
+              justifyContent="center"
+            >
+              {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
+              <Link
+                underline="none"
+                target={'_blank'}
+                sx={{ cursor: 'pointer' }}
+                onClick={() => {
+                  hideModal()
+                  history.push(routes._Profile + `/${item.voter}`)
+                }}
+              >
+                <StyledListText>{shortenAddress(item.voter)}</StyledListText>
+              </Link>
+              <StyledListText noWrap align="center">
+                {item.optionContent}
+              </StyledListText>
+              <StyledListText align="center">{formatNumberWithCommas(item.votes)}</StyledListText>
+              {item.chainId && item.txHash ? (
                 <Link
                   underline="none"
                   target={'_blank'}
-                  sx={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    hideModal()
-                    history.push(routes._Profile + `/${item.voter}`)
-                  }}
+                  href={getEtherscanLink(item.chainId, item.txHash, 'transaction')}
+                  sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
                 >
-                  <StyledListText>{shortenAddress(item.voter)}</StyledListText>
+                  <StyledListText align="center">hash</StyledListText>
                 </Link>
-                <StyledListText noWrap align="center">
-                  {item.optionContent}
-                </StyledListText>
-                <StyledListText align="right">{formatNumberWithCommas(item.votes)}</StyledListText>
-              </>
-            ))}
-          </Box>
+              ) : null}
+            </Box>
+          ))}
+
           {!userVoteList?.length && <EmptyData />}
           <Box
             display={'flex'}
