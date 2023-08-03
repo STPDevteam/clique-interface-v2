@@ -284,7 +284,7 @@ export default function VoteProgress({
               ? 'Insufficient votes.'
               : isVoteSuccess
               ? 'It seems that you have a voting transaction on the blockchain in progress.'
-              : 'You have votes pending to be on-chain and the vote takes effect after on the chain.'}
+              : 'You have pending votes to confirm, the votes will take effect after confirmation.'}
           </Typography>
           {isPending && (
             <BlackButton

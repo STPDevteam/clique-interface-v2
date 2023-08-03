@@ -268,48 +268,48 @@ export default function ChainVoteModal({
     if (proposalInfo.status !== 'Active') {
       return {
         disabled: true,
-        error: 'Proposal voting is not opened'
+        error: 'Proposal voting is not opened.'
       }
     }
 
     if (!myVotes || myVotes <= 0) {
       return {
         disabled: true,
-        error: 'Insufficient votes'
+        error: 'Insufficient votes.'
       }
     }
 
     if (!isTotalVote && !isVoted && !singLe && speed === 0) {
       return {
         disabled: true,
-        error: 'Please enter your votes'
+        error: 'Please enter your votes.'
       }
     }
 
     if (singLe && !voteId.length && speed === 0) {
       return {
         disabled: true,
-        error: 'Please select vote option'
+        error: 'Please select vote option.'
       }
     }
 
     if (myVotes - isTotalVote > 0 && !singLe && speed === 0) {
       return {
         disabled: false,
-        error: 'There is still unused votes'
+        error: 'You still have remaining votes.'
       }
     }
 
     if (proposalInfo.alreadyVoted && isPending === VoteStatus.PENDING) {
       return {
         disabled: false,
-        error: 'You have already voted, Please confirm the on-chain transaction'
+        error: 'You have already voted, Please confirm the on-chain transaction.'
       }
     }
     if (isUpChainVoteSuccess && isPending === VoteStatus.PENDING) {
       return {
         disabled: false,
-        error: 'You seem to have already voted on the other chain'
+        error: 'You seem to have already voted on the other chain.'
       }
     }
 
