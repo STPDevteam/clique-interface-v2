@@ -41,7 +41,7 @@ export const SUPPORT_NETWORK_CHAIN_IDS: ChainId[] = process.env.REACT_APP_CHAIN_
   ? process.env.REACT_APP_CHAIN_IDS.split(',').map(v => Number(v) as ChainId)
   : [ChainId.BSC]
 
-export const IS_TEST_NET = !!(NETWORK_CHAIN_ID === ChainId.ROPSTEN)
+export const IS_TEST_NET = !(NETWORK_CHAIN_ID === ChainId.MAINNET)
 
 export const AllChainList = [
   {

@@ -206,6 +206,7 @@ export default function App() {
                     )}
                   />
                   <Route exact strict path={routes.Activity} component={Activity} />
+                  <Route exact strict path={routes._CreateSoulToken} component={CreateSoulToken} />
                   <Route exact strict path={routes.CreateSoulToken} component={CreateSoulToken} />
                   <Route exact strict path={routes.SoulTokenDetail} component={SoulTokenDetail} />
                   <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />

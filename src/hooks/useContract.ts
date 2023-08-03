@@ -157,7 +157,7 @@ export function useSbtFactoryContract(queryChainId?: ChainId): Contract | null {
 }
 
 export function useSbtContract(address?: string, queryChainId?: ChainId): Contract | null {
-  return useContract(address, SBT_ABI.abi, true, queryChainId)
+  return useContract(address, SBT_ABI, true, queryChainId)
 }
 
 export function useProposalContract(queryChainId?: ChainId): Contract | null {

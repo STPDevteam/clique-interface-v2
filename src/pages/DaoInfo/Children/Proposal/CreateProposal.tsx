@@ -25,6 +25,7 @@ import { ReactComponent as ProposalIcon } from 'assets/svg/proposal.svg'
 import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
+import { IS_TEST_NET } from 'constants/chain'
 // import { ChainListMap } from 'constants/chain'
 // import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
@@ -109,6 +110,8 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
       : VotingTypes.SINGLE
   )
   const createProposalCallback = useCreateProposalCallback()
+  console.log('period', daoInfo.votingPeriod)
+
   const createToken = useMemo(() => {
     if (!daoInfo.governance[0] || !daoInfo.governance[0].createRequire) {
       return undefined
@@ -369,6 +372,9 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                       if (daoInfo.votingPeriod) {
                         setEndtime((startTime ? timestamp : timestamp + 5 * 60) + daoInfo.votingPeriod)
                       }
+                      if (daoInfo.votingPeriod === 0) {
+                        setEndtime((startTime ? timestamp : timestamp) + 86400 * 3 + 300)
+                      }
                     }}
                   ></DateTimePicker>
                 </DateSelectStyle>
@@ -388,7 +394,15 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                   <DateTimePicker
                     label=" "
                     disabled={daoInfo.votingPeriod !== 0 || !startTime}
-                    minDateTime={startTime ? new Date(startTime * 1000) : undefined}
+                    minDateTime={
+                      startTime
+                        ? daoInfo.votingPeriod === 0
+                          ? IS_TEST_NET
+                            ? new Date(startTime * 1000)
+                            : new Date(startTime * 1000 + 86400000 * 3)
+                          : new Date(startTime * 1000)
+                        : undefined
+                    }
                     value={endTime ? new Date(endTime * 1000) : null}
                     onValue={timestamp => {
                       if (!timestamp) return

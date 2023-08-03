@@ -153,9 +153,13 @@ export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
 }
 
 export const CREATE_SBT: { [chainId in ChainId]?: string } = {
+  [ChainId.MAINNET]: '0x6053856cfCcB9fcB43d57b05Cd7a3709bae3fc95',
+  [ChainId.POLYGON]: '0x0856B272Cd587B4eC88265980c5a69Cc6d870a4A',
+  [ChainId.KLAYTN]: '0x74beAD96e35985F84f917514beD07EB7ab9211e8',
+  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS,
   [ChainId.GOERLI]: '0xE7D3553e20fE2f41569456EE8980b49C6Da3A27b',
-  [ChainId.SEPOLIA]: '0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272',
-  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS || ''
+  [ChainId.ZKSYNC_ERA]: '0x644Ea01E10c10364A2dF36cE414D9FAb526DE0fe',
+  [ChainId.SEPOLIA]: '0x507e6585455e4C68748D8c623Ad45dA4Ee2a6272'
 }
 
 export const PROPOSAL_VOTING: { [chainId in ChainId]?: string } = {

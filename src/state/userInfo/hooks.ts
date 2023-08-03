@@ -43,10 +43,15 @@ export function useLoginSignature() {
     if (!account || !web3) return
 
     return web3.eth.personal.sign(signMessage, account, '').then(async signStr => {
-      const res = await login(account, signMessage, signStr)
-      toast.success('Welcome to Clique')
-      dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res.jwtToken } }))
-      return res.openNonce
+      try {
+        const res = await login(account, signMessage, signStr)
+        toast.success('Welcome to Clique')
+        dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res.jwtToken } }))
+        return res.openNonce
+      } catch (err) {
+        toast.error(err || 'Something wrong')
+        return -1
+      }
     })
   }, [account, web3, login, dispatch])
 }

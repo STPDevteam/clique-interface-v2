@@ -998,3 +998,10 @@ export function getSbtClaimList(offset: number, limit: number, sbtId: number) {
     sbtId
   })
 }
+
+export function getNftRefresh(contractAddress: string, tokenId: string) {
+  return Axios.post('stpdao/v3/user/nftscan/refresh', {
+    contractAddress,
+    tokenId
+  })
+}

@@ -14,17 +14,14 @@ import EmptyData from 'components/EmptyData'
 import Image from 'components/Image'
 import Tooltip from 'components/Tooltip'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { VotingTypesName, govList } from 'state/buildingGovDao/actions'
 import { getVotingNumberByTimestamp } from 'utils/dao'
 import { formatNumberWithCommas, getEtherscanLink, shortenAddress } from 'utils'
 import defaultLogo from 'assets/images/create-token-ball.png'
 import AboutIcon from 'assets/images/about_icon.png'
-
 import { ChainListMap } from 'constants/chain'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
-import { useParams } from 'react-router-dom'
-import { useGetDaoInfo } from 'hooks/useBackedDaoServer'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import Copy from 'components/essential/Copy'
 import { ExternalLink } from 'theme/components'
 import Header from 'pages/AboutSetting/AboutHeader'
@@ -85,10 +82,7 @@ const StyledText = styled(Typography)(
 
 export default function About() {
   const isSmDown = useBreakpoint('sm')
-  const { daoId: daoId } = useParams<{ daoId: string }>()
-  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
-  const [rand] = useState(Math.random())
-  const createDaoData = useGetDaoInfo(Number(daoId), rand)
+  const { createDaoData: daoInfo } = useUpdateDaoDataCallback()
   const votingPeriodDate = useMemo(
     () => (daoInfo?.votingPeriod ? getVotingNumberByTimestamp(daoInfo.votingPeriod) : undefined),
     [daoInfo?.votingPeriod]
@@ -113,7 +107,7 @@ export default function About() {
         <Header />
         <div>
           <Title sx={{ mb: 18 }}>Governance</Title>
-          {createDaoData && <BasicTable list={createDaoData.governance} />}
+          {daoInfo && <BasicTable list={daoInfo.governance} />}
           <StyledItem
             direction={isSmDown ? 'column' : 'row'}
             gap={isSmDown ? 20 : 10}
@@ -324,7 +318,7 @@ function BasicTable({ list }: { list: govList[] }) {
                     <Image src={row.tokenLogo || defaultLogo} width={32} height={32} style={{ borderRadius: '50%' }} />
                     {row.tokenName}({row.symbol})
                   </TableContentText>
-                  <TableContentText>{ChainListMap[row.chainId].name || 'Ethereum'}</TableContentText>
+                  <TableContentText>{ChainListMap[row.chainId]?.name || 'Ethereum'}</TableContentText>
                   <TableContentText>
                     <Box
                       display={'flex'}

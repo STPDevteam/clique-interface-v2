@@ -107,8 +107,20 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
   }
 
   const handleSubmit = (values: any) => {
+    if (
+      daoInfo?.daoLogo === values.daoLogo &&
+      daoInfo?.daoName === values.name &&
+      daoInfo?.twitter === values?.twitter &&
+      daoInfo?.discord === values?.discord &&
+      daoInfo?.bio === values?.description &&
+      daoInfo?.website === values?.website &&
+      daoInfo?.github === values?.github &&
+      daoInfo?.category?.join(',') === values.category
+    ) {
+      toast.info('Nothing changed')
+      return
+    }
     setLoading(true)
-    console.log(values)
     updateDaoGeneral(
       values.description,
       values.category.split(','),
@@ -159,22 +171,6 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     <UpImgButton onChange={val => setFieldValue('daoLogo', val)} size={124} value={values.daoLogo} />
                   </Box>
                 </FormItem>
-                <FormItem sx={sxInputStyle} name="description" required>
-                  <Input
-                    label="Introduction"
-                    placeholderSize="14px"
-                    style={{
-                      borderColor: errors.description ? '#e46767' : '#D4D7E2'
-                    }}
-                    endAdornment={
-                      <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
-                        {values.description.length}/1000
-                      </Typography>
-                    }
-                    placeholder="Add a brief description about your project."
-                    value={values.description}
-                  />
-                </FormItem>
                 <FormItem name="category" required fieldType="custom">
                   <CategoriesSelect
                     style={{ height: '42px!important' }}
@@ -182,6 +178,37 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     onChange={val => {
                       setFieldValue('category', val)
                     }}
+                  />
+                </FormItem>
+                <FormItem name="discord">
+                  <Input
+                    style={{
+                      borderColor: errors.discord ? '#e46767' : '#D4D7E2'
+                    }}
+                    label="Discord"
+                    placeholderSize="14px"
+                    placeholder="e.c. bitcoin"
+                    value={values.discord}
+                  />
+                </FormItem>
+                <FormItem name="website">
+                  <Input
+                    style={{
+                      borderColor: errors.website ? '#e46767' : '#D4D7E2'
+                    }}
+                    label="Website"
+                    value={values.website}
+                  />
+                </FormItem>
+                <FormItem name="github">
+                  <Input
+                    style={{
+                      borderColor: errors.github ? '#e46767' : '#D4D7E2'
+                    }}
+                    label="Github"
+                    placeholderSize="14px"
+                    placeholder="e.c. bitcoin"
+                    value={values.github}
                   />
                 </FormItem>
                 <FormItem sx={sxInputStyle} name="twitter">
@@ -253,58 +280,29 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     />
                   </Box>
                 </FormItem>
-                <FormItem name="github">
+                <FormItem sx={sxInputStyle} name="description" required>
                   <Input
-                    style={{
-                      borderColor: errors.github ? '#e46767' : '#D4D7E2'
-                    }}
-                    label="Github"
+                    height={377}
+                    width={319}
+                    label="Introduction"
                     placeholderSize="14px"
-                    placeholder="e.c. bitcoin"
-                    value={values.github}
-                  />
-                </FormItem>
-                <FormItem name="discord">
-                  <Input
+                    multiline
+                    rows={15}
                     style={{
-                      borderColor: errors.discord ? '#e46767' : '#D4D7E2'
+                      borderColor: errors.description ? '#e46767' : '#D4D7E2'
                     }}
-                    label="Discord"
-                    placeholderSize="14px"
-                    placeholder="e.c. bitcoin"
-                    value={values.discord}
-                  />
-                </FormItem>
-                <FormItem name="website">
-                  <Input
-                    style={{
-                      borderColor: errors.website ? '#e46767' : '#D4D7E2'
-                    }}
-                    label="Website"
-                    value={values.website}
+                    endAdornment={
+                      <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
+                        {values.description.length}/1,000
+                      </Typography>
+                    }
+                    placeholder="Add a brief description about your project."
+                    value={values.description}
                   />
                 </FormItem>
               </Box>
             </Wrapper>
-            {/* <Box sx={{ mt: 20, display: 'flex', gap: 38, alignItems: 'center' }}>
-              <Typography
-                sx={{
-                  fontWeight: 500,
-                  fontSize: '14px',
-                  lineHeight: '16px',
-                  color: '#80829F'
-                }}
-              >
-                Who can join the DAO
-              </Typography>
-              <ToggleButtonGroup itemWidth={150} Props={ListItem} setToggleValue={setToggleValue} />
-            </Box>
-            {ToggleValue === 'Anyone' ? (
-              ''
-            ) : (
-              <TokenContainer values={values} daoInfo={daoInfo} errors={errors} shareChildRef={childStateRef} />
-            )} */}
-            <Box mt={30} display="flex" justifyContent={'flex-end'}>
+            <Box mt={30} display="flex" justifyContent={'flex-end'} mb={20}>
               <LoadingButton
                 loading={loading}
                 loadingPosition="center"

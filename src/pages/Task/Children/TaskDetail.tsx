@@ -601,7 +601,7 @@ export default function TaskDetail({
               {ReactHtmlParser(
                 filterXSS(taskDetailData?.content || '', {
                   onIgnoreTagAttr: function(_, name, value) {
-                    if (name === 'class') {
+                    if (name === 'class' || name === 'style') {
                       return name + '="' + escapeAttrValue(value) + '"'
                     }
                     return undefined

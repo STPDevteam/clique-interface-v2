@@ -9,7 +9,8 @@ import {
   styled,
   Tooltip,
   TooltipProps,
-  tooltipClasses
+  tooltipClasses,
+  Alert
 } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
@@ -131,8 +132,8 @@ export const Tabs: Tab[] = [
   },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
-  { title: 'Tools', route: routes.DappStore },
-  { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
+  { title: 'Tools', route: routes.DappStore }
+  // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
 // const navLinkSX = () => ({
@@ -409,13 +410,32 @@ export default function Header() {
     <>
       {isShow && (
         <>
+          <Box height={50} />
+          <Alert
+            icon={<></>}
+            sx={{
+              height: 50,
+              position: 'fixed',
+              top: 0,
+              width: '100%',
+              left: 0,
+              zIndex: 1000,
+              display: 'flex',
+              justifyContent: 'center'
+            }}
+          >
+            You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
+            <a href="https://v2.myclique.io/" target="_blank" rel="noreferrer">
+              https://v2.myclique.io/
+            </a>
+          </Alert>
           <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
           <Filler />
           <StyledMobileAppBar>
             <TabsBox />
           </StyledMobileAppBar>
 
-          <StyledAppBar>
+          <StyledAppBar sx={{ top: isGovernance ? 0 : 50 }}>
             <Box display="flex" alignItems="center">
               <MainLogo to={routes.Governance}>
                 <Image src={logo} alt={'logo'} />

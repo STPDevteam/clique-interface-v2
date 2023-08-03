@@ -12,6 +12,7 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useDaoSbtList } from 'hooks/useBackedSbtServer'
 import DaoSbtList from './DaoSbtList'
+import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
@@ -152,16 +153,69 @@ export default function Activity() {
             )}
           </>
         )}
-        {tabValue === 1 && (
+        {tabValue === 0 && daoAdminLevel.job !== DaoAdminLevelProp[0] && daoAdminLevel.job !== DaoAdminLevelProp[1] && (
+          <TooltipStyle title={'Only DAO creator and DAO owner can create DAO rewards.'} placement="top">
+            {backedDaoInfo?.approve ? (
+              <Box>
+                <BlackButton
+                  disabled
+                  width={isSmDown ? '146px' : '252px'}
+                  fontSize={isSmDown ? 10 : 14}
+                  height={isSmDown ? '40px' : '36px'}
+                  borderRadius={isSmDown ? '8px' : undefined}
+                >
+                  Create {activityTypeText[activityType]}
+                </BlackButton>
+              </Box>
+            ) : (
+              <Box
+                width={isSmDown ? '146px' : '252px'}
+                height={isSmDown ? '40px' : '36px'}
+                display={'flex'}
+                alignItems="center"
+                justifyContent={'center'}
+                sx={{
+                  backgroundColor: theme.bgColor.bg2,
+                  borderRadius: { xs: '8px', sm: '16px' },
+                  color: theme.palette.text.secondary,
+                  fontSize: { xs: 10, sm: 14 },
+                  fontWeight: 700
+                }}
+              >
+                Create {activityTypeText[activityType]}
+                {/* <Tooltip title="Can be created after verification">
+                  <ErrorOutline sx={{ marginLeft: 4 }} />
+                </Tooltip> */}
+              </Box>
+            )}
+          </TooltipStyle>
+        )}
+        {tabValue === 1 && (daoAdminLevel.job === DaoAdminLevelProp[0] || daoAdminLevel.job === DaoAdminLevelProp[1]) && (
           <BlackButton
             width={isSmDown ? '146px' : '252px'}
             fontSize={isSmDown ? 10 : 14}
             height={isSmDown ? '40px' : '36px'}
             borderRadius={isSmDown ? '8px' : undefined}
-            onClick={() => history.push(routes.CreateSoulToken)}
+            onClick={() => history.push(routes.CreateSoulToken + `/${daoId}`)}
           >
             Create SBT
           </BlackButton>
+        )}
+        {tabValue === 1 && daoAdminLevel.job !== DaoAdminLevelProp[0] && daoAdminLevel.job !== DaoAdminLevelProp[1] && (
+          <TooltipStyle title={'Only DAO creator and DAO owner can create SBT.'} placement="top">
+            <Box>
+              <BlackButton
+                disabled
+                width={isSmDown ? '146px' : '252px'}
+                fontSize={isSmDown ? 10 : 14}
+                height={isSmDown ? '40px' : '36px'}
+                borderRadius={isSmDown ? '8px' : undefined}
+                onClick={() => history.push(routes.CreateSoulToken + `/${daoId}`)}
+              >
+                Create SBT
+              </BlackButton>
+            </Box>
+          </TooltipStyle>
         )}
       </RowCenter>
       {tabValue === 0 && activityType === ActivityType.AIRDROP && <AirdropList {...airdropData} />}

@@ -4,15 +4,17 @@ import Image from 'components/Image'
 import Loading from 'components/Loading'
 import Pagination from 'components/Pagination'
 import { AllChainList, ChainId, ChainListMap } from 'constants/chain'
-import { ScanNFTInfo, useAccountNFTsList } from 'hooks/useBackedProfileServer'
+import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import placeholderImage from 'assets/images/placeholder.png'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
 import { getEtherscanLink } from 'utils'
+import LoopIcon from '@mui/icons-material/Loop'
+import { toast } from 'react-toastify'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   borderRadius: '16px',
@@ -35,10 +37,11 @@ import { getEtherscanLink } from 'utils'
 // }))
 
 const StyledItems = styled(Box)(({ theme }) => ({
-  height: 328,
+  height: 298,
   background: '#F9F9F9',
   border: '1px solid #E4E4E4',
   borderRadius: '10px',
+  position: 'relative',
   [theme.breakpoints.down('sm')]: {
     height: 200
   }
@@ -121,7 +124,7 @@ export default function AccountNFTs({ account }: { account: string }) {
         }}
       >
         {showAccountNFTsList.map((item, index) => (
-          <NFTItem key={index} nft={item} nftChainId={currentChainId}></NFTItem>
+          <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
         ))}
         {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
           <StyledItems
@@ -170,25 +173,72 @@ export default function AccountNFTs({ account }: { account: string }) {
   )
 }
 
-function NFTItem({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId }) {
+function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftChainId: ChainId }) {
   const isSmDown = useBreakpoint('sm')
+  const [hoverIndex, setHoverIndex] = useState<any>(null)
+  const refreshCb = useRefreshNft()
+
+  const refresh = useCallback(() => {
+    refreshCb(nft.contract_address, nft.token_id).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Refresh error')
+        return
+      }
+      toast.success('Refresh success')
+    })
+  }, [nft.contract_address, nft.token_id, refreshCb])
+
   return (
-    <StyledItems>
-      <Typography noWrap padding="5px 16px" maxWidth={isSmDown ? 160 : 250}>
-        {nft.name || nft.contract_name || '-'}
-      </Typography>
+    <StyledItems
+      onMouseEnter={() => {
+        setHoverIndex(idx)
+      }}
+      onMouseLeave={() => {
+        setHoverIndex(null)
+      }}
+    >
+      {hoverIndex === idx && (
+        <Box
+          sx={{
+            position: 'absolute',
+            right: 10,
+            top: 10,
+            backgroundColor: 'rgba(0, 0, 0, 0.1)',
+            width: 23,
+            height: 23,
+            borderRadius: '50%'
+          }}
+        >
+          <LoopIcon
+            sx={{
+              cursor: 'pointer',
+              display: 'inline-block',
+              marginLeft: 3,
+              marginTop: 3,
+              width: '16px',
+              height: '16px',
+              // mixBlendMode: 'difference',
+              '& path': {
+                fill: '#fff'
+              }
+            }}
+            onClick={refresh}
+          ></LoopIcon>
+        </Box>
+      )}
       <Image
         altSrc={placeholderImage}
         style={{
           width: '100%',
           height: isSmDown ? 124 : 248,
+          borderRadius: '10px 10px 0 0',
           objectFit: 'cover'
         }}
         src={nft.image_uri || placeholderImage}
       />
       <RowCenter padding="5px 16px">
-        <Typography noWrap maxWidth={100}>
-          #{nft.token_id}
+        <Typography noWrap maxWidth={160}>
+          {nft.name || nft.contract_name || '-'}#{nft.token_id}
         </Typography>
         {/* {nftChainId === ChainId.MAINNET && ( */}
         <Link

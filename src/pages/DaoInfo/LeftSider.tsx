@@ -42,6 +42,7 @@ import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 import useModal from 'hooks/useModal'
 import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
 import AddIcon from 'assets/images/add.png'
+import { EmptyDaoItem } from 'components/Header/MySpace'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -288,7 +289,12 @@ export default function LeftSider() {
         route: '',
         children: workspaceList
       },
-      { title: 'DAO Rewards', icon: <Bounty />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoActivity) },
+      {
+        title: 'DAO Rewards & SBT',
+        icon: <Bounty />,
+        defaultOpen: false,
+        route: makeRouteLink(routes.DaoInfoActivity)
+      },
       { title: 'Member', icon: <Member />, defaultOpen: false, route: makeRouteLink(routes.DaoMember) },
       { title: 'About', icon: <About />, defaultOpen: false, route: makeRouteLink(routes.DaoInfoAbout) },
       {
@@ -400,6 +406,7 @@ export default function LeftSider() {
             }
           >
             <>
+              {myJoinedDaoList.length === 0 && <EmptyDaoItem />}
               {account &&
                 myJoinedDaoList?.map(option => (
                   <Box

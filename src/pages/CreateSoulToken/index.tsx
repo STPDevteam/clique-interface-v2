@@ -17,12 +17,12 @@ import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useActiveWeb3React } from 'hooks'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
-import { UserProfileAdminProps, useUserProfileInfo } from 'hooks/useBackedProfileServer'
+import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { timeStampToFormat } from 'utils/dao'
 
 export interface DaoMemberProp {
@@ -109,7 +109,13 @@ const eligibilityList = [
   { id: 3, value: ClaimWay.WhiteList, label: 'Upload Addresses' }
 ]
 
+export enum AccountLevel {
+  CREATOR = 0,
+  OWNER = 1
+}
+
 export default function Index() {
+  const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const { library, account, chainId } = useActiveWeb3React()
   const theme = useTheme()
   const [whitelistBoole, setWhitelistBoole] = useState<boolean>(false)
@@ -122,24 +128,25 @@ export default function Index() {
   const { result: userInfo } = useUserProfileInfo(account || undefined)
   const daoMemberList = useMemo(() => {
     if (!userInfo?.adminDao) return
-    const daoList = userInfo?.adminDao.filter(v => Number(v.accountLevel) === 1 || Number(v.accountLevel) === 0)
+    const daoList = userInfo?.adminDao.filter(
+      v => Number(v.accountLevel) === AccountLevel.OWNER || Number(v.accountLevel) === AccountLevel.CREATOR
+    )
     return daoList
   }, [userInfo?.adminDao])
-  const [daoValue, setDaoValue] = useState<UserProfileAdminProps | null>(null)
-
+  const [daoValue, setDaoValue] = useState<number | null>(Number(curDaoId) || null)
   const [symbolValue, setSymbolValue] = useState('')
   const [itemName, setItemName] = useState('')
   const [Introduction, setIntroduction] = useState('')
   const [totalSupply, setTotalSupply] = useState<string>('')
   const { CreateSbtCallback } = useCreateSbtCallback()
-
   const { showModal, hideModal } = useModal()
   const history = useHistory()
   const userSignature = useUserInfo()
   const SubmitCreate = useCallback(() => {
+    if (!daoValue) return
     showModal(<TransacitonPendingModal />)
     CreateSbtCallback(
-      daoValue?.daoId,
+      daoValue,
       account || undefined,
       fileValue,
       itemName,
@@ -158,7 +165,7 @@ export default function Index() {
           <TransactionSubmittedModal
             BackdropClick={true}
             hideFunc={() => {
-              history.replace(routes._SoulTokenDetail + '/' + daoValue?.daoId + '/' + res.sbtId)
+              history.replace(routes._SoulTokenDetail + '/' + daoValue + '/' + res.sbtId)
             }}
             hash={res.hash}
           />
@@ -175,7 +182,7 @@ export default function Index() {
   }, [
     showModal,
     CreateSbtCallback,
-    daoValue?.daoId,
+    daoValue,
     account,
     fileValue,
     itemName,
@@ -384,11 +391,11 @@ export default function Index() {
             <InputTitleStyle>Select a DAO</InputTitleStyle>
             <ContentHintStyle>An identity token based on the DAO</ContentHintStyle>
             <Select
-              placeholder="Select DAO"
+              placeholder={'Select DAO'}
               noBold
-              value={daoValue?.daoId || ''}
+              value={daoValue || 0}
               onChange={e => {
-                setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value) || null)
+                setDaoValue(daoMemberList?.find(v => v.daoId === e.target.value)?.daoId || null)
               }}
             >
               {daoMemberList && daoMemberList?.length > 0 ? (
@@ -400,7 +407,7 @@ export default function Index() {
                       fontSize: '14px !important'
                     }}
                     value={item?.daoId}
-                    selected={daoValue?.daoId === item?.daoId}
+                    selected={daoValue === item?.daoId}
                   >
                     <Box sx={{ display: 'flex', gap: 10, flexGrow: 1 }}>
                       <Image
@@ -412,8 +419,12 @@ export default function Index() {
                   </MenuItem>
                 ))
               ) : (
-                <MenuItem disabled sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
-                  No options
+                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
+                  No available DAO, only the creator or owner of DAO can create SBT,
+                  <Link href={routes.CreateDao} sx={{ cursor: 'pointer' }}>
+                    to create DAO
+                  </Link>
+                  .
                 </MenuItem>
               )}
             </Select>
