@@ -187,20 +187,21 @@ export default function Info({
             </svg>
           </MuiLink> */}
               </Box>
-              {account === proposalInfo.proposer.account && proposalInfo.status === 'Soon' && (
-                <Box mt={15}>
-                  <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
-                    {isCancel ? (
-                      <>
-                        Cancel
-                        <Dots />
-                      </>
-                    ) : (
-                      'Cancel proposal'
-                    )}
-                  </BlackButton>
-                </Box>
-              )}
+              {account?.toLowerCase() === proposalInfo.proposer.account.toLowerCase() &&
+                proposalInfo.status === 'Soon' && (
+                  <Box mt={15}>
+                    <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
+                      {isCancel ? (
+                        <>
+                          Cancel
+                          <Dots />
+                        </>
+                      ) : (
+                        'Cancel proposal'
+                      )}
+                    </BlackButton>
+                  </Box>
+                )}
             </Box>
           )}
         </div>
