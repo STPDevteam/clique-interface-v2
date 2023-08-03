@@ -29,6 +29,7 @@ import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
 import TooltipStyle from 'components/Tooltip'
 import { ApplicationModal } from 'state/application/actions'
+import { Dots } from 'theme/components'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -212,10 +213,7 @@ export default function VoteProgress({
                         gap: 6
                       }}
                     >
-                      <TooltipStyle
-                        placement="top"
-                        value="This voting information is not yet on the chain, the vote will take effect after successful synchronization on the chain."
-                      />
+                      <TooltipStyle placement="top" value="The votes have not been executed on the blockchain yet." />
                       {'You voted ' + formatNumberWithCommas(item.userVote.votes)}
                     </Typography>
                   </>
@@ -283,29 +281,38 @@ export default function VoteProgress({
               : proposalInfo.yourVotes === 0
               ? 'Insufficient votes.'
               : isVoteSuccess
-              ? 'It seems that you have a voting transaction on the blockchain in progress.'
-              : 'You have pending votes to confirm, the votes will take effect after confirmation.'}
+              ? 'The votes are currently being confirmed.'
+              : 'You have votes pending to confirm, the votes will take effect after confirmation.'}
           </Typography>
           {isPending && (
-            <BlackButton
-              style={{
-                height: 36,
-                width: 85,
-                fontWeight: 500,
-                color: '#C5954F',
-                backgroundColor: '#fff !important',
-                border: '1px solid #F1DEAB !important',
-                ':hover': {
-                  backgroundColor: '#F5F5F5 !important',
-                  color: '#9F8644'
-                }
-              }}
-              onClick={() => {
-                voteModalToggle()
-              }}
-            >
-              PUSH
-            </BlackButton>
+            <>
+              {isVoteSuccess ? (
+                <BlackButton disabled width="100px" height="36px">
+                  Confiming <Dots />
+                </BlackButton>
+              ) : (
+                <BlackButton
+                  disabled={isVoteSuccess}
+                  style={{
+                    height: 36,
+                    width: 100,
+                    fontWeight: 500,
+                    color: '#C5954F',
+                    backgroundColor: '#fff !important',
+                    border: '1px solid #F1DEAB !important',
+                    ':hover': {
+                      backgroundColor: '#F5F5F5 !important',
+                      color: '#9F8644'
+                    }
+                  }}
+                  onClick={() => {
+                    voteModalToggle()
+                  }}
+                >
+                  PUSH
+                </BlackButton>
+              )}
+            </>
           )}
         </Box>
       )}
