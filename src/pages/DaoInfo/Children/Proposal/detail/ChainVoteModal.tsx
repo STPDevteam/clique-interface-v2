@@ -460,7 +460,7 @@ export default function ChainVoteModal({
               <BlackButton
                 width="200px"
                 height="40px"
-                disabled={voteBtn.disabled}
+                disabled={!account || !proposalInfo.yourVotes}
                 onClick={() => {
                   voteModalToggle()
                   upChainProposalVoteCallback()
