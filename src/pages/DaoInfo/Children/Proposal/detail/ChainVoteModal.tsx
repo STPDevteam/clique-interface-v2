@@ -687,7 +687,7 @@ function SingleVoteSpeedOne({
           {proposalOptions.map(item => (
             <MenuItem
               key={item.optionId}
-              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170', maxWidth: 342, overflow: 'hidden' }}
+              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
               value={item.optionId}
             >
               {item.optionContent.length > 30 ? item.optionContent.slice(0, 30) + '...' : item.optionContent}
