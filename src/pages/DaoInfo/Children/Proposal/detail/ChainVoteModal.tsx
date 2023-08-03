@@ -153,6 +153,16 @@ export default function ChainVoteModal({
     return false
   }, [userVoteList])
 
+  const isPending = useMemo(() => {
+    if (userVoteList?.find(v => v.status === VoteStatus.SUCCESS)) {
+      return VoteStatus.SUCCESS
+    }
+    if (userVoteList?.find(v => v.status === VoteStatus.PENDING)) {
+      return VoteStatus.PENDING
+    }
+    return 'Close'
+  }, [userVoteList])
+
   const isUpChainVoteSuccess = useUserVoteHasSubmitted(`${account}_Chain_Proposal${proposalInfo.proposalId}`)
 
   const [vote, setVote] = useState<number[]>([])
@@ -262,52 +272,60 @@ export default function ChainVoteModal({
       }
     }
 
-    if (proposalInfo.alreadyVoted && userVoteList?.find(v => v.status === VoteStatus.PENDING)) {
-      return {
-        disabled: false,
-        error: 'You have already voted, Please confirm the on-chain transaction.'
-      }
-    }
-
-    if (!isTotalVote && !isVoted && proposalInfo.votingType !== 1) {
-      return {
-        disabled: true,
-        error: 'Please enter your votes'
-      }
-    }
-
-    if (singLe && !voteId.length) {
-      return {
-        disabled: true,
-        error: 'Please select vote option'
-      }
-    }
-
-    if (myVotes - isTotalVote > 0 && proposalInfo.votingType !== 1) {
-      return {
-        disabled: false,
-        error: 'There is still unused votes'
-      }
-    }
-
     if (!myVotes || myVotes <= 0) {
       return {
         disabled: true,
         error: 'Insufficient votes'
       }
     }
+
+    if (!isTotalVote && !isVoted && !singLe && speed === 0) {
+      return {
+        disabled: true,
+        error: 'Please enter your votes'
+      }
+    }
+
+    if (singLe && !voteId.length && speed === 0) {
+      return {
+        disabled: true,
+        error: 'Please select vote option'
+      }
+    }
+
+    if (myVotes - isTotalVote > 0 && !singLe && speed === 0) {
+      return {
+        disabled: false,
+        error: 'There is still unused votes'
+      }
+    }
+
+    if (proposalInfo.alreadyVoted && isPending === VoteStatus.PENDING) {
+      return {
+        disabled: false,
+        error: 'You have already voted, Please confirm the on-chain transaction'
+      }
+    }
+    if (isUpChainVoteSuccess && isPending === VoteStatus.PENDING) {
+      return {
+        disabled: false,
+        error: 'You seem to have already voted on the other chain'
+      }
+    }
+
     return {
       disabled: false
     }
   }, [
+    isPending,
     isTotalVote,
+    isUpChainVoteSuccess,
     isVoted,
     myVotes,
     proposalInfo.alreadyVoted,
     proposalInfo.status,
-    proposalInfo.votingType,
     singLe,
-    userVoteList,
+    speed,
     voteId.length
   ])
   return (
@@ -377,23 +395,6 @@ export default function ChainVoteModal({
               {voteBtn.error}
             </Typography>
           )}
-
-          {isUpChainVoteSuccess && userVoteList?.find(v => v.status === VoteStatus.PENDING) && (
-            <Typography
-              sx={{
-                font: '500 12px/30px "Inter"',
-                color: '#9F8644',
-                borderRadius: '8px',
-                background: 'rgba(255, 186, 10, 0.18)',
-                height: 30,
-                paddingLeft: 15,
-                mt: 10
-              }}
-            >
-              You seem to have already voted on the other chain
-            </Typography>
-          )}
-
           <RowCenter mt={6}>
             <OutlineButton
               width={200}

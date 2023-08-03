@@ -77,22 +77,42 @@ export default function VoteProgress({
 
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
 
+  const isSuccess = useMemo(() => {
+    if (voteList.find(v => v.status === VoteStatus.SUCCESS)) {
+      return VoteStatus.SUCCESS
+    }
+    if (voteList.find(v => v.status === VoteStatus.PENDING)) {
+      return VoteStatus.PENDING
+    }
+    return 'Close'
+  }, [voteList])
+
   useEffect(() => {
     if (timeRefresh === -1) {
       toTimeRefresh()
       return
     }
-    if (isVoteSuccess && !voteList.find(v => v.status === VoteStatus.SUCCESS)) {
+    if (isVoteSuccess && isSuccess === VoteStatus.PENDING) {
       setUpDateVoteList(Math.random())
       refresh(Math.random())
       toTimeRefresh()
+    } else {
+      refresh(Math.random())
+      toTimeRefresh()
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timeRefresh, isVoteSuccess])
+  }, [timeRefresh])
 
   useEffect(() => {
-    if (isVoteSuccess && timeRefresh !== -1 && voteList.find(v => v.status === VoteStatus.SUCCESS) && voteModalOpen) {
+    if (isVoteSuccess && isSuccess === VoteStatus.PENDING) {
+      setUpDateVoteList(Math.random())
+      refresh(Math.random())
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isVoteSuccess])
+
+  useEffect(() => {
+    if (isVoteSuccess && timeRefresh !== -1 && isSuccess === VoteStatus.SUCCESS && voteModalOpen) {
       voteModalToggle()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

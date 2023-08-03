@@ -12,7 +12,7 @@ import DaoContainer from 'components/DaoContainer'
 import { useProposalDetailsInfo, useProposalVoteList } from 'hooks/useBackedProposalServer'
 import { VotingTypes } from 'state/buildingGovDao/actions'
 import { formatNumberWithCommas } from 'utils'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+// import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import useModal from 'hooks/useModal'
 
@@ -22,14 +22,12 @@ export default function ProposalDetail() {
     proposalId: string
   }>()
   const curDaoId = Number(daoId)
-  const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
+  // const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
 
-  return daoInfo ? (
+  return (
     <DaoContainer>
       <DetailBox daoId={curDaoId} proposalId={Number(proposalId)} />
     </DaoContainer>
-  ) : (
-    <Loading />
   )
 }
 
