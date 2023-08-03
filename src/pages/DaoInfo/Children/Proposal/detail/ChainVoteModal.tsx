@@ -615,9 +615,8 @@ function MultiVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAlr
       </VoteContentStyle>
       <Box sx={{ mt: 12, display: 'grid', flexDirection: 'column', gap: 10 }}>
         <Select
-          placeholder="Select chain"
           noBold
-          label="Choose a network to sign"
+          label="Select a network to sign"
           value={chainId || undefined}
           onChange={e => {
             account && triggerSwitchChain(library, e.target.value, account)
@@ -636,7 +635,7 @@ function MultiVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAlr
       </Box>
 
       <Typography mt={12} fontWeight={500} fontSize={14} lineHeight={'20px'} color={'#80829F'}>
-        The vote will take effect after successful synchronization on the chain.
+        The vote will take effect after successful synchronization on the blockchain.
       </Typography>
     </>
   )
@@ -723,9 +722,8 @@ function SingleVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAl
       </VoteContentStyle>
       <Box sx={{ mt: 12, display: 'grid', flexDirection: 'column', gap: 10 }}>
         <Select
-          placeholder="Select chain"
           noBold
-          label="Choose a network to sign"
+          label="Select a network to sign"
           value={chainId || undefined}
           onChange={e => {
             account && triggerSwitchChain(library, e.target.value, account)
@@ -744,7 +742,7 @@ function SingleVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAl
       </Box>
 
       <Typography mt={12} mb={30} fontWeight={500} fontSize={14} lineHeight={'20px'} color={'#80829F'}>
-        The vote will take effect after successful synchronization on the chain.
+        The vote will take effect after successful synchronization on the blockchain.
       </Typography>
     </>
   )
