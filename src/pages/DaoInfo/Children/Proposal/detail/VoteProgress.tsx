@@ -288,11 +288,10 @@ export default function VoteProgress({
             <>
               {isVoteSuccess ? (
                 <BlackButton disabled width="100px" height="36px">
-                  Confiming <Dots />
+                  confirming <Dots />
                 </BlackButton>
               ) : (
                 <BlackButton
-                  disabled={isVoteSuccess}
                   style={{
                     height: 36,
                     width: 100,
@@ -306,6 +305,7 @@ export default function VoteProgress({
                     }
                   }}
                   onClick={() => {
+                    console.log('=>', voteModalOpen)
                     voteModalToggle()
                   }}
                 >
@@ -381,7 +381,7 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
                   href={getEtherscanLink(item.chainId, item.txHash, 'transaction')}
                   sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
                 >
-                  <StyledListText align="center">hash</StyledListText>
+                  <StyledListText align="center">Hash</StyledListText>
                 </Link>
               ) : null}
             </Box>
