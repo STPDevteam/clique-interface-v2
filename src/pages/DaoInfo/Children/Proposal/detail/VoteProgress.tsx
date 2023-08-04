@@ -78,7 +78,7 @@ export default function VoteProgress({
 
   const allVotes = proposalInfo?.options.map(item => item.votes).reduce((pre, val) => pre + val)
 
-  const isSuccess = useMemo(() => {
+  const voteStatus = useMemo(() => {
     if (voteList.find(v => v.status === VoteStatus.SUCCESS)) {
       return VoteStatus.SUCCESS
     }
@@ -93,19 +93,16 @@ export default function VoteProgress({
       toTimeRefresh()
       return
     }
-    if (isVoteSuccess && isSuccess === VoteStatus.PENDING) {
+    if (isVoteSuccess && voteStatus === VoteStatus.PENDING) {
       setUpDateVoteList(Math.random())
-      refresh(Math.random())
-      toTimeRefresh()
-    } else {
-      refresh(Math.random())
-      toTimeRefresh()
     }
+    refresh(Math.random())
+    toTimeRefresh()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRefresh])
 
   useEffect(() => {
-    if (isVoteSuccess && isSuccess === VoteStatus.PENDING) {
+    if (isVoteSuccess && voteStatus === VoteStatus.PENDING) {
       setUpDateVoteList(Math.random())
       refresh(Math.random())
     }
@@ -113,7 +110,7 @@ export default function VoteProgress({
   }, [isVoteSuccess])
 
   useEffect(() => {
-    if (isVoteSuccess && timeRefresh !== -1 && isSuccess === VoteStatus.SUCCESS && voteModalOpen) {
+    if (isVoteSuccess && voteStatus === VoteStatus.SUCCESS && voteModalOpen) {
       voteModalToggle()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -305,7 +302,7 @@ export default function VoteProgress({
                     }
                   }}
                   onClick={() => {
-                    console.log('=>', voteModalOpen)
+                    console.log('status=>', voteModalOpen, isVoteSuccess)
                     voteModalToggle()
                   }}
                 >
@@ -358,7 +355,6 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
               alignItems={'center'}
               justifyContent="center"
             >
-              {/* href={getEtherscanLink(daoChainId, item.voter, 'address')} */}
               <Link
                 underline="none"
                 target={'_blank'}
