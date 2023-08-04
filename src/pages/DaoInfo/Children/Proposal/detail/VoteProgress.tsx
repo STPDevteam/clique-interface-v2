@@ -353,7 +353,7 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
             <Box
               key={item.optionId}
               display={'grid'}
-              gridTemplateColumns={item.chainId && item.txHash ? '1fr 1fr 0.8fr 1fr' : '1fr 1fr 0.8fr'}
+              gridTemplateColumns={item.chainId && item.txHash ? '1fr 1fr 1fr 0.6fr' : '1fr 1fr 0.8fr'}
               gap={'10px 5px'}
               alignItems={'center'}
               justifyContent="center"

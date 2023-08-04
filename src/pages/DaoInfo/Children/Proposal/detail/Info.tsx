@@ -17,10 +17,19 @@ import { toast } from 'react-toastify'
 import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
 import Copy from 'components/essential/Copy'
+import useModal from 'hooks/useModal'
+import Modal from 'components/Modal'
+import OutlineButton from 'components/Button/OutlineButton'
+import { RowCenter } from '../ProposalItem'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
+
+const StyledBody = styled(Box)({
+  minHeight: 200,
+  padding: '40px 32px'
+})
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -93,6 +102,7 @@ export default function Info({
   const isSmDown = useBreakpoint('sm')
   const { account } = useActiveWeb3React()
   // const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
+  const { showModal, hideModal } = useModal()
   const cancelProposalCallback = useCancelProposalCallback()
   const [tabValue, setTabValue] = useState(0)
   const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
@@ -100,29 +110,45 @@ export default function Info({
     cancelProposalCallback(proposalInfo.proposalId).then((res: any) => {
       if (res.data.code !== 200) {
         toast.error(res.data.msg || 'Network error')
+        hideModal()
         return
       }
+      hideModal()
       refresh(Math.random())
       toast.success('Cancel success')
     })
-  }, [cancelProposalCallback, proposalInfo.proposalId, refresh])
+  }, [cancelProposalCallback, hideModal, proposalInfo.proposalId, refresh])
 
   return (
     <VoteWrapper>
       <Box pb={40}>
-        <StyledTabs>
-          <Tabs value={tabValue}>
-            {tabList.map((item, idx) => (
-              <Tab
-                key={item.label + idx}
-                label={item.label}
-                onClick={() => setTabValue(idx)}
-                sx={{ gap: 10, marginRight: 50, textTransform: 'none' }}
-                className={tabValue === idx ? 'active' : ''}
-              ></Tab>
-            ))}
-          </Tabs>
-        </StyledTabs>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <StyledTabs>
+            <Tabs value={tabValue}>
+              {tabList.map((item, idx) => (
+                <Tab
+                  key={item.label + idx}
+                  label={item.label}
+                  onClick={() => setTabValue(idx)}
+                  sx={{ gap: 10, marginRight: 50, textTransform: 'none' }}
+                  className={tabValue === idx ? 'active' : ''}
+                ></Tab>
+              ))}
+            </Tabs>
+          </StyledTabs>
+          {account?.toLowerCase() === proposalInfo.proposer.account.toLowerCase() && proposalInfo.status === 'Soon' && (
+            <BlackButton
+              height="40px"
+              width="210px"
+              disabled={isCancel}
+              onClick={() => {
+                showModal(<CancelProposalModal Callback={onCancelProposalCallback} />)
+              }}
+            >
+              Cancel proposal
+            </BlackButton>
+          )}
+        </Box>
         <Box>
           {tabValue === 0 ? (
             <div style={{ borderTop: '1px solid #D4D7E2' }}>
@@ -143,8 +169,8 @@ export default function Info({
               </Box>
             </div>
           ) : (
-            <Box>
-              <Box mb={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
+            <div style={{ borderTop: '1px solid #D4D7E2' }}>
+              <Box mb={12} mt={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
                 <LeftText>Minimum votes needed to execute</LeftText>
                 <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
                 <LeftText>Voting mode</LeftText>
@@ -190,25 +216,71 @@ export default function Info({
                   </svg>
                 </MuiLink> */}
               </Box>
-              {account?.toLowerCase() === proposalInfo.proposer.account.toLowerCase() &&
-                proposalInfo.status === 'Soon' && (
-                  <Box mt={15}>
-                    <BlackButton height="40px" width="160px" disabled={isCancel} onClick={onCancelProposalCallback}>
-                      {isCancel ? (
-                        <>
-                          Cancel
-                          <Dots />
-                        </>
-                      ) : (
-                        'Cancel proposal'
-                      )}
-                    </BlackButton>
-                  </Box>
-                )}
-            </Box>
+            </div>
           )}
         </Box>
       </Box>
     </VoteWrapper>
+  )
+}
+
+function CancelProposalModal({ Callback }: { Callback: () => void }) {
+  const { hideModal } = useModal()
+  const [loading, setLoading] = useState<boolean>(false)
+  return (
+    <Modal maxWidth="480px" closeIcon width="100%">
+      <StyledBody sx={{ paddingTop: 55, paddingBottom: 30 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography
+            sx={{
+              fontSize: 14,
+              fontWeight: 500,
+              lineHeight: '20px',
+              color: '#3F5170',
+              maxWidth: 285,
+              textAlign: 'center'
+            }}
+          >
+            Canceled proposals cannot be restored, do you want to proceed?
+          </Typography>
+        </Box>
+        <RowCenter mt={30}>
+          <OutlineButton
+            width={200}
+            color="#0049C6"
+            style={{
+              borderColor: '#0049C6'
+            }}
+            noBold
+            height={40}
+            borderRadius="8px"
+            onClick={() => {
+              hideModal()
+            }}
+          >
+            Later
+          </OutlineButton>
+          <BlackButton
+            disabled={loading}
+            width="200px"
+            height="40px"
+            borderRadius="8px"
+            onClick={() => {
+              setLoading(true)
+              Callback()
+            }}
+          >
+            {loading ? (
+              <>
+                Cancel
+                <Dots />
+              </>
+            ) : (
+              'Cancel'
+            )}
+          </BlackButton>
+        </RowCenter>
+      </StyledBody>
+    </Modal>
   )
 }
