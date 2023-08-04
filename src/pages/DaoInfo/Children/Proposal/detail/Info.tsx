@@ -105,9 +105,11 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
         <Box>
           {tabValue === 0 ? (
             <div style={{ borderTop: '1px solid #D4D7E2' }}>
-              <Typography color={'#80829F'} fontWeight={500}>
-                {proposalInfo.introduction}
-              </Typography>
+              {proposalInfo.introduction && (
+                <Typography color={'#80829F'} fontWeight={500} marginTop={12}>
+                  {proposalInfo.introduction}
+                </Typography>
+              )}
               <Box className="ql-editor">
                 {ReactHtmlParser(
                   filterXSS(proposalInfo.content || '', {
