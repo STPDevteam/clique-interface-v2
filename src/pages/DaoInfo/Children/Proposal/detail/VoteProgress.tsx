@@ -156,11 +156,11 @@ export default function VoteProgress({
               rowGap={'5px'}
             >
               <Box display={'grid'} maxWidth={600}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 0.3fr', gap: 10 }}>
                   <Typography
                     mb={5}
                     sx={{
-                      maxWidth: '440px',
+                      maxWidth: '450px',
                       wordWrap: 'break-word'
                     }}
                   >
@@ -379,6 +379,16 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
                   sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
                 >
                   <StyledListText align="center">Hash</StyledListText>
+                </Link>
+              ) : null}
+              {item.arHash ? (
+                <Link
+                  underline="none"
+                  target={'_blank'}
+                  href={item.arHash}
+                  sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                >
+                  <StyledListText align="center">Arweave Hash</StyledListText>
                 </Link>
               ) : null}
             </Box>

@@ -330,7 +330,7 @@ export default function ChainVoteModal({
   ])
   return (
     <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
-      <StyledBody height={singLe ? 'auto' : '540px'}>
+      <StyledBody minHeight={singLe ? 'auto' : '540px'}>
         <Box>
           <Typography fontWeight={500} variant="h6">
             Vote

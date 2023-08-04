@@ -128,7 +128,16 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
                 <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
                 <LeftText>Voting mode</LeftText>
                 <Typography>{proposalInfo.isChain ? CreateType.ONCHAIN : CreateType.GASLESS}</Typography>
-
+                <LeftText>Arweave Hash</LeftText>
+                {proposalInfo.arHash ? (
+                  <Link style={{ textDecoration: 'none' }} to={proposalInfo.arHash}>
+                    <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
+                      {proposalInfo.arHash}
+                    </Typography>
+                  </Link>
+                ) : (
+                  <Typography>--</Typography>
+                )}
                 <LeftText>Token contract address</LeftText>
                 <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
                   <Typography>{proposalInfo.useVoteBase[0]?.tokenAddress}</Typography>
