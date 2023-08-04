@@ -347,9 +347,9 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
             Votes ({(allVotes && formatNumberWithCommas(allVotes)) || '--'})
           </Typography>
 
-          {userVoteList?.map(item => (
+          {userVoteList?.map((item, index) => (
             <Box
-              key={item.optionId}
+              key={item.optionId + index.toString()}
               display={'grid'}
               gridTemplateColumns={item.chainId && item.txHash ? '1fr 1fr 1fr 0.6fr' : '1fr 1fr 0.8fr'}
               gap={'10px 5px'}
