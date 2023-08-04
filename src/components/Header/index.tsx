@@ -421,7 +421,8 @@ export default function Header() {
               left: 0,
               zIndex: 1000,
               display: 'flex',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              borderRadius: '0'
             }}
           >
             You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
