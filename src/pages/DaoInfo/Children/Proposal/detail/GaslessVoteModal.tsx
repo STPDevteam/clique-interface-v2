@@ -273,7 +273,6 @@ export default function GaslessVoteModal({
                     sx={{ height: 7 }}
                   />
                   <Input
-                    type="number"
                     value={item.userVote.votes?.toString() || (vote[index] ? vote[index].toString() : '0')}
                     maxWidth={90}
                     height={34}
