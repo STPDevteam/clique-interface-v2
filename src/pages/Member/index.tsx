@@ -145,9 +145,9 @@ export default function Member() {
   return (
     <DaoContainer>
       <>
-        {(!isJoined.isJoin || !account) && <EmptyPage />}
-
-        {jobsList.length && account && isJoined.isJoin ? (
+        {!isJoined.isJoin || !account ? (
+          <EmptyPage />
+        ) : jobsList.length && account && isJoined.isJoin ? (
           <Box>
             <Box
               sx={{
@@ -269,7 +269,7 @@ export default function Member() {
             )}
           </Box>
         ) : (
-          jobListLoading && account && <Loading />
+          jobListLoading && <Loading />
         )}
       </>
     </DaoContainer>
