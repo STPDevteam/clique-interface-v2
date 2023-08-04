@@ -381,6 +381,16 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
                   <StyledListText align="center">Hash</StyledListText>
                 </Link>
               ) : null}
+              {item.arHash ? (
+                <Link
+                  underline="none"
+                  target={'_blank'}
+                  href={item.arHash}
+                  sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                >
+                  <StyledListText align="center">Arweave Hash</StyledListText>
+                </Link>
+              ) : null}
             </Box>
           ))}
 

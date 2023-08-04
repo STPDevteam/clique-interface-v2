@@ -231,6 +231,7 @@ export interface useProposalDetailInfoProps {
   votingType: number
   proposalThreshold: number
   yourVotes: number
+  arHash: string
 }
 
 export interface VoteParamsProp {
@@ -247,6 +248,7 @@ export interface VoteListProp {
   chainId: number
   proposalId: number
   txHash: string
+  arHash: string
 }
 
 export function useProposalVoteCallback() {
