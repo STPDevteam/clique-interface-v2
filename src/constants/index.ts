@@ -164,7 +164,8 @@ export const CREATE_SBT: { [chainId in ChainId]?: string } = {
 
 export const PROPOSAL_VOTING: { [chainId in ChainId]?: string } = {
   [ChainId.POLYGON_MUMBAI]: '0x525a9b685d78e65C58584e466aF459303fDF346E',
-  [ChainId.SEPOLIA]: '0x21AD787Fb35d30293F6F9F83Ebf61Ab50f800275'
+  [ChainId.SEPOLIA]: '0x21AD787Fb35d30293F6F9F83Ebf61Ab50f800275',
+  [ChainId.BSC]: '0x6D40E6fCa9f9bfEc98A69b66593a732E0849a91e'
 }
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
