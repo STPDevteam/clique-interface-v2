@@ -791,7 +791,7 @@ export function joinV3Dao(daoId: number) {
   return Axios.post(`stpdao/v3/user/join/${daoId}`, {})
 }
 
-export function cancelProposal(proposalId: number) {
+export function cancelProposal(proposalId: number | undefined) {
   return Axios.post(`stpdao/v3/proposal/cancel/${proposalId}`, {})
 }
 

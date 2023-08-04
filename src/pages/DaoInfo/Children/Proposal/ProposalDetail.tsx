@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, styled } from '@mui/material'
 import Back from 'components/Back'
 import Loading from 'components/Loading'
 import { routes } from 'constants/routes'
@@ -15,6 +15,19 @@ import { formatNumberWithCommas } from 'utils'
 // import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import useModal from 'hooks/useModal'
+import { BlackButton } from 'components/Button/Button'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import Modal from 'components/Modal'
+import OutlineButton from 'components/Button/OutlineButton'
+import { toast } from 'react-toastify'
+import { useCancelProposalCallback } from 'hooks/useProposalCallback'
+import { Dots } from 'theme/components'
+import { RowCenter } from './ProposalItem'
+
+const StyledBody = styled(Box)({
+  minHeight: 200,
+  padding: '40px 32px'
+})
 
 export default function ProposalDetail() {
   const { daoId: daoId, proposalId } = useParams<{
@@ -36,7 +49,9 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
   const { account } = useActiveWeb3React()
   const [rand, setRand] = useState<number>(-1)
   const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
-  const { showModal } = useModal()
+  const { showModal, hideModal } = useModal()
+  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
+  const cancelProposalCallback = useCancelProposalCallback()
 
   const toList = useCallback(() => {
     history.replace(routes._DaoInfo + `/${daoId}/proposal`)
@@ -68,6 +83,19 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
     })
     return arr
   }, [proposalDetailInfo?.options, proposalVoteList])
+
+  const onCancelProposalCallback = useCallback(() => {
+    cancelProposalCallback(proposalDetailInfo?.proposalId).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Network error')
+        hideModal()
+        return
+      }
+      hideModal()
+      setRand(Math.random())
+      toast.success('Cancel success')
+    })
+  }, [cancelProposalCallback, hideModal, proposalDetailInfo?.proposalId, setRand])
 
   return proposalDetailInfo ? (
     <Box>
@@ -116,28 +144,107 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
                   Your votes: {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes)) || '--'}
                 </Typography>
               </Box>
-              <Typography
-                onClick={() => showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} />)}
-                variant="body1"
-                sx={{
-                  cursor: 'pointer',
-                  '&:hover': {
-                    textDecoration: 'underline'
-                  }
-                }}
-                color={'#80829F'}
-              >
-                View all votes ({allVotes && formatNumberWithCommas(allVotes)})
-              </Typography>
+
+              {proposalDetailInfo.status !== 'Soon' && (
+                <OutlineButton
+                  width={'190px'}
+                  color="#0049C6"
+                  style={{
+                    borderColor: '#97B7EF',
+                    fontWeight: 600
+                  }}
+                  noBold
+                  height={40}
+                  borderRadius="8px"
+                  onClick={() => showModal(<VoteListModal allVotes={allVotes} proposalId={proposalId} />)}
+                >
+                  View all votes ({allVotes && formatNumberWithCommas(allVotes)})
+                </OutlineButton>
+              )}
+
+              {account?.toLowerCase() === proposalDetailInfo.proposer.account.toLowerCase() &&
+                proposalDetailInfo.status === 'Soon' && (
+                  <BlackButton
+                    height="40px"
+                    width="190px"
+                    disabled={isCancel}
+                    onClick={() => {
+                      showModal(<CancelProposalModal Callback={onCancelProposalCallback} />)
+                    }}
+                  >
+                    Cancel Proposal
+                  </BlackButton>
+                )}
             </Box>
           </Grid>
           <Grid item md={12} xs={12}>
-            <VoteInfo proposalInfo={proposalDetailInfo} refresh={setRand} />
+            <VoteInfo proposalInfo={proposalDetailInfo} />
           </Grid>
         </Grid>
       </Box>
     </Box>
   ) : (
     <Loading />
+  )
+}
+
+function CancelProposalModal({ Callback }: { Callback: () => void }) {
+  const { hideModal } = useModal()
+  const [loading, setLoading] = useState<boolean>(false)
+  return (
+    <Modal maxWidth="480px" closeIcon width="100%">
+      <StyledBody sx={{ paddingTop: 55, paddingBottom: 30 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Typography
+            sx={{
+              fontSize: 14,
+              fontWeight: 500,
+              lineHeight: '20px',
+              color: '#3F5170',
+              maxWidth: 285,
+              textAlign: 'center'
+            }}
+          >
+            Canceled proposals cannot be restored, do you want to proceed?
+          </Typography>
+        </Box>
+        <RowCenter mt={30}>
+          <OutlineButton
+            width={200}
+            color="#0049C6"
+            style={{
+              borderColor: '#0049C6'
+            }}
+            noBold
+            height={40}
+            borderRadius="8px"
+            onClick={() => {
+              hideModal()
+            }}
+          >
+            Later
+          </OutlineButton>
+          <BlackButton
+            disabled={loading}
+            width="200px"
+            height="40px"
+            borderRadius="8px"
+            onClick={() => {
+              setLoading(true)
+              Callback()
+            }}
+          >
+            {loading ? (
+              <>
+                Cancel
+                <Dots />
+              </>
+            ) : (
+              'Cancel'
+            )}
+          </BlackButton>
+        </RowCenter>
+      </StyledBody>
+    </Modal>
   )
 }

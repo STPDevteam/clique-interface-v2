@@ -13,7 +13,7 @@ export enum SignType {
 }
 
 export function useCancelProposalCallback() {
-  return useCallback(async (proposalId: number) => {
+  return useCallback(async (proposalId: number | undefined) => {
     return await cancelProposal(proposalId)
   }, [])
 }

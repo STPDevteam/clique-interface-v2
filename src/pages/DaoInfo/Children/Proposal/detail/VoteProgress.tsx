@@ -119,12 +119,13 @@ export default function VoteProgress({
   const isPending = useMemo(() => {
     if (
       voteList.find(v => v.status === VoteStatus.PENDING)?.voter.toLowerCase() === account?.toLowerCase() &&
-      account
+      account &&
+      proposalInfo.status === 'Active'
     ) {
       return true
     }
     return false
-  }, [account, voteList])
+  }, [account, proposalInfo.status, voteList])
 
   return (
     <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
@@ -285,7 +286,7 @@ export default function VoteProgress({
             <>
               {isVoteSuccess ? (
                 <BlackButton disabled width="100px" height="36px">
-                  confirming <Dots />
+                  Confirming <Dots />
                 </BlackButton>
               ) : (
                 <BlackButton

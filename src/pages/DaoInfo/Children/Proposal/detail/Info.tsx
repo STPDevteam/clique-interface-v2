@@ -1,35 +1,22 @@
 import { Box, styled, Typography, useTheme, Tabs, Tab } from '@mui/material'
-import { BlackButton } from 'components/Button/Button'
 import { CreateType, useProposalDetailInfoProps } from 'hooks/useBackedProposalServer'
-import { useCancelProposalCallback } from 'hooks/useProposalCallback'
 import ShowAdminTag from 'pages/DaoInfo/ShowAdminTag'
 import { formatNumberWithCommas, shortenAddress } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import { VoteWrapper } from './Vote'
-import { Dispatch, SetStateAction, useCallback, useState } from 'react'
-import { useActiveWeb3React } from 'hooks'
-import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
-import { Dots } from 'theme/components'
+import { useState } from 'react'
+
 import { routes } from 'constants/routes'
 import { Link } from 'react-router-dom'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { toast } from 'react-toastify'
+
 import ReactHtmlParser from 'react-html-parser'
 import { escapeAttrValue } from 'xss'
 import Copy from 'components/essential/Copy'
-import useModal from 'hooks/useModal'
-import Modal from 'components/Modal'
-import OutlineButton from 'components/Button/OutlineButton'
-import { RowCenter } from '../ProposalItem'
 
 const LeftText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary
 }))
-
-const StyledBody = styled(Box)({
-  minHeight: 200,
-  padding: '40px 32px'
-})
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -91,33 +78,11 @@ const tabList = [
   { label: ' Proposal Info', value: ' Proposal Info' }
 ]
 
-export default function Info({
-  proposalInfo,
-  refresh
-}: {
-  proposalInfo: useProposalDetailInfoProps
-  refresh: Dispatch<SetStateAction<number>>
-}) {
+export default function Info({ proposalInfo }: { proposalInfo: useProposalDetailInfoProps }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
-  const { account } = useActiveWeb3React()
   // const proposalSnapshot = useProposalSnapshot(daoChainId, '', proposalInfo.proposalId)
-  const { showModal, hideModal } = useModal()
-  const cancelProposalCallback = useCancelProposalCallback()
   const [tabValue, setTabValue] = useState(0)
-  const { claimSubmitted: isCancel } = useUserHasSubmittedClaim(`_cancelProposal`)
-  const onCancelProposalCallback = useCallback(() => {
-    cancelProposalCallback(proposalInfo.proposalId).then((res: any) => {
-      if (res.data.code !== 200) {
-        toast.error(res.data.msg || 'Network error')
-        hideModal()
-        return
-      }
-      hideModal()
-      refresh(Math.random())
-      toast.success('Cancel success')
-    })
-  }, [cancelProposalCallback, hideModal, proposalInfo.proposalId, refresh])
 
   return (
     <VoteWrapper>
@@ -136,18 +101,6 @@ export default function Info({
               ))}
             </Tabs>
           </StyledTabs>
-          {account?.toLowerCase() === proposalInfo.proposer.account.toLowerCase() && proposalInfo.status === 'Soon' && (
-            <BlackButton
-              height="40px"
-              width="210px"
-              disabled={isCancel}
-              onClick={() => {
-                showModal(<CancelProposalModal Callback={onCancelProposalCallback} />)
-              }}
-            >
-              Cancel proposal
-            </BlackButton>
-          )}
         </Box>
         <Box>
           {tabValue === 0 ? (
@@ -221,66 +174,5 @@ export default function Info({
         </Box>
       </Box>
     </VoteWrapper>
-  )
-}
-
-function CancelProposalModal({ Callback }: { Callback: () => void }) {
-  const { hideModal } = useModal()
-  const [loading, setLoading] = useState<boolean>(false)
-  return (
-    <Modal maxWidth="480px" closeIcon width="100%">
-      <StyledBody sx={{ paddingTop: 55, paddingBottom: 30 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Typography
-            sx={{
-              fontSize: 14,
-              fontWeight: 500,
-              lineHeight: '20px',
-              color: '#3F5170',
-              maxWidth: 285,
-              textAlign: 'center'
-            }}
-          >
-            Canceled proposals cannot be restored, do you want to proceed?
-          </Typography>
-        </Box>
-        <RowCenter mt={30}>
-          <OutlineButton
-            width={200}
-            color="#0049C6"
-            style={{
-              borderColor: '#0049C6'
-            }}
-            noBold
-            height={40}
-            borderRadius="8px"
-            onClick={() => {
-              hideModal()
-            }}
-          >
-            Later
-          </OutlineButton>
-          <BlackButton
-            disabled={loading}
-            width="200px"
-            height="40px"
-            borderRadius="8px"
-            onClick={() => {
-              setLoading(true)
-              Callback()
-            }}
-          >
-            {loading ? (
-              <>
-                Cancel
-                <Dots />
-              </>
-            ) : (
-              'Cancel'
-            )}
-          </BlackButton>
-        </RowCenter>
-      </StyledBody>
-    </Modal>
   )
 }
