@@ -156,11 +156,11 @@ export default function VoteProgress({
               rowGap={'5px'}
             >
               <Box display={'grid'} maxWidth={600}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 0.3fr', gap: 10 }}>
                   <Typography
                     mb={5}
                     sx={{
-                      maxWidth: '440px',
+                      maxWidth: '450px',
                       wordWrap: 'break-word'
                     }}
                   >
