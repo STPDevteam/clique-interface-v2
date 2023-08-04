@@ -21,6 +21,7 @@ import AddMemberModal from 'pages/AboutSetting/Modals/AddMemberModal'
 import { routes } from 'constants/routes'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
 import { useActiveWeb3React } from 'hooks'
+import Loading from 'components/Loading'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -101,7 +102,7 @@ export default function Member() {
   const { showModal, hideModal } = useModal()
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
-  const { result: jobsList } = useJobsList(curDaoId)
+  const { result: jobsList, loading: jobListLoading } = useJobsList(curDaoId)
   const { result: jobsNum } = useGetPublishJobList(curDaoId, randNum)
   const addJobsCB = useCallback(() => {
     showModal(
@@ -140,132 +141,137 @@ export default function Member() {
           icon: <Invite />
         }
       ]
+
   return (
     <DaoContainer>
-      {(!isJoined.isJoin && jobsList && jobsList.length !== 0) || !account ? (
-        <EmptyPage />
-      ) : (
-        <Box>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              flexDirection: 'row',
-              '& button': {
-                width: 125,
-                height: 36,
-                borderRadius: '8px'
-              }
-            }}
-          >
+      <>
+        {(!isJoined.isJoin || !account) && <EmptyPage />}
+
+        {jobsList.length && account && isJoined.isJoin ? (
+          <Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                '& button': {
+                  width: 125,
+                  height: 36,
+                  borderRadius: '8px'
+                }
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  '& svg path': {
+                    fill: '#0049C6'
+                  },
+                  '& p': {
+                    fontWeight: 600,
+                    fontSize: 30,
+                    textAlign: 'left',
+                    color: '#3f5170'
+                  }
+                }}
+              >
+                <MemberIcon width={38} height={38} />
+                <Typography>Member</Typography>
+              </Box>
+              {isJoined.job === 'owner' || isJoined.job === 'superAdmin' ? (
+                <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
+                  <Button onClick={addJobsCB}>+ Add Job</Button>
+                  <Button onClick={addMemberCB}>+ Add Member</Button>
+                </Box>
+              ) : (
+                <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
+                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="left">
+                    <DisabledBtn>+ Add Job</DisabledBtn>
+                  </TooltipStyle>
+                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="top">
+                    <DisabledBtn>+ Add Member</DisabledBtn>
+                  </TooltipStyle>
+                </Box>
+              )}
+            </Box>
+            <Typography
+              variant="h5"
+              fontWeight={500}
+              lineHeight={'20px'}
+              sx={{
+                width: '700px',
+                textAlign: 'left',
+                color: '#3f5170',
+                fontSize: 14,
+                mt: 15
+              }}
+            >
+              Manage members here, add them by address, and define roles for them. Make sure to turn on your
+              notifications to receive information about new openings.
+            </Typography>
             <Box
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 10,
-                '& svg path': {
-                  fill: '#0049C6'
-                },
+                flexDirection: 'row',
+                justifyContent: 'space-between',
                 '& p': {
-                  fontWeight: 600,
-                  fontSize: 30,
-                  textAlign: 'left',
-                  color: '#3f5170'
+                  cursor: 'pointer',
+                  color: '#0049C6',
+                  fontWeight: 500,
+                  padding: '12px 16px',
+                  marginBottom: '-12px'
                 }
               }}
             >
-              <MemberIcon width={38} height={38} />
-              <Typography>Member</Typography>
+              <StyledTabs>
+                <Tabs value={tabValue}>
+                  {tabList.map((item, idx) => (
+                    <Tab
+                      key={item.label + idx}
+                      icon={item.icon}
+                      iconPosition="start"
+                      label={item.label}
+                      onClick={() => setTabValue(idx)}
+                      sx={{ gap: 10, marginRight: 50 }}
+                      className={tabValue === idx ? 'active' : ''}
+                    ></Tab>
+                  ))}
+                </Tabs>
+              </StyledTabs>
+              {tabList.length === 3 && tabValue === 1 ? (
+                <Typography
+                  onClick={() => {
+                    history.push(routes._DaoInfo + `/${daoId}/settings?tab=3`)
+                  }}
+                >
+                  View open jobs({jobsNum.length})&gt;
+                </Typography>
+              ) : (
+                <></>
+              )}
             </Box>
-            {isJoined.job === 'owner' || isJoined.job === 'superAdmin' ? (
-              <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
-                <Button onClick={addJobsCB}>+ Add Job</Button>
-                <Button onClick={addMemberCB}>+ Add Member</Button>
-              </Box>
-            ) : (
-              <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
-                <TooltipStyle title={"This feature is only available to DAO's owner."} placement="left">
-                  <DisabledBtn>+ Add Job</DisabledBtn>
-                </TooltipStyle>
-                <TooltipStyle title={"This feature is only available to DAO's owner."} placement="top">
-                  <DisabledBtn>+ Add Member</DisabledBtn>
-                </TooltipStyle>
-              </Box>
-            )}
-          </Box>
-          <Typography
-            variant="h5"
-            fontWeight={500}
-            lineHeight={'20px'}
-            sx={{
-              width: '700px',
-              textAlign: 'left',
-              color: '#3f5170',
-              fontSize: 14,
-              mt: 15
-            }}
-          >
-            Manage members here, add them by address, and define roles for them. Make sure to turn on your notifications
-            to receive information about new openings.
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              '& p': {
-                cursor: 'pointer',
-                color: '#0049C6',
-                fontWeight: 500,
-                padding: '12px 16px',
-                marginBottom: '-12px'
-              }
-            }}
-          >
-            <StyledTabs>
-              <Tabs value={tabValue}>
-                {tabList.map((item, idx) => (
-                  <Tab
-                    key={item.label + idx}
-                    icon={item.icon}
-                    iconPosition="start"
-                    label={item.label}
-                    onClick={() => setTabValue(idx)}
-                    sx={{ gap: 10, marginRight: 50 }}
-                    className={tabValue === idx ? 'active' : ''}
-                  ></Tab>
-                ))}
-              </Tabs>
-            </StyledTabs>
-            {tabList.length === 3 && tabValue === 1 ? (
-              <Typography
-                onClick={() => {
-                  history.push(routes._DaoInfo + `/${daoId}/settings?tab=3`)
-                }}
-              >
-                View open jobs({jobsNum.length})&gt;
-              </Typography>
-            ) : (
-              <></>
-            )}
-          </Box>
-          <Divider />
-          {tabList.length === 2 ? (
-            tabValue === 0 ? (
+            <Divider />
+            {tabList.length === 2 ? (
+              tabValue === 0 ? (
+                <CardView result={jobsList} role={isJoined?.job} />
+              ) : (
+                <OpenJobs />
+              )
+            ) : tabValue === 0 ? (
               <CardView result={jobsList} role={isJoined?.job} />
+            ) : tabValue === 1 ? (
+              <JobApplication result={applyList} reFetch={() => setRand(Math.random())} />
             ) : (
-              <OpenJobs />
-            )
-          ) : tabValue === 0 ? (
-            <CardView result={jobsList} role={isJoined?.job} />
-          ) : tabValue === 1 ? (
-            <JobApplication result={applyList} reFetch={() => setRand(Math.random())} />
-          ) : (
-            <InviteUser />
-          )}
-        </Box>
-      )}
+              <InviteUser />
+            )}
+          </Box>
+        ) : (
+          jobListLoading && account && <Loading />
+        )}
+      </>
     </DaoContainer>
   )
 }
