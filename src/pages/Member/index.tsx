@@ -20,6 +20,7 @@ import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import AddMemberModal from 'pages/AboutSetting/Modals/AddMemberModal'
 import { routes } from 'constants/routes'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
+import { useActiveWeb3React } from 'hooks'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -91,6 +92,7 @@ const DisabledBtn = styled(Box)({
 
 export default function Member() {
   const [rand, setRand] = useState(Math.random())
+  const { account } = useActiveWeb3React()
   const [randNum] = useState(Math.random())
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
@@ -140,7 +142,7 @@ export default function Member() {
       ]
   return (
     <DaoContainer>
-      {!isJoined.isJoin && jobsList && jobsList.length !== 0 ? (
+      {(!isJoined.isJoin && jobsList && jobsList.length !== 0) || !account ? (
         <EmptyPage />
       ) : (
         <Box>
