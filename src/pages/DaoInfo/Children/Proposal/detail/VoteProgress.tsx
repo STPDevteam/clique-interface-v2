@@ -355,6 +355,14 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
               gap={'10px 5px'}
               alignItems={'center'}
               justifyContent="center"
+              sx={{
+                '& .link': {
+                  textDecoration: 'none',
+                  ':hover': {
+                    textDecoration: 'underline'
+                  }
+                }
+              }}
             >
               <Link
                 underline="none"
@@ -382,14 +390,9 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
                 </Link>
               ) : null}
               {item.arHash ? (
-                <Link
-                  underline="none"
-                  target={'_blank'}
-                  href={item.arHash}
-                  sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
-                >
+                <a href={item.arHash} target="_blank" rel="noreferrer" className="link">
                   <StyledListText align="center">Arweave Hash</StyledListText>
-                </Link>
+                </a>
               ) : null}
             </Box>
           ))}

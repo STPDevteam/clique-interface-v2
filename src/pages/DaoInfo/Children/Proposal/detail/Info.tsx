@@ -132,11 +132,23 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
                 <Typography>{proposalInfo.isChain ? CreateType.ONCHAIN : CreateType.GASLESS}</Typography>
                 <LeftText>Arweave Hash</LeftText>
                 {proposalInfo.arHash ? (
-                  <Link style={{ textDecoration: 'none' }} to={proposalInfo.arHash}>
-                    <Typography fontSize={13} fontWeight={600} color={theme.palette.primary.light}>
+                  <Typography
+                    fontSize={13}
+                    fontWeight={600}
+                    color={theme.palette.primary.light}
+                    sx={{
+                      '& .link': {
+                        textDecoration: 'none',
+                        ':hover': {
+                          textDecoration: 'underline'
+                        }
+                      }
+                    }}
+                  >
+                    <a href={proposalInfo.arHash} target="_blank" rel="noreferrer" className="link">
                       {proposalInfo.arHash}
-                    </Typography>
-                  </Link>
+                    </a>
+                  </Typography>
                 ) : (
                   <Typography>--</Typography>
                 )}
