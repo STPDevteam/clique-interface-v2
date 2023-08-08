@@ -52,7 +52,7 @@ interface Tab extends TabContent {
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
   { title: 'Explore DAOs', route: routes.Governance },
-  { title: 'DAO Rewards', route: routes.Activity },
+  { title: 'Clique Discovery', route: routes.Activity },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
   {
     title: 'Creater',

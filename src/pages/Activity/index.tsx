@@ -104,7 +104,8 @@ export default function Activity() {
             mt: { sm: 0, xs: '30%' }
           }}
         >
-          {`Community rewards are live!`}
+          {/* {`Community rewards are live!`} */}
+          {`Traverse and find new worlds through rewards and education!`}
           <Link
             sx={{ color: 'inherit', textDecoration: 'none' }}
             target="_blank"

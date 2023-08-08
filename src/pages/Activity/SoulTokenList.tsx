@@ -1,4 +1,4 @@
-import { Box, Typography, styled, Stack } from '@mui/material'
+import { Box, Typography, styled, Stack, Link } from '@mui/material'
 import Image from 'components/Image'
 import { DaoAvatars } from 'components/Avatars'
 import { useHistory } from 'react-router-dom'
@@ -124,18 +124,35 @@ function ItemCard(item: SbtListProp) {
         }}
       />
       <ContentBoxStyle>
-        <Box sx={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-          <DaoAvatars src={item?.daoLogo} size={24} />
-          <Typography variant="h6" lineHeight={'19px'}>
-            {item?.daoName}
-          </Typography>
-        </Box>
-        <Box>
-          <Typography variant="h6" lineHeight={'27px'}>
-            {/* The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
+        <Box sx={{ display: 'grid', gap: 10 }}>
+          <Box sx={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <DaoAvatars src={item?.daoLogo} size={36} />
+            <Box sx={{ display: 'grid', gap: 3 }}>
+              <Typography variant="body1" lineHeight={'16px'} fontSize={14} color={'#80829F'}>
+                DAO
+              </Typography>
+              <Link
+                target="_blank"
+                href={routes._DaoInfo + `/${item.daoId}` + '/proposal'}
+                sx={{
+                  fontWeight: '600',
+                  fontSize: 16,
+                  textDecoration: 'none',
+                  color: '#3F5170',
+                  ':hover': { textDecoration: 'underline' }
+                }}
+              >
+                {item?.daoName}
+              </Link>
+            </Box>
+          </Box>
+          <Box>
+            <Typography variant="h6" lineHeight={'27px'}>
+              {/* The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
             with interacting with all projects on the protocol... */}
-            {item?.itemName}
-          </Typography>
+              {item?.itemName}
+            </Typography>
+          </Box>
         </Box>
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 300px' }}>
           <ContentLayout>

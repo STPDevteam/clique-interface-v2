@@ -437,14 +437,28 @@ export default function SoulTokenDetail() {
                     {sbtDetail?.itemName || '--'}
                   </Typography>
                 </TooltipStyle>
-                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 20 }}>
+                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
                   <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
-                  <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                     <Typography variant="body1" color={'#80829F'}>
                       Base on
                     </Typography>
-                    <Typography variant="h6" fontSize={18} lineHeight={'20px'}>
+                    <Typography
+                      variant="h6"
+                      fontSize={18}
+                      lineHeight={'20px'}
+                      sx={{
+                        cursor: 'pointer'
+                        // ':hover': { textDecoration: 'underline' }
+                      }}
+                      onClick={() => {
+                        history.push(routes._DaoInfo + `/${sbtDetail.daoId}` + '/proposal')
+                      }}
+                    >
                       {sbtDetail?.daoName || '--'}
+                    </Typography>
+                    <Typography variant="body1" color={'#80829F'}>
+                      DAO
                     </Typography>
                   </Box>
                   <JoInButton disabled={isJoin} onClick={JoinCallback}>
