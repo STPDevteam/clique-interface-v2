@@ -534,14 +534,14 @@ export function useSbtList() {
 
 export function useDaoSbtList(daoId: number) {
   const {
-    data: { chainId, status, currentPage, category },
-    setCategory,
-    setStatus,
-    setChainId,
-    setCurrentPage
+    data: { category },
+    setCategory
   } = useSbtListPaginationCallback()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [status, setStatus] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
+  const [chainId, setChainId] = useState<number>(0)
   const pageSize = 8
   const [result, setResult] = useState<SbtListProp[]>([])
   const [timeRefresh, setTimeRefresh] = useState(-1)
