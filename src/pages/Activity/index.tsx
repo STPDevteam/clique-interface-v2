@@ -105,12 +105,14 @@ export default function Activity() {
           }}
         >
           {/* {`Community rewards are live!`} */}
-          {`Traverse and find new worlds through rewards and education!`}
           <Link
             sx={{ color: 'inherit', textDecoration: 'none' }}
             target="_blank"
             href="https://stp-dao.gitbook.io/verse-network/clique/daodrop"
-          >{` Click to know how it works. `}</Link>
+          >
+            {`Traverse and find new worlds through rewards and education!`}
+          </Link>
+          {/* {` Click to know how it works. `} */}
         </Typography>
       </BannerWrapper>
       <Box
