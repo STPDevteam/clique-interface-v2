@@ -30,7 +30,8 @@ export enum ChainId {
   POLYGON_MANGO = 1442,
   COINBASE_TESTNET = 84531,
   ZetaChain_TESTNET = 7001,
-  SEPOLIA = 11155111
+  SEPOLIA = 11155111,
+  BASE = 8453
 }
 
 export const NETWORK_CHAIN_ID: ChainId = process.env.REACT_APP_CHAIN_ID
@@ -179,6 +180,14 @@ export const AllChainList = [
     name: 'ZetaChain Athens 2',
     id: ChainId.ZetaChain_TESTNET,
     hex: '0x1B59'
+  },
+  {
+    icon: <ETH />,
+    logo: CoinbaseSvg,
+    symbol: 'Base',
+    name: 'Base',
+    id: ChainId.BASE,
+    hex: '0x2105'
   }
 ]
 
@@ -390,5 +399,16 @@ export const SUPPORTED_NETWORKS: {
     },
     rpcUrls: ['https://sepolia.infura.io/v3/169a2f10743f4afdaa0a17e148552867'],
     blockExplorerUrls: ['https://sepolia.etherscan.io/']
+  },
+  [ChainId.BASE]: {
+    chainId: '0x2105',
+    chainName: 'Base',
+    nativeCurrency: {
+      name: 'Base',
+      symbol: 'ETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://developer-access-mainnet.base.org'],
+    blockExplorerUrls: ['https://basescan.org']
   }
 }

@@ -18,7 +18,7 @@ import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { ChainId } from '../constants/chain'
 import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
-import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS, CREATE_SBT, PROPOSAL_VOTING } from '../constants'
+import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS, SBT_FACTORY, PROPOSAL_VOTING } from '../constants'
 import { useUserLocation } from 'state/application/hooks'
 
 // returns null on errors
@@ -149,7 +149,7 @@ export function usePublicSaleContract(queryChainId?: ChainId): Contract | null {
 export function useSbtFactoryContract(queryChainId?: ChainId): Contract | null {
   const { chainId } = useActiveWeb3React()
   return useContract(
-    queryChainId || chainId ? CREATE_SBT[(queryChainId || chainId) as ChainId] : undefined,
+    queryChainId || chainId ? SBT_FACTORY[(queryChainId || chainId) as ChainId] : undefined,
     SBT_FACTORY_ABI,
     true,
     queryChainId

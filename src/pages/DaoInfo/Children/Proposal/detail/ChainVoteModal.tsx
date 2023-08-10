@@ -330,7 +330,7 @@ export default function ChainVoteModal({
   ])
   return (
     <Modal maxWidth="480px" closeIcon width="100%" customIsOpen={voteModalOpen} customOnDismiss={voteModalToggle}>
-      <StyledBody minHeight={singLe ? 'auto' : '540px'}>
+      <StyledBody minHeight={singLe ? 'auto' : '540px !important'}>
         <Box>
           <Typography fontWeight={500} variant="h6">
             Vote
@@ -362,9 +362,6 @@ export default function ChainVoteModal({
               vote={vote}
             />
           )}
-          {speed === VoteSpeed.SpeedTwo && !singLe && (
-            <MultiVoteSpeedTwo myVotes={myVotes} myAlreadyVotes={myAlreadyVotes} />
-          )}
           {speed === VoteSpeed.SpeedOne && singLe && (
             <SingleVoteSpeedOne
               setVoteId={setVoteId}
@@ -374,8 +371,8 @@ export default function ChainVoteModal({
               proposalOptions={proposalOptions}
             />
           )}
-          {speed === VoteSpeed.SpeedTwo && singLe && (
-            <SingleVoteSpeedTwo myVotes={myVotes} myAlreadyVotes={myAlreadyVotes} />
+          {speed === VoteSpeed.SpeedTwo && (
+            <VoteSpeedTwo myVotes={myVotes} myAlreadyVotes={myAlreadyVotes} singLe={singLe} />
           )}
         </Box>
         <Box>
@@ -594,53 +591,6 @@ function MultiVoteSpeedOne({
   )
 }
 
-function MultiVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAlreadyVotes: number }) {
-  const { library, account, chainId } = useActiveWeb3React()
-  console.log(myAlreadyVotes)
-
-  return (
-    <>
-      <VoteContentStyle>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography fontWeight={500} fontSize={14} lineHeight={'18px'}>
-            Your votes
-          </Typography>
-          <Typography lineHeight={'18px'} color={'#0049C6'} fontSize={13} fontWeight={600}>
-            {/* {(myVotes &&
-              formatNumberWithCommas(new BigNumber(myVotes).minus(new BigNumber(myAlreadyVotes)).toString())) ||
-              '--'} */}
-            {myVotes || '--'}
-          </Typography>
-        </Box>
-      </VoteContentStyle>
-      <Box sx={{ mt: 12, display: 'grid', flexDirection: 'column', gap: 10 }}>
-        <Select
-          noBold
-          label="Select a network to sign"
-          value={chainId || undefined}
-          onChange={e => {
-            account && triggerSwitchChain(library, e.target.value, account)
-          }}
-        >
-          {ChainList.map(item => (
-            <MenuItem
-              key={item.id}
-              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-              value={item.id}
-            >
-              {item.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </Box>
-
-      <Typography mt={12} fontWeight={500} fontSize={14} lineHeight={'20px'} color={'#80829F'}>
-        The vote will take effect after successful synchronization on the blockchain.
-      </Typography>
-    </>
-  )
-}
-
 function SingleVoteSpeedOne({
   setVoteId,
   voteId,
@@ -702,7 +652,15 @@ function SingleVoteSpeedOne({
   )
 }
 
-function SingleVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAlreadyVotes: number }) {
+function VoteSpeedTwo({
+  myVotes,
+  myAlreadyVotes,
+  singLe
+}: {
+  myVotes: number
+  myAlreadyVotes: number
+  singLe: boolean
+}) {
   const { library, account, chainId } = useActiveWeb3React()
   console.log(myAlreadyVotes)
   return (
@@ -741,7 +699,7 @@ function SingleVoteSpeedTwo({ myVotes, myAlreadyVotes }: { myVotes: number; myAl
         </Select>
       </Box>
 
-      <Typography mt={12} mb={30} fontWeight={500} fontSize={14} lineHeight={'20px'} color={'#80829F'}>
+      <Typography mt={12} mb={singLe ? 30 : 0} fontWeight={500} fontSize={14} lineHeight={'20px'} color={'#80829F'}>
         The vote will take effect after successful synchronization on the blockchain.
       </Typography>
     </>

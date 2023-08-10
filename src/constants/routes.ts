@@ -30,12 +30,12 @@ export const routes = {
   _ActivitySaleDetail: '/activity/sale',
   ActivitySaleDetail: '/activity/sale/:chainId/:address/:id',
   Tokens: '/tokens',
-  CreateSoulToken: '/createSoulToken',
-  _CreateSoulToken: '/createSoulToken/:daoId',
-  _SoulTokenDetail: '/soulTokenDetail',
-  SoulTokenDetail: '/soulTokenDetail/:daoId/:sbtId',
+  CreateSoulToken: '/creator/soulToken',
+  _CreateSoulToken: '/creator/soulToken/:daoId',
+  _SoulTokenDetail: '/soulToken/Detail',
+  SoulTokenDetail: '/soulToken/Detail/:daoId/:sbtId',
 
-  Creator: '/creator',
+  Creator: '/create',
   CreateDao: '/create/dao',
   CreatorToken: '/creator/token',
 

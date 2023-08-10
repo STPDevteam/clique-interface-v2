@@ -143,6 +143,10 @@ const chains: ChainObject = {
   [ChainId.SEPOLIA]: {
     link: 'https://sepolia.etherscan.io',
     builder: explorers.etherscan
+  },
+  [ChainId.BASE]: {
+    link: 'https://basescan.org',
+    builder: explorers.etherscan
   }
 }
 
