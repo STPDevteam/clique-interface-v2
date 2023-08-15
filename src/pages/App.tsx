@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
@@ -135,6 +135,8 @@ export default function App() {
     }
   }, [dispatch, pathname])
 
+  const makeDaoInfo = (route: string) => route.replace(routes.DaoInfo, '')
+
   return (
     <Suspense fallback={null}>
       <ModalProvider>
@@ -164,26 +166,28 @@ export default function App() {
               <Web3ReactManager>
                 <Routes>
                   <Route
-                    path={routes.DaoInfo}
+                    path={routes.DaoInfo + '/*'}
                     element={
                       <DaoInfoLayout>
                         <DaoInfoUpdater />
-                        <Route path={routes.DaoInfoAbout} element={<About />} />
-                        <Route path={routes.DaoMember} element={<Member />} />
-                        <Route path={routes.DaoTreasury} element={<ComingSoon />} />
-                        <Route path={routes.DaoIdea} element={<ComingSoon />} />
-                        <Route path={routes.DaoInfoActivity} element={<DaoBounty />} />
-                        <Route path={routes.DaoAboutSetting} element={<AboutSetting />} />
-                        <Route path={routes.DaoTeamMeetings} element={<ComingSoon />} />
-                        <Route path={routes.DaoTeamDocs} element={<ComingSoon />} />
-                        <Route path={routes._DaoTeamTask} element={<Task />} />
-                        <Route path={routes.DaoTeamCalendar} element={<ComingSoon />} />
-                        <Route path={routes.DaoTeamTrash} element={<ComingSoon />} />
-                        <Route path={routes.Proposal} element={<ProposalList />} />
-                        <Route path={routes.CreateProposal} element={<CreateProposal />} />
-                        <Route path={routes.ProposalDetail} element={<ProposalDetail />} />
-                        <Route path={routes.CreateAirdrop} element={<CreateAirdrop />} />
-                        {/* <Route path={routes.DaoInfo} render={() => <Redirect to={location.pathname + '/proposal'} />} /> */}
+                        <Routes>
+                          <Route path={makeDaoInfo(routes.DaoInfoAbout)} element={<About />} />
+                          <Route path={makeDaoInfo(routes.DaoMember)} element={<Member />} />
+                          <Route path={makeDaoInfo(routes.DaoTreasury)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoIdea)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoInfoActivity)} element={<DaoBounty />} />
+                          <Route path={makeDaoInfo(routes.DaoAboutSetting)} element={<AboutSetting />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamMeetings)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamDocs)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes._DaoTeamTask)} element={<Task />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamCalendar)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamTrash)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.Proposal)} element={<ProposalList />} />
+                          <Route path={makeDaoInfo(routes.CreateProposal)} element={<CreateProposal />} />
+                          <Route path={makeDaoInfo(routes.ProposalDetail)} element={<ProposalDetail />} />
+                          <Route path={makeDaoInfo(routes.CreateAirdrop)} element={<CreateAirdrop />} />
+                          <Route path={'*'} element={<Navigate replace to={location.pathname + '/proposal'} />} />
+                        </Routes>
                       </DaoInfoLayout>
                     }
                   />
@@ -206,8 +210,8 @@ export default function App() {
                   <Route path={routes.Notification} element={<Notification />} />
                   <Route path={routes.Profile} element={<Profile />} />
                   <Route path={routes._Profile} element={<Profile />} />
-                  {/* <Route path="/governance" render={() => <Redirect to={routes.Governance} />} />
-                  <Route path="/" render={() => <Redirect to={routes.Governance} />} /> */}
+                  <Route path="/governance" element={<Navigate replace to={routes.Governance} />} />
+                  <Route path="/" element={<Navigate replace to={routes.Governance} />} />
                 </Routes>
               </Web3ReactManager>
             </BodyWrapper>
