@@ -183,10 +183,12 @@ export function useClaimAirdropCallback() {
           return response.hash
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useClaimAirdropCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )
@@ -232,10 +234,12 @@ export function useRecycleAirdropCallback() {
           return response.hash
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useRecycleAirdropCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )
@@ -343,10 +347,12 @@ export function usePublishAirdropCallback() {
           return response.hash
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'usePublishAirdropCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )
