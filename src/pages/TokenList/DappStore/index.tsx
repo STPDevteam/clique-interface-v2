@@ -9,7 +9,7 @@ import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
 import { routes } from 'constants/routes'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import chainLogo0 from 'assets/images/chainLogo0.png'
 import chainLogo1 from 'assets/images/chainLogo1.png'
 import chainLogo2 from 'assets/images/chainLogo2.png'
@@ -88,7 +88,7 @@ const cardsData = [
 ]
 
 function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }: any) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
@@ -132,7 +132,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           if (!account) return toggleWalletModal()
           if (!userSignature) return loginSignature()
         }
-        route ? history.push(route) : window.open(link, '_blank')
+        route ? navigate(route) : window.open(link, '_blank')
       }}
     >
       <Box className="headerCon">

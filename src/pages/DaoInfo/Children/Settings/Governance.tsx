@@ -24,7 +24,7 @@ import useModal from 'hooks/useModal'
 import { Dots } from 'theme/components'
 import { useCallback, useMemo, useState } from 'react'
 import { govList } from 'state/buildingGovDao/actions'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUpdateGovernance } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
@@ -75,7 +75,7 @@ export default function General({ daoId }: { daoId: number }) {
   const [PeriodValue, setPeriodValue] = useState(daoInfo.votingPeriod > 0 ? 'Fixtime' : 'Customization')
   const [TypesValue, setTypesValue] = useState(TypesList[daoInfo.votingType].value)
   const [proposalThreshold, setProposalThreshold] = useState(daoInfo.proposalThreshold || '')
-  const history = useHistory()
+  const navigate = useNavigate()
   const weight = useMemo(
     () =>
       daoInfo.governance.map(item => ({
@@ -171,7 +171,7 @@ export default function General({ daoId }: { daoId: number }) {
         )}
         <OutlineButton
           style={{ maxWidth: 184, height: 36, color: '#3F5170', border: '1px solid #3F5170' }}
-          onClick={() => history.push(routes.CreatorToken)}
+          onClick={() => navigate(routes.CreatorToken)}
         >
           Create New Token
         </OutlineButton>

@@ -9,7 +9,7 @@ import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import { timeStampToFormat } from 'utils/dao'
 import { useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
@@ -61,7 +61,7 @@ function TypeTitle({ isRead, type }: { isRead: boolean; type: NotificationTypes 
 }
 
 function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boolean }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const showData: {
     text: string
     link?: string
@@ -105,7 +105,7 @@ function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boole
               {showData.text}
               {'. '}
               {showData.link && (
-                <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+                <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
                   View
                 </Link>
               )}
@@ -118,7 +118,7 @@ function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boole
             {showData.text}
             {'. '}
             {showData.link && (
-              <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+              <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
                 View
               </Link>
             )}

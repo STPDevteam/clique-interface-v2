@@ -133,7 +133,7 @@ export default function TaskDetail({
   proposalBaseList: ProposalListBaseProp[]
   daoId: number
   spacesId: number
-  editData: ITaskQuote
+  editData: ITaskQuote | any
   identity: string
   initStatus: string
 }) {
@@ -170,7 +170,7 @@ export default function TaskDetail({
   }, [editData, proposalBaseList])
 
   const toggleDrawer = useCallback(
-    e => {
+    (e: React.KeyboardEvent<Element>) => {
       if (
         e.type === 'keydown' &&
         ((e as React.KeyboardEvent).key === 'Tab' || (e as React.KeyboardEvent).key === 'Shift')
@@ -600,7 +600,7 @@ export default function TaskDetail({
             <EditContent>
               {ReactHtmlParser(
                 filterXSS(taskDetailData?.content || '', {
-                  onIgnoreTagAttr: function(_, name, value) {
+                  onIgnoreTagAttr: function (_, name, value) {
                     if (name === 'class' || name === 'style') {
                       return name + '="' + escapeAttrValue(value) + '"'
                     }

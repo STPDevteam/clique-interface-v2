@@ -36,7 +36,7 @@ const Connector = styled(MuiStepConnector)(() => ({
 export default function Stepper(props: Props) {
   const { activeStep, steps, completedIcon = <StepCompletedIcon />, connector = <Connector />, onStep } = props
 
-  const onClick = useCallback(val => () => onStep && onStep(parseInt(val)), [onStep])
+  const onClick = useCallback((val: number | string) => () => onStep && onStep(Number(val)), [onStep])
 
   function StepIcon(props: any) {
     const { active, completed, children } = props

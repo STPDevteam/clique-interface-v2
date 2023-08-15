@@ -41,14 +41,8 @@ export default function AddTeamspaceModal({
   const theme = useTheme()
 
   const validationSchema = yup.object().shape({
-    title: yup
-      .string()
-      .trim()
-      .required('Title required'),
-    des: yup
-      .string()
-      .trim()
-      .required('Description required')
+    title: yup.string().trim().required('Title required'),
+    des: yup.string().trim().required('Description required')
   })
 
   const initialValues = {

@@ -1,7 +1,7 @@
 import { Box, Typography, styled, Stack, Link } from '@mui/material'
 import Image from 'components/Image'
 import { DaoAvatars } from 'components/Avatars'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import Pagination from 'components/Pagination'
 import EmptyData from 'components/EmptyData'
@@ -109,12 +109,12 @@ export default function DaoSoulTokenList({
 }
 
 function ItemCard(item: SbtListProp) {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <StyledItem
       onClick={() => {
-        history.push(routes._SoulTokenDetail + '/' + item.daoId + '/' + item.SBTId)
+        navigate(routes._SoulTokenDetail + '/' + item.daoId + '/' + item.SBTId)
       }}
     >
       <Image

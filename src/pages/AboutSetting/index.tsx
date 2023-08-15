@@ -17,7 +17,7 @@ import Image from 'components/Image'
 // import { useIsJoined } from 'hooks/useBackedDaoServer'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 
@@ -57,7 +57,7 @@ export default function AboutSetting() {
   const paramName = searchParams.get('tab')
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [tabValue, setTabValue] = useState(0)
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   // const { isJoined: myJoinDaoData } = useIsJoined(Number(curDaoId))
@@ -155,9 +155,9 @@ export default function AboutSetting() {
       !userSignature ||
       (myJoinDaoData?.job !== DaoAdminLevelProp[1] && myJoinDaoData?.job !== DaoAdminLevelProp[0])
     ) {
-      history.replace(routes._DaoInfo + `/${curDaoId}/proposal`)
+      navigate(routes._DaoInfo + `/${curDaoId}/proposal`, { replace: true })
     }
-  }, [account, history, myJoinDaoData?.job, userSignature, curDaoId])
+  }, [account, myJoinDaoData?.job, userSignature, curDaoId, navigate])
 
   return (
     <DaoContainer>

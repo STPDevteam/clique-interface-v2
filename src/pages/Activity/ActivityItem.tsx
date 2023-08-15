@@ -7,11 +7,11 @@ import { ActivityStatus } from 'hooks/useActivityInfo'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { useMemo } from 'react'
-import { useHistory } from 'react-router'
 import { useNativeAndToken } from 'state/wallet/hooks'
 import { currentTimeStamp, getTargetTimeString } from 'utils'
 import { timeStampToFormat } from 'utils/dao'
 import CircularStatic from './CircularStatic'
+import { useNavigate } from 'react-router-dom'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -146,7 +146,7 @@ function ShowStatus({ item }: { item: ActivityListProp }) {
 }
 
 export function AirdropItem({ item }: { item: ActivityListProp }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
 
   const token = useNativeAndToken(item.tokenAddress, item.tokenChainId)
@@ -156,7 +156,7 @@ export function AirdropItem({ item }: { item: ActivityListProp }) {
   }, [item.amount, token])
 
   return (
-    <AirdropStyledItem onClick={() => history.push(routes._ActivityAirdropDetail + `/${item.daoId}/${item.airdropId}`)}>
+    <AirdropStyledItem onClick={() => navigate(routes._ActivityAirdropDetail + `/${item.daoId}/${item.airdropId}`)}>
       <StyledStatusBox direction={'row'} spacing={24}>
         <ShowStatus item={item} />
       </StyledStatusBox>

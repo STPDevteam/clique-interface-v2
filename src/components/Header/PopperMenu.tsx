@@ -9,7 +9,7 @@ import { ReactComponent as ScopeIcon } from 'assets/svg/scope.svg'
 import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import PopperCard from 'components/PopperCard'
 import { routes } from 'constants/routes'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 const menuList = [
   {
@@ -42,7 +42,7 @@ const menuList = [
 ]
 
 export default function PopperMenu() {
-  const history = useHistory()
+  const navigate = useNavigate()
   return (
     <Box>
       <PopperCard
@@ -100,7 +100,7 @@ export default function PopperMenu() {
                 }
               }}
               key={option.title}
-              onClick={() => (option.route ? history.push(option.route) : window.open(option.link, '_blank'))}
+              onClick={() => (option.route ? navigate(option.route) : window.open(option.link, '_blank'))}
             >
               {option.icon}
               <Typography fontWeight={500} fontSize={14} ml={6}>

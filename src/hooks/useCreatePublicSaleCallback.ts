@@ -196,7 +196,7 @@ export function useCreatePublicSaleCallback() {
       salesAmount: string | number,
       salePrice: string | number,
       currentSaleToken: string,
-      saleMode,
+      saleMode: string,
       startTime: number | string,
       title: string,
       whiteList: string[]

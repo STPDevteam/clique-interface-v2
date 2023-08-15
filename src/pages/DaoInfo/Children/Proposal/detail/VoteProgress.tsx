@@ -14,7 +14,6 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import useModal from 'hooks/useModal'
 import { ProposalOptionProp } from 'hooks/useProposalInfo'
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router'
 import { formatNumberWithCommas, getEtherscanLink, shortenAddress } from 'utils'
 // import { RowCenter } from '../ProposalItem'
 import { VoteWrapper } from './Vote'
@@ -30,6 +29,7 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import TooltipStyle from 'components/Tooltip'
 import { ApplicationModal } from 'state/application/actions'
 import { Dots } from 'theme/components'
+import { useNavigate } from 'react-router-dom'
 
 const StyledItem = styled(Box)(({}) => ({
   borderRadius: '8px',
@@ -331,7 +331,7 @@ export default function VoteProgress({
 export function VoteListModal({ proposalId, allVotes }: { proposalId: number; allVotes: number | undefined }) {
   const { hideModal } = useModal()
   const { result: proposalVoteList, page } = useProposalVoteList(proposalId, VoteStatus.SUCCESS, true)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const userVoteList = useMemo(() => {
     if (!proposalVoteList) return
@@ -370,7 +370,7 @@ export function VoteListModal({ proposalId, allVotes }: { proposalId: number; al
                 sx={{ cursor: 'pointer' }}
                 onClick={() => {
                   hideModal()
-                  history.push(routes._Profile + `/${item.voter}`)
+                  navigate(routes._Profile + `/${item.voter}`)
                 }}
               >
                 <StyledListText>{shortenAddress(item.voter)}</StyledListText>

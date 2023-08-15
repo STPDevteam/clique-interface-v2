@@ -103,7 +103,7 @@ export default function EditTokenModal({
         hideModal()
       })
     } catch (error) {
-      toast.error(error || 'Network error')
+      toast.error(error?.toString() || 'Network error')
     }
   }, [SetDaoGovernance, daoId, proposalThreshold, votingPeriod, votingType, weight, updater, hideModal])
   const voteBtn = useMemo(() => {
@@ -154,7 +154,7 @@ export default function EditTokenModal({
           </Box>
           <Box sx={{ maxWidth: '253px', width: '100%' }}>
             <ContentTitleStyle sx={{ mb: 10 }}>Network</ContentTitleStyle>
-            {/* <ChainSelect             
+            {/* <ChainSelect
               chainList={ChainList.filter(
                 v =>
                   v.id !== ChainId.POLYGON_MANGO &&

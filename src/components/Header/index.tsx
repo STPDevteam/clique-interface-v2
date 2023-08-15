@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react'
-import { NavLink, useHistory, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   AppBar,
   Box,
@@ -455,7 +455,7 @@ export default function Header() {
 
 function TabsBox() {
   const { pathname } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
@@ -545,7 +545,7 @@ function TabsBox() {
                     onClick={() => {
                       if (!account) return toggleWalletModal()
                       if (!userSignature) return loginSignature()
-                      option.route ? history.push(option.route) : window.open(option.link, '_blank')
+                      option.route ? navigate(option.route) : window.open(option.link, '_blank')
                     }}
                   >
                     {option.titleContent ?? option.title}

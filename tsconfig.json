@@ -22,7 +22,6 @@
     "jsx": "react-jsx",
     "downlevelIteration": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["react-spring", "jest"],
     "baseUrl": "src"
   },
   "exclude": ["node_modules"],

@@ -6,7 +6,7 @@ import { LoadingButton } from '@mui/lab'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
-import { useHistory, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from 'react'
 import { CreateDaoDataProp, VotingTypes, VotingTypesName } from 'state/buildingGovDao/actions'
 // import Loading from 'components/Loading'
@@ -26,6 +26,7 @@ import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
 import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { IS_TEST_NET } from 'constants/chain'
+import { useNavigate } from 'react-router-dom'
 // import { ChainListMap } from 'constants/chain'
 // import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
@@ -90,7 +91,7 @@ export default function CreateProposal() {
 
 function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
   const theme = useTheme()
-  const history = useHistory()
+  const navigate = useNavigate()
   const userSignature = useUserInfo()
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
@@ -192,8 +193,8 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   }, [daoInfo.governance, description, endTime, myBalance, startTime, title, userSignature, voteOption])
 
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoId}/proposal`)
-  }, [daoId, history])
+    navigate(routes._DaoInfo + `/${daoId}/proposal`, { replace: true })
+  }, [daoId, navigate])
 
   const handleSubmit = useCallback(() => {
     setStartValidate(true)
@@ -424,7 +425,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             </Alert>
           )}
           <Stack direction="row" mt={20} mb={20} justifyContent={'space-between'}>
-            <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
+            <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={window.history.back}>
               Back
             </OutlineButton>
             {!account ? (

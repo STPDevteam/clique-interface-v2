@@ -3,7 +3,7 @@ import { UserProfileAdminProps } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Image from 'components/Image'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import tag from 'assets/images/tag.png'
 import fans from 'assets/images/fans.png'
@@ -52,7 +52,7 @@ export function DaoItem({
   isApprove: boolean
   members: number
 }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   console.log(accountLevel, isApprove)
 
   return (
@@ -85,7 +85,7 @@ export function DaoItem({
         }
       }}
       onClick={() => {
-        history.push(routes._DaoInfo + `/${daoId}/proposal`)
+        navigate(routes._DaoInfo + `/${daoId}/proposal`)
       }}
     >
       <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'} gap={10}>

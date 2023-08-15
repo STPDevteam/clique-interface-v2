@@ -10,7 +10,6 @@ import lBanner from 'assets/images/l_banner.png'
 import rBanner from 'assets/images/r_banner.png'
 import tag from 'assets/images/tag.png'
 import ball from 'assets/images/ball.png'
-import { useHistory } from 'react-router'
 // import stp from 'assets/images/stp.png'
 import { ReactComponent as Mirror } from 'assets/svg/mirror.svg'
 import { ReactComponent as Tg } from 'assets/svg/tg.svg'
@@ -24,6 +23,7 @@ import { useHomeDaoList } from 'hooks/useBackedDaoServer'
 import { ListProp } from 'hooks/useBackedDaoServer'
 
 import { routes } from 'constants/routes'
+import { useNavigate } from 'react-router-dom'
 
 const ColSentence = styled(Box)(() => ({
   display: 'flex',
@@ -50,7 +50,7 @@ export function DaoItem({
   activityProposalCount,
   approve
 }: ListProp) {
-  const history = useHistory()
+  const navigate = useNavigate()
   return (
     <Box
       minWidth={281}
@@ -81,7 +81,7 @@ export function DaoItem({
         }
       }}
       onClick={() => {
-        history.push(routes._DaoInfo + `/${daoId}/proposal`)
+        navigate(routes._DaoInfo + `/${daoId}/proposal`)
       }}
     >
       <Box display={'flex'} justifyContent={'flex-start'} flexDirection={'row'} alignItems={'center'} gap={10}>
@@ -141,12 +141,12 @@ export function DaoItem({
 }
 
 export default function Home() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { result } = useHomeTopList()
   const { result: homeDaoList } = useHomeDaoList()
   const showAll = useCallback(() => {
-    history.push('/daos')
-  }, [history])
+    navigate('/daos')
+  }, [navigate])
   // const loadAll = useCallback(() => {}, [])
 
   return (
@@ -247,7 +247,7 @@ export default function Home() {
               }
             }}
             onClick={() => {
-              history.push(routes._Profile + `/${item.account}`)
+              navigate(routes._Profile + `/${item.account}`)
             }}
           >
             <Image src={item.avatar || ball} alt=""></Image>

@@ -170,7 +170,7 @@ export default function DragTaskPanel() {
   const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), '', '', rand)
 
   const showSidePanel = useCallback(
-    (editData, initStatus) => {
+    (editData?: ITaskQuote, initStatus?: string) => {
       showModal(
         <TaskDetail
           open={true}
@@ -178,7 +178,7 @@ export default function DragTaskPanel() {
             setRand(Math.random())
             hideModal()
           }}
-          initStatus={initStatus}
+          initStatus={initStatus || ''}
           proposalBaseList={result}
           daoId={daoId}
           spacesId={Number(spacesId)}
@@ -349,7 +349,7 @@ export default function DragTaskPanel() {
   )
 
   const handleContextMenu = useCallback(
-    (e, el, index) => {
+    (e: any, el: ITaskQuote[], index: number) => {
       e.preventDefault()
       const _arr: any = []
       taskTypeListRes.map(item => {

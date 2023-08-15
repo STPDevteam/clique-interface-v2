@@ -45,7 +45,7 @@ export function useBuildingDaoDataCallback() {
   )
   const updateBuildingDaoKeyData = useCallback(
     (key: CreateDaoDataPropKey, value: any) => {
-      const _updateData = (Object.assign({ ...buildingDaoData }, { [key]: value }) as unknown) as CreateDaoDataProp
+      const _updateData = Object.assign({ ...buildingDaoData }, { [key]: value }) as unknown as CreateDaoDataProp
       updateBuildingDaoData(_updateData)
     },
     [buildingDaoData, updateBuildingDaoData]

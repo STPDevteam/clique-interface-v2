@@ -265,7 +265,7 @@ export function usePublishAirdropCallback() {
       airdropToken: Token,
       needStake: CurrencyAmount,
       airdropList: { address: string; amount: string }[],
-      daoId
+      daoId: number
     ) => {
       if (!account) throw new Error('none account')
       if (!contract) throw new Error('none contract')
@@ -394,7 +394,7 @@ export function useAirdropDownloadCallback() {
           airdropSignatureStr.sign
         )
         const result = res.data
-        const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent((result as unknown) as string)
+        const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(result as unknown as string)
         window.open(uri)
       } catch (error) {
         const err: any = error

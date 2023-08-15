@@ -130,8 +130,8 @@ export default function Details() {
   const { showModal, hideModal } = useModal()
   const { result } = usePublicSaleBaseList(saleId)
   const SwapData: PublicSaleListBaseProp = result[0]
-  const salesInfo = useGetSalesInfo(saleId, SwapData?.chainId)
-  const SoldAmountData = useGetSoldAmount(saleId, account || '', SwapData?.chainId)
+  const salesInfo = useGetSalesInfo(saleId || '', SwapData?.chainId)
+  const SoldAmountData = useGetSoldAmount(saleId || '', account || '', SwapData?.chainId)
   const saleToken = useNativeAndToken(SwapData?.saleToken, SwapData?.chainId)
   const receiveToken = useNativeAndToken(SwapData?.receiveToken, SwapData?.chainId)
   const soldCurrencyAmount = useMemo(() => {
@@ -187,10 +187,7 @@ export default function Details() {
           setUpdateTime('')
           return
         }
-        ratio = new BigNumber(result[0]?.price)
-          .div(new BigNumber(result[1]?.price))
-          .toFixed(6)
-          .toString()
+        ratio = new BigNumber(result[0]?.price).div(new BigNumber(result[1]?.price)).toFixed(6).toString()
         setUrl([result[0], result[1]])
         setUpdateTime(result[0]?.updateAt)
       } catch (error) {
@@ -208,7 +205,7 @@ export default function Details() {
       .toSignificant(2)
   }, [saleCurrencyAmount, saleToken, salesInfo, soldCurrencyAmount])
 
-  const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId)
+  const { ListLoading, listRes, listPage } = usePublicSaleTransactionList(saleId || '')
 
   const totalAmount = useMemo(() => {
     if (!salesInfo || !saleToken || !receiveToken) return
@@ -603,7 +600,7 @@ export default function Details() {
             >
               {ReactHtmlParser(
                 filterXSS(SwapData?.about || '', {
-                  onIgnoreTagAttr: function(_, name, value) {
+                  onIgnoreTagAttr: function (_, name, value) {
                     if (name === 'class' || name === 'style') {
                       return name + '="' + escapeAttrValue(value) + '"'
                     }
@@ -613,7 +610,7 @@ export default function Details() {
               )}
             </Stack>
           ) : (
-            <TransactionList loading={ListLoading} page={listPage} result0={listRes} saleId={saleId} />
+            <TransactionList loading={ListLoading} page={listPage} result0={listRes} saleId={saleId || ''} />
           )}
         </Stack>
         <Stack className="right_content">

@@ -15,7 +15,7 @@ import {
   ClaimWay,
   useSbtContractClaimTotal
 } from 'hooks/useBackedSbtServer'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useJoinDAO } from 'hooks/useBackedDaoServer'
 import { useUserInfo, useLoginSignature } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -128,7 +128,7 @@ const ClaimWayMapText = {
 export default function SoulTokenDetail() {
   const { library, account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
-  const history = useHistory()
+  const navigate = useNavigate()
   const loginSignature = useLoginSignature()
   const toggleWalletModal = useWalletModalToggle()
   const { showModal, hideModal } = useModal()
@@ -137,9 +137,12 @@ export default function SoulTokenDetail() {
     sbtId: string
   }>()
   const [isJoin, setIsJoin] = useState(false)
-  const { result: sbtDetail, contractQueryIsClaim, contractQueryLoading, loading: sbtDetailLoading } = useSbtDetail(
-    sbtId
-  )
+  const {
+    result: sbtDetail,
+    contractQueryIsClaim,
+    contractQueryLoading,
+    loading: sbtDetailLoading
+  } = useSbtDetail(sbtId || '')
   const { result: sbtClaimList, total: ClaimTotal } = useSbtClaimList(Number(sbtId))
   const { result: sbtIsClaim, setUpdateIsClaim } = useSbtQueryIsClaim(Number(sbtId))
   const { isJoined, loading: JoinedLoading } = useIsJoined(Number(daoId))
@@ -233,6 +236,7 @@ export default function SoulTokenDetail() {
   const sbtClaimCallback = useCallback(() => {
     if (!account) return toggleWalletModal()
     if (!userSignature) return loginSignature()
+    if (!sbtId) return
     showModal(<TransacitonPendingModal />)
     SbtClaimCallback(sbtId)
       .then(res => {
@@ -452,7 +456,7 @@ export default function SoulTokenDetail() {
                         // ':hover': { textDecoration: 'underline' }
                       }}
                       onClick={() => {
-                        history.push(routes._DaoInfo + `/${sbtDetail.daoId}` + '/proposal')
+                        navigate(routes._DaoInfo + `/${sbtDetail.daoId}` + '/proposal')
                       }}
                     >
                       {sbtDetail?.daoName || '--'}
@@ -529,7 +533,7 @@ export default function SoulTokenDetail() {
                   {/* {sbtDetail?.introduction || '--'} */}
                   {ReactHtmlParser(
                     filterXSS(sbtDetail?.introduction || '', {
-                      onIgnoreTagAttr: function(_, name, value) {
+                      onIgnoreTagAttr: function (_, name, value) {
                         if (name === 'class' || name === 'style') {
                           return name + '="' + escapeAttrValue(value) + '"'
                         }
@@ -569,7 +573,7 @@ export default function SoulTokenDetail() {
                     sbtClaimList?.map((item: any, index: number) =>
                       index < 32 ? (
                         <Image
-                          onClick={() => history.push(routes._Profile + `/${item.account}`)}
+                          onClick={() => navigate(routes._Profile + `/${item.account}`)}
                           key={item.account}
                           src={item.accountLogo || avatar}
                           style={{
@@ -581,7 +585,7 @@ export default function SoulTokenDetail() {
                           }}
                         />
                       ) : (
-                        <Image src={EllipsisIcon} width={50} />
+                        <Image src={EllipsisIcon} key={item.account} width={50} />
                       )
                     )}
                 </Box>

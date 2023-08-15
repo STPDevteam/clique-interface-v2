@@ -87,7 +87,7 @@ export default function AirdropTable({
     const el = document.getElementById('upload_CSV') as HTMLInputElement
     if (!el || !el.files) return
     const reader = new FileReader()
-    reader.onload = function() {
+    reader.onload = function () {
       const ret: ItemProp[] = []
       const textInput = reader.result as string
       const allRows = textInput.split(/\r?\n|\r/)

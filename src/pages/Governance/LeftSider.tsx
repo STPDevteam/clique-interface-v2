@@ -3,7 +3,7 @@ import { ReactComponent as AddIcon } from 'assets/svg/add_icon.svg'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import { routes } from 'constants/routes'
 // import useModal from 'hooks/useModal'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 // import { CreateGovernanceModal } from 'components/Governance/CreateGovernanceModal'
 import { useMyJoinedDao } from 'hooks/useBackedDaoServer'
 import { DaoAvatars } from 'components/Avatars'
@@ -82,7 +82,7 @@ const Item = styled(Box)(({ theme }) => ({
 export default function LeftSider() {
   const theme = useTheme()
   // const { showModal } = useModal()
-  const history = useHistory()
+  const navigate = useNavigate()
   const { result: myJoinedDaoList } = useMyJoinedDao()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
@@ -109,7 +109,7 @@ export default function LeftSider() {
         <Box mt={10} sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />
         <Item
           sx={{ borderLeft: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
-          onClick={() => history.push(routes.Governance)}
+          onClick={() => navigate(routes.Governance)}
         >
           <div className="action">
             <SearchIcon></SearchIcon>
@@ -122,7 +122,7 @@ export default function LeftSider() {
           onClick={() => {
             if (!account) return toggleWalletModal()
             if (!userSignature) return loginSignature()
-            history.push(routes.CreateDao)
+            navigate(routes.CreateDao)
           }}
         >
           <div className="action">
@@ -138,10 +138,10 @@ export default function LeftSider() {
 }
 
 function DaoItem({ daoId, daoLogo, daoName }: { daoId: number; daoLogo: string; daoName: string }) {
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
-    <Item onClick={() => history.push(`${routes._DaoInfo}/${daoId}/proposal`)}>
+    <Item onClick={() => navigate(`${routes._DaoInfo}/${daoId}/proposal`)}>
       <DaoAvatars src={daoLogo} alt={'daoName'} />
       <Text noWrap>{daoName || 'daoName'}</Text>
     </Item>

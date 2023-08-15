@@ -54,8 +54,9 @@ async function fetchChunk(
             item.gasUsed.gte(Math.floor((chunk[Number(i)].gasRequired ?? DEFAULT_GAS_REQUIRED) * 0.95))
           ) {
             console.warn(
-              `A call failed due to requiring ${item.gasUsed.toString()} vs. allowed ${chunk[Number(i)].gasRequired ??
-                DEFAULT_GAS_REQUIRED}`,
+              `A call failed due to requiring ${item.gasUsed.toString()} vs. allowed ${
+                chunk[Number(i)].gasRequired ?? DEFAULT_GAS_REQUIRED
+              }`,
               chunk[Number(i)]
             )
           }
@@ -154,9 +155,10 @@ function UpdaterChain({ chainId }: { chainId: ChainId }) {
     return outdatedListeningKeys(state.callResults, listeningKeys, chainId, latestBlockNumber)
   }, [chainId, state.callResults, listeningKeys, latestBlockNumber])
 
-  const serializedOutdatedCallKeys = useMemo(() => JSON.stringify(unserializedOutdatedCallKeys.sort()), [
-    unserializedOutdatedCallKeys
-  ])
+  const serializedOutdatedCallKeys = useMemo(
+    () => JSON.stringify(unserializedOutdatedCallKeys.sort()),
+    [unserializedOutdatedCallKeys]
+  )
 
   useEffect(() => {
     if (!latestBlockNumber || !chainId || !multicall2Contract) return

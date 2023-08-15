@@ -75,12 +75,8 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 }))
 
 export default function Governance({ back, next }: { back: () => void; next: (hash: string) => void }) {
-  const {
-    createTokenData,
-    updateTokenDistributionKeyData,
-    addReservedRowCallback,
-    removeReservedRowCallback
-  } = useCreateTokenDataCallback()
+  const { createTokenData, updateTokenDistributionKeyData, addReservedRowCallback, removeReservedRowCallback } =
+    useCreateTokenDataCallback()
   const createTokenDistributionData = createTokenData.distribution
   const createTokenBaseData = createTokenData.basic
   const createTokenCallback = useCreateTokenCallback()

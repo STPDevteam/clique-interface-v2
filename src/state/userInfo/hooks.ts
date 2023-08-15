@@ -49,7 +49,7 @@ export function useLoginSignature() {
         dispatch(saveUserInfo({ userInfo: { account, signature: signStr, loggedToken: res.jwtToken } }))
         return res.openNonce
       } catch (err) {
-        toast.error(err || 'Something wrong')
+        toast.error(err?.toString() || 'Something wrong')
         return -1
       }
     })

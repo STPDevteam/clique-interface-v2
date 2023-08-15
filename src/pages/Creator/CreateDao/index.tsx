@@ -16,7 +16,7 @@ import { formCheckValid } from 'utils'
 import * as yup from 'yup'
 import { FormType } from 'pages/DaoInfo/Children/Settings/type'
 import { toast } from 'react-toastify'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
@@ -36,16 +36,16 @@ const InputStyle = styled(Input)(() => ({
 }))
 
 export default function Index() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const theme = useTheme()
 
   useEffect(() => {
     if (!account || !userSignature) {
-      history.replace(routes.Governance)
+      navigate(routes.Governance, { replace: true })
     }
-  }, [account, history, userSignature])
+  }, [account, navigate, userSignature])
 
   const validationSchema = yup.object().shape({
     daoLogo: yup.string().required('Please upload your Dao picture'),
@@ -77,10 +77,7 @@ export default function Index() {
         }
         return true
       }),
-    Introduction: yup
-      .string()
-      .required('Please enter your Organization Introduction')
-      .trim(),
+    Introduction: yup.string().required('Please enter your Organization Introduction').trim(),
     category: yup.string().required(formCheckValid('category', FormType.Select))
   })
 
@@ -111,7 +108,7 @@ export default function Index() {
     }
     updateMyJoinedDaoListData()
     toast.success('Create success')
-    history.push(routes._DaoInfo + `/${res.data.data}/proposal`)
+    navigate(routes._DaoInfo + `/${res.data.data}/proposal`)
   }
   return (
     <Formik

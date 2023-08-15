@@ -8,7 +8,7 @@ import { ReactComponent as Discord } from 'assets/svg/discord.svg'
 import { ReactComponent as Youtobe } from 'assets/svg/youtobe.svg'
 import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import { JobsListProps, useChangeAdminRole } from 'hooks/useBackedDaoServer'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useCallback, useState } from 'react'
 import { ChainId } from 'constants/chain'
@@ -31,7 +31,7 @@ export const JobsType: { [key in number]: string } = {
 }
 
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId) as ChainId
@@ -70,7 +70,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
           onMouseLeave={() => {
             setHoverIndex(null)
           }}
-          onClick={() => history.push(routes._Profile + `/${item.account}`)}
+          onClick={() => navigate(routes._Profile + `/${item.account}`)}
         >
           <Card
             sx={{

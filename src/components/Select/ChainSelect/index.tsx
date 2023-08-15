@@ -32,7 +32,7 @@ export default function ChainSelect({
   style?: React.CSSProperties | SxProps<Theme>
 }) {
   const handleChange = useCallback(
-    e => {
+    (e: { target: { value: string } }) => {
       const chain = chainList.find(chain => chain.symbol === e.target.value && chain.id) ?? null
       onChange && onChange(chain)
     },

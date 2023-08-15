@@ -45,10 +45,10 @@ export function useCreateTokenDataCallback() {
   )
   const updateTokenBasicKeyData = useCallback(
     (key: CreateTokenDataBasicKey, value: any) => {
-      const _updateData = (Object.assign(
+      const _updateData = Object.assign(
         { ...createTokenData.basic },
         { [key]: value }
-      ) as unknown) as CreateTokenDataBasic
+      ) as unknown as CreateTokenDataBasic
       updateBasic(_updateData)
     },
     [createTokenData.basic, updateBasic]

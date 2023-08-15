@@ -1,11 +1,11 @@
 import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core'
 import 'inter-ui'
 import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import { CssBaseline, ThemeProvider as MuiThemeProvider, StyledEngineProvider } from '@mui/material'
-import ReactDOM from 'react-dom'
 import theme from 'theme/index'
 import { Provider } from 'react-redux'
-import { Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import Blocklist from './components/essential/Blocklist'
 import { NetworkContextName } from './constants'
 import App from './pages/App'
@@ -15,11 +15,9 @@ import ApplicationUpdater from './state/application/updater'
 import MulticallUpdater from './state/multicall/updater'
 import TransactionUpdater from './state/transactions/updater'
 import getLibrary from './utils/getLibrary'
-import { createBrowserHistory } from 'history'
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 import ReactGA from 'react-ga4'
 import { isMobile } from 'react-device-detect'
-const browserHistory = createBrowserHistory()
 
 const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
 if (typeof GOOGLE_ANALYTICS_ID === 'string') {
@@ -46,7 +44,11 @@ function Self({ children }: any) {
   return children
 }
 
-ReactDOM.render(
+const container = document.getElementById('root')
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const root = createRoot(container!)
+
+root.render(
   <StrictMode>
     <Web3ReactProvider getLibrary={getLibrary}>
       <Web3ProviderNetwork getLibrary={getLibrary}>
@@ -56,19 +58,18 @@ ReactDOM.render(
             <StyledEngineProvider injectFirst>
               <MuiThemeProvider theme={theme}>
                 <CssBaseline />
-                <Router history={browserHistory}>
+                <BrowserRouter>
                   <Self>
                     <App />
                   </Self>
-                </Router>
+                </BrowserRouter>
               </MuiThemeProvider>
             </StyledEngineProvider>
           </Provider>
         </Blocklist>
       </Web3ProviderNetwork>
     </Web3ReactProvider>
-  </StrictMode>,
-  document.getElementById('root')
+  </StrictMode>
 )
 
 serviceWorkerRegistration.unregister()

@@ -12,7 +12,7 @@ import { useActiveWeb3React } from 'hooks'
 import { Chain } from 'models/chain'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useToken, useCurrencyBalance } from 'state/wallet/hooks'
 import { isAddress } from 'utils'
 import isZero from 'utils/isZero'
@@ -58,24 +58,23 @@ export default function CreateAirdrop() {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { account } = useActiveWeb3React()
   const { myJoinDaoData: daoAdminLevel } = useUpdateDaoDataCallback()
-  const history = useHistory()
   useEffect(() => {
     if (!account || daoAdminLevel.job === 'noRole' || daoAdminLevel.job === 'visitor') {
-      history.goBack()
+      window.history.back()
     }
-  }, [daoAdminLevel, history, account])
+  }, [daoAdminLevel, account])
 
   return daoInfo ? <CreateAirdropForm daoChainId={daoId} daoInfo={daoInfo} /> : <Loading />
 }
 
 function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const theme = useTheme()
   console.log(daoInfo)
   const { showModal, hideModal } = useModal()
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoChainId}/DAO_Rewards`)
-  }, [daoChainId, history])
+    navigate(routes._DaoInfo + `/${daoChainId}/DAO_Rewards`, { replace: true })
+  }, [daoChainId, navigate])
   const { account, chainId, library } = useActiveWeb3React()
   const [airdropAddress, setAirdropAddress] = useState('')
   const [title, setTitle] = useState('')
@@ -151,7 +150,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
     )
       .then(hash => {
         hideModal()
-        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => history.goBack()} />)
+        showModal(<TransactiontionSubmittedModal hash={hash} hideFunc={() => window.history.back()} />)
       })
       .catch((err: any) => {
         hideModal()
@@ -171,7 +170,6 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
     eventEndTime,
     eventStartTime,
     hideModal,
-    history,
     inputValueAmount,
     isEth,
     network,

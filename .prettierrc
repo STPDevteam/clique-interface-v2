@@ -1,6 +1,9 @@
 {
+  "arrowParens": "avoid",
   "semi": false,
   "singleQuote": true,
   "printWidth": 120,
-  "trailingComma": "none"
+  "trailingComma": "none",
+  "arrayExpand": false,
+  "endOfLine": "auto"
 }
