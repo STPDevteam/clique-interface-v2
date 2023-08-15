@@ -121,6 +121,7 @@ export default function App() {
   const theme = useTheme()
   const dispatch = useDispatch()
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development') return
     fetchUserLocation().then(res => {
       store.dispatch({
         type: 'application/setUserLocation',

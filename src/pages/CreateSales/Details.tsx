@@ -285,7 +285,7 @@ export default function Details() {
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)
@@ -315,7 +315,7 @@ export default function Details() {
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)

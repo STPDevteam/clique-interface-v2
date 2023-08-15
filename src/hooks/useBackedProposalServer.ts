@@ -294,8 +294,6 @@ export function useUpChainProposalVoteCallback() {
         from: account
       })
         .then((response: TransactionResponse) => {
-          console.log(`${account}_Chain_proposal${proposalId}`)
-
           addTransaction(response, {
             summary: `On-chain success`,
             claim: { recipient: `${account}_Chain_proposal${proposalId}` }
@@ -305,10 +303,12 @@ export function useUpChainProposalVoteCallback() {
           }
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'upChainProposal',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )

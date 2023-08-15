@@ -61,7 +61,7 @@ export default function AirdropCollectModal({
       .catch(err => {
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'Commit error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'Commit error'}
           </MessageBox>
         )
       })

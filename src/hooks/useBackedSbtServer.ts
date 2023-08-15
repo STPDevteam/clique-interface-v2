@@ -161,10 +161,12 @@ export function useCreateSbtCallback() {
           }
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useCreateSBTCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )
@@ -340,10 +342,12 @@ export function useSbtClaim() {
           }
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useClaimSBTCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )
