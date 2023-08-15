@@ -187,7 +187,7 @@ export default function App() {
                           <Route path={makeDaoInfo(routes.CreateProposal)} element={<CreateProposal />} />
                           <Route path={makeDaoInfo(routes.ProposalDetail)} element={<ProposalDetail />} />
                           <Route path={makeDaoInfo(routes.CreateAirdrop)} element={<CreateAirdrop />} />
-                          <Route path={'*'} element={<Navigate replace to={location.pathname + '/proposal'} />} />
+                          <Route path={'*'} element={<Navigate replace to={'proposal'} />} />
                         </Routes>
                       </DaoInfoLayout>
                     }
