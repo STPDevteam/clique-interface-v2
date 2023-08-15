@@ -59,6 +59,7 @@ import LoginModal from 'components/Header/LoginModal'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 
 const AppWrapper = styled('div')(({ theme }) => ({
@@ -117,6 +118,7 @@ const BodyWrapper = styled('div')(({}) => ({
 }))
 
 export default function App() {
+  const { headerLinkIsShow } = useUpdateDaoDataCallback()
   const { pathname } = useLocation()
   const theme = useTheme()
   const dispatch = useDispatch()
@@ -156,6 +158,7 @@ export default function App() {
             <BodyWrapper
               id="body"
               sx={{
+                minHeight: headerLinkIsShow ? 'calc(100vh - 50px)' : '100vh',
                 paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
                 [theme.breakpoints.down('md')]: {
                   minHeight: `${theme.height.mobileHeader} - 50px`

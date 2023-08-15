@@ -88,3 +88,7 @@ export const updateJoinDaoModalShakeStatus = createAction<{ isShakeJoinDaoModal:
   'buildingDao/updateJoinDaoModalShakeStatus'
 )
 export const removeCreateDaoData = createAction('buildingDao/removeCreateDaoData')
+
+export const updateIsShowHeaderModalStatus = createAction<{ isShowHeaderModal: boolean }>(
+  'buildingDao/updateIsShowHeaderModalStatus'
+)

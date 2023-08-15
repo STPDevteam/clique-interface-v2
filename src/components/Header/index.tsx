@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   AppBar,
@@ -32,11 +32,13 @@ import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { getWorkspaceInfo } from 'utils/fetch/server'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import { useDispatch } from 'react-redux'
+import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
 
 interface TabContent {
   title: string
@@ -307,6 +309,9 @@ export function capitalizeFirstLetter(str: string) {
 }
 
 export default function Header() {
+  const dispatch = useDispatch()
+  const { headerLinkIsShow } = useUpdateDaoDataCallback()
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
@@ -321,11 +326,19 @@ export default function Header() {
   const [workspaceTitle, setWorkspaceTitle] = useState('')
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
-  const isShow = useMemo(() => {
+  // const isShow = useMemo(() => {
+  //   if (curPath === routes.CreateDao) {
+  //     return false
+  //   }
+  //   return true
+  // }, [curPath])
+  useEffect(() => {
     if (curPath === routes.CreateDao) {
-      return false
+      dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: false }))
+    } else {
+      dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: true }))
     }
-    return true
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curPath])
   const makeBreadcrumbs = useMemo(() => {
     if (!daoInfo?.daoName) {
@@ -408,7 +421,7 @@ export default function Header() {
   }
   return (
     <>
-      {isShow && (
+      {headerLinkIsShow && (
         <>
           <Box height={50} />
           <Alert
