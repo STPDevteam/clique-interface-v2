@@ -333,7 +333,7 @@ export default function Header() {
   //   return true
   // }, [curPath])
   useEffect(() => {
-    if (curPath === routes.CreateDao) {
+    if (curPath === routes.CreateDao || pathname.includes(makeRouteLink(routes.DaoInfo))) {
       dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: false }))
     } else {
       dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: true }))
