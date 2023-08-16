@@ -1,4 +1,4 @@
-import { Box, Button, Stack, styled, Typography } from '@mui/material'
+import { Box, Button, Stack, styled, Typography, ButtonGroup, Button as MuiButton } from '@mui/material'
 import Image from 'components/Image'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
@@ -6,6 +6,7 @@ import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useState } from 'react'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -23,18 +24,36 @@ const Item = styled(Box)(({}) => ({
   justifyItems: 'center',
   alignItems: 'center',
   cursor: 'pointer',
-  width: 250,
-  padding: '9px 20px',
+  width: 227,
+  padding: '10px 20px 10px 5px',
   gap: 10,
+  '&:hover .right': {
+    height: 0,
+    width: 0,
+    border: '1px solid #999',
+    position: 'relative',
+    '::before': {
+      position: 'absolute',
+      right: 1,
+      top: '-6px',
+      content: '""',
+      display: 'block',
+      height: 7,
+      width: 0,
+      border: '1px solid #999',
+      transform: 'rotate(135deg)'
+    }
+  },
   '&:hover': {
     backgroundColor: '#0049C60D'
   },
+
   '&:hover p': {
     color: '#0049C6'
   },
   '& img': {
-    width: 24,
-    height: 24,
+    width: 30,
+    height: 30,
     border: '1px solid #D4D7E2',
     borderRadius: '50%'
   },
@@ -47,34 +66,56 @@ const Item = styled(Box)(({}) => ({
 }))
 
 const EmptyWrapper = styled(Box)({
-  width: 329,
+  width: 236,
   height: 140,
   padding: '16px 9px 6px',
   textAlign: 'center'
 })
 
-const ButtonGroup = styled(Stack)({
+const ButtonStyledGroup = styled(Stack)({
   flexDirection: 'row',
   justifyContent: 'space-between',
-  marginTop: 14,
+  marginTop: 5,
   '& button': {
-    width: 140,
-    height: 32
+    width: 106,
+    height: 32,
+    padding: '5px !important'
   }
 })
+
+const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  width: 227,
+  '& button': {
+    height: 30,
+    borderWidth: '1px',
+    color: theme.palette.text.primary,
+    fontWeight: 600,
+    padding: '5px 8px !important',
+    '&:hover': {
+      borderWidth: '1px'
+    },
+    '&.active': {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white
+    }
+  }
+}))
 
 export default function MySpace() {
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
+  const [isUpChain, setIsUpChain] = useState<boolean>(false)
 
   return (
     <Box>
       <PopperCard
         sx={{
           marginTop: 13,
-          maxHeight: '50vh',
-          overflowY: 'auto',
-          '&::-webkit-scrollbar': {
+          maxWidth: 250,
+          padding: '12px 10px 0',
+          '& ::-webkit-scrollbar': {
             display: 'none'
           }
         }}
@@ -107,15 +148,68 @@ export default function MySpace() {
         }
       >
         <>
-          {myJoinedDaoList.length === 0 && <EmptyDaoItem />}
-          {myJoinedDaoList?.map(option => (
-            <Box
-              key={option.daoName + option.daoId}
-              onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+          <StyledButtonGroup>
+            <MuiButton
+              className={!isUpChain ? 'active' : ''}
+              onClick={e => {
+                e.stopPropagation()
+                setIsUpChain(false)
+              }}
             >
-              <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
+              {'DAOs'}
+            </MuiButton>
+            <MuiButton
+              className={isUpChain ? 'active' : ''}
+              onClick={e => {
+                e.stopPropagation()
+                setIsUpChain(true)
+              }}
+            >
+              {'NFT Account'}
+            </MuiButton>
+          </StyledButtonGroup>
+          {myJoinedDaoList.length === 0 && !isUpChain && <EmptyDaoItem />}
+          {!isUpChain ? (
+            <Box
+              mt={10}
+              sx={{
+                maxHeight: '45vh',
+                overflowY: 'auto'
+              }}
+            >
+              {myJoinedDaoList?.map(option => (
+                <Box
+                  key={option.daoName + option.daoId}
+                  onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+                >
+                  <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
+                </Box>
+              ))}
             </Box>
-          ))}
+          ) : (
+            <Box
+              mt={10}
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                gap: 4,
+                maxHeight: '45vh',
+                overflowY: 'auto'
+              }}
+            >
+              {myJoinedDaoList?.map(option => (
+                <Box key={option.daoName + option.daoId} sx={{ maxHeight: '54px' }}>
+                  <Image
+                    src={option.daoLogo || ''}
+                    alt={''}
+                    width={54}
+                    height={54}
+                    style={{ border: '1px solid #97B7EF', borderRadius: '6px', cursor: 'pointer' }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          )}
         </>
       </PopperCard>
     </Box>
@@ -127,18 +221,19 @@ export function EmptyDaoItem() {
   return (
     <EmptyWrapper>
       <Image src={HateIcon} width={36} />
-      <Typography noWrap width={'100%'} lineHeight={'20px'} color={'#3F5170'}>
+      <Typography noWrap width={'100%'} lineHeight={'20px'} color={'#3F5170'} fontSize={12}>
         <span style={{ fontWeight: 700 }}>Oops!</span>
+        <br />
         <span style={{ fontWeight: 400 }}> You haven&apos;t joined any DAOs yet.</span>
       </Typography>
-      <ButtonGroup>
+      <ButtonStyledGroup>
         <Button variant="contained" onClick={() => navigate(routes.CreateDao)}>
           Create DAO
         </Button>
         <Button variant="outlined" color="primary" onClick={() => navigate(routes.Governance)}>
           Explore DAOs
         </Button>
-      </ButtonGroup>
+      </ButtonStyledGroup>
     </EmptyWrapper>
   )
 }
@@ -148,6 +243,7 @@ function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
     <Item>
       <Image src={daoLogo || ''} alt={daoName} />
       <Text noWrap>{daoName || ''}</Text>
+      <Typography className="right" maxWidth={14} width={'100%'} />
     </Item>
   )
 }
