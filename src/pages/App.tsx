@@ -215,7 +215,7 @@ export default function App() {
                   <Route path={routes.Profile} element={<Profile />} />
                   <Route path={routes._Profile} element={<Profile />} />
                   <Route path="/governance" element={<Navigate replace to={routes.Governance} />} />
-                  <Route path="/" element={<Navigate replace to={routes.Governance} />} />
+                  <Route path="*" element={<Navigate replace to={routes.Governance} />} />
                 </Routes>
               </Web3ReactManager>
             </BodyWrapper>
