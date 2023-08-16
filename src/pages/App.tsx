@@ -1,7 +1,7 @@
 import { Suspense, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
 BigNumber.config({ EXPONENTIAL_AT: [-7, 40] })
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { styled, useTheme } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
@@ -59,6 +59,7 @@ import LoginModal from 'components/Header/LoginModal'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
+import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 
 const AppWrapper = styled('div')(({ theme }) => ({
@@ -117,10 +118,12 @@ const BodyWrapper = styled('div')(({}) => ({
 }))
 
 export default function App() {
+  const { headerLinkIsShow } = useUpdateDaoDataCallback()
   const { pathname } = useLocation()
   const theme = useTheme()
   const dispatch = useDispatch()
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development') return
     fetchUserLocation().then(res => {
       store.dispatch({
         type: 'application/setUserLocation',
@@ -135,12 +138,14 @@ export default function App() {
     }
   }, [dispatch, pathname])
 
+  const makeDaoInfo = (route: string) => route.replace(routes.DaoInfo, '')
+
   return (
     <Suspense fallback={null}>
       <ModalProvider>
         <AppWrapper id="app">
           <LoginModal />
-          <Route component={GoogleAnalyticsReporter} />
+          <GoogleAnalyticsReporter />
           <ContentWrapper>
             <Header />
             {/* <AiChat /> */}
@@ -153,6 +158,7 @@ export default function App() {
             <BodyWrapper
               id="body"
               sx={{
+                minHeight: headerLinkIsShow ? 'calc(100vh - 50px)' : '100vh',
                 paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
                 [theme.breakpoints.down('md')]: {
                   minHeight: `${theme.height.mobileHeader} - 50px`
@@ -161,76 +167,56 @@ export default function App() {
             >
               <Popups />
               <Polling />
-              {/* <WarningModal /> */}
               <Web3ReactManager>
-                <Switch>
+                <Routes>
                   <Route
-                    strict
-                    path={routes.DaoInfo}
-                    render={() => (
+                    path={routes.DaoInfo + '/*'}
+                    element={
                       <DaoInfoLayout>
                         <DaoInfoUpdater />
-                        <Switch>
-                          <Route path={routes.DaoInfoAbout} exact strict component={About} />
-                          <Route path={routes.DaoMember} exact strict component={Member} />
-                          <Route path={routes.DaoTreasury} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoIdea} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoInfoActivity} exact strict component={DaoBounty} />
-                          <Route path={routes.DaoAboutSetting} exact strict component={AboutSetting} />
-                          <Route path={routes.DaoTeamMeetings} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoTeamDocs} exact strict component={ComingSoon} />
-                          <Route path={routes._DaoTeamTask} exact strict component={Task} />
-                          <Route path={routes.DaoTeamCalendar} exact strict component={ComingSoon} />
-                          <Route path={routes.DaoTeamTrash} exact strict component={ComingSoon} />
-                          <Route path={routes.Proposal} exact strict component={ProposalList} />
-                          <Route path={routes.CreateProposal} exact strict component={CreateProposal} />
-                          <Route path={routes.ProposalDetail} exact strict component={ProposalDetail} />
-                          <Route path={routes.CreateAirdrop} exact strict component={CreateAirdrop} />
-                          <Route
-                            exact
-                            path={routes.DaoInfo}
-                            render={() => <Redirect to={location.pathname + '/proposal'} />}
-                          />
-                        </Switch>
+                        <Routes>
+                          <Route path={makeDaoInfo(routes.DaoInfoAbout)} element={<About />} />
+                          <Route path={makeDaoInfo(routes.DaoMember)} element={<Member />} />
+                          <Route path={makeDaoInfo(routes.DaoTreasury)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoIdea)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoInfoActivity)} element={<DaoBounty />} />
+                          <Route path={makeDaoInfo(routes.DaoAboutSetting)} element={<AboutSetting />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamMeetings)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamDocs)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes._DaoTeamTask)} element={<Task />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamCalendar)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.DaoTeamTrash)} element={<ComingSoon />} />
+                          <Route path={makeDaoInfo(routes.Proposal)} element={<ProposalList />} />
+                          <Route path={makeDaoInfo(routes.CreateProposal)} element={<CreateProposal />} />
+                          <Route path={makeDaoInfo(routes.ProposalDetail)} element={<ProposalDetail />} />
+                          <Route path={makeDaoInfo(routes.CreateAirdrop)} element={<CreateAirdrop />} />
+                          <Route path={'*'} element={<Navigate replace to={'proposal'} />} />
+                        </Routes>
                       </DaoInfoLayout>
-                    )}
+                    }
                   />
-                  <Route strict path={routes.DappStore} component={DappStore} />
+                  <Route path={routes.DappStore} element={<DappStore />} />
                   <Route
-                    strict
                     path={routes.Governance}
-                    render={() => (
+                    element={
                       <Governance>
                         <GovernanceHome />
                       </Governance>
-                    )}
+                    }
                   />
-                  <Route exact strict path={routes.Activity} component={Activity} />
-                  <Route exact strict path={routes._CreateSoulToken} component={CreateSoulToken} />
-                  <Route exact strict path={routes.CreateSoulToken} component={CreateSoulToken} />
-                  <Route exact strict path={routes.SoulTokenDetail} component={SoulTokenDetail} />
-                  <Route exact strict path={routes.ActivityAirdropDetail} component={ActivityAirdropDetail} />
-                  {/* <Route exact strict path={routes.ActivitySaleDetail} component={ActivitySaleDetail} /> */}
-                  {/* <Route exact strict path={routes.Tokens} component={TokenList} /> */}
-                  {/* <Route exact strict path={routes.Creator} component={Creator} /> */}
-                  {/* <Route exact strict path={routes.CreatorDao} component={CreatorDao} /> */}
-                  <Route exact strict path={routes.CreateDao} component={CreateDao} />
-                  <Route exact strict path={routes.CreatorToken} component={CreatorToken} />
-                  <Route exact strict path={routes.Notification} component={Notification} />
-                  {/* <Route exact strict path={routes.PushList} component={PushList} /> */}
-                  <Route exact strict path={routes.Profile} component={Profile} />
-                  <Route exact strict path={routes._Profile} component={Profile} />
-                  {/* <Route exact strict path={routes.CreateSales} component={CreateSales} /> */}
-                  {/* <Route exact strict path={routes.SaleDetails} component={SaleDetail} /> */}
-                  {/* <Route exact strict path={routes.Home} component={Home} /> */}
-                  <Route exact path="/governance" render={() => <Redirect to={routes.Governance} />} />
-                  <Route exact path="/" render={() => <Redirect to={routes.Governance} />} />
-                  {/* <Route exact strict path={routes.CreateSales} component={CreateSales} />
-                  <Route exact strict path={routes.SaleDetails} component={SaleDetail} />
-                  <Route exact strict path={routes.SaleList} component={SaleList} />
-                  <Route exact strict path={routes.Push} component={Push} /> */}
-                  {/* <Route exact path="/" render={() => <Redirect to={routes.Governance} />} /> */}
-                </Switch>
+                  <Route path={routes.Activity} element={<Activity />} />
+                  <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
+                  <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
+                  <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />
+                  <Route path={routes.ActivityAirdropDetail} element={<ActivityAirdropDetail />} />
+                  <Route path={routes.CreateDao} element={<CreateDao />} />
+                  <Route path={routes.CreatorToken} element={<CreatorToken />} />
+                  <Route path={routes.Notification} element={<Notification />} />
+                  <Route path={routes.Profile} element={<Profile />} />
+                  <Route path={routes._Profile} element={<Profile />} />
+                  <Route path="/governance" element={<Navigate replace to={routes.Governance} />} />
+                  <Route path="*" element={<Navigate replace to={routes.Governance} />} />
+                </Routes>
               </Web3ReactManager>
             </BodyWrapper>
           </ContentWrapper>

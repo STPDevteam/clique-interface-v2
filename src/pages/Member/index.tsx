@@ -9,7 +9,7 @@ import CardView from './Children/CardView'
 import JobApplication from './Children/JobApplication'
 import InviteUser from './Children/InviteUser'
 import { useJobsApplyList, useJobsList } from 'hooks/useBackedDaoServer'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import DaoContainer from 'components/DaoContainer'
 import OpenJobs from './Children/OpenJobs'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
@@ -98,7 +98,7 @@ export default function Member() {
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const [tabValue, setTabValue] = useState(0)
   const curDaoId = Number(daoId)
-  const history = useHistory()
+  const navigate = useNavigate()
   const { showModal, hideModal } = useModal()
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result: applyList } = useJobsApplyList(curDaoId, rand)
@@ -244,7 +244,7 @@ export default function Member() {
               {tabList.length === 3 && tabValue === 1 ? (
                 <Typography
                   onClick={() => {
-                    history.push(routes._DaoInfo + `/${daoId}/settings?tab=3`)
+                    navigate(routes._DaoInfo + `/${daoId}/settings?tab=3`)
                   }}
                 >
                   View open jobs({jobsNum.length})&gt;

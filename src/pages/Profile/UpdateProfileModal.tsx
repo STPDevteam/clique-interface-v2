@@ -59,7 +59,7 @@ export default function UpdateProfileModal({
         toast.success('Update success')
       })
       .catch(err => {
-        toast.error(err?.data?.message || err?.error?.message || err?.message || 'Update error')
+        toast.error(err?.reason || err?.data?.message || err?.error?.message || err?.message || 'Update error')
       })
   }, [
     account,

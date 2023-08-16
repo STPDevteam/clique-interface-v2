@@ -33,9 +33,7 @@ const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }
   }
 }))
 
-async function save(
-  file: File
-): Promise<{
+async function save(file: File): Promise<{
   data: string
   result: boolean
 }> {

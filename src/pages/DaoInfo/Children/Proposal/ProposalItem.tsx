@@ -5,7 +5,7 @@ import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
 import { formatNumberWithCommas, getEtherscanLink, shortenAddress } from 'utils'
 import ShowProposalStatusTag from './ShowProposalStatusTag'
 import { ShowProposalStatusV3Tag } from './ShowProposalStatusTag'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { myCliqueV1Domain } from '../../../../constants'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -70,12 +70,12 @@ export default function ProposalItem(props: ProposalListBaseProp) {
 }
 
 function ProposalV3Item(props: ProposalListBaseProp) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoId)
 
   return (
-    <StyledCard onClick={() => history.push(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
+    <StyledCard onClick={() => navigate(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
       <RowCenter>
         <Box sx={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <Typography
@@ -113,7 +113,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
         <Box
           sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 6 }}
           onClick={e => {
-            history.push(routes._Profile + `/${props.proposer.account}`)
+            navigate(routes._Profile + `/${props.proposer.account}`)
             e.stopPropagation()
           }}
         >
@@ -202,7 +202,7 @@ function ProposalV3Item(props: ProposalListBaseProp) {
 }
 
 function ProposalV2Item(props: ProposalListBaseProp) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const curDaoId = Number(daoId)
@@ -238,7 +238,7 @@ function ProposalV2Item(props: ProposalListBaseProp) {
   }, [props])
 
   return (
-    <StyledCard onClick={() => history.push(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
+    <StyledCard onClick={() => navigate(routes._DaoInfo + `/${curDaoId}/proposal/detail/${props.proposalId}`)}>
       {isSmDown && (
         <Box mb={8} display={'flex'} alignItems="center">
           {Creator}

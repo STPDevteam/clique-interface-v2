@@ -22,7 +22,7 @@ import {
 } from '@mui/x-data-grid'
 import { useGetTaskList, useGetWorkspaceInfo } from 'hooks/useBackedTaskServer'
 import { useMemo } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
 import DaoContainer from 'components/DaoContainer'
 import { MapPriorityType, MapTaskStatus } from './Children/TaskDetail'
@@ -237,7 +237,7 @@ const statusFilter = [
   { value: 'D_notStatus', label: 'No status' }
 ]
 
-const AllTaskTable = function({ priority, status }: { priority: string | undefined; status: string | undefined }) {
+const AllTaskTable = function ({ priority, status }: { priority: string | undefined; status: string | undefined }) {
   // const [selectedRow, setSelectRow] = useState<GridSelectionModel>()
   const { spacesId } = useParams<{ spacesId: string }>()
   const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), status, priority)
@@ -320,7 +320,7 @@ export default function Index() {
 
   const daoId = Number(curDaoId)
   const _spacesId = Number(spacesId)
-  const history = useHistory()
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const { result: workspaceInfo } = useGetWorkspaceInfo(_spacesId)
   const [tabValue, setTabValue] = useState(0)
@@ -339,10 +339,10 @@ export default function Index() {
       ) {
         return
       } else {
-        history.replace(routes._DaoInfo + `/${daoId}/proposal`)
+        navigate(routes._DaoInfo + `/${daoId}/proposal`, { replace: true })
       }
     }
-  }, [account, daoId, history, isJoined.job, isJoin, workspaceInfo, userInfo?.loggedToken])
+  }, [account, daoId, isJoined.job, isJoin, workspaceInfo, userInfo?.loggedToken, navigate])
 
   return (
     <DaoContainer>

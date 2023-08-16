@@ -15,7 +15,7 @@ import { ReactComponent as Opensea } from 'assets/svg/opensea.svg'
 import MyTokens from './MyTokens'
 import MyRecords from './MyRecords'
 import AccountNFTs from './AccountNFTs'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   // useAccountFollowersList,
   // useAccountFollowingList,
@@ -93,17 +93,17 @@ export default function Profile() {
   const { showModal, hideModal } = useModal()
   const walletModalToggle = useWalletModalToggle()
   const currentAccount = useMemo(() => (isAddress(address) ? address : account || undefined), [account, address])
-  const isSelf = useMemo(() => currentAccount && account && account.toLowerCase() === currentAccount.toLowerCase(), [
-    account,
-    currentAccount
-  ])
+  const isSelf = useMemo(
+    () => currentAccount && account && account.toLowerCase() === currentAccount.toLowerCase(),
+    [account, currentAccount]
+  )
   const { isFollowed, toggleFollow } = useUserFollowStatus(
     account || undefined,
     currentAccount && currentAccount !== account ? currentAccount : undefined
   )
 
   const [rand, setRand] = useState(Math.random())
-  const history = useHistory()
+  const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
   const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand, isFollowed)
 
@@ -131,9 +131,11 @@ export default function Profile() {
   }, [hideModal])
 
   useEffect(() => {
-    if (!currentAccount || !account) history.replace('/')
+    if (!currentAccount || !account) {
+      navigate('/', { replace: true })
+    }
     hideModal()
-  }, [currentAccount, hideModal, history, account])
+  }, [currentAccount, hideModal, account, navigate])
 
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
@@ -443,7 +445,7 @@ export default function Profile() {
 // function AccountFollowersList({ userId }: { userId: number | undefined }) {
 //   const { result: accountFollowersList, page, loading } = useAccountFollowersList(userId)
 //   const { hideModal } = useModal()
-//   const history = useHistory()
+//   const navigate = useNavigate()
 //   const isSmDown = useBreakpoint('sm')
 //   console.log(accountFollowersList, 90)
 //   return (
@@ -467,7 +469,7 @@ export default function Profile() {
 //                   sx={{ cursor: 'pointer' }}
 //                   onClick={() => {
 //                     hideModal()
-//                     history.push(routes._Profile + `/${item.account}`)
+//                     navigate(routes._Profile + `/${item.account}`)
 //                   }}
 //                 >
 //                   <Box display={'flex'} alignItems="center">
@@ -498,7 +500,7 @@ export default function Profile() {
 // function AccountFollowingList({ userId }: { userId: number | undefined }) {
 //   const { result: accountFollowingList, page, loading } = useAccountFollowingList(userId)
 //   const { hideModal } = useModal()
-//   const history = useHistory()
+//   const navigate = useNavigate()
 //   const isSmDown = useBreakpoint('sm')
 //   return (
 //     <Modal maxWidth="600px" closeIcon width="100%">
@@ -521,7 +523,7 @@ export default function Profile() {
 //                   sx={{ cursor: 'pointer' }}
 //                   onClick={() => {
 //                     hideModal()
-//                     history.push(routes._Profile + `/${item.account}`)
+//                     navigate(routes._Profile + `/${item.account}`)
 //                   }}
 //                 >
 //                   <Box display={'flex'} alignItems="center">

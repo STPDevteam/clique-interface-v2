@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react'
-import { NavLink, useHistory, useLocation } from 'react-router-dom'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   AppBar,
   Box,
@@ -32,11 +32,13 @@ import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
-import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
+import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { getWorkspaceInfo } from 'utils/fetch/server'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import { useDispatch } from 'react-redux'
+import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
 
 interface TabContent {
   title: string
@@ -55,7 +57,7 @@ export const Tabs: Tab[] = [
   { title: 'Clique Discovery', route: routes.Activity },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
   {
-    title: 'Creater',
+    title: 'Creator',
     route: '',
     subTab: [
       // {
@@ -307,6 +309,9 @@ export function capitalizeFirstLetter(str: string) {
 }
 
 export default function Header() {
+  const dispatch = useDispatch()
+  const { headerLinkIsShow } = useUpdateDaoDataCallback()
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
@@ -321,11 +326,19 @@ export default function Header() {
   const [workspaceTitle, setWorkspaceTitle] = useState('')
 
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
-  const isShow = useMemo(() => {
-    if (curPath === routes.CreateDao) {
-      return false
+  // const isShow = useMemo(() => {
+  //   if (curPath === routes.CreateDao) {
+  //     return false
+  //   }
+  //   return true
+  // }, [curPath])
+  useEffect(() => {
+    if (curPath === routes.CreateDao || pathname.includes(makeRouteLink(routes.DaoInfo))) {
+      dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: false }))
+    } else {
+      dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: true }))
     }
-    return true
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [curPath])
   const makeBreadcrumbs = useMemo(() => {
     if (!daoInfo?.daoName) {
@@ -408,7 +421,7 @@ export default function Header() {
   }
   return (
     <>
-      {isShow && (
+      {headerLinkIsShow && (
         <>
           <Box height={50} />
           <Alert
@@ -455,7 +468,7 @@ export default function Header() {
 
 function TabsBox() {
   const { pathname } = useLocation()
-  const history = useHistory()
+  const navigate = useNavigate()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
@@ -545,7 +558,7 @@ function TabsBox() {
                     onClick={() => {
                       if (!account) return toggleWalletModal()
                       if (!userSignature) return loginSignature()
-                      option.route ? history.push(option.route) : window.open(option.link, '_blank')
+                      option.route ? navigate(option.route) : window.open(option.link, '_blank')
                     }}
                   >
                     {option.titleContent ?? option.title}

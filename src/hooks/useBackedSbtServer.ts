@@ -152,7 +152,7 @@ export function useCreateSbtCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Create SBT`,
+            summary: `SBT Created`,
             claim: { recipient: `${account}_create_sbt` }
           })
           return {
@@ -161,10 +161,12 @@ export function useCreateSbtCallback() {
           }
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useCreateSBTCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )
@@ -332,7 +334,7 @@ export function useSbtClaim() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Claim SBT`,
+            summary: `SBT Claimed`,
             claim: { recipient: `${account}_claim_sbt_${sbtId}` }
           })
           return {
@@ -340,10 +342,12 @@ export function useSbtClaim() {
           }
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useClaimSBTCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )

@@ -36,7 +36,7 @@ import SelectCurrencyModal from 'components/Input/CurrencyInputPanel/SelectCurre
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { BigNumber } from 'bignumber.js'
 import JSBI from 'jsbi'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useWalletModalToggle } from 'state/application/hooks'
@@ -124,10 +124,10 @@ export default function Index() {
   const [currencyRatio, setCurrencyRatio] = useState('')
   const [eventTitle, setEventTitle] = useState('')
   const [isAccountWhite, setIsAccountWhite] = useState(false)
-  const history = useHistory()
+  const navigate = useNavigate()
   const { showModal, hideModal } = useModal()
 
-  const handleChangeOneTimePrice = useCallback(e => {
+  const handleChangeOneTimePrice = useCallback((e: { target: { value: SetStateAction<string> } }) => {
     setOnetimePrice(e.target.value)
     setMaxPurchase(e.target.value)
     setMinPurchase(e.target.value)
@@ -145,7 +145,7 @@ export default function Index() {
     const el = document.getElementById('upload_CSV') as HTMLInputElement
     if (!el || !el.files) return
     const reader = new FileReader()
-    reader.onload = function() {
+    reader.onload = function () {
       const ret: string[] = []
       const textInput = reader.result as string
       const allRows = textInput.split(/\r?\n|\r/)
@@ -192,7 +192,7 @@ export default function Index() {
         if (!result.isWhite) {
           setIsAccountWhite(false)
           showModal(
-            <MessageBox type="error" hideFunc={() => history.goBack()}>
+            <MessageBox type="error" hideFunc={() => window.history.back()}>
               You are not in the whitelist, you can&apos;t create a swap
             </MessageBox>
           )
@@ -204,7 +204,7 @@ export default function Index() {
         console.error(error)
       }
     })()
-  }, [account, history, showModal])
+  }, [account, showModal])
   useEffect(() => {
     if (!saleToken || !receiveToken) return
     let result: any = []
@@ -298,7 +298,7 @@ export default function Index() {
       .then(hash => {
         hideModal()
         showModal(
-          <TransactiontionSubmittedModal hash={hash} hideFunc={() => history.push(routes.SaleList)}>
+          <TransactiontionSubmittedModal hash={hash} hideFunc={() => navigate(routes.SaleList)}>
             Your swap can take up to 5 minutes to appear
           </TransactiontionSubmittedModal>
         )
@@ -307,7 +307,7 @@ export default function Index() {
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)
@@ -332,7 +332,7 @@ export default function Index() {
     isWhitelist,
     publicSaleList,
     hideModal,
-    history
+    navigate
   ])
 
   const [approveState, approveCallback] = useApproveCallback(
@@ -344,9 +344,9 @@ export default function Index() {
 
   const tokenPriceText = useMemo(() => {
     if (!saleToken || !receiveToken) return
-    return `1 ${saleToken?.symbol} = ${currencyRatio} ${receiveToken?.symbol} / 1 ${
-      receiveToken?.symbol
-    } = ${currencyRatio && new BigNumber(1).div(currencyRatio).toFixed(6)} ${saleToken?.symbol}`
+    return `1 ${saleToken?.symbol} = ${currencyRatio} ${receiveToken?.symbol} / 1 ${receiveToken?.symbol} = ${
+      currencyRatio && new BigNumber(1).div(currencyRatio).toFixed(6)
+    } ${saleToken?.symbol}`
   }, [currencyRatio, receiveToken, saleToken])
 
   const totalShare = useMemo(() => {
@@ -356,10 +356,7 @@ export default function Index() {
 
   const sharePer = useMemo(() => {
     if (!salePrice || !oneTimePrice) return
-    return new BigNumber(oneTimePrice)
-      .multipliedBy(new BigNumber(salePrice))
-      .toFixed()
-      .toString()
+    return new BigNumber(oneTimePrice).multipliedBy(new BigNumber(salePrice)).toFixed().toString()
   }, [salePrice, oneTimePrice])
 
   const paramsCheck: {
@@ -605,8 +602,9 @@ export default function Index() {
           placeholder="0"
           label="Sale amount"
           endAdornment={<>{saleToken?.symbol}</>}
-          rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) ||
-            '-'} ${saleToken?.symbol || ''}`}
+          rightLabel={`Balance: ${saleTokenBalance?.toSignificant(6, { groupSeparator: ',' }) || '-'} ${
+            saleToken?.symbol || ''
+          }`}
           type="amount"
         />
       </Stack>
@@ -725,15 +723,9 @@ export default function Index() {
         <Typography color={theme.palette.text.secondary} fontWeight={500} variant="inherit">
           {salePrice &&
             currencyRatio &&
-            (new BigNumber(salePrice)
-              .multipliedBy(new BigNumber(100))
-              .div(Number(currencyRatio))
-              .isLessThan(0.01)
+            (new BigNumber(salePrice).multipliedBy(new BigNumber(100)).div(Number(currencyRatio)).isLessThan(0.01)
               ? '< 0.01'
-              : new BigNumber(salePrice)
-                  .multipliedBy(new BigNumber(100))
-                  .div(Number(currencyRatio))
-                  .toFixed(2))}
+              : new BigNumber(salePrice).multipliedBy(new BigNumber(100)).div(Number(currencyRatio)).toFixed(2))}
           %
           {/* {new BigNumber(salePrice)
             .multipliedBy(new BigNumber(100))

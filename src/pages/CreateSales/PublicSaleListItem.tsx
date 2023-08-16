@@ -3,7 +3,6 @@ import { Box, Stack, styled, Typography } from '@mui/material'
 import { ChainListMap } from 'constants/chain'
 import CircularStatic from 'pages/Activity/CircularStatic'
 import { routes } from 'constants/routes'
-import { useHistory } from 'react-router'
 import { PublicSaleListBaseProp } from 'hooks/useBackedPublicSaleServer'
 import { useNativeAndToken } from 'state/wallet/hooks'
 import { TokenAmount } from 'constants/token'
@@ -15,6 +14,7 @@ import { BigNumber } from 'bignumber.js'
 import { useGetSalesInfo } from 'hooks/useCreatePublicSaleCallback'
 import { titleCase } from 'utils/dao'
 import { publicSaleStatus } from 'hooks/useBackedPublicSaleServer'
+import { useNavigate } from 'react-router-dom'
 
 const StyledItem = styled('div')(({ theme }) => ({
   border: `1px solid ${theme.bgColor.bg2}`,
@@ -149,7 +149,7 @@ function ShowStatus({ item }: { item: any }) {
 }
 
 export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseProp }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   // const [ratio, setRatio] = useState('')
   const saleToken = useNativeAndToken(item.saleToken, item.chainId)
   const receiveToken = useNativeAndToken(item.receiveToken, item.chainId)
@@ -197,7 +197,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
   // }, [item.chainId, receiveToken, saleToken])
 
   return (
-    <StyledItem onClick={() => history.push(routes._SaleDetails + `/${item.saleId}`)}>
+    <StyledItem onClick={() => navigate(routes._SaleDetails + `/${item.saleId}`)}>
       <StyledStatusBox direction={'row'} spacing={24}>
         <ShowStatus item={item} />
       </StyledStatusBox>
@@ -205,10 +205,7 @@ export default function PublicSaleListItem({ item }: { item: PublicSaleListBaseP
         <img src={ChainListMap[item?.chainId]?.logo} alt="" />
         <Typography variant="inherit">
           {new BigNumber(item.originalDiscount).multipliedBy(100).isGreaterThanOrEqualTo(0.01)
-            ? new BigNumber(item.originalDiscount)
-                .multipliedBy(100)
-                .toFixed(2)
-                .toString()
+            ? new BigNumber(item.originalDiscount).multipliedBy(100).toFixed(2).toString()
             : '< 0.01'}
           % discount
         </Typography>

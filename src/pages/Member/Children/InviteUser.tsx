@@ -29,9 +29,10 @@ export default function InviteUser() {
           '& .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
             padding: '0 0 0 20px'
           },
-          '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root': {
-            border: 'none!important'
-          },
+          '& .MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.Mui-focused, & .css-jh7bmd-MuiInputBase-root.MuiInputBase-root':
+            {
+              border: 'none!important'
+            },
           '& .input': {
             width: '100% - 160px',
             fontSize: 14,

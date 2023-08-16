@@ -75,12 +75,8 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 }))
 
 export default function Governance({ back, next }: { back: () => void; next: (hash: string) => void }) {
-  const {
-    createTokenData,
-    updateTokenDistributionKeyData,
-    addReservedRowCallback,
-    removeReservedRowCallback
-  } = useCreateTokenDataCallback()
+  const { createTokenData, updateTokenDistributionKeyData, addReservedRowCallback, removeReservedRowCallback } =
+    useCreateTokenDataCallback()
   const createTokenDistributionData = createTokenData.distribution
   const createTokenBaseData = createTokenData.basic
   const createTokenCallback = useCreateTokenCallback()
@@ -102,7 +98,7 @@ export default function Governance({ back, next }: { back: () => void; next: (ha
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)

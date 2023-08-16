@@ -7,7 +7,7 @@ import addDaoIcon from 'assets/images/add-dao-icon.png'
 import createTokenIcon from 'assets/images/create-token-ball.png'
 import Image from 'components/Image'
 import Collapse from 'components/Collapse'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import useBreakpoint from 'hooks/useBreakpoint'
 
@@ -40,7 +40,7 @@ export default function Index() {
   const { account } = useActiveWeb3React()
   const toggleWalletModal = useWalletModalToggle()
   const theme = useTheme()
-  const history = useHistory()
+  const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
   return (
     <Wrapper>
@@ -62,7 +62,7 @@ export default function Index() {
                 toggleWalletModal()
                 return
               }
-              history.push(routes.CreateDao)
+              navigate(routes.CreateDao)
             }}
           >
             <Image src={addDaoIcon} width={isSmDown ? 82 : 182}></Image>
@@ -85,7 +85,7 @@ export default function Index() {
                 toggleWalletModal()
                 return
               }
-              history.push(routes.CreatorToken)
+              navigate(routes.CreatorToken)
             }}
           >
             <Image src={createTokenIcon} width={isSmDown ? 82 : 182}></Image>

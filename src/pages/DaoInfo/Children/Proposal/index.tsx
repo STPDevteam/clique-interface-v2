@@ -2,7 +2,7 @@ import { Box, Stack, Typography, MenuItem, Grid, Link } from '@mui/material'
 import Button from 'components/Button/Button'
 import Select from 'components/Select/Select'
 import ProposalItem from './ProposalItem'
-import { useHistory, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import { routes } from 'constants/routes'
 import { useProposalBaseList } from 'hooks/useBackedProposalServer'
 import DelayLoading from 'components/DelayLoading'
@@ -18,6 +18,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useEffect, useMemo } from 'react'
 import { formatNumberWithCommas } from 'utils'
+import { useNavigate } from 'react-router-dom'
 
 const itemList = [
   { value: '', label: 'All Proposals' },
@@ -28,7 +29,7 @@ const itemList = [
 ]
 
 export default function Proposal() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { showModal, hideModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { updateMyJoinedDaoListData, myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
@@ -109,7 +110,7 @@ export default function Proposal() {
                           }}
                           onClick={() => {
                             hideModal()
-                            history.push(routes._DaoInfo + `/${params.daoId}/settings?tab=1`)
+                            navigate(routes._DaoInfo + `/${params.daoId}/settings?tab=1`)
                           }}
                         >
                           to set up
@@ -124,7 +125,7 @@ export default function Proposal() {
 
                   return
                 }
-                history.push(routes._DaoInfo + `/${params.daoId}/proposal/create`)
+                navigate(routes._DaoInfo + `/${params.daoId}/proposal/create`)
               }}
             >
               + Create A Proposal

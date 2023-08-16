@@ -35,10 +35,12 @@ export function useCreateERC20ClaimCallback() {
           return response.hash
         })
         .catch((err: any) => {
-          if (err.code !== 4001) {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
             commitErrorMsg(
               'useCreateERC20ClaimCallback',
-              JSON.stringify(err?.data?.message || err?.error?.message || err?.message || 'unknown error'),
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
               method,
               JSON.stringify(args)
             )

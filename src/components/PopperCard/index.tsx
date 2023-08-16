@@ -77,9 +77,6 @@ export default function PopperCard({
             {targetElement}
           </Box>
           <Popper
-            onResize={1}
-            onResizeCapture={1}
-            nonce={1}
             open={open}
             placement={placement}
             anchorEl={anchorEl}

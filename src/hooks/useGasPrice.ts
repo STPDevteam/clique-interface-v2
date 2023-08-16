@@ -27,7 +27,9 @@ export function useGasPriceInfo() {
       } catch (error) {
         console.log(error)
         const err = error as any
-        throw new Error(`${err?.data?.message || err?.error?.message || err?.message || 'unknown error'}.`)
+        throw new Error(
+          `${err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}.`
+        )
       }
       return {
         gasPrice: calculateGasPriceMargin(gasPrice || ''),

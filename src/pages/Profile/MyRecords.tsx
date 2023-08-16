@@ -13,7 +13,7 @@ import {
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useMemo } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { timeStampToFormat } from 'utils/dao'
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -89,7 +89,7 @@ const accountBackedSendRecordTypesText = {
 }
 
 function RecordItem({ item }: { item: AccountSendRecordProp }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const link = useMemo(() => {
     if (
       [
@@ -127,7 +127,7 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
         <Box display={'flex'} alignItems="center">
           <DaoAvatars size={64} src={item.daoLogo} />
           <Typography fontSize={14} fontWeight={600} color={theme.palette.text.secondary} ml={16}>
-            <span style={{ cursor: link ? 'pointer' : 'auto' }} onClick={() => link && history.push(link)}>
+            <span style={{ cursor: link ? 'pointer' : 'auto' }} onClick={() => link && navigate(link)}>
               {item.titles || item.daoName}
             </span>
           </Typography>

@@ -3,7 +3,7 @@ import { BlackButton } from 'components/Button/Button'
 import { routes } from 'constants/routes'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
 import { useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
 import { AirdropList, PublicSaleList } from './List'
 import { useDaoActivityList } from 'hooks/useBackedActivityServer'
@@ -84,7 +84,7 @@ export default function Activity() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId)
   const { myJoinDaoData: daoAdminLevel } = useUpdateDaoDataCallback()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [activityType] = useState<ActivityType>(ActivityType.AIRDROP)
   const { buildingDaoData: backedDaoInfo } = useBuildingDaoDataCallback()
   const airdropData = useDaoActivityList(daoId, ActivityType.AIRDROP)
@@ -120,7 +120,7 @@ export default function Activity() {
                 height={isSmDown ? '40px' : '36px'}
                 borderRadius={isSmDown ? '8px' : undefined}
                 onClick={() =>
-                  history.push(
+                  navigate(
                     routes._DaoInfo +
                       `/${daoId}/DAO_Rewards/${
                         activityType === ActivityType.PUBLIC_SALE ? 'create_sale' : 'create_DAO_Rewards'
@@ -196,7 +196,7 @@ export default function Activity() {
             fontSize={isSmDown ? 10 : 14}
             height={isSmDown ? '40px' : '36px'}
             borderRadius={isSmDown ? '8px' : undefined}
-            onClick={() => history.push(routes.CreateSoulToken + `/${daoId}`)}
+            onClick={() => navigate(routes.CreateSoulToken + `/${daoId}`)}
           >
             Create SBT
           </BlackButton>
@@ -210,7 +210,7 @@ export default function Activity() {
                 fontSize={isSmDown ? 10 : 14}
                 height={isSmDown ? '40px' : '36px'}
                 borderRadius={isSmDown ? '8px' : undefined}
-                onClick={() => history.push(routes.CreateSoulToken + `/${daoId}`)}
+                onClick={() => navigate(routes.CreateSoulToken + `/${daoId}`)}
               >
                 Create SBT
               </BlackButton>

@@ -113,7 +113,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
               <Box className="ql-editor">
                 {ReactHtmlParser(
                   filterXSS(proposalInfo.content || '', {
-                    onIgnoreTagAttr: function(_, name, value) {
+                    onIgnoreTagAttr: function (_, name, value) {
                       if (name === 'class' || name === 'style') {
                         return name + '="' + escapeAttrValue(value) + '"'
                       }

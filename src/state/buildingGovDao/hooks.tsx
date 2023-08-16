@@ -45,7 +45,7 @@ export function useBuildingDaoDataCallback() {
   )
   const updateBuildingDaoKeyData = useCallback(
     (key: CreateDaoDataPropKey, value: any) => {
-      const _updateData = (Object.assign({ ...buildingDaoData }, { [key]: value }) as unknown) as CreateDaoDataProp
+      const _updateData = Object.assign({ ...buildingDaoData }, { [key]: value }) as unknown as CreateDaoDataProp
       updateBuildingDaoData(_updateData)
     },
     [buildingDaoData, updateBuildingDaoData]
@@ -70,6 +70,7 @@ export function useUpdateDaoDataCallback() {
   const myJoinDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.myJoinDaoData)
   const createDaoData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoData)
   const createDaoListData = useSelector((state: AppState) => state.buildingGovernanceDao.createDaoListData)
+  const headerLinkIsShow = useSelector((state: AppState) => state.buildingGovernanceDao.isShowHeaderModal)
 
   const { daoId: _daoId } = useParams<{ daoId: string }>()
   const daoId = useMemo(() => Number(_daoId), [_daoId])
@@ -117,6 +118,7 @@ export function useUpdateDaoDataCallback() {
       updateJoinDaoDataStatus,
       isOpen,
       isShake,
+      headerLinkIsShow,
       createDaoData,
       spaceListData,
       myJoinDaoData,
@@ -129,6 +131,7 @@ export function useUpdateDaoDataCallback() {
       updateMyJoinedDaoListData,
       updateJoinDaoDataStatus,
       isOpen,
+      headerLinkIsShow,
       isShake,
       createDaoData,
       spaceListData,

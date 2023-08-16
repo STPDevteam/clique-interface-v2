@@ -7,7 +7,7 @@ import { routes } from 'constants/routes'
 import { ListProp } from 'hooks/useBackedDaoServer'
 // import { useDaoBaseInfo } from 'hooks/useDaoInfo'
 // import { useCallback } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 // import { useToken } from 'state/wallet/hooks'
 // import { useActiveWeb3React } from 'hooks'
 // import { useWalletModalToggle } from 'state/application/hooks'
@@ -86,7 +86,7 @@ export default function DaoItem({
   approve
 }: ListProp) {
   const theme = useTheme()
-  const history = useHistory()
+  const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
   // const { showModal } = useModal()
   // const daoBaseInfo = useDaoBaseInfo(daoAddress, chainId)
@@ -107,7 +107,7 @@ export default function DaoItem({
   // )
 
   return (
-    <StyledCard onClick={() => history.push(`${routes._DaoInfo}/${daoId}`)}>
+    <StyledCard onClick={() => navigate(`${routes._DaoInfo}/${daoId}`)}>
       <Box display={'grid'} gap="12px" gridTemplateColumns={'48px calc(100%)'}>
         <DaoAvatars size={48} src={daoLogo} alt={daoName} />
         <Box>

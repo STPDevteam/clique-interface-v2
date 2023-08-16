@@ -15,7 +15,7 @@ import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 import { timeStampToFormat } from 'utils/dao'
 import { useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import Image from 'components/Image'
@@ -110,7 +110,7 @@ const TitleStyle = styled(Typography)(() => ({
 // }) {
 //   const [isRead, setIsRead] = useState(item.alreadyRead)
 
-//   const history = useHistory()
+//   const navigate = useNavigate()
 //   const showData: {
 //     text: string
 //     link?: string
@@ -168,7 +168,7 @@ const TitleStyle = styled(Typography)(() => ({
 //               {showData.text}
 //               {'. '}
 //               {showData.link && (
-//                 <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+//                 <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
 //                   View
 //                 </Link>
 //               )}
@@ -186,7 +186,7 @@ const TitleStyle = styled(Typography)(() => ({
 //               {showData.text}
 //               {'. '}
 //               {showData.link && (
-//                 <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+//                 <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
 //                   View
 //                 </Link>
 //               )}
@@ -199,7 +199,7 @@ const TitleStyle = styled(Typography)(() => ({
 //             {showData.text}
 //             {'. '}
 //             {showData.link && (
-//               <Link onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+//               <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
 //                 View
 //               </Link>
 //             )}
@@ -235,7 +235,7 @@ export default function NotificationPage() {
             <Typography mr={10} color={'#3F5170'} fontSize={30} fontWeight={600}>
               Notifications
             </Typography>
-            {/* <OutlineButton height={24} width={140} noBold onClick={() => history.push(routes.PushList)}>
+            {/* <OutlineButton height={24} width={140} noBold onClick={() => navigate(routes.PushList)}>
               Push Message
             </OutlineButton> */}
           </RowCenter>
@@ -312,7 +312,7 @@ function MsgItems({
   const [isRead, setIsRead] = useState(item.alreadyRead)
   const theme = useTheme()
 
-  const history = useHistory()
+  const navigate = useNavigate()
   const showData: {
     content: JSX.Element | string
     link?: string
@@ -326,7 +326,7 @@ function MsgItems({
             <ContentStyle
               maxWidth={540}
               noWrap
-              onClick={() => history.push(showData.link as string)}
+              onClick={() => navigate(showData.link as string)}
               sx={{ cursor: 'pointer' }}
             >
               {item.activityTitle},
@@ -334,11 +334,7 @@ function MsgItems({
           </>
         ) : item.types === 'JobReject' || item.types === 'JobApply' ? (
           <>
-            <LinkStyle
-              underline="hover"
-              onClick={() => history.push(showData.link as string)}
-              sx={{ cursor: 'pointer' }}
-            >
+            <LinkStyle underline="hover" onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
               {item.daoName}
             </LinkStyle>
             {item.types === 'JobApply' ? (
@@ -360,11 +356,7 @@ function MsgItems({
                 : ''}
               of {` `}
             </ContentStyle>
-            <LinkStyle
-              underline="hover"
-              onClick={() => history.push(showData.link as string)}
-              sx={{ cursor: 'pointer' }}
-            >
+            <LinkStyle underline="hover" onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
               {item.daoName}
             </LinkStyle>
           </>
@@ -417,7 +409,7 @@ function MsgItems({
             : ''
           : ''
     }
-  }, [history, item.activityId, item.activityTitle, item.daoId, item.daoName, item.types])
+  }, [item.activityId, item.activityTitle, item.daoId, item.daoName, item.types, navigate])
 
   return (
     <Box
@@ -453,7 +445,7 @@ function MsgItems({
           </Box>
           <Box sx={{ display: 'flex', gap: 6 }}>{showData.content}</Box>
           {showData.link && titleFilter(item.types) !== 'DAO Members' && (
-            <Link underline="hover" onClick={() => history.push(showData.link as string)} sx={{ cursor: 'pointer' }}>
+            <Link underline="hover" onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
               View
             </Link>
           )}

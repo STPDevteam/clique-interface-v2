@@ -10,7 +10,7 @@ import {
   Tooltip,
   Stack
 } from '@mui/material'
-import { NavLink, useHistory, useLocation, useParams } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
 import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
 // import { ReactComponent as treasury } from 'assets/svg/treasury.svg'
@@ -250,7 +250,7 @@ export function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string
 export default function LeftSider() {
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
-  const history = useHistory()
+  const navigate = useNavigate()
   const [activeIndex, setActiveIndex] = useState([false, false, false, false, false, false])
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
@@ -260,7 +260,7 @@ export default function LeftSider() {
     myJoinDaoData,
     updateWrokspaceListData
   } = useUpdateDaoDataCallback()
-  const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
+  const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId || ''), [daoId])
   const [activeIdx, setActiveIdx] = useState(-1)
   const { showModal } = useModal()
 
@@ -411,7 +411,7 @@ export default function LeftSider() {
                 myJoinedDaoList?.map(option => (
                   <Box
                     key={option.daoId + option.daoName}
-                    onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+                    onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
                   >
                     <DaoItem {...option} />
                   </Box>
@@ -532,7 +532,7 @@ export default function LeftSider() {
                           (!item.isPublic && myJoinDaoData.privateSpaces[idx1]?.isJoin)
                         ) {
                           setActiveIdx(idx1)
-                          history.push(item.link || '')
+                          navigate(item.link || '')
                           e.stopPropagation()
                         } else if (!item.isPublic && !myJoinDaoData.privateSpaces[idx1]?.isJoin) {
                           return

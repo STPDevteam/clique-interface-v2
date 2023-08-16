@@ -241,10 +241,9 @@ export default function ChainVoteModal({
           console.log(err)
           showModal(
             <MessageBox type="error">
-              {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+              {err.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
             </MessageBox>
           )
-          console.error(err)
         })
     }
   }, [
@@ -436,7 +435,7 @@ export default function ChainVoteModal({
                       setLoading(false)
                       showModal(
                         <MessageBox type="error">
-                          {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+                          {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
                         </MessageBox>
                       )
                     })

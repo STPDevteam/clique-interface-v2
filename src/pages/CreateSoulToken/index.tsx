@@ -17,7 +17,7 @@ import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import { useActiveWeb3React } from 'hooks'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
@@ -140,7 +140,7 @@ export default function Index() {
   const [totalSupply, setTotalSupply] = useState<string>('')
   const { CreateSbtCallback } = useCreateSbtCallback()
   const { showModal, hideModal } = useModal()
-  const history = useHistory()
+  const navigate = useNavigate()
   const userSignature = useUserInfo()
   const SubmitCreate = useCallback(() => {
     if (!daoValue) return
@@ -165,7 +165,7 @@ export default function Index() {
           <TransactionSubmittedModal
             BackdropClick={true}
             hideFunc={() => {
-              history.replace(routes._SoulTokenDetail + '/' + daoValue + '/' + res.sbtId)
+              navigate(routes._SoulTokenDetail + '/' + daoValue + '/' + res.sbtId, { replace: true })
             }}
             hash={res.hash}
           />
@@ -174,15 +174,15 @@ export default function Index() {
       .catch((err: any) => {
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)
       })
   }, [
+    daoValue,
     showModal,
     CreateSbtCallback,
-    daoValue,
     account,
     fileValue,
     itemName,
@@ -195,7 +195,7 @@ export default function Index() {
     Introduction,
     accountList,
     hideModal,
-    history
+    navigate
   ])
 
   const nextHandler = useMemo(() => {
@@ -306,9 +306,9 @@ export default function Index() {
   ])
   useEffect(() => {
     if (!account || !userSignature) {
-      history.push(routes.Governance)
+      navigate(routes.Governance)
     }
-  }, [account, history, userSignature])
+  }, [account, navigate, userSignature])
 
   const insertLine = useCallback((list: string[], newItem: string) => {
     const _ret = list.filter(item => item.toLowerCase() !== newItem.toLowerCase())
@@ -326,7 +326,7 @@ export default function Index() {
     const el = document.getElementById('upload_CSV') as HTMLInputElement
     if (!el || !el.files) return
     const reader = new FileReader()
-    reader.onload = function() {
+    reader.onload = function () {
       const ret: string[] = []
       const textInput = reader.result as string
       const allRows = textInput.split(/\r?\n|\r/)
@@ -484,7 +484,7 @@ export default function Index() {
                   setSymbolValue(e.target.value.toUpperCase())
                 }
               }}
-              label="symbol"
+              label="Symbol"
               placeholder="Enter Symbol"
               maxLength={26}
               endAdornment={

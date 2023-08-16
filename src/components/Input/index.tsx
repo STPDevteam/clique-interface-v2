@@ -146,7 +146,7 @@ export default function Input({
     [userPattern]
   )
   const handleChange = useCallback(
-    event => {
+    (event: any) => {
       // replace commas with periods
       // setErrorMsg(false)
       if (event.target.value && maxLength && event.target.value.length > maxLength) {
@@ -177,7 +177,7 @@ export default function Input({
           <StyledInputWrapper
             onClick={() => {
               setHideFormatWrapper(true)
-              const el = (inputUserRef?.current as unknown) as Element
+              const el = inputUserRef?.current as unknown as Element
               el.querySelector('input')?.focus()
             }}
             className={!showFormatWrapperValue ? 'placeholder' : ''}

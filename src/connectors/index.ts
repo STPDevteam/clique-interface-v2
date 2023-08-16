@@ -45,8 +45,7 @@ export const walletconnect = new WalletConnectConnector({
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   chainId: NETWORK_CHAIN_ID || undefined,
-  supportedChainIds: SUPPORT_NETWORK_CHAIN_IDS,
-  pollingInterval: 15000
+  supportedChainIds: SUPPORT_NETWORK_CHAIN_IDS
 })
 
 // mainnet only

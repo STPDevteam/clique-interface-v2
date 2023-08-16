@@ -1,7 +1,7 @@
 import { Box, Button, Stack, styled, Typography } from '@mui/material'
 import Image from 'components/Image'
 import { routes } from 'constants/routes'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
@@ -65,7 +65,7 @@ const ButtonGroup = styled(Stack)({
 
 export default function MySpace() {
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   return (
     <Box>
@@ -111,7 +111,7 @@ export default function MySpace() {
           {myJoinedDaoList?.map(option => (
             <Box
               key={option.daoName + option.daoId}
-              onClick={() => history.push(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+              onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
             >
               <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
             </Box>
@@ -123,7 +123,7 @@ export default function MySpace() {
 }
 
 export function EmptyDaoItem() {
-  const history = useHistory()
+  const navigate = useNavigate()
   return (
     <EmptyWrapper>
       <Image src={HateIcon} width={36} />
@@ -132,10 +132,10 @@ export function EmptyDaoItem() {
         <span style={{ fontWeight: 400 }}> You haven&apos;t joined any DAOs yet.</span>
       </Typography>
       <ButtonGroup>
-        <Button variant="contained" onClick={() => history.push(routes.CreateDao)}>
+        <Button variant="contained" onClick={() => navigate(routes.CreateDao)}>
           Create DAO
         </Button>
-        <Button variant="outlined" color="primary" onClick={() => history.push(routes.Governance)}>
+        <Button variant="outlined" color="primary" onClick={() => navigate(routes.Governance)}>
           Explore DAOs
         </Button>
       </ButtonGroup>

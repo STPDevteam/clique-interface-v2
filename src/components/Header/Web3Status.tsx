@@ -17,7 +17,7 @@ import useModal from 'hooks/useModal'
 // import { ReactComponent as NotificationIcon } from '../../assets/svg/notification_icon.svg'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { routes } from 'constants/routes'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -66,7 +66,7 @@ function Web3StatusInner() {
   const {
     data: { unReadCount: notReadCount }
   } = useNotificationListPaginationCallback()
-  const history = useHistory()
+  const navigate = useNavigate()
 
   if (account && chainId) {
     return (
@@ -120,7 +120,7 @@ function Web3StatusInner() {
                 <svg
                   onClick={e => {
                     e.stopPropagation()
-                    history.push(routes.Notification)
+                    navigate(routes.Notification)
                   }}
                   width="24"
                   height="24"

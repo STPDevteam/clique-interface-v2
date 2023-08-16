@@ -54,26 +54,11 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
       .required(formCheckValid('description', FormType.Input))
       .max(1000, `*The number of characters exceeds the limit`),
     category: yup.string().required(formCheckValid('category', FormType.Select)),
-    website: yup
-      .string()
-      .trim()
-      .url('Please enter a valid URL'),
-    twitter: yup
-      .string()
-      .trim()
-      .url('Please enter a valid URL'),
-    github: yup
-      .string()
-      .trim()
-      .url('Please enter a valid URL'),
-    discord: yup
-      .string()
-      .trim()
-      .url('Please enter a valid URL'),
-    instagram: yup
-      .string()
-      .trim()
-      .url('Please enter a valid URL')
+    website: yup.string().trim().url('Please enter a valid URL'),
+    twitter: yup.string().trim().url('Please enter a valid URL'),
+    github: yup.string().trim().url('Please enter a valid URL'),
+    discord: yup.string().trim().url('Please enter a valid URL'),
+    instagram: yup.string().trim().url('Please enter a valid URL')
     // tokenContractAddr: yup.string().matches(/^0x[a-fA-F0-9]{40}$/, 'Invalid token contract address'),
     // holdAmount: yup.string().when('ToggleValue', {
     //   is: 'Anyone',

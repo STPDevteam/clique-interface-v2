@@ -5,7 +5,7 @@ import { injected, walletlink } from 'connectors'
 import { routes } from 'constants/routes'
 import { useActiveWeb3React } from 'hooks'
 import { useMemo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ApplicationModal } from 'state/application/actions'
 import { useToggleModal } from 'state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from 'state/transactions/hooks'
@@ -19,7 +19,7 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
 export default function MyWallet() {
   const { account, deactivate, connector } = useActiveWeb3React()
   const toggleModal = useToggleModal(ApplicationModal.WALLET)
-  const history = useHistory()
+  const navigate = useNavigate()
 
   const allTransactions = useAllTransactions()
 
@@ -47,7 +47,7 @@ export default function MyWallet() {
         <OutlineButton
           onClick={() => {
             toggleModal()
-            history.push(routes._Profile)
+            navigate(routes._Profile)
           }}
           fontSize={12}
           style={{ borderWidth: 1 }}

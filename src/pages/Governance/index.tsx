@@ -1,5 +1,5 @@
 import SearchPanel from './SearchPanel'
-import { Grid, Box, Typography } from '@mui/material'
+import { Grid, Box } from '@mui/material'
 import DaoItem from './DaoItem'
 import Pagination from 'components/Pagination'
 // import { useHomeDaoList } from 'hooks/useBackedDaoServer'
@@ -54,9 +54,9 @@ export default function Home() {
             onChange={(_, value) => page.setCurrentPage(value)}
           />
         </Box>
-        <Typography variant="body2" textAlign={'right'} sx={{ color: theme => theme.palette.text.secondary }}>
+        {/* <Typography variant="body2" textAlign={'right'} sx={{ color: theme => theme.palette.text.secondary }}>
           Notice: Newly created DAO will appear here in a few minutes.
-        </Typography>
+        </Typography> */}
       </Box>
     </Box>
   )

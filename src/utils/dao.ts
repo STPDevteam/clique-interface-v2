@@ -79,12 +79,7 @@ export function isSocialUrl(name: 'discord' | 'twitter' | string, url: string) {
 
 export function getPerForAmount(tokenSupply: string | number, amount: string | number | undefined) {
   if (!tokenSupply || !amount) return 0
-  return Number(
-    new BigNumber(amount)
-      .dividedBy(tokenSupply)
-      .multipliedBy(100)
-      .toFormat(4)
-  )
+  return Number(new BigNumber(amount).dividedBy(tokenSupply).multipliedBy(100).toFormat(4))
   // const _amount = JSBI.multiply(JSBI.BigInt(amount), JSBI.BigInt(10000))
   // let ret = JSBI.divide(_amount, JSBI.BigInt(tokenSupply)).toString()
   // ret = (Number(ret) / 100).toFixed(2)
@@ -93,10 +88,7 @@ export function getPerForAmount(tokenSupply: string | number, amount: string | n
 
 export function getAmountForPer(tokenSupply: string | number, per: number | undefined) {
   if (!tokenSupply || !per) return '0'
-  return new BigNumber(tokenSupply)
-    .multipliedBy(per)
-    .dividedBy(100)
-    .toFixed(0)
+  return new BigNumber(tokenSupply).multipliedBy(per).dividedBy(100).toFixed(0)
   // const _per = JSBI.BigInt((per * 100).toFixed(0))
   // return JSBI.divide(JSBI.multiply(_per, JSBI.BigInt(tokenSupply)), JSBI.BigInt(10000)).toString()
 }

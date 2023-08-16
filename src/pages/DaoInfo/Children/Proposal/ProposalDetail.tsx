@@ -3,7 +3,7 @@ import Back from 'components/Back'
 import Loading from 'components/Loading'
 import { routes } from 'constants/routes'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import DetailContent from './detail'
 // import DetailVote from './detail/Vote'
 import VoteProgress, { VoteListModal } from './detail/VoteProgress'
@@ -45,7 +45,7 @@ export default function ProposalDetail() {
 }
 
 function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
-  const history = useHistory()
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const [rand, setRand] = useState<number>(-1)
   const { result: proposalDetailInfo } = useProposalDetailsInfo(proposalId, rand)
@@ -54,8 +54,8 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
   const cancelProposalCallback = useCancelProposalCallback()
 
   const toList = useCallback(() => {
-    history.replace(routes._DaoInfo + `/${daoId}/proposal`)
-  }, [daoId, history])
+    navigate(routes._DaoInfo + `/${daoId}/proposal`, { replace: true })
+  }, [daoId, navigate])
 
   useEffect(() => {
     setRand(Math.random())

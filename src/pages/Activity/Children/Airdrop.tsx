@@ -117,7 +117,7 @@ export default function Airdrop() {
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)
@@ -136,7 +136,7 @@ export default function Airdrop() {
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)
@@ -224,7 +224,7 @@ export default function Airdrop() {
                       <Box mt={20} className="ql-editor">
                         {ReactHtmlParser(
                           filterXSS(airdropDescData?.description || '', {
-                            onIgnoreTagAttr: function(_, name, value) {
+                            onIgnoreTagAttr: function (_, name, value) {
                               if (name === 'class' || name === 'style') {
                                 return name + '="' + escapeAttrValue(value) + '"'
                               }
@@ -548,7 +548,7 @@ function Manage({
         hideModal()
         showModal(
           <MessageBox type="error">
-            {err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+            {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
           </MessageBox>
         )
         console.error(err)

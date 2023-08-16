@@ -58,7 +58,7 @@ const FormItem: React.FC<IFormItemProps> = ({
     ? typeof meta.error === 'string'
       ? meta.error
       : // eslint-disable-next-line @typescript-eslint/ban-types
-        Object.values((meta.error as unknown) as object)[0]
+        Object.values(meta.error as unknown as object)[0]
     : ''
   const showError = (meta.touched || submitCount > 0) && !!error
   const showTips = showError || !!tips

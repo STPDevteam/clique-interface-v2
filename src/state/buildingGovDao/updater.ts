@@ -13,10 +13,10 @@ export default function Updater(): null {
   const { account } = useActiveWeb3React()
   const { hideModal } = useModal()
   const { daoId: _daoId } = useParams<{ daoId: string }>()
-  const daoId = useMemo(() => (location.pathname.includes('/governance/daoInfo') ? Number(_daoId) : 0), [
-    _daoId,
-    location.pathname
-  ])
+  const daoId = useMemo(
+    () => (location.pathname.includes('/governance/daoInfo') ? Number(_daoId) : 0),
+    [_daoId, location.pathname]
+  )
   const createDaoData = useGetDaoInfo(daoId)
   const { isJoined: myJoinDaoData } = useIsJoined(daoId)
   const { result: spaceListData } = useGetLeftTaskList(daoId)
