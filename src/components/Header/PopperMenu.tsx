@@ -19,7 +19,7 @@ const menuList = [
   },
   { title: 'Create DAO', icon: <DaosIcon />, route: routes.CreateDao },
   {
-    title: 'Dao Rewards',
+    title: 'DAO Rewards',
     icon: <RewardsIcon />,
     route: routes.Activity
   },

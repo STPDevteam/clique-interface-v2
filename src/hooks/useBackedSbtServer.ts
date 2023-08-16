@@ -152,7 +152,7 @@ export function useCreateSbtCallback() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Create SBT`,
+            summary: `SBT Created`,
             claim: { recipient: `${account}_create_sbt` }
           })
           return {
@@ -334,7 +334,7 @@ export function useSbtClaim() {
       })
         .then((response: TransactionResponse) => {
           addTransaction(response, {
-            summary: `Claim SBT`,
+            summary: `SBT Claimed`,
             claim: { recipient: `${account}_claim_sbt_${sbtId}` }
           })
           return {

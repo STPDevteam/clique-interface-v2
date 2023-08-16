@@ -57,7 +57,7 @@ export const Tabs: Tab[] = [
   { title: 'Clique Discovery', route: routes.Activity },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
   {
-    title: 'Creater',
+    title: 'Creator',
     route: '',
     subTab: [
       // {
