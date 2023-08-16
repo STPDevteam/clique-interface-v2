@@ -425,7 +425,15 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             </Alert>
           )}
           <Stack direction="row" mt={20} mb={20} justifyContent={'space-between'}>
-            <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={window.history.back}>
+            <OutlineButton
+              noBold
+              color="#0049C6"
+              width="200px"
+              height="40px"
+              onClick={() => {
+                window.history.back()
+              }}
+            >
               Back
             </OutlineButton>
             {!account ? (
