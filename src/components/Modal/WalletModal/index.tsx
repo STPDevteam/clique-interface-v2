@@ -131,7 +131,7 @@ export default function WalletModal({}: // pendingTransactions,
               active={option.connector && option.connector === connector}
               link={option.href}
               header={option.name}
-              icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
+              icon={require('../../../assets/walletIcon/' + option.iconName)}
             />
           )
         } else if (window.web3 && window.ethereum && (option.name === 'MetaMask' || option.name === 'injected')) {
@@ -147,7 +147,7 @@ export default function WalletModal({}: // pendingTransactions,
               active={option.connector === connector}
               link={option.href}
               header={option.name}
-              icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
+              icon={require('../../../assets/walletIcon/' + option.iconName)}
             />
           )
         }
@@ -197,7 +197,7 @@ export default function WalletModal({}: // pendingTransactions,
             active={option.connector === connector}
             link={option.href}
             header={option.name}
-            icon={require('../../../assets/walletIcon/' + option.iconName)?.default}
+            icon={require('../../../assets/walletIcon/' + option.iconName)}
           />
         )
       )
