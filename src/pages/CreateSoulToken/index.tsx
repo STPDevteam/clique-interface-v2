@@ -484,7 +484,7 @@ export default function Index() {
                   setSymbolValue(e.target.value.toUpperCase())
                 }
               }}
-              label="symbol"
+              label="Symbol"
               placeholder="Enter Symbol"
               maxLength={26}
               endAdornment={

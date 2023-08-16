@@ -272,7 +272,7 @@ export default function SoulTokenDetail() {
       return {
         buttonText: (
           <DeployButton disabled>
-            Deploy <Dots />
+            Deploying <Dots />
           </DeployButton>
         )
       }
@@ -473,7 +473,7 @@ export default function SoulTokenDetail() {
               <DetailLayoutStyle>
                 <RowCenter>
                   <Box>
-                    <DetailTitleStyle>Items </DetailTitleStyle>
+                    <DetailTitleStyle>Number of Items </DetailTitleStyle>
                     <DetailStyle>{sbtDetail?.totalSupply || '--'}</DetailStyle>
                   </Box>
                   <Box>
