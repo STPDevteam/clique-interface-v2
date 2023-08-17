@@ -37,7 +37,6 @@ import Button from 'components/Button/Button'
 // import Loading from 'components/Loading'
 
 import { useWalletModalToggle } from 'state/application/hooks'
-import { injected, walletlink } from 'connectors'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { ReactComponent as EditIcon } from 'assets/svg/edit.svg'
@@ -87,7 +86,7 @@ const StyledLink = styled(Link)(({ borderColor, bgColor }: { borderColor?: strin
 }))
 
 export default function Profile() {
-  const { account, chainId, connector, deactivate } = useActiveWeb3React()
+  const { account, chainId, deactivate } = useActiveWeb3React()
   const { address } = useParams<{ address: string }>()
   const theme = useTheme()
   const { showModal, hideModal } = useModal()
@@ -409,7 +408,6 @@ export default function Profile() {
                 </Box>
                 {isSelf ? (
                   <OutlineButton
-                    disabled={connector !== injected || connector === walletlink}
                     noBold
                     style={{
                       borderColor: '#C60C00',

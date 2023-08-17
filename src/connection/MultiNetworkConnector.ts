@@ -1,6 +1,7 @@
 import { NetworkConnector } from './NetworkConnector'
-import { Web3Provider } from '@ethersproject/providers'
-import { ChainId, SUPPORTED_NETWORKS } from '../constants/chain'
+import { StaticJsonRpcProvider, Web3Provider } from '@ethersproject/providers'
+import { ChainId, SUPPORTED_NETWORKS, SUPPORT_NETWORK_CHAIN_IDS } from '../constants/chain'
+import { AppJsonRpcProvider } from 'connection/providers'
 
 export function getRpcUrl(chainId: ChainId) {
   switch (chainId) {
@@ -24,7 +25,7 @@ export function getOtherNetworkLibrary(chainId: ChainId, countryCode?: string) {
   return new Web3Provider(
     new NetworkConnector({
       urls: {
-        [chainId]: rpc
+        [chainId]: getRpcUrl(chainId)
       }
     }).provider as any
   )
@@ -50,3 +51,16 @@ function getRpcUrlByCountryCode(chainId: ChainId, countryCode?: string) {
       return SUPPORTED_NETWORKS[chainId]?.rpcUrls[0] || ''
   }
 }
+
+/**
+ * These are the only JsonRpcProviders used directly by the interface.
+ */
+
+const _RPC_PROVIDERS: any = {}
+const _RPC_URLS_MAPS: any = {}
+SUPPORT_NETWORK_CHAIN_IDS.map(c => {
+  _RPC_PROVIDERS[c] = new AppJsonRpcProvider(c)
+  _RPC_URLS_MAPS[c] = getRpcUrl(c)
+})
+export const RPC_PROVIDERS = _RPC_PROVIDERS as { [key in ChainId]: StaticJsonRpcProvider }
+export const RPC_URLS_MAPS = _RPC_URLS_MAPS as { [key in ChainId]: string }

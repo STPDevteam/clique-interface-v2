@@ -10,8 +10,10 @@ import pagination from './pagination/reducer'
 import chatHistory from './chatHistory/reducer'
 import createTokenData from './createToken/reducer'
 import localUserInfo from './userInfo/reducer'
+import wallets from './wallet/reducer'
+import userWallet from './userWallet/reducer'
 
-const PERSISTED_KEYS: string[] = ['user', 'transactions', 'createTokenData']
+const PERSISTED_KEYS: string[] = ['user', 'transactions', 'createTokenData', 'userWallet']
 
 const store = configureStore({
   reducer: {
@@ -23,6 +25,8 @@ const store = configureStore({
     localUserInfo,
     buildingGovernanceDao,
     chatHistory,
+    wallets,
+    userWallet,
     createTokenData
   },
   middleware: [...getDefaultMiddleware({ thunk: false }), save({ states: PERSISTED_KEYS })],

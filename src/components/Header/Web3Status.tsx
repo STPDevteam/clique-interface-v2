@@ -1,7 +1,5 @@
 import { useMemo } from 'react'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { useTheme, Box, Typography } from '@mui/material'
-import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
@@ -18,6 +16,7 @@ import useModal from 'hooks/useModal'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
+import { useActiveWeb3React } from 'hooks'
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -50,7 +49,8 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
 // }))
 
 function Web3StatusInner() {
-  const { account, chainId, error } = useWeb3React()
+  const { account, chainId, errorNetwork } = useActiveWeb3React()
+  console.log('🚀 ~ file: Web3Status.tsx:53 ~ Web3StatusInner ~ errorNetwork:', account, errorNetwork)
   const { ENSName } = useENSName(account ?? undefined)
   const allTransactions = useAllTransactions()
   const sortedRecentTransactions = useMemo(() => {
@@ -173,7 +173,7 @@ function Web3StatusInner() {
         </Box>
       </Box>
     )
-  } else if (error) {
+  } else if (errorNetwork) {
     return (
       <Button
         backgroundColor={theme.palette.error.main}
@@ -184,7 +184,7 @@ function Web3StatusInner() {
           toggleWalletModal()
         }}
       >
-        {error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}
+        {'Wrong Network'}
       </Button>
     )
   } else {
@@ -204,9 +204,6 @@ function Web3StatusInner() {
 }
 
 export default function Web3Status() {
-  const { active } = useWeb3React()
-  const contextNetwork = useWeb3React(NetworkContextName)
-
   // const { ENSName } = useENSName(account ?? undefined)
 
   // const allTransactions = useAllTransactions()
@@ -218,10 +215,6 @@ export default function Web3Status() {
 
   // const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
   // const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash)
-
-  if (!contextNetwork.active && !active) {
-    return null
-  }
 
   return (
     <>

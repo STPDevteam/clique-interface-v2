@@ -17,7 +17,7 @@ import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import { ChainId } from '../constants/chain'
-import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
+import { getOtherNetworkLibrary } from 'connection/MultiNetworkConnector'
 import { AIRDROP_ADDRESS, DAO_FACTORY_ADDRESS, PUBLICSALE_ADDRESS, SBT_FACTORY, PROPOSAL_VOTING } from '../constants'
 import { useUserLocation } from 'state/application/hooks'
 

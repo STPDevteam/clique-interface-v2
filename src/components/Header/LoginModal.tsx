@@ -4,7 +4,6 @@ import { ApplicationModal } from 'state/application/actions'
 import { Box, Button, Typography } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 // import { setInjectedConnected } from 'utils/isInjectedConnectedPrev'
-import { useWeb3React } from '@web3-react/core'
 import { useActiveWeb3React } from 'hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import logo from '../../assets/svg/logo.svg'
@@ -18,7 +17,7 @@ export const UserType = {
 
 export default function LoginModal() {
   const [btnDisable, setBtnDisable] = useState(false)
-  const { connector, deactivate } = useWeb3React()
+  const { deactivate } = useActiveWeb3React()
   const { account } = useActiveWeb3React()
   const walletModalOpen = useModalOpen(ApplicationModal.SIGN_LOGIN)
   const { open, close } = useSignLoginModalControl()
@@ -66,9 +65,8 @@ export default function LoginModal() {
   const cancel = useCallback(() => {
     // setInjectedConnected()
     deactivate()
-    connector?.deactivate()
     close()
-  }, [close, connector, deactivate])
+  }, [close, deactivate])
 
   console.log('walletModalOpen && !userInfo?.loggedToken', walletModalOpen, !userInfo?.loggedToken)
   return (
