@@ -10,7 +10,8 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
-  Alert
+  Alert,
+  useTheme
 } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
@@ -134,7 +135,8 @@ export const Tabs: Tab[] = [
   },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
-  { title: 'Tools', route: routes.DappStore }
+  { title: 'Tools', route: routes.DappStore },
+  { title: 'NFT', route: routes.NftAccount }
   // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
@@ -155,11 +157,9 @@ export const Tabs: Tab[] = [
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'fixed',
   height: theme.height.header,
-  backgroundColor: theme.palette.background.paper,
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
-  boxShadow: 'inset 0px -1px 0px #E4E4E4',
   padding: '0 40px',
   zIndex: theme.zIndex.drawer,
   // [theme.breakpoints.down('md')]: {
@@ -309,6 +309,7 @@ export function capitalizeFirstLetter(str: string) {
 }
 
 export default function Header() {
+  const theme = useTheme()
   const dispatch = useDispatch()
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
 
@@ -324,7 +325,13 @@ export default function Header() {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [workspaceTitle, setWorkspaceTitle] = useState('')
-
+  const IsNftPage = useMemo(() => {
+    if (pathname.includes(makeRouteLink(routes._NftAccount))) {
+      return true
+    }
+    return false
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
   // const isShow = useMemo(() => {
   //   if (curPath === routes.CreateDao) {
@@ -373,6 +380,8 @@ export default function Header() {
       <>
         <StyledAppBar
           sx={{
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: 'inset 0px -1px 0px #E4E4E4',
             paddingLeft: '292px !important'
           }}
         >
@@ -423,33 +432,43 @@ export default function Header() {
     <>
       {headerLinkIsShow && (
         <>
-          <Box height={50} />
-          <Alert
-            icon={<></>}
-            sx={{
-              height: 50,
-              position: 'fixed',
-              top: 0,
-              width: '100%',
-              left: 0,
-              zIndex: 1000,
-              display: 'flex',
-              justifyContent: 'center',
-              borderRadius: '0'
-            }}
-          >
-            You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
-            <a href="https://v2.myclique.io/" target="_blank" rel="noreferrer">
-              https://v2.myclique.io/
-            </a>
-          </Alert>
+          {!IsNftPage && (
+            <>
+              <Box height={50} />
+              <Alert
+                icon={<></>}
+                sx={{
+                  height: 50,
+                  position: 'fixed',
+                  top: 0,
+                  width: '100%',
+                  left: 0,
+                  zIndex: 1000,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  borderRadius: '0'
+                }}
+              >
+                You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
+                <a href="https://v2.myclique.io/" target="_blank" rel="noreferrer">
+                  https://v2.myclique.io/
+                </a>
+              </Alert>
+            </>
+          )}
           <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
           <Filler />
           <StyledMobileAppBar>
             <TabsBox />
           </StyledMobileAppBar>
 
-          <StyledAppBar sx={{ top: isGovernance ? 0 : 50 }}>
+          <StyledAppBar
+            sx={{
+              top: isGovernance || IsNftPage ? 0 : 50,
+              backgroundColor: IsNftPage ? 'transparent' : theme.palette.background.paper,
+              boxShadow: IsNftPage ? 'none' : 'inset 0px -1px 0px #E4E4E4'
+            }}
+          >
             <Box display="flex" alignItems="center">
               <MainLogo to={routes.Governance}>
                 <Image src={logo} alt={'logo'} />

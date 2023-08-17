@@ -241,7 +241,7 @@ export default function ChainVoteModal({
           console.log(err)
           showModal(
             <MessageBox type="error">
-              {err.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+              {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
             </MessageBox>
           )
         })

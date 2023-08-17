@@ -106,7 +106,7 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 export default function MySpace() {
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
-  const [isUpChain, setIsUpChain] = useState<boolean>(false)
+  const [isActive, setIsActive] = useState<boolean>(false)
 
   return (
     <Box>
@@ -150,26 +150,26 @@ export default function MySpace() {
         <>
           <StyledButtonGroup>
             <MuiButton
-              className={!isUpChain ? 'active' : ''}
+              className={!isActive ? 'active' : ''}
               onClick={e => {
                 e.stopPropagation()
-                setIsUpChain(false)
+                setIsActive(false)
               }}
             >
               {'DAOs'}
             </MuiButton>
             <MuiButton
-              className={isUpChain ? 'active' : ''}
+              className={isActive ? 'active' : ''}
               onClick={e => {
                 e.stopPropagation()
-                setIsUpChain(true)
+                setIsActive(true)
               }}
             >
               {'NFT Account'}
             </MuiButton>
           </StyledButtonGroup>
-          {myJoinedDaoList.length === 0 && !isUpChain && <EmptyDaoItem />}
-          {!isUpChain ? (
+          {myJoinedDaoList.length === 0 && !isActive && <EmptyDaoItem />}
+          {!isActive ? (
             <Box
               mt={10}
               sx={{

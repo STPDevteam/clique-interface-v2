@@ -7,6 +7,7 @@ import rewardsIcon from 'assets/images/rewardsIcon.png'
 import sbtIcon from 'assets/images/soulboundIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
+import nftCardIcon from 'assets/images/nftcard_icon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
@@ -19,13 +20,16 @@ import chainLogo5 from 'assets/images/chainLogo5.png'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import CreateNftModal from 'pages/Nft/CreateNftModal'
+import useModal from 'hooks/useModal'
 
 export enum ToolsCardsTitle {
   DAORewards = 'DAO Rewards',
   CreateDAO = 'Create DAO',
   CreateToken = 'Create Token',
   SDK = 'SDK',
-  CreateSBT = 'Create Soulbound Token of DAO'
+  CreateSBT = 'Create Soulbound Token of DAO',
+  Nft = 'Create an account as NFT'
 }
 
 const cardsData = [
@@ -84,6 +88,14 @@ const cardsData = [
     supportChainsIcon: 'all',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.CreateSoulToken
+  },
+  {
+    title: ToolsCardsTitle.Nft,
+    icon: nftCardIcon,
+    des: 'ERC-6551 turns every NFT into a smart wallet that can own tokens and interact with dApps across the Ethereum ecosystem.',
+    supportChainsIcon: [chainLogo0],
+    bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
+    route: routes.NftAccount
   }
 ]
 
@@ -93,6 +105,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const { showModal } = useModal()
   return (
     <Box
       sx={{
@@ -127,12 +140,17 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         if (
           title === ToolsCardsTitle.CreateSBT ||
           title === ToolsCardsTitle.CreateDAO ||
-          title === ToolsCardsTitle.CreateToken
+          title === ToolsCardsTitle.CreateToken ||
+          title === ToolsCardsTitle.Nft
         ) {
           if (!account) return toggleWalletModal()
           if (!userSignature) return loginSignature()
         }
-        route ? navigate(route) : window.open(link, '_blank')
+        if (title === ToolsCardsTitle.Nft) {
+          showModal(<CreateNftModal />)
+        } else {
+          route ? navigate(route) : window.open(link, '_blank')
+        }
       }}
     >
       <Box className="headerCon">

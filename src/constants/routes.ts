@@ -34,6 +34,9 @@ export const routes = {
   _CreateSoulToken: '/creator/soulToken/:daoId',
   _SoulTokenDetail: '/soulToken/Detail',
   SoulTokenDetail: '/soulToken/Detail/:daoId/:sbtId',
+  _NftAccount: '/Nft',
+  NftAccount: '/Nft/Account/generator',
+  NftSelect: '/Nft/Select/deployment',
 
   Creator: '/create',
   CreateDao: '/create/dao',

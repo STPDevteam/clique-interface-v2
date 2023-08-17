@@ -61,6 +61,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
+import { NftAccount } from './Nft/NftAccount'
+import { NftSelect } from './Nft/NftSelect'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -205,6 +207,8 @@ export default function App() {
                     }
                   />
                   <Route path={routes.Activity} element={<Activity />} />
+                  <Route path={routes.NftAccount} element={<NftAccount />} />
+                  <Route path={routes.NftSelect} element={<NftSelect />} />
                   <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
                   <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
                   <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />
