@@ -2,7 +2,7 @@ import { useActiveWeb3React } from 'hooks'
 import { TokenboundClient } from '@tokenbound/sdk'
 import { useCallback, useMemo } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
-
+import { isAddress } from 'ethers/lib/utils'
 import { useContractIsDeploy } from './useContractIsDeploy'
 
 export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: string) {
@@ -15,7 +15,7 @@ export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: st
   )
 
   const getAccount = useMemo(() => {
-    if (!tokenboundClient || !tokenContract || !tokenId) {
+    if (!tokenboundClient || !tokenContract || !tokenId || !isAddress(tokenContract)) {
       return undefined
     }
     return tokenboundClient.getAccount({
@@ -32,7 +32,6 @@ export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: st
   //   [getAccount, tokenboundClient]
   // )
   const isDeploy = useContractIsDeploy(getAccount)
-  console.log(isDeploy, 90)
 
   const createAccountCallback = useCallback(async () => {
     if (

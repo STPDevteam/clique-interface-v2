@@ -3,7 +3,7 @@ import { Box, Stack, Typography, styled } from '@mui/material'
 import Input from 'components/Input'
 import Image from 'components/Image'
 import { ChainList } from 'constants/chain'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import Button from 'components/Button/Button'
 import { ReactComponent as ShareIconComponent } from 'assets/svg/share.svg'
@@ -14,6 +14,7 @@ import TransacitonPendingModal from 'components/Modal/TransactionModals/Transact
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { Dots } from 'theme/components'
+import { ScanNFTInfo } from 'hooks/useBackedProfileServer'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -49,14 +50,17 @@ const ShareIcon = styled(ShareIconComponent)(() => ({
   }
 }))
 
-export default function CreateNftModal() {
+export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const { chainId } = useActiveWeb3React()
   const [contractAddress, setContractAddress] = useState<string>('')
   const [tokenId, setTokenId] = useState<string>('')
+  const [tokenId_f, setTokenId_f] = useState<string>('')
+  const [isChange, setIsChange] = useState<boolean>(false)
+  const [isEnterIng, setIsEnterIng] = useState<boolean>(false)
   const { showModal, hideModal } = useModal()
   const { isDeploy, getAccount, createAccountCallback } = useCreateTBACallback(
     contractAddress as `0x${string}`,
-    tokenId
+    tokenId_f
   )
   const curChain = useMemo(() => {
     const res = ChainList.filter(item => item.id === chainId)
@@ -71,6 +75,18 @@ export default function CreateNftModal() {
       return false
     }
   }, [isDeploy])
+
+  useEffect(() => {
+    if (nft) {
+      setContractAddress(nft.contract_address)
+      setTokenId(nft.token_id)
+      setIsChange(true)
+    } else {
+      setContractAddress('')
+      setTokenId('')
+      setIsChange(false)
+    }
+  }, [nft])
 
   const createAccount = useCallback(async () => {
     showModal(<TransacitonPendingModal />)
@@ -139,6 +155,7 @@ export default function CreateNftModal() {
         <Stack spacing={20}>
           <TitleStyle>Create an account with an NFT</TitleStyle>
           <Input
+            disabled={isChange}
             value={contractAddress}
             label="Your address"
             placeholder="0x..."
@@ -154,19 +171,28 @@ export default function CreateNftModal() {
             </Box>
           </Box>
           <Input
+            disabled={isChange}
             value={tokenId}
             label="NFT ID"
             placeholder="Token ID"
+            onBlur={() => {
+              setTokenId_f(tokenId)
+              setIsEnterIng(false)
+            }}
             onChange={e => {
-              if (/^[1-9]\d*$/.test(e.target.value) || !e.target.value) {
+              if (/^[1-9]\d*$/.test(e.target.value) || !e.target.value || e.target.value === '0') {
                 setTokenId(e.target.value)
+                setIsEnterIng(true)
+              } else if (/^[0\d]*$/.test(e.target.value)) {
+                setTokenId(e.target.value[1])
+                setIsEnterIng(true)
               }
             }}
           />
           <Box sx={{ display: 'grid', gap: 5 }}>
             <Button
               style={{ height: 40 }}
-              disabled={createBtn.disabled}
+              disabled={createBtn.disabled || isEnterIng || isPending}
               onClick={() => {
                 if (createBtn.handler) {
                   createBtn.handler()

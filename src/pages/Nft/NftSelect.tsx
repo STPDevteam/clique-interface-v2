@@ -1,12 +1,23 @@
 import { NftLayout } from './NftAccount'
-import { Box, Typography, styled } from '@mui/material'
-import Nft_bgImage from 'assets/images/coingecko.png'
+import { Box, Link, Typography, styled } from '@mui/material'
 import chainLogo0 from 'assets/images/chainLogo0.png'
 import { ReactComponent as ShareIcon } from 'assets/svg/share.svg'
+import { ReactComponent as HourglassIcon } from 'assets/svg/hourglass_icon.svg'
+import { ReactComponent as NotHaveNftIcon } from 'assets/svg/nothavenft_icon.svg'
 import LoopIcon from '@mui/icons-material/Loop'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
 import CreateNftModal from './CreateNftModal'
+import { useActiveWeb3React } from 'hooks'
+import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
+import { useCallback, useMemo } from 'react'
+import { ChainId } from 'constants/chain'
+import useBreakpoint from 'hooks/useBreakpoint'
+import { toast } from 'react-toastify'
+import { getEtherscanLink } from 'utils'
+import placeholderImage from 'assets/images/placeholder.png'
+import Image from 'components/Image'
+
 const TitleStyle = styled(Typography)(() => ({
   color: '#FFF',
   fontSize: '36px',
@@ -20,11 +31,49 @@ const CardStyled = styled(Box)(() => ({
   width: 225,
   borderRadius: '8px',
   border: '1px solid #2D50CB',
-  background: '#0F1F39',
+  background: 'rgb(249, 249, 249)',
+  // background: '#0F1F39',
   position: 'relative'
 }))
 
+const ContentTextStyle = styled(Typography)(() => ({
+  color: 'var(--button-line, #97B7EF)',
+  fontSize: '14px',
+  fontWeight: 500,
+  lineHeight: '20px'
+}))
+
+const SearchCardStyle = styled(Box)(() => ({
+  position: 'relative',
+  margin: '90px auto 0',
+  borderRadius: '20px',
+  background: 'linear-gradient(45deg, #67ccf8 0%, #3457b9 50%, #3d7bce 100%)',
+  '& .item': {
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    borderRadius: '20px',
+    margin: 2,
+    borderImageSlice: 1,
+    // background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.14) 100%)'
+    background: 'linear-gradient(180deg, #3558b9e6 0%, #2b53c0e6 80%, #2643c1e6 100%)',
+    backdropFilter: ' blur(30.5px)',
+    position: 'absolute'
+  }
+}))
+
 export function NftSelect() {
+  const { account, chainId } = useActiveWeb3React()
+  // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
+  const { result: accountNFTsList, loading, page } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+
+  const showAccountNFTsList = useMemo(() => {
+    return accountNFTsList.length > 10 ? accountNFTsList : accountNFTsList.slice(0, 10)
+  }, [accountNFTsList])
+
+  console.log(page)
+
   return (
     <NftLayout>
       <Box
@@ -35,27 +84,57 @@ export function NftSelect() {
         <TitleStyle>
           Select an NFT deployment as the <b style={{ color: '#A7F46A' }}> wallet</b>
         </TitleStyle>
-        <Box
-          sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 20, padding: '20px 115px', mt: 35 }}
-        >
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-          <Card></Card>
-        </Box>
+
+        {loading && <Searching />}
+
+        {!showAccountNFTsList.length && !loading ? (
+          <>
+            <NotHaveNft />
+          </>
+        ) : (
+          <Box
+            sx={{
+              maxHeight: 585,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+              gap: 20,
+              padding: '20px 110px',
+              mt: 35,
+              '::-webkit-scrollbar': {
+                display: 'none'
+              }
+            }}
+          >
+            <>
+              {showAccountNFTsList.map((item, index) => (
+                <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
+              ))}
+            </>
+          </Box>
+        )}
       </Box>
     </NftLayout>
   )
 }
 
-function Card() {
+function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | undefined }) {
   const { showModal } = useModal()
+  const isSmDown = useBreakpoint('sm')
+  const refreshCb = useRefreshNft()
+
+  const refresh = useCallback(() => {
+    refreshCb(nft.contract_address, nft.token_id).then((res: any) => {
+      if (res.data.code !== 200) {
+        toast.error(res.data.msg || 'Refresh error')
+        return
+      }
+      toast.success('Refresh success')
+    })
+  }, [nft.contract_address, nft.token_id, refreshCb])
+  console.log(isSmDown, nft)
+
   return (
     <Box
       sx={{
@@ -76,7 +155,8 @@ function Card() {
             transform: 'translateY(-15px)',
             boxShadow: '0px 4px 20px 3px #0094FF',
             border: '1px solid var(--button-line, #97B7EF)',
-            background: ' #0F1F39'
+            // background: ' #0F1F39'
+            background: 'rgb(249, 249, 249)'
           }
         }
       }}
@@ -111,10 +191,19 @@ function Card() {
             }
           }}
           onClick={() => {
-            console.log(1)
+            refresh()
           }}
         ></LoopIcon>
-        <img src={Nft_bgImage} alt="" height={'100%'} width={'100%'} style={{ borderRadius: '8px' }} />
+        <Image
+          altSrc={placeholderImage}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '8px',
+            objectFit: 'cover'
+          }}
+          src={nft.image_uri || placeholderImage}
+        />
         <Box
           sx={{
             position: 'absolute',
@@ -138,7 +227,7 @@ function Card() {
               }
             }}
             onClick={() => {
-              showModal(<CreateNftModal />)
+              showModal(<CreateNftModal nft={nft} />)
             }}
           >
             Deploy
@@ -167,13 +256,92 @@ function Card() {
               lineHeight: '20px'
             }}
           >
-            Heroes of Evermore#...
+            {nft.name || nft.contract_name || '-'}#{nft.token_id}
           </Typography>
           <Box className="shareButton" sx={{ display: 'none', alignItems: 'center' }}>
-            <ShareIcon />
+            <Link
+              target={'_blank'}
+              underline="none"
+              href={
+                nftChainId === ChainId.MAINNET
+                  ? `https://opensea.io/assets/ethereum/${nft.contract_address}/${nft.token_id}`
+                  : nftChainId && getEtherscanLink(nftChainId, nft.contract_address, 'token') + `?a=${nft.token_id}`
+              }
+            >
+              <ShareIcon />
+            </Link>
           </Box>
         </Box>
       </CardStyled>
     </Box>
+  )
+}
+
+function Searching() {
+  return (
+    <SearchCardStyle
+      style={{
+        height: 280,
+        width: '278.816px'
+      }}
+    >
+      <Box
+        className="item"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 30
+        }}
+      >
+        <HourglassIcon />
+        <ContentTextStyle>Searching for available NFTs</ContentTextStyle>
+      </Box>
+    </SearchCardStyle>
+  )
+}
+
+function NotHaveNft() {
+  return (
+    <SearchCardStyle
+      style={{
+        width: '443px',
+        height: '280px'
+      }}
+    >
+      <Box
+        className="item"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 30
+        }}
+      >
+        <NotHaveNftIcon />
+        <ContentTextStyle
+          sx={{
+            maxWidth: 340,
+            textAlign: 'center'
+          }}
+        >
+          {"Whoops, you don't have any available NFTs."}
+          <br />
+          {" It's okay, go into "}
+          <Link
+            style={{
+              cursor: 'pointer',
+              color: '#F9F9F9',
+              textDecoration: 'underline'
+            }}
+          >
+            Clique Discovery
+          </Link>
+          {' to claim a NFT !'}
+        </ContentTextStyle>
+      </Box>
+    </SearchCardStyle>
   )
 }

@@ -218,7 +218,11 @@ export interface ScanNFTInfo {
   token_uri: string
 }
 
-export function useAccountNFTsList(account: string, searchChainId: number, ercType: 'erc721' | 'erc1155') {
+export function useAccountNFTsList(
+  account: string | undefined,
+  searchChainId: number | undefined,
+  ercType: 'erc721' | 'erc1155'
+) {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(0)
@@ -231,7 +235,7 @@ export function useAccountNFTsList(account: string, searchChainId: number, ercTy
 
   useEffect(() => {
     ;(async () => {
-      if (!account) {
+      if (!account || !searchChainId) {
         setResult([])
         setTotal(0)
         return

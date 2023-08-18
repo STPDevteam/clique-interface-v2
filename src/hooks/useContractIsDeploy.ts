@@ -25,7 +25,6 @@ export function useContractIsDeploy(tokenContract?: string) {
         console.error('Error:', error)
       })
   }, [block, tokenContract, library])
-  console.log(isDeploy)
 
   return useMemo(() => isDeploy, [isDeploy])
 }
