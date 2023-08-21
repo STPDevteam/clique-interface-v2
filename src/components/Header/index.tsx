@@ -20,6 +20,7 @@ import { HideOnMobile } from 'theme/index'
 // import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/svg/logo.svg'
+import logoWhite from '../../assets/svg/logo_white.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
@@ -471,7 +472,7 @@ export default function Header() {
           >
             <Box display="flex" alignItems="center">
               <MainLogo to={routes.Governance}>
-                <Image src={logo} alt={'logo'} />
+                <Image src={IsNftPage ? logoWhite : logo} alt={'logo'} />
               </MainLogo>
               <HideOnMobile breakpoint="md">
                 <TabsBox />

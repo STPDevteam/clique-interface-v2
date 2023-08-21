@@ -8,15 +8,18 @@ import LoopIcon from '@mui/icons-material/Loop'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
 import CreateNftModal from './CreateNftModal'
+import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
 import { getEtherscanLink } from 'utils'
 import placeholderImage from 'assets/images/placeholder.png'
 import Image from 'components/Image'
+import { useNavigate } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 const TitleStyle = styled(Typography)(() => ({
   color: '#FFF',
@@ -48,6 +51,7 @@ const SearchCardStyle = styled(Box)(() => ({
   margin: '90px auto 0',
   borderRadius: '20px',
   background: 'linear-gradient(45deg, #67ccf8 0%, #3457b9 50%, #3d7bce 100%)',
+  filter: 'drop-shadow(0px 14px 34px #0A35FF)',
   '& .item': {
     top: 0,
     right: 0,
@@ -64,16 +68,31 @@ const SearchCardStyle = styled(Box)(() => ({
 }))
 
 export function NftSelect() {
+  const navigate = useNavigate()
+  const userSignature = useUserInfo()
   const { account, chainId } = useActiveWeb3React()
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
-  const { result: accountNFTsList, loading, page } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+
+  const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+
+  // const { result: accountNFTsList, loading } = useAccountNFTsList(
+  //   '0xccf5a3e7a9ae61a45be3c4f22787266b678faf33',
+  //   137,
+  //   'erc721'
+  // )
 
   const showAccountNFTsList = useMemo(() => {
     return accountNFTsList.length > 10 ? accountNFTsList : accountNFTsList.slice(0, 10)
   }, [accountNFTsList])
 
-  console.log(page)
+  console.log(chainId)
 
+  useEffect(() => {
+    if (!account || !userSignature) {
+      navigate(routes.NftAccount)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account, userSignature])
   return (
     <NftLayout>
       <Box
@@ -100,8 +119,8 @@ export function NftSelect() {
               display: 'grid',
               gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
               gap: 20,
-              padding: '20px 110px',
-              mt: 35,
+              padding: '35px 110px',
+              mt: 25,
               '::-webkit-scrollbar': {
                 display: 'none'
               }
@@ -133,7 +152,7 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
       toast.success('Refresh success')
     })
   }, [nft.contract_address, nft.token_id, refreshCb])
-  console.log(isSmDown, nft)
+  console.log(isSmDown)
 
   return (
     <Box
@@ -249,17 +268,20 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
           }}
         >
           <Typography
+            noWrap
             sx={{
               color: ' var(--button-line, #97B7EF)',
               fontSize: '14px',
               fontWeight: 400,
-              lineHeight: '20px'
+              lineHeight: '20px',
+              maxWidth: 180
             }}
           >
             {nft.name || nft.contract_name || '-'}#{nft.token_id}
           </Typography>
-          <Box className="shareButton" sx={{ display: 'none', alignItems: 'center' }}>
+          <Box className="shareButton" sx={{ display: 'none' }}>
             <Link
+              sx={{ height: '16px', width: '16px' }}
               target={'_blank'}
               underline="none"
               href={
@@ -303,6 +325,8 @@ function Searching() {
 }
 
 function NotHaveNft() {
+  const navigate = useNavigate()
+
   return (
     <SearchCardStyle
       style={{
@@ -335,6 +359,9 @@ function NotHaveNft() {
               cursor: 'pointer',
               color: '#F9F9F9',
               textDecoration: 'underline'
+            }}
+            onClick={() => {
+              navigate(routes.Activity)
             }}
           >
             Clique Discovery

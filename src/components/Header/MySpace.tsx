@@ -7,6 +7,11 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useState } from 'react'
+import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
+import Loading from 'components/Loading'
+import placeholderImage from 'assets/images/placeholder.png'
+import { useActiveWeb3React } from 'hooks'
+import EmptyData from 'components/EmptyData'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -27,23 +32,23 @@ const Item = styled(Box)(({}) => ({
   width: 227,
   padding: '10px 20px 10px 5px',
   gap: 10,
-  '&:hover .right': {
-    height: 0,
-    width: 0,
-    border: '1px solid #999',
-    position: 'relative',
-    '::before': {
-      position: 'absolute',
-      right: 1,
-      top: '-6px',
-      content: '""',
-      display: 'block',
-      height: 7,
-      width: 0,
-      border: '1px solid #999',
-      transform: 'rotate(135deg)'
-    }
-  },
+  // '&:hover .right': {
+  //   height: 0,
+  //   width: 0,
+  //   border: '1px solid #999',
+  //   position: 'relative',
+  //   '::before': {
+  //     position: 'absolute',
+  //     right: 1,
+  //     top: '-6px',
+  //     content: '""',
+  //     display: 'block',
+  //     height: 7,
+  //     width: 0,
+  //     border: '1px solid #999',
+  //     transform: 'rotate(135deg)'
+  //   }
+  // },
   '&:hover': {
     backgroundColor: '#0049C60D'
   },
@@ -104,9 +109,17 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 }))
 
 export default function MySpace() {
+  const { account, chainId } = useActiveWeb3React()
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState<boolean>(false)
+  // const { result: accountNFTsList, loading } = useAccountNFTsList(
+  //   '0xccf5a3e7a9ae61a45be3c4f22787266b678faf33',
+  //   137,
+  //   'erc721'
+  // )
+
+  const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
 
   return (
     <Box>
@@ -174,7 +187,8 @@ export default function MySpace() {
               mt={10}
               sx={{
                 maxHeight: '45vh',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                marginBottom: '6px'
               }}
             >
               {myJoinedDaoList?.map(option => (
@@ -187,28 +201,42 @@ export default function MySpace() {
               ))}
             </Box>
           ) : (
-            <Box
-              mt={10}
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr 1fr 1fr',
-                gap: 4,
-                maxHeight: '45vh',
-                overflowY: 'auto'
-              }}
-            >
-              {myJoinedDaoList?.map(option => (
-                <Box key={option.daoName + option.daoId} sx={{ maxHeight: '54px' }}>
-                  <Image
-                    src={option.daoLogo || ''}
-                    alt={''}
-                    width={54}
-                    height={54}
-                    style={{ border: '1px solid #97B7EF', borderRadius: '6px', cursor: 'pointer' }}
-                  />
+            <>
+              {loading && <Loading sx={{ marginTop: 30 }} />}
+              {accountNFTsList.length ? (
+                <Box
+                  mt={10}
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                    gap: 4,
+                    maxHeight: '45vh',
+                    overflowY: 'auto',
+                    minHeight: '160px',
+                    marginBottom: '6px'
+                  }}
+                >
+                  {accountNFTsList?.map((option, index) => (
+                    <Box key={option.contract_name + index} sx={{ maxHeight: '54px', mb: 6 }}>
+                      <Image
+                        src={option.image_uri || placeholderImage}
+                        alt={''}
+                        width={54}
+                        height={54}
+                        style={{ border: '1px solid #97B7EF', borderRadius: '6px' }}
+                        // onClick={() => {
+                        //   navigate(routes.NftSelect)
+                        // }}
+                      />
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-            </Box>
+              ) : (
+                <Box>
+                  <EmptyData>No data</EmptyData>
+                </Box>
+              )}
+            </>
           )}
         </>
       </PopperCard>
@@ -243,7 +271,7 @@ function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
     <Item>
       <Image src={daoLogo || ''} alt={daoName} />
       <Text noWrap>{daoName || ''}</Text>
-      <Typography className="right" maxWidth={14} width={'100%'} />
+      {/* <Typography className="right" maxWidth={14} width={'100%'} /> */}
     </Item>
   )
 }

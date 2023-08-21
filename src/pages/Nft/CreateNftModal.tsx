@@ -80,11 +80,13 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     if (nft) {
       setContractAddress(nft.contract_address)
       setTokenId(nft.token_id)
+      setTokenId_f(nft.token_id)
       setIsChange(true)
     } else {
       setContractAddress('')
       setTokenId('')
       setIsChange(false)
+      setTokenId_f('')
     }
   }, [nft])
 
