@@ -23,7 +23,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 
 export enum ToolsCardsTitle {
-  DAORewards = 'DAO Rewards',
+  DAORewards = 'Clique Rewards',
   CreateDAO = 'Create DAO',
   CreateToken = 'Create Token',
   SDK = 'SDK',

@@ -70,7 +70,7 @@ const statusItemList = [
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
   { value: ActivityStatus.ACTIVE, label: 'Active' },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
-  { value: ActivityStatus.AIRDROP, label: 'DAO Rewards' },
+  { value: ActivityStatus.AIRDROP, label: 'Clique Rewards' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
 ]
 const tabList = [

@@ -110,7 +110,7 @@ export const activityStatusText = {
   [ActivityStatus.SOON]: 'Soon',
   [ActivityStatus.ACTIVE]: 'Active',
   [ActivityStatus.ENDED]: 'Ended',
-  [ActivityStatus.AIRDROP]: 'DAO Rewards',
+  [ActivityStatus.AIRDROP]: 'Clique Rewards',
   [ActivityStatus.CLOSED]: 'Closed'
 }
 

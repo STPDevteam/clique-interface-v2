@@ -118,7 +118,7 @@ const TitleStyle = styled(Typography)(() => ({
 //     return {
 //       text:
 //         item.types === 'Airdrop'
-//           ? 'You have a new DAO Rewards can be claimed'
+//           ? 'You have a new Clique Rewards can be claimed'
 //           : item.types === 'NewProposal'
 //           ? item.activityTitle || ''
 //           : item.types === 'ReserveToken'
@@ -320,7 +320,7 @@ function MsgItems({
     return {
       content:
         item.types === 'Airdrop' ? (
-          <ContentStyle>You have a new DAO Rewards can be claimed,</ContentStyle>
+          <ContentStyle>You have a new Clique Rewards can be claimed,</ContentStyle>
         ) : item.types === 'NewProposal' ? (
           <>
             <ContentStyle
@@ -458,7 +458,7 @@ function MsgItems({
 
 function titleFilter(title: string) {
   if (title === 'Airdrop') {
-    return 'DAO Rewards'
+    return 'Clique Rewards'
   } else if (title === 'NewProposal') {
     return 'Active Proposal'
   } else if (title === 'ReserveToken') {
