@@ -213,6 +213,7 @@ export default function Index() {
     <Box
       sx={{
         maxWidth: 1440,
+        margin: 'auto',
         padding: '44px 120px',
         '& .top_banner': {
           marginLeft: 18,
