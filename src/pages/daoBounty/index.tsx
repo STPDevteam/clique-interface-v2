@@ -19,7 +19,7 @@ export default function DaoBounty() {
         >
           <BountyIcon width={38} height={38} />
           <Typography ml={10} fontWeight={600} fontSize={30}>
-            DAO Rewards & SBT
+            Clique Rewards & SBT
           </Typography>
         </Stack>
         <DaoInfoActivity />
