@@ -71,12 +71,12 @@ export enum ActivityType {
 
 export const activityTypeText = {
   [ActivityType.PUBLIC_SALE]: 'Public Sale',
-  [ActivityType.AIRDROP]: 'DAO Rewards'
+  [ActivityType.AIRDROP]: 'Clique Rewards'
 }
 
 const tabList = [
-  { value: 'DAO Rewards', label: 'DAO Rewards' },
-  { value: 'Soulbound Token on DAO', label: 'Soulbound Token on DAO' }
+  { value: 'Clique Rewards', label: 'Clique Rewards' },
+  { value: 'Soulbound Token', label: 'Soulbound Token' }
 ]
 
 export default function Activity() {
@@ -154,7 +154,7 @@ export default function Activity() {
           </>
         )}
         {tabValue === 0 && daoAdminLevel.job !== DaoAdminLevelProp[0] && daoAdminLevel.job !== DaoAdminLevelProp[1] && (
-          <TooltipStyle title={'Only DAO creator and DAO owner can create DAO rewards.'} placement="top">
+          <TooltipStyle title={'Only DAO creator and DAO owner can create Clique Rewards.'} placement="top">
             {backedDaoInfo?.approve ? (
               <Box>
                 <BlackButton

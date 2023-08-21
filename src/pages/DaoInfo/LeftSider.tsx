@@ -290,7 +290,7 @@ export default function LeftSider() {
         children: workspaceList
       },
       {
-        title: 'DAO Rewards & SBT',
+        title: 'Clique Rewards & SBT',
         icon: <Bounty />,
         defaultOpen: false,
         route: makeRouteLink(routes.DaoInfoActivity)

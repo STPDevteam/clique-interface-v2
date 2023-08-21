@@ -70,12 +70,12 @@ const statusItemList = [
   { value: ActivityStatus.SOON, label: ActivityStatus.SOON },
   { value: ActivityStatus.ACTIVE, label: 'Active' },
   { value: ActivityStatus.ENDED, label: ActivityStatus.ENDED },
-  { value: ActivityStatus.AIRDROP, label: 'DAO Rewards' },
+  { value: ActivityStatus.AIRDROP, label: 'Clique Rewards' },
   { value: ActivityStatus.CLOSED, label: ActivityStatus.CLOSED }
 ]
 const tabList = [
-  { value: 'DAO Rewards', label: 'DAO Rewards' },
-  { value: 'Soulbound Token on DAO', label: 'Soulbound Token on DAO' }
+  { value: 'Clique Rewards', label: 'Clique Rewards' },
+  { value: 'Soulbound Token', label: 'Soulbound Token' }
 ]
 
 export default function Activity() {
