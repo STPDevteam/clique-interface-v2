@@ -15,6 +15,7 @@ import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import { Dots } from 'theme/components'
 import { ScanNFTInfo } from 'hooks/useBackedProfileServer'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -52,6 +53,7 @@ const ShareIcon = styled(ShareIconComponent)(() => ({
 
 export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const { chainId } = useActiveWeb3React()
+  const userSignature = useUserInfo()
   const [contractAddress, setContractAddress] = useState<string>('')
   const [tokenId, setTokenId] = useState<string>('')
   const [tokenId_f, setTokenId_f] = useState<string>('')
@@ -89,6 +91,10 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
       setTokenId_f('')
     }
   }, [nft])
+
+  useEffect(() => {
+    if (!userSignature) return hideModal()
+  }, [userSignature, hideModal])
 
   const createAccount = useCallback(async () => {
     showModal(<TransacitonPendingModal />)
