@@ -158,7 +158,6 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
     <Box
       sx={{
         cursor: 'pointer',
-        paddingBottom: 2,
         '&:hover': {
           '.chainIcon': {
             display: 'block !important'
@@ -219,7 +218,9 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
             width: '100%',
             height: '100%',
             borderRadius: '8px',
-            objectFit: 'cover'
+            objectFit: 'cover',
+            position: 'absolute',
+            zIndex: 0
           }}
           src={nft.image_uri || placeholderImage}
         />
