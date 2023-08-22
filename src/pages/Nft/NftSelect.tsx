@@ -11,7 +11,7 @@ import CreateNftModal from './CreateNftModal'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect } from 'react'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
@@ -81,10 +81,6 @@ export function NftSelect() {
   //   'erc721'
   // )
 
-  const showAccountNFTsList = useMemo(() => {
-    return accountNFTsList.length > 10 ? accountNFTsList : accountNFTsList.slice(0, 10)
-  }, [accountNFTsList])
-
   console.log(chainId)
 
   useEffect(() => {
@@ -106,7 +102,7 @@ export function NftSelect() {
 
         {loading && <Searching />}
 
-        {!showAccountNFTsList.length && !loading ? (
+        {!accountNFTsList?.length && !loading ? (
           <>
             <NotHaveNft />
           </>
@@ -127,7 +123,7 @@ export function NftSelect() {
             }}
           >
             <>
-              {showAccountNFTsList.map((item, index) => (
+              {accountNFTsList?.map((item, index) => (
                 <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
               ))}
             </>
@@ -186,7 +182,7 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
           alt=""
           height={'30'}
           width={'30'}
-          style={{ borderRadius: '50%', position: 'absolute', top: 10, left: 10, display: 'none' }}
+          style={{ borderRadius: '50%', position: 'absolute', top: 10, left: 10, display: 'none', zIndex: 10 }}
         />
         <LoopIcon
           sx={{
