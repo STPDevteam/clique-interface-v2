@@ -1,6 +1,9 @@
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, keyframes, styled } from '@mui/material'
 import Nft_bgImage from 'assets/images/nft_bg.png'
 import NftImage from 'assets/images/nft_r.png'
+import Coin_1 from 'assets/images/coin_1.png'
+import Coin_2 from 'assets/images/coin_2.png'
+import Coin_3 from 'assets/images/coin_3.png'
 import { ReactComponent as NftAccountTxt } from 'assets/svg/nftAccount_txt.svg'
 import Button from 'components/Button/Button'
 import { useNavigate } from 'react-router-dom'
@@ -9,6 +12,25 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import useBreakpoint from 'hooks/useBreakpoint'
+
+const conin1_key = keyframes`
+0% { transform: translateY(0); }
+25% { transform: translateY(-5px); }
+75% { transform: translateY(5px); }
+100% { transform: translateY(0); }
+`
+const conin2_key = keyframes`
+0% { transform: translateY(0); }
+25% { transform: translateY(5px); }
+75% { transform: translateY(-5px); }
+100% { transform: translateY(0); }
+`
+const conin3_key = keyframes`
+0% { transform: translateY(0); }
+25% { transform: translateY(-5px); }
+75% { transform: translateY(5px); }
+100% { transform: translateY(0); }
+`
 
 const TitleStyle = styled(Box)(() => ({
   display: 'flex',
@@ -51,7 +73,8 @@ export function NftAccount() {
           style={{
             height: isMdDown ? 'auto' : 300,
             alignItems: isMdDown ? 'center' : 'normal',
-            textAlign: isMdDown ? 'center' : 'left'
+            textAlign: isMdDown ? 'center' : 'left',
+            marginBottom: isMdDown ? '0' : '50px'
           }}
         >
           <NftAccountTxt />
@@ -70,8 +93,59 @@ export function NftAccount() {
             Create my NFT account
           </CreateNftButton>
         </TitleStyle>
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <img src={NftImage} alt="" width={663} height={582} />
+        <Box
+          sx={{
+            textAlign: 'center',
+            width: isMdDown ? '70vw' : 631,
+            height: isMdDown ? '70vw' : 557,
+            position: 'relative'
+          }}
+        >
+          <img
+            src={NftImage}
+            alt=""
+            style={{
+              width: isMdDown ? '70vw' : 631,
+              height: isMdDown ? '70vw' : 557
+            }}
+          />
+          <Box
+            sx={{
+              width: '49.68px',
+              height: '49.03px',
+              position: 'absolute',
+              top: 60,
+              left: isMdDown ? '37vw' : 320,
+              animation: `${conin1_key} 5s linear infinite`
+            }}
+          >
+            <img src={Coin_1} alt="" width={'100%'} height={'100%'} />
+          </Box>
+
+          <Box
+            sx={{
+              width: '98px',
+              height: '109px',
+              position: 'absolute',
+              top: 55,
+              right: -15,
+              animation: `${conin2_key} 5s linear infinite`
+            }}
+          >
+            <img src={Coin_2} alt="" width={'100%'} height={'100%'} />
+          </Box>
+          <Box
+            sx={{
+              width: '81.42px',
+              height: '80.35px',
+              position: 'absolute',
+              bottom: isMdDown ? '20vw' : 170,
+              right: 0,
+              animation: `${conin3_key} 5s linear infinite`
+            }}
+          >
+            <img src={Coin_3} alt="" width={'100%'} height={'100%'} />
+          </Box>
         </Box>
       </Box>
     </NftLayout>

@@ -232,7 +232,7 @@ export default function MySpace() {
                   ))}
                 </Box>
               ) : (
-                <Box>
+                <Box padding={'15px 0'}>
                   <EmptyData>No data</EmptyData>
                 </Box>
               )}

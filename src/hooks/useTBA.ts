@@ -4,6 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { isAddress } from 'ethers/lib/utils'
 import { useContractIsDeploy } from './useContractIsDeploy'
+// import { useTokenContract } from './useContract'
 
 export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: string) {
   const { account, chainId, library } = useActiveWeb3React()
@@ -67,9 +68,31 @@ export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: st
     }
   }, [account, addTransaction, chainId, getAccount, isDeploy, library, tokenContract, tokenId, tokenboundClient])
 
+  // const erc20Contract = useTokenContract('0x21C3ac8c6E5079936A59fF01639c37F36CE5ed9E')
+  // const transfer = useCallback(
+  //   (to: string, value: string) => {
+  //     return erc20Contract?.interface.encodeFunctionData('transfer', [to, value])
+  //   },
+  //   [erc20Contract?.interface]
+  // )
+
+  // const send = async () => {
+  //   const data = transfer('0xF2da7b9CDb35Dc7c8e875DE0241b02376825CF86', '10000')
+  //   if (!data || !getAccount) return
+  //   const tranData = await tokenboundClient?.prepareExecuteCall({
+  //     account: getAccount,
+  //     to: '0x21C3ac8c6E5079936A59fF01639c37F36CE5ed9E',
+  //     value: BigInt(0),
+  //     data
+  //   })
+
+  //   if (tranData) await library?.getSigner().sendTransaction(tranData)
+  // }
+
   return {
     isDeploy,
     getAccount,
     createAccountCallback
+    // send
   }
 }
