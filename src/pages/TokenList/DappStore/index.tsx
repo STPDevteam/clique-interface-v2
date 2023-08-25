@@ -7,7 +7,7 @@ import rewardsIcon from 'assets/images/rewardsIcon.png'
 import sbtIcon from 'assets/images/soulboundIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
-import nftCardIcon from 'assets/images/nftcard_icon.png'
+// import nftCardIcon from 'assets/images/nftcard_icon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
 import accountIcon from 'assets/images/accountCard_icon.png'
 import assetPortalIcon from 'assets/images/assetPortalCard_icon.png'
@@ -93,20 +93,21 @@ const cardsData = [
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.CreateSoulToken
   },
-  {
-    title: ToolsCardsTitle.Nft,
-    icon: nftCardIcon,
-    des: 'ERC-6551 turns every NFT into a smart wallet that can own tokens and interact with dApps across the Ethereum ecosystem.',
-    supportChainsIcon: [chainLogo0],
-    bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
-    route: routes.NftAccount
-  },
+  // {
+  //   title: ToolsCardsTitle.Nft,
+  //   icon: nftCardIcon,
+  //   des: 'ERC-6551 turns every NFT into a smart wallet that can own tokens and interact with dApps across the Ethereum ecosystem.',
+  //   supportChainsIcon: [chainLogo0],
+  //   bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
+  //   route: routes.NftAccount
+  // },
   {
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
     des: 'One-click on-chainactivity using accountabstraction.',
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
+    supportChainsIcon: [chainLogo0],
+    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
+    route: routes.NftAccount
   },
   {
     title: ToolsCardsTitle.AssetPortal,
