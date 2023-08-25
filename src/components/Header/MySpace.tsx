@@ -109,7 +109,7 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
   }
 }))
 
-export default function MySpace() {
+export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
   // const { account, chainId } = useActiveWeb3React()
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
@@ -138,11 +138,11 @@ export default function MySpace() {
             sx={{
               height: 36,
               padding: '0 14px',
-              border: '1px solid #D4D7E2',
+              border: `1px solid${IsNftPage ? '#fff' : '#D4D7E2'}`,
               borderRadius: '8px',
               cursor: 'pointer',
               '&:hover': {
-                borderColor: '#97B7EF'
+                borderColor: IsNftPage ? '#D4D7E2' : '#97B7EF'
               },
               '& svg': {
                 marginLeft: 'auto'
@@ -150,7 +150,12 @@ export default function MySpace() {
             }}
             alignItems={'center'}
           >
-            <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+            <Typography
+              fontWeight={500}
+              fontSize={14}
+              textAlign={'left'}
+              sx={{ color: IsNftPage ? '#fff' : '#3F5170' }}
+            >
               My Space
             </Typography>
             <ArrowIcon />

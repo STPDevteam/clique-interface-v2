@@ -8,7 +8,7 @@ import PopperCard from 'components/PopperCard'
 import { useMemo } from 'react'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
-export default function NetworkSelect() {
+export default function NetworkSelect({ IsNftPage }: { IsNftPage: boolean }) {
   const { chainId, account, library } = useActiveWeb3React()
   const isDownSm = useBreakpoint('sm')
   const curChainLogo = useMemo(() => {
@@ -36,13 +36,13 @@ export default function NetworkSelect() {
               width: 36,
               height: 36,
               padding: '0 4px',
-              border: '1px solid #D4D7E2',
+              border: `1px solid ${IsNftPage ? '#fff' : '#D4D7E2'}`,
               borderRadius: '8px',
               justifyContent: 'center',
               position: 'relative',
               cursor: 'pointer',
               '&:hover': {
-                borderColor: '#97B7EF'
+                borderColor: IsNftPage ? '#D4D7E2' : '#97B7EF'
               },
               '& .exchange': {
                 position: 'absolute',

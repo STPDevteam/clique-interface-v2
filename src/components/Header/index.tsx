@@ -507,7 +507,7 @@ export default function Header() {
                 </Typography>
               ))}
             </Breadcrumbs>
-            <HeaderRight />
+            <HeaderRight IsNftPage={IsNftPage} />
           </Box>
         </StyledAppBar>
       </>
@@ -544,7 +544,7 @@ export default function Header() {
           <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
           <Filler />
           <StyledMobileAppBar>
-            <TabsBox />
+            <TabsBox IsNftPage={IsNftPage} />
           </StyledMobileAppBar>
 
           <StyledAppBar
@@ -559,10 +559,10 @@ export default function Header() {
                 <Image src={IsNftPage ? logoWhite : logo} alt={'logo'} />
               </MainLogo>
               <HideOnMobile breakpoint="md">
-                <TabsBox />
+                <TabsBox IsNftPage={IsNftPage} />
               </HideOnMobile>
             </Box>
-            <HeaderRight />
+            <HeaderRight IsNftPage={IsNftPage} />
           </StyledAppBar>
         </>
       )}
@@ -570,7 +570,7 @@ export default function Header() {
   )
 }
 
-function TabsBox() {
+function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const toggleWalletModal = useWalletModalToggle()
@@ -616,7 +616,7 @@ function TabsBox() {
                   sx={{
                     paddingTop: 30,
                     fontSize: 14,
-                    color: '#808189',
+                    color: IsNftPage ? '#fff' : '#808189',
                     fontWeight: 600,
                     cursor: 'pointer',
                     gap: 10,
@@ -747,7 +747,7 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   }
 }))
 
-export function HeaderRight() {
+export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
   const { pathname } = useLocation()
   const userInfo = useUserInfo()
   return (
@@ -757,9 +757,9 @@ export function HeaderRight() {
       alignItems="center"
       gap={{ xs: '10px', sm: '10px' }}
     >
-      <NetworkSelect />
-      {userInfo?.loggedToken && <MySpace />}
-      <Web3Status />
+      <NetworkSelect IsNftPage={IsNftPage} />
+      {userInfo?.loggedToken && <MySpace IsNftPage={IsNftPage} />}
+      <Web3Status IsNftPage={IsNftPage} />
       {pathname === routes.DappStore || pathname === routes.Governance ? (
         <Box mr={20}>
           <LightTooltip
