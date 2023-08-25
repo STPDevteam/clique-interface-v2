@@ -69,7 +69,7 @@ function MsgItem({ item, isReadAll }: { item: NotificationProp; isReadAll: boole
     return {
       text:
         item.types === 'Airdrop'
-          ? 'You have a new DAO Rewards can be claimed'
+          ? 'You have a new Clique Rewards can be claimed'
           : item.types === 'NewProposal'
           ? item.activityTitle || ''
           : item.types === 'ReserveToken'

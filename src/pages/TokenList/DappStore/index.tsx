@@ -9,6 +9,8 @@ import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
 import nftCardIcon from 'assets/images/nftcard_icon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
+import accountIcon from 'assets/images/accountCard_icon.png'
+import assetPortalIcon from 'assets/images/assetPortalCard_icon.png'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
 import chainLogo0 from 'assets/images/chainLogo0.png'
@@ -24,12 +26,14 @@ import CreateNftModal from 'pages/Nft/CreateNftModal'
 import useModal from 'hooks/useModal'
 
 export enum ToolsCardsTitle {
-  DAORewards = 'DAO Rewards',
+  DAORewards = 'Clique Rewards',
   CreateDAO = 'Create DAO',
   CreateToken = 'Create Token',
   SDK = 'SDK',
   CreateSBT = 'Create Soulbound Token of DAO',
-  Nft = 'Create an account as NFT'
+  Nft = 'Create an account as NFT',
+  AccountGenerator = 'Account Generator',
+  AssetPortal = 'Asset Portal'
 }
 
 const cardsData = [
@@ -96,6 +100,20 @@ const cardsData = [
     supportChainsIcon: [chainLogo0],
     bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
     route: routes.NftAccount
+  },
+  {
+    title: ToolsCardsTitle.AccountGenerator,
+    icon: accountIcon,
+    des: 'One-click on-chainactivity using accountabstraction.',
+    supportChainsIcon: 'soon',
+    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
+  },
+  {
+    title: ToolsCardsTitle.AssetPortal,
+    icon: assetPortalIcon,
+    des: 'Buy, sell and hold any onchain asset throughcustom marketplace.',
+    supportChainsIcon: 'soon',
+    bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)'
   }
 ]
 
@@ -184,6 +202,10 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
             -
           </Typography>
+        ) : supportChainsIcon === 'soon' ? (
+          <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
+            Coming soon...
+          </Typography>
         ) : (
           <Box
             mt={8}
@@ -209,6 +231,7 @@ export default function Index() {
     <Box
       sx={{
         maxWidth: 1440,
+        margin: 'auto',
         padding: '44px 120px',
         '& .top_banner': {
           marginLeft: 18,
@@ -217,7 +240,7 @@ export default function Index() {
       }}
     >
       <Image className="top_banner" src={banner} />
-      <Grid mt={30} container>
+      <Grid mt={12} container>
         {cardsData.map((item, index) => (
           <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
             <CardItem {...item} />

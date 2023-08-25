@@ -206,13 +206,13 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
     if (!airdropCurrency) {
       return {
         disabled: true,
-        error: 'DAO Rewards token required'
+        error: 'Clique Rewards token required'
       }
     }
     if (!airdropCurrencyBalance || airdropCurrencyBalance.equalTo(JSBI.BigInt(0))) {
       return {
         disabled: true,
-        error: 'DAO Rewards amount required'
+        error: 'Clique Rewards amount required'
       }
     }
     if (!eventStartTime) {
@@ -242,25 +242,25 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
     if (!airdropStartTime) {
       return {
         disabled: true,
-        error: 'DAO Rewards start time required'
+        error: 'Clique Rewards start time required'
       }
     }
     if (airdropStartTime <= eventEndTime) {
       return {
         disabled: true,
-        error: 'The DAO Rewards start time must be later than the event end time'
+        error: 'The Clique Rewards start time must be later than the event end time'
       }
     }
     if (!airdropEndTime) {
       return {
         disabled: true,
-        error: 'DAO Rewards end time required'
+        error: 'Clique Rewards end time required'
       }
     }
     if (airdropEndTime <= airdropStartTime) {
       return {
         disabled: true,
-        error: 'The DAO Rewards end time must be later than the DAO Rewards start time'
+        error: 'The Clique Rewards end time must be later than the Clique Rewards start time'
       }
     }
 
@@ -342,10 +342,10 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
   return (
     <DaoContainer>
       <Box>
-        <Back sx={{ marginLeft: 0 }} text="All DAO Rewards" event={toList} />
+        <Back sx={{ marginLeft: 0 }} text="All Clique Rewards" event={toList} />
         <Box mt={20} pb={40}>
           <ContainerWrapper maxWidth={709}>
-            <Typography variant="h6">Create A DAO Rewards Event</Typography>
+            <Typography variant="h6">Create A Clique Rewards Event</Typography>
             <Stack spacing={20} mt={20}>
               <div>
                 <StyledText mb={10}>Event Title</StyledText>
@@ -379,7 +379,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
 
               {isZero(airdropAddress) ? (
                 <Input
-                  label="DAO Rewards token"
+                  label="Clique Rewards token"
                   value={network ? Currency.get_ETH_TOKEN(network.id as ChainId)?.symbol || '' : ''}
                   readOnly
                   rightLabel={
@@ -424,7 +424,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
               <InputNumerical
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
-                label="Total Amount For DAO Rewards"
+                label="Total Amount For Clique Rewards"
                 balance={airdropCurrencyBalance?.toSignificant(6, { groupSeparator: ',' })}
                 onMax={() => setInputValue(airdropCurrencyBalance?.toSignificant(6) || '')}
               />
@@ -456,7 +456,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
                   ></DateTimePicker>
                 </Box>
                 <Box>
-                  <StyledText>DAO Rewards Start Time</StyledText>
+                  <StyledText>Clique Rewards Start Time</StyledText>
                   <DateTimePicker
                     inputWidth={isSmDown ? '100%' : undefined}
                     disabled={!eventEndTime}
@@ -466,7 +466,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
                   ></DateTimePicker>
                 </Box>
                 <Box>
-                  <StyledText>DAO Rewards End Time</StyledText>
+                  <StyledText>Clique Rewards End Time</StyledText>
                   <DateTimePicker
                     inputWidth={isSmDown ? '100%' : undefined}
                     disabled={!airdropStartTime}
@@ -484,7 +484,7 @@ function CreateAirdropForm({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp
               </Alert>
             ) : (
               <Alert severity="success" sx={{ marginTop: 20 }}>
-                You can now create a DAO Rewards
+                You can now create a Clique Rewards
               </Alert>
             )}
 

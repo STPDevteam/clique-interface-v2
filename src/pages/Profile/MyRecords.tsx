@@ -83,9 +83,9 @@ const accountBackedSendRecordTypesText = {
   [AccountBackedSendRecordTypesProp.EvOwnershipTransferred]: 'Admin Transferred',
   [AccountBackedSendRecordTypesProp.EvCreateERC20]: 'Create Token',
   [AccountBackedSendRecordTypesProp.EvClaimReserve]: 'Claim Reserve Token',
-  [AccountBackedSendRecordTypesProp.EvCreateAirdrop]: 'Create DAO Rewards',
-  [AccountBackedSendRecordTypesProp.EvSettleAirdrop]: 'Publish DAO Rewards',
-  [AccountBackedSendRecordTypesProp.EvClaimed]: 'Claim DAO Rewards'
+  [AccountBackedSendRecordTypesProp.EvCreateAirdrop]: 'Create Clique Rewards',
+  [AccountBackedSendRecordTypesProp.EvSettleAirdrop]: 'Publish Clique Rewards',
+  [AccountBackedSendRecordTypesProp.EvClaimed]: 'Claim Clique Rewards'
 }
 
 function RecordItem({ item }: { item: AccountSendRecordProp }) {

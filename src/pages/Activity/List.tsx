@@ -1,6 +1,6 @@
 import { Box, Link, Stack, Typography, useTheme } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
-import OutlineButton from 'components/Button/OutlineButton'
+// import OutlineButton from 'components/Button/OutlineButton'
 import DelayLoading from 'components/DelayLoading'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
@@ -9,7 +9,7 @@ import Pagination from 'components/Pagination'
 import { routes } from 'constants/routes'
 import { ActivityListProp } from 'hooks/useBackedActivityServer'
 import useBreakpoint from 'hooks/useBreakpoint'
-import { ActivityType, activityTypeText } from 'pages/DaoInfo/Children/Activity'
+import { ActivityType } from 'pages/DaoInfo/Children/Activity'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { timeStampToFormat } from 'utils/dao'
 import { AirdropItem } from 'pages/Activity/ActivityItem'
@@ -32,6 +32,8 @@ function ItemWrapper({
 }) {
   const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
+  console.log(type)
+
   // const { buildingDaoData: daoBaseInfo } = useBuildingDaoDataCallback()
   return (
     <Stack spacing={24}>
@@ -52,7 +54,7 @@ function ItemWrapper({
             Publish at {timeStampToFormat(publishTime)}
           </Typography>
         </RowCenter>
-        <OutlineButton
+        {/* <OutlineButton
           style={
             type === ActivityType.AIRDROP
               ? { color: theme.palette.primary.light, borderColor: theme.palette.primary.light }
@@ -64,7 +66,7 @@ function ItemWrapper({
           width="154px"
         >
           {activityTypeText[type]}
-        </OutlineButton>
+        </OutlineButton> */}
       </Stack>
       {children}
     </Stack>

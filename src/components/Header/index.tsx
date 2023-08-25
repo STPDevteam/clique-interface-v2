@@ -364,6 +364,9 @@ export default function Header() {
         })
         return workspaceTitle || 'task'
       }
+      if (v === 'DAO_Rewards') {
+        return 'Clique Rewards'
+      }
       return capitalizeFirstLetter(v.replace(/_/g, ' '))
     })
     const listData = _list.filter((v, index) => {

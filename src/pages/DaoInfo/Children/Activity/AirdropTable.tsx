@@ -120,7 +120,7 @@ export default function AirdropTable({
     <Stack spacing={10} mt={20}>
       <RowCenter flexWrap={'wrap'}>
         <RowCenter flexWrap={'wrap'}>
-          <StyledText mr={10}>DAO Rewards addresses</StyledText>
+          <StyledText mr={10}>Clique Rewards addresses</StyledText>
           {readonly ? null : (
             <div>
               <input accept=".csv" type="file" onChange={uploadCSV} id="upload_CSV" style={{ width: 0, height: 0 }} />
@@ -170,7 +170,7 @@ export default function AirdropTable({
             height={40}
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            label="DAO Rewards amount"
+            label="Clique Rewards amount"
           />
         </Stack>
       )}
