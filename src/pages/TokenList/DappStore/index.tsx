@@ -160,12 +160,12 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           title === ToolsCardsTitle.CreateSBT ||
           title === ToolsCardsTitle.CreateDAO ||
           title === ToolsCardsTitle.CreateToken ||
-          title === ToolsCardsTitle.Nft
+          title === ToolsCardsTitle.AccountGenerator
         ) {
           if (!account) return toggleWalletModal()
           if (!userSignature) return loginSignature()
         }
-        if (title === ToolsCardsTitle.Nft) {
+        if (title === ToolsCardsTitle.AccountGenerator) {
           showModal(<CreateNftModal />)
         } else {
           route ? navigate(route) : window.open(link, '_blank')
