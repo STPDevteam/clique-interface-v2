@@ -16,7 +16,7 @@ import TransactionSubmittedModal from 'components/Modal/TransactionModals/Transa
 import { Dots } from 'theme/components'
 import { ScanNFTInfo } from 'hooks/useBackedProfileServer'
 import { useUserInfo } from 'state/userInfo/hooks'
-import { useRecentNftList, useNftAccountList } from 'hooks/useBackedNftCallback'
+import { useRecentNftList } from 'hooks/useBackedNftCallback'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
@@ -64,7 +64,6 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const [isChange, setIsChange] = useState<boolean>(false)
   const [isEnterIng, setIsEnterIng] = useState<boolean>(false)
   const { showModal, hideModal } = useModal()
-  useNftAccountList()
   const { isDeploy, getAccount, createAccountCallback } = useCreateTBACallback(
     contractAddress as `0x${string}`,
     tokenId_f

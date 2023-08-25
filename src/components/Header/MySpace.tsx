@@ -214,7 +214,7 @@ export default function MySpace() {
                   }}
                 >
                   {NftList?.map((option, index) => (
-                    <Box key={option.contract_name + index} sx={{ maxHeight: '54px', mb: 6 }}>
+                    <Box key={index} sx={{ maxHeight: '54px', mb: 6 }}>
                       <Image
                         src={option.image_uri || placeholderImage}
                         alt={''}
