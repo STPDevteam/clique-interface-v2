@@ -7,11 +7,12 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useState } from 'react'
-import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
+// import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
 import Loading from 'components/Loading'
 import placeholderImage from 'assets/images/placeholder.png'
-import { useActiveWeb3React } from 'hooks'
+// import { useActiveWeb3React } from 'hooks'
 import EmptyData from 'components/EmptyData'
+import { useNftAccountList } from 'hooks/useBackedNftCallback'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -109,17 +110,13 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 }))
 
 export default function MySpace() {
-  const { account, chainId } = useActiveWeb3React()
+  // const { account, chainId } = useActiveWeb3React()
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState<boolean>(false)
-  // const { result: accountNFTsList, loading } = useAccountNFTsList(
-  //   '0xccf5a3e7a9ae61a45be3c4f22787266b678faf33',
-  //   137,
-  //   'erc721'
-  // )
-
-  const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  const { result: NftList, loading } = useNftAccountList()
+  // const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  console.log('NftList=>', NftList)
 
   return (
     <Box>
@@ -203,7 +200,7 @@ export default function MySpace() {
           ) : (
             <>
               {loading && <Loading sx={{ marginTop: 30 }} />}
-              {accountNFTsList.length ? (
+              {NftList.length ? (
                 <Box
                   mt={10}
                   sx={{
@@ -216,7 +213,7 @@ export default function MySpace() {
                     marginBottom: '6px'
                   }}
                 >
-                  {accountNFTsList?.map((option, index) => (
+                  {NftList?.map((option, index) => (
                     <Box key={option.contract_name + index} sx={{ maxHeight: '54px', mb: 6 }}>
                       <Image
                         src={option.image_uri || placeholderImage}

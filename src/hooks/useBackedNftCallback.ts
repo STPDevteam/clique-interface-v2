@@ -11,7 +11,7 @@ export interface RecentNftListProp {
   implementation: string
   salt: number
   tokenContract: string
-  tokenId: number
+  tokenId: string
   transactionHash: string
   updateTime: string
 }
@@ -43,8 +43,10 @@ export function useRecentNftList() {
 export function useNftAccountList() {
   const { chainId, account } = useActiveWeb3React()
   const [result, setResult] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     ;(async () => {
+      setLoading(true)
       if (!chainId || !account) return
       const res = await getNftAccountList(
         chainId as number,
@@ -56,12 +58,15 @@ export function useNftAccountList() {
 
       if (res.data.code === 200) {
         setResult(res.data.data)
+        setLoading(false)
       } else {
         setResult([])
+        setLoading(false)
       }
     })()
   }, [chainId, account])
   return {
-    result
+    result,
+    loading
   }
 }
