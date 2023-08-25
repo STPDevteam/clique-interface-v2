@@ -31,6 +31,8 @@ import PopperMenu from './PopperMenu'
 // import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
 // import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 // import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
+import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
+import NewTag from 'assets/svg/new_tag.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
@@ -59,21 +61,35 @@ export const Tabs: Tab[] = [
     title: 'AW Solutions',
     route: '',
     subTab: [
-      {
-        title: 'Account Generator',
-        route: routes.NftAccount,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Account Generator</Typography>
-          </Box>
-        )
-      },
+      // {
+      //   title: 'Account Generator',
+      //   route: routes.NftAccount,
+      //   titleContent: (
+      //     <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
+      //       <Typography color={'#3F5170'}>Account Generator</Typography>
+      //       <Typography
+      //         sx={{
+      //           fontSize: '12px',
+      //           fontWeight: 700,
+      //           lineHeight: '20px',
+      //           fontStyle: 'italic',
+      //           background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
+      //           backgroundClip: 'text',
+      //           '-webkit-background-clip': 'text',
+      //           '-webkit-text-fill-color': 'transparent'
+      //         }}
+      //       >
+      //         NEW!
+      //       </Typography>
+      //     </Box>
+      //   )
+      // },
       {
         title: 'Asset Portal',
         route: routes.Soon,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Asset Portal (coming soon)</Typography>
+            <Typography color={'#3F5170'}>Asset Portal </Typography>
           </Box>
         )
       },
@@ -82,7 +98,7 @@ export const Tabs: Tab[] = [
         route: routes.Soon,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Identity Engine (coming soon)</Typography>
+            <Typography color={'#3F5170'}>Identity Engine </Typography>
           </Box>
         )
       },
@@ -91,7 +107,7 @@ export const Tabs: Tab[] = [
         route: routes.Soon,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Data APIs (coming soon)</Typography>
+            <Typography color={'#3F5170'}>Data APIs </Typography>
           </Box>
         )
       }
@@ -629,46 +645,168 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                   }}
                   alignItems={'center'}
                 >
-                  {title}
-                  <ArrowIcon />
+                  {title === 'AW Solutions' ? (
+                    <>
+                      <Box display={'flex'} alignItems={'center'} gap={4}>
+                        <img src={NewTag} alt="" />
+                        {title}
+                      </Box>
+
+                      <ArrowIcon />
+                    </>
+                  ) : (
+                    <>
+                      {title}
+                      <ArrowIcon />
+                    </>
+                  )}
                 </Box>
               }
             >
               <>
-                {subTab.map(option => (
-                  <Box
-                    sx={{
-                      // width: 150,
-                      minWidth: '150px',
-                      height: 40,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        backgroundColor: '#0049C60D',
-                        colorr: '#0049C6'
-                      },
-                      '&:hover svg path': {
-                        fill: '#0049C6'
-                      },
-                      '& p': {
-                        marginLeft: 8
-                      },
-                      '&:hover p': {
-                        color: '#0049C6'
-                      }
-                    }}
-                    key={option.title}
-                    onClick={() => {
-                      if (!account) return toggleWalletModal()
-                      if (!userSignature) return loginSignature()
-                      option.route ? navigate(option.route) : window.open(option.link, '_blank')
-                    }}
-                  >
-                    {option.titleContent ?? option.title}
-                  </Box>
-                ))}
+                {title === 'AW Solutions' ? (
+                  <>
+                    <Box
+                      gap={30}
+                      sx={{
+                        minWidth: '150px',
+                        height: 40,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        '&:hover': {
+                          backgroundColor: '#E8F1FF',
+                          color: '#0049C6'
+                        },
+                        '& p': {
+                          marginLeft: 8
+                        }
+                      }}
+                      onClick={() => {
+                        if (!account) return toggleWalletModal()
+                        if (!userSignature) return loginSignature()
+                        navigate(routes.NftAccount)
+                      }}
+                    >
+                      <Typography color={'#3F5170'}>Account Generator</Typography>
+                      <Typography
+                        sx={{
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          lineHeight: '20px',
+                          fontStyle: 'italic',
+                          background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
+                          backgroundClip: 'text',
+                          '-webkit-background-clip': 'text',
+                          '-webkit-text-fill-color': 'transparent'
+                        }}
+                      >
+                        NEW!
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        background: '#F2F7FF',
+                        padding: '5px 5px 15px',
+                        marginBottom: 5,
+                        borderRadius: '7px'
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: '100%',
+                          background: '#E8F1FF',
+                          borderRadius: '6px',
+                          height: 27,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          paddingLeft: 12,
+                          '& svg path': {
+                            fill: '#97B7EF'
+                          }
+                        }}
+                      >
+                        <TimeIcon />
+                        <Typography
+                          sx={{
+                            color: 'var(--button-line, #97B7EF)',
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            lineHeight: '20px'
+                          }}
+                        >
+                          Coming soon
+                        </Typography>
+                      </Box>
+                      {subTab.map(option => (
+                        <Box
+                          sx={{
+                            // width: 150,
+                            minWidth: '200px',
+                            height: 40,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            borderRadius: '6px',
+                            '&:hover': {
+                              backgroundColor: '#E8F1FF',
+                              color: '#0049C6',
+                              cursor: 'no-drop'
+                            },
+                            '& p': {
+                              marginLeft: 8
+                            }
+                          }}
+                          key={option.title}
+                          onClick={e => {
+                            e.stopPropagation()
+                          }}
+                        >
+                          {option.titleContent ?? option.title}
+                        </Box>
+                      ))}
+                    </Box>
+                  </>
+                ) : (
+                  subTab.map(option => (
+                    <Box
+                      sx={{
+                        // width: 150,
+                        minWidth: '150px',
+                        height: 40,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#0049C60D',
+                          color: '#0049C6'
+                        },
+                        '&:hover svg path': {
+                          fill: '#0049C6'
+                        },
+                        '& p': {
+                          marginLeft: 8
+                        },
+                        '&:hover p': {
+                          color: '#0049C6'
+                        }
+                      }}
+                      key={option.title}
+                      onClick={() => {
+                        if (!account) return toggleWalletModal()
+                        if (!userSignature) return loginSignature()
+                        option.route ? navigate(option.route) : window.open(option.link, '_blank')
+                      }}
+                    >
+                      {option.titleContent ?? option.title}
+                    </Box>
+                  ))
+                )}
               </>
             </PopperCard>
             {/* <PlainSelect
