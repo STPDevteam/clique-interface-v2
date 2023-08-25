@@ -131,27 +131,27 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     if (!contractAddress) {
       return {
         disabled: true,
-        error: 'Please enter your Address.'
+        error: 'Please enter your address'
       }
     }
 
     if (!isAddress(contractAddress)) {
       return {
         disabled: true,
-        error: 'Address format error.'
+        error: 'Address format error'
       }
     }
 
     if (!tokenId) {
       return {
         disabled: true,
-        error: 'tokenId required.'
+        error: 'tokenId required'
       }
     }
     if (isDeploy) {
       return {
         disabled: true,
-        error: 'Address is already deployed.'
+        error: 'Address is already deployed'
       }
     }
     return {
