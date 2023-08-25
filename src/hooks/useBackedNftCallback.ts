@@ -50,7 +50,7 @@ export function useNftAccountList() {
       if (!chainId || !account) return
       const res = await getNftAccountList(
         chainId as number,
-        '0x0',
+        '0x0000000000000000000000000000000000000000000000000000000000000000',
         '0x2d25602551487c3f3354dd80d76d54383a243358',
         account
       )
