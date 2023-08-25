@@ -19,6 +19,7 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import { useRecentNftList, useNftAccountList } from 'hooks/useBackedNftCallback'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import EmptyData from 'components/EmptyData'
+import Loading from 'components/Loading'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -234,7 +235,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
 }
 
 function MessageList() {
-  const { result: RecentNftList } = useRecentNftList()
+  const { result: RecentNftList, loading } = useRecentNftList()
   console.log(RecentNftList)
 
   return (
@@ -249,9 +250,7 @@ function MessageList() {
       <Stack spacing={13}>
         <ContentTitleStyle>Recent creations</ContentTitleStyle>
 
-        {!RecentNftList?.length ? (
-          <EmptyData>No data</EmptyData>
-        ) : (
+        {RecentNftList?.length ? (
           RecentNftList?.map((item, index) => (
             <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <ContentTextStyle>{shortenAddress(item?.account, 4)}</ContentTextStyle>
@@ -266,6 +265,8 @@ function MessageList() {
               </ContentTextStyle>
             </Box>
           ))
+        ) : (
+          <>{loading ? <Loading sx={{ marginTop: 30 }} /> : <EmptyData>No data</EmptyData>}</>
         )}
       </Stack>
     </Box>
