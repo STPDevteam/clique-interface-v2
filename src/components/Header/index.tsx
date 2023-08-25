@@ -26,10 +26,10 @@ import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
-import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
+// import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 // import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
 // import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
-import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
+// import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 // import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
@@ -55,89 +55,170 @@ interface Tab extends TabContent {
 
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
-  { title: 'Explore DAOs', route: routes.Governance },
-  { title: 'Clique Discovery', route: routes.Activity },
-  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
   {
-    title: 'Creator',
+    title: 'AW Solutions',
     route: '',
     subTab: [
-      // {
-      //   title: 'DAO Rewards',
-      //   route: routes.Activity,
-      //   titleContent: (
-      //     <Box display={'flex'} flexDirection={'row'}>
-      //       <RewardsIcon />
-      //       <Typography color={'#3F5170'}>DAO Rewards</Typography>
-      //     </Box>
-      //   )
-      // },
       {
-        title: 'Create DAO',
-        route: routes.CreateDao,
+        title: 'Account Generator',
+        route: routes.NftAccount,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <DaosIcon />
-            <Typography color={'#3F5170'}>Create DAO</Typography>
+            <Typography color={'#3F5170'}>Account Generator</Typography>
           </Box>
         )
       },
       {
-        title: 'Create Token',
-        route: routes.CreatorToken,
+        title: 'Asset Portal',
+        route: routes.Soon,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <TokenIcon />
-            <Typography color={'#3F5170'}>Create Token</Typography>
+            <Typography color={'#3F5170'}>Asset Portal (coming soon)</Typography>
           </Box>
         )
       },
       {
-        title: 'Create SBT',
-        route: routes.CreateSoulToken,
+        title: 'Identity Engine',
+        route: routes.Soon,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
-            <TokenIcon />
-            <Typography color={'#3F5170'}>Create SBT</Typography>
+            <Typography color={'#3F5170'}>Identity Engine (coming soon)</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Data APIs',
+        route: routes.Soon,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Data APIs (coming soon)</Typography>
           </Box>
         )
       }
-      // {
-      //   title: 'SDK',
-      //   link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
-      //   titleContent: (
-      //     <Box
-      //       display={'flex'}
-      //       flexDirection={'row'}
-      //       sx={{
-      //         '&:hover svg path': {
-      //           fill: '#0049C6'
-      //         }
-      //       }}
-      //     >
-      //       <SdkIcon />
-      //       <Typography color={'#3F5170'} flex={1}>
-      //         SDK
-      //       </Typography>
-      //     </Box>
-      //   )
-      // },
-      // {
-      //   title: 'Tools',
-      //   route: routes.DappStore,
-      //   titleContent: (
-      //     <Box display={'flex'} flexDirection={'row'}>
-      //       <HomeSvg />
-      //       <Typography color={'#3F5170'}>Tools</Typography>
-      //     </Box>
-      //   )
-      // }
     ]
   },
+
+  {
+    title: 'Workspace',
+    route: '',
+    subTab: [
+      {
+        title: 'Explore DAOs',
+        route: routes.Home,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Explore DAOs</Typography>
+          </Box>
+        )
+      }
+    ]
+  },
+  {
+    title: 'Discovery',
+    route: '',
+    subTab: [
+      {
+        title: 'Clique Discovery',
+        route: routes.Activity,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Clique Discovery</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Tools',
+        route: routes.DappStore,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Tools</Typography>
+          </Box>
+        )
+      }
+    ]
+  }
+  // { title: 'Explore DAOs', route: routes.Governance },
+  // { title: 'Clique Discovery', route: routes.Activity },
+  // { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
+  // {
+  //   title: 'Creator',
+  //   route: '',
+  //   subTab: [
+  // {
+  //   title: 'DAO Rewards',
+  //   route: routes.Activity,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <RewardsIcon />
+  //       <Typography color={'#3F5170'}>DAO Rewards</Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Create DAO',
+  //   route: routes.CreateDao,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <DaosIcon />
+  //       <Typography color={'#3F5170'}>Create DAO</Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Create Token',
+  //   route: routes.CreatorToken,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <TokenIcon />
+  //       <Typography color={'#3F5170'}>Create Token</Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Create SBT',
+  //   route: routes.CreateSoulToken,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <TokenIcon />
+  //       <Typography color={'#3F5170'}>Create SBT</Typography>
+  //     </Box>
+  //   )
+  // }
+  // {
+  //   title: 'SDK',
+  //   link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
+  //   titleContent: (
+  //     <Box
+  //       display={'flex'}
+  //       flexDirection={'row'}
+  //       sx={{
+  //         '&:hover svg path': {
+  //           fill: '#0049C6'
+  //         }
+  //       }}
+  //     >
+  //       <SdkIcon />
+  //       <Typography color={'#3F5170'} flex={1}>
+  //         SDK
+  //       </Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Tools',
+  //   route: routes.DappStore,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <HomeSvg />
+  //       <Typography color={'#3F5170'}>Tools</Typography>
+  //     </Box>
+  //   )
+  // }
+  //   ]
+  // },
   // { title: 'Swap', route: routes.SaleList },
   // { title: 'Tokens', route: routes.Tokens },
-  { title: 'Tools', route: routes.DappStore },
-  { title: 'NFT', route: routes.NftAccount }
+  // { title: 'Tools', route: routes.DappStore }
   // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
@@ -557,7 +638,8 @@ function TabsBox() {
                 {subTab.map(option => (
                   <Box
                     sx={{
-                      width: 150,
+                      // width: 150,
+                      minWidth: '150px',
                       height: 40,
                       display: 'flex',
                       flexDirection: 'row',

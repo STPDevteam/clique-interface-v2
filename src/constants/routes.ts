@@ -44,7 +44,7 @@ export const routes = {
 
   Notification: '/notification',
   PushList: '/notification/push/list',
-
+  Soon: '/comingSoon',
   Profile: '/profile/:address',
   _Profile: '/profile',
   CreateSales: '/createSale',
