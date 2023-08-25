@@ -68,7 +68,7 @@ export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: st
     }
   }, [account, addTransaction, chainId, getAccount, isDeploy, library, tokenContract, tokenId, tokenboundClient])
 
-  // const erc20Contract = useTokenContract('0x21C3ac8c6E5079936A59fF01639c37F36CE5ed9E')
+  // const erc20Contract = useTokenContract('')
   // const transfer = useCallback(
   //   (to: string, value: string) => {
   //     return erc20Contract?.interface.encodeFunctionData('transfer', [to, value])
@@ -77,11 +77,11 @@ export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: st
   // )
 
   // const send = async () => {
-  //   const data = transfer('0xF2da7b9CDb35Dc7c8e875DE0241b02376825CF86', '10000')
+  //   const data = transfer('', '10000')
   //   if (!data || !getAccount) return
   //   const tranData = await tokenboundClient?.prepareExecuteCall({
   //     account: getAccount,
-  //     to: '0x21C3ac8c6E5079936A59fF01639c37F36CE5ed9E',
+  //     to: '',
   //     value: BigInt(0),
   //     data
   //   })

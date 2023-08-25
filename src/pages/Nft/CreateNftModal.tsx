@@ -16,6 +16,9 @@ import TransactionSubmittedModal from 'components/Modal/TransactionModals/Transa
 import { Dots } from 'theme/components'
 import { ScanNFTInfo } from 'hooks/useBackedProfileServer'
 import { useUserInfo } from 'state/userInfo/hooks'
+import { useRecentNftList, useNftAccountList } from 'hooks/useBackedNftCallback'
+import { getEtherscanLink, shortenAddress } from 'utils'
+import EmptyData from 'components/EmptyData'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -60,6 +63,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const [isChange, setIsChange] = useState<boolean>(false)
   const [isEnterIng, setIsEnterIng] = useState<boolean>(false)
   const { showModal, hideModal } = useModal()
+  useNftAccountList()
   const { isDeploy, getAccount, createAccountCallback } = useCreateTBACallback(
     contractAddress as `0x${string}`,
     tokenId_f
@@ -101,7 +105,6 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
 
     try {
       const res = await createAccountCallback()
-      console.log(res)
       hideModal()
       showModal(
         <TransactionSubmittedModal
@@ -198,26 +201,30 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
             }}
           />
           <Box sx={{ display: 'grid', gap: 5 }}>
-            <Button
-              style={{ height: 40 }}
-              disabled={createBtn.disabled || isEnterIng || isPending}
-              onClick={() => {
-                if (createBtn.handler) {
-                  createBtn.handler()
-                }
-              }}
-            >
-              {isPending ? (
-                <>
-                  pending
-                  <Dots />
-                </>
-              ) : createBtn.error ? (
-                createBtn.error
-              ) : (
-                'Create Account'
-              )}
-            </Button>
+            {isAddress(contractAddress) && isEnterIng ? (
+              <Button style={{ height: 40 }} disabled>
+                Create Account
+              </Button>
+            ) : (
+              <Button
+                style={{ height: 40 }}
+                disabled={createBtn.disabled || isPending || isEnterIng}
+                onClick={() => {
+                  createBtn.handler && createBtn.handler()
+                }}
+              >
+                {isPending ? (
+                  <>
+                    pending
+                    <Dots />
+                  </>
+                ) : createBtn.error ? (
+                  createBtn.error
+                ) : (
+                  'Create Account'
+                )}
+              </Button>
+            )}
           </Box>
           <MessageList />
         </Stack>
@@ -227,6 +234,9 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
 }
 
 function MessageList() {
+  const { result: RecentNftList } = useRecentNftList()
+  console.log(RecentNftList)
+
   return (
     <Box
       sx={{
@@ -239,27 +249,24 @@ function MessageList() {
       <Stack spacing={13}>
         <ContentTitleStyle>Recent creations</ContentTitleStyle>
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <ContentTextStyle>Token Name #2452</ContentTextStyle>
-          <ContentTextStyle sx={{ color: '#0049C6', cursor: 'pointer', display: 'flex', gap: 5, alignItems: 'center' }}>
-            View on Blockchain
-            <ShareIcon />
-          </ContentTextStyle>
-        </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <ContentTextStyle>Token Name #2452</ContentTextStyle>
-          <ContentTextStyle sx={{ color: '#0049C6', cursor: 'pointer', display: 'flex', gap: 5, alignItems: 'center' }}>
-            View on Blockchain
-            <ShareIcon />
-          </ContentTextStyle>
-        </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <ContentTextStyle>Token Name #2452</ContentTextStyle>
-          <ContentTextStyle sx={{ color: '#0049C6', cursor: 'pointer', display: 'flex', gap: 5, alignItems: 'center' }}>
-            View on Blockchain
-            <ShareIcon />
-          </ContentTextStyle>
-        </Box>
+        {!RecentNftList?.length ? (
+          <EmptyData>No data</EmptyData>
+        ) : (
+          RecentNftList?.map((item, index) => (
+            <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <ContentTextStyle>{shortenAddress(item?.account, 4)}</ContentTextStyle>
+              <ContentTextStyle
+                onClick={() => {
+                  window.open(getEtherscanLink(item?.chainId, item?.transactionHash, 'transaction'))
+                }}
+                sx={{ color: '#0049C6', cursor: 'pointer', display: 'flex', gap: 5, alignItems: 'center' }}
+              >
+                View on Blockchain
+                <ShareIcon />
+              </ContentTextStyle>
+            </Box>
+          ))
+        )}
       </Stack>
     </Box>
   )
