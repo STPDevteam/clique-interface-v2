@@ -1,10 +1,10 @@
 import Modal from 'components/Modal/index'
 import { Box, Stack, Typography, styled } from '@mui/material'
 import Input from 'components/Input'
-import Image from 'components/Image'
-import { ChainList } from 'constants/chain'
+// import Image from 'components/Image'
+// import { ChainList } from 'constants/chain'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useActiveWeb3React } from 'hooks'
+// import { useActiveWeb3React } from 'hooks'
 import Button from 'components/Button/Button'
 import { ReactComponent as ShareIconComponent } from 'assets/svg/share.svg'
 import { isAddress } from 'ethers/lib/utils'
@@ -56,7 +56,7 @@ const ShareIcon = styled(ShareIconComponent)(() => ({
 }))
 
 export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
-  const { chainId } = useActiveWeb3React()
+  // const { chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const [contractAddress, setContractAddress] = useState<string>('')
   const [tokenId, setTokenId] = useState<string>('')
@@ -68,10 +68,10 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     contractAddress as `0x${string}`,
     tokenId_f
   )
-  const curChain = useMemo(() => {
-    const res = ChainList.filter(item => item.id === chainId)
-    return res[0]
-  }, [chainId])
+  // const curChain = useMemo(() => {
+  //   const res = ChainList.filter(item => item.id === chainId)
+  //   return res[0]
+  // }, [chainId])
   console.log(isDeploy, getAccount)
 
   const isPending = useMemo(() => {
@@ -176,9 +176,10 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
           />
           <Box sx={{ display: 'grid', gap: 5 }}>
             <ContentTitleStyle>Token Name</ContentTitleStyle>
-            <Box sx={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              <Image src={curChain?.logo} style={{ height: 24, width: 24 }} />
-              <ContentTextStyle>{curChain?.name}</ContentTextStyle>
+            <Box sx={{ display: 'flex', gap: 10, alignItems: 'center', paddingLeft: 6 }}>
+              <ContentTextStyle>{'--'}</ContentTextStyle>
+              {/* <Image src={curChain?.logo} style={{ height: 24, width: 24 }} />
+              <ContentTextStyle>{curChain?.name}</ContentTextStyle> */}
             </Box>
           </Box>
           <Input
