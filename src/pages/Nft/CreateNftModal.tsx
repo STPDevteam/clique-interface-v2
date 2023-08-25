@@ -201,7 +201,22 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
               }
             }}
           />
-          <Box sx={{ display: 'grid', gap: 5 }}>
+          <Box sx={{ display: 'grid', gap: 10 }}>
+            {getAccount && (
+              <ContentTitleStyle
+                sx={{
+                  background: 'var(--light-bg, #F8FBFF)',
+                  borderRadius: '6px',
+                  padding: '8px 0 8px 12px'
+                }}
+              >
+                Generated address:{' '}
+                <Typography fontSize={12} color={'#0049C6'}>
+                  {getAccount}
+                </Typography>
+              </ContentTitleStyle>
+            )}
+
             {isAddress(contractAddress) && isEnterIng ? (
               <Button style={{ height: 40 }} disabled>
                 Create Account
