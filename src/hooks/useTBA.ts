@@ -58,7 +58,7 @@ export function useCreateTBACallback(tokenContract?: `0x${string}`, tokenId?: st
       const rep = await library.getSigner().sendTransaction(tranData)
 
       addTransaction(rep, {
-        summary: 'NftAccount Create',
+        summary: 'NFT Account Created',
         claim: { recipient: `${getAccount}_create_Nft_Account` }
       })
 
