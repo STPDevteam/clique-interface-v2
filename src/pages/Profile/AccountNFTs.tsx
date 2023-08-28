@@ -87,7 +87,7 @@ const tabList = [
   {
     label: 'NFTs'
   },
-  { label: 'My Create Nfts (6551)' }
+  { label: 'My Created NFT Accounts' }
 ]
 
 export default function AccountNFTs({ account }: { account: string }) {
