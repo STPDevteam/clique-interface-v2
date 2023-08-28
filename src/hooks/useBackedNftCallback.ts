@@ -7,6 +7,7 @@ import {
   getNftAccountInfo
 } from '../utils/fetch/server'
 import { useActiveWeb3React } from 'hooks'
+import { ScanNFTInfo } from './useBackedProfileServer'
 
 export interface RecentNftListProp {
   account: string
@@ -107,7 +108,7 @@ export function useMyCreateNftAccountList(account: string) {
 
 export function useNftAccountList() {
   const { chainId, account } = useActiveWeb3React()
-  const [result, setResult] = useState<any[]>([])
+  const [result, setResult] = useState<ScanNFTInfo[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     ;(async () => {

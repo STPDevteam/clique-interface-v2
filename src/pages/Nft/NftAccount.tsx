@@ -4,7 +4,7 @@ import NftImage from 'assets/images/nft_r.png'
 import Coin_1 from 'assets/images/coin_1.png'
 import Coin_2 from 'assets/images/coin_2.png'
 import Coin_3 from 'assets/images/coin_3.png'
-import { ReactComponent as NftAccountTxt } from 'assets/svg/nftAccount_txt.svg'
+// import { ReactComponent as NftAccountTxt } from 'assets/svg/nftAccount_txt.svg'
 import Button from 'components/Button/Button'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
@@ -77,8 +77,22 @@ export function NftAccount() {
             marginBottom: isMdDown ? '0' : '50px'
           }}
         >
-          <NftAccountTxt />
+          {/* <NftAccountTxt /> */}
 
+          <Typography
+            sx={{
+              color: '#FFF',
+              fontFeatureSettings: `'clig' off, 'liga' off`,
+              fontFamily: 'Passion One',
+              fontSize: '50px',
+              fontStyle: 'normal',
+              fontWeight: 800,
+              lineHeight: '20px',
+              letterSpacing: ' 1px'
+            }}
+          >
+            Generate NFT Smart Wallets
+          </Typography>
           <Typography sx={{ color: '#fff', font: '400 18px/28px "Inter"', maxWidth: 472 }}>
             Turn any NFT into a Smart Wallet to seamlessly own any assets and efficiently interact with blockchain
             applications and ecosystems.

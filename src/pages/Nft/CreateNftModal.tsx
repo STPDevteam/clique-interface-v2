@@ -34,7 +34,7 @@ const TitleStyle = styled(Typography)(() => ({
 }))
 
 const ContentTitleStyle = styled(Typography)(() => ({
-  color: 'var(--tile-grey, #80829F)',
+  color: 'var(--tile-grey, #808191)',
   fontSize: '14px',
   fontWeight: 400,
   lineHeight: '20px'
