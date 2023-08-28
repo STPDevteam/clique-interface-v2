@@ -280,7 +280,7 @@ function RecentList({ item }: { item: RecentNftListProp }) {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-      <ContentTextStyle>
+      <ContentTextStyle noWrap maxWidth={200}>
         {nftInfo?.name || '--'}#{item.tokenId}
       </ContentTextStyle>
       <ContentTextStyle
