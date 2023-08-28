@@ -16,8 +16,8 @@ import TransactionSubmittedModal from 'components/Modal/TransactionModals/Transa
 import { Dots } from 'theme/components'
 import { ScanNFTInfo } from 'hooks/useBackedProfileServer'
 import { useUserInfo } from 'state/userInfo/hooks'
-import { useRecentNftList } from 'hooks/useBackedNftCallback'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import { useRecentNftList, useNftAccountInfo, RecentNftListProp } from 'hooks/useBackedNftCallback'
+import { getEtherscanLink } from 'utils'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 
@@ -266,24 +266,32 @@ function MessageList() {
         <ContentTitleStyle>Recent Creations</ContentTitleStyle>
 
         {RecentNftList?.length ? (
-          RecentNftList?.map((item, index) => (
-            <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <ContentTextStyle>{shortenAddress(item?.account, 4)}</ContentTextStyle>
-              <ContentTextStyle
-                onClick={() => {
-                  window.open(getEtherscanLink(item?.chainId, item?.transactionHash, 'transaction'))
-                }}
-                sx={{ color: '#0049C6', cursor: 'pointer', display: 'flex', gap: 5, alignItems: 'center' }}
-              >
-                View on Blockchain
-                <ShareIcon />
-              </ContentTextStyle>
-            </Box>
-          ))
+          RecentNftList?.map((item, index) => <RecentList key={index} item={item} />)
         ) : (
           <>{loading ? <Loading sx={{ marginTop: 30 }} /> : <EmptyData>No data</EmptyData>}</>
         )}
       </Stack>
+    </Box>
+  )
+}
+
+function RecentList({ item }: { item: RecentNftListProp }) {
+  const { result: nftInfo } = useNftAccountInfo(item.tokenContract, item.chainId)
+
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <ContentTextStyle>
+        {nftInfo?.name || '--'}#{item.tokenId}
+      </ContentTextStyle>
+      <ContentTextStyle
+        onClick={() => {
+          window.open(getEtherscanLink(item?.chainId, item?.transactionHash, 'transaction'))
+        }}
+        sx={{ color: '#0049C6', cursor: 'pointer', display: 'flex', gap: 5, alignItems: 'center' }}
+      >
+        View on Blockchain
+        <ShareIcon />
+      </ContentTextStyle>
     </Box>
   )
 }
