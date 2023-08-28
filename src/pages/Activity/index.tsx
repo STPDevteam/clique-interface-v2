@@ -34,7 +34,7 @@ import { useSbtList } from 'hooks/useBackedSbtServer'
 //   }
 // }))
 
-const TabStyle = styled(Tabs)(({ theme }) => ({
+export const TabStyle = styled(Tabs)(({ theme }) => ({
   '& .MuiButtonBase-root': {
     fontWeight: 500,
     fontSize: 18,

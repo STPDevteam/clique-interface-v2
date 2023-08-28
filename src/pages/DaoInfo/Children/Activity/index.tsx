@@ -1,4 +1,4 @@
-import { styled, Tooltip, Box, useTheme, Tabs, Tab } from '@mui/material'
+import { Tooltip, Box, useTheme, Tab } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { routes } from 'constants/routes'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
@@ -13,6 +13,7 @@ import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buil
 import { useDaoSbtList } from 'hooks/useBackedSbtServer'
 import DaoSbtList from './DaoSbtList'
 import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
+import { TabStyle } from 'pages/Activity'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
@@ -32,37 +33,6 @@ import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 //     }
 //   }
 // }))
-
-const TabStyle = styled(Tabs)(({ theme }) => ({
-  '& .MuiButtonBase-root': {
-    fontWeight: 500,
-    fontSize: 18,
-    lineHeight: '22px',
-    color: '#3F5170',
-    textTransform: 'none',
-    padding: 0
-  },
-  '& .MuiTabs-indicator': {
-    height: 4,
-    background: '#0049C6',
-    borderRadius: '2px',
-    margin: 'auto'
-  },
-  '& .active': {
-    fontWeight: 700,
-    fontSize: 18,
-    lineHeight: '22px',
-    color: '#0049C6'
-  },
-  [theme.breakpoints.down('sm')]: {
-    '& .MuiButtonBase-root': {
-      fontSize: 16
-    },
-    '& .active': {
-      fontSize: 16
-    }
-  }
-}))
 
 export enum ActivityType {
   PUBLIC_SALE = 'Public Sale',

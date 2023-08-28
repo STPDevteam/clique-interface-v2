@@ -1,4 +1,4 @@
-import { Box, Link, MenuItem, Stack, styled, Typography } from '@mui/material'
+import { Box, Link, MenuItem, Stack, styled, Typography, Tabs, Tab } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Image from 'components/Image'
 import Loading from 'components/Loading'
@@ -15,6 +15,7 @@ import LogoText from 'components/LogoText'
 import { getEtherscanLink } from 'utils'
 import LoopIcon from '@mui/icons-material/Loop'
 import { toast } from 'react-toastify'
+import { Dots } from 'theme/components'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   borderRadius: '16px',
@@ -36,6 +37,37 @@ import { toast } from 'react-toastify'
 //   }
 // }))
 
+const TabStyle = styled(Tabs)(({ theme }) => ({
+  '& .MuiButtonBase-root': {
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: '22px',
+    color: '#3F5170',
+    textTransform: 'none',
+    padding: 0
+  },
+  '& .MuiTabs-indicator': {
+    height: 4,
+    background: '#0049C6',
+    borderRadius: '2px',
+    margin: 'auto'
+  },
+  '& .active': {
+    fontWeight: 600,
+    fontSize: 16,
+    lineHeight: '22px',
+    color: '#0049C6'
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .MuiButtonBase-root': {
+      fontSize: 16
+    },
+    '& .active': {
+      fontSize: 16
+    }
+  }
+}))
+
 const StyledItems = styled(Box)(({ theme }) => ({
   height: 298,
   background: '#F9F9F9',
@@ -51,11 +83,19 @@ const nftSupportedChain = AllChainList.filter(i =>
   [ChainId.MAINNET, ChainId.BSC, ChainId.POLYGON, ChainId.ZKSYNC_ERA].includes(i.id)
 )
 
+const tabList = [
+  {
+    label: 'NFTs'
+  },
+  { label: 'My Create Nfts (6551)' }
+]
+
 export default function AccountNFTs({ account }: { account: string }) {
   const isSmDown = useBreakpoint('sm')
   const [viewAll, setViewAll] = useState(false)
   const [currentChainId, setCurrentChainId] = useState<ChainId>(1)
   const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
+  const [tabValue, setTabValue] = useState<number>(0)
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
     return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
@@ -80,94 +120,131 @@ export default function AccountNFTs({ account }: { account: string }) {
       margin={'0 auto'}
     >
       <Box display={'flex'} justifyContent="space-between">
-        <Typography variant="h6" fontSize={16} fontWeight={600}>
-          NFTs
-        </Typography>
-        <Stack spacing={10} direction={'row'}>
-          <Select
-            noBold
-            defaultValue={ChainListMap[currentChainId]?.symbol}
-            value={currentChainId}
-            height={36}
-            onChange={e => setCurrentChainId(e.target.value)}
-          >
-            {nftSupportedChain.map(option => (
-              <MenuItem value={option.id} key={option.id} selected={currentChainId === option.id}>
-                <LogoText logo={option.logo} text={option.symbol} />
+        <TabStyle value={tabValue}>
+          {tabList.map((item, idx) => (
+            <Tab
+              key={item.label + idx}
+              label={item.label}
+              onClick={() => {
+                setTabValue(idx)
+              }}
+              sx={{ gap: 10, marginRight: 50 }}
+              className={tabValue === idx ? 'active' : ''}
+            ></Tab>
+          ))}
+        </TabStyle>
+
+        {tabValue === 0 && (
+          <Stack spacing={10} direction={'row'}>
+            <Select
+              noBold
+              defaultValue={ChainListMap[currentChainId]?.symbol}
+              value={currentChainId}
+              height={36}
+              onChange={e => setCurrentChainId(e.target.value)}
+            >
+              {nftSupportedChain.map(option => (
+                <MenuItem value={option.id} key={option.id} selected={currentChainId === option.id}>
+                  <LogoText logo={option.logo} text={option.symbol} />
+                </MenuItem>
+              ))}
+            </Select>
+            <Select noBold value={ercType} height={36} onChange={e => setErcType(e.target.value)}>
+              <MenuItem value={'erc721'} key={'erc721'} selected={ercType === 'erc721'}>
+                Erc721
               </MenuItem>
-            ))}
-          </Select>
-          <Select noBold value={ercType} height={36} onChange={e => setErcType(e.target.value)}>
-            <MenuItem value={'erc721'} key={'erc721'} selected={ercType === 'erc721'}>
-              Erc721
-            </MenuItem>
-            <MenuItem value={'erc1155'} key={'erc1155'} selected={ercType === 'erc1155'}>
-              Erc1155
-            </MenuItem>
-          </Select>
-        </Stack>
-      </Box>
-      <Box
-        mt={16}
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
-            xs: '1fr 1fr'
-          },
-          gap: '15px',
-          minWidth: isSmDown ? 'unset' : '800px',
-          overflowX: 'auto',
-          '&::-webkit-scrollbar': {
-            display: 'none'
-          }
-        }}
-      >
-        {showAccountNFTsList.map((item, index) => (
-          <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
-        ))}
-        {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
-          <StyledItems
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-              cursor: 'pointer'
-            }}
-            onClick={() => setViewAll(true)}
-          >
-            <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
-              <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
-            </svg>
-            <Typography color={'#9A9A9A'} fontWeight={500}>
-              View all
-            </Typography>
-            <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
-              <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
-            </svg>
-          </StyledItems>
-        )}
-      </Box>
-      <Box mt={20}>
-        {!accountNFTsList.length && !loading && <EmptyData />}
-        {loading && (
-          <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Loading />
-          </Box>
+              <MenuItem value={'erc1155'} key={'erc1155'} selected={ercType === 'erc1155'}>
+                Erc1155
+              </MenuItem>
+            </Select>
+          </Stack>
         )}
       </Box>
 
-      {viewAll && page.totalPage > 1 && (
-        <Box display={'flex'} mt={20} justifyContent="center">
-          <Pagination
-            count={page.totalPage}
-            page={page.currentPage}
-            onChange={(_, value) => page.setCurrentPage(value)}
-          />
+      {tabValue === 0 && (
+        <Box mt={20}>
+          {!accountNFTsList.length && !loading && <EmptyData />}
+          {loading && (
+            <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Loading />
+            </Box>
+          )}
         </Box>
+      )}
+      {tabValue === 1 && (
+        <Box mt={20}>
+          {!accountNFTsList.length && <EmptyData />}
+          {loading && (
+            <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Loading />
+            </Box>
+          )}
+        </Box>
+      )}
+
+      {tabValue === 0 && (
+        <>
+          <Box
+            mt={16}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+                xs: '1fr 1fr'
+              },
+              gap: '15px',
+              minWidth: isSmDown ? 'unset' : '800px',
+              overflowX: 'auto',
+              '&::-webkit-scrollbar': {
+                display: 'none'
+              }
+            }}
+          >
+            {showAccountNFTsList.map((item, index) => (
+              <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
+            ))}
+            {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
+              <StyledItems
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setViewAll(true)}
+              >
+                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+                </svg>
+                <Typography color={'#9A9A9A'} fontWeight={500}>
+                  View all
+                </Typography>
+                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+                </svg>
+              </StyledItems>
+            )}
+          </Box>
+
+          {viewAll && page.totalPage > 1 && (
+            <Box display={'flex'} mt={20} justifyContent="center">
+              <Pagination
+                count={page.totalPage}
+                page={page.currentPage}
+                onChange={(_, value) => page.setCurrentPage(value)}
+              />
+            </Box>
+          )}
+        </>
+      )}
+      {tabValue === 1 && (
+        // <CreateNft6551 accountNFTsList={accountNFTsList} currentChainId={currentChainId} page={page} />
+        <Typography fontSize={20} textAlign={'center'} mt={50}>
+          Coming Soon <Dots />
+        </Typography>
       )}
     </ContainerWrapper>
   )
@@ -262,3 +339,93 @@ function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftC
     </StyledItems>
   )
 }
+
+// function CreateNft6551({
+//   accountNFTsList,
+//   currentChainId,
+//   page
+// }: {
+//   accountNFTsList: any[]
+//   currentChainId: number
+//   page: {
+//     setCurrentPage: Dispatch<SetStateAction<number>>
+//     currentPage: number
+//     total: number
+//     totalPage: number
+//     pageSize: number
+//   }
+// }) {
+//   const isSmDown = useBreakpoint('sm')
+//   const [viewAll, setViewAll] = useState(false)
+//   const showAccountNFTsList = useMemo(() => {
+//     return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
+//   }, [accountNFTsList, viewAll])
+
+//   useEffect(() => {
+//     if (accountNFTsList.length === 4) {
+//       setViewAll(true)
+//     }
+//     if (isSmDown) {
+//       setViewAll(true)
+//     }
+//   }, [accountNFTsList, isSmDown])
+
+//   return (
+//     <>
+//       <Box
+//         mt={16}
+//         sx={{
+//           display: 'grid',
+//           gridTemplateColumns: {
+//             sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+//             xs: '1fr 1fr'
+//           },
+//           gap: '15px',
+//           minWidth: isSmDown ? 'unset' : '800px',
+//           overflowX: 'auto',
+//           '&::-webkit-scrollbar': {
+//             display: 'none'
+//           }
+//         }}
+//       >
+//         {showAccountNFTsList.map((item, index) => (
+//           <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
+//         ))}
+//         {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
+//           <StyledItems
+//             sx={{
+//               display: 'flex',
+//               flexDirection: 'column',
+//               justifyContent: 'space-around',
+//               alignItems: 'center',
+//               cursor: 'pointer'
+//             }}
+//             onClick={() => setViewAll(true)}
+//           >
+//             <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+//               <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+//               <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+//             </svg>
+//             <Typography color={'#9A9A9A'} fontWeight={500}>
+//               View all
+//             </Typography>
+//             <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+//               <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+//               <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+//             </svg>
+//           </StyledItems>
+//         )}
+//       </Box>
+
+//       {viewAll && page.totalPage > 1 && (
+//         <Box display={'flex'} mt={20} justifyContent="center">
+//           <Pagination
+//             count={page.totalPage}
+//             page={page.currentPage}
+//             onChange={(_, value) => page.setCurrentPage(value)}
+//           />
+//         </Box>
+//       )}
+//     </>
+//   )
+// }
