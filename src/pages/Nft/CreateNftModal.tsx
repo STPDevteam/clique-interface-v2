@@ -164,7 +164,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     <Modal maxWidth="480px" width="100%" closeIcon>
       <BodyBoxStyle>
         <Stack spacing={20}>
-          <TitleStyle>Create an account with an NFT</TitleStyle>
+          <TitleStyle>Manually Create a Smart Wallet using a NFT</TitleStyle>
           <Input
             disabled={isChange}
             value={contractAddress}
