@@ -235,12 +235,41 @@ export default function Index() {
         margin: 'auto',
         padding: '44px 120px',
         '& .top_banner': {
-          marginLeft: 18,
-          width: 'calc(100% - 18px)'
+          width: 'calc(100% - 18px)',
+          height: '100%',
+          objectFit: 'cover'
         }
       }}
     >
-      <Image className="top_banner" src={banner} />
+      <Box sx={{ position: 'relative', height: 197, marginLeft: 18 }}>
+        <Image className="top_banner" src={banner} style={{ position: 'absolute', zIndex: 0, borderRadius: '8px' }} />
+        <Typography
+          sx={{
+            color: '#fff',
+            fontSize: '50px',
+            fontWeight: 700,
+            lineHeight: '77px',
+            position: 'absolute',
+            top: 34,
+            left: 70
+          }}
+        >
+          Tools
+        </Typography>
+        <Typography
+          sx={{
+            color: '#fff',
+            fontSize: '16px',
+            fontWeight: 500,
+            lineHeight: '20px',
+            position: 'absolute',
+            top: 120,
+            left: 72
+          }}
+        >
+          The most powerful set of web3 development tools to build
+        </Typography>
+      </Box>
       <Grid mt={12} container>
         {cardsData.map((item, index) => (
           <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
