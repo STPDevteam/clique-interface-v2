@@ -88,7 +88,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.CreateSBT,
     icon: sbtIcon,
-    des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
+    des: 'Provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: 'all',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.CreateSoulToken
