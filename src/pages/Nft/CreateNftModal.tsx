@@ -145,7 +145,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     if (!tokenId) {
       return {
         disabled: true,
-        error: 'tokenId required'
+        error: 'Token ID required'
       }
     }
     if (isDeploy) {
@@ -168,7 +168,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
           <Input
             disabled={isChange}
             value={contractAddress}
-            label="Your address"
+            label="NFT Collection Address"
             placeholder="0x..."
             onChange={e => {
               setContractAddress(e.target.value)
