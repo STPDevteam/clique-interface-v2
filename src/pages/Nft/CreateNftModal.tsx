@@ -210,7 +210,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                   padding: '8px 0 8px 12px'
                 }}
               >
-                Generated address:{' '}
+                Generated Address:{' '}
                 <Typography fontSize={12} color={'#0049C6'}>
                   {getAccount}
                 </Typography>
@@ -263,7 +263,7 @@ function MessageList() {
       }}
     >
       <Stack spacing={13}>
-        <ContentTitleStyle>Recent creations</ContentTitleStyle>
+        <ContentTitleStyle>Recent Creations</ContentTitleStyle>
 
         {RecentNftList?.length ? (
           RecentNftList?.map((item, index) => (
