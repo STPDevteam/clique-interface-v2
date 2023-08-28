@@ -80,7 +80,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.SDK,
     icon: sdkIcon,
-    des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
+    des: 'Provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: '',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     link: 'https://www.npmjs.com/package/@myclique/governance-sdk'
