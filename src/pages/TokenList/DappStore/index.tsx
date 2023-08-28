@@ -30,7 +30,7 @@ export enum ToolsCardsTitle {
   CreateDAO = 'Create DAO',
   CreateToken = 'Create Token',
   SDK = 'SDK',
-  CreateSBT = 'Create Soulbound Token of DAO',
+  CreateSBT = 'Create Soulbound Token for your DAOs',
   Nft = 'Create an account as NFT',
   AccountGenerator = 'Account Generator',
   AssetPortal = 'Asset Portal'
