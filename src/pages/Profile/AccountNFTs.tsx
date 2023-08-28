@@ -321,7 +321,7 @@ function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListPr
         <Table>
           <TableHead>
             <TableRow>
-              <StyledTableCell className="firstColumn"> Account </StyledTableCell>
+              <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
               <StyledTableCell>TokenId</StyledTableCell>
               <StyledTableCell>Token Contract</StyledTableCell>
               <StyledTableCell>Create time</StyledTableCell>
