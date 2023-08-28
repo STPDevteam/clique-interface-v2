@@ -1,5 +1,5 @@
 import Modal from 'components/Modal/index'
-import { Box, Stack, Typography, styled } from '@mui/material'
+import { Alert, Box, Stack, Typography, styled } from '@mui/material'
 import Input from 'components/Input'
 // import Image from 'components/Image'
 // import { ChainList } from 'constants/chain'
@@ -217,6 +217,8 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
               </ContentTitleStyle>
             )}
 
+            {createBtn.error && <Alert severity="error">{createBtn.error}</Alert>}
+
             {isAddress(contractAddress) && isEnterIng ? (
               <Button style={{ height: 40 }} disabled>
                 Create Account
@@ -234,8 +236,6 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                     pending
                     <Dots />
                   </>
-                ) : createBtn.error ? (
-                  createBtn.error
                 ) : (
                   'Create Account'
                 )}
