@@ -14,6 +14,10 @@ import { ReactComponent as CoinbaseLogo } from '../assets/svg/coinbase_logo.svg'
 import ZetaSvg from '../assets/svg/zeta-chain.svg'
 import { ReactComponent as ZetaLogo } from '../assets/svg/zeta-chain.svg'
 
+export function isSupportedChain(chainId: ChainId | undefined) {
+  return !!(chainId && SUPPORT_NETWORK_CHAIN_IDS.includes(chainId))
+}
+
 export enum ChainId {
   MAINNET = 1,
   ROPSTEN = 3,

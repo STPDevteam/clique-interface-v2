@@ -5,7 +5,7 @@ import useIsWindowVisible from '../../hooks/useIsWindowVisible'
 import { setCurAddress, updateBlockNumber } from './actions'
 import { useDispatch } from 'react-redux'
 import { SUPPORT_NETWORK_CHAIN_IDS } from 'constants/chain'
-import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
+import { getOtherNetworkLibrary } from 'connection/MultiNetworkConnector'
 import { useUpdateNotificationUnReadCount } from 'hooks/useBackedNotificationServer'
 import { useUserLocation } from './hooks'
 import { useLogin } from 'hooks/useBackedDaoServer'
@@ -51,7 +51,7 @@ export default function Updater(): null {
     library
       .getBlockNumber()
       .then(blockNumberCallback)
-      .catch(error => console.error(`Failed to get block number for chainId: ${chainId}`, error))
+      .catch((error: any) => console.error(`Failed to get block number for chainId: ${chainId}`, error))
 
     library.on('block', blockNumberCallback)
     return () => {
