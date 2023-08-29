@@ -120,7 +120,7 @@ export const Tabs: Tab[] = [
     subTab: [
       {
         title: 'Explore DAOs',
-        route: routes.Home,
+        route: routes.Governance,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'}>
             <Typography color={'#3F5170'}>Explore DAOs</Typography>

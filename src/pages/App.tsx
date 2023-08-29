@@ -218,7 +218,7 @@ export default function App() {
                 <Route path={routes._Profile} element={<Profile />} />
                 <Route path={routes.Soon} element={<ComingSoon />} />
                 <Route path="/governance" element={<Navigate replace to={routes.Governance} />} />
-                <Route path="/" element={<Navigate replace to={routes.Governance} />} />
+                <Route path="*" element={<Navigate replace to={routes.Governance} />} />
               </Routes>
             </BodyWrapper>
           </ContentWrapper>
