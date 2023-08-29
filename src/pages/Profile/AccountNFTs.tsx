@@ -101,9 +101,8 @@ const StyledItems = styled(Box)(({ theme }) => ({
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
-    width: 188,
-    padding: 0,
-    paddingLeft: 20,
+    minWidth: 110,
+    padding: '0px 20px',
     height: '31px',
     backgroundColor: '#F8FBFF',
     fontFamily: 'Inter',
@@ -331,10 +330,13 @@ function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListPr
           <TableBody>
             {myCreateNftList.map((row, index) => (
               <StyledTableRow key={index}>
-                <StyledTableCell style={{ display: 'flex', alignItems: 'center' }}>
-                  {row.account ? shortenAddress(row.account, 4) : '--'}
-                  <Copy margin="0 0 0 10px" toCopy={row.account} />
+                <StyledTableCell>
+                  <Box display={'flex'} alignItems={'center'}>
+                    {row.account ? shortenAddress(row.account, 4) : '--'}
+                    <Copy margin="0 0 0 10px" toCopy={row.account} />
+                  </Box>
                 </StyledTableCell>
+
                 <StyledTableCell>
                   <Typography
                     sx={{
@@ -346,11 +348,14 @@ function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListPr
                     {row.tokenId}
                   </Typography>
                 </StyledTableCell>
-                <StyledTableCell style={{ display: 'flex', alignItems: 'center' }}>
-                  <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}>
-                    {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
-                  </ExternalLink>
-                  <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
+
+                <StyledTableCell>
+                  <Box display={'flex'} alignItems={'center'}>
+                    <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}>
+                      {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
+                    </ExternalLink>
+                    <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
+                  </Box>
                 </StyledTableCell>
                 <StyledTableCell>{row.createTime || '--'}</StyledTableCell>
                 <StyledTableCell>

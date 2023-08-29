@@ -136,10 +136,11 @@ export function useNftAccountList() {
   }
 }
 
-export function useNftAccountInfo(contract_address: string, chainId: number) {
+export function useNftAccountInfo(contract_address: string, chainId: number | undefined) {
   const [result, setResult] = useState<NftInfoProp>()
   useEffect(() => {
     ;(async () => {
+      if (!contract_address || !chainId) return
       try {
         const res = await getNftAccountInfo(contract_address, chainId)
         if (res.data.code === 200) {
