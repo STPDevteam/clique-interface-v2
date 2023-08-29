@@ -1,5 +1,5 @@
 import Modal from 'components/Modal/index'
-import { Alert, Box, Stack, Typography, styled } from '@mui/material'
+import { Box, Stack, Typography, styled } from '@mui/material'
 import Input from 'components/Input'
 // import Image from 'components/Image'
 // import { ChainList } from 'constants/chain'
@@ -20,6 +20,7 @@ import { useRecentNftList, useNftAccountInfo, RecentNftListProp } from 'hooks/us
 import { getEtherscanLink } from 'utils'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
+import { ChainId } from 'constants/chain'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -55,6 +56,12 @@ const ShareIcon = styled(ShareIconComponent)(() => ({
   }
 }))
 
+const ErrorText = styled(Typography)(() => ({
+  color: '#E46767',
+  font: '400 12px/20px "Inter"',
+  marginTop: '3px'
+}))
+
 export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const { chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
@@ -62,19 +69,22 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const [tokenId, setTokenId] = useState<string>('')
   const [tokenId_f, setTokenId_f] = useState<string>('')
   const [isChange, setIsChange] = useState<boolean>(false)
-  const [isEnterIng, setIsEnterIng] = useState<boolean>(false)
+  const [isEnterIng_address, setIsEnterIng_address] = useState<boolean>()
+  const [isEnterIng_id, setIsEnterIng_id] = useState<boolean>()
   const { showModal, hideModal } = useModal()
   const { isDeploy, getAccount, createAccountCallback } = useCreateTBACallback(
     contractAddress as `0x${string}`,
     tokenId_f
   )
   const { result: nftInfo } = useNftAccountInfo(contractAddress, chainId)
-  console.log(nftInfo)
 
-  // const curChain = useMemo(() => {
-  //   const res = ChainList.filter(item => item.id === chainId)
-  //   return res[0]
-  // }, [chainId])
+  const IsEthChain = useMemo(() => {
+    if (chainId === ChainId.MAINNET) {
+      return true
+    }
+    return false
+  }, [chainId])
+
   console.log(isDeploy, getAccount)
 
   const isPending = useMemo(() => {
@@ -126,57 +136,76 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     }
   }, [createAccountCallback, hideModal, showModal])
 
-  const createBtn: {
-    disabled: boolean
-    handler?: () => void
-    error?: undefined | string | JSX.Element
-  } = useMemo(() => {
-    if (!contractAddress) {
-      return {
-        disabled: true,
-        error: 'Please enter your address'
-      }
-    }
+  // const createBtn: {
+  //   disabled: boolean
+  //   handler?: () => void
+  //   error?: undefined | string | JSX.Element
+  // } = useMemo(() => {
+  //   if (!contractAddress) {
+  //     return {
+  //       disabled: true,
+  //       error: <ErrorText>Please enter your address</ErrorText>
+  //     }
+  //   }
 
-    if (!isAddress(contractAddress)) {
-      return {
-        disabled: true,
-        error: 'Address format error'
-      }
-    }
+  //   if (!isAddress(contractAddress)) {
+  //     return {
+  //       disabled: true,
+  //       error: <ErrorText>Address format error</ErrorText>
+  //     }
+  //   }
 
-    if (!tokenId) {
-      return {
-        disabled: true,
-        error: 'Token ID required'
-      }
-    }
-    if (isDeploy) {
-      return {
-        disabled: true,
-        error: 'Address is already deployed'
-      }
-    }
-    return {
-      disabled: false,
-      handler: createAccount
-    }
-  }, [contractAddress, isDeploy, tokenId, createAccount])
+  //   if (!tokenId) {
+  //     return {
+  //       disabled: true,
+  //       error: <ErrorText>Token ID required</ErrorText>
+  //     }
+  //   }
+  //   if (isDeploy) {
+  //     return {
+  //       disabled: true,
+  //       error: <ErrorText>Address is already deployed</ErrorText>
+  //     }
+  //   }
+  //   return {
+  //     disabled: false,
+  //     handler: createAccount
+  //   }
+  // }, [contractAddress, isDeploy, tokenId, createAccount])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
       <BodyBoxStyle>
         <Stack spacing={20}>
           <TitleStyle>Manually Create a Smart Wallet using a NFT</TitleStyle>
-          <Input
-            disabled={isChange}
-            value={contractAddress}
-            label="NFT Collection Address"
-            placeholder="0x..."
-            onChange={e => {
-              setContractAddress(e.target.value)
-            }}
-          />
+          <Box>
+            <Input
+              disabled={isChange}
+              value={contractAddress}
+              label="NFT Collection Address"
+              style={{
+                borderColor:
+                  !isEnterIng_address &&
+                  isEnterIng_address !== undefined &&
+                  (!contractAddress || !isAddress(contractAddress))
+                    ? '#E46767'
+                    : '#D4D7E2'
+              }}
+              placeholder="0x..."
+              onBlur={() => {
+                setIsEnterIng_address(false)
+              }}
+              onChange={e => {
+                setContractAddress(e.target.value)
+                setIsEnterIng_address(true)
+              }}
+            />
+            {(!contractAddress || !isAddress(contractAddress)) &&
+              !isEnterIng_address &&
+              isEnterIng_address !== undefined && (
+                <ErrorText>{!contractAddress ? 'Please enter your address.' : 'Address format error.'}</ErrorText>
+              )}
+          </Box>
           <Box sx={{ display: 'grid', gap: 5 }}>
             <ContentTitleStyle>Token Name</ContentTitleStyle>
             <Box sx={{ display: 'flex', gap: 10, alignItems: 'center', paddingLeft: 6 }}>
@@ -185,65 +214,91 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
               <ContentTextStyle>{curChain?.name}</ContentTextStyle> */}
             </Box>
           </Box>
-          <Input
-            disabled={isChange}
-            value={tokenId}
-            label="NFT ID"
-            placeholder="Token ID"
-            onBlur={() => {
-              setTokenId_f(tokenId)
-              setIsEnterIng(false)
-            }}
-            onChange={e => {
-              if (/^[1-9]\d*$/.test(e.target.value) || !e.target.value || e.target.value === '0') {
-                setTokenId(e.target.value)
-                setIsEnterIng(true)
-              } else if (/^[0\d]*$/.test(e.target.value)) {
-                setTokenId(e.target.value[1])
-                setIsEnterIng(true)
-              }
-            }}
-          />
+          <Box>
+            <Input
+              disabled={isChange}
+              value={tokenId}
+              label="NFT ID"
+              placeholder="Token ID"
+              style={{
+                borderColor: !isEnterIng_id && isEnterIng_id !== undefined && !tokenId ? '#E46767' : '#D4D7E2'
+              }}
+              onBlur={() => {
+                setTokenId_f(tokenId)
+                setIsEnterIng_id(false)
+              }}
+              onChange={e => {
+                if (/^[1-9]\d*$/.test(e.target.value) || !e.target.value || e.target.value === '0') {
+                  setTokenId(e.target.value)
+                  setIsEnterIng_id(true)
+                } else if (/^[0\d]*$/.test(e.target.value)) {
+                  setTokenId(e.target.value[1])
+                  setIsEnterIng_id(true)
+                }
+              }}
+            />
+            {!tokenId && !isEnterIng_id && isEnterIng_id !== undefined && (
+              <ErrorText>{!tokenId ? 'Token ID required.' : 'Address is already deployed.'}</ErrorText>
+            )}
+          </Box>
           <Box sx={{ display: 'grid', gap: 10 }}>
             {getAccount && (
-              <ContentTitleStyle
-                sx={{
-                  background: 'var(--light-bg, #F8FBFF)',
-                  borderRadius: '6px',
-                  padding: '8px 0 8px 12px'
-                }}
-              >
-                Generated Address:{' '}
-                <Typography fontSize={12} color={'#0049C6'}>
-                  {getAccount}
-                </Typography>
-              </ContentTitleStyle>
+              <Box>
+                <ContentTitleStyle
+                  sx={{
+                    background: 'var(--light-bg, #F8FBFF)',
+                    borderRadius: '6px',
+                    padding: '8px 0 8px 12px'
+                  }}
+                >
+                  Generated Address:{' '}
+                  <Typography fontSize={12} color={isDeploy ? '#E46767' : '#0049C6'}>
+                    {getAccount}
+                  </Typography>
+                </ContentTitleStyle>
+                {isDeploy && <ErrorText>{'Address is already deployed.'}</ErrorText>}
+              </Box>
             )}
 
-            {createBtn.error && <Alert severity="error">{createBtn.error}</Alert>}
+            <Box>
+              {!IsEthChain && (
+                <ErrorText marginBottom={'3px'}>
+                  {'Currently, only creation on the Ethereum chain is supported.'}
+                </ErrorText>
+              )}
 
-            {isAddress(contractAddress) && isEnterIng ? (
-              <Button style={{ height: 40 }} disabled>
-                Create Account
-              </Button>
-            ) : (
-              <Button
-                style={{ height: 40 }}
-                disabled={createBtn.disabled || isPending || isEnterIng}
-                onClick={() => {
-                  createBtn.handler && createBtn.handler()
-                }}
-              >
-                {isPending ? (
-                  <>
-                    Pending
-                    <Dots />
-                  </>
-                ) : (
-                  'Create Account'
-                )}
-              </Button>
-            )}
+              {isAddress(contractAddress) && isEnterIng_id ? (
+                <Button style={{ height: 40 }} disabled>
+                  Create Account
+                </Button>
+              ) : (
+                <Button
+                  style={{ height: 40 }}
+                  disabled={
+                    isPending ||
+                    isEnterIng_id ||
+                    isEnterIng_address ||
+                    isDeploy ||
+                    !tokenId ||
+                    !contractAddress ||
+                    !isAddress(contractAddress) ||
+                    !IsEthChain
+                  }
+                  onClick={() => {
+                    createAccount()
+                  }}
+                >
+                  {isPending ? (
+                    <>
+                      Pending
+                      <Dots />
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </Button>
+              )}
+            </Box>
           </Box>
           <MessageList />
         </Stack>
