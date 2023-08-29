@@ -30,7 +30,7 @@ export enum ToolsCardsTitle {
   CreateDAO = 'Create DAO',
   CreateToken = 'Create Token',
   SDK = 'SDK',
-  CreateSBT = 'Create Soulbound Token for your DAOs',
+  CreateSBT = 'Create Soulbound Token of DAO',
   Nft = 'Create an account as NFT',
   AccountGenerator = 'Account Generator',
   AssetPortal = 'Asset Portal'
@@ -88,7 +88,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.CreateSBT,
     icon: sbtIcon,
-    des: 'Provides easy access to the high level interactions to be governance with an Clique DAO.',
+    des: 'Create Soulbound Token for your DAOs.',
     supportChainsIcon: 'all',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.CreateSoulToken
