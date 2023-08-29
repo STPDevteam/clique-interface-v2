@@ -233,7 +233,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
               >
                 {isPending ? (
                   <>
-                    pending
+                    Pending
                     <Dots />
                   </>
                 ) : (

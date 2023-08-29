@@ -305,7 +305,7 @@ export default function AccountNFTs({ account }: { account: string }) {
           )}
         </>
       )}
-      {tabValue === 1 && <CreateNft6551 myCreateNftList={myCreateNftList} />}
+      {tabValue === 1 && myCreateNftList.length ? <CreateNft6551 myCreateNftList={myCreateNftList} /> : null}
     </ContainerWrapper>
   )
 }
@@ -322,9 +322,9 @@ function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListPr
           <TableHead>
             <TableRow>
               <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
-              <StyledTableCell>TokenId</StyledTableCell>
+              <StyledTableCell>Token Id</StyledTableCell>
               <StyledTableCell>Token Contract</StyledTableCell>
-              <StyledTableCell>Create time</StyledTableCell>
+              <StyledTableCell>Create Time</StyledTableCell>
               <StyledTableCell>Hash</StyledTableCell>
             </TableRow>
           </TableHead>
