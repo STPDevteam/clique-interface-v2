@@ -12,13 +12,17 @@ import {
 import { CurrencyAmount, TokenAmount } from '../../constants/token/fractions'
 import JSBI from 'jsbi'
 import { Currency, ETHER, Token } from '../../constants/token'
-import { BAST_TOKEN, ZERO_ADDRESS } from '../../constants'
+import { ZERO_ADDRESS } from '../../constants'
 import { ChainId } from 'constants/chain'
 import { arrayify, parseBytes32String } from 'ethers/lib/utils'
-import { getOtherNetworkLibrary } from 'connectors/MultiNetworkConnector'
+import { getOtherNetworkLibrary } from 'connection/MultiNetworkConnector'
 import ERC20_ABI from 'constants/abis/erc20.json'
 import isZero from 'utils/isZero'
 import { useUserLocation } from 'state/application/hooks'
+import { useCallback } from 'react'
+import { useAppDispatch, useAppSelector } from 'state/hooks'
+import { addConnectedWallet } from './reducer'
+import { Wallet } from './reducer'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -164,18 +168,6 @@ export function useCurrencyBalance(
     if (!account || !currency) return undefined
     return isEth ? ethBalance[account] : tokenBalance
   }, [account, currency, ethBalance, isEth, tokenBalance])
-}
-
-export function useBaseTokenBalance(): TokenAmount | undefined {
-  const { account, chainId } = useActiveWeb3React()
-
-  const base = chainId ? BAST_TOKEN[chainId] : undefined
-
-  const baseBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, base)
-
-  if (!base) return undefined
-
-  return baseBalance
 }
 
 // parse a name or symbol from a token response
@@ -343,4 +335,16 @@ export function useTokenByChain(
       totalSupply: new TokenAmount(token, totalSupply || '0')
     }
   }, [contract, curChainId, decimals, name, symbol, tokenAddress, totalSupply])
+}
+
+export function useConnectedWallets(): [Wallet[], (wallet: Wallet) => void] {
+  const dispatch = useAppDispatch()
+  const connectedWallets = useAppSelector(state => state.wallets.connectedWallets)
+  const addWallet = useCallback(
+    (wallet: Wallet) => {
+      dispatch(addConnectedWallet(wallet))
+    },
+    [dispatch]
+  )
+  return [connectedWallets, addWallet]
 }

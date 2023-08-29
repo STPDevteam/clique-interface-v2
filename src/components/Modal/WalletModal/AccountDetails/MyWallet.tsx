@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material'
 import OutlineButton from 'components/Button/OutlineButton'
 import Copy from 'components/essential/Copy'
-import { injected, walletlink } from 'connectors'
 import { routes } from 'constants/routes'
 import { useActiveWeb3React } from 'hooks'
 import { useMemo } from 'react'
@@ -17,7 +16,7 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
 }
 
 export default function MyWallet() {
-  const { account, deactivate, connector } = useActiveWeb3React()
+  const { account, deactivate } = useActiveWeb3React()
   const toggleModal = useToggleModal(ApplicationModal.WALLET)
   const navigate = useNavigate()
 
@@ -58,7 +57,6 @@ export default function MyWallet() {
           View Profile
         </OutlineButton>
         <OutlineButton
-          disabled={connector !== injected || connector === walletlink}
           fontSize={12}
           style={{ borderWidth: 1 }}
           fontWeight={500}
