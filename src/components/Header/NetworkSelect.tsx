@@ -103,7 +103,7 @@ export default function NetworkSelect({ IsNftPage }: { IsNftPage: boolean }) {
               {isDownSm ? (
                 <Image src={option.logo} style={{ height: 24, width: 24, margin: '5px 0 0' }} />
               ) : (
-                <LogoText logo={option.logo} text={option.symbol} gapSize={'small'} fontSize={14} />
+                <LogoText logo={option.logo} text={option.symbol} gapSize={'small'} fontSize={14} size="24px" />
               )}
             </MenuItem>
           ))}

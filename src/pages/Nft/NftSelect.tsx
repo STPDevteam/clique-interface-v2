@@ -1,6 +1,6 @@
 import { NftLayout } from './NftAccount'
 import { Box, Link, Typography, styled } from '@mui/material'
-import chainLogo0 from 'assets/images/chainLogo0.png'
+// import chainLogo0 from 'assets/images/chainLogo0.png'
 import { ReactComponent as ShareIcon } from 'assets/svg/share.svg'
 import { ReactComponent as HourglassIcon } from 'assets/svg/hourglass_icon.svg'
 import { ReactComponent as NotHaveNftIcon } from 'assets/svg/nothavenft_icon.svg'
@@ -11,7 +11,7 @@ import CreateNftModal from './CreateNftModal'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
@@ -20,6 +20,7 @@ import placeholderImage from 'assets/images/placeholder.png'
 import Image from 'components/Image'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { ChainList } from 'constants/chain'
 
 const TitleStyle = styled(Typography)(() => ({
   color: '#FFF',
@@ -74,14 +75,6 @@ export function NftSelect() {
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
 
   const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-
-  // const { result: accountNFTsList, loading } = useAccountNFTsList(
-  //   '0xccf5a3e7a9ae61a45be3c4f22787266b678faf33',
-  //   137,
-  //   'erc721'
-  // )
-
-  console.log(chainId)
 
   useEffect(() => {
     if (!account || !userSignature) {
@@ -139,6 +132,11 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
   const isSmDown = useBreakpoint('sm')
   const refreshCb = useRefreshNft()
 
+  const curChainLogo = useMemo(() => {
+    const res = ChainList.filter(item => item.id === nftChainId)
+    return res[0]?.logo
+  }, [nftChainId])
+
   const refresh = useCallback(() => {
     refreshCb(nft.contract_address, nft.token_id).then((res: any) => {
       if (res.data.code !== 200) {
@@ -178,7 +176,7 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
       <CardStyled className="card">
         <img
           className="chainIcon"
-          src={chainLogo0}
+          src={curChainLogo}
           alt=""
           height={'30'}
           width={'30'}

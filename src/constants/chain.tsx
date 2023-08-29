@@ -1,6 +1,7 @@
 import { Chain } from 'models/chain'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
-import EthUrl from 'assets/svg/eth_logo.svg'
+// import EthUrl from 'assets/svg/eth_logo.svg'
+import EthUrl from 'assets/images/chainLogo0.png'
 import BSCUrl from 'assets/svg/binance.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
 import MaticSvg from 'assets/svg/matic.svg'

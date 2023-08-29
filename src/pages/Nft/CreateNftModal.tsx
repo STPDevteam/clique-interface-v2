@@ -261,12 +261,6 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
             )}
 
             <Box>
-              {!IsEthChain && (
-                <ErrorText marginBottom={'3px'}>
-                  {'Currently, only creation on the Ethereum chain is supported.'}
-                </ErrorText>
-              )}
-
               {isAddress(contractAddress) && isEnterIng_id ? (
                 <Button style={{ height: 40 }} disabled>
                   Create Account
@@ -297,6 +291,11 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                     'Create Account'
                   )}
                 </Button>
+              )}
+              {!IsEthChain && (
+                <ErrorText marginBottom={'3px'}>
+                  {'Currently, only creation on the Ethereum chain is supported.'}
+                </ErrorText>
               )}
             </Box>
           </Box>
