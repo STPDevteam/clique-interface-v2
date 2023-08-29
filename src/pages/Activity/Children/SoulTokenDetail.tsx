@@ -564,14 +564,30 @@ export default function SoulTokenDetail() {
               </ColumnLayoutStyle>
               <OwnersStyle>
                 <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'} sx={{ display: 'flex', gap: 5 }}>
-                  Owners({sbtClaimList && sbtClaimList?.length > 0 ? sbtClaimList?.length : 0})
+                  Owners({ClaimTotal || 0})
                   <Tooltip value="The owners will appear here in a few minutes." />
                 </Typography>
                 <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                  {sbtClaimList &&
-                    sbtClaimList?.length > 0 &&
-                    sbtClaimList?.map((item: any, index: number) =>
-                      index < 32 ? (
+                  {sbtClaimList?.length && sbtClaimList?.length > 32
+                    ? sbtClaimList?.map((item: any, index: number) =>
+                        index < 31 ? (
+                          <Image
+                            onClick={() => navigate(routes._Profile + `/${item.account}`)}
+                            key={item.account}
+                            src={item.accountLogo || avatar}
+                            style={{
+                              height: 50,
+                              width: 50,
+                              borderRadius: '50%',
+                              backgroundColor: '#bfbf',
+                              cursor: 'pointer'
+                            }}
+                          />
+                        ) : (
+                          <Image src={EllipsisIcon} key={item.account} width={50} />
+                        )
+                      )
+                    : sbtClaimList?.map((item: any) => (
                         <Image
                           onClick={() => navigate(routes._Profile + `/${item.account}`)}
                           key={item.account}
@@ -584,10 +600,7 @@ export default function SoulTokenDetail() {
                             cursor: 'pointer'
                           }}
                         />
-                      ) : (
-                        <Image src={EllipsisIcon} key={item.account} width={50} />
-                      )
-                    )}
+                      ))}
                 </Box>
               </OwnersStyle>
             </ContentBoxStyle>
