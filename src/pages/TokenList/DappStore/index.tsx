@@ -233,25 +233,33 @@ export default function Index() {
       sx={{
         maxWidth: 1440,
         margin: 'auto',
-        padding: '44px 120px',
-        '& .top_banner': {
-          width: 'calc(100% - 18px)',
-          height: '100%',
-          objectFit: 'cover'
-        }
+        padding: '44px 120px'
+        // '& .top_banner': {
+        //   width: 'calc(100% - 18px)',
+        //   height: '100%',
+        //   objectFit: 'cover'
+        // }
       }}
     >
-      <Box sx={{ position: 'relative', height: 197, marginLeft: 18 }}>
-        <Image className="top_banner" src={banner} style={{ position: 'absolute', zIndex: 0, borderRadius: '8px' }} />
+      <Box
+        sx={{
+          height: 197,
+          paddingTop: '34px',
+          paddingLeft: ' 70px',
+          marginLeft: 18,
+          borderRadius: '8px',
+          backgroundImage: `url(${banner})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center'
+        }}
+      >
+        {/* <Image className="top_banner" src={banner} style={{ position: 'absolute', zIndex: 0, borderRadius: '8px' }} /> */}
         <Typography
           sx={{
             color: '#fff',
             fontSize: '50px',
             fontWeight: 700,
-            lineHeight: '77px',
-            position: 'absolute',
-            top: 34,
-            left: 70
+            lineHeight: '77px'
           }}
         >
           Tools
@@ -262,9 +270,7 @@ export default function Index() {
             fontSize: '16px',
             fontWeight: 500,
             lineHeight: '20px',
-            position: 'absolute',
-            top: 120,
-            left: 72
+            marginTop: 9
           }}
         >
           The most powerful set of web3 development tools to build
