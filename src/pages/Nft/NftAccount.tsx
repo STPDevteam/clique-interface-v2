@@ -87,7 +87,7 @@ export function NftAccount() {
               fontSize: '50px',
               fontStyle: 'normal',
               fontWeight: 800,
-              lineHeight: '20px',
+              lineHeight: '60px',
               letterSpacing: ' 1px'
             }}
           >
@@ -112,7 +112,8 @@ export function NftAccount() {
             textAlign: 'center',
             width: isMdDown ? '70vw' : 631,
             height: isMdDown ? '70vw' : 557,
-            position: 'relative'
+            position: 'relative',
+            margin: isMdDown ? 'auto' : '0'
           }}
         >
           <img
@@ -125,10 +126,10 @@ export function NftAccount() {
           />
           <Box
             sx={{
-              width: '49.68px',
-              height: '49.03px',
+              width: isMdDown ? '7vw' : '49.68px',
+              height: isMdDown ? '7vw' : '49.03px',
               position: 'absolute',
-              top: 60,
+              top: isMdDown ? '11%' : 60,
               left: isMdDown ? '37vw' : 320,
               animation: `${conin1_key} 5s linear infinite`
             }}
@@ -138,8 +139,8 @@ export function NftAccount() {
 
           <Box
             sx={{
-              width: '98px',
-              height: '109px',
+              width: isMdDown ? '11vw' : '98px',
+              height: isMdDown ? '11vw' : '109px',
               position: 'absolute',
               top: 55,
               right: -15,
@@ -150,8 +151,8 @@ export function NftAccount() {
           </Box>
           <Box
             sx={{
-              width: '81.42px',
-              height: '80.35px',
+              width: isMdDown ? '9vw' : '81.42px',
+              height: isMdDown ? '9vw' : '80.35px',
               position: 'absolute',
               bottom: isMdDown ? '20vw' : 170,
               right: 0,
