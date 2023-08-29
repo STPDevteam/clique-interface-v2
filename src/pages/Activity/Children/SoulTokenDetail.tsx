@@ -568,7 +568,7 @@ export default function SoulTokenDetail() {
                   <Tooltip value="The owners will appear here in a few minutes." />
                 </Typography>
                 <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                  {sbtClaimList?.length && sbtClaimList?.length > 32
+                  {sbtClaimList?.length && ClaimTotal > 32
                     ? sbtClaimList?.map((item: any, index: number) =>
                         index < 31 ? (
                           <Image
