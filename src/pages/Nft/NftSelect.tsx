@@ -100,27 +100,29 @@ export function NftSelect() {
             <NotHaveNft />
           </>
         ) : (
-          <Box
-            sx={{
-              maxHeight: 585,
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-              gap: 20,
-              padding: '35px 110px',
-              mt: 25,
-              '::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            <>
-              {accountNFTsList?.map((item, index) => (
-                <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
-              ))}
-            </>
-          </Box>
+          !loading && (
+            <Box
+              sx={{
+                maxHeight: 585,
+                overflowY: 'auto',
+                overflowX: 'hidden',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+                gap: 20,
+                padding: '35px 110px',
+                mt: 25,
+                '::-webkit-scrollbar': {
+                  display: 'none'
+                }
+              }}
+            >
+              <>
+                {accountNFTsList?.map((item, index) => (
+                  <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
+                ))}
+              </>
+            </Box>
+          )
         )}
       </Box>
     </NftLayout>
