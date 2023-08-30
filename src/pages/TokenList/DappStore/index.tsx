@@ -197,7 +197,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
             textAlign={'left'}
             width={'100%'}
           >
-            All Chain
+            All Chains
           </Typography>
         ) : supportChainsIcon === '' ? (
           <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
