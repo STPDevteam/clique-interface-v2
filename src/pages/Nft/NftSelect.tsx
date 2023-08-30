@@ -21,6 +21,7 @@ import Image from 'components/Image'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { ChainList } from 'constants/chain'
+import { useSbtListPaginationCallback } from 'state/pagination/hooks'
 
 const TitleStyle = styled(Typography)(() => ({
   color: '#FFF',
@@ -324,7 +325,7 @@ function Searching() {
 
 function NotHaveNft() {
   const navigate = useNavigate()
-
+  const { setCategory } = useSbtListPaginationCallback()
   return (
     <SearchCardStyle
       style={{
@@ -359,6 +360,7 @@ function NotHaveNft() {
               textDecoration: 'underline'
             }}
             onClick={() => {
+              setCategory(1)
               navigate(routes.Activity)
             }}
           >
