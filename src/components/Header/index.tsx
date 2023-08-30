@@ -38,9 +38,9 @@ import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { getWorkspaceInfo } from 'utils/fetch/server'
-import { useActiveWeb3React } from 'hooks'
-import { useWalletModalToggle } from 'state/application/hooks'
-import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+// import { useActiveWeb3React } from 'hooks'
+// import { useWalletModalToggle } from 'state/application/hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
 import { useDispatch } from 'react-redux'
 import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
 
@@ -589,10 +589,10 @@ export default function Header() {
 function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const toggleWalletModal = useWalletModalToggle()
-  const loginSignature = useLoginSignature()
-  const { account } = useActiveWeb3React()
-  const userSignature = useUserInfo()
+  // const toggleWalletModal = useWalletModalToggle()
+  // const loginSignature = useLoginSignature()
+  // const { account } = useActiveWeb3React()
+  // const userSignature = useUserInfo()
   return (
     <LinksWrapper>
       {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
@@ -685,8 +685,6 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                         }
                       }}
                       onClick={() => {
-                        if (!account) return toggleWalletModal()
-                        if (!userSignature) return loginSignature()
                         navigate(routes.NftAccount)
                       }}
                     >
@@ -798,8 +796,6 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                       }}
                       key={option.title}
                       onClick={() => {
-                        if (!account) return toggleWalletModal()
-                        if (!userSignature) return loginSignature()
                         option.route ? navigate(option.route) : window.open(option.link, '_blank')
                       }}
                     >

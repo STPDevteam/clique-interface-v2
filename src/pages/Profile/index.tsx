@@ -34,7 +34,7 @@ import Button from 'components/Button/Button'
 // import Pagination from 'components/Pagination'
 // import EmptyData from 'components/EmptyData'
 // import { routes } from 'constants/routes'
-// import Loading from 'components/Loading'
+import Loading from 'components/Loading'
 
 import { useWalletModalToggle } from 'state/application/hooks'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
@@ -100,7 +100,7 @@ export default function Profile() {
     account || undefined,
     currentAccount && currentAccount !== account ? currentAccount : undefined
   )
-
+  const [isLogin, setIsLogin] = useState<boolean>(false)
   const [rand, setRand] = useState(Math.random())
   const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
@@ -130,16 +130,20 @@ export default function Profile() {
   }, [hideModal])
 
   useEffect(() => {
+    setTimeout(() => {
+      setIsLogin(true)
+    }, 500)
+    if (!isLogin) return
     if (!currentAccount || !account) {
       navigate('/', { replace: true })
     }
     hideModal()
-  }, [currentAccount, hideModal, account, navigate])
+  }, [currentAccount, hideModal, account, navigate, isLogin])
 
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()
 
-  return (
+  return account && profileInfo ? (
     <Box
       paddingBottom={40}
       sx={{
@@ -436,6 +440,10 @@ export default function Profile() {
 
         {isSelf && <MyRecords account={currentAccount || ''} />}
       </Box>
+    </Box>
+  ) : (
+    <Box>
+      <Loading sx={{ marginTop: 50 }} />
     </Box>
   )
 }
