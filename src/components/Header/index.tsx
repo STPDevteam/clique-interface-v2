@@ -798,8 +798,6 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                       }}
                       key={option.title}
                       onClick={() => {
-                        if (!account) return toggleWalletModal()
-                        if (!userSignature) return loginSignature()
                         option.route ? navigate(option.route) : window.open(option.link, '_blank')
                       }}
                     >
