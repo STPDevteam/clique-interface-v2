@@ -64,7 +64,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.CreateDAO,
     icon: createDaoIcon,
-    des: 'Add a DAO on Clique',
+    des: 'Add a DAO on Clique.',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #F5F1FF 27.66%, #FEFEFF 99.85%)',
     route: routes.CreateDao
@@ -104,7 +104,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
-    des: 'One-click on-chain transaction using account abstraction',
+    des: 'One-click on-chain transaction using account abstraction.',
     supportChainsIcon: [chainLogo0],
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.NftAccount
