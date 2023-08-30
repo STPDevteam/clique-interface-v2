@@ -90,7 +90,8 @@ export function NftSelect() {
         }}
       >
         <TitleStyle>
-          Select an NFT deployment as the <b style={{ color: '#A7F46A' }}> Smart Wallet</b>
+          Select a NFT to create
+          <b style={{ color: '#A7F46A' }}> Smart Wallet</b>
         </TitleStyle>
 
         {loading && <Searching />}
