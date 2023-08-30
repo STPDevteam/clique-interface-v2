@@ -1,5 +1,5 @@
 import Modal from 'components/Modal/index'
-import { Box, Stack, Typography, styled } from '@mui/material'
+import { Box, Stack, Typography, styled, Link } from '@mui/material'
 import Input from 'components/Input'
 // import Image from 'components/Image'
 // import { ChainList } from 'constants/chain'
@@ -21,6 +21,8 @@ import { getEtherscanLink } from 'utils'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import { ChainId } from 'constants/chain'
+import { routes } from 'constants/routes'
+import { useNavigate } from 'react-router-dom'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -65,6 +67,7 @@ const ErrorText = styled(Typography)(() => ({
 export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
   const { chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const navigate = useNavigate()
   const [contractAddress, setContractAddress] = useState<string>('')
   const [tokenId, setTokenId] = useState<string>('')
   const [tokenId_f, setTokenId_f] = useState<string>('')
@@ -117,15 +120,27 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     showModal(<TransacitonPendingModal />)
 
     try {
-      const res = await createAccountCallback()
+      await createAccountCallback()
       hideModal()
       showModal(
         <TransactionSubmittedModal
           hideFunc={() => {
             console.log('next=>')
           }}
-          hash={res}
-        />
+        >
+          <Link
+            style={{
+              fontSize: 12,
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              hideModal()
+              navigate(routes.Profile)
+            }}
+          >
+            view on profile
+          </Link>
+        </TransactionSubmittedModal>
       )
     } catch (err: any) {
       showModal(
@@ -134,7 +149,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
         </MessageBox>
       )
     }
-  }, [createAccountCallback, hideModal, showModal])
+  }, [createAccountCallback, hideModal, navigate, showModal])
 
   // const createBtn: {
   //   disabled: boolean
