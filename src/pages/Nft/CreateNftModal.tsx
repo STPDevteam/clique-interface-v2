@@ -218,7 +218,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
             <Input
               disabled={isChange}
               value={tokenId}
-              label="NFT ID"
+              label="Token ID"
               placeholder="Token ID"
               style={{
                 borderColor: !isEnterIng_id && isEnterIng_id !== undefined && !tokenId ? '#E46767' : '#D4D7E2'
@@ -237,9 +237,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                 }
               }}
             />
-            {!tokenId && !isEnterIng_id && isEnterIng_id !== undefined && (
-              <ErrorText>{!tokenId ? 'Token ID required.' : 'Address is already deployed.'}</ErrorText>
-            )}
+            {!tokenId && !isEnterIng_id && isEnterIng_id !== undefined && <ErrorText>{'Token ID required.'}</ErrorText>}
           </Box>
           <Box sx={{ display: 'grid', gap: 10 }}>
             {getAccount && (
@@ -256,7 +254,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                     {getAccount}
                   </Typography>
                 </ContentTitleStyle>
-                {isDeploy && <ErrorText>{'Address is already deployed.'}</ErrorText>}
+                {isDeploy && <ErrorText>{'This NFT has been deployed already.'}</ErrorText>}
               </Box>
             )}
 
@@ -293,9 +291,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                 </Button>
               )}
               {!IsEthChain && (
-                <ErrorText marginBottom={'3px'}>
-                  {'Currently, only creation on the Ethereum chain is supported.'}
-                </ErrorText>
+                <ErrorText marginBottom={'3px'}>{'Currently, only the Ethereum network is supported.'}</ErrorText>
               )}
             </Box>
           </Box>
