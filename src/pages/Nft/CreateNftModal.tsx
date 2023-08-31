@@ -135,7 +135,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
             }}
             onClick={() => {
               hideModal()
-              navigate(routes.Profile)
+              navigate(routes._Profile)
             }}
           >
             view on profile
