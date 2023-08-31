@@ -34,6 +34,7 @@ import { toast } from 'react-toastify'
 import { MyCreateNftListProp, useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
 import { ExternalLink } from 'theme/components'
 import Copy from 'components/essential/Copy'
+import { useProfilePaginationCallback } from 'state/pagination/hooks'
 
 // import { useActiveWeb3React } from 'hooks'
 
@@ -158,7 +159,11 @@ export default function AccountNFTs({ account }: { account: string }) {
   const [viewAll, setViewAll] = useState(false)
   const [currentChainId, setCurrentChainId] = useState<ChainId>(1)
   const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
-  const [tabValue, setTabValue] = useState<number>(0)
+  const {
+    data: { nftTabIndex },
+    setNftTabIndex
+  } = useProfilePaginationCallback()
+  const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
   const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
@@ -173,6 +178,13 @@ export default function AccountNFTs({ account }: { account: string }) {
       setViewAll(true)
     }
   }, [accountNFTsList, isSmDown])
+
+  useEffect(() => {
+    return () => {
+      setNftTabIndex(0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <ContainerWrapper

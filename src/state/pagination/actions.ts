@@ -21,6 +21,9 @@ export interface SbtListPaginationProp {
   currentPage: number
   category: number
 }
+export interface ProfilePaginationProp {
+  nftTabIndex: number
+}
 
 export interface NotificationListPaginationProp {
   unReadCount: number
@@ -42,3 +45,7 @@ export const updateSbtListPagination = createAction<{ sbtListPagination: SbtList
 export const updateNotificationListPagination = createAction<{
   notificationListPagination: NotificationListPaginationProp
 }>('pagination/updateNotificationListPagination')
+
+export const updateProfilePagination = createAction<{
+  profilePagination: ProfilePaginationProp
+}>('pagination/updateProfilePagination')

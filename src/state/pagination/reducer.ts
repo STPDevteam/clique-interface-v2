@@ -8,7 +8,9 @@ import {
   updateNotificationListPagination,
   NotificationListPaginationProp,
   updateSbtListPagination,
-  SbtListPaginationProp
+  SbtListPaginationProp,
+  updateProfilePagination,
+  ProfilePaginationProp
 } from './actions'
 
 export interface SysPagination {
@@ -16,6 +18,7 @@ export interface SysPagination {
   activityListPagination: ActivityListPaginationProp
   notificationListPagination: NotificationListPaginationProp
   sbtListPagination: SbtListPaginationProp
+  profilePagination: ProfilePaginationProp
 }
 
 export const initialState: SysPagination = {
@@ -39,6 +42,9 @@ export const initialState: SysPagination = {
     status: '',
     currentPage: 1,
     category: 0
+  },
+  profilePagination: {
+    nftTabIndex: 0
   }
 }
 
@@ -55,5 +61,8 @@ export default createReducer(initialState, builder =>
     })
     .addCase(updateSbtListPagination, (state, action) => {
       state.sbtListPagination = action.payload.sbtListPagination
+    })
+    .addCase(updateProfilePagination, (state, action) => {
+      state.profilePagination = action.payload.profilePagination
     })
 )

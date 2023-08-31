@@ -23,6 +23,7 @@ import Loading from 'components/Loading'
 import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
+import { useProfilePaginationCallback } from 'state/pagination/hooks'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -65,6 +66,7 @@ const ErrorText = styled(Typography)(() => ({
 }))
 
 export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
+  const { setNftTabIndex } = useProfilePaginationCallback()
   const { chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const navigate = useNavigate()
@@ -134,6 +136,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
               cursor: 'pointer'
             }}
             onClick={() => {
+              setNftTabIndex(1)
               hideModal()
               navigate(routes._Profile)
             }}
@@ -149,7 +152,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
         </MessageBox>
       )
     }
-  }, [createAccountCallback, hideModal, navigate, showModal])
+  }, [createAccountCallback, hideModal, navigate, setNftTabIndex, showModal])
 
   // const createBtn: {
   //   disabled: boolean
