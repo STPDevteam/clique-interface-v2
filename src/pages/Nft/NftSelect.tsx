@@ -22,6 +22,7 @@ import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { ChainList } from 'constants/chain'
 import { useSbtListPaginationCallback } from 'state/pagination/hooks'
+import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 
 const TitleStyle = styled(Typography)(() => ({
   color: '#FFF',
@@ -75,7 +76,18 @@ export function NftSelect() {
   const { account, chainId } = useActiveWeb3React()
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
 
-  const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+
+  const SBTIsDeployList = useSBTIsDeployList(
+    _accountNFTsList.map(item => item.contract_address),
+    _accountNFTsList.map(i => i.token_id)
+  )
+
+  const accountNFTsList = useMemo(() => {
+    if (!SBTIsDeployList) return _accountNFTsList
+
+    return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === false)
+  }, [SBTIsDeployList, _accountNFTsList])
 
   useEffect(() => {
     if (!account || !userSignature) {
