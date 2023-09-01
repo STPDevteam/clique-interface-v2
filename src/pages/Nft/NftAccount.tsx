@@ -230,13 +230,13 @@ export function NftLayout({ children }: { children: JSX.Element }) {
         top: 0,
         left: 0,
         height: '100vh',
-        width: '100%'
-        // backgroundImage: `url(${Nft_bgImage})`,
-        // backgroundSize: 'cover',
-        // backgroundPosition: 'center center'
+        width: '100%',
+        backgroundImage: `url(${Nft_bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center'
       }}
     >
-      <img
+      {/* <img
         src={Nft_bgImage}
         alt=""
         style={{
@@ -246,7 +246,7 @@ export function NftLayout({ children }: { children: JSX.Element }) {
           position: 'fixed',
           zIndex: 0
         }}
-      />
+      /> */}
       <Box sx={{ maxWidth: 1440, margin: 'auto', position: 'relative', zIndex: 10 }}>{children}</Box>
     </Box>
   )

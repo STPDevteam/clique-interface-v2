@@ -127,12 +127,15 @@ export default function Index() {
                 height: '100vh',
                 maxWidth: '70vh',
                 width: '50vw',
+                backgroundImage: `url(${WelcomeWeb3})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center',
                 [theme.breakpoints.down('sm')]: {
                   display: 'none'
                 }
               }}
             >
-              <img
+              {/* <img
                 src={WelcomeWeb3}
                 alt=""
                 style={{
@@ -142,7 +145,7 @@ export default function Index() {
                   width: '50vw',
                   objectFit: 'cover'
                 }}
-              />
+              /> */}
             </Box>
             <Box
               sx={{
