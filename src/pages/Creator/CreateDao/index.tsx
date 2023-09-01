@@ -1,6 +1,6 @@
 import { Box, Typography, styled, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-// import CrateBg from 'assets/images/cratedao_bg.png'
+import WelcomeWeb3_Bg from 'assets/images/cratedao_bg.png'
 // import { ReactComponent as WelcomeTitle } from 'assets/svg/web3title.svg'
 import WelcomeWeb3 from 'assets/images/welcomweb3_bg.png'
 import UpImgButton from 'components/UploadImage/UpImgButton'
@@ -148,115 +148,130 @@ export default function Index() {
                 maxWidth: 644,
                 padding: '70px  80px',
                 [theme.breakpoints.down('sm')]: {
-                  padding: '40px  30px'
+                  padding: '0',
+                  background: `url(${WelcomeWeb3_Bg})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center center',
+                  height: '100vh'
                 }
               }}
             >
-              <Typography variant="h3" sx={{ lineHeight: '56px', fontWeight: 700 }}>
-                Build a DAO
-              </Typography>
-              <FormItem name="daoLogo" required>
-                <Box>
-                  <UpImgButton
-                    sx={{ mt: 20 }}
-                    logoTitle="LOGO"
-                    size={125}
-                    value={values.daoLogo}
-                    onChange={val => {
-                      setFieldValue('daoLogo', val)
-                    }}
-                  />
-                </Box>
-              </FormItem>
-              <Box sx={{ mt: 30, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
-                <TitleStyle>Organization Name</TitleStyle>
-                <FormItem name="daoName" required>
-                  <InputStyle
-                    style={{ borderColor: errors.daoName && touched.daoName ? '#E46767' : '#D4D7E2' }}
-                    value={values.daoName}
-                    placeholder="Enter name"
-                    onChange={e => setFieldValue('daoName', e.target.value)}
-                  />
-                </FormItem>
-              </Box>
-              <Box sx={{ mt: 20, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
-                <TitleStyle>Organization UserName</TitleStyle>
-                <Typography variant="body2" sx={{ lineHeight: '20px', fontSize: 14, mt: 8 }}>
-                  Organize username must be between 4-20 lowercase characters and contain letters, numbers and
-                  underscores only.
-                </Typography>
-                <FormItem name="handle" required>
-                  <Input
-                    style={{ borderColor: errors.handle && touched.handle ? '#E46767' : '#D4D7E2' }}
-                    value={values.handle}
-                    placeholder="Enter organize userName"
-                  />
-                </FormItem>
-              </Box>
-              <Box sx={{ mt: 16, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
-                <TitleStyle>Introduction </TitleStyle>
-                <FormItem name="Introduction" required>
-                  <InputStyle
-                    style={{ borderColor: errors.Introduction && touched.Introduction ? '#E46767' : '#D4D7E2' }}
-                    value={values.Introduction}
-                    onChange={e => setFieldValue('Introduction', e.target.value)}
-                    placeholder="Write a description"
-                    maxLength={200}
-                    endAdornment={
-                      <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
-                        {values.Introduction.length}/200
-                      </Typography>
-                    }
-                  />
-                </FormItem>
-              </Box>
-              <Box sx={{ mt: 20, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
-                <FormItem name="category" fieldType="custom">
-                  <CategoriesSelect
-                    style={{
-                      maxWidth: '564px',
-                      borderColor: errors.category && touched.category ? '#E46767' : '#D4D7E2'
-                    }}
-                    value={values.category}
-                    onChange={val => {
-                      setFieldValue('category', val)
-                    }}
-                  />
-                </FormItem>
-              </Box>
-
               <Box
                 sx={{
-                  mt: 40,
                   width: '100%',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 10
+                  [theme.breakpoints.down('sm')]: {
+                    padding: '40px  30px',
+                    height: '100vh',
+                    backdropFilter: 'blur(10px)'
+                  }
                 }}
               >
-                {/* <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
+                <Typography variant="h3" sx={{ lineHeight: '56px', fontWeight: 700 }}>
+                  Build a DAO
+                </Typography>
+                <FormItem name="daoLogo" required>
+                  <Box>
+                    <UpImgButton
+                      sx={{ mt: 20 }}
+                      logoTitle="LOGO"
+                      size={125}
+                      value={values.daoLogo}
+                      onChange={val => {
+                        setFieldValue('daoLogo', val)
+                      }}
+                    />
+                  </Box>
+                </FormItem>
+                <Box sx={{ mt: 30, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
+                  <TitleStyle>Organization Name</TitleStyle>
+                  <FormItem name="daoName" required>
+                    <InputStyle
+                      style={{ borderColor: errors.daoName && touched.daoName ? '#E46767' : '#D4D7E2' }}
+                      value={values.daoName}
+                      placeholder="Enter name"
+                      onChange={e => setFieldValue('daoName', e.target.value)}
+                    />
+                  </FormItem>
+                </Box>
+                <Box sx={{ mt: 20, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
+                  <TitleStyle>Organization UserName</TitleStyle>
+                  <Typography variant="body2" sx={{ lineHeight: '20px', fontSize: 14, mt: 8 }}>
+                    Organize username must be between 4-20 lowercase characters and contain letters, numbers and
+                    underscores only.
+                  </Typography>
+                  <FormItem name="handle" required>
+                    <Input
+                      style={{ borderColor: errors.handle && touched.handle ? '#E46767' : '#D4D7E2' }}
+                      value={values.handle}
+                      placeholder="Enter organize userName"
+                    />
+                  </FormItem>
+                </Box>
+                <Box sx={{ mt: 16, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
+                  <TitleStyle>Introduction </TitleStyle>
+                  <FormItem name="Introduction" required>
+                    <InputStyle
+                      style={{ borderColor: errors.Introduction && touched.Introduction ? '#E46767' : '#D4D7E2' }}
+                      value={values.Introduction}
+                      onChange={e => setFieldValue('Introduction', e.target.value)}
+                      placeholder="Write a description"
+                      maxLength={200}
+                      endAdornment={
+                        <Typography color={theme.palette.text.secondary} fontWeight={500} variant="body2" fontSize={14}>
+                          {values.Introduction.length}/200
+                        </Typography>
+                      }
+                    />
+                  </FormItem>
+                </Box>
+                <Box sx={{ mt: 20, '& .MuiFormHelperText-root': { marginLeft: 0 } }}>
+                  <FormItem name="category" fieldType="custom">
+                    <CategoriesSelect
+                      style={{
+                        maxWidth: '564px',
+                        borderColor: errors.category && touched.category ? '#E46767' : '#D4D7E2'
+                      }}
+                      value={values.category}
+                      onChange={val => {
+                        setFieldValue('category', val)
+                      }}
+                    />
+                  </FormItem>
+                </Box>
+
+                <Box
+                  sx={{
+                    mt: 40,
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: 10
+                  }}
+                >
+                  {/* <OutlineButton noBold color="#0049C6" width="200px" height="40px" onClick={history.goBack}>
                   Back
                 </OutlineButton> */}
-                <Back sx={{ margin: '0 !important' }} />
-                <LoadingButton
-                  // loading={isSaving}
-                  loadingPosition="start"
-                  startIcon={<></>}
-                  variant="contained"
-                  color="primary"
-                  sx={{
-                    width: 270,
-                    height: 40,
-                    textAlign: 'center',
-                    [theme.breakpoints.down('sm')]: {
-                      width: 180
-                    }
-                  }}
-                  type="submit"
-                >
-                  Create Now
-                </LoadingButton>
+                  <Back sx={{ margin: '0 !important' }} />
+                  <LoadingButton
+                    // loading={isSaving}
+                    loadingPosition="start"
+                    startIcon={<></>}
+                    variant="contained"
+                    color="primary"
+                    sx={{
+                      width: 270,
+                      height: 40,
+                      textAlign: 'center',
+                      [theme.breakpoints.down('sm')]: {
+                        width: 180
+                      }
+                    }}
+                    type="submit"
+                  >
+                    Create Now
+                  </LoadingButton>
+                </Box>
               </Box>
             </Box>
           </Box>

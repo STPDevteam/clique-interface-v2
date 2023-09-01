@@ -86,10 +86,10 @@ export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
 }
 
 export const SBT_FACTORY: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0x6053856cfCcB9fcB43d57b05Cd7a3709bae3fc95',
+  [ChainId.MAINNET]: process.env.REACT_APP_ETH_SBT_FACTORY_ADDRESS || '',
   [ChainId.POLYGON]: '0x0856B272Cd587B4eC88265980c5a69Cc6d870a4A',
   [ChainId.KLAYTN]: '0x74beAD96e35985F84f917514beD07EB7ab9211e8',
-  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS || '',
   [ChainId.GOERLI]: '0xE7D3553e20fE2f41569456EE8980b49C6Da3A27b',
   [ChainId.ZKSYNC_ERA]: '0x644Ea01E10c10364A2dF36cE414D9FAb526DE0fe',
   [ChainId.BASE]: '0x39B2A1F263Bac7Be5e4a8e43e9dc427a1Eea78D4',

@@ -1,5 +1,5 @@
 import Modal from 'components/Modal/index'
-import { Box, Stack, Typography, styled } from '@mui/material'
+import { Box, Stack, Typography, styled, Link } from '@mui/material'
 import Input from 'components/Input'
 // import Image from 'components/Image'
 // import { ChainList } from 'constants/chain'
@@ -21,6 +21,9 @@ import { getEtherscanLink } from 'utils'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
 import { ChainId } from 'constants/chain'
+import { routes } from 'constants/routes'
+import { useNavigate } from 'react-router-dom'
+import { useProfilePaginationCallback } from 'state/pagination/hooks'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '30px 28px '
@@ -63,8 +66,10 @@ const ErrorText = styled(Typography)(() => ({
 }))
 
 export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
+  const { setNftTabIndex } = useProfilePaginationCallback()
   const { chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const navigate = useNavigate()
   const [contractAddress, setContractAddress] = useState<string>('')
   const [tokenId, setTokenId] = useState<string>('')
   const [tokenId_f, setTokenId_f] = useState<string>('')
@@ -117,15 +122,28 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     showModal(<TransacitonPendingModal />)
 
     try {
-      const res = await createAccountCallback()
+      await createAccountCallback()
       hideModal()
       showModal(
         <TransactionSubmittedModal
           hideFunc={() => {
             console.log('next=>')
           }}
-          hash={res}
-        />
+        >
+          <Link
+            style={{
+              fontSize: 12,
+              cursor: 'pointer'
+            }}
+            onClick={() => {
+              setNftTabIndex(1)
+              hideModal()
+              navigate(routes._Profile)
+            }}
+          >
+            view on profile
+          </Link>
+        </TransactionSubmittedModal>
       )
     } catch (err: any) {
       showModal(
@@ -134,7 +152,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
         </MessageBox>
       )
     }
-  }, [createAccountCallback, hideModal, showModal])
+  }, [createAccountCallback, hideModal, navigate, setNftTabIndex, showModal])
 
   // const createBtn: {
   //   disabled: boolean
@@ -218,7 +236,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
             <Input
               disabled={isChange}
               value={tokenId}
-              label="NFT ID"
+              label="Token ID"
               placeholder="Token ID"
               style={{
                 borderColor: !isEnterIng_id && isEnterIng_id !== undefined && !tokenId ? '#E46767' : '#D4D7E2'
@@ -237,9 +255,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                 }
               }}
             />
-            {!tokenId && !isEnterIng_id && isEnterIng_id !== undefined && (
-              <ErrorText>{!tokenId ? 'Token ID required.' : 'Address is already deployed.'}</ErrorText>
-            )}
+            {!tokenId && !isEnterIng_id && isEnterIng_id !== undefined && <ErrorText>{'Token ID required.'}</ErrorText>}
           </Box>
           <Box sx={{ display: 'grid', gap: 10 }}>
             {getAccount && (
@@ -256,7 +272,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                     {getAccount}
                   </Typography>
                 </ContentTitleStyle>
-                {isDeploy && <ErrorText>{'Address is already deployed.'}</ErrorText>}
+                {isDeploy && <ErrorText>{'This NFT has been deployed already.'}</ErrorText>}
               </Box>
             )}
 
@@ -293,9 +309,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                 </Button>
               )}
               {!IsEthChain && (
-                <ErrorText marginBottom={'3px'}>
-                  {'Currently, only creation on the Ethereum chain is supported.'}
-                </ErrorText>
+                <ErrorText marginBottom={'3px'}>{'Currently, only the Ethereum network is supported.'}</ErrorText>
               )}
             </Box>
           </Box>

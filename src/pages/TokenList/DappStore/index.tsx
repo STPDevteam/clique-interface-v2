@@ -24,6 +24,8 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import CreateNftModal from 'pages/Nft/CreateNftModal'
 import useModal from 'hooks/useModal'
+import { useState } from 'react'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export enum ToolsCardsTitle {
   DAORewards = 'Clique Rewards',
@@ -64,7 +66,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.CreateDAO,
     icon: createDaoIcon,
-    des: 'Add a DAO on Clique',
+    des: 'Add a DAO on Clique.',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #F5F1FF 27.66%, #FEFEFF 99.85%)',
     route: routes.CreateDao
@@ -104,7 +106,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
-    des: 'One-click on-chainactivity using accountabstraction.',
+    des: 'One-click on-chain transaction using account abstraction.',
     supportChainsIcon: [chainLogo0],
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.NftAccount
@@ -112,7 +114,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.AssetPortal,
     icon: assetPortalIcon,
-    des: 'Buy, sell and hold any onchain asset throughcustom marketplace.',
+    des: 'Buy, sell and hold any onchain asset through custom marketplace.',
     supportChainsIcon: 'soon',
     bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)'
   }
@@ -125,10 +127,15 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const { showModal } = useModal()
+  const [isClick, setIsClick] = useState<boolean>(false)
+  const isSmDown = useBreakpoint('sm')
+
   return (
     <Box
       sx={{
-        height: 264,
+        height: !isSmDown ? 264 : isClick ? 264 : 97,
+        transition: 'all 0.5s',
+        overflow: 'hidden',
         border: '1px solid #d4d7e2',
         borderRadius: '10px',
         cursor: !link && !route ? 'no-drop' : 'pointer',
@@ -172,7 +179,15 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         }
       }}
     >
-      <Box className="headerCon">
+      <Box
+        className="headerCon"
+        onClick={(e: any) => {
+          if (isSmDown) {
+            setIsClick(!isClick)
+            e.stopPropagation()
+          }
+        }}
+      >
         <Typography fontSize={18} lineHeight={'20px'} color={'#3F5170'} fontWeight={700}>
           {title}
         </Typography>
@@ -197,7 +212,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
             textAlign={'left'}
             width={'100%'}
           >
-            All Chain
+            All Chains
           </Typography>
         ) : supportChainsIcon === '' ? (
           <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
@@ -228,12 +243,14 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
 }
 
 export default function Index() {
+  const isSmDown = useBreakpoint('sm')
+
   return (
     <Box
       sx={{
         maxWidth: 1440,
         margin: 'auto',
-        padding: '44px 120px'
+        padding: isSmDown ? '25px 25px' : '44px 120px'
         // '& .top_banner': {
         //   width: 'calc(100% - 18px)',
         //   height: '100%',
@@ -244,13 +261,12 @@ export default function Index() {
       <Box
         sx={{
           height: 197,
-          paddingTop: '34px',
-          paddingLeft: ' 70px',
-          marginLeft: 18,
+          padding: isSmDown ? '10px 10px 0' : '34px 0 0 70px',
+          marginLeft: isSmDown ? 0 : 18,
           borderRadius: '8px',
           backgroundImage: `url(${banner})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center center'
+          backgroundPosition: isSmDown ? '-600px center' : 'center center'
         }}
       >
         {/* <Image className="top_banner" src={banner} style={{ position: 'absolute', zIndex: 0, borderRadius: '8px' }} /> */}
@@ -278,7 +294,7 @@ export default function Index() {
       </Box>
       <Grid mt={12} container>
         {cardsData.map((item, index) => (
-          <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
+          <Grid padding={isSmDown ? '18px 0 0' : '18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
             <CardItem {...item} />
           </Grid>
         ))}
