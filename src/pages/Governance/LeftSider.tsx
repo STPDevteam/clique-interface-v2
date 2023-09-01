@@ -95,7 +95,13 @@ export default function LeftSider() {
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   return (
-    <Wrapper>
+    <Wrapper
+      sx={{
+        [theme.breakpoints.down('sm')]: {
+          display: userSignature ? 'block' : 'none'
+        }
+      }}
+    >
       <Box
         className="dao-box"
         sx={{
