@@ -571,35 +571,13 @@ export default function SoulTokenDetail() {
                   {sbtClaimList?.length && ClaimTotal > 32
                     ? sbtClaimList?.map((item: any, index: number) =>
                         index < 31 ? (
-                          <Image
-                            onClick={() => navigate(routes._Profile + `/${item.account}`)}
-                            key={item.account}
-                            src={item.accountLogo || avatar}
-                            style={{
-                              height: 50,
-                              width: 50,
-                              borderRadius: '50%',
-                              backgroundColor: '#bfbf',
-                              cursor: 'pointer'
-                            }}
-                          />
+                          <UserAvatar key={item.account} logoUrl={item.accountLogo} userAccount={item.account} />
                         ) : (
                           <Image src={EllipsisIcon} key={item.account} width={50} />
                         )
                       )
                     : sbtClaimList?.map((item: any) => (
-                        <Image
-                          onClick={() => navigate(routes._Profile + `/${item.account}`)}
-                          key={item.account}
-                          src={item.accountLogo || avatar}
-                          style={{
-                            height: 50,
-                            width: 50,
-                            borderRadius: '50%',
-                            backgroundColor: '#bfbf',
-                            cursor: 'pointer'
-                          }}
-                        />
+                        <UserAvatar key={item.account} logoUrl={item.accountLogo} userAccount={item.account} />
                       ))}
                 </Box>
               </OwnersStyle>
@@ -607,6 +585,33 @@ export default function SoulTokenDetail() {
           </Box>
         </ContainerWrapper>
       )}
+    </>
+  )
+}
+
+function UserAvatar({ logoUrl, userAccount }: { logoUrl: string; userAccount: string }) {
+  const { account } = useActiveWeb3React()
+  const userSignature = useUserInfo()
+  const navigate = useNavigate()
+  const loginSignature = useLoginSignature()
+  const toggleWalletModal = useWalletModalToggle()
+  return (
+    <>
+      <Image
+        onClick={() => {
+          if (!account) return toggleWalletModal()
+          if (!userSignature) return loginSignature()
+          navigate(routes._Profile + `/${userAccount}`)
+        }}
+        src={logoUrl || avatar}
+        style={{
+          height: 50,
+          width: 50,
+          borderRadius: '50%',
+          backgroundColor: '#bfbf',
+          cursor: 'pointer'
+        }}
+      />
     </>
   )
 }
