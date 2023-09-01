@@ -1,4 +1,4 @@
-import { Box, Typography, keyframes, styled } from '@mui/material'
+import { Box, Typography, keyframes, styled, useTheme } from '@mui/material'
 import Nft_bgImage from 'assets/images/nft_bg.png'
 import NftImage from 'assets/images/nft_r.png'
 import Coin_1 from 'assets/images/coin_1.png'
@@ -40,15 +40,22 @@ const TitleStyle = styled(Box)(() => ({
   gap: 30
 }))
 
-const CreateNftButton = styled(Button)(() => ({
+const CreateNftButton = styled(Button)(({ theme }) => ({
   width: 252,
   height: 46,
   borderRadius: '38px',
   background: 'linear-gradient(180deg, #2265D8 0%, #012EAC 81.25%, #0150AC 100%)',
-  boxShadow: '0px 4px 44px 0px rgba(2, 26, 98, 0.52)'
+  boxShadow: '0px 4px 44px 0px rgba(2, 26, 98, 0.52)',
+  [theme.breakpoints.down('sm')]: {
+    width: 205,
+    height: 36,
+    borderRadius: '18px'
+  }
 }))
 
 export function NftAccount() {
+  const theme = useTheme()
+
   const isMdDown = useBreakpoint('md')
   const navigate = useNavigate()
   const toggleWalletModal = useWalletModalToggle()
@@ -61,20 +68,32 @@ export function NftAccount() {
     <NftLayout>
       <Box
         sx={{
-          height: isMdDown ? 'auto' : '100vh',
-          display: isMdDown ? 'grid' : 'flex',
-          marginTop: isMdDown ? 130 : 0,
+          height: '100vh',
+          display: 'flex',
+          marginTop: 0,
           gap: 10,
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          [theme.breakpoints.down('sm')]: {
+            height: 'auto',
+            display: 'grid',
+            marginTop: 120
+          }
         }}
       >
         <TitleStyle
-          style={{
-            height: isMdDown ? 'auto' : 300,
-            alignItems: isMdDown ? 'center' : 'normal',
-            textAlign: isMdDown ? 'center' : 'left',
-            marginBottom: isMdDown ? '0' : '50px'
+          sx={{
+            height: 300,
+            alignItems: 'normal',
+            textAlign: 'left',
+            marginBottom: '50px',
+            [theme.breakpoints.down('sm')]: {
+              height: 'auto',
+              alignItems: 'center',
+              textAlign: 'center',
+              marginBottom: '0',
+              padding: '0 20px'
+            }
           }}
         >
           {/* <NftAccountTxt /> */}
@@ -88,12 +107,28 @@ export function NftAccount() {
               fontStyle: 'normal',
               fontWeight: 800,
               lineHeight: '60px',
-              letterSpacing: ' 1px'
+              letterSpacing: ' 1px',
+              [theme.breakpoints.down('sm')]: {
+                fontSize: '28px',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                lineHeight: '30px'
+              }
             }}
           >
             Generate NFT Smart Wallets
           </Typography>
-          <Typography sx={{ color: '#fff', font: '400 18px/28px "Inter"', maxWidth: 472 }}>
+          <Typography
+            sx={{
+              color: '#fff',
+              font: '400 18px/28px "Inter"',
+              maxWidth: 472,
+              [theme.breakpoints.down('sm')]: {
+                width: '100%',
+                fontSize: '14px'
+              }
+            }}
+          >
             Turn any NFT into a Smart Wallet to seamlessly own any assets and efficiently interact with blockchain
             applications and ecosystems.
           </Typography>
@@ -110,10 +145,15 @@ export function NftAccount() {
         <Box
           sx={{
             textAlign: 'center',
-            width: isMdDown ? '70vw' : 631,
-            height: isMdDown ? '70vw' : 557,
+            width: 631,
+            height: 557,
             position: 'relative',
-            margin: isMdDown ? 'auto' : '0'
+            margin: '0',
+            [theme.breakpoints.down('sm')]: {
+              width: '70vw',
+              height: '70vw',
+              margin: 'auto'
+            }
           }}
         >
           <img
@@ -126,12 +166,18 @@ export function NftAccount() {
           />
           <Box
             sx={{
-              width: isMdDown ? '7vw' : '49.68px',
-              height: isMdDown ? '7vw' : '49.03px',
+              width: '49.68px',
+              height: '49.03px',
               position: 'absolute',
-              top: isMdDown ? '11%' : 60,
-              left: isMdDown ? '37vw' : 320,
-              animation: `${conin1_key} 5s linear infinite`
+              top: 60,
+              left: 320,
+              animation: `${conin1_key} 5s linear infinite`,
+              [theme.breakpoints.down('sm')]: {
+                width: '7vw',
+                height: '7vw',
+                top: '11%',
+                left: '37vw'
+              }
             }}
           >
             <img src={Coin_1} alt="" width={'100%'} height={'100%'} />
@@ -139,24 +185,33 @@ export function NftAccount() {
 
           <Box
             sx={{
-              width: isMdDown ? '11vw' : '98px',
-              height: isMdDown ? '11vw' : '109px',
+              width: '98px',
+              height: '109px',
               position: 'absolute',
               top: 55,
               right: -15,
-              animation: `${conin2_key} 5s linear infinite`
+              animation: `${conin2_key} 5s linear infinite`,
+              [theme.breakpoints.down('sm')]: {
+                width: '11vw',
+                height: '11vw'
+              }
             }}
           >
             <img src={Coin_2} alt="" width={'100%'} height={'100%'} />
           </Box>
           <Box
             sx={{
-              width: isMdDown ? '9vw' : '81.42px',
-              height: isMdDown ? '9vw' : '80.35px',
+              width: '81.42px',
+              height: '80.35px',
               position: 'absolute',
-              bottom: isMdDown ? '20vw' : 170,
+              bottom: 170,
               right: 0,
-              animation: `${conin3_key} 5s linear infinite`
+              animation: `${conin3_key} 5s linear infinite`,
+              [theme.breakpoints.down('sm')]: {
+                width: '9vw',
+                height: '9vw',
+                bottom: '20vw'
+              }
             }}
           >
             <img src={Coin_3} alt="" width={'100%'} height={'100%'} />
