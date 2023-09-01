@@ -22,8 +22,9 @@ import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { isAddress } from 'utils'
 import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
-import { useUserProfileInfo } from 'hooks/useBackedProfileServer'
+import { useIsDelayTime, useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { timeStampToFormat } from 'utils/dao'
+import Loading from 'components/Loading'
 
 export interface DaoMemberProp {
   accountLevel: number
@@ -117,6 +118,7 @@ export enum AccountLevel {
 export default function Index() {
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const { library, account, chainId } = useActiveWeb3React()
+  const { isDelayTime } = useIsDelayTime()
   const theme = useTheme()
   const [whitelistBoole, setWhitelistBoole] = useState<boolean>(false)
   const [openSnackbar, setOpenSnackbar] = useState(false)
@@ -305,10 +307,11 @@ export default function Index() {
     SubmitCreate
   ])
   useEffect(() => {
+    if (isDelayTime) return
     if (!account || !userSignature) {
       navigate(routes.Governance)
     }
-  }, [account, navigate, userSignature])
+  }, [account, navigate, isDelayTime, userSignature])
 
   const insertLine = useCallback((list: string[], newItem: string) => {
     const _ret = list.filter(item => item.toLowerCase() !== newItem.toLowerCase())
@@ -352,7 +355,7 @@ export default function Index() {
     }
     reader.readAsBinaryString(el.files[0])
   }, [insertLine])
-  return (
+  return account && userSignature ? (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
       <Box
         sx={{
@@ -628,6 +631,10 @@ export default function Index() {
           </Box>
         </Box>
       </ContentBoxStyle>
+    </Box>
+  ) : (
+    <Box>
+      <Loading sx={{ marginTop: 50 }} />
     </Box>
   )
 }
