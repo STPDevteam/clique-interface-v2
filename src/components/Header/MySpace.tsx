@@ -8,7 +8,6 @@ import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useState } from 'react'
 // import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
-import Loading from 'components/Loading'
 import placeholderImage from 'assets/images/placeholder.png'
 // import { useActiveWeb3React } from 'hooks'
 import EmptyData from 'components/EmptyData'
@@ -114,7 +113,7 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState<boolean>(false)
-  const { result: NftList, loading } = useNftAccountList()
+  const { result: NftList } = useNftAccountList()
   // const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
   console.log('NftList=>', NftList)
 
@@ -204,7 +203,6 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
             </Box>
           ) : (
             <>
-              {loading && <Loading sx={{ marginTop: 30 }} />}
               {NftList.length ? (
                 <Box
                   mt={10}

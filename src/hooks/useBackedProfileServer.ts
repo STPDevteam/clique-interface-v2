@@ -451,3 +451,15 @@ export function useRefreshNft() {
       .catch(err => err)
   }, [])
 }
+
+export function useIsDelayTime() {
+  const [isDelayTime, setIsDelayTime] = useState<boolean>(true)
+  useEffect(() => {
+    setTimeout(() => {
+      setIsDelayTime(false)
+    }, 500)
+  }, [])
+  return {
+    isDelayTime
+  }
+}

@@ -10,7 +10,7 @@ import useModal from 'hooks/useModal'
 import CreateNftModal from './CreateNftModal'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
-import { ScanNFTInfo, useAccountNFTsList, useRefreshNft } from 'hooks/useBackedProfileServer'
+import { ScanNFTInfo, useAccountNFTsList, useIsDelayTime, useRefreshNft } from 'hooks/useBackedProfileServer'
 import { useCallback, useEffect, useMemo } from 'react'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -23,6 +23,7 @@ import { routes } from 'constants/routes'
 import { ChainList } from 'constants/chain'
 import { useSbtListPaginationCallback } from 'state/pagination/hooks'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
+import Loading from 'components/Loading'
 
 const TitleStyle = styled(Typography)(() => ({
   color: '#FFF',
@@ -73,6 +74,7 @@ const SearchCardStyle = styled(Box)(() => ({
 export function NftSelect() {
   const navigate = useNavigate()
   const userSignature = useUserInfo()
+  const { isDelayTime } = useIsDelayTime()
   const { account, chainId } = useActiveWeb3React()
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
 
@@ -90,55 +92,61 @@ export function NftSelect() {
   }, [SBTIsDeployList, _accountNFTsList])
 
   useEffect(() => {
+    if (isDelayTime) return
     if (!account || !userSignature) {
       navigate(routes.NftAccount)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, userSignature])
+  }, [account, userSignature, isDelayTime, navigate])
   return (
     <NftLayout>
-      <Box
-        sx={{
-          marginTop: 130
-        }}
-      >
-        <TitleStyle>
-          Select a NFT to create
-          <b style={{ color: '#A7F46A' }}> Smart Wallet</b>
-        </TitleStyle>
+      {account && userSignature ? (
+        <Box
+          sx={{
+            marginTop: 130
+          }}
+        >
+          <TitleStyle>
+            Select a NFT to create
+            <b style={{ color: '#A7F46A' }}> Smart Wallet</b>
+          </TitleStyle>
 
-        {loading && <Searching />}
+          {loading && <Searching />}
 
-        {!accountNFTsList?.length && !loading ? (
-          <>
-            <NotHaveNft />
-          </>
-        ) : (
-          !loading && (
-            <Box
-              sx={{
-                maxHeight: 585,
-                overflowY: 'auto',
-                overflowX: 'hidden',
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-                gap: 20,
-                padding: '35px 110px',
-                mt: 25,
-                '::-webkit-scrollbar': {
-                  display: 'none'
-                }
-              }}
-            >
-              <>
-                {accountNFTsList?.map((item, index) => (
-                  <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
-                ))}
-              </>
-            </Box>
-          )
-        )}
-      </Box>
+          {!accountNFTsList?.length && !loading ? (
+            <>
+              <NotHaveNft />
+            </>
+          ) : (
+            !loading && (
+              <Box
+                sx={{
+                  maxHeight: 585,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+                  gap: 20,
+                  padding: '35px 110px',
+                  mt: 25,
+                  '::-webkit-scrollbar': {
+                    display: 'none'
+                  }
+                }}
+              >
+                <>
+                  {accountNFTsList?.map((item, index) => (
+                    <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
+                  ))}
+                </>
+              </Box>
+            )
+          )}
+        </Box>
+      ) : (
+        <Box>
+          <Loading sx={{ marginTop: 80 }} />
+        </Box>
+      )}
     </NftLayout>
   )
 }

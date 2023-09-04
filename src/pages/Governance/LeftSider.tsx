@@ -17,6 +17,7 @@ const Wrapper = styled('div')(({ theme }) => ({
   height: `calc(100vh - ${theme.height.header})`,
   // overflowY: 'auto',
   padding: '16px 8px',
+  zIndex: 999,
   // '&::-webkit-scrollbar': {
   //   display: 'none'
   // },
@@ -30,16 +31,21 @@ const Wrapper = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 138px',
-    borderRight: 0,
-    padding: '10px 16px',
-    height: 84,
+    // display: 'grid',
+    // gridTemplateColumns: '1fr 138px',
+    // borderRight: 0,
+    // padding: '10px 16px',
+    height: 'auto',
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(244,244,244,0.85)',
+    borderRadius: '16px',
     '& .dao-box': {
-      overflowY: 'hidden',
-      overflowX: 'auto',
-      height: '84px',
-      width: `calc(100vw - 32px - 138px)`,
+      overflowY: 'auto',
+      // overflowX: 'auto',
+      height: '150px',
+      display: 'block',
+      width: `64px`,
       '&::-webkit-scrollbar': {
         display: 'none'
       }
@@ -89,7 +95,13 @@ export default function LeftSider() {
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   return (
-    <Wrapper>
+    <Wrapper
+      sx={{
+        [theme.breakpoints.down('sm')]: {
+          display: userSignature ? 'block' : 'none'
+        }
+      }}
+    >
       <Box
         className="dao-box"
         sx={{
@@ -101,14 +113,14 @@ export default function LeftSider() {
         ))}
       </Box>
       <Box
-        sx={{
-          display: { sm: 'block', xs: 'inline-flex' },
-          justifyContent: { xs: 'flex-end', sm: undefined }
-        }}
+      // sx={{
+      //   display: { sm: 'block', xs: 'inline-flex' },
+      //   justifyContent: { xs: 'flex-end', sm: undefined }
+      // }}
       >
         <Box mt={10} sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />
         <Item
-          sx={{ borderLeft: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
+          // sx={{ borderTop: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
           onClick={() => navigate(routes.Governance)}
         >
           <div className="action">

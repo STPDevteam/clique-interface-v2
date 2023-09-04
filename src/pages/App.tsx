@@ -162,6 +162,7 @@ export default function App() {
                 minHeight: headerLinkIsShow ? 'calc(100vh - 50px)' : '100vh',
                 paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
                 [theme.breakpoints.down('md')]: {
+                  paddingTop: pathname === routes.CreateDao ? 0 : 20,
                   minHeight: `${theme.height.mobileHeader} - 50px`
                 }
               }}

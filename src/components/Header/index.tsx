@@ -61,53 +61,26 @@ export const Tabs: Tab[] = [
     title: 'AW Solutions',
     route: '',
     subTab: [
-      // {
-      //   title: 'Account Generator',
-      //   route: routes.NftAccount,
-      //   titleContent: (
-      //     <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
-      //       <Typography color={'#3F5170'}>Account Generator</Typography>
-      //       <Typography
-      //         sx={{
-      //           fontSize: '12px',
-      //           fontWeight: 700,
-      //           lineHeight: '20px',
-      //           fontStyle: 'italic',
-      //           background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
-      //           backgroundClip: 'text',
-      //           '-webkit-background-clip': 'text',
-      //           '-webkit-text-fill-color': 'transparent'
-      //         }}
-      //       >
-      //         NEW!
-      //       </Typography>
-      //     </Box>
-      //   )
-      // },
       {
-        title: 'Asset Portal',
-        route: routes.Soon,
+        title: 'Account Generator',
+        route: routes.NftAccount,
         titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Asset Portal </Typography>
-          </Box>
-        )
-      },
-      {
-        title: 'Identity Engine',
-        route: routes.Soon,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Identity Engine </Typography>
-          </Box>
-        )
-      },
-      {
-        title: 'Data APIs',
-        route: routes.Soon,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <Typography color={'#3F5170'}>Data APIs </Typography>
+          <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
+            <Typography color={'#3F5170'}>Account Generator</Typography>
+            <Typography
+              sx={{
+                fontSize: '12px',
+                fontWeight: 700,
+                lineHeight: '20px',
+                fontStyle: 'italic',
+                background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
+                backgroundClip: 'text',
+                '-webkit-background-clip': 'text',
+                '-webkit-text-fill-color': 'transparent'
+              }}
+            >
+              NEW!
+            </Typography>
           </Box>
         )
       }
@@ -237,6 +210,35 @@ export const Tabs: Tab[] = [
   // { title: 'Tools', route: routes.DappStore }
   // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
+const ComingSoonList: TabContent[] = [
+  {
+    title: 'Asset Portal',
+    route: routes.Soon,
+    titleContent: (
+      <Box display={'flex'} flexDirection={'row'}>
+        <Typography color={'#3F5170'}>Asset Portal </Typography>
+      </Box>
+    )
+  },
+  {
+    title: 'Identity Engine',
+    route: routes.Soon,
+    titleContent: (
+      <Box display={'flex'} flexDirection={'row'}>
+        <Typography color={'#3F5170'}>Identity Engine </Typography>
+      </Box>
+    )
+  },
+  {
+    title: 'Data APIs',
+    route: routes.Soon,
+    titleContent: (
+      <Box display={'flex'} flexDirection={'row'}>
+        <Typography color={'#3F5170'}>Data APIs </Typography>
+      </Box>
+    )
+  }
+]
 
 // const navLinkSX = () => ({
 //   textDecoration: 'none',
@@ -328,7 +330,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 const StyledMobileAppBar = styled(StyledAppBar)(({ theme }) => ({
   display: 'none',
   [theme.breakpoints.down('sm')]: {
-    display: 'flex',
+    display: 'none',
     position: 'unset',
     marginTop: 10,
     height: `calc(${theme.height.mobileHeader} - 10px)`
@@ -587,6 +589,7 @@ export default function Header() {
 }
 
 function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
+  const theme = useTheme()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   // const toggleWalletModal = useWalletModalToggle()
@@ -610,7 +613,10 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                 subTab.some(tab => tab.route && pathname.includes(tab.route))
                   ? theme.palette.text.primary
                   : 'transparnet',
-              display: 'flex'
+              display: 'flex',
+              [theme.breakpoints.down('sm')]: {
+                paddingBottom: 0
+              }
             }}
             key={title + idx}
           >
@@ -636,6 +642,9 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                     fontWeight: 600,
                     cursor: 'pointer',
                     gap: 10,
+                    [theme.breakpoints.down('sm')]: {
+                      paddingTop: 0
+                    },
                     '& svg:hover path': {
                       fill: '#0049C6'
                     },
@@ -666,108 +675,34 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
               <>
                 {title === 'AW Solutions' ? (
                   <>
-                    <Box
-                      gap={30}
-                      sx={{
-                        minWidth: '150px',
-                        height: 40,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        borderRadius: '6px',
-                        '&:hover': {
-                          backgroundColor: '#E8F1FF',
-                          color: '#0049C6'
-                        },
-                        '& p': {
-                          marginLeft: 8
-                        }
-                      }}
-                      onClick={() => {
-                        navigate(routes.NftAccount)
-                      }}
-                    >
-                      <Typography color={'#3F5170'}>Account Generator</Typography>
-                      <Typography
-                        sx={{
-                          fontSize: '12px',
-                          fontWeight: 700,
-                          lineHeight: '20px',
-                          fontStyle: 'italic',
-                          background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
-                          backgroundClip: 'text',
-                          '-webkit-background-clip': 'text',
-                          '-webkit-text-fill-color': 'transparent'
-                        }}
-                      >
-                        NEW!
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        background: '#F2F7FF',
-                        padding: '5px 5px 15px',
-                        marginBottom: 5,
-                        borderRadius: '7px'
-                      }}
-                    >
+                    {subTab.map(option => (
                       <Box
+                        key={option.title}
+                        gap={30}
                         sx={{
-                          width: '100%',
-                          background: '#E8F1FF',
-                          borderRadius: '6px',
-                          height: 27,
+                          minWidth: '150px',
+                          height: 40,
                           display: 'flex',
+                          flexDirection: 'row',
                           alignItems: 'center',
-                          gap: 5,
-                          paddingLeft: 12,
-                          '& svg path': {
-                            fill: '#97B7EF'
+                          cursor: 'pointer',
+                          borderRadius: '6px',
+                          '&:hover': {
+                            backgroundColor: '#E8F1FF',
+                            color: '#0049C6'
+                          },
+                          '& p': {
+                            marginLeft: 8
                           }
                         }}
+                        onClick={() => {
+                          option.route ? navigate(option.route) : window.open(option.link, '_blank')
+                        }}
                       >
-                        <TimeIcon />
-                        <Typography
-                          sx={{
-                            color: 'var(--button-line, #97B7EF)',
-                            fontSize: '12px',
-                            fontWeight: '500',
-                            lineHeight: '20px'
-                          }}
-                        >
-                          Coming soon
-                        </Typography>
+                        {option.titleContent ?? option.title}
                       </Box>
-                      {subTab.map(option => (
-                        <Box
-                          sx={{
-                            // width: 150,
-                            minWidth: '200px',
-                            height: 40,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            borderRadius: '6px',
-                            '&:hover': {
-                              backgroundColor: '#E8F1FF',
-                              color: '#0049C6',
-                              cursor: 'no-drop'
-                            },
-                            '& p': {
-                              marginLeft: 8
-                            }
-                          }}
-                          key={option.title}
-                          onClick={e => {
-                            e.stopPropagation()
-                          }}
-                        >
-                          {option.titleContent ?? option.title}
-                        </Box>
-                      ))}
-                    </Box>
+                    ))}
+                    <ComingSoonListStyle options={ComingSoonList} />
                   </>
                 ) : (
                   subTab.map(option => (
@@ -884,6 +819,7 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
 export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
   const { pathname } = useLocation()
   const userInfo = useUserInfo()
+  const theme = useTheme()
   return (
     <Box
       display={{ sm: 'flex', xs: 'grid' }}
@@ -895,7 +831,14 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
       {userInfo?.loggedToken && <MySpace IsNftPage={IsNftPage} />}
       <Web3Status IsNftPage={IsNftPage} />
       {pathname === routes.DappStore || pathname === routes.Governance ? (
-        <Box mr={20}>
+        <Box
+          mr={20}
+          sx={{
+            [theme.breakpoints.down('sm')]: {
+              display: 'none'
+            }
+          }}
+        >
           <LightTooltip
             title={
               <div
@@ -928,5 +871,76 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
         <PopperMenu />
       )}
     </Box>
+  )
+}
+
+function ComingSoonListStyle({ options }: { options: TabContent[] }) {
+  return (
+    <>
+      <Box
+        sx={{
+          background: '#F2F7FF',
+          padding: '5px 5px 15px',
+          marginBottom: 5,
+          borderRadius: '7px'
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            background: '#E8F1FF',
+            borderRadius: '6px',
+            height: 27,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 5,
+            paddingLeft: 12,
+            '& svg path': {
+              fill: '#97B7EF'
+            }
+          }}
+        >
+          <TimeIcon />
+          <Typography
+            sx={{
+              color: 'var(--button-line, #97B7EF)',
+              fontSize: '12px',
+              fontWeight: '500',
+              lineHeight: '20px'
+            }}
+          >
+            Coming soon
+          </Typography>
+        </Box>
+        {options.map(option => (
+          <Box
+            sx={{
+              // width: 150,
+              minWidth: '200px',
+              height: 40,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              cursor: 'pointer',
+              borderRadius: '6px',
+              '&:hover': {
+                backgroundColor: '#E8F1FF',
+                color: '#0049C6',
+                cursor: 'no-drop'
+              },
+              '& p': {
+                marginLeft: 8
+              }
+            }}
+            key={option.title}
+            onClick={e => {
+              e.stopPropagation()
+            }}
+          >
+            {option.titleContent ?? option.title}
+          </Box>
+        ))}
+      </Box>
+    </>
   )
 }

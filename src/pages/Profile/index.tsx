@@ -17,6 +17,7 @@ import MyRecords from './MyRecords'
 import AccountNFTs from './AccountNFTs'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
+  useIsDelayTime,
   // useAccountFollowersList,
   // useAccountFollowingList,
   useUserFollowStatus,
@@ -100,12 +101,11 @@ export default function Profile() {
     account || undefined,
     currentAccount && currentAccount !== account ? currentAccount : undefined
   )
-  const [isLogin, setIsLogin] = useState<boolean>(false)
   const [rand, setRand] = useState(Math.random())
   const navigate = useNavigate()
   const isSmDown = useBreakpoint('sm')
   const { result: profileInfo, loading } = useUserProfileInfo(currentAccount || undefined, rand, isFollowed)
-
+  const { isDelayTime } = useIsDelayTime()
   // const { result: accountFollowersList } = useAccountFollowersList(profileInfo?.userId)
   // const { result: accountFollowingList } = useAccountFollowingList(profileInfo?.userId)
 
@@ -130,15 +130,12 @@ export default function Profile() {
   }, [hideModal])
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLogin(true)
-    }, 500)
-    if (!isLogin) return
+    if (isDelayTime) return
     if (!currentAccount || !account) {
       navigate('/', { replace: true })
     }
     hideModal()
-  }, [currentAccount, hideModal, account, navigate, isLogin])
+  }, [currentAccount, hideModal, account, navigate, isDelayTime])
 
   const userSignature = useUserInfo()
   const loginSignature = useLoginSignature()

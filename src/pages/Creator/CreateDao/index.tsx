@@ -22,6 +22,7 @@ import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useEffect } from 'react'
+import { useIsDelayTime } from 'hooks/useBackedProfileServer'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -40,12 +41,13 @@ export default function Index() {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const theme = useTheme()
-
+  const { isDelayTime } = useIsDelayTime()
   useEffect(() => {
+    if (isDelayTime) return
     if (!account || !userSignature) {
       navigate(routes.Governance, { replace: true })
     }
-  }, [account, navigate, userSignature])
+  }, [account, isDelayTime, navigate, userSignature])
 
   const validationSchema = yup.object().shape({
     daoLogo: yup.string().required('Please upload your Dao picture'),
@@ -125,12 +127,15 @@ export default function Index() {
                 height: '100vh',
                 maxWidth: '70vh',
                 width: '50vw',
+                backgroundImage: `url(${WelcomeWeb3})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center center',
                 [theme.breakpoints.down('sm')]: {
                   display: 'none'
                 }
               }}
             >
-              <img
+              {/* <img
                 src={WelcomeWeb3}
                 alt=""
                 style={{
@@ -140,7 +145,7 @@ export default function Index() {
                   width: '50vw',
                   objectFit: 'cover'
                 }}
-              />
+              /> */}
             </Box>
             <Box
               sx={{
