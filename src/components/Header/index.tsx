@@ -39,6 +39,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useDispatch } from 'react-redux'
 import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 interface TabContent {
   title: string
@@ -188,6 +189,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       color: theme.palette.primary.main
     },
     [theme.breakpoints.down('sm')]: {
+      paddingTop: 0,
       paddingBottom: '10px'
     }
   },
@@ -278,7 +280,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
     overflowX: 'auto',
     overflowY: 'hidden',
     whiteSpace: 'nowrap',
-    height: 40,
+    // height: 40,
     scrollbarWidth: 'none' /* firefox */,
     '-ms-overflow-style': 'none' /* IE 10+ */,
     '&::-webkit-scrollbar': {
@@ -324,7 +326,7 @@ export default function Header() {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [workspaceTitle, setWorkspaceTitle] = useState('')
-
+  const isSm = useBreakpoint('sm')
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
   // const isShow = useMemo(() => {
   //   if (curPath === routes.CreateDao) {
@@ -438,7 +440,8 @@ export default function Header() {
               zIndex: 1000,
               display: 'flex',
               justifyContent: 'center',
-              borderRadius: '0'
+              borderRadius: '0',
+              padding: isSm ? 0 : '8px 0'
             }}
           >
             You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
@@ -476,6 +479,7 @@ function TabsBox() {
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const isSm = useBreakpoint('sm')
   return (
     <LinksWrapper>
       {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
@@ -513,7 +517,7 @@ function TabsBox() {
                   flexDirection={'row'}
                   display={'flex'}
                   sx={{
-                    paddingTop: 30,
+                    paddingTop: isSm ? 0 : 30,
                     fontSize: 14,
                     color: '#808189',
                     fontWeight: 600,
@@ -654,6 +658,7 @@ export function HeaderRight() {
       gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto auto' }}
       alignItems="center"
       gap={{ xs: '10px', sm: '10px' }}
+      sx={{ overflow: 'scroll', '&::-webkit-scrollbar': { display: 'none' } }}
     >
       <NetworkSelect />
       {userInfo?.loggedToken && <MySpace />}

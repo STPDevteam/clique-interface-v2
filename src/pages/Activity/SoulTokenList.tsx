@@ -19,11 +19,14 @@ const StyledItem = styled('div')(({ theme }) => ({
   borderRadius: theme.borderRadius.default,
   padding: '20px 56px 20px 24px',
   display: 'grid',
-  gridTemplateColumns: '180px 1fr',
   gap: 34,
   cursor: 'pointer',
+  [theme.breakpoints.up('sm')]: {
+    gridTemplateColumns: '180px 1fr'
+  },
   [theme.breakpoints.down('sm')]: {
-    padding: '10px 15px 16px'
+    padding: '10px 15px 16px',
+    gridTemplateRows: '180px 1fr'
   }
 }))
 const ContentBoxStyle = styled(Box)(() => ({
@@ -107,7 +110,6 @@ export default function SoulTokenList({
 
 function ItemCard(item: SbtListProp) {
   const navigate = useNavigate()
-
   return (
     <StyledItem
       onClick={() => {
@@ -147,14 +149,18 @@ function ItemCard(item: SbtListProp) {
             </Box>
           </Box>
           <Box>
-            <Typography variant="h6" lineHeight={'27px'}>
+            <Typography
+              variant="h6"
+              lineHeight={'27px'}
+              sx={{ wordBreak: 'break-all', overflow: 'hidden', textOverflow: 'ellipsis' }}
+            >
               {/* The STP protocol is open to anyone, and project configurations can vary widely. There are risks associated
             with interacting with all projects on the protocol... */}
               {item?.itemName}
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 300px' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row', justifyContent: 'space-between', gap: 10 }}>
           <ContentLayout>
             <ContentTitleStyle>Items</ContentTitleStyle>
             <ContentStyle>{formatNumberWithCommas(item?.totalSupply)}</ContentStyle>

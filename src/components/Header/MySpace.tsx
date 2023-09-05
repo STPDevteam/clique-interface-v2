@@ -99,7 +99,7 @@ export default function MySpace() {
             }}
             alignItems={'center'}
           >
-            <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+            <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170', whiteSpace: 'pre' }}>
               My Space
             </Typography>
             <ArrowIcon />

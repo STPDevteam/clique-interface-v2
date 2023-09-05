@@ -61,6 +61,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -121,6 +122,7 @@ export default function App() {
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
   const { pathname } = useLocation()
   const theme = useTheme()
+  const isSm = useBreakpoint('sm')
   const dispatch = useDispatch()
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') return
@@ -159,7 +161,7 @@ export default function App() {
               id="body"
               sx={{
                 minHeight: headerLinkIsShow ? 'calc(100vh - 50px)' : '100vh',
-                paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
+                paddingTop: pathname === routes.CreateDao || isSm ? 0 : theme.height.header,
                 [theme.breakpoints.down('md')]: {
                   minHeight: `${theme.height.mobileHeader} - 50px`
                 }

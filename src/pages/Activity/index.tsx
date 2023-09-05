@@ -147,7 +147,7 @@ export default function Activity() {
                 <Select
                   placeholder=""
                   noBold
-                  width={isSmDown ? '175px' : '250px'}
+                  width={isSmDown ? 'auto' : '250px'}
                   height={isSmDown ? '36px' : '40px'}
                   value={chainIdVal}
                   onChange={e => {

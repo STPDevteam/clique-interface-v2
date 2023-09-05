@@ -43,6 +43,7 @@ import Loading from 'components/Loading'
 import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import JoinDaoClaimModal from './JoinDaoClaimModal'
 import { routes } from 'constants/routes'
+import useBreakpoint from 'hooks/useBreakpoint'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: 800,
   marginBottom: 40,
@@ -51,8 +52,9 @@ const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   border: '1px solid #D4D7E2',
   borderRadius: '10px'
 }))
-const ContentHeaderStyle = styled(Box)(() => ({
-  padding: '30px 40px'
+const ContentHeaderStyle = styled(Box)(({ theme }) => ({
+  padding: '30px 40px',
+  [theme.breakpoints.down('sm')]: { padding: 15 }
 }))
 const JoInButton = styled(Button)(() => ({
   height: 36,
@@ -63,13 +65,14 @@ const JoInButton = styled(Button)(() => ({
     color: '#97B7EF'
   }
 }))
-const DetailLayoutStyle = styled(Box)(() => ({
+const DetailLayoutStyle = styled(Box)(({ theme }) => ({
   background: '#F8FBFF',
   padding: '13px 40px',
   height: 215,
   display: 'grid',
   flexDirection: 'column',
-  gap: 20
+  gap: 20,
+  [theme.breakpoints.down('sm')]: { padding: 15, height: 'max-content' }
 }))
 
 const ColumnLayoutStyle = styled(Box)(() => ({
@@ -153,6 +156,7 @@ export default function SoulTokenDetail() {
   const TextRef = useRef<HTMLSpanElement | null>(null)
   const [open, setOpen] = useState(false)
   const [isOverflowed, setIsOverflowed] = useState(false)
+  const isSm = useBreakpoint('sm')
   const handleTooltipClose = () => {
     setOpen(false)
   }
@@ -412,10 +416,15 @@ export default function SoulTokenDetail() {
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
       ) : (
-        <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
+        <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30, px: isSm ? 20 : 0 }}>
           <Back />
-          <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
-            <ContentBoxStyle>
+          <Box
+            sx={[
+              { display: 'flex', gap: 20, marginTop: 30, flexDirection: 'row' },
+              isSm && { flexDirection: 'column' }
+            ]}
+          >
+            <ContentBoxStyle sx={{ minHeight: isSm ? 300 : 800 }}>
               <ContentHeaderStyle>
                 <TooltipStyle
                   onClose={handleTooltipClose}
@@ -441,9 +450,9 @@ export default function SoulTokenDetail() {
                     {sbtDetail?.itemName || '--'}
                   </Typography>
                 </TooltipStyle>
-                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
                     <Typography variant="body1" color={'#80829F'}>
                       Base on
                     </Typography>
@@ -471,7 +480,7 @@ export default function SoulTokenDetail() {
                 </Box>
               </ContentHeaderStyle>
               <DetailLayoutStyle>
-                <RowCenter>
+                <RowCenter sx={[isSm && { flexWrap: 'wrap', spacing: 10 }]}>
                   <Box>
                     <DetailTitleStyle>Number of Items </DetailTitleStyle>
                     <DetailStyle>{sbtDetail?.totalSupply || '--'}</DetailStyle>
@@ -544,7 +553,7 @@ export default function SoulTokenDetail() {
                 </Typography>
               </Box>
             </ContentBoxStyle>
-            <ContentBoxStyle maxWidth={580} maxHeight={800}>
+            <ContentBoxStyle maxWidth={580} maxHeight={800} sx={{ minHeight: isSm ? 300 : 800 }}>
               <ColumnLayoutStyle
                 sx={{
                   height: 470,
@@ -553,7 +562,10 @@ export default function SoulTokenDetail() {
                   borderBottom: '1px solid #D4D7E2'
                 }}
               >
-                <Image src={sbtDetail?.fileUrl || ''} style={{ height: 310, width: 310, borderRadius: '10px' }} />
+                <Image
+                  src={sbtDetail?.fileUrl || ''}
+                  style={{ height: 310, width: isSm ? '90%' : 310, borderRadius: '10px' }}
+                />
                 <ColumnLayoutStyle
                   sx={{
                     gap: 10

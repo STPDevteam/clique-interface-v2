@@ -84,7 +84,7 @@ function Web3StatusInner() {
             padding: '0 12px',
             borderRadius: `${theme.shape.borderRadius}px`,
             display: { sm: 'flex', xs: 'grid' },
-            gridTemplateColumns: 'auto auto',
+            gridTemplateColumns: { xs: 'auto auto auto', md: 'auto auto' },
             justifyContent: 'center',
             alignItems: 'center',
             gap: '5px',
