@@ -64,7 +64,7 @@ export default function OpenJobs() {
             padding: '16px 20px',
             borderRadius: '8px',
             '& p': {
-              width: 742
+              maxWidth: 742
             }
           }}
         >

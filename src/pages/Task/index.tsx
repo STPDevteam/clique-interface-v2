@@ -160,7 +160,7 @@ const columns: GridColDef[] = [
   }
 ]
 
-const StyledTabs = styled('div')(({ theme }) => ({
+export const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
   fontWeight: 600,
   fontSize: 14,

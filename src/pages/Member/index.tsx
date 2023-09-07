@@ -1,4 +1,4 @@
-import { Box, Typography, styled, Tabs, Tab, Divider } from '@mui/material'
+import { Box, Typography, styled, Tabs, Tab, Divider, useTheme } from '@mui/material'
 import { ReactComponent as MemberIcon } from 'assets/svg/member.svg'
 import Button from 'components/Button/Button'
 import { ReactComponent as View } from 'assets/svg/view.svg'
@@ -22,6 +22,7 @@ import { routes } from 'constants/routes'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
 import { useActiveWeb3React } from 'hooks'
 import Loading from 'components/Loading'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -70,6 +71,9 @@ const StyledTabs = styled('div')(({ theme }) => ({
       marginRight: 0,
       '&:last-child': {
         marginRight: 0
+      },
+      '& .css-1q9gtu-MuiButtonBase-root-MuiTab-root': {
+        fontSize: '13px !important'
       }
     }
   }
@@ -92,6 +96,8 @@ const DisabledBtn = styled(Box)({
 })
 
 export default function Member() {
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const [rand, setRand] = useState(Math.random())
   const { account } = useActiveWeb3React()
   const [randNum] = useState(Math.random())
@@ -180,28 +186,14 @@ export default function Member() {
                 <MemberIcon width={38} height={38} />
                 <Typography>Member</Typography>
               </Box>
-              {isJoined.job === 'owner' || isJoined.job === 'superAdmin' ? (
-                <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
-                  <Button onClick={addJobsCB}>+ Add Job</Button>
-                  <Button onClick={addMemberCB}>+ Add Member</Button>
-                </Box>
-              ) : (
-                <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
-                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="left">
-                    <DisabledBtn>+ Add Job</DisabledBtn>
-                  </TooltipStyle>
-                  <TooltipStyle title={"This feature is only available to DAO's owner."} placement="top">
-                    <DisabledBtn>+ Add Member</DisabledBtn>
-                  </TooltipStyle>
-                </Box>
-              )}
+              {!isSmDown && <AddJobMemberButtons job={isJoined.job} addJobsCB={addJobsCB} addMemberCB={addMemberCB} />}
             </Box>
             <Typography
               variant="h5"
               fontWeight={500}
               lineHeight={'20px'}
               sx={{
-                width: '700px',
+                maxWidth: '700px',
                 textAlign: 'left',
                 color: '#3f5170',
                 fontSize: 14,
@@ -217,12 +209,17 @@ export default function Member() {
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
+
                 '& p': {
                   cursor: 'pointer',
                   color: '#0049C6',
                   fontWeight: 500,
                   padding: '12px 16px',
                   marginBottom: '-12px'
+                },
+                [theme.breakpoints.down('sm')]: {
+                  width: 'calc(100vw - 32px)',
+                  overflowX: 'auto'
                 }
               }}
             >
@@ -235,7 +232,13 @@ export default function Member() {
                       iconPosition="start"
                       label={item.label}
                       onClick={() => setTabValue(idx)}
-                      sx={{ gap: 10, marginRight: 50 }}
+                      sx={{
+                        gap: 10,
+                        marginRight: 50,
+                        [theme.breakpoints.down('sm')]: {
+                          mr: 0
+                        }
+                      }}
                       className={tabValue === idx ? 'active' : ''}
                     ></Tab>
                   ))}
@@ -243,6 +246,9 @@ export default function Member() {
               </StyledTabs>
               {tabList.length === 3 && tabValue === 1 ? (
                 <Typography
+                  sx={{
+                    whiteSpace: 'nowrap'
+                  }}
                   onClick={() => {
                     navigate(routes._DaoInfo + `/${daoId}/settings?tab=3`)
                   }}
@@ -273,5 +279,35 @@ export default function Member() {
         )}
       </>
     </DaoContainer>
+  )
+}
+
+function AddJobMemberButtons({
+  job,
+  addJobsCB,
+  addMemberCB
+}: {
+  job: string
+  addJobsCB: () => void
+  addMemberCB: () => void
+}) {
+  return (
+    <>
+      {job === 'owner' || job === 'superAdmin' ? (
+        <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
+          <Button onClick={addJobsCB}>+ Add Job</Button>
+          <Button onClick={addMemberCB}>+ Add Member</Button>
+        </Box>
+      ) : (
+        <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
+          <TooltipStyle title={"This feature is only available to DAO's owner."} placement="left">
+            <DisabledBtn>+ Add Job</DisabledBtn>
+          </TooltipStyle>
+          <TooltipStyle title={"This feature is only available to DAO's owner."} placement="top">
+            <DisabledBtn>+ Add Member</DisabledBtn>
+          </TooltipStyle>
+        </Box>
+      )}
+    </>
   )
 }
