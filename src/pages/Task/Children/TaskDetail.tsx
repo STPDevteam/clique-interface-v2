@@ -1,4 +1,15 @@
-import { Box, Drawer, Typography, styled, Radio, RadioGroup, FormControlLabel, Alert, MenuItem } from '@mui/material'
+import {
+  Box,
+  Drawer,
+  Typography,
+  styled,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Alert,
+  MenuItem,
+  useTheme
+} from '@mui/material'
 import ConfirmButton from 'components/Button/Button'
 import SaveButton from 'components/Button/OutlineButton'
 import Image from 'components/Image'
@@ -26,7 +37,7 @@ import useCopyClipboard from 'hooks/useCopyClipboard'
 import { toast } from 'react-toastify'
 import { ProposalListBaseProp } from 'hooks/useBackedProposalServer'
 
-const ColSentence = styled(Box)(() => ({
+const ColSentence = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'flex-end',
   flexDirection: 'row',
@@ -34,6 +45,9 @@ const ColSentence = styled(Box)(() => ({
   margin: '20px 0 0',
   '& button': {
     border: '1px solid #0049c6'
+  },
+  [theme.breakpoints.down('sm')]: {
+    margin: '45px 0 0'
   }
 }))
 
@@ -183,6 +197,7 @@ export default function TaskDetail({
   )
   const [isSubmit, setIsSubmit] = useState(false)
   const isSmDown = useBreakpoint('sm')
+  const theme = useTheme()
   const [isCopied, setCopied] = useCopyClipboard()
   const [isEdit, setIsEdit] = useState<any>(!!editData ?? false)
   const { result: taskDetailData } = useGetTaskDetail(editData?.taskId)
@@ -282,6 +297,12 @@ export default function TaskDetail({
           '& .title': {
             margin: '10px 0',
             paddingLeft: 0
+          },
+          [theme.breakpoints.down('sm')]: {
+            '& .MuiDrawer-paper': {
+              width: '100vw',
+              padding: '20px'
+            }
           }
           // '& .Mui-focused, & .MuiInputBase-root': {
           //   border: 'none!important'
@@ -706,7 +727,7 @@ export default function TaskDetail({
                   >
                     {item.nickname
                       ? item.nickname.length > 7
-                        ? item.nickname.slice(0, 7) + '...'
+                        ? (isSmDown ? item.nickname.slice(0, 3) : item.nickname.slice(0, 7)) + '...'
                         : item.nickname
                       : 'unnamed'}
                     {'(' + shortenAddress(item.account, 3) + ')'}
@@ -888,7 +909,7 @@ export default function TaskDetail({
               <Editor content={content} setContent={setContent} />
             </RowContent>
             {!value.trim() && isSubmit && (
-              <Alert style={{ marginTop: 20 }} severity="error">
+              <Alert style={{ marginTop: isSmDown ? 45 : 20 }} severity="error">
                 Task title required
               </Alert>
             )}
