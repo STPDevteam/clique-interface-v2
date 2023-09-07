@@ -24,6 +24,9 @@ const StyledCard = styled(Box)(({ theme }) => ({
   boxShadow: theme.boxShadow.bs2,
   transition: 'all 0.5s',
   color: '#3f5170',
+  [theme.breakpoints.down('sm')]: {
+    width: 'calc(100vw - 32px)'
+  },
   '&:hover': {
     border: `1px solid #97B7EF`,
     padding: '22px'

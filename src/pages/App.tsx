@@ -62,6 +62,7 @@ import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 import { NftAccount } from './Nft/NftAccount'
 import { NftSelect } from './Nft/NftSelect'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -120,6 +121,7 @@ const BodyWrapper = styled('div')(({}) => ({
 
 export default function App() {
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
   const { pathname } = useLocation()
   const theme = useTheme()
   const dispatch = useDispatch()
@@ -137,7 +139,8 @@ export default function App() {
     if (!pathname.includes('/governance/daoInfo')) {
       dispatch(removeCreateDaoData())
     }
-  }, [dispatch, pathname])
+    setSidedStatusCallBack(false)
+  }, [dispatch, pathname, setSidedStatusCallBack])
 
   const makeDaoInfo = (route: string) => route.replace(routes.DaoInfo, '')
 
