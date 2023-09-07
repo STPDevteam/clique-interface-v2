@@ -1,9 +1,11 @@
 import DaoContainer from 'components/DaoContainer'
 import DaoInfoActivity from 'pages/DaoInfo/Children/Activity'
 import { ReactComponent as BountyIcon } from 'assets/svg/bounty.svg'
-import { Box, Stack, Typography } from '@mui/material'
+import { Box, Stack, Typography, useTheme } from '@mui/material'
 
 export default function DaoBounty() {
+  const theme = useTheme()
+
   return (
     <DaoContainer>
       <Box>
@@ -18,7 +20,16 @@ export default function DaoBounty() {
           mb={20}
         >
           <BountyIcon width={38} height={38} />
-          <Typography ml={10} fontWeight={600} fontSize={30}>
+          <Typography
+            sx={{
+              ml: 10,
+              fontWeight: 600,
+              fontSize: 30,
+              [theme.breakpoints.down('sm')]: {
+                fontSize: 26
+              }
+            }}
+          >
             Clique Rewards & SBT
           </Typography>
         </Stack>

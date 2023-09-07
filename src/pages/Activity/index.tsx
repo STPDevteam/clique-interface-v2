@@ -57,10 +57,10 @@ export const TabStyle = styled(Tabs)(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     '& .MuiButtonBase-root': {
-      fontSize: 16
+      fontSize: 15
     },
     '& .active': {
-      fontSize: 16
+      fontSize: 15
     }
   }
 }))

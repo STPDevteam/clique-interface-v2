@@ -27,7 +27,8 @@ const StyledItem = styled('div')(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     padding: '10px 15px 16px',
-    gridTemplateRows: '180px 1fr'
+    gridTemplateRows: '180px 1fr',
+    gap: 20
   }
 }))
 const ContentBoxStyle = styled(Box)(() => ({
@@ -109,7 +110,7 @@ export default function SoulTokenList({
   )
 }
 
-function ItemCard(item: SbtListProp) {
+export function ItemCard(item: SbtListProp) {
   const navigate = useNavigate()
   const isSm = useBreakpoint('sm')
   console.log('isSm', isSm)
