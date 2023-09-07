@@ -223,6 +223,7 @@ export function NftAccount() {
 }
 
 export function NftLayout({ children }: { children: JSX.Element }) {
+  const theme = useTheme()
   return (
     <Box
       sx={{
@@ -233,7 +234,11 @@ export function NftLayout({ children }: { children: JSX.Element }) {
         width: '100%',
         backgroundImage: `url(${Nft_bgImage})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center center'
+        backgroundPosition: 'center center',
+        padding: '0  35px 0 20px',
+        [theme.breakpoints.down('sm')]: {
+          padding: '0'
+        }
       }}
     >
       {/* <img
