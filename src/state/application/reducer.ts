@@ -8,7 +8,8 @@ import {
   setOpenModal,
   setUserLocation,
   UserIPLocation,
-  setCurAddress
+  setCurAddress,
+  setDaoInfoLeftSidedOpenStatus
 } from './actions'
 
 type PopupList = Array<{ key: string; show: boolean; content: PopupContent; removeAfterMs: number | null }>
@@ -19,6 +20,7 @@ export interface ApplicationState {
   readonly openModal: ApplicationModal | null
   userLocation: UserIPLocation | null | undefined
   curAddress: string
+  openDaoLeftSided: boolean
 }
 
 const initialState: ApplicationState = {
@@ -26,7 +28,8 @@ const initialState: ApplicationState = {
   popupList: [],
   openModal: null,
   userLocation: undefined,
-  curAddress: ''
+  curAddress: '',
+  openDaoLeftSided: false
 }
 
 export default createReducer(initialState, builder => {
@@ -64,5 +67,8 @@ export default createReducer(initialState, builder => {
     })
     .addCase(setCurAddress, (state, action) => {
       state.curAddress = action.payload
+    })
+    .addCase(setDaoInfoLeftSidedOpenStatus, (state, action) => {
+      state.openDaoLeftSided = action.payload
     })
 })

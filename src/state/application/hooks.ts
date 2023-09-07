@@ -3,7 +3,14 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useActiveWeb3React } from '../../hooks'
 import { AppDispatch, AppState } from '../index'
-import { addPopup, ApplicationModal, PopupContent, removePopup, setOpenModal } from './actions'
+import {
+  addPopup,
+  ApplicationModal,
+  PopupContent,
+  removePopup,
+  setOpenModal,
+  setDaoInfoLeftSidedOpenStatus
+} from './actions'
 
 export function useBlockNumber(chainId?: ChainId): number | undefined {
   const { chainId: curChainId } = useActiveWeb3React()
@@ -86,4 +93,9 @@ export function useActivePopups(): AppState['application']['popupList'] {
 
 export function useUserLocation(): AppState['application']['userLocation'] {
   return useSelector((state: AppState) => state.application.userLocation)
+}
+
+export function useDaoInfoLeftSidedOpenStatus() {
+  const dispatch = useDispatch<AppDispatch>()
+  return useCallback((open: boolean) => dispatch(setDaoInfoLeftSidedOpenStatus(open)), [dispatch])
 }

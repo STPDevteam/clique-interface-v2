@@ -43,7 +43,9 @@ import { getWorkspaceInfo } from 'utils/fetch/server'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useDispatch } from 'react-redux'
 import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
-
+import useBreakpoint from 'hooks/useBreakpoint'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 interface TabContent {
   title: string
   route?: string
@@ -410,9 +412,10 @@ export function capitalizeFirstLetter(str: string) {
 
 export default function Header() {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const dispatch = useDispatch()
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
-
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
@@ -485,7 +488,13 @@ export default function Header() {
           sx={{
             backgroundColor: theme.palette.background.paper,
             boxShadow: 'inset 0px -1px 0px #E4E4E4',
-            paddingLeft: '292px !important'
+            paddingLeft: '292px !important',
+            [theme.breakpoints.down('sm')]: {
+              paddingLeft: '0px !important',
+              paddingRight: '0px !important',
+              boxShadow: 'inset 0px -1px 0px #E4E4E4',
+              height: '65px !important'
+            }
           }}
         >
           <Box
@@ -506,25 +515,47 @@ export default function Header() {
               }
             }}
           >
-            <Breadcrumbs aria-label="breadcrumb">
-              <NavLink to="/">
-                <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
-                DAOs
-              </NavLink>
-              {makeBreadcrumbs.map((v, i) => (
-                <Typography
-                  key={v}
-                  color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
-                  fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
-                >
-                  {pathname.includes(makeRouteLink(routes.Proposal)) && i !== makeBreadcrumbs.length - 1 && i !== 0 ? (
-                    <NavLink to={makeRouteLink(routes.Proposal)}>{v}</NavLink>
-                  ) : (
-                    v
-                  )}
-                </Typography>
-              ))}
-            </Breadcrumbs>
+            {isSmDown ? (
+              <Box
+                sx={{
+                  height: 36,
+                  width: 36,
+                  border: '1px solid #D4D7E2',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: '15px'
+                }}
+                onClick={() => {
+                  setSidedStatusCallBack(true)
+                }}
+              >
+                <MenuIcon sx={{ path: { fill: '#0049C6' } }} />
+              </Box>
+            ) : (
+              <Breadcrumbs aria-label="breadcrumb">
+                <NavLink to="/">
+                  <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
+                  DAOs
+                </NavLink>
+                {makeBreadcrumbs.map((v, i) => (
+                  <Typography
+                    key={v}
+                    color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
+                    fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
+                  >
+                    {pathname.includes(makeRouteLink(routes.Proposal)) &&
+                    i !== makeBreadcrumbs.length - 1 &&
+                    i !== 0 ? (
+                      <NavLink to={makeRouteLink(routes.Proposal)}>{v}</NavLink>
+                    ) : (
+                      v
+                    )}
+                  </Typography>
+                ))}
+              </Breadcrumbs>
+            )}
             <HeaderRight IsNftPage={IsNftPage} />
           </Box>
         </StyledAppBar>
@@ -820,6 +851,7 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
   const { pathname } = useLocation()
   const userInfo = useUserInfo()
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   return (
     <Box
       display={{ sm: 'flex', xs: 'grid' }}
@@ -828,7 +860,7 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
       gap={{ xs: '10px', sm: '10px' }}
     >
       <NetworkSelect IsNftPage={IsNftPage} />
-      {userInfo?.loggedToken && <MySpace IsNftPage={IsNftPage} />}
+      {userInfo?.loggedToken && !isSmDown && <MySpace IsNftPage={IsNftPage} />}
       <Web3Status IsNftPage={IsNftPage} />
       {pathname === routes.DappStore || pathname === routes.Governance ? (
         <Box
