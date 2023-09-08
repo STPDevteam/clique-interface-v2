@@ -10,6 +10,7 @@ import {
   AccountSendRecordProp,
   useAccountSendRecordList
 } from 'hooks/useBackedProfileServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import { useMemo } from 'react'
@@ -30,7 +31,14 @@ export default function MyRecords({ account }: { account: string }) {
   const theme = useTheme()
   const { result: list, page, loading } = useAccountSendRecordList(account)
   return (
-    <ContainerWrapper maxWidth={1150} margin={'0 auto'}>
+    <ContainerWrapper
+      maxWidth={1150}
+      margin={'0 auto'}
+      style={{
+        width: 'calc(100vw - 32px)',
+        overflow: 'hidden'
+      }}
+    >
       <Box display={'flex'} justifyContent="space-between">
         <Typography variant="h6" fontSize={16} fontWeight={600}>
           My Activity
@@ -89,6 +97,7 @@ const accountBackedSendRecordTypesText = {
 }
 
 function RecordItem({ item }: { item: AccountSendRecordProp }) {
+  const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const link = useMemo(() => {
     if (
@@ -125,8 +134,20 @@ function RecordItem({ item }: { item: AccountSendRecordProp }) {
       </RowCenter>
       <RowCenter mt={4}>
         <Box display={'flex'} alignItems="center">
-          <DaoAvatars size={64} src={item.daoLogo} />
-          <Typography fontSize={14} fontWeight={600} color={theme.palette.text.secondary} ml={16}>
+          <DaoAvatars size={isSmDown ? 40 : 64} src={item.daoLogo} />
+          <Typography
+            sx={{
+              width: 'auto',
+              [theme.breakpoints.down('sm')]: {
+                wordWrap: 'break-word',
+                maxWidth: '100px'
+              }
+            }}
+            fontSize={14}
+            fontWeight={600}
+            color={theme.palette.text.secondary}
+            ml={isSmDown ? 8 : 16}
+          >
             <span style={{ cursor: link ? 'pointer' : 'auto' }} onClick={() => link && navigate(link)}>
               {item.titles || item.daoName}
             </span>

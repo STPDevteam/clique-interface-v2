@@ -183,7 +183,10 @@ export default function Header() {
                   alignItems: 'center'
                 }}
               >
-                <Typography variant="h5" sx={{ width: '50vw', font: '600 24px/29px "Inter"', wordWrap: 'break-word' }}>
+                <Typography
+                  variant="h5"
+                  sx={{ width: isSmDown ? '50vw' : 'auto', font: '600 24px/29px "Inter"', wordWrap: 'break-word' }}
+                >
                   {daoInfo?.daoName || '--'}
                 </Typography>
                 {daoInfo?.approve && <AuthIcon />}
@@ -229,12 +232,22 @@ export default function Header() {
                   </Box>
                 )}
               </Box>
-              <Box sx={{ display: 'flex', mt: 10 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  mt: 10,
+                  gap: 6,
+                  [theme.breakpoints.down('sm')]: {
+                    width: 'calc(100vw - 32px)',
+                    flexWrap: 'wrap',
+                    gap: 6
+                  }
+                }}
+              >
                 {categoryList.map((name, index) => (
                   <Box
                     key={index}
                     sx={{
-                      mr: 6,
                       padding: '1px 14px',
                       gap: '10px',
                       height: '20px',

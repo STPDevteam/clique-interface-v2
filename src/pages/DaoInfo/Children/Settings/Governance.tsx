@@ -190,7 +190,7 @@ export default function General({ daoId }: { daoId: number }) {
           Create New Token
         </OutlineButton>
       </Row>
-      {createDaoData?.governance && (
+      {!!createDaoData?.governance.length && (
         <BasicTable
           updater={updateDaoBaseData}
           setRand={() => {}}

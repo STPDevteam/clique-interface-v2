@@ -417,7 +417,7 @@ export default function SoulTokenDetail() {
         </DelayLoading>
       ) : (
         <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30, px: isSm ? 20 : 0 }}>
-          <Back />
+          <Back sx={{ marginLeft: '0 !important' }} />
           <Box
             sx={[
               { display: 'flex', gap: 20, marginTop: 30, flexDirection: 'row' },

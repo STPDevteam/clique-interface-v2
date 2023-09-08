@@ -13,7 +13,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  tableCellClasses
+  tableCellClasses,
+  useTheme
 } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Image from 'components/Image'
@@ -96,7 +97,8 @@ const StyledItems = styled(Box)(({ theme }) => ({
   borderRadius: '10px',
   position: 'relative',
   [theme.breakpoints.down('sm')]: {
-    height: 200
+    height: 180,
+    width: '44vw'
   }
 }))
 
@@ -164,7 +166,9 @@ export default function AccountNFTs({ account }: { account: string }) {
     setNftTabIndex
   } = useProfilePaginationCallback()
   const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
-  const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
+  const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(
+    account && '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3'
+  )
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
     return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
@@ -195,7 +199,7 @@ export default function AccountNFTs({ account }: { account: string }) {
       style={{ width: isSmDown ? '100%' : '100vw' }}
       margin={'0 auto'}
     >
-      <Box display={'flex'} justifyContent="space-between">
+      <Box display={isSmDown ? 'grid' : 'flex'} justifyContent="space-between" gap={isSmDown ? 10 : 0}>
         <TabStyle value={tabValue}>
           {tabList.map((item, idx) => (
             <Tab
@@ -323,73 +327,83 @@ export default function AccountNFTs({ account }: { account: string }) {
 
 function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListProp[] }) {
   // const { chainId } = useActiveWeb3React()
-  const isSmDown = useBreakpoint('sm')
-  console.log(isSmDown)
-
+  const theme = useTheme()
   return (
     <>
-      <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
-              <StyledTableCell>Token ID</StyledTableCell>
-              <StyledTableCell>Token Contract</StyledTableCell>
-              <StyledTableCell>Create Time</StyledTableCell>
-              <StyledTableCell>Hash</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {myCreateNftList.map((row, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell>
-                  <Box display={'flex'} alignItems={'center'}>
-                    {row.account ? shortenAddress(row.account, 4) : '--'}
-                    <Copy margin="0 0 0 10px" toCopy={row.account} />
-                  </Box>
-                </StyledTableCell>
+      <Box
+        sx={{
+          width: 'auto',
+          [theme.breakpoints.down('sm')]: {
+            width: 'calc(100vw - 32px)',
+            overflowX: 'auto'
+          }
+        }}
+      >
+        <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
+                <StyledTableCell>Token ID</StyledTableCell>
+                <StyledTableCell>Token Contract</StyledTableCell>
+                <StyledTableCell>Create Time</StyledTableCell>
+                <StyledTableCell>Hash</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {myCreateNftList.map((row, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>
+                    <Box display={'flex'} alignItems={'center'}>
+                      {row.account ? shortenAddress(row.account, 4) : '--'}
+                      <Copy margin="0 0 0 10px" toCopy={row.account} />
+                    </Box>
+                  </StyledTableCell>
 
-                <StyledTableCell>
-                  <Typography
-                    sx={{
-                      maxWidth: 50,
-                      width: '100%'
-                    }}
-                    noWrap
-                  >
-                    {row.tokenId}
-                  </Typography>
-                </StyledTableCell>
-
-                <StyledTableCell>
-                  <Box display={'flex'} alignItems={'center'}>
-                    <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}>
-                      {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
-                    </ExternalLink>
-                    <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
-                  </Box>
-                </StyledTableCell>
-                <StyledTableCell>{row.createTime || '--'}</StyledTableCell>
-                <StyledTableCell>
-                  <Typography
-                    sx={{
-                      maxWidth: 200,
-                      width: '100%'
-                    }}
-                    noWrap
-                  >
-                    <ExternalLink
-                      href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}
+                  <StyledTableCell>
+                    <Typography
+                      sx={{
+                        maxWidth: 50,
+                        width: '100%'
+                      }}
+                      noWrap
                     >
-                      {row.transactionHash || '--'}
-                    </ExternalLink>
-                  </Typography>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                      {row.tokenId}
+                    </Typography>
+                  </StyledTableCell>
+
+                  <StyledTableCell>
+                    <Box display={'flex'} alignItems={'center'}>
+                      <ExternalLink
+                        href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}
+                      >
+                        {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
+                      </ExternalLink>
+                      <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
+                    </Box>
+                  </StyledTableCell>
+                  <StyledTableCell>{row.createTime || '--'}</StyledTableCell>
+                  <StyledTableCell>
+                    <Typography
+                      sx={{
+                        maxWidth: 200,
+                        width: '100%'
+                      }}
+                      noWrap
+                    >
+                      <ExternalLink
+                        href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}
+                      >
+                        {row.transactionHash || '--'}
+                      </ExternalLink>
+                    </Typography>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
     </>
   )
 }

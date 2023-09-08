@@ -572,7 +572,10 @@ export default function LeftSider() {
                         </>
                       ) : (
                         <>
-                          <TooltipStyle title={'Private space, visible only to those invited.'} placement="left">
+                          <TooltipStyle
+                            title={'Private space, visible only to those invited.'}
+                            placement={isSmDown ? 'top' : 'left'}
+                          >
                             <Box
                               className={'LBox'}
                               sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}

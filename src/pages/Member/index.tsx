@@ -69,11 +69,20 @@ const StyledTabs = styled('div')(({ theme }) => ({
     justifyContent: 'space-evenly',
     '&>*': {
       marginRight: 0,
+
       '&:last-child': {
         marginRight: 0
       },
       '& .css-1q9gtu-MuiButtonBase-root-MuiTab-root': {
-        fontSize: '13px !important'
+        fontSize: '12px !important',
+        gap: 5
+      },
+      '& .css-heg063-MuiTabs-flexContainer': {
+        justifyContent: 'space-between',
+        width: 'calc(100vw - 32px)'
+      },
+      '& button': {
+        padding: 0
       }
     }
   }
@@ -203,6 +212,7 @@ export default function Member() {
               Manage members here, add them by address, and define roles for them. Make sure to turn on your
               notifications to receive information about new openings.
             </Typography>
+            {isSmDown && <AddJobMemberButtons job={isJoined.job} addJobsCB={addJobsCB} addMemberCB={addMemberCB} />}
             <Box
               sx={{
                 display: 'flex',
@@ -216,10 +226,6 @@ export default function Member() {
                   fontWeight: 500,
                   padding: '12px 16px',
                   marginBottom: '-12px'
-                },
-                [theme.breakpoints.down('sm')]: {
-                  width: 'calc(100vw - 32px)',
-                  overflowX: 'auto'
                 }
               }}
             >
@@ -244,11 +250,8 @@ export default function Member() {
                   ))}
                 </Tabs>
               </StyledTabs>
-              {tabList.length === 3 && tabValue === 1 ? (
+              {tabList.length === 3 && tabValue === 1 && !isSmDown ? (
                 <Typography
-                  sx={{
-                    whiteSpace: 'nowrap'
-                  }}
                   onClick={() => {
                     navigate(routes._DaoInfo + `/${daoId}/settings?tab=3`)
                   }}
@@ -269,7 +272,12 @@ export default function Member() {
             ) : tabValue === 0 ? (
               <CardView result={jobsList} role={isJoined?.job} />
             ) : tabValue === 1 ? (
-              <JobApplication result={applyList} reFetch={() => setRand(Math.random())} />
+              <JobApplication
+                result={applyList}
+                reFetch={() => setRand(Math.random())}
+                jobsNum={jobsNum}
+                daoId={curDaoId}
+              />
             ) : (
               <InviteUser />
             )}
@@ -291,12 +299,34 @@ function AddJobMemberButtons({
   addJobsCB: () => void
   addMemberCB: () => void
 }) {
+  const isSmDown = useBreakpoint('sm')
   return (
     <>
       {job === 'owner' || job === 'superAdmin' ? (
-        <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
-          <Button onClick={addJobsCB}>+ Add Job</Button>
-          <Button onClick={addMemberCB}>+ Add Member</Button>
+        <Box
+          display={'flex'}
+          alignItems={'center'}
+          flexDirection={'row'}
+          gap={8}
+          justifyContent={isSmDown ? 'end' : 'unset'}
+          mt={isSmDown ? 20 : 0}
+        >
+          <Button
+            onClick={addJobsCB}
+            width={isSmDown ? '120px' : 'auto'}
+            height={isSmDown ? '32px' : '40px'}
+            fontSize={isSmDown ? '13px' : '14px'}
+          >
+            + Add Job
+          </Button>
+          <Button
+            onClick={addMemberCB}
+            width={isSmDown ? '120px' : 'auto'}
+            height={isSmDown ? '32px' : '40px'}
+            fontSize={isSmDown ? '13px' : '14px'}
+          >
+            + Add Member
+          </Button>
         </Box>
       ) : (
         <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>

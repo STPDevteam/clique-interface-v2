@@ -25,6 +25,7 @@ import Editor from 'pages/DaoInfo/Children/Proposal/Editor'
 import { useIsDelayTime, useUserProfileInfo } from 'hooks/useBackedProfileServer'
 import { timeStampToFormat } from 'utils/dao'
 import Loading from 'components/Loading'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export interface DaoMemberProp {
   accountLevel: number
@@ -49,8 +50,12 @@ const ContentHintStyle = styled(Typography)(() => ({
   lineHeight: '16px',
   color: '#8D8EA5'
 }))
-const ContentBoxStyle = styled(Box)(() => ({
-  padding: '30px 120px 70px 70px'
+const ContentBoxStyle = styled(Box)(({ theme }) => ({
+  padding: '30px 120px 70px 70px',
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    padding: '0 16px 40px'
+  }
 }))
 
 const DateBoxStyle = styled(Box)(() => ({
@@ -116,6 +121,7 @@ export enum AccountLevel {
 }
 
 export default function Index() {
+  const isSmDown = useBreakpoint('sm')
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const { library, account, chainId } = useActiveWeb3React()
   const { isDelayTime } = useIsDelayTime()
@@ -357,26 +363,35 @@ export default function Index() {
   }, [insertLine])
   return account && userSignature ? (
     <Box sx={{ display: 'flex', maxWidth: '1440px', width: '100%' }}>
-      <Box
-        sx={{
-          width: 600,
-          // height: 'calc(100% - 80px)',
-          display: 'flex',
-          flexGrow: 1
-        }}
-      >
-        <img
-          src={SoulTokenBgImg}
-          alt=""
-          style={{
+      {!isSmDown && (
+        <Box
+          sx={{
             width: 600,
-            height: '100%'
+            // height: 'calc(100% - 80px)',
+            display: 'flex',
+            flexGrow: 1
           }}
-        />
-      </Box>
+        >
+          <img
+            src={SoulTokenBgImg}
+            alt=""
+            style={{
+              width: 600,
+              height: '100%'
+            }}
+          />
+        </Box>
+      )}
       <ContentBoxStyle>
         <Back />
-        <Typography style={{ marginTop: 30 }} variant="h3" lineHeight={'56px'} fontWeight={'700'}>
+        <Typography
+          sx={{
+            font: "700 40px/56px 'Inter' ",
+            color: '#3f5170',
+            marginTop: 30,
+            [theme.breakpoints.down('sm')]: { fontSize: '32px', lineHeight: '40px', marginTop: 20 }
+          }}
+        >
           Create Soulbound Token of DAO
         </Typography>
         <Typography variant="body1" fontWeight={'400'} fontSize={16}>
@@ -456,6 +471,13 @@ export default function Index() {
           <Box sx={{ mt: 20, mb: 20 }}>
             <UploadFile
               size={150}
+              sx={{
+                width: 'auto',
+                [theme.breakpoints.down('sm')]: {
+                  gap: 0,
+                  justifyContent: 'space-between'
+                }
+              }}
               value={fileValue}
               onChange={e => {
                 setFileValue(e)

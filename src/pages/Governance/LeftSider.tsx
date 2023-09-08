@@ -43,9 +43,10 @@ const Wrapper = styled('div')(({ theme }) => ({
     '& .dao-box': {
       overflowY: 'auto',
       // overflowX: 'auto',
-      height: '150px',
+      maxHeight: '150px',
       display: 'block',
       width: `64px`,
+      height: 'auto',
       '&::-webkit-scrollbar': {
         display: 'none'
       }
