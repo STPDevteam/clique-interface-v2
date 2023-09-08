@@ -1,4 +1,4 @@
-import { Box, Link, styled, Typography, Tooltip, TooltipProps, tooltipClasses } from '@mui/material'
+import { Box, Link, styled, Typography, Tooltip, TooltipProps, tooltipClasses, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import { ReactComponent as Discord } from 'assets/svg/discord.svg'
@@ -64,6 +64,7 @@ const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
 }))
 
 export default function Header() {
+  const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   const dispatch = useDispatch()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
@@ -130,25 +131,59 @@ export default function Header() {
         <StyledHeader>
           <Box
             sx={{
-              display: 'flex'
+              display: 'flex',
+              gap: 35,
+              [theme.breakpoints.down('sm')]: {
+                display: 'grid',
+                gap: 10
+              }
             }}
           >
             <Box
               sx={{
-                height: 142,
-                width: 142,
-                border: '1px solid #D4D7E2',
-                borderRadius: '8px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
+                width: 'auto',
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: 'space-between'
+                }
               }}
             >
-              <DaoAvatars size={isSmDown ? 60 : 100} src={daoInfo?.daoLogo} />
+              <Box
+                sx={{
+                  height: 142,
+                  width: 142,
+                  border: '1px solid #D4D7E2',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <DaoAvatars size={isSmDown ? 60 : 100} src={daoInfo?.daoLogo} />
+              </Box>
+
+              {!isSmDown ? null : !account ? null : myJoinDaoData?.job === 'owner' ? null : myJoinDaoData.isJoin ? (
+                <Text onClick={handleQuitClick}>
+                  <QuitIcon />
+                  Quit DAO
+                </Text>
+              ) : (
+                <Button width="87px" height="36px" onClick={joinDaoClick}>
+                  Join DAO
+                </Button>
+              )}
             </Box>
-            <Box sx={{ ml: 35, height: 142 }}>
-              <Box sx={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <Typography variant="h5" sx={{ font: '600 24px/29px "Inter" ' }}>
+
+            <Box sx={{ height: 142 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 8,
+                  alignItems: 'center'
+                }}
+              >
+                <Typography variant="h5" sx={{ width: '50vw', font: '600 24px/29px "Inter"', wordWrap: 'break-word' }}>
                   {daoInfo?.daoName || '--'}
                 </Typography>
                 {daoInfo?.approve && <AuthIcon />}
@@ -172,7 +207,10 @@ export default function Header() {
                     '-webkit-box-orient': 'vertical',
                     '-webkit-line-clamp': '2',
                     wordBreak: 'break-all',
-                    lineHeight: '20px'
+                    lineHeight: '20px',
+                    [theme.breakpoints.down('sm')]: {
+                      maxWidth: '100vw'
+                    }
                   }}
                 >
                   {daoInfo?.bio || '--'}
@@ -243,7 +281,7 @@ export default function Header() {
               </Box>
             </Box>
           </Box>
-          {!account ? null : myJoinDaoData?.job === 'owner' ? null : myJoinDaoData.isJoin ? (
+          {isSmDown ? null : !account ? null : myJoinDaoData?.job === 'owner' ? null : myJoinDaoData.isJoin ? (
             <Text onClick={handleQuitClick}>
               <QuitIcon />
               Quit DAO

@@ -61,7 +61,9 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
         gap: 20,
         padding: '20px 0',
         [theme.breakpoints.down('sm')]: {
-          gridTemplateColumns: '1fr 1fr'
+          // gridTemplateColumns: '1fr 1fr',
+          justifyContent: 'space-between',
+          gap: 10
         }
       }}
     >
@@ -102,7 +104,7 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                 fontWeight: 600
               },
               [theme.breakpoints.down('sm')]: {
-                width: '160px'
+                width: '44vw'
               }
             }}
           >
