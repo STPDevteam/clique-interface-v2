@@ -8,7 +8,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Alert
+  Alert,
+  useTheme
 } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import Input from 'components/Input/InputNumerical'
@@ -35,6 +36,7 @@ import { useTokenByChain } from 'state/wallet/hooks'
 import { isAddress } from 'ethers/lib/utils'
 import EmptyData from 'components/EmptyData'
 import Tooltip from 'components/Tooltip'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const InputTitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -46,10 +48,14 @@ const InputTitleStyle = styled(Typography)(() => ({
 const InputStyle = styled(Input)(() => ({
   height: 40
 }))
-const GridLayoutff = styled(Box)(() => ({
+const GridLayoutff = styled(Box)(({ theme }) => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
-  gap: 16
+  gap: 16,
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    gridTemplateColumns: 'auto'
+  }
 }))
 
 const Row = styled(Box)(() => ({
@@ -58,6 +64,8 @@ const Row = styled(Box)(() => ({
 
 export default function General({ daoId }: { daoId: number }) {
   const { showModal } = useModal()
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const [loading, setLoading] = useState(false)
   const [fixTime, setFixtime] = useState((daoInfo.votingPeriod / 3600).toString())
@@ -156,7 +164,7 @@ export default function General({ daoId }: { daoId: number }) {
       <Row sx={{ gap: 10, mb: 14 }}>
         {createDaoData && createDaoData.governance.length < 1 && (
           <Button
-            style={{ maxWidth: 184, height: 36 }}
+            style={{ maxWidth: 184, height: isSmDown ? 32 : 36, fontSize: isSmDown ? '13px' : '14px' }}
             onClick={() => {
               if (createDaoData && createDaoData.governance.length >= 1) {
                 toast.error('There can only be one governance token, if you want to modify it, please remove it first')
@@ -170,7 +178,13 @@ export default function General({ daoId }: { daoId: number }) {
           </Button>
         )}
         <OutlineButton
-          style={{ maxWidth: 184, height: 36, color: '#3F5170', border: '1px solid #3F5170' }}
+          style={{
+            maxWidth: 184,
+            height: isSmDown ? 32 : 36,
+            fontSize: isSmDown ? '13px' : '14px',
+            color: '#3F5170',
+            border: '1px solid #3F5170'
+          }}
           onClick={() => navigate(routes.CreatorToken)}
         >
           Create New Token
@@ -220,14 +234,32 @@ export default function General({ daoId }: { daoId: number }) {
               value={proposalThreshold}
             />
             {startValite && saveBtn.text === 'threshold' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
-            <Row sx={{ maxWidth: 463, justifyContent: 'space-between', mt: 20 }}>
+            <Row
+              sx={{
+                maxWidth: 463,
+                justifyContent: 'space-between',
+                mt: 20,
+                [theme.breakpoints.down('sm')]: {
+                  display: 'grid',
+                  gap: 10
+                }
+              }}
+            >
               <InputTitleStyle>Voting Types</InputTitleStyle>
               <ToggleButtonGroup initIndex={daoInfo.votingType} Props={TypesList} setToggleValue={setTypesValue} />
             </Row>
           </Box>
 
           <Row sx={{ maxWidth: 463, gap: 10, flexDirection: 'column' }}>
-            <Row sx={{ justifyContent: 'space-between' }}>
+            <Row
+              sx={{
+                justifyContent: 'space-between',
+                [theme.breakpoints.down('sm')]: {
+                  display: 'grid',
+                  gap: 10
+                }
+              }}
+            >
               <InputTitleStyle>Voting Period</InputTitleStyle>
               <ToggleButtonGroup
                 initIndex={daoInfo.votingPeriod > 0 ? 0 : 1}
@@ -257,7 +289,18 @@ export default function General({ daoId }: { daoId: number }) {
                 {startValite && saveBtn.text === 'time' && <Typography color={'#E46767'}>{saveBtn.error}</Typography>}
               </Row>
             ) : (
-              <Typography color="#8D8EA5" lineHeight="40px" variant="body1" paddingLeft={20}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: '#8D8EA5',
+                  lineHeight: '40px',
+                  paddingLeft: 20,
+                  [theme.breakpoints.down('sm')]: {
+                    lineHeight: '20px',
+                    paddingLeft: 0
+                  }
+                }}
+              >
                 Customize the voting time when creating a proposal
               </Typography>
             )}
@@ -270,7 +313,11 @@ export default function General({ daoId }: { daoId: number }) {
         </Alert>
       )}
       <Box mt={30} display="flex" justifyContent={'flex-end'} mb={20}>
-        <BlackButton width="270px" height="40px" onClick={updateGovernance}>
+        <BlackButton
+          width={isSmDown ? '200px' : '270px'}
+          height={isSmDown ? '36px' : '40px'}
+          onClick={updateGovernance}
+        >
           {loading ? (
             <>
               Saving
