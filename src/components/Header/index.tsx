@@ -324,18 +324,17 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     '& .link': { marginRight: 24 },
     // justifyContent: 'space-around',
     height: theme.height.mobileHeader,
-    padding: '0 15px',
-    boxShadow: 'none'
+    padding: '0 0 0 10px'
+    // boxShadow: 'none'
   }
 }))
 
 const StyledMobileAppBar = styled(StyledAppBar)(({ theme }) => ({
   display: 'none',
   [theme.breakpoints.down('sm')]: {
-    display: 'none',
+    display: 'block',
     position: 'unset',
-    marginTop: 10,
-    height: `calc(${theme.height.mobileHeader} - 10px)`
+    height: 40
   }
 }))
 
@@ -381,6 +380,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
     overflowY: 'hidden',
     whiteSpace: 'nowrap',
     height: 40,
+    alignItems: 'center',
     scrollbarWidth: 'none' /* firefox */,
     '-ms-overflow-style': 'none' /* IE 10+ */,
     '&::-webkit-scrollbar': {
@@ -609,7 +609,12 @@ export default function Header() {
               boxShadow: IsNftPage ? 'none' : 'inset 0px -1px 0px #E4E4E4'
             }}
           >
-            <Box display="flex" alignItems="center">
+            <Box
+              display="flex"
+              alignItems="center"
+              // width={isSmDown ? 25 : 'auto'}
+              // overflow={isSmDown ? 'hidden' : 'unset'}
+            >
               <MainLogo to={routes.Governance}>
                 <Image src={IsNftPage ? logoWhite : logo} alt={'logo'} />
               </MainLogo>
@@ -680,7 +685,9 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                     cursor: 'pointer',
                     gap: 10,
                     [theme.breakpoints.down('sm')]: {
-                      paddingTop: 0
+                      paddingTop: 0,
+                      gap: 6,
+                      color: '#fff'
                     },
                     '& svg:hover path': {
                       fill: '#0049C6'
@@ -863,7 +870,7 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
       display={{ sm: 'flex', xs: 'grid' }}
       gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto auto' }}
       alignItems="center"
-      gap={{ xs: '10px', sm: '10px' }}
+      gap={{ xs: '5px', sm: '10px' }}
     >
       <NetworkSelect IsNftPage={IsNftPage} />
       {userInfo?.loggedToken && !isSmDown && <MySpace IsNftPage={IsNftPage} />}
