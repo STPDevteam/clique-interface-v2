@@ -580,7 +580,13 @@ export default function Header() {
                   zIndex: 1000,
                   display: 'flex',
                   justifyContent: 'center',
-                  borderRadius: '0'
+                  borderRadius: '0',
+                  fontSize: isSmDown ? 12 : 14,
+                  [theme.breakpoints.down('sm')]: {
+                    '& .css-1pxa9xg-MuiAlert-message': {
+                      padding: 0
+                    }
+                  }
                 }}
               >
                 You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
