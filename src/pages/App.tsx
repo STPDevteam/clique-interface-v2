@@ -90,7 +90,7 @@ const AppWrapper = styled('div')(({ theme }) => ({
   }
 }))
 
-const ContentWrapper = styled('div')({
+const ContentWrapper = styled('div')(({ theme }) => ({
   width: '100%',
   maxHeight: '100vh',
   overflow: 'auto',
@@ -100,7 +100,8 @@ const ContentWrapper = styled('div')({
     zIndex: 199999,
     '& .Toastify__toast': {
       borderRadius: '10px',
-      border: '1px solid #97B7EF'
+      border: '1px solid #97B7EF',
+      height: 50
     },
     '& .Toastify__toast-body': {
       justifyContent: 'center',
@@ -108,8 +109,16 @@ const ContentWrapper = styled('div')({
       fontWeight: 500,
       fontSize: 14
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .toast-container': {
+      width: '90vw',
+      margin: 'auto',
+      left: 0,
+      right: 0
+    }
   }
-})
+}))
 
 const BodyWrapper = styled('div')(({}) => ({
   // paddingTop: theme.height.header,

@@ -1,6 +1,6 @@
 import { Box, Typography, styled, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import WelcomeWeb3_Bg from 'assets/images/cratedao_bg.png'
+// import WelcomeWeb3_Bg from 'assets/images/cratedao_bg.png'
 // import { ReactComponent as WelcomeTitle } from 'assets/svg/web3title.svg'
 import WelcomeWeb3 from 'assets/images/welcomweb3_bg.png'
 import UpImgButton from 'components/UploadImage/UpImgButton'
@@ -23,6 +23,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useEffect } from 'react'
 import { useIsDelayTime } from 'hooks/useBackedProfileServer'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -30,7 +31,7 @@ const TitleStyle = styled(Typography)(() => ({
   lineHeight: '16px',
   color: '#80829F'
 }))
-const InputStyle = styled(Input)(() => ({
+const InputStyle = styled(Input)(({}) => ({
   marginTop: 10,
   height: 40,
   maxWidth: 564
@@ -41,6 +42,7 @@ export default function Index() {
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const { isDelayTime } = useIsDelayTime()
   useEffect(() => {
     if (isDelayTime) return
@@ -154,7 +156,6 @@ export default function Index() {
                 padding: '70px  80px',
                 [theme.breakpoints.down('sm')]: {
                   padding: '0',
-                  background: `url(${WelcomeWeb3_Bg})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center center',
                   height: '100vh'
@@ -171,7 +172,7 @@ export default function Index() {
                   }
                 }}
               >
-                <Typography variant="h3" sx={{ lineHeight: '56px', fontWeight: 700 }}>
+                <Typography variant="h3" sx={{ lineHeight: '56px', fontWeight: 700, fontSize: isSmDown ? 34 : 40 }}>
                   Build a DAO
                 </Typography>
                 <FormItem name="daoLogo" required>
@@ -179,7 +180,7 @@ export default function Index() {
                     <UpImgButton
                       sx={{ mt: 20 }}
                       logoTitle="LOGO"
-                      size={125}
+                      size={isSmDown ? 100 : 125}
                       value={values.daoLogo}
                       onChange={val => {
                         setFieldValue('daoLogo', val)
@@ -246,7 +247,8 @@ export default function Index() {
 
                 <Box
                   sx={{
-                    mt: 40,
+                    mt: isSmDown ? 25 : 40,
+                    paddingBottom: isSmDown ? 30 : 0,
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -269,7 +271,8 @@ export default function Index() {
                       height: 40,
                       textAlign: 'center',
                       [theme.breakpoints.down('sm')]: {
-                        width: 180
+                        width: 160,
+                        height: 36
                       }
                     }}
                     type="submit"

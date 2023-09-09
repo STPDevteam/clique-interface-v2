@@ -383,7 +383,7 @@ export default function Index() {
         </Box>
       )}
       <ContentBoxStyle>
-        <Back />
+        <Back sx={{ marginLeft: 0 }} />
         <Typography
           sx={{
             font: "700 40px/56px 'Inter' ",
