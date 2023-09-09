@@ -30,7 +30,7 @@ const Wrapper = styled(Box)(({ theme }) => ({
   gap: 16,
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
-    padding: '20px'
+    padding: '0'
   }
 }))
 
