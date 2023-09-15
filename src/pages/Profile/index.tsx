@@ -190,7 +190,12 @@ export default function Profile() {
                     alignItems={'center'}
                   >
                     {profileInfo?.twitter && isSocialUrl('twitter', profileInfo.twitter) ? (
-                      <StyledLink target={'_blank'} href={profileInfo.twitter} underline="none">
+                      <StyledLink
+                        target={'_blank'}
+                        href={profileInfo.twitter}
+                        underline="none"
+                        width={isSmDown ? '40px' : 'auto'}
+                      >
                         <Twitter />
                         {!isSmDown && (
                           <Typography color="#0F7CAB" fontSize={12} ml={5} noWrap maxWidth={70}>
@@ -210,6 +215,7 @@ export default function Profile() {
                         underline="none"
                         borderColor={'#E6D2FF'}
                         bgColor="#FCF3FF"
+                        width={isSmDown ? '40px' : 'auto'}
                       >
                         <Discord />
                         {!isSmDown && (
@@ -230,6 +236,7 @@ export default function Profile() {
                         underline="none"
                         borderColor={'#FFD2D2'}
                         bgColor="#FFF3F3"
+                        width={isSmDown ? '40px' : 'auto'}
                       >
                         <Youtobe />
                         {!isSmDown && (
@@ -250,6 +257,7 @@ export default function Profile() {
                         underline="none"
                         borderColor={'#F3F9FF'}
                         bgColor="#D2DAFF"
+                        width={isSmDown ? '40px' : 'auto'}
                       >
                         <Opensea />
                         {!isSmDown && (
@@ -387,11 +395,12 @@ export default function Profile() {
                 justifyContent={'space-between'}
                 spacing={isSmDown ? 10 : 20}
               >
-                <Box sx={{ width: '60%', maxWidth: '700px', wordWrap: 'break-word' }}>
-                  <Typography mt={10} fontSize={14} fontWeight={600}>
-                    {profileInfo?.introduction || ''}
-                  </Typography>
-                  {/* <Box
+                {!isSmDown && (
+                  <Box sx={{ width: '60%', maxWidth: '700px', wordWrap: 'break-word' }}>
+                    <Typography mt={10} fontSize={14} fontWeight={600}>
+                      {profileInfo?.introduction || ''}
+                    </Typography>
+                    {/* <Box
                     display={'flex'}
                     alignItems="center"
                     sx={{
@@ -406,7 +415,8 @@ export default function Profile() {
                   >
                     + Add
                   </Box> */}
-                </Box>
+                  </Box>
+                )}
                 {isSelf ? (
                   <OutlineButton
                     noBold
@@ -426,6 +436,28 @@ export default function Profile() {
               </Stack>
             </Box>
           </Box>
+          {isSmDown && (
+            <>
+              <Box sx={{ width: '100%', maxWidth: '700px', wordWrap: 'break-word' }}>
+                <Typography
+                  mt={10}
+                  fontSize={14}
+                  fontWeight={600}
+                  sx={{
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                    overflow: 'hidden',
+                    paddingRight: 20,
+                    textOverflow: 'ellipsis',
+                    wordBreak: ' break-all'
+                  }}
+                >
+                  {profileInfo?.introduction || ''}
+                </Typography>
+              </Box>
+            </>
+          )}
         </StyledHeader>
       </ContainerWrapper>
       <Box display={'grid'} gap="48px">

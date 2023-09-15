@@ -30,6 +30,7 @@ export default function WalletModal({}: // pendingTransactions,
   // ENSName?: string
 }) {
   const isUpToMD = useBreakpoint('md')
+  const isSmDown = useBreakpoint('sm')
   // important that these are destructed from the account-specific web3-react context
   const { active, account, library, connector, errorNetwork } = useActiveWeb3React()
 
@@ -131,7 +132,7 @@ export default function WalletModal({}: // pendingTransactions,
         )}
 
         <Stack spacing={10}>
-          <Typography mb={6} width={400} textAlign="center" variant="body1" lineHeight={1.3}>
+          <Typography mb={6} width={isSmDown ? '100%' : 400} textAlign="center" variant="body1" lineHeight={1.3}>
             By connecting a wallet, you acknowledge that you have read and understand the Clique{' '}
             <Link target={'_blank'} href="https://stp-dao.gitbook.io/verse-network/clique/overview-of-clique">
               Disclaimer
@@ -143,7 +144,6 @@ export default function WalletModal({}: // pendingTransactions,
       </>
     )
   }
-  const isSmDown = useBreakpoint('sm')
 
   return (
     <Modal customIsOpen={walletModalOpen} customOnDismiss={toggleWalletModal} maxWidth="560px" closeIcon={true}>

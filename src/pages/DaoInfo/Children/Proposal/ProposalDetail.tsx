@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, styled } from '@mui/material'
+import { Box, Grid, Typography, styled, useTheme } from '@mui/material'
 import Back from 'components/Back'
 import Loading from 'components/Loading'
 import { routes } from 'constants/routes'
@@ -23,6 +23,7 @@ import { toast } from 'react-toastify'
 import { useCancelProposalCallback } from 'hooks/useProposalCallback'
 import { Dots } from 'theme/components'
 import { RowCenter } from './ProposalItem'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledBody = styled(Box)({
   minHeight: 200,
@@ -45,6 +46,8 @@ export default function ProposalDetail() {
 }
 
 function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number }) {
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const [rand, setRand] = useState<number>(-1)
@@ -132,26 +135,39 @@ function DetailBox({ daoId, proposalId }: { daoId: number; proposalId: number })
                 height: 80,
                 borderRadius: '8px',
                 padding: 30,
-                color: '#80829F'
+                color: '#80829F',
+                [theme.breakpoints.down('sm')]: {
+                  padding: 5
+                }
               }}
             >
-              <Box display={'flex'} gap={60}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 60,
+                  [theme.breakpoints.down('sm')]: {
+                    display: 'grid',
+                    gap: 5
+                  }
+                }}
+              >
                 <Typography>
-                  Voting types:{' '}
+                  Voting types:
                   {proposalDetailInfo.votingType === VotingTypes.SINGLE ? 'Single-voting' : 'Multi-voting'}
                 </Typography>
                 <Typography>
-                  Your votes: {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes)) || '--'}
+                  Your votes:
+                  {(account && formatNumberWithCommas(proposalDetailInfo.yourVotes)) || '--'}
                 </Typography>
               </Box>
 
               {proposalDetailInfo.status !== 'Soon' && (
                 <OutlineButton
-                  width={'190px'}
                   color="#0049C6"
                   style={{
                     borderColor: '#97B7EF',
-                    fontWeight: 600
+                    fontWeight: 600,
+                    width: isSmDown ? '130px' : '190px'
                   }}
                   noBold
                   height={40}

@@ -11,6 +11,7 @@ import * as yup from 'yup'
 import FormItem from 'components/FormItem'
 import { Form, Formik } from 'formik'
 import { LoadingButton } from '@mui/lab'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const guestList = [
   { value: 'public', label: 'Public' },
@@ -34,6 +35,7 @@ export default function AddTeamspaceModal({
   originAccess?: string
   onDimiss: () => void
 }) {
+  const isSmDown = useBreakpoint('sm')
   const [currentStatus, setCurrentStatus] = useState<string>(originAccess ?? 'public')
   const { hideModal } = useModal()
   const create = useAddTeamspace()
@@ -89,8 +91,8 @@ export default function AddTeamspaceModal({
     >
       {({ values, setFieldValue, errors, touched }) => {
         return (
-          <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
-            <Box component={Form} display="grid" textAlign={'center'} width="100%" height="480px">
+          <Modal maxWidth={isSmDown ? 'auto' : '480px'} width="100%" closeIcon padding="13px 28px">
+            <Box component={Form} display="grid" textAlign={'center'} width="100%" height={isSmDown ? 'auto' : '480px'}>
               <Box
                 display="flex"
                 justifyContent="space-between"
@@ -136,7 +138,7 @@ export default function AddTeamspaceModal({
               </FormItem>
               <Select
                 placeholder=""
-                width={'422px'}
+                width={isSmDown ? '100%' : '422px'}
                 height={40}
                 noBold
                 label="Guests"

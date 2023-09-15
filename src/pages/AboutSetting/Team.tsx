@@ -1,4 +1,4 @@
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled, useTheme } from '@mui/material'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ReactComponent as AddIcon } from 'assets/svg/newIcon.svg'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -19,6 +19,8 @@ import EmptyData from 'components/EmptyData'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
+import { shortenAddress } from 'utils'
+import Copy from 'components/essential/Copy'
 // import Pagination from 'components/Pagination'
 
 const TopText = styled(Box)({
@@ -35,6 +37,7 @@ export const adminLevelIndex = {
 
 export default function Team() {
   const isSmDown = useBreakpoint('sm')
+  const theme = useTheme()
   const [rand, setRand] = useState(Math.random())
   const [randNum, setRandNum] = useState(Math.random())
   const { showModal, hideModal } = useModal()
@@ -72,7 +75,7 @@ export default function Team() {
         display={'flex'}
         alignItems={'center'}
         gap={10}
-        width={158}
+        maxWidth={158}
         sx={{
           textOverflow: 'ellipsis',
           overflow: 'hidden'
@@ -84,7 +87,16 @@ export default function Team() {
         </Typography>
       </Box>,
       <Box key={account + daoId} display={'flex'} justifyContent={'flex-start'}>
-        <Typography>{account}</Typography>
+        <Typography display={'flex'}>
+          {isSmDown ? (
+            <>
+              {shortenAddress(account, 4)}
+              <Copy margin="0 0 0 10px" toCopy={account} />
+            </>
+          ) : (
+            account
+          )}
+        </Typography>
       </Box>,
       <Box
         key={account + daoId}
@@ -117,7 +129,7 @@ export default function Team() {
           )
         }}
       >
-        <Typography width={130} textAlign={'left'}>
+        <Typography width={isSmDown ? 'auto' : 130} textAlign={'left'}>
           {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'superAdmin' ? 'Owner' : ''}
           {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'owner' ? 'Creator' : ''}
           {DaoAdminLevelProp[jobsLevel as keyof typeof DaoAdminLevelProp] === 'admin' ? 'Admin' : ''}
@@ -125,12 +137,12 @@ export default function Team() {
         <ExpandMoreIcon />
       </Box>
     ])
-  }, [curAccount, memberLevel.job, memberList, showModal, updateDaoMyJoinData])
+  }, [curAccount, isSmDown, memberLevel.job, memberList, showModal, updateDaoMyJoinData])
 
   return (
     <Box
       sx={{
-        padding: isSmDown ? '20px 16px' : '0 0 40px',
+        padding: isSmDown ? '0' : '0 0 40px',
         borderRadius: '8px',
         '& table': {
           border: '1px solid #D4D7E2',
@@ -186,13 +198,17 @@ export default function Team() {
         </Box>
       </TopText>
       <Box
-        mt={14}
-        mb={20}
         sx={{
+          mt: 14,
+          mb: 20,
           display: 'flex',
           flexDirection: 'row',
           flexWrap: 'wrap',
-          gap: 15
+          gap: 15,
+          [theme.breakpoints.down('sm')]: {
+            mt: 25,
+            mb: 25
+          }
         }}
       >
         {jobList.map((item, index) => (
@@ -206,17 +222,27 @@ export default function Team() {
           onChange={(_, value) => page.setCurrentPage(value)}
         />
       </Box> */}
-      {tableList.length === 0 ? (
-        <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>
-      ) : (
-        <Table
-          collapsible={false}
-          firstAlign="left"
-          variant="outlined"
-          header={['Member', 'Address', 'Guests']}
-          rows={tableList}
-        />
-      )}
+      <Box
+        sx={{
+          width: 'auto',
+          [theme.breakpoints.down('sm')]: {
+            display: 'grid',
+            gap: 10
+          }
+        }}
+      >
+        {tableList.length === 0 ? (
+          <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>
+        ) : (
+          <Table
+            collapsible={false}
+            firstAlign="left"
+            variant="outlined"
+            header={['Member', 'Address', 'Guests']}
+            rows={tableList}
+          />
+        )}
+      </Box>
     </Box>
   )
 }
@@ -267,6 +293,7 @@ function JobCard({
   title: string
   onDimiss: () => void
 }) {
+  const theme = useTheme()
   const { showModal, hideModal } = useModal()
 
   const editIconClick = useCallback(() => {
@@ -310,6 +337,9 @@ function JobCard({
         '& p': {
           color: '#3F5170',
           lineHeight: 1
+        },
+        [theme.breakpoints.down('sm')]: {
+          width: 'calc(100vw - 32px)'
         }
       }}
     >
@@ -353,7 +383,10 @@ function JobCard({
             overflow: 'hidden',
             WebkitBoxOrient: 'vertical',
             textOverflow: 'ellipsis',
-            WebkitLineClamp: 3
+            WebkitLineClamp: 3,
+            [theme.breakpoints.down('sm')]: {
+              width: 'auto'
+            }
           }
         }}
       >

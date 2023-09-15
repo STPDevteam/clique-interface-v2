@@ -187,7 +187,7 @@ export function useUpdateNewJob() {
   }, [])
 }
 
-interface PublishItemProp {
+export interface PublishItemProp {
   daoId: number
   jobBio: string
   jobPublishId: number

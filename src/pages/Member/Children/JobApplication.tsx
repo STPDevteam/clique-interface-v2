@@ -1,4 +1,4 @@
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography, useTheme } from '@mui/material'
 // import { ReactComponent as Twitter } from 'assets/svg/twitter.svg'
 import Image from 'components/Image'
 import { timeStampToFormat } from 'utils/dao'
@@ -10,9 +10,26 @@ import { useActiveWeb3React } from 'hooks'
 import { JobsType } from './CardView'
 import avatar from 'assets/images/avatar.png'
 import { toast } from 'react-toastify'
-// import Button from 'components/Button/Button'
+import useBreakpoint from 'hooks/useBreakpoint'
+import EmptyData from 'components/EmptyData'
+import { routes } from 'constants/routes'
+import { useNavigate } from 'react-router-dom'
+import { PublishItemProp } from 'hooks/useBackedTaskServer'
 
-export default function JobApplication({ result, reFetch }: { result: JobsApplyListProp[]; reFetch: () => void }) {
+export default function JobApplication({
+  result,
+  reFetch,
+  jobsNum,
+  daoId
+}: {
+  result: JobsApplyListProp[]
+  reFetch: () => void
+  jobsNum: PublishItemProp[]
+  daoId: number
+}) {
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
+  const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const reviewApply = useReviewApply()
   const opTypeCallback = useCallback(
@@ -52,6 +69,7 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         display={'flex'}
         gap={10}
         alignItems={'center'}
+        justifyContent={isSmDown ? 'end' : 'start'}
         fontWeight={500}
         sx={{
           width: '100%',
@@ -65,7 +83,7 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
       >
         <Image src={item.avatar || avatar}></Image>
         <Tooltip title={item.nickname || 'unnamed'} arrow placement="top">
-          <Typography noWrap sx={{ width: '100px', fontSize: 16, cursor: 'pointer' }}>
+          <Typography noWrap sx={{ width: isSmDown ? 'auto' : '100px', fontSize: 16, cursor: 'pointer' }}>
             {item.nickname || 'unnamed'}
           </Typography>
         </Tooltip>
@@ -88,11 +106,14 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
               textOverflow: 'ellipsis',
               display: '-webkit-box',
               '-webkit-box-orient': 'vertical',
-              '-webkit-line-clamp': '2'
+              '-webkit-line-clamp': '2',
+              textAlign: isSmDown ? 'right' : 'center',
+              paddingLeft: isSmDown ? 10 : 0
             }}
             fontWeight={400}
             fontSize={12}
             color={'#80829F'}
+            noWrap
           >
             {item.message || '--'}
           </Typography>
@@ -138,7 +159,7 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         </Typography>
       </Box>
     ])
-  }, [opTypeCallback, result])
+  }, [isSmDown, opTypeCallback, result])
 
   return (
     <Box
@@ -151,12 +172,41 @@ export default function JobApplication({ result, reFetch }: { result: JobsApplyL
         }
       }}
     >
-      <Table
-        firstAlign="left"
-        variant="outlined"
-        header={['User', 'Role applied for', 'Applied Time', 'Message', '']}
-        rows={tableList}
-      ></Table>
+      {isSmDown && (
+        <Typography
+          sx={{
+            cursor: 'pointer',
+            color: '#0049C6',
+            fontWeight: 500,
+            textAlign: 'right',
+            padding: '15px 10px 6px 0',
+            fontSize: '13px'
+          }}
+          onClick={() => {
+            navigate(routes._DaoInfo + `/${daoId}/settings?tab=3`)
+          }}
+        >
+          View open jobs({jobsNum.length})&gt;
+        </Typography>
+      )}
+      <Box
+        sx={{
+          width: 'auto',
+          [theme.breakpoints.down('sm')]: {
+            gap: 10,
+            display: 'grid'
+          }
+        }}
+      >
+        <Table
+          firstAlign="left"
+          variant="outlined"
+          header={['User', 'Role applied for', 'Applied Time', 'Message', '']}
+          rows={tableList}
+        ></Table>
+      </Box>
+
+      {isSmDown && !tableList.length && <EmptyData />}
     </Box>
   )
 }

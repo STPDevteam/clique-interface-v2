@@ -1,4 +1,4 @@
-import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem, Stack, Tooltip } from '@mui/material'
+import { Box, Typography, Tabs, Tab, Divider, styled, MenuItem, Stack, Tooltip, useTheme } from '@mui/material'
 import Select from 'components/Select/Select'
 // import Button from 'components/Button/Button'
 // import OutlinedButton from 'components/Button/OutlineButton'
@@ -160,7 +160,7 @@ const columns: GridColDef[] = [
   }
 ]
 
-const StyledTabs = styled('div')(({ theme }) => ({
+export const StyledTabs = styled('div')(({ theme }) => ({
   display: 'flex',
   fontWeight: 600,
   fontSize: 14,
@@ -201,11 +201,24 @@ const StyledTabs = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
-    justifyContent: 'space-evenly',
+    justifyContent: 'start',
+    height: 36,
+    '& .css-1bgkweh-MuiButtonBase-root-MuiTab-root': {
+      padding: '6px 8px',
+      minHeight: '36px'
+    },
     '&>*': {
+      minHeight: '36px',
       marginRight: 0,
       '&:last-child': {
-        marginRight: 0
+        marginRight: 0,
+        minHeight: '36px'
+      },
+      '& button': {
+        fontSize: '13px !important',
+        '&.active': {
+          fontWeight: 600
+        }
       }
     }
   }
@@ -242,7 +255,7 @@ const AllTaskTable = function ({ priority, status }: { priority: string | undefi
   const { spacesId } = useParams<{ spacesId: string }>()
   const { result: taskTypeListRes } = useGetTaskList(Number(spacesId), status, priority)
   // const remove = useRemoveTask()
-
+  const theme = useTheme()
   const rows = useMemo(() => {
     if (!taskTypeListRes) return []
     const _arr: any = []
@@ -271,41 +284,52 @@ const AllTaskTable = function ({ priority, status }: { priority: string | undefi
   return (
     <Box
       sx={{
-        minWidth: 800,
-        width: '100%',
-        textAlign: 'center',
-        margin: '20px auto 40px',
-        '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {
-          width: '100%'
-        },
-        '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
-          borderRight: `1px solid #f0f0f0`
-        },
-        '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
-          borderBottom: `1px solid #f0f0f0`
-        },
-        '& .MuiDataGrid-columnHeaders .MuiDataGrid-iconSeparator': {
-          display: 'none'
+        width: 'auto',
+        [theme.breakpoints.down('sm')]: {
+          width: 'calc(100vw - 32px)',
+          overflowX: 'auto'
         }
       }}
     >
-      <DataGrid
-        disableColumnMenu
-        rows={rows}
-        columns={columns}
-        autoHeight={true}
-        pageSize={10}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-        hideFooterPagination={true}
-        onSelectionModelChange={editTask}
-      />
+      <Box
+        sx={{
+          minWidth: 800,
+          width: '100%',
+          textAlign: 'center',
+          margin: '20px auto 40px',
+          '& .MuiDataGrid-columnHeaders.css-okt5j6-MuiDataGrid-columnHeaders': {
+            width: '100%'
+          },
+          '& .MuiDataGrid-columnHeader, .MuiDataGrid-cell': {
+            borderRight: `1px solid #f0f0f0`
+          },
+          '& .MuiDataGrid-columnsContainer, .MuiDataGrid-cell': {
+            borderBottom: `1px solid #f0f0f0`
+          },
+          '& .MuiDataGrid-columnHeaders .MuiDataGrid-iconSeparator': {
+            display: 'none'
+          }
+        }}
+      >
+        <DataGrid
+          disableColumnMenu
+          rows={rows}
+          columns={columns}
+          autoHeight={true}
+          pageSize={10}
+          rowsPerPageOptions={[5]}
+          checkboxSelection
+          hideFooterPagination={true}
+          onSelectionModelChange={editTask}
+        />
+      </Box>
     </Box>
   )
 }
 
 export default function Index() {
   // const isSmDown = useBreakpoint('sm')
+  const theme = useTheme()
   const { daoId: curDaoId, spacesId: spacesId } = useParams<{
     daoId: string
     spacesId: string
@@ -411,7 +435,11 @@ export default function Index() {
               display: 'flex',
               justifyContent: 'space-between',
               flexDirection: 'row',
-              alignItems: 'center'
+              alignItems: 'center',
+              [theme.breakpoints.down('sm')]: {
+                display: 'grid',
+                width: '100%'
+              }
             }}
           >
             <StyledTabs>
@@ -429,6 +457,12 @@ export default function Index() {
                 ))}
               </Tabs>
             </StyledTabs>
+            {tabValue === 1 && (
+              <Box width={'calc(100vw - 32px)'} margin={'10px 0'}>
+                <Divider />
+              </Box>
+            )}
+
             {tabValue === 1 ? (
               <Box
                 sx={{
@@ -502,7 +536,7 @@ export default function Index() {
               ''
             )}
           </Box>
-          <Divider />
+          {tabValue === 0 && <Divider />}
           {tabValue === 0 ? <TeamSpacesTask /> : <AllTaskTable priority={currentPriority} status={currentStatus} />}
         </Stack>
       ) : (

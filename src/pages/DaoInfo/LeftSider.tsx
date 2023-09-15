@@ -43,6 +43,10 @@ import useModal from 'hooks/useModal'
 import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
 import AddIcon from 'assets/images/add.png'
 import { EmptyDaoItem } from 'components/Header/MySpace'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -248,6 +252,9 @@ export function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string
 }
 
 export default function LeftSider() {
+  const isOpen = useSelector((state: AppState) => state.application.openDaoLeftSided)
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
+  const isSmDown = useBreakpoint('sm')
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
   const navigate = useNavigate()
@@ -336,6 +343,13 @@ export default function LeftSider() {
     }
   }, [makeRouteLink, pathname, workspaceList])
 
+  const IsOpenSided = useMemo(() => {
+    if (!isSmDown) {
+      return true
+    }
+    return isOpen
+  }, [isOpen, isSmDown])
+
   return (
     <StyledAppBar>
       <Drawer
@@ -348,8 +362,9 @@ export default function LeftSider() {
             boxSizing: 'border-box'
           }
         }}
-        variant="permanent"
+        variant="persistent"
         anchor="left"
+        open={IsOpenSided}
       >
         <Box
           display={'flex'}
@@ -557,7 +572,10 @@ export default function LeftSider() {
                         </>
                       ) : (
                         <>
-                          <TooltipStyle title={'Private space, visible only to those invited.'} placement="left">
+                          <TooltipStyle
+                            title={'Private space, visible only to those invited.'}
+                            placement={isSmDown ? 'top' : 'left'}
+                          >
                             <Box
                               className={'LBox'}
                               sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
@@ -720,6 +738,14 @@ export default function LeftSider() {
             </Typography>
           </Box> */}
       </Drawer>
+      {isSmDown && isOpen && (
+        <Box
+          onClick={() => {
+            setSidedStatusCallBack(false)
+          }}
+          sx={{ height: '100vh', width: '100vw', background: 'rgba(0, 0, 0, 0.5)', position: 'fixed', top: 0, left: 0 }}
+        />
+      )}
     </StyledAppBar>
   )
 }

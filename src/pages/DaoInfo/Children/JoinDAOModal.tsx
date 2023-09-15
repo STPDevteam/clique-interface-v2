@@ -14,6 +14,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { useDispatch } from 'react-redux'
 import { updateJoinDaoModalStatus, updateJoinDaoModalShakeStatus } from 'state/buildingGovDao/actions'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const slideIn = keyframes`
   from {
@@ -31,14 +32,15 @@ const shake = keyframes`
   100% { transform: translateY(0); }
 `
 
-const Wrapper = styled(Stack)({
+const Wrapper = styled(Stack)(({}) => ({
   position: 'fixed',
   bottom: 0,
   left: 0,
   right: 0,
   zIndex: 10000,
   gridTemplateColumns: '200px 1fr 200px',
-  height: 153,
+  minHeight: 153,
+  height: 'auto',
   flexDirection: 'row',
   alignItems: 'center',
   background: `url(${blueBg})`,
@@ -57,12 +59,13 @@ const Wrapper = styled(Stack)({
     display: 'none',
     bottom: -200
   }
+
   // '&.shake-animation': {
   //   animation: `${shake} 0.5s`
   // }
-})
+}))
 
-const CategoryWrapper = styled(Box)({
+const CategoryWrapper = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -91,10 +94,19 @@ const CategoryWrapper = styled(Box)({
   },
   '& .colorItem5': {
     backgroundColor: '#BD73F6'
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    flexWrap: 'wrap',
+    gap: 6,
+    '& span': {
+      fontSize: 12
+    }
   }
-})
+}))
 
 export default function JoinDaoFrame() {
+  const isSmDown = useBreakpoint('sm')
   const { daoId: daoId } = useParams<{ daoId: string }>()
   const { createDaoData, updateDaoMyJoinData, isOpen, isShake, updateMyJoinedDaoListData } = useUpdateDaoDataCallback()
   const toggleWalletModal = useWalletModalToggle()
@@ -161,14 +173,28 @@ export default function JoinDaoFrame() {
         animation: `${isOpen && isShake ? shake : isOpen && isShake === undefined && slideIn} .5s ease`
       }}
     >
-      <Box display="grid" width="260px">
-        <Box display={'flex'} justifyContent={'center'}>
-          <Avatar sx={{ width: 88, height: 88 }} src={createDaoData?.daoLogo || ''}></Avatar>
+      <Box display="grid" width={isSmDown ? 200 : 260}>
+        <Box display={isSmDown ? 'grid' : 'flex'} justifyContent={'center'} gap={isSmDown ? 10 : 0}>
+          <Avatar
+            sx={{ width: isSmDown ? 60 : 88, height: isSmDown ? 60 : 88, margin: 'auto' }}
+            src={createDaoData?.daoLogo || ''}
+          ></Avatar>
+          {isSmDown && (
+            <Button
+              onClick={onClickJoinDao}
+              noBold
+              style={{ border: 0, color: '#0049C6', backgroundColor: '#fff', fontWeight: 700 }}
+              width="87px"
+              height="32px"
+            >
+              Join DAO
+            </Button>
+          )}
         </Box>
       </Box>
       <Box display="grid" textAlign={'left'} width="100%" gap={12}>
-        <Box display={'flex'} justifyContent={'flex-start'} gap={22}>
-          <Typography variant="inherit" lineHeight={'20px'} fontSize={27} fontWeight={600} color="#fff">
+        <Box display={isSmDown ? 'grid' : 'flex'} justifyContent={'flex-start'} gap={isSmDown ? 10 : 22}>
+          <Typography variant="inherit" lineHeight={'20px'} fontSize={isSmDown ? 20 : 27} fontWeight={600} color="#fff">
             {createDaoData?.daoName}
           </Typography>
           <CategoryWrapper>
@@ -192,24 +218,26 @@ export default function JoinDaoFrame() {
           }}
           height={47}
           lineHeight={'22px'}
-          fontSize={14}
+          fontSize={isSmDown ? 13 : 14}
           fontWeight={400}
           color="#fff"
         >
           {createDaoData?.bio}
         </Typography>
       </Box>
-      <Box display="grid" width="260px">
-        <Button
-          onClick={onClickJoinDao}
-          noBold
-          style={{ border: 0, color: '#0049C6', backgroundColor: '#fff', fontWeight: 700 }}
-          width="87px"
-          height="36px"
-        >
-          Join DAO
-        </Button>
-      </Box>
+      {!isSmDown && (
+        <Box display="grid" width={260}>
+          <Button
+            onClick={onClickJoinDao}
+            noBold
+            style={{ border: 0, color: '#0049C6', backgroundColor: '#fff', fontWeight: 700 }}
+            width="87px"
+            height="36px"
+          >
+            Join DAO
+          </Button>
+        </Box>
+      )}
       <Image src={close} alt="" className="close" onClick={closeClick} />
     </Wrapper>
   )

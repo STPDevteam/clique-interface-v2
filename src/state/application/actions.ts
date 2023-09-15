@@ -37,3 +37,5 @@ export const removePopup = createAction<{ key: string }>('application/removePopu
 export const setUserLocation = createAction<UserIPLocation | null>('application/setUserLocation')
 
 export const setCurAddress = createAction<string>('application/setCurAddress')
+
+export const setDaoInfoLeftSidedOpenStatus = createAction<boolean>('application/setDaoInfoLeftSidedOpenStatus')
