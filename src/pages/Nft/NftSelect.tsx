@@ -1,4 +1,4 @@
-import { NftLayout } from './NftAccount'
+import { NftLayout } from './NftGenerator'
 import { Box, Link, Typography, styled, useTheme } from '@mui/material'
 // import chainLogo0 from 'assets/images/chainLogo0.png'
 import { ReactComponent as ShareIcon } from 'assets/svg/share.svg'
@@ -106,7 +106,7 @@ export function NftSelect() {
   useEffect(() => {
     if (isDelayTime) return
     if (!account || !userSignature) {
-      navigate(routes.NftAccount)
+      navigate(routes.NftGenerator)
     }
   }, [account, userSignature, isDelayTime, navigate])
   return (

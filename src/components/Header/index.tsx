@@ -65,7 +65,7 @@ export const Tabs: Tab[] = [
     subTab: [
       {
         title: 'Account Generator',
-        route: routes.NftAccount,
+        route: routes.NftGenerator,
         titleContent: (
           <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
             <Typography color={'#3F5170'}>Account Generator</Typography>
@@ -429,7 +429,7 @@ export default function Header() {
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [workspaceTitle, setWorkspaceTitle] = useState('')
   const IsNftPage = useMemo(() => {
-    if (pathname.includes(makeRouteLink(routes._NftAccount))) {
+    if (pathname.includes(makeRouteLink(routes._Nft))) {
       return true
     }
     return false

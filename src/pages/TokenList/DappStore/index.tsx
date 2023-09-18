@@ -109,7 +109,7 @@ const cardsData = [
     des: 'One-click on-chain transaction using account abstraction.',
     supportChainsIcon: [chainLogo0],
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
-    route: routes.NftAccount
+    route: routes.NftGenerator
   },
   {
     title: ToolsCardsTitle.AssetPortal,

@@ -53,7 +53,7 @@ const CreateNftButton = styled(Button)(({ theme }) => ({
   }
 }))
 
-export function NftAccount() {
+export function NftGenerator() {
   const theme = useTheme()
 
   const isMdDown = useBreakpoint('md')
