@@ -99,11 +99,7 @@ export default function WalletModal({}: // pendingTransactions,
           </Box>
           <Button
             onClick={() => {
-              const id = Object.values(ChainId).find(val => val === NETWORK_CHAIN_ID)
-              if (!id) {
-                return
-              }
-              triggerSwitchChain(library, id as ChainId, '')
+              triggerSwitchChain(library, NETWORK_CHAIN_ID as ChainId, '')
             }}
           >
             Connect to {SUPPORTED_NETWORKS[NETWORK_CHAIN_ID] ? SUPPORTED_NETWORKS[NETWORK_CHAIN_ID]?.chainName : 'BSC'}

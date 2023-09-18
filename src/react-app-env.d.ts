@@ -6,7 +6,7 @@ interface Window {
   ethereum?: {
     isMetaMask?: true
     on?: (...args: any[]) => void
-    send: (...args: any[]) => void
+    send: (...args: any[]) => Promise<any>
     request?: (...args: any[]) => Promise<any>
     removeListener?: (...args: any[]) => void
     isBraveWallet?: true
