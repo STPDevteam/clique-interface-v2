@@ -135,15 +135,17 @@ export function NftSelect() {
                   maxHeight: 585,
                   overflowY: 'auto',
                   overflowX: 'hidden',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+                  display: 'flex',
+                  // gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
                   gap: 20,
                   padding: '35px 110px',
+                  flexWrap: 'wrap',
                   mt: 25,
                   '::-webkit-scrollbar': {
                     display: 'none'
                   },
                   [theme.breakpoints.down('sm')]: {
+                    display: 'grid',
                     padding: '0',
                     gridTemplateColumns: '44vw 44vw',
                     height: '60vh',

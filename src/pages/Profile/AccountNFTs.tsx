@@ -166,9 +166,7 @@ export default function AccountNFTs({ account }: { account: string }) {
     setNftTabIndex
   } = useProfilePaginationCallback()
   const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
-  const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(
-    account && '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3'
-  )
+  const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
     return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
