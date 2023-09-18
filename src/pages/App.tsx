@@ -63,6 +63,7 @@ import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 import { NftGenerator } from './Nft/NftGenerator'
 import { NftSelect } from './Nft/NftSelect'
 import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
+import { NftAccounts } from './Nft/NftAccounts'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -220,6 +221,7 @@ export default function App() {
                 <Route path={routes.Activity} element={<Activity />} />
                 <Route path={routes.NftGenerator} element={<NftGenerator />} />
                 <Route path={routes.NftSelect} element={<NftSelect />} />
+                <Route path={routes.NftAssets} element={<NftAccounts />} />
                 <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />

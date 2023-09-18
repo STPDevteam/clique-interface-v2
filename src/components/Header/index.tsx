@@ -57,6 +57,17 @@ interface Tab extends TabContent {
   subTab?: TabContent[]
 }
 
+const NewTagText = styled(Typography)(() => ({
+  fontSize: '12px',
+  fontWeight: 700,
+  lineHeight: '20px',
+  fontStyle: 'italic',
+  background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
+  backgroundClip: 'text',
+  '-webkit-background-clip': 'text',
+  '-webkit-text-fill-color': 'transparent'
+}))
+
 export const Tabs: Tab[] = [
   // { title: 'HOME', route: routes.Home },
   {
@@ -69,20 +80,17 @@ export const Tabs: Tab[] = [
         titleContent: (
           <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
             <Typography color={'#3F5170'}>Account Generator</Typography>
-            <Typography
-              sx={{
-                fontSize: '12px',
-                fontWeight: 700,
-                lineHeight: '20px',
-                fontStyle: 'italic',
-                background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
-                backgroundClip: 'text',
-                '-webkit-background-clip': 'text',
-                '-webkit-text-fill-color': 'transparent'
-              }}
-            >
-              NEW!
-            </Typography>
+            <NewTagText>NEW!</NewTagText>
+          </Box>
+        )
+      },
+      {
+        title: 'Asset Portal',
+        route: routes.NftAssets,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
+            <Typography color={'#3F5170'}>Asset Portal</Typography>
+            <NewTagText>NEW!</NewTagText>
           </Box>
         )
       }

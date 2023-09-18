@@ -216,6 +216,7 @@ export interface ScanNFTInfo {
   owner: string
   token_id: string
   token_uri: string
+  latest_trade_price: number
 }
 
 export function useAccountNFTsList(

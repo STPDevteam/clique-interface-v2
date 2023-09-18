@@ -160,43 +160,6 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
     }
   }, [createAccountCallback, hideModal, navigate, setNftTabIndex, showModal])
 
-  // const createBtn: {
-  //   disabled: boolean
-  //   handler?: () => void
-  //   error?: undefined | string | JSX.Element
-  // } = useMemo(() => {
-  //   if (!contractAddress) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Please enter your address</ErrorText>
-  //     }
-  //   }
-
-  //   if (!isAddress(contractAddress)) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Address format error</ErrorText>
-  //     }
-  //   }
-
-  //   if (!tokenId) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Token ID required</ErrorText>
-  //     }
-  //   }
-  //   if (isDeploy) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Address is already deployed</ErrorText>
-  //     }
-  //   }
-  //   return {
-  //     disabled: false,
-  //     handler: createAccount
-  //   }
-  // }, [contractAddress, isDeploy, tokenId, createAccount])
-
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
       <BodyBoxStyle>
