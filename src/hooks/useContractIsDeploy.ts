@@ -14,8 +14,6 @@ export function useContractIsDeploy(tokenContract?: string) {
     library
       .getCode(tokenContract)
       .then(code => {
-        console.log(code)
-
         if (code === '0x' || code === '0x0') {
           setIsDeploy(false)
         } else {

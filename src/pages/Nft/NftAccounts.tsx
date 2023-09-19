@@ -9,6 +9,11 @@ import { useMemo } from 'react'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import { ScanNFTInfo, useAccountNFTsList } from 'hooks/useBackedProfileServer'
 import { useActiveWeb3React } from 'hooks'
+import { Searching } from './Children/Card/Searching'
+import { NotHaveNft } from './Children/Card/NotHaveNft'
+import { useCreateTBACallback } from 'hooks/useTBA'
+import { useNavigate } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 const TitleLayout = styled(Box)(() => ({
   height: 'auto',
@@ -112,7 +117,11 @@ const NftCards = styled(Box)(({ theme }) => ({
 export function NftAccounts() {
   const { account, chainId } = useActiveWeb3React()
   const { showModal } = useModal()
-  const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  const { result: _accountNFTsList, loading } = useAccountNFTsList(
+    '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3' || undefined,
+    chainId,
+    'erc721'
+  )
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
@@ -120,12 +129,13 @@ export function NftAccounts() {
   )
 
   const accountNFTsList = useMemo(() => {
-    if (!SBTIsDeployList) return _accountNFTsList
+    if (!_accountNFTsList.length) return []
+    if (!SBTIsDeployList) return
 
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
 
-  console.log(accountNFTsList, loading)
+  console.log(account)
 
   return (
     <NftLayout>
@@ -141,17 +151,28 @@ export function NftAccounts() {
             Create NFT Account
           </TitleButton>
         </TitleLayout>
-        <NftCards justifyContent={accountNFTsList.length > 4 ? 'start' : 'center'}>
-          {accountNFTsList.map(item => (
-            <NftCard key={item.contract_name} nft={item} />
-          ))}
-        </NftCards>
+        {accountNFTsList !== undefined && !loading ? (
+          accountNFTsList.length ? (
+            <NftCards justifyContent={accountNFTsList && accountNFTsList?.length > 4 ? 'start' : 'center'}>
+              {accountNFTsList?.map(item => (
+                <NftCard key={item.contract_name} nft={item} />
+              ))}
+            </NftCards>
+          ) : (
+            <NotHaveNft />
+          )
+        ) : (
+          <Searching />
+        )}
       </Box>
     </NftLayout>
   )
 }
 
 function NftCard({ nft }: { nft: ScanNFTInfo }) {
+  const navigate = useNavigate()
+  const { getAccount } = useCreateTBACallback(nft.contract_address as `0x${string}`, nft.token_id)
+
   return (
     <Box
       sx={{
@@ -162,6 +183,9 @@ function NftCard({ nft }: { nft: ScanNFTInfo }) {
             transform: 'translateY(-15px)'
           }
         }
+      }}
+      onClick={() => {
+        navigate(routes._NftDetail + `/${getAccount}/1`)
       }}
     >
       <NftIsDelayCard className="nft_card">

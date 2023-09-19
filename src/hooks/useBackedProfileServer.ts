@@ -156,7 +156,6 @@ export function useAccountSendRecordList(account: string) {
         const res = await getAccountSendRecordList((currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data as any
-        console.log(data)
         if (!data) {
           setResult([])
           setTotal(0)

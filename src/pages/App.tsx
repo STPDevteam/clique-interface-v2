@@ -64,6 +64,7 @@ import { NftGenerator } from './Nft/NftGenerator'
 import { NftSelect } from './Nft/NftSelect'
 import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 import { NftAccounts } from './Nft/NftAccounts'
+import { Nft6551Detail } from './Nft/Children/Nft6551Detail'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -222,6 +223,7 @@ export default function App() {
                 <Route path={routes.NftGenerator} element={<NftGenerator />} />
                 <Route path={routes.NftSelect} element={<NftSelect />} />
                 <Route path={routes.NftAssets} element={<NftAccounts />} />
+                <Route path={routes.NftDetail} element={<Nft6551Detail />} />
                 <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />

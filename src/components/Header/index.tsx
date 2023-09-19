@@ -437,7 +437,7 @@ export default function Header() {
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [workspaceTitle, setWorkspaceTitle] = useState('')
   const IsNftPage = useMemo(() => {
-    if (pathname.includes(makeRouteLink(routes._Nft))) {
+    if (pathname.includes(makeRouteLink(routes._Nft)) && !pathname.includes(routes._NftDetail)) {
       return true
     }
     return false

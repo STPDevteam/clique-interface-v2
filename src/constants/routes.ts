@@ -39,6 +39,8 @@ export const routes = {
   NftGenerator: '/nft/account/generator',
   NftSelect: '/nft/select/deployment',
   NftAssets: '/nft/account/assets',
+  _NftDetail: '/nft/account/detail',
+  NftDetail: '/nft/account/detail/:nftAddress/:chainId',
 
   Creator: '/create',
   CreateDao: '/create/dao',

@@ -1,4 +1,4 @@
-import { Box, Link, Typography, styled, useTheme } from '@mui/material'
+import { Box, Link, Typography, styled } from '@mui/material'
 // import chainLogo0 from 'assets/images/chainLogo0.png'
 import { ReactComponent as ShareIcon } from 'assets/svg/share.svg'
 import LoopIcon from '@mui/icons-material/Loop'
@@ -8,7 +8,7 @@ import CreateNftModal from './CreateNftModal'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo, useAccountNFTsList, useIsDelayTime, useRefreshNft } from 'hooks/useBackedProfileServer'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
@@ -24,6 +24,7 @@ import { NftLayout } from './NftLayout'
 import { Searching } from './Children/Card/Searching'
 import { NotHaveNft } from './Children/Card/NotHaveNft'
 import { NftDelaySuccess } from './Children/Card/SuccessCard'
+import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
 
 const TitleStyle = styled(Typography)(({ theme }) => ({
   color: '#FFF',
@@ -50,6 +51,29 @@ const CardStyled = styled(Box)(({ theme }) => ({
   }
 }))
 
+const NftCards = styled(Box)(({ theme }) => ({
+  maxHeight: 585,
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  display: 'flex',
+  gap: 20,
+  padding: '35px 110px',
+  flexWrap: 'wrap',
+  mt: 25,
+  '::-webkit-scrollbar': {
+    display: 'none'
+  },
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    padding: '0',
+    gridTemplateColumns: '42vw 42vw',
+    paddingTop: '35px',
+    gap: 10,
+    mt: 0,
+    justifyContent: 'space-evenly'
+  }
+}))
+
 export const ContentTextStyle = styled(Typography)(() => ({
   color: 'var(--button-line, #97B7EF)',
   fontSize: '14px',
@@ -58,7 +82,6 @@ export const ContentTextStyle = styled(Typography)(() => ({
 }))
 
 export function NftSelect() {
-  const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const userSignature = useUserInfo()
@@ -67,14 +90,17 @@ export function NftSelect() {
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
 
   const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-
+  const { claimSubmitted } = useUserHasSubmittedClaim(`${''}_create_Nft_Account`)
+  const [isDeployIng, setIsDeployIng] = useState<boolean | undefined>()
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
     _accountNFTsList.map(i => i.token_id)
   )
 
   const accountNFTsList = useMemo(() => {
-    if (!SBTIsDeployList) return _accountNFTsList
+    if (!_accountNFTsList) return []
+
+    if (!SBTIsDeployList) return
 
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === false)
   }, [SBTIsDeployList, _accountNFTsList])
@@ -85,70 +111,53 @@ export function NftSelect() {
       navigate(routes.NftGenerator)
     }
   }, [account, userSignature, isDelayTime, navigate])
+
+  useEffect(() => {
+    if (claimSubmitted) {
+      setIsDeployIng(true)
+    }
+    if (!claimSubmitted && isDeployIng) {
+      setIsDeployIng(false)
+    }
+  }, [claimSubmitted, isDeployIng])
   return (
     <NftLayout>
       <>
-        <>
-          {account && userSignature ? (
-            <Box
-              sx={{
-                marginTop: isSmDown ? 10 : 50
-              }}
-            >
-              <TitleStyle>
-                Select a NFT to create
-                <b style={{ color: '#A7F46A' }}> Smart Wallet</b>
-              </TitleStyle>
-
-              {loading && <Searching />}
-
-              {!accountNFTsList?.length && !loading ? (
-                <>
-                  <NotHaveNft />
-                </>
-              ) : (
-                !loading && (
-                  <Box
-                    sx={{
-                      maxHeight: 585,
-                      overflowY: 'auto',
-                      overflowX: 'hidden',
-                      display: 'flex',
-                      // gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-                      gap: 20,
-                      padding: '35px 110px',
-                      flexWrap: 'wrap',
-                      mt: 25,
-                      '::-webkit-scrollbar': {
-                        display: 'none'
-                      },
-                      [theme.breakpoints.down('sm')]: {
-                        display: 'grid',
-                        padding: '0',
-                        gridTemplateColumns: '42vw 42vw',
-                        paddingTop: '35px',
-                        gap: 10,
-                        mt: 0,
-                        justifyContent: 'space-evenly'
-                      }
-                    }}
-                  >
-                    <>
+        {isDeployIng === undefined ? (
+          <>
+            {account && userSignature ? (
+              <Box
+                sx={{
+                  marginTop: isSmDown ? 10 : 50
+                }}
+              >
+                <TitleStyle>
+                  Select a NFT to create
+                  <b style={{ color: '#A7F46A' }}> Smart Wallet</b>
+                </TitleStyle>
+                {accountNFTsList !== undefined && !loading ? (
+                  accountNFTsList.length ? (
+                    <NftCards>
                       {accountNFTsList?.map((item, index) => (
                         <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
                       ))}
-                    </>
-                  </Box>
-                )
-              )}
-            </Box>
-          ) : (
-            <Box>
-              <Loading />
-            </Box>
-          )}
-        </>
-        {false && <NftDelaySuccess />}
+                    </NftCards>
+                  ) : (
+                    <NotHaveNft />
+                  )
+                ) : (
+                  <Searching />
+                )}
+              </Box>
+            ) : (
+              <Box>
+                <Loading />
+              </Box>
+            )}
+          </>
+        ) : (
+          <NftDelaySuccess />
+        )}
       </>
     </NftLayout>
   )
