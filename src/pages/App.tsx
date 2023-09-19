@@ -60,8 +60,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
-import { NftGenerator } from './Nft/NftGenerator'
-import { NftSelect } from './Nft/NftSelect'
+// import { NftGenerator } from './Nft/NftGenerator'
+// import { NftSelect } from './Nft/NftSelect'
 import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 
 const AppWrapper = styled('div')(({ theme }) => ({
@@ -218,8 +218,8 @@ export default function App() {
                   }
                 />
                 <Route path={routes.Activity} element={<Activity />} />
-                <Route path={routes.NftGenerator} element={<NftGenerator />} />
-                <Route path={routes.NftSelect} element={<NftSelect />} />
+                {/* <Route path={routes.NftGenerator} element={<NftGenerator />} />
+                <Route path={routes.NftSelect} element={<NftSelect />} /> */}
                 <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />

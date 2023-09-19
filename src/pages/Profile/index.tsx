@@ -147,7 +147,7 @@ export default function Profile() {
         padding: { sm: '44px 0 40px 0', xs: '0 16px 20px' },
         background: `url(${bg})`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize: '100% 320px'
+        backgroundSize: isSmDown ? '100% 230px' : '100% 320px'
       }}
     >
       <ContainerWrapper maxWidth={1200} margin={isSmDown ? '0 auto 24px' : '0 auto 40px'}>
@@ -176,7 +176,7 @@ export default function Profile() {
                   alignItems="center"
                   sx={{
                     gridTemplateColumns: { sm: 'auto auto auto 1fr', xs: 'unset' },
-                    gap: '10px'
+                    gap: 6
                   }}
                 >
                   <Typography variant="h5" noWrap>
@@ -272,93 +272,180 @@ export default function Profile() {
                     )}
                   </Box>
                 </Box>
-                {isSelf ? (
-                  <RowCenter
-                    mt={{ xs: 10 }}
-                    sx={{
-                      justifyContent: 'flex-end',
-                      '& svg': {
-                        marginRight: 5
-                      },
-                      '&:hover svg path': {
-                        fill: theme.palette.primary.main
-                      }
-                    }}
-                  >
-                    <OutlineButton
-                      style={{ border: 'none' }}
-                      noBold
-                      disabled={loading}
-                      width="75px"
-                      height={'24px'}
-                      onClick={async () => {
-                        if (!userSignature) {
-                          await loginSignature()
-                          refreshProfile()
-                        } else if (profileInfo) {
-                          showModal(<UpdateProfileModal userProfile={profileInfo} refreshProfile={refreshProfile} />)
-                        }
-                      }}
-                    >
-                      <EditIcon />
-                      Edit
-                    </OutlineButton>
-                  </RowCenter>
-                ) : (
-                  <Box mt={{ xs: 10 }}>
-                    {isFollow ? (
-                      <Button
-                        onClick={() => toggleFollow(false)}
-                        width={isSmDown ? '100px' : '200px'}
-                        height={isSmDown ? '30px' : '44px'}
-                        backgroundColor="transparent"
-                        style={{ border: '1px solid #0049C6' }}
-                        color="#0049C6"
-                        hoverbg="#1976D20A "
-                      >
-                        - Unfollowed
-                      </Button>
-                    ) : (
-                      <BlackButton
-                        onClick={() => {
-                          if (!account) {
-                            walletModalToggle()
-                          } else {
-                            toggleFollow(true)
+                {!isSmDown && (
+                  <>
+                    {isSelf ? (
+                      <RowCenter
+                        mt={{ xs: 0, sm: 10 }}
+                        sx={{
+                          justifyContent: 'flex-end',
+                          '& svg': {
+                            marginRight: 5
+                          },
+                          '&:hover svg path': {
+                            fill: theme.palette.primary.main
                           }
                         }}
-                        width={isSmDown ? '100px' : '200px'}
-                        height={isSmDown ? '30px' : '44px'}
                       >
-                        + Follow
-                      </BlackButton>
+                        <OutlineButton
+                          style={{ border: 'none' }}
+                          noBold
+                          disabled={loading}
+                          width="75px"
+                          height={'24px'}
+                          onClick={async () => {
+                            if (!userSignature) {
+                              await loginSignature()
+                              refreshProfile()
+                            } else if (profileInfo) {
+                              showModal(
+                                <UpdateProfileModal userProfile={profileInfo} refreshProfile={refreshProfile} />
+                              )
+                            }
+                          }}
+                        >
+                          <EditIcon />
+                          Edit
+                        </OutlineButton>
+                      </RowCenter>
+                    ) : (
+                      <Box mt={{ xs: 10 }}>
+                        {isFollow ? (
+                          <Button
+                            onClick={() => toggleFollow(false)}
+                            width={isSmDown ? '100px' : '200px'}
+                            height={isSmDown ? '30px' : '44px'}
+                            backgroundColor="transparent"
+                            style={{ border: '1px solid #0049C6' }}
+                            color="#0049C6"
+                            hoverbg="#1976D20A "
+                          >
+                            - Unfollowed
+                          </Button>
+                        ) : (
+                          <BlackButton
+                            onClick={() => {
+                              if (!account) {
+                                walletModalToggle()
+                              } else {
+                                toggleFollow(true)
+                              }
+                            }}
+                            width={isSmDown ? '100px' : '200px'}
+                            height={isSmDown ? '30px' : '44px'}
+                          >
+                            + Follow
+                          </BlackButton>
+                        )}
+                      </Box>
                     )}
-                  </Box>
+                  </>
                 )}
               </Box>
               <Box
-                mt={12}
-                display={'flex'}
-                alignItems="center"
                 sx={{
-                  width: 'fit-content',
-                  borderRadius: '30px',
-                  padding: '4px 4px 2px 16px',
-                  backgroundColor: '#F2F2F2'
+                  display: { xs: 'flex', sm: 'block' },
+                  gap: { xs: 10, sm: 0 },
+                  marginTop: { xs: 10, sm: 0 }
                 }}
               >
-                <Link
-                  fontSize={13}
-                  href={getEtherscanLink(chainId || 1, currentAccount || '', 'address')}
-                  fontWeight={600}
-                  target="_blank"
-                  underline="none"
-                  mr={6}
+                <Box
+                  mt={isSmDown ? 0 : 12}
+                  display={'flex'}
+                  alignItems="center"
+                  sx={{
+                    width: 'fit-content',
+                    borderRadius: '30px',
+                    padding: '4px 4px 2px 16px',
+                    backgroundColor: '#F2F2F2',
+                    height: isSmDown ? '30px' : 'auto',
+                    svg: {
+                      marginRight: isSmDown ? '0 !important' : 'auto'
+                    }
+                  }}
                 >
-                  {currentAccount ? shortenAddress(currentAccount) : ''}
-                </Link>
-                <Copy toCopy={currentAccount || ''} />
+                  <Link
+                    fontSize={13}
+                    href={getEtherscanLink(chainId || 1, currentAccount || '', 'address')}
+                    fontWeight={600}
+                    target="_blank"
+                    underline="none"
+                    mr={6}
+                  >
+                    {currentAccount ? shortenAddress(currentAccount) : ''}
+                  </Link>
+                  <Copy toCopy={currentAccount || ''} />
+                </Box>
+                {isSmDown && (
+                  <>
+                    {isSelf ? (
+                      <RowCenter
+                        sx={{
+                          justifyContent: 'flex-end',
+                          '& svg': {
+                            marginRight: 5
+                          },
+                          '&:hover svg path': {
+                            fill: theme.palette.primary.main
+                          }
+                        }}
+                      >
+                        <OutlineButton
+                          style={{ border: 'none' }}
+                          noBold
+                          disabled={loading}
+                          width="75px"
+                          height={'24px'}
+                          onClick={async () => {
+                            if (!userSignature) {
+                              await loginSignature()
+                              refreshProfile()
+                            } else if (profileInfo) {
+                              showModal(
+                                <UpdateProfileModal userProfile={profileInfo} refreshProfile={refreshProfile} />
+                              )
+                            }
+                          }}
+                        >
+                          <EditIcon />
+                          Edit
+                        </OutlineButton>
+                      </RowCenter>
+                    ) : (
+                      <Box>
+                        {isFollow ? (
+                          <Button
+                            onClick={() => toggleFollow(false)}
+                            width={isSmDown ? '100px' : '200px'}
+                            height={isSmDown ? '30px' : '44px'}
+                            backgroundColor="transparent"
+                            style={{ border: '1px solid #0049C6' }}
+                            color="#0049C6"
+                            hoverbg="#1976D20A "
+                          >
+                            - Unfollowed
+                          </Button>
+                        ) : (
+                          <BlackButton
+                            onClick={() => {
+                              if (!account) {
+                                walletModalToggle()
+                              } else {
+                                toggleFollow(true)
+                              }
+                            }}
+                            width={isSmDown ? '100px' : '200px'}
+                            height={isSmDown ? '30px' : '44px'}
+                          >
+                            + Follow
+                          </BlackButton>
+                        )}
+                      </Box>
+                    )}
+                  </>
+                )}
               </Box>
+
               {/* <Stack mt={10} direction={'row'} alignItems="center" spacing={isSmDown ? 10 : 20}>
                 <Typography
                   fontWeight={600}
@@ -391,7 +478,7 @@ export default function Profile() {
               <Stack
                 mt={10}
                 direction={'row'}
-                alignItems="center"
+                alignItems="start"
                 justifyContent={'space-between'}
                 spacing={isSmDown ? 10 : 20}
               >

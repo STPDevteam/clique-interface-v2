@@ -5,8 +5,8 @@ import {
   Stack,
   styled,
   Typography,
-  Tabs,
-  Tab,
+  // Tabs,
+  // Tab,
   Table,
   TableBody,
   TableCell,
@@ -35,7 +35,7 @@ import { toast } from 'react-toastify'
 import { MyCreateNftListProp, useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
 import { ExternalLink } from 'theme/components'
 import Copy from 'components/essential/Copy'
-import { useProfilePaginationCallback } from 'state/pagination/hooks'
+// import { useProfilePaginationCallback } from 'state/pagination/hooks'
 
 // import { useActiveWeb3React } from 'hooks'
 
@@ -59,36 +59,36 @@ import { useProfilePaginationCallback } from 'state/pagination/hooks'
 //   }
 // }))
 
-const TabStyle = styled(Tabs)(({ theme }) => ({
-  '& .MuiButtonBase-root': {
-    fontWeight: 600,
-    fontSize: 16,
-    lineHeight: '22px',
-    color: '#3F5170',
-    textTransform: 'none',
-    padding: 0
-  },
-  '& .MuiTabs-indicator': {
-    height: 4,
-    background: '#0049C6',
-    borderRadius: '2px',
-    margin: 'auto'
-  },
-  '& .active': {
-    fontWeight: 600,
-    fontSize: 16,
-    lineHeight: '22px',
-    color: '#0049C6'
-  },
-  [theme.breakpoints.down('sm')]: {
-    '& .MuiButtonBase-root': {
-      fontSize: 16
-    },
-    '& .active': {
-      fontSize: 16
-    }
-  }
-}))
+// const TabStyle = styled(Tabs)(({ theme }) => ({
+//   '& .MuiButtonBase-root': {
+//     fontWeight: 600,
+//     fontSize: 16,
+//     lineHeight: '22px',
+//     color: '#3F5170',
+//     textTransform: 'none',
+//     padding: 0
+//   },
+//   '& .MuiTabs-indicator': {
+//     height: 4,
+//     background: '#0049C6',
+//     borderRadius: '2px',
+//     margin: 'auto'
+//   },
+//   '& .active': {
+//     fontWeight: 600,
+//     fontSize: 16,
+//     lineHeight: '22px',
+//     color: '#0049C6'
+//   },
+//   [theme.breakpoints.down('sm')]: {
+//     '& .MuiButtonBase-root': {
+//       fontSize: 16
+//     },
+//     '& .active': {
+//       fontSize: 16
+//     }
+//   }
+// }))
 
 const StyledItems = styled(Box)(({ theme }) => ({
   height: 298,
@@ -149,23 +149,23 @@ const nftSupportedChain = AllChainList.filter(i =>
   [ChainId.MAINNET, ChainId.BSC, ChainId.POLYGON, ChainId.ZKSYNC_ERA].includes(i.id)
 )
 
-const tabList = [
-  {
-    label: 'NFTs'
-  },
-  { label: 'My Created NFT Accounts' }
-]
+// const tabList = [
+//   {
+//     label: 'NFTs'
+//   },
+//   { label: 'My Created NFT Accounts' }
+// ]
 
 export default function AccountNFTs({ account }: { account: string }) {
   const isSmDown = useBreakpoint('sm')
   const [viewAll, setViewAll] = useState(false)
   const [currentChainId, setCurrentChainId] = useState<ChainId>(1)
   const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
-  const {
-    data: { nftTabIndex },
-    setNftTabIndex
-  } = useProfilePaginationCallback()
-  const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
+  // const {
+  //   data: { nftTabIndex },
+  //   setNftTabIndex
+  // } = useProfilePaginationCallback()
+  // const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
   const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
@@ -181,13 +181,14 @@ export default function AccountNFTs({ account }: { account: string }) {
     }
   }, [accountNFTsList, isSmDown])
 
-  useEffect(() => {
-    return () => {
-      setNftTabIndex(0)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   return () => {
+  //     setNftTabIndex(0)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
+  const IsShow = false
   return (
     <ContainerWrapper
       maxWidth={isSmDown ? '100%' : 1150}
@@ -197,8 +198,8 @@ export default function AccountNFTs({ account }: { account: string }) {
       style={{ width: isSmDown ? '100%' : '100vw' }}
       margin={'0 auto'}
     >
-      <Box display={isSmDown ? 'grid' : 'flex'} justifyContent="space-between" gap={isSmDown ? 10 : 0}>
-        <TabStyle value={tabValue}>
+      <Box display={'flex'} justifyContent="space-between" gap={isSmDown ? 10 : 0}>
+        {/* <TabStyle value={tabValue}>
           {tabList.map((item, idx) => (
             <Tab
               key={item.label + idx}
@@ -210,46 +211,47 @@ export default function AccountNFTs({ account }: { account: string }) {
               className={tabValue === idx ? 'active' : ''}
             ></Tab>
           ))}
-        </TabStyle>
+        </TabStyle> */}
 
-        {tabValue === 0 && (
-          <Stack spacing={10} direction={'row'}>
-            <Select
-              noBold
-              defaultValue={ChainListMap[currentChainId]?.symbol}
-              value={currentChainId}
-              height={36}
-              onChange={e => setCurrentChainId(e.target.value)}
-            >
-              {nftSupportedChain.map(option => (
-                <MenuItem value={option.id} key={option.id} selected={currentChainId === option.id}>
-                  <LogoText logo={option.logo} text={option.symbol} />
-                </MenuItem>
-              ))}
-            </Select>
-            <Select noBold value={ercType} height={36} onChange={e => setErcType(e.target.value)}>
-              <MenuItem value={'erc721'} key={'erc721'} selected={ercType === 'erc721'}>
-                Erc721
+        <Typography variant="h6" fontSize={16} fontWeight={600}>
+          NFTs
+        </Typography>
+
+        <Stack spacing={10} direction={'row'}>
+          <Select
+            noBold
+            defaultValue={ChainListMap[currentChainId]?.symbol}
+            value={currentChainId}
+            height={36}
+            onChange={e => setCurrentChainId(e.target.value)}
+          >
+            {nftSupportedChain.map(option => (
+              <MenuItem value={option.id} key={option.id} selected={currentChainId === option.id}>
+                <LogoText logo={option.logo} text={option.symbol} />
               </MenuItem>
-              <MenuItem value={'erc1155'} key={'erc1155'} selected={ercType === 'erc1155'}>
-                Erc1155
-              </MenuItem>
-            </Select>
-          </Stack>
+            ))}
+          </Select>
+          <Select noBold value={ercType} height={36} onChange={e => setErcType(e.target.value)}>
+            <MenuItem value={'erc721'} key={'erc721'} selected={ercType === 'erc721'}>
+              Erc721
+            </MenuItem>
+            <MenuItem value={'erc1155'} key={'erc1155'} selected={ercType === 'erc1155'}>
+              Erc1155
+            </MenuItem>
+          </Select>
+        </Stack>
+      </Box>
+
+      <Box mt={20}>
+        {!accountNFTsList.length && !loading && <EmptyData />}
+        {loading && (
+          <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Loading />
+          </Box>
         )}
       </Box>
 
-      {tabValue === 0 && (
-        <Box mt={20}>
-          {!accountNFTsList.length && !loading && <EmptyData />}
-          {loading && (
-            <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Loading />
-            </Box>
-          )}
-        </Box>
-      )}
-      {tabValue === 1 && (
+      {IsShow && (
         <Box mt={20}>
           {!myCreateNftList.length && <EmptyData />}
           {loading_c && (
@@ -260,65 +262,64 @@ export default function AccountNFTs({ account }: { account: string }) {
         </Box>
       )}
 
-      {tabValue === 0 && (
-        <>
-          <Box
-            mt={16}
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
-                xs: '1fr 1fr'
-              },
-              gap: '15px',
-              minWidth: isSmDown ? 'unset' : '800px',
-              overflowX: 'auto',
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            {showAccountNFTsList.map((item, index) => (
-              <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
-            ))}
-            {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
-              <StyledItems
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setViewAll(true)}
-              >
-                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
-                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
-                </svg>
-                <Typography color={'#9A9A9A'} fontWeight={500}>
-                  View all
-                </Typography>
-                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
-                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
-                </svg>
-              </StyledItems>
-            )}
-          </Box>
-
-          {viewAll && page.totalPage > 1 && (
-            <Box display={'flex'} mt={20} justifyContent="center">
-              <Pagination
-                count={page.totalPage}
-                page={page.currentPage}
-                onChange={(_, value) => page.setCurrentPage(value)}
-              />
-            </Box>
+      <>
+        <Box
+          mt={16}
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+              xs: '1fr 1fr'
+            },
+            gap: '15px',
+            minWidth: isSmDown ? 'unset' : '800px',
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            }
+          }}
+        >
+          {showAccountNFTsList.map((item, index) => (
+            <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
+          ))}
+          {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
+            <StyledItems
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
+              onClick={() => setViewAll(true)}
+            >
+              <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+              </svg>
+              <Typography color={'#9A9A9A'} fontWeight={500}>
+                View all
+              </Typography>
+              <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+              </svg>
+            </StyledItems>
           )}
-        </>
-      )}
-      {tabValue === 1 && myCreateNftList.length ? <CreateNft6551 myCreateNftList={myCreateNftList} /> : null}
+        </Box>
+
+        {viewAll && page.totalPage > 1 && (
+          <Box display={'flex'} mt={20} justifyContent="center">
+            <Pagination
+              count={page.totalPage}
+              page={page.currentPage}
+              onChange={(_, value) => page.setCurrentPage(value)}
+            />
+          </Box>
+        )}
+      </>
+
+      {IsShow && myCreateNftList.length ? <CreateNft6551 myCreateNftList={myCreateNftList} /> : null}
     </ContainerWrapper>
   )
 }
