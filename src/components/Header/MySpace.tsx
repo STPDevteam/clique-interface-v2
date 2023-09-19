@@ -1,4 +1,4 @@
-import { Box, Button, Stack, styled, Typography, ButtonGroup, Button as MuiButton } from '@mui/material'
+import { Box, Button, Stack, styled, Typography } from '@mui/material'
 import Image from 'components/Image'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
@@ -6,12 +6,12 @@ import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
-import { useState } from 'react'
+// import { useState } from 'react'
 // import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
-import placeholderImage from 'assets/images/placeholder.png'
+// import placeholderImage from 'assets/images/placeholder.png'
 // import { useActiveWeb3React } from 'hooks'
-import EmptyData from 'components/EmptyData'
-import { useNftAccountList } from 'hooks/useBackedNftCallback'
+// import EmptyData from 'components/EmptyData'
+// import { useNftAccountList } from 'hooks/useBackedNftCallback'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -88,34 +88,33 @@ const ButtonStyledGroup = styled(Stack)({
   }
 })
 
-const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  width: 227,
-  '& button': {
-    height: 30,
-    borderWidth: '1px',
-    color: theme.palette.text.primary,
-    fontWeight: 600,
-    padding: '5px 8px !important',
-    '&:hover': {
-      borderWidth: '1px'
-    },
-    '&.active': {
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white
-    }
-  }
-}))
+// const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+//   display: 'grid',
+//   gridTemplateColumns: '1fr 1fr',
+//   width: 227,
+//   '& button': {
+//     height: 30,
+//     borderWidth: '1px',
+//     color: theme.palette.text.primary,
+//     fontWeight: 600,
+//     padding: '5px 8px !important',
+//     '&:hover': {
+//       borderWidth: '1px'
+//     },
+//     '&.active': {
+//       backgroundColor: theme.palette.primary.main,
+//       color: theme.palette.common.white
+//     }
+//   }
+// }))
 
 export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
   // const { account, chainId } = useActiveWeb3React()
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
-  const [isActive, setIsActive] = useState<boolean>(false)
-  const { result: NftList } = useNftAccountList()
+  // const [isActive, setIsActive] = useState<boolean>(false)
+  // const { result: NftList } = useNftAccountList()
   // const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-  console.log('NftList=>', NftList)
 
   return (
     <Box>
@@ -123,7 +122,7 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
         sx={{
           marginTop: 13,
           maxWidth: 250,
-          padding: '12px 10px 0',
+          padding: '12px',
           '& ::-webkit-scrollbar': {
             display: 'none'
           }
@@ -162,7 +161,25 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
         }
       >
         <>
-          <StyledButtonGroup>
+          <Box
+            mt={10}
+            sx={{
+              maxHeight: '45vh',
+              overflowY: 'auto',
+              marginBottom: '6px'
+            }}
+          >
+            {myJoinedDaoList?.map(option => (
+              <Box
+                key={option.daoName + option.daoId}
+                onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+              >
+                <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
+              </Box>
+            ))}
+          </Box>
+
+          {/* <StyledButtonGroup>
             <MuiButton
               className={!isActive ? 'active' : ''}
               onClick={e => {
@@ -237,7 +254,7 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
                 </Box>
               )}
             </>
-          )}
+          )} */}
         </>
       </PopperCard>
     </Box>
