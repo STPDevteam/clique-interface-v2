@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs, Typography, styled, useTheme } from '@mui/material'
+import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 // import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import Back from 'components/Back'
@@ -12,18 +12,24 @@ import { ReactComponent as ETHIcon } from 'assets/tokens/ETH.svg'
 import { ReactComponent as SendIcon } from 'assets/svg/sendIcon.svg'
 import { ReactComponent as ReceiveIcon } from 'assets/svg/receiveIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
+import { ReactComponent as OpenSeaIcon } from 'assets/svg/opensea.svg'
+import { ReactComponent as TransferIcon } from 'assets/svg/transferIcon.svg'
 import { useActiveWeb3React } from 'hooks'
 import { shortenAddress } from 'utils'
 import Button, { BlackButton } from 'components/Button/Button'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Assets } from './Tabs/Assets'
 import { Nfts } from './Tabs/Nfts'
 import { History } from './Tabs/History'
-import { Tokens } from 'pages/Nft/Tokens'
-
+import placeholderImage from 'assets/images/placeholder.png'
+import Image from 'components/Image'
+import SendTokenModal from './SendTokenModal'
+import useModal from 'hooks/useModal'
+import SendNftModal from './SendNftModal'
+import RecieveAssetsModal from './RecieveAssetsModal'
+// import { ReactComponent as WETHIcon } from 'assets/tokens/WETH.svg'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
-  minHeight: 800,
-  marginBottom: 40,
+  height: '780px',
   maxWidth: maxWidth ? maxWidth : 600,
   width: '100%',
   border: '1px solid #D4D7E2',
@@ -36,7 +42,9 @@ const LeftDetailStyle = styled(Box)(() => ({
 }))
 
 const RightDetailStyle = styled(Box)(() => ({
-  width: '100%'
+  width: '100%',
+  display: 'grid',
+  gap: 20
 }))
 
 const TitleStyle = styled(Typography)(() => ({
@@ -115,14 +123,15 @@ const StyledTabs = styled('div')(({ theme }) => ({
   fontSize: 14,
   listStyle: 'none',
   padding: 0,
-  height: 60,
+  height: '48px',
   borderBottom: '1px solid #D4D7E2',
-
+  marginTop: '10px',
   '&>*': {
     textDecoration: 'none',
     whiteSpace: 'nowrap',
     color: '#0049c6',
     cursor: 'pointer',
+    minHeight: 'auto',
     '&:hover': {
       color: '#0049c6'
     },
@@ -134,7 +143,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
     width: '0!important'
   },
   '& button': {
-    height: '60px',
+    height: '48px',
     display: 'flex',
     alignItems: 'start',
     border: 0,
@@ -173,6 +182,20 @@ const StyledTabs = styled('div')(({ theme }) => ({
   }
 }))
 
+const SelectOptionStyle = styled(Box)(() => ({
+  color: 'var(--word-color, #3F5170)',
+  fontWeight: '500',
+  lineHeight: '20px',
+  padding: '9px 22px 11px',
+  height: '40px',
+  width: '100%',
+  fontSize: '14px',
+  cursor: 'pointer',
+  ':hover': {
+    background: 'rgba(0, 73, 198, 0.05)'
+  }
+}))
+
 enum TAB {
   Assets = 'Assets',
   NFTs = 'NFTs',
@@ -183,6 +206,7 @@ const TabsList = [TAB.Assets, TAB.NFTs, TAB.History]
 
 export function Nft6551Detail() {
   const theme = useTheme()
+  const { showModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
   console.log(nftAddress, chainId)
   const { account } = useActiveWeb3React()
@@ -201,15 +225,17 @@ export function Nft6551Detail() {
         <Box sx={[{ display: 'flex', gap: 20, flexDirection: 'row' }]}>
           <ContentBoxStyle>
             <LeftDetailStyle>
-              <Back
-                text="NFT Accounts"
-                sx={{
-                  margin: '0 !important',
-                  fontWeight: 500,
-                  lineHeight: '20px'
-                }}
-              />
-              <TitleStyle>{`$0.0123`}</TitleStyle>
+              <Box display="grid" gap="15px">
+                <Back
+                  text="NFT Accounts"
+                  sx={{
+                    margin: '0 !important',
+                    fontWeight: 500,
+                    lineHeight: '20px'
+                  }}
+                />
+                <TitleStyle>{`$0.0123`}</TitleStyle>
+              </Box>
               <ButtonsStyle>
                 <AccountButton>
                   <ETHIcon />
@@ -217,19 +243,11 @@ export function Nft6551Detail() {
                   <Copy toCopy={'value'} />
                 </AccountButton>
 
-                <OutlineButton>
+                <OutlineButton onClick={() => showModal(<RecieveAssetsModal />)}>
                   <ReceiveIcon />
                   Receive
                 </OutlineButton>
-
-                <OutlineButton>
-                  <SendIcon />
-                  <Box display={'flex'} gap={'10px'} alignItems={'center'}>
-                    Send
-                    <ArrowIcon />
-                  </Box>
-                </OutlineButton>
-
+                <SendButton />
                 <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
               </ButtonsStyle>
 
@@ -266,18 +284,153 @@ export function Nft6551Detail() {
                 </Tabs>
               </StyledTabs>
               {TabsList[tabValue] === TAB.Assets && <Assets />}
-              {TabsList[tabValue] === TAB.NFTs && <Nfts />}
+              {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} />}
               {TabsList[tabValue] === TAB.History && <History />}
             </LeftDetailStyle>
           </ContentBoxStyle>
-          <ContentBoxStyle maxWidth={580} maxHeight={800}>
+          <ContentBoxStyle maxWidth={580}>
             <RightDetailStyle>
-              asdasdas
-              <Tokens Symbol="USDT" />
+              <Box display={'grid'} gap={'8px'} minHeight={57}>
+                {TabsList[tabValue] !== TAB.History && (
+                  <>
+                    <Typography
+                      sx={{
+                        color: 'var(--tile-grey, #80829F)',
+                        lineHeight: '20px'
+                      }}
+                    >
+                      Collection name asdo
+                    </Typography>
+                    <TitleStyle fontSize={'24px !important'}>NFT NAME #001</TitleStyle>
+                  </>
+                )}
+              </Box>
+
+              <Box
+                sx={{
+                  height: 500,
+                  width: 500,
+                  borderRadius: '10px',
+                  background: 'rgb(236 236 236)'
+                }}
+              >
+                <Image
+                  style={{
+                    height: 500,
+                    width: 500,
+                    borderRadius: '10px',
+                    objectFit: 'cover',
+                    zIndex: 0
+                  }}
+                  src={placeholderImage}
+                />
+              </Box>
+              <Typography
+                sx={{
+                  color: 'var(--tile-grey, #80829F)',
+                  lineHeight: '20px'
+                }}
+              >
+                Developers around the world are tired of working and contributing their time and effort to enrich the
+                top 1%. Join the movement that is community owned, building the future from the bottom up.
+              </Typography>
+              <ButtonsStyle justifyContent={'end'}>
+                <OutlineButton sx={{ padding: '10px 20px', gap: 5 }}>
+                  <OpenSeaIcon />
+                  View on Opensea
+                </OutlineButton>
+                <OutlineButton sx={{ padding: '11px', gap: 5 }}>
+                  <TransferIcon />
+                  Transfer
+                </OutlineButton>
+              </ButtonsStyle>
             </RightDetailStyle>
           </ContentBoxStyle>
         </Box>
       </ContainerWrapper>
     </>
+  )
+}
+
+function SendButton() {
+  const { showModal } = useModal()
+  // const popperRef = useRef<any>(null)
+  const childRef = useRef<any>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const open = !!anchorEl
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (event.type === 'touchend') return
+    setAnchorEl(event.currentTarget)
+    event.nativeEvent.stopImmediatePropagation()
+    event.stopPropagation()
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (childRef.current && !childRef.current.contains(event.target)) {
+        setAnchorEl(null)
+        event.stopPropagation()
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+  return (
+    <div>
+      <ClickAwayListener
+        onClickAway={() => {
+          setAnchorEl(null)
+        }}
+      >
+        <>
+          <Box
+            onMouseEnter={handleClick}
+            onClick={e => {
+              e.stopPropagation()
+              e.nativeEvent.stopImmediatePropagation()
+              handleClick(e)
+            }}
+          >
+            <OutlineButton>
+              <SendIcon />
+              <Box display={'flex'} gap={'10px'} alignItems={'center'}>
+                Send
+                <ArrowIcon />
+              </Box>
+            </OutlineButton>
+          </Box>
+
+          <Popper
+            open={open}
+            placement={'bottom-start'}
+            anchorEl={anchorEl}
+            className="popperCon"
+            style={{
+              zIndex: 99999
+            }}
+          >
+            <Box
+              sx={{
+                width: '150px',
+                borderRadius: '8px',
+                border: '1px solid var(--line, #D4D7E2)',
+                background: '#FFF',
+                marginTop: '8px',
+                padding: '9px 0'
+              }}
+              ref={childRef}
+              onClick={() => setAnchorEl(null)}
+            >
+              <SelectOptionStyle onClick={() => showModal(<SendTokenModal />)}>Fungible Token</SelectOptionStyle>
+              <SelectOptionStyle onClick={() => showModal(<SendNftModal />)}>NFT</SelectOptionStyle>
+            </Box>
+          </Popper>
+        </>
+      </ClickAwayListener>
+    </div>
   )
 }

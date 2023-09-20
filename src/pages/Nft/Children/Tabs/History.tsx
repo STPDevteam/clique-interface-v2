@@ -1,5 +1,6 @@
 import { Box, styled } from '@mui/material'
 import Table from 'components/Table'
+import Copy from 'components/essential/Copy'
 import { Tokens } from 'pages/Nft/Tokens'
 import { useMemo } from 'react'
 
@@ -7,6 +8,10 @@ const TableContentStyle = styled(Box)(({ theme }) => ({
   height: '50px',
   display: 'flex',
   alignItems: 'center',
+  color: 'var(--word-color, #3F5170)',
+  fontSize: '14px',
+  fontWeight: '500',
+  lineHeight: '20px',
   svg: {
     width: '18px',
     height: '18px'
@@ -55,14 +60,13 @@ export function History() {
   const AssetsTableList = useMemo(() => {
     return AssetsTokenList.map(({ Type, Token, Amount, TxID }, index) => [
       <TableContentStyle key={index}>{Type}</TableContentStyle>,
-      <TableContentStyle key={index} justifyContent={'center'}>
-        {Token}
-      </TableContentStyle>,
-      <TableContentStyle key={index} style={{ justifyContent: 'center' }}>
+      <TableContentStyle key={index}>{Token}</TableContentStyle>,
+      <TableContentStyle key={index} sx={{ justifyContent: 'center' }}>
         {Amount}
       </TableContentStyle>,
-      <TableContentStyle key={index} style={{ justifyContent: 'end' }}>
+      <TableContentStyle key={index} sx={{ justifyContent: 'end', gap: 8, '& svg': { margin: 0 } }}>
         ${TxID}
+        <Copy toCopy={TxID} />
       </TableContentStyle>
     ])
   }, [])
@@ -90,6 +94,9 @@ export function History() {
                 borderRadius: '8px 0 0 0',
                 borderColor: '#D4D7E2',
                 paddingLeft: '30px',
+                textAlign: 'left'
+              },
+              '& .MuiTableCell-root:nth-of-type(2)': {
                 textAlign: 'left'
               },
               '& .MuiTableCell-root:nth-of-type(4)': {

@@ -1,0 +1,153 @@
+import Modal from 'components/Modal/index'
+import { Box, Typography, styled } from '@mui/material'
+import Image from 'components/Image'
+import placeholderImage from 'assets/images/placeholder.png'
+import { ReactComponent as CodeYellowIcon } from 'assets/svg/code_yellow.svg'
+import Copy from 'components/essential/Copy'
+import { useState } from 'react'
+
+const BodyBoxStyle = styled(Box)(() => ({
+  padding: '13px 28px',
+  display: 'grid',
+  gap: 20
+}))
+
+const TokensStyle = styled(Box)(() => ({
+  padding: '10px 0',
+  display: 'grid',
+  flexDirection: 'column',
+  gap: 17
+}))
+
+const TokensItem = styled(Box)(() => ({
+  display: 'flex',
+  width: '100%',
+  justifyContent: 'space-between',
+  paddingRight: '6px',
+  alignItems: 'center',
+  cursor: 'pointer',
+  borderRadius: '8px',
+  ':hover': {
+    background: '#F8FBFF'
+  }
+}))
+
+const TextStyle = styled(Typography)(() => ({
+  fontSize: '16px',
+  color: '#80829F',
+  lineHeight: '20px'
+}))
+
+const QRcodeStyle = styled(Box)(() => ({
+  width: '100%',
+  background: 'rgba(255, 186, 10, 0.18)',
+  borderRadius: '8px',
+  padding: '20px',
+  overflow: 'hidden'
+}))
+
+const QRcodeText = styled(Typography)(() => ({
+  fontSize: '14px',
+  lineHeight: '20px',
+  fontWeight: '500',
+  color: '#9F8644'
+}))
+
+const QRcodeWhite = styled(Box)(() => ({
+  height: '139px',
+  width: '100%',
+  background: '#fff',
+  borderRadius: '6px',
+  padding: '14px 17px',
+  display: 'grid',
+  gap: '10px',
+  marginTop: '15px'
+}))
+
+const AddressStyle = styled(Typography)(() => ({
+  maxWidth: '194px',
+  height: 'auto',
+  fontSize: '16px',
+  fontWeight: '600',
+  lineHeight: '23px',
+  '>div': {
+    display: 'inline-block',
+    svg: {
+      marginLeft: '6px'
+    }
+  }
+}))
+
+export default function RecieveAssetsModal() {
+  const [isCheck, setIsCheck] = useState<boolean>(false)
+  return (
+    <Modal maxWidth="480px" width="100%" closeIcon>
+      <BodyBoxStyle>
+        <Typography
+          sx={{
+            fontWeight: 500,
+            fontSize: 14,
+            lineHeight: '24px',
+            color: '#3F5170'
+          }}
+        >
+          Recieve Assets
+        </Typography>
+        <TokensStyle>
+          <TokensItem onClick={() => setIsCheck(!isCheck)}>
+            <Box display={'flex'} gap={'15px'}>
+              <Image
+                style={{ height: 40, width: 40, background: '#F8FBFF', borderRadius: '50%' }}
+                src={placeholderImage}
+              />
+              <Box>
+                <TextStyle>ETH</TextStyle>
+                <TextStyle fontSize={'12px !important'}>Ethereum</TextStyle>
+              </Box>
+            </Box>
+            <TextStyle>0</TextStyle>
+          </TokensItem>
+        </TokensStyle>
+        <QRcodeStyle
+          sx={{
+            height: isCheck ? 220 : 55,
+            transition: 'all 0.5s'
+          }}
+        >
+          <Box display={'flex'} justifyContent={'space-between'}>
+            <QRcodeText>Other Token</QRcodeText>
+            <QRcodeText display={'flex'} gap={'12px'} lineHeight={'16px !important'} fontSize={'14px !important'}>
+              Show receive address QRcode
+              <CodeYellowIcon />
+            </QRcodeText>
+          </Box>
+          <QRcodeWhite>
+            <Typography lineHeight={'16px'} fontSize={'14px'} color={'#8D8EA5'}>
+              Only send Ethereum network assets to this address
+            </Typography>
+            <Box display={'flex'} justifyContent={'space-between'}>
+              <AddressStyle
+                sx={{
+                  overflowWrap: 'break-word'
+                }}
+              >
+                0x5ef8651589B8F672C4D2bC1543840725D61Eb846
+                <Copy toCopy="111" />
+              </AddressStyle>
+              <Box
+                sx={{
+                  svg: {
+                    height: '76px',
+                    width: '76px'
+                  }
+                }}
+              >
+                <CodeYellowIcon />
+              </Box>
+            </Box>
+          </QRcodeWhite>
+        </QRcodeStyle>
+      </BodyBoxStyle>
+    </Modal>
+  )
+}

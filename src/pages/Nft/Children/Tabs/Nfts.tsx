@@ -1,6 +1,5 @@
 import { Box, styled, Typography, Link } from '@mui/material'
 import { ChainList } from 'constants/chain'
-import { useActiveWeb3React } from 'hooks'
 import { useCallback, useMemo } from 'react'
 import LoopIcon from '@mui/icons-material/Loop'
 import placeholderImage from 'assets/images/placeholder.png'
@@ -9,7 +8,7 @@ import { useRefreshNft } from 'hooks/useBackedProfileServer'
 import { toast } from 'react-toastify'
 import { ReactComponent as ShareIcon } from 'assets/svg/share.svg'
 
-export function Nfts() {
+export function Nfts({ chainId }: { chainId: number }) {
   return (
     <>
       <Box
@@ -20,10 +19,10 @@ export function Nfts() {
           flexWrap: 'wrap'
         }}
       >
-        <Card />
-        <Card />
-        <Card />
-        <Card />
+        <Card chainId={chainId} />
+        <Card chainId={chainId} />
+        <Card chainId={chainId} />
+        <Card chainId={chainId} />
       </Box>
     </>
   )
@@ -43,9 +42,7 @@ const CardStyled = styled(Box)(({ theme }) => ({
   }
 }))
 
-function Card() {
-  const { chainId } = useActiveWeb3React()
-
+function Card({ chainId }: { chainId: number }) {
   const refreshCb = useRefreshNft()
 
   const curChainLogo = useMemo(() => {
@@ -130,11 +127,11 @@ function Card() {
             position: 'absolute',
             bottom: 0,
             left: 0,
-            height: 37,
+            height: 27,
             width: '100%',
             background: '#F8FBFF',
             borderRadius: '0 0 8px 8px',
-            padding: '8px 10px 10px 15px',
+            padding: '0 10px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center'
