@@ -1,4 +1,4 @@
-import { Box, styled, Typography } from '@mui/material'
+import { Box, styled, TooltipProps, tooltipClasses, Typography, Tooltip } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Button from 'components/Button/Button'
@@ -37,10 +37,9 @@ import Copy from 'components/essential/Copy'
 import { ExternalLink } from 'theme/components'
 import { toast } from 'react-toastify'
 import isZero from 'utils/isZero'
-import Tooltip from 'components/Tooltip'
+import TooltipBgStyle from 'components/Tooltip'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
-import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import JoinDaoClaimModal from './JoinDaoClaimModal'
 import { routes } from 'constants/routes'
 import useBreakpoint from 'hooks/useBreakpoint'
@@ -120,6 +119,26 @@ const DeployButton = styled(Button)(() => ({
 
 const OwnersStyle = styled(Box)(() => ({
   padding: '20px 25px'
+}))
+
+const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#F8FBFF !important',
+    color: '#97B7EF !important',
+    width: 300,
+    fontFamily: 'Inter',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+    borderRadius: '6px',
+    border: ' 1px solid #97B7EF',
+    padding: '8px  8px 8px 12px',
+    '& .MuiTooltip-arrow': {
+      color: '#97B7EF !important'
+    }
+  }
 }))
 
 const ClaimWayMapText = {
@@ -574,7 +593,7 @@ export default function SoulTokenDetail() {
               <OwnersStyle>
                 <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'} sx={{ display: 'flex', gap: 5 }}>
                   Owners({ClaimTotal || 0})
-                  <Tooltip value="The owners will appear here in a few minutes." />
+                  <TooltipBgStyle value="The owners will appear here in a few minutes." />
                 </Typography>
                 <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
                   {sbtClaimList?.length && ClaimTotal > 32

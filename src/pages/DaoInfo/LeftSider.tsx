@@ -1,15 +1,4 @@
-import {
-  Box,
-  Drawer,
-  List,
-  ListItemText,
-  styled,
-  TooltipProps,
-  tooltipClasses,
-  Typography,
-  Tooltip,
-  Stack
-} from '@mui/material'
+import { Box, Drawer, List, ListItemText, styled, Typography, Stack } from '@mui/material'
 import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
 import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
@@ -47,6 +36,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 import useBreakpoint from 'hooks/useBreakpoint'
+import TooltipStyle from 'components/Tooltip'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -211,25 +201,25 @@ const ChildItem = styled(Box)({
   }
 })
 
-export const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(() => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#F8FBFF !important',
-    color: '#97B7EF !important',
-    width: 300,
-    fontFamily: 'Inter',
-    fontWeight: 500,
-    fontSize: '12px',
-    lineHeight: '16px',
-    borderRadius: '6px',
-    border: ' 1px solid #97B7EF',
-    padding: '8px  8px 8px 12px',
-    '& .MuiTooltip-arrow': {
-      color: '#97B7EF !important'
-    }
-  }
-}))
+// export const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+//   <Tooltip {...props} classes={{ popper: className }} />
+// ))(() => ({
+//   [`& .${tooltipClasses.tooltip}`]: {
+//     backgroundColor: '#F8FBFF !important',
+//     color: '#97B7EF !important',
+//     width: 300,
+//     fontFamily: 'Inter',
+//     fontWeight: 500,
+//     fontSize: '12px',
+//     lineHeight: '16px',
+//     borderRadius: '6px',
+//     border: ' 1px solid #97B7EF',
+//     padding: '8px  8px 8px 12px',
+//     '& .MuiTooltip-arrow': {
+//       color: '#97B7EF !important'
+//     }
+//   }
+// }))
 
 export interface LeftSiderMenu {
   title: string
@@ -573,7 +563,8 @@ export default function LeftSider() {
                       ) : (
                         <>
                           <TooltipStyle
-                            title={'Private space, visible only to those invited.'}
+                            isShowIcon
+                            value={'Private space, visible only to those invited.'}
                             placement={isSmDown ? 'top' : 'left'}
                           >
                             <Box
@@ -643,7 +634,7 @@ export default function LeftSider() {
                       backgroundColor: '#fff'
                     }}
                   >
-                    <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
+                    <TooltipStyle isShowIcon value={"This feature is only available to DAO's owner."} placement="right">
                       <Stack flexDirection={'row'} alignItems={'center'} gap={10}>
                         <img src={AddIcon} width={14} height={14} />
                         <Typography

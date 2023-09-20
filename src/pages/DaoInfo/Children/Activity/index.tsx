@@ -2,7 +2,7 @@ import { Tooltip, Box, useTheme, Tab } from '@mui/material'
 import { BlackButton } from 'components/Button/Button'
 import { routes } from 'constants/routes'
 import { DaoAdminLevelProp } from 'hooks/useDaoInfo'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { RowCenter } from '../Proposal/ProposalItem'
 import { AirdropList, PublicSaleList } from './List'
@@ -12,8 +12,10 @@ import useBreakpoint from 'hooks/useBreakpoint'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useDaoSbtList } from 'hooks/useBackedSbtServer'
 import DaoSbtList from './DaoSbtList'
-import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
+// import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import { TabStyle } from 'pages/Activity'
+import TooltipStyle from 'components/Tooltip'
+import ClickAwayListener from '@mui/material/ClickAwayListener'
 
 // const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 //   display: 'grid',
@@ -51,6 +53,8 @@ const tabList = [
 
 export default function Activity() {
   const theme = useTheme()
+  const [tooltipOpen, setTooltipOpen] = useState(false)
+
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId)
   const { myJoinDaoData: daoAdminLevel } = useUpdateDaoDataCallback()
@@ -64,6 +68,22 @@ export default function Activity() {
   const handleChange = (event: any, newValue: any) => {
     search.setCategory(newValue)
   }
+
+  const handleTooltipClick = () => {
+    setTooltipOpen(!tooltipOpen)
+  }
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      setTooltipOpen(false)
+      event.stopPropagation()
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <div>
@@ -136,15 +156,36 @@ export default function Activity() {
                     }}
                   >
                     Create {activityTypeText[activityType]}
-                    <Tooltip title="Can be created after verification">
-                      <ErrorOutline sx={{ marginLeft: 4 }} />
-                    </Tooltip>
+                    {isSmDown ? (
+                      <ClickAwayListener
+                        onClickAway={() => {
+                          setTooltipOpen(false)
+                        }}
+                      >
+                        <Tooltip
+                          open={tooltipOpen}
+                          onClick={handleTooltipClick}
+                          placement={'top'}
+                          title="Can be created after verification"
+                        >
+                          <ErrorOutline sx={{ marginLeft: 4 }} />
+                        </Tooltip>
+                      </ClickAwayListener>
+                    ) : (
+                      <Tooltip title="Can be created after verification">
+                        <ErrorOutline sx={{ marginLeft: 4 }} />
+                      </Tooltip>
+                    )}
                   </Box>
                 )}
               </>
             )}
           {tabValue === 0 && daoAdminLevel.job !== DaoAdminLevelProp[0] && daoAdminLevel.job !== DaoAdminLevelProp[1] && (
-            <TooltipStyle title={'Only DAO creator and DAO owner can create Clique Rewards.'} placement="top">
+            <TooltipStyle
+              isShowIcon
+              value={'Only DAO creator and DAO owner can create Clique Rewards.'}
+              placement="top"
+            >
               {backedDaoInfo?.approve ? (
                 <Box>
                   <BlackButton
@@ -193,7 +234,7 @@ export default function Activity() {
               </BlackButton>
             )}
           {tabValue === 1 && daoAdminLevel.job !== DaoAdminLevelProp[0] && daoAdminLevel.job !== DaoAdminLevelProp[1] && (
-            <TooltipStyle title={'Only DAO creator and DAO owner can create SBT.'} placement="top">
+            <TooltipStyle isShowIcon value={'Only DAO creator and DAO owner can create SBT.'} placement="top">
               <Box>
                 <BlackButton
                   disabled

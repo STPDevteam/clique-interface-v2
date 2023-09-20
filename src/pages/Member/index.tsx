@@ -16,7 +16,7 @@ import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import EmptyPage from 'pages/DaoInfo/Children/emptyPage'
 import useModal from 'hooks/useModal'
 import AddJobsModal from 'pages/AboutSetting/Modals/AddJobsModal'
-import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
+import TooltipStyle from 'components/Tooltip'
 import AddMemberModal from 'pages/AboutSetting/Modals/AddMemberModal'
 import { routes } from 'constants/routes'
 import { useGetPublishJobList } from 'hooks/useBackedTaskServer'
@@ -330,10 +330,10 @@ function AddJobMemberButtons({
         </Box>
       ) : (
         <Box display={'flex'} alignItems={'center'} flexDirection={'row'} gap={8}>
-          <TooltipStyle title={"This feature is only available to DAO's owner."} placement="left">
+          <TooltipStyle isShowIcon value={"This feature is only available to DAO's owner."} placement="left">
             <DisabledBtn>+ Add Job</DisabledBtn>
           </TooltipStyle>
-          <TooltipStyle title={"This feature is only available to DAO's owner."} placement="top">
+          <TooltipStyle isShowIcon value={"This feature is only available to DAO's owner."} placement="top">
             <DisabledBtn>+ Add Member</DisabledBtn>
           </TooltipStyle>
         </Box>
