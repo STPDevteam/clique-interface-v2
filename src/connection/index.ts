@@ -19,6 +19,7 @@ import { RPC_PROVIDERS, getRpcUrl } from 'connection/MultiNetworkConnector'
 import { OKXWallet } from '@okwallet/web3-react-okxwallet'
 import { BinanceWallet } from 'web3-react-binance-wallet'
 import { SELECTABLE_ENABLE_WALLETS } from '../constants'
+import { toast } from 'react-toastify'
 
 function onError(error: Error) {
   console.debug(`web3-react error: ${error}`)
@@ -53,13 +54,20 @@ const injectedConnection: Connection = {
   hooks: web3InjectedHooks,
   type: ConnectionType.INJECTED,
   getIcon: (isDarkMode: boolean) => getInjection(isDarkMode).icon,
-  shouldDisplay: () => getIsMetaMaskWallet() || getShouldAdvertiseMetaMask() || getIsGenericInjector(),
+  shouldDisplay: () => true,
   // If on non-injected, non-mobile browser, prompt user to install Metamask
   overrideActivate: () => {
-    if (getShouldAdvertiseMetaMask()) {
-      window.open('https://metamask.io/', 'inst_metamask')
+    // if (getShouldAdvertiseMetaMask()) {
+    //   window.open('https://metamask.io/', 'inst_metamask')
+    //   return true
+    // }
+
+    if (!getIsMetaMaskWallet() || !getIsGenericInjector() || !getShouldAdvertiseMetaMask()) {
+      toast.error('Please open in the wallet')
+      !isMobile && window.open('https://metamask.io/', 'inst_metamask')
       return true
     }
+
     return false
   }
 }
