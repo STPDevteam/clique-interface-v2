@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import {
   getRecentNftList,
@@ -8,6 +8,7 @@ import {
 } from '../utils/fetch/server'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo } from './useBackedProfileServer'
+import { TokenboundClient } from '@tokenbound/sdk'
 
 export interface RecentNftListProp {
   account: string
@@ -156,5 +157,43 @@ export function useNftAccountInfo(contract_address: string | undefined, chainId:
   }, [contract_address, chainId])
   return {
     result
+  }
+}
+
+export function useNft6551Detail(nftAccount: string | undefined) {
+  const [loading, setLoading] = useState<boolean>()
+  const { chainId, library } = useActiveWeb3React()
+  const [result, setResult] = useState<NftInfoProp>()
+
+  const tokenboundClient = useMemo(
+    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
+    [chainId, library]
+  )
+
+  useEffect(() => {
+    ;(async () => {
+      const Nft = await tokenboundClient?.getNFT({
+        accountAddress: nftAccount as `0x${string}`
+      })
+      try {
+        setLoading(true)
+        const res = await getNftAccountInfo(Nft?.tokenContract as string, chainId)
+        if (res.data.code === 200) {
+          setResult(res.data.data)
+          setLoading(false)
+        } else {
+          setResult(undefined)
+          setLoading(false)
+        }
+      } catch (error) {
+        setResult(undefined)
+        console.log(error)
+      }
+    })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId])
+  return {
+    result,
+    loading
   }
 }

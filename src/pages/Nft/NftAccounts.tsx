@@ -118,11 +118,8 @@ export function NftAccounts() {
   const { account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
-  const { result: _accountNFTsList, loading } = useAccountNFTsList(
-    '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3' || undefined,
-    chainId,
-    'erc721'
-  )
+  const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  // '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3'
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
@@ -194,7 +191,7 @@ function NftCard({ nft }: { nft: ScanNFTInfo }) {
         }
       }}
       onClick={() => {
-        navigate(routes._NftDetail + `/${getAccount}`)
+        navigate(routes._NftDetail + `/${getAccount}/${nft.token_id}`)
       }}
     >
       <NftIsDelayCard className="nft_card">

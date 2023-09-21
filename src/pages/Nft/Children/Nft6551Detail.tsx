@@ -17,7 +17,7 @@ import { ReactComponent as TransferIcon } from 'assets/svg/transferIcon.svg'
 import { useActiveWeb3React } from 'hooks'
 import { shortenAddress } from 'utils'
 import Button, { BlackButton } from 'components/Button/Button'
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Assets } from './Tabs/Assets'
 import { Nfts } from './Tabs/Nfts'
 import { History } from './Tabs/History'
@@ -27,8 +27,7 @@ import SendTokenModal from './SendTokenModal'
 import useModal from 'hooks/useModal'
 import SendNftModal from './SendNftModal'
 import RecieveAssetsModal from './RecieveAssetsModal'
-import { TokenboundClient } from '@tokenbound/sdk'
-import { useNftAccountInfo } from 'hooks/useBackedNftCallback'
+import { useNft6551Detail } from 'hooks/useBackedNftCallback'
 // import { ReactComponent as WETHIcon } from 'assets/tokens/WETH.svg'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   height: '780px',
@@ -208,27 +207,13 @@ enum TAB {
 const TabsList = [TAB.Assets, TAB.NFTs, TAB.History]
 
 export function Nft6551Detail() {
-  const { chainId, library, account } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const theme = useTheme()
   const { showModal } = useModal()
-  const { nftAddress } = useParams<{ nftAddress: string }>()
+  const { nftAddress, tokenId } = useParams<{ nftAddress: string; tokenId: string }>()
   const [tabValue, setTabValue] = useState<number>(0)
-  const { result: nftInfo } = useNftAccountInfo('0x08a24D6B6076F60ad645f7d54194E0647f1b1a90', chainId)
-
-  const tokenboundClient = useMemo(
-    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
-    [chainId, library]
-  )
-
-  useEffect(() => {
-    ;(async () => {
-      const Nft = await tokenboundClient?.getNFT({
-        accountAddress: nftAddress as `0x${string}`
-      })
-      console.log('nft=>', Nft)
-    })()
-  }, [tokenboundClient, nftAddress])
-  console.log('nftInfo=>', nftInfo)
+  const { result: NftInfoData } = useNft6551Detail(nftAddress)
+  console.log('=>', NftInfoData)
 
   return (
     <>
@@ -318,7 +303,9 @@ export function Nft6551Detail() {
                     >
                       Collection name asdo
                     </Typography>
-                    <TitleStyle fontSize={'24px !important'}>NFT NAME #001</TitleStyle>
+                    <TitleStyle fontSize={'24px !important'} noWrap>
+                      {NftInfoData?.name || '--'} #{tokenId}
+                    </TitleStyle>
                   </>
                 )}
               </Box>
