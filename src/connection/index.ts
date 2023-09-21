@@ -63,7 +63,7 @@ const injectedConnection: Connection = {
     // }
 
     if (!getIsMetaMaskWallet() || !getIsGenericInjector() || !getShouldAdvertiseMetaMask()) {
-      toast.error('Please open in the wallet')
+      toast('Please open in the wallet')
       !isMobile && window.open('https://metamask.io/', 'inst_metamask')
       return true
     }
