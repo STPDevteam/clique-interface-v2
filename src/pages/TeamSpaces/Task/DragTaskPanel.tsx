@@ -164,7 +164,7 @@ export default function DragTaskPanel() {
   const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId)
-  const update = useUpdateTask()
+  const { updateTaskCallback } = useUpdateTask()
   const remove = useRemoveTask()
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result } = useProposalBaseList(daoId)
@@ -248,7 +248,7 @@ export default function DragTaskPanel() {
             taskList[dInd][destination.index].weight + taskList[dInd][destination.index].weight / 2
         }
         setTaskList(newState)
-        update(
+        updateTaskCallback(
           taskList[sInd][source.index].assignAccount,
           '',
           taskList[sInd][source.index].deadline,
@@ -293,7 +293,7 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].status = taskList[dInd][destination.index - 1].status
         }
         setTaskList(newState)
-        update(
+        updateTaskCallback(
           taskList[sInd][source.index].assignAccount,
           '',
           taskList[sInd][source.index].deadline,
@@ -319,7 +319,7 @@ export default function DragTaskPanel() {
           .catch(err => console.log(err))
       }
     },
-    [taskList, type, update]
+    [taskList, type, updateTaskCallback]
   )
 
   useCallback(

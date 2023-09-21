@@ -47,7 +47,7 @@ const ColSentence = styled(Box)(({ theme }) => ({
     border: '1px solid #0049c6'
   },
   [theme.breakpoints.down('sm')]: {
-    margin: '45px 0 0'
+    margin: '100px 0 0'
   }
 }))
 
@@ -208,8 +208,8 @@ export default function TaskDetail({
   const [value, setValue] = useState(editData?.taskName ?? '')
   const [endTime, setEndTime] = useState<any>(editData?.deadline ?? null)
   const [content, setContent] = useState<any>(taskDetailData?.content ?? '')
-  const create = useCreateTask()
-  const update = useUpdateTask()
+  const { loading: createLoading, CreateTaskCallback } = useCreateTask()
+  const { loading: updateLoading, updateTaskCallback } = useUpdateTask()
   const link = useMemo(() => {
     return window.location.toString()
   }, [])
@@ -221,7 +221,7 @@ export default function TaskDetail({
     setIsSubmit(true)
     if (!value.trim()) return
     if (!spacesId) return
-    create(
+    CreateTaskCallback(
       assignees,
       content,
       endTime,
@@ -238,13 +238,13 @@ export default function TaskDetail({
       } else toast.error('Network error')
       setIsSubmit(false)
     })
-  }, [spacesId, assignees, content, create, currentStatus, endTime, onDismiss, priority, proposal, value])
+  }, [value, spacesId, CreateTaskCallback, assignees, content, endTime, priority, proposal, currentStatus, onDismiss])
 
   const updateCallback = useCallback(() => {
     setIsSubmit(true)
     if (!value.trim()) return
     if (!editData) return
-    update(
+    updateTaskCallback(
       assignees,
       content,
       endTime,
@@ -267,23 +267,23 @@ export default function TaskDetail({
       toast.success('Update success')
       setIsSubmit(false)
     })
-  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, update, value])
+  }, [assignees, content, currentStatus, editData, endTime, onDismiss, priority, proposal, updateTaskCallback, value])
 
   const getActions = useCallback(() => {
     if (editData) {
       return (
-        <SaveButton width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
+        <SaveButton disabled={updateLoading} width="140px" height="36px" color="#0049C6" onClick={updateCallback}>
           Save
         </SaveButton>
       )
     } else {
       return (
-        <ConfirmButton width="140px" height="36px" color="#ffffff" onClick={createCallback}>
+        <ConfirmButton disabled={createLoading} width="140px" height="36px" color="#ffffff" onClick={createCallback}>
           Confirm
         </ConfirmButton>
       )
     }
-  }, [createCallback, editData, updateCallback])
+  }, [createCallback, createLoading, editData, updateCallback, updateLoading])
 
   return (
     <Box maxWidth="608px" width="100%">
