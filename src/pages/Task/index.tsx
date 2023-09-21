@@ -202,10 +202,10 @@ export const StyledTabs = styled('div')(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     justifyContent: 'start',
-    height: 36,
-    '& .css-1bgkweh-MuiButtonBase-root-MuiTab-root': {
-      padding: '6px 8px',
-      minHeight: '36px'
+    height: 'auto',
+    '& .MuiTabs-scroller': {
+      display: 'flex',
+      alignItems: 'center'
     },
     '&>*': {
       minHeight: '36px',
@@ -216,6 +216,8 @@ export const StyledTabs = styled('div')(({ theme }) => ({
       },
       '& button': {
         fontSize: '13px !important',
+        padding: '6px 8px',
+        minHeight: '36px',
         '&.active': {
           fontWeight: 600
         }
