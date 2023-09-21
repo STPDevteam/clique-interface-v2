@@ -3,17 +3,16 @@ import { NftIsDelayCard, NftLayout } from './NftLayout'
 import { ReactComponent as AddSvg } from 'assets/svg/add.svg'
 import Image from 'components/Image'
 import placeholderImage from 'assets/images/placeholder.png'
-import CreateNftModal from './CreateNftModal'
-import useModal from 'hooks/useModal'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
-import { ScanNFTInfo, useAccountNFTsList } from 'hooks/useBackedProfileServer'
+import { ScanNFTInfo, useAccountNFTsList, useIsDelayTime } from 'hooks/useBackedProfileServer'
 import { useActiveWeb3React } from 'hooks'
 import { Searching } from './Children/Card/Searching'
 import { NotHaveNft } from './Children/Card/NotHaveNft'
 import { useCreateTBACallback } from 'hooks/useTBA'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { useUserInfo } from 'state/userInfo/hooks'
 
 const TitleLayout = styled(Box)(() => ({
   height: 'auto',
@@ -115,8 +114,10 @@ const NftCards = styled(Box)(({ theme }) => ({
 }))
 
 export function NftAccounts() {
+  const navigate = useNavigate()
   const { account, chainId } = useActiveWeb3React()
-  const { showModal } = useModal()
+  const userSignature = useUserInfo()
+  const { isDelayTime } = useIsDelayTime()
   const { result: _accountNFTsList, loading } = useAccountNFTsList(
     '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3' || undefined,
     chainId,
@@ -135,7 +136,15 @@ export function NftAccounts() {
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
 
+  useEffect(() => {
+    if (isDelayTime) return
+    if (!account || !userSignature) {
+      navigate(routes.NftGenerator)
+    }
+  }, [account, userSignature, isDelayTime, navigate])
+
   console.log(account)
+  console.log('accounts=>', accountNFTsList)
 
   return (
     <NftLayout>
@@ -144,7 +153,7 @@ export function NftAccounts() {
           <TitleStyle>NFT Accounts</TitleStyle>
           <TitleButton
             onClick={() => {
-              showModal(<CreateNftModal />)
+              navigate(routes.NftSelect)
             }}
           >
             <AddIcon />
@@ -185,7 +194,7 @@ function NftCard({ nft }: { nft: ScanNFTInfo }) {
         }
       }}
       onClick={() => {
-        navigate(routes._NftDetail + `/${getAccount}/1`)
+        navigate(routes._NftDetail + `/${getAccount}`)
       }}
     >
       <NftIsDelayCard className="nft_card">
@@ -209,7 +218,7 @@ function NftCard({ nft }: { nft: ScanNFTInfo }) {
           <div style={{ marginTop: '9px' }}>
             <CardBottomText>Collection name</CardBottomText>
             <CardNftName noWrap>
-              {nft.name || '--'}#{nft.token_id}
+              {nft.name || nft.contract_name || '-'}#{nft.token_id}
             </CardNftName>
           </div>
         </>

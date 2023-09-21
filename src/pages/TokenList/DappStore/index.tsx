@@ -26,6 +26,7 @@ import CreateNftModal from 'pages/Nft/CreateNftModal'
 import useModal from 'hooks/useModal'
 import { useState } from 'react'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { NftProp } from 'pages/Nft/NftSelect'
 
 export enum ToolsCardsTitle {
   DAORewards = 'Clique Rewards',
@@ -129,6 +130,9 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const { showModal } = useModal()
   const [isClick, setIsClick] = useState<boolean>(false)
   const isSmDown = useBreakpoint('sm')
+  const [nftData, setNftData] = useState<NftProp>()
+
+  console.log(nftData)
 
   return (
     <Box
@@ -173,7 +177,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           if (!userSignature) return loginSignature()
         }
         if (title === ToolsCardsTitle.AccountGenerator) {
-          showModal(<CreateNftModal />)
+          showModal(<CreateNftModal setNftData={setNftData} />)
         } else {
           route ? navigate(route) : window.open(link, '_blank')
         }

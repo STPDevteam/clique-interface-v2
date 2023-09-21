@@ -3,6 +3,11 @@ import Image from 'components/Image'
 import placeholderImage from 'assets/images/placeholder.png'
 import { NftIsDelayCard } from 'pages/Nft/NftLayout'
 import Button from 'components/Button/Button'
+import { useNavigate } from 'react-router-dom'
+import { routes } from 'constants/routes'
+import { NftProp } from 'pages/Nft/NftSelect'
+import { useActiveWeb3React } from 'hooks'
+import { useNftAccountInfo } from 'hooks/useBackedNftCallback'
 
 const TitleStyle = styled(Typography)(({ theme }) => ({
   color: '#FFF',
@@ -19,7 +24,8 @@ const CardHeadStyle = styled(Typography)(() => ({
   color: '#FFF',
   fontSize: '18px',
   fontWeight: 600,
-  lineHeight: '28px'
+  lineHeight: '28px',
+  textAlign: 'center'
 }))
 
 const NftImgStyle = styled(Box)(({ theme }) => ({
@@ -32,10 +38,14 @@ const NftImgStyle = styled(Box)(({ theme }) => ({
   }
 }))
 
-export function NftDelaySuccess() {
+export function NftDelaySuccess({ nftData }: { nftData: NftProp | undefined }) {
+  const { chainId } = useActiveWeb3React()
+  const { result: nftInfo } = useNftAccountInfo(nftData?.contractAddress, chainId)
+  console.log('nftInfo=>', nftInfo)
+  const navigate = useNavigate()
   return (
     <>
-      <Box sx={{ marginTop: 30, display: 'grid', justifyContent: 'center' }}>
+      <Box sx={{ mt: 50, display: 'grid', justifyContent: 'center' }}>
         <TitleStyle>Congratulations! </TitleStyle>
         <TitleStyle>
           {`Here's your`}
@@ -55,7 +65,9 @@ export function NftDelaySuccess() {
           <NftIsDelayCard className="class_nft_card">
             <>
               <Box sx={{ display: 'grid', gap: 10 }}>
-                <CardHeadStyle>NFT NAME #6207</CardHeadStyle>
+                <CardHeadStyle noWrap>
+                  {nftInfo?.name || '-'}#{nftData?.nftTokenId}
+                </CardHeadStyle>
                 <NftImgStyle>
                   <Image
                     altSrc={placeholderImage}
@@ -66,11 +78,18 @@ export function NftDelaySuccess() {
                       objectFit: 'cover',
                       zIndex: 0
                     }}
-                    src={placeholderImage}
+                    src={nftInfo?.logo_url || placeholderImage}
                   />
                 </NftImgStyle>
               </Box>
-              <Button style={{ borderRadius: '20px', height: '40px' }}>View Now</Button>
+              <Button
+                style={{ borderRadius: '20px', height: '40px' }}
+                onClick={() => {
+                  navigate(routes.NftAssets)
+                }}
+              >
+                View Now
+              </Button>
             </>
           </NftIsDelayCard>
         </Box>

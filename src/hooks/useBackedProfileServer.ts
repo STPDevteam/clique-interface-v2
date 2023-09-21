@@ -12,6 +12,7 @@ import {
   userProfile
 } from '../utils/fetch/server'
 import { DaoAdminLevelProp } from './useDaoInfo'
+import { useActiveWeb3React } from 'hooks'
 
 export interface UserProfileDaoProp {
   accountLevel: typeof DaoAdminLevelProp
@@ -228,6 +229,11 @@ export function useAccountNFTsList(
   const [total, setTotal] = useState<number>(0)
   const pageSize = 100
   const [result, setResult] = useState<ScanNFTInfo[]>([])
+  const { chainId } = useActiveWeb3React()
+
+  useEffect(() => {
+    setResult([])
+  }, [chainId])
 
   useEffect(() => {
     setCurrentPage(1)

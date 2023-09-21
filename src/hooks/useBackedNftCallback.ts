@@ -136,7 +136,7 @@ export function useNftAccountList() {
   }
 }
 
-export function useNftAccountInfo(contract_address: string, chainId: number | undefined) {
+export function useNftAccountInfo(contract_address: string | undefined, chainId: number | undefined) {
   const [result, setResult] = useState<NftInfoProp>()
   useEffect(() => {
     ;(async () => {

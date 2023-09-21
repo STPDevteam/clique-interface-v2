@@ -8,7 +8,7 @@ import CreateNftModal from './CreateNftModal'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo, useAccountNFTsList, useIsDelayTime, useRefreshNft } from 'hooks/useBackedProfileServer'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { ChainId } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
@@ -81,6 +81,12 @@ export const ContentTextStyle = styled(Typography)(() => ({
   lineHeight: '20px'
 }))
 
+export interface NftProp {
+  nftAccount: `0x${string}` | undefined
+  contractAddress: string | undefined
+  nftTokenId: string | undefined
+}
+
 export function NftSelect() {
   const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
@@ -88,17 +94,22 @@ export function NftSelect() {
   const { isDelayTime } = useIsDelayTime()
   const { account, chainId } = useActiveWeb3React()
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
-
-  const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-  const { claimSubmitted } = useUserHasSubmittedClaim(`${''}_create_Nft_Account`)
+  const [nftData, setNftData] = useState<NftProp>()
+  const { result: _accountNFTsList, loading } = useAccountNFTsList(
+    '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3' || undefined,
+    chainId,
+    'erc721'
+  )
+  const { claimSubmitted } = useUserHasSubmittedClaim(`${nftData?.nftAccount}_create_Nft_Account`)
   const [isDeployIng, setIsDeployIng] = useState<boolean | undefined>()
+  const [isDeploySuccess, setIsDeploySuccess] = useState<boolean>(false)
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
     _accountNFTsList.map(i => i.token_id)
   )
 
   const accountNFTsList = useMemo(() => {
-    if (!_accountNFTsList) return []
+    if (!_accountNFTsList.length) return []
 
     if (!SBTIsDeployList) return
 
@@ -117,13 +128,15 @@ export function NftSelect() {
       setIsDeployIng(true)
     }
     if (!claimSubmitted && isDeployIng) {
-      setIsDeployIng(false)
+      setIsDeploySuccess(true)
     }
   }, [claimSubmitted, isDeployIng])
+  console.log(_accountNFTsList, !loading)
+
   return (
     <NftLayout>
       <>
-        {isDeployIng === undefined ? (
+        {!isDeploySuccess ? (
           <>
             {account && userSignature ? (
               <Box
@@ -139,7 +152,12 @@ export function NftSelect() {
                   accountNFTsList.length ? (
                     <NftCards>
                       {accountNFTsList?.map((item, index) => (
-                        <Card key={index + item.contract_name} nft={item} nftChainId={chainId} />
+                        <Card
+                          key={index + item.contract_name}
+                          nft={item}
+                          nftChainId={chainId}
+                          setNftData={setNftData}
+                        />
                       ))}
                     </NftCards>
                   ) : (
@@ -156,14 +174,22 @@ export function NftSelect() {
             )}
           </>
         ) : (
-          <NftDelaySuccess />
+          <NftDelaySuccess nftData={nftData} />
         )}
       </>
     </NftLayout>
   )
 }
 
-function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | undefined }) {
+function Card({
+  nft,
+  nftChainId,
+  setNftData
+}: {
+  nft: ScanNFTInfo
+  nftChainId: ChainId | undefined
+  setNftData: Dispatch<SetStateAction<NftProp | undefined>>
+}) {
   const { showModal } = useModal()
   const isSmDown = useBreakpoint('sm')
   const refreshCb = useRefreshNft()
@@ -277,7 +303,7 @@ function Card({ nft, nftChainId }: { nft: ScanNFTInfo; nftChainId: ChainId | und
               }
             }}
             onClick={() => {
-              showModal(<CreateNftModal nft={nft} />)
+              showModal(<CreateNftModal nft={nft} setNftData={setNftData} />)
             }}
           >
             Deploy
