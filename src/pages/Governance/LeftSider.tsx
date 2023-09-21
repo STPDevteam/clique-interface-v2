@@ -121,7 +121,7 @@ export default function LeftSider() {
         sx={{
           [theme.breakpoints.down('sm')]: {
             right: 4,
-            bottom: 50,
+            bottom: 55,
             backgroundColor: 'rgba(244,244,244,0.85)',
             borderRadius: '16px',
             height: !open ? 0 : 'auto',

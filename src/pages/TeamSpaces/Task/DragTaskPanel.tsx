@@ -502,9 +502,9 @@ export default function DragTaskPanel() {
                                 onClick={() => {
                                   showSidePanel(item, undefined)
                                 }}
-                                onTouchEnd={() => {
-                                  showSidePanel(item, undefined)
-                                }}
+                                // onTouchEnd={() => {
+                                //   showSidePanel(item, undefined)
+                                // }}
                                 className={item.priority}
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
