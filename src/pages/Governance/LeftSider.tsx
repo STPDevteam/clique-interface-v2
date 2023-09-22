@@ -96,7 +96,7 @@ export default function LeftSider() {
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const isSmDown = useBreakpoint('sm')
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   return (
     <>
       {userSignature && isSmDown && (
