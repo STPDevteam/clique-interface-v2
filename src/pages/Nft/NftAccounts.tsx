@@ -140,7 +140,6 @@ export function NftAccounts() {
     }
   }, [account, userSignature, isDelayTime, navigate])
 
-  console.log(account)
   console.log('accounts=>', accountNFTsList)
 
   return (
@@ -161,7 +160,7 @@ export function NftAccounts() {
           accountNFTsList.length ? (
             <NftCards justifyContent={accountNFTsList && accountNFTsList?.length > 4 ? 'start' : 'center'}>
               {accountNFTsList?.map(item => (
-                <NftCard key={item.contract_name} nft={item} />
+                <NftCard key={item.contract_name} nft={item} chainId={chainId} />
               ))}
             </NftCards>
           ) : (
@@ -175,7 +174,7 @@ export function NftAccounts() {
   )
 }
 
-function NftCard({ nft }: { nft: ScanNFTInfo }) {
+function NftCard({ nft, chainId }: { nft: ScanNFTInfo; chainId: number | undefined }) {
   const navigate = useNavigate()
   const { getAccount } = useCreateTBACallback(nft.contract_address as `0x${string}`, nft.token_id)
 
@@ -191,7 +190,7 @@ function NftCard({ nft }: { nft: ScanNFTInfo }) {
         }
       }}
       onClick={() => {
-        navigate(routes._NftDetail + `/${getAccount}/${nft.token_id}`)
+        navigate(routes._NftDetail + `/${getAccount}/${chainId}`)
       }}
     >
       <NftIsDelayCard className="nft_card">

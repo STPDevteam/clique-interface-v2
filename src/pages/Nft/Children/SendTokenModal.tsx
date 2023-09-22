@@ -3,9 +3,15 @@ import { Box, MenuItem, Typography, styled } from '@mui/material'
 import Input from 'components/Input/index'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Select from 'components/Select/Select'
 import Image from 'components/Image'
+import { isAddress } from 'ethers/lib/utils'
+import { Currency } from 'constants/token'
+import { ChainList } from 'constants/chain'
+import { useActiveWeb3React } from 'hooks'
+import { useCurrencyBalance } from 'state/wallet/hooks'
+import { ChainId } from 'constants/chain'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -20,7 +26,42 @@ const RedText = styled(Typography)({
 
 export default function SendTokenModal() {
   const { hideModal } = useModal()
-  const [requirementAmount, setRequirementAmount] = useState('')
+  const { account } = useActiveWeb3React()
+  const [toAccount, setToAccount] = useState<string>('')
+  const [amount, setAmount] = useState<string>('')
+  const [checkChainId, setCheckChainId] = useState<number>()
+  const network = useMemo(() => {
+    if (checkChainId) {
+      return Currency.get_ETH_TOKEN(checkChainId as ChainId)
+    }
+
+    return
+  }, [checkChainId])
+
+  const airdropCurrencyBalance = useCurrencyBalance(
+    account || undefined,
+    network || undefined,
+    checkChainId || undefined
+  )
+
+  const nextHandler = useMemo(() => {
+    if (!isAddress(toAccount))
+      return {
+        error: 'address error',
+        disabled: true
+      }
+    if (!amount) {
+      return {
+        error: ' enter',
+        disabled: true
+      }
+    }
+    return {
+      disabled: false
+    }
+  }, [toAccount, amount])
+
+  console.log(nextHandler, airdropCurrencyBalance)
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
@@ -41,35 +82,48 @@ export default function SendTokenModal() {
             placeholder={'Ethereum address(0x) or ENS'}
             label="To Account"
             onChange={e => {
-              setRequirementAmount(e.target.value)
+              setToAccount(e.target.value)
             }}
-            value={requirementAmount}
+            value={toAccount}
           />
           <Select
             label="Assets"
-            placeholder={'Select DAO'}
             noBold
-            value={1}
+            placeholder="Select a Token"
+            value={checkChainId}
             onChange={e => {
-              console.log(e)
+              setCheckChainId(e.target.value)
+            }}
+            style={{
+              '&:after': {
+                content: `"Balance:${airdropCurrencyBalance?.toSignificant(6) || '--'} ${
+                  airdropCurrencyBalance?.currency.symbol || '--'
+                }"`,
+                position: 'absolute',
+                right: 40,
+                color: '#3F5170',
+                fontSize: 14,
+                fontWeight: '500!important',
+                display: checkChainId ? 'block' : 'none'
+              }
             }}
           >
-            <MenuItem
-              sx={{
-                fontWeight: 500,
-                fontSize: '14px !important'
-              }}
-              value={1}
-              //   selected={daoValue === item?.daoId}
-            >
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            {ChainList.map((v, index) => (
+              <MenuItem
+                key={v.id + index}
+                sx={{
+                  fontWeight: 500,
+                  fontSize: '14px !important'
+                }}
+                value={v.id}
+                selected={checkChainId === v.id}
+              >
                 <Box sx={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={''} />
-                  ETH
+                  <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={v.logo} />
+                  {v.symbol}
                 </Box>
-                <Typography>Balance:0.003 ETH</Typography>
-              </Box>
-            </MenuItem>
+              </MenuItem>
+            ))}
           </Select>
           <InputStyle
             placeholderSize="14px"
@@ -82,19 +136,31 @@ export default function SendTokenModal() {
                   lineHeight: '22px',
                   width: '41px',
                   height: '22px',
-                  borderRadius: '2px',
+                  borderRadius: '4px',
                   background: 'var(--light-bg, #F8FBFF)',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  ':hover': {
+                    background: 'var(--light-bg, #e6e6e6)'
+                  }
                 }}
                 variant="body1"
+                onClick={() => {
+                  if (airdropCurrencyBalance && checkChainId) {
+                    setAmount(airdropCurrencyBalance?.toSignificant(6))
+                  }
+                }}
               >
                 Max
               </Typography>
             }
             onChange={e => {
-              setRequirementAmount(e.target.value)
+              const value = e.target.value
+              if (!isNaN(Number(value)) || !value) {
+                setAmount(value)
+              }
             }}
-            value={requirementAmount}
+            value={amount}
           />
         </Box>
         {false && <RedText>{123}</RedText>}
@@ -102,8 +168,12 @@ export default function SendTokenModal() {
           <Button
             width="100%"
             height="40px"
-            disabled={false}
-            onClick={hideModal}
+            disabled={nextHandler.disabled}
+            onClick={() => {
+              console.log('123')
+
+              hideModal()
+            }}
             style={{
               ':disabled': {
                 color: '#fff',
@@ -111,7 +181,7 @@ export default function SendTokenModal() {
               }
             }}
           >
-            {false ? 'Insufficient balance' : 'Send'}
+            {nextHandler.disabled ? 'Insufficient balance' : 'Send'}
           </Button>
         </Box>
       </BodyBoxStyle>

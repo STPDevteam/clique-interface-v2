@@ -9,6 +9,8 @@ import {
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo } from './useBackedProfileServer'
 import { TokenboundClient } from '@tokenbound/sdk'
+import { useNavigate } from 'react-router-dom'
+import { routes } from 'constants/routes'
 
 export interface RecentNftListProp {
   account: string
@@ -46,6 +48,8 @@ export interface NftInfoProp {
   price_symbol: string
   name: string
   owner: string
+  opensea_floor_price: number
+  large_image_url: string
 }
 
 export function useRecentNftList() {
@@ -160,10 +164,12 @@ export function useNftAccountInfo(contract_address: string | undefined, chainId:
   }
 }
 
-export function useNft6551Detail(nftAccount: string | undefined) {
+export function useNft6551Detail(nftAccount: string | undefined, chainId_route: string | undefined) {
   const [loading, setLoading] = useState<boolean>()
   const { chainId, library } = useActiveWeb3React()
+  const [tokenId, setTokenId] = useState<string>()
   const [result, setResult] = useState<NftInfoProp>()
+  const navigate = useNavigate()
 
   const tokenboundClient = useMemo(
     () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
@@ -172,11 +178,17 @@ export function useNft6551Detail(nftAccount: string | undefined) {
 
   useEffect(() => {
     ;(async () => {
+      if (!chainId || !nftAccount || !chainId_route) return
+      if (Number(chainId_route) !== Number(chainId)) {
+        navigate(routes.NftAssets)
+        return
+      }
+      setLoading(true)
       const Nft = await tokenboundClient?.getNFT({
         accountAddress: nftAccount as `0x${string}`
       })
+      setTokenId(Nft?.tokenId)
       try {
-        setLoading(true)
         const res = await getNftAccountInfo(Nft?.tokenContract as string, chainId)
         if (res.data.code === 200) {
           setResult(res.data.data)
@@ -191,9 +203,10 @@ export function useNft6551Detail(nftAccount: string | undefined) {
       }
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
+  }, [chainId, nftAccount])
   return {
     result,
+    tokenId,
     loading
   }
 }

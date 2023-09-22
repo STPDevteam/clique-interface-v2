@@ -95,11 +95,7 @@ export function NftSelect() {
   const { account, chainId } = useActiveWeb3React()
   // const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
   const [nftData, setNftData] = useState<NftProp>()
-  const { result: _accountNFTsList, loading } = useAccountNFTsList(
-    '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3' || undefined,
-    chainId,
-    'erc721'
-  )
+  const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
   const { claimSubmitted } = useUserHasSubmittedClaim(`${nftData?.nftAccount}_create_Nft_Account`)
   const [isDeployIng, setIsDeployIng] = useState<boolean | undefined>()
   const [isDeploySuccess, setIsDeploySuccess] = useState<boolean>(false)

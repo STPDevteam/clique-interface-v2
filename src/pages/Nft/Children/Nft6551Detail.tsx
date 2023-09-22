@@ -1,11 +1,10 @@
-import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme } from '@mui/material'
+import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme, Link } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 // import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import Back from 'components/Back'
-import { useParams } from 'react-router-dom'
-// import { ChainListMap } from 'constants/chain'
+import { useNavigate, useParams } from 'react-router-dom'
+
 import Copy from 'components/essential/Copy'
-import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
 // import { routes } from 'constants/routes'
 import { ReactComponent as ETHIcon } from 'assets/tokens/ETH.svg'
@@ -15,7 +14,7 @@ import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import { ReactComponent as OpenSeaIcon } from 'assets/svg/opensea.svg'
 import { ReactComponent as TransferIcon } from 'assets/svg/transferIcon.svg'
 import { useActiveWeb3React } from 'hooks'
-import { shortenAddress } from 'utils'
+import { getEtherscanLink, shortenAddress } from 'utils'
 import Button, { BlackButton } from 'components/Button/Button'
 import { useEffect, useRef, useState } from 'react'
 import { Assets } from './Tabs/Assets'
@@ -28,9 +27,13 @@ import useModal from 'hooks/useModal'
 import SendNftModal from './SendNftModal'
 import RecieveAssetsModal from './RecieveAssetsModal'
 import { useNft6551Detail } from 'hooks/useBackedNftCallback'
+import { useUserInfo } from 'state/userInfo/hooks'
+import { useIsDelayTime } from 'hooks/useBackedProfileServer'
+import { routes } from 'constants/routes'
+import { ChainId } from 'constants/chain'
 // import { ReactComponent as WETHIcon } from 'assets/tokens/WETH.svg'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
-  height: '780px',
+  minHeight: '780px',
   maxWidth: maxWidth ? maxWidth : 600,
   width: '100%',
   border: '1px solid #D4D7E2',
@@ -207,156 +210,179 @@ enum TAB {
 const TabsList = [TAB.Assets, TAB.NFTs, TAB.History]
 
 export function Nft6551Detail() {
-  const { chainId, account } = useActiveWeb3React()
+  const navigate = useNavigate()
+  const userSignature = useUserInfo()
+  const { isDelayTime } = useIsDelayTime()
+  const { account } = useActiveWeb3React()
   const theme = useTheme()
-  const { showModal } = useModal()
-  const { nftAddress, tokenId } = useParams<{ nftAddress: string; tokenId: string }>()
+  const { showModal, hideModal } = useModal()
+  const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
   const [tabValue, setTabValue] = useState<number>(0)
-  const { result: NftInfoData } = useNft6551Detail(nftAddress)
-  console.log('=>', NftInfoData)
+  const { result: NftInfoData, loading, tokenId } = useNft6551Detail(nftAddress, chainId)
+  console.log('NftInfoData=>', NftInfoData)
+  useEffect(() => {
+    if (isDelayTime) return
+    if (!account || !userSignature) {
+      navigate(routes.NftGenerator)
+      hideModal()
+    }
+  }, [account, userSignature, hideModal, isDelayTime, navigate])
 
   return (
     <>
-      {false && (
-        <DelayLoading loading={false}>
-          <Loading sx={{ marginTop: 30 }} />
-        </DelayLoading>
-      )}
-
       <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 40 }}>
-        <Box sx={[{ display: 'flex', gap: 20, flexDirection: 'row' }]}>
-          <ContentBoxStyle>
-            <LeftDetailStyle>
-              <Box display="grid" gap="15px">
-                <Back
-                  text="NFT Accounts"
+        {loading ? (
+          <Box>
+            <Loading sx={{ marginTop: 30 }} />
+          </Box>
+        ) : (
+          <Box sx={[{ display: 'flex', gap: 20, flexDirection: 'row' }]}>
+            <ContentBoxStyle>
+              <LeftDetailStyle>
+                <Box display="grid" gap="15px">
+                  <Back
+                    text="NFT Accounts"
+                    sx={{
+                      margin: '0 !important',
+                      fontWeight: 500,
+                      lineHeight: '20px'
+                    }}
+                  />
+                  <TitleStyle>${NftInfoData?.opensea_floor_price || '--'}</TitleStyle>
+                </Box>
+                <ButtonsStyle>
+                  <AccountButton>
+                    <ETHIcon />
+                    <Typography>{account ? shortenAddress(account) : '--'}</Typography>
+                    <Copy toCopy={'value'} />
+                  </AccountButton>
+
+                  <OutlineButton onClick={() => showModal(<RecieveAssetsModal />)}>
+                    <ReceiveIcon />
+                    Receive
+                  </OutlineButton>
+                  <SendButton chainId={Number(chainId)} />
+                  <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
+                </ButtonsStyle>
+
+                <WarningStyle>
+                  <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+                    {`Apply for .aw domain name now ->`}
+                  </Typography>
+
+                  <BlackButton
+                    className="class_apply_button"
+                    onClick={() => {
+                      console.log('status=>', 1)
+                    }}
+                  >
+                    Apply
+                  </BlackButton>
+                </WarningStyle>
+                <StyledTabs>
+                  <Tabs value={tabValue}>
+                    {TabsList.map((item, idx) => (
+                      <Tab
+                        key={item + idx}
+                        label={item}
+                        onClick={() => setTabValue(idx)}
+                        sx={{
+                          gap: 50,
+                          [theme.breakpoints.down('sm')]: {
+                            mr: 0
+                          }
+                        }}
+                        className={tabValue === idx ? 'active' : ''}
+                      ></Tab>
+                    ))}
+                  </Tabs>
+                </StyledTabs>
+                {TabsList[tabValue] === TAB.Assets && <Assets />}
+                {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} />}
+                {TabsList[tabValue] === TAB.History && <History />}
+              </LeftDetailStyle>
+            </ContentBoxStyle>
+            <ContentBoxStyle maxWidth={580}>
+              <RightDetailStyle>
+                <Box display={'grid'} gap={'8px'} minHeight={57}>
+                  {TabsList[tabValue] !== TAB.History && (
+                    <>
+                      <Typography
+                        sx={{
+                          color: 'var(--tile-grey, #80829F)',
+                          lineHeight: '20px'
+                        }}
+                      >
+                        Collection name asdo
+                      </Typography>
+                      <TitleStyle fontSize={'24px !important'} noWrap>
+                        {NftInfoData?.name || '--'} #{tokenId}
+                      </TitleStyle>
+                    </>
+                  )}
+                </Box>
+
+                <Box
                   sx={{
-                    margin: '0 !important',
-                    fontWeight: 500,
-                    lineHeight: '20px'
-                  }}
-                />
-                <TitleStyle>{`$0.0123`}</TitleStyle>
-              </Box>
-              <ButtonsStyle>
-                <AccountButton>
-                  <ETHIcon />
-                  <Typography>{account ? shortenAddress(account) : '--'}</Typography>
-                  <Copy toCopy={'value'} />
-                </AccountButton>
-
-                <OutlineButton onClick={() => showModal(<RecieveAssetsModal />)}>
-                  <ReceiveIcon />
-                  Receive
-                </OutlineButton>
-                <SendButton />
-                <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
-              </ButtonsStyle>
-
-              <WarningStyle>
-                <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
-                  {`Apply for .aw domain name now ->`}
-                </Typography>
-
-                <BlackButton
-                  className="class_apply_button"
-                  onClick={() => {
-                    console.log('status=>', 1)
-                  }}
-                >
-                  Apply
-                </BlackButton>
-              </WarningStyle>
-              <StyledTabs>
-                <Tabs value={tabValue}>
-                  {TabsList.map((item, idx) => (
-                    <Tab
-                      key={item + idx}
-                      label={item}
-                      onClick={() => setTabValue(idx)}
-                      sx={{
-                        gap: 50,
-                        [theme.breakpoints.down('sm')]: {
-                          mr: 0
-                        }
-                      }}
-                      className={tabValue === idx ? 'active' : ''}
-                    ></Tab>
-                  ))}
-                </Tabs>
-              </StyledTabs>
-              {TabsList[tabValue] === TAB.Assets && <Assets />}
-              {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} />}
-              {TabsList[tabValue] === TAB.History && <History />}
-            </LeftDetailStyle>
-          </ContentBoxStyle>
-          <ContentBoxStyle maxWidth={580}>
-            <RightDetailStyle>
-              <Box display={'grid'} gap={'8px'} minHeight={57}>
-                {TabsList[tabValue] !== TAB.History && (
-                  <>
-                    <Typography
-                      sx={{
-                        color: 'var(--tile-grey, #80829F)',
-                        lineHeight: '20px'
-                      }}
-                    >
-                      Collection name asdo
-                    </Typography>
-                    <TitleStyle fontSize={'24px !important'} noWrap>
-                      {NftInfoData?.name || '--'} #{tokenId}
-                    </TitleStyle>
-                  </>
-                )}
-              </Box>
-
-              <Box
-                sx={{
-                  height: 500,
-                  width: 500,
-                  borderRadius: '10px',
-                  background: 'rgb(236 236 236)'
-                }}
-              >
-                <Image
-                  style={{
                     height: 500,
                     width: 500,
                     borderRadius: '10px',
-                    objectFit: 'cover',
-                    zIndex: 0
+                    background: 'rgb(236 236 236)'
                   }}
-                  src={placeholderImage}
-                />
-              </Box>
-              <Typography
-                sx={{
-                  color: 'var(--tile-grey, #80829F)',
-                  lineHeight: '20px'
-                }}
-              >
-                Developers around the world are tired of working and contributing their time and effort to enrich the
-                top 1%. Join the movement that is community owned, building the future from the bottom up.
-              </Typography>
-              <ButtonsStyle justifyContent={'end'}>
-                <OutlineButton sx={{ padding: '10px 20px', gap: 5 }}>
-                  <OpenSeaIcon />
-                  View on Opensea
-                </OutlineButton>
-                <OutlineButton sx={{ padding: '11px', gap: 5 }}>
-                  <TransferIcon />
-                  Transfer
-                </OutlineButton>
-              </ButtonsStyle>
-            </RightDetailStyle>
-          </ContentBoxStyle>
-        </Box>
+                >
+                  <Image
+                    style={{
+                      height: 500,
+                      width: 500,
+                      borderRadius: '10px',
+                      objectFit: 'cover',
+                      zIndex: 0
+                    }}
+                    src={NftInfoData?.large_image_url || placeholderImage}
+                  />
+                </Box>
+                <Typography
+                  sx={{
+                    color: 'var(--tile-grey, #80829F)',
+                    lineHeight: '20px'
+                  }}
+                >
+                  {NftInfoData?.description ||
+                    ` Developers around the world are tired of working and contributing their time and effort to enrich the
+                  top 1%. Join the movement that is community owned, building the future from the bottom up.`}
+                </Typography>
+                <ButtonsStyle justifyContent={'end'}>
+                  <Link
+                    target={'_blank'}
+                    underline="none"
+                    href={
+                      Number(chainId) === ChainId.MAINNET
+                        ? `https://opensea.io/assets/ethereum/${NftInfoData?.contract_address}/${tokenId}`
+                        : chainId &&
+                          NftInfoData?.contract_address &&
+                          getEtherscanLink(Number(chainId), NftInfoData?.contract_address, 'token') + `?a=${tokenId}`
+                    }
+                  >
+                    <OutlineButton sx={{ padding: '10px 20px', gap: 5 }}>
+                      <OpenSeaIcon />
+                      View on Opensea
+                    </OutlineButton>
+                  </Link>
+                  <OutlineButton sx={{ padding: '11px', gap: 5 }}>
+                    <TransferIcon />
+                    Transfer
+                  </OutlineButton>
+                </ButtonsStyle>
+              </RightDetailStyle>
+            </ContentBoxStyle>
+          </Box>
+        )}
       </ContainerWrapper>
     </>
   )
 }
 
-function SendButton() {
+function SendButton({ chainId }: { chainId: number | undefined }) {
   const { showModal } = useModal()
   // const popperRef = useRef<any>(null)
   const childRef = useRef<any>(null)
@@ -413,6 +439,7 @@ function SendButton() {
             placement={'bottom-start'}
             anchorEl={anchorEl}
             className="popperCon"
+            onMouseLeave={() => setAnchorEl(null)}
             style={{
               zIndex: 99999
             }}
@@ -430,7 +457,7 @@ function SendButton() {
               onClick={() => setAnchorEl(null)}
             >
               <SelectOptionStyle onClick={() => showModal(<SendTokenModal />)}>Fungible Token</SelectOptionStyle>
-              <SelectOptionStyle onClick={() => showModal(<SendNftModal />)}>NFT</SelectOptionStyle>
+              <SelectOptionStyle onClick={() => showModal(<SendNftModal chainId={chainId} />)}>NFT</SelectOptionStyle>
             </Box>
           </Popper>
         </>
