@@ -124,7 +124,7 @@ export default function LeftSider() {
             bottom: 55,
             backgroundColor: 'rgba(244,244,244,0.85)',
             borderRadius: '16px',
-            height: !open ? 0 : 'auto',
+            height: !open ? 0 : 'unset',
             overflow: !open ? 'hidden' : 'unset',
             display: userSignature ? 'block' : 'none',
             padding: !open ? 0 : '10px 0 6px',
