@@ -33,6 +33,7 @@ const Wrapper = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
+    zIndex: 999,
     // display: 'grid',
     // gridTemplateColumns: '1fr 138px',
     // borderRight: 0,
