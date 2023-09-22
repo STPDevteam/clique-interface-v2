@@ -96,7 +96,7 @@ export default function LeftSider() {
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
   const isSmDown = useBreakpoint('sm')
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   return (
     <>
       {userSignature && isSmDown && (
@@ -121,6 +121,7 @@ export default function LeftSider() {
       <Wrapper
         sx={{
           [theme.breakpoints.down('sm')]: {
+            position: 'fixed',
             right: 4,
             bottom: 55,
             backgroundColor: 'rgba(244,244,244,0.85)',
