@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from '@mui/material'
+import { Box, Card, Typography, useTheme } from '@mui/material'
 import Image from 'components/Image'
 import Avatar from 'assets/images/avatar.png'
 import { shortenAddress } from 'utils'
@@ -31,6 +31,7 @@ export const JobsType: { [key in number]: string } = {
 }
 
 export default function CardView({ result, role }: { result: JobsListProps[]; role: string | undefined }) {
+  const theme = useTheme()
   const navigate = useNavigate()
   const { account } = useActiveWeb3React()
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
@@ -58,7 +59,12 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 20,
-        padding: '20px 0'
+        padding: '20px 0',
+        [theme.breakpoints.down('sm')]: {
+          // gridTemplateColumns: '1fr 1fr',
+          justifyContent: 'space-between',
+          gap: 10
+        }
       }}
     >
       {result.map((item: JobsListProps, index) => (
@@ -96,6 +102,9 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
               },
               '& p': {
                 fontWeight: 600
+              },
+              [theme.breakpoints.down('sm')]: {
+                width: '44vw'
               }
             }}
           >

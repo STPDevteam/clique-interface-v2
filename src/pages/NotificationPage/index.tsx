@@ -20,16 +20,40 @@ import { routes } from 'constants/routes'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import Image from 'components/Image'
 import NotiIcon from 'assets/images/notiIcon.png'
+import useBreakpoint from 'hooks/useBreakpoint'
 // import PushManagementModal from './PushManagementModal'
 
 const Wrapper = styled(Stack)(({ theme }) => ({
   marginTop: 24,
-  // padding: '34px 39px',
-  borderTop: `1px solid ${theme.bgColor.bg2}`,
+  paddingBottom: '30px',
+  borderTop: `1px solid ${theme.bgColor.bg2}`
   // borderRadius: theme.borderRadius.default,
   // boxShadow: theme.boxShadow.bs1,
-  [theme.breakpoints.down('sm')]: {
-    padding: '16px'
+}))
+
+const StyledCard = styled(Box)(({ theme }) => ({
+  padding: '10px 24px',
+  width: '100%',
+  height: 150,
+  cursor: 'pointer',
+  border: `1px solid ${theme.bgColor.bg2}`,
+  borderRadius: theme.borderRadius.default,
+  boxShadow: theme.boxShadow.bs2,
+  transition: 'all 0.5s',
+  color: '#3f5170',
+  '& .content': {
+    fontSize: 18,
+    height: 48,
+    marginTop: 6,
+    fontWeight: 600,
+    overflow: 'hidden',
+    color: '#3F5170',
+    textOverflow: 'ellipsis',
+    width: '100%',
+    display: '-webkit-box',
+    '-webkit-box-orient': 'vertical',
+    '-webkit-line-clamp': '2',
+    wordBreak: 'break-all'
   }
 }))
 
@@ -60,157 +84,8 @@ const TitleStyle = styled(Typography)(() => ({
   lineHeight: '20px'
 }))
 
-// function TypeTitle({ isRead, type }: { isRead: boolean; type: NotificationTypes }) {
-//   const theme = useTheme()
-//   const title = useMemo(
-//     () =>
-//       type === 'Airdrop'
-//         ? 'Airdrop'
-//         : type === 'NewProposal'
-//         ? 'New active proposal'
-//         : type === 'ReserveToken'
-//         ? 'Reserve token'
-//         : type === 'PublicSaleCreated'
-//         ? 'Create swap'
-//         : type === 'PublicSalePurchased'
-//         ? 'Purchased a swap'
-//         : type === 'PublicSaleCanceled'
-//         ? 'Cancelled a swap'
-//         : 'message',
-//     [type]
-//   )
-//   return isRead ? (
-//     <Text>{title}</Text>
-//   ) : (
-//     <Box display={'flex'} alignItems="center">
-//       <Box
-//         sx={{
-//           width: 6,
-//           height: 6,
-//           borderRadius: '50%',
-//           marginRight: 12,
-//           backgroundColor: theme.palette.primary.main
-//         }}
-//       />
-//       <Text color={theme.palette.text.primary}>{title}</Text>
-//     </Box>
-//   )
-// }
-
-// function MsgItem({
-//   item,
-//   setReadOnce,
-//   isReadAll,
-//   toBackedReadOnce
-// }: {
-//   item: NotificationProp
-//   setReadOnce: () => void
-//   isReadAll: boolean
-//   toBackedReadOnce: (notificationId: number) => Promise<any>
-// }) {
-//   const [isRead, setIsRead] = useState(item.alreadyRead)
-
-//   const navigate = useNavigate()
-//   const showData: {
-//     text: string
-//     link?: string
-//   } = useMemo(() => {
-//     return {
-//       text:
-//         item.types === 'Airdrop'
-//           ? 'You have a new Clique Rewards can be claimed'
-//           : item.types === 'NewProposal'
-//           ? item.activityTitle || ''
-//           : item.types === 'ReserveToken'
-//           ? 'You have a new token can be claimed'
-//           : 'message',
-//       link:
-//         item.types === 'Airdrop'
-//           ? item.activityId && item.daoId
-//             ? routes._ActivityAirdropDetail + `/${item.daoId}/${item.activityId}`
-//             : ''
-//           : item.types === 'NewProposal'
-//           ? item.daoId
-//             ? routes._DaoInfo + `/${item.daoId}/proposal/detail/${item.activityId}`
-//             : ''
-//           : item.types === 'ReserveToken'
-//           ? routes._Profile
-//           : item.types === 'PublicSaleCreated' ||
-//             item.types === 'PublicSalePurchased' ||
-//             item.types === 'PublicSaleCanceled'
-//           ? routes._SaleDetails + `/${item.activityId || 0}`
-//           : ''
-//     }
-//   }, [item.activityId, item.activityTitle, item.daoId, item.types])
-
-//   return (
-//     <Box
-//       sx={{ cursor: isRead || isReadAll ? 'auto' : 'pointer' }}
-//       onClick={() => {
-//         if (!isRead || !isReadAll) {
-//           toBackedReadOnce(item.notificationId).then(() => {
-//             setIsRead(true)
-//             setReadOnce()
-//           })
-//         }
-//       }}
-//     >
-//       <RowCenter mb={16}>
-//         <TypeTitle isRead={isRead || isReadAll} type={item.types} />
-//         <Text>{timeStampToFormat(item.notificationTime)}</Text>
-//       </RowCenter>
-//       {item.types === 'Airdrop' || item.types === 'NewProposal' ? (
-//         <Box display={'flex'} alignItems="center">
-//           <DaoAvatars size={64} src={item.daoLogo} />
-//           <Box ml={16}>
-//             <Text>{item.daoName}</Text>
-//             <Text display={'inline-block'}>
-//               {showData.text}
-//               {'. '}
-//               {showData.link && (
-//                 <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
-//                   View
-//                 </Link>
-//               )}
-//             </Text>
-//           </Box>
-//         </Box>
-//       ) : item.types === 'PublicSaleCreated' ||
-//         item.types === 'PublicSalePurchased' ||
-//         item.types === 'PublicSaleCanceled' ? (
-//         <Box display={'flex'} alignItems="center">
-//           <DaoAvatars size={64} src={item.daoLogo} />
-//           <Box ml={16}>
-//             <Text>{item.daoName}</Text>
-//             <Text display={'inline-block'}>
-//               {showData.text}
-//               {'. '}
-//               {showData.link && (
-//                 <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
-//                   View
-//                 </Link>
-//               )}
-//             </Text>
-//           </Box>
-//         </Box>
-//       ) : (
-//         <Box>
-//           <Text display={'inline-block'}>
-//             {showData.text}
-//             {'. '}
-//             {showData.link && (
-//               <Link onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
-//                 View
-//               </Link>
-//             )}
-//           </Text>
-//         </Box>
-//       )}
-//     </Box>
-//   )
-// }
-
 export default function NotificationPage() {
+  const isSmDown = useBreakpoint('sm')
   const [isReadAll, setIsReadAll] = useState(false)
   const { result: notificationList, loading, page } = useNotificationListInfo()
   const {
@@ -232,7 +107,7 @@ export default function NotificationPage() {
         <RowCenter>
           <RowCenter>
             <Image width={38} src={NotiIcon} />
-            <Typography mr={10} color={'#3F5170'} fontSize={30} fontWeight={600}>
+            <Typography mr={10} color={'#3F5170'} fontSize={isSmDown ? 28 : 30} fontWeight={600}>
               Notifications
             </Typography>
             {/* <OutlineButton height={24} width={140} noBold onClick={() => navigate(routes.PushList)}>
@@ -246,8 +121,9 @@ export default function NotificationPage() {
               </OutlineButton>
             </Badge> */}
             <OutlineButton
-              height={36}
-              width={150}
+              height={isSmDown ? 32 : 36}
+              width={isSmDown ? 'auto' : 150}
+              style={{ fontSize: isSmDown ? 13 : 14, padding: isSmDown ? '0 6px' : 0 }}
               noBold
               color="#0049C6"
               onClick={() => {
@@ -271,7 +147,7 @@ export default function NotificationPage() {
             <DelayLoading loading={loading}>
               <Loading sx={{ marginTop: 30 }} />
             </DelayLoading>
-            <Stack>
+            <Stack spacing={isSmDown ? 10 : 0} mt={isSmDown ? 20 : 0}>
               {!loading &&
                 notificationList.map(item => (
                   <MsgItems
@@ -311,7 +187,7 @@ function MsgItems({
   console.log(isReadAll)
   const [isRead, setIsRead] = useState(item.alreadyRead)
   const theme = useTheme()
-
+  const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const showData: {
     content: JSX.Element | string
@@ -423,8 +299,8 @@ function MsgItems({
         }
       }}
     >
-      <RowCenter sx={{ height: 60, borderBottom: '1px solid #D4D7E2' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      {isSmDown ? (
+        <StyledCard sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150 }}>
             {isReadAll ? (
               ''
@@ -443,15 +319,47 @@ function MsgItems({
             )}
             <TitleStyle>{titleFilter(item.types)}</TitleStyle>
           </Box>
-          <Box sx={{ display: 'flex', gap: 6 }}>{showData.content}</Box>
-          {showData.link && titleFilter(item.types) !== 'DAO Members' && (
-            <Link underline="hover" onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
-              View
-            </Link>
-          )}
-        </Box>
-        <Text>{timeStampToFormat(item.notificationTime)}</Text>
-      </RowCenter>
+          <Box sx={{ display: 'grid', gap: 6 }}>
+            {showData.content}
+            {showData.link && titleFilter(item.types) !== 'DAO Members' && (
+              <Link underline="hover" onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
+                View
+              </Link>
+            )}
+          </Box>
+          <Text>{timeStampToFormat(item.notificationTime)}</Text>
+        </StyledCard>
+      ) : (
+        <RowCenter sx={{ height: 60, borderBottom: '1px solid #D4D7E2' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', minWidth: 150 }}>
+              {isReadAll ? (
+                ''
+              ) : !isRead ? (
+                <Box
+                  sx={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    marginRight: 12,
+                    backgroundColor: theme.palette.primary.main
+                  }}
+                />
+              ) : (
+                ''
+              )}
+              <TitleStyle>{titleFilter(item.types)}</TitleStyle>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 6 }}>{showData.content}</Box>
+            {showData.link && titleFilter(item.types) !== 'DAO Members' && (
+              <Link underline="hover" onClick={() => navigate(showData.link as string)} sx={{ cursor: 'pointer' }}>
+                View
+              </Link>
+            )}
+          </Box>
+          <Text>{timeStampToFormat(item.notificationTime)}</Text>
+        </RowCenter>
+      )}
     </Box>
   )
 }

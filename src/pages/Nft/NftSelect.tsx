@@ -1,5 +1,5 @@
-import { NftLayout } from './NftAccount'
-import { Box, Link, Typography, styled } from '@mui/material'
+import { NftLayout } from './NftGenerator'
+import { Box, Link, Typography, styled, useTheme } from '@mui/material'
 // import chainLogo0 from 'assets/images/chainLogo0.png'
 import { ReactComponent as ShareIcon } from 'assets/svg/share.svg'
 import { ReactComponent as HourglassIcon } from 'assets/svg/hourglass_icon.svg'
@@ -25,22 +25,29 @@ import { useSbtListPaginationCallback } from 'state/pagination/hooks'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import Loading from 'components/Loading'
 
-const TitleStyle = styled(Typography)(() => ({
+const TitleStyle = styled(Typography)(({ theme }) => ({
   color: '#FFF',
   fontSize: '36px',
   fontWeight: 700,
   lineHeight: '40px',
-  textAlign: 'center'
+  textAlign: 'center',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '30px'
+  }
 }))
 
-const CardStyled = styled(Box)(() => ({
+const CardStyled = styled(Box)(({ theme }) => ({
   height: 260,
   width: 225,
   borderRadius: '8px',
   border: '1px solid #2D50CB',
   background: 'rgb(249, 249, 249)',
   // background: '#0F1F39',
-  position: 'relative'
+  position: 'relative',
+  [theme.breakpoints.down('sm')]: {
+    width: '44vw',
+    height: 180
+  }
 }))
 
 const ContentTextStyle = styled(Typography)(() => ({
@@ -50,7 +57,7 @@ const ContentTextStyle = styled(Typography)(() => ({
   lineHeight: '20px'
 }))
 
-const SearchCardStyle = styled(Box)(() => ({
+const SearchCardStyle = styled(Box)(({ theme }) => ({
   position: 'relative',
   margin: '90px auto 0',
   borderRadius: '20px',
@@ -68,10 +75,15 @@ const SearchCardStyle = styled(Box)(() => ({
     background: 'linear-gradient(180deg, #3558b9e6 0%, #2b53c0e6 80%, #2643c1e6 100%)',
     backdropFilter: ' blur(30.5px)',
     position: 'absolute'
+  },
+  [theme.breakpoints.down('sm')]: {
+    margin: '45px auto 0'
   }
 }))
 
 export function NftSelect() {
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
@@ -94,7 +106,7 @@ export function NftSelect() {
   useEffect(() => {
     if (isDelayTime) return
     if (!account || !userSignature) {
-      navigate(routes.NftAccount)
+      navigate(routes.NftGenerator)
     }
   }, [account, userSignature, isDelayTime, navigate])
   return (
@@ -102,7 +114,7 @@ export function NftSelect() {
       {account && userSignature ? (
         <Box
           sx={{
-            marginTop: 130
+            marginTop: isSmDown ? 90 : 130
           }}
         >
           <TitleStyle>
@@ -123,13 +135,24 @@ export function NftSelect() {
                   maxHeight: 585,
                   overflowY: 'auto',
                   overflowX: 'hidden',
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
+                  display: 'flex',
+                  // gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
                   gap: 20,
                   padding: '35px 110px',
+                  flexWrap: 'wrap',
                   mt: 25,
                   '::-webkit-scrollbar': {
                     display: 'none'
+                  },
+                  [theme.breakpoints.down('sm')]: {
+                    display: 'grid',
+                    padding: '0',
+                    gridTemplateColumns: '44vw 44vw',
+                    height: '60vh',
+                    paddingTop: '35px',
+                    gap: 10,
+                    mt: 0,
+                    justifyContent: 'space-evenly'
                   }
                 }}
               >
@@ -344,13 +367,14 @@ function Searching() {
 }
 
 function NotHaveNft() {
+  const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const { setCategory } = useSbtListPaginationCallback()
   return (
     <SearchCardStyle
       style={{
-        width: '443px',
-        height: '280px'
+        width: isSmDown ? '340px' : '443px',
+        height: isSmDown ? '280px' : '280px'
       }}
     >
       <Box
@@ -367,7 +391,8 @@ function NotHaveNft() {
         <ContentTextStyle
           sx={{
             maxWidth: 340,
-            textAlign: 'center'
+            textAlign: 'center',
+            fontSize: isSmDown ? 13 : 14
           }}
         >
           {"Whoops, you don't have any available NFTs."}

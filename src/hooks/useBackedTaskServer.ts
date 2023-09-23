@@ -187,7 +187,7 @@ export function useUpdateNewJob() {
   }, [])
 }
 
-interface PublishItemProp {
+export interface PublishItemProp {
   daoId: number
   jobBio: string
   jobPublishId: number
@@ -327,7 +327,8 @@ export function useGetPublishJobList(daoId: number, refresh?: number) {
 }
 
 export function useCreateTask() {
-  return useCallback(
+  const [loading, setLoading] = useState<boolean>()
+  const CreateTaskCallback = useCallback(
     (
       assignAccount: string,
       content: string,
@@ -339,16 +340,26 @@ export function useCreateTask() {
       status: string,
       taskName: string
     ) => {
+      setLoading(true)
       return createTask(assignAccount, content, deadline, priority, proposalId, reward, spacesId, status, taskName)
-        .then(res => res)
+        .then(res => {
+          setLoading(false)
+          return res
+        })
         .catch(err => console.log(err))
     },
     []
   )
+  return {
+    loading,
+    CreateTaskCallback
+  }
 }
 
 export function useUpdateTask() {
-  return useCallback(
+  const [loading, setLoading] = useState<boolean>()
+
+  const updateTaskCallback = useCallback(
     (
       assignAccount: string,
       content: string,
@@ -363,6 +374,7 @@ export function useUpdateTask() {
       taskName: string,
       weight: number
     ) => {
+      setLoading(true)
       return updateTask(
         assignAccount,
         content,
@@ -377,11 +389,18 @@ export function useUpdateTask() {
         taskName,
         weight
       )
-        .then(res => res)
+        .then(res => {
+          setLoading(false)
+          return res
+        })
         .catch(err => console.log(err))
     },
     []
   )
+  return {
+    loading,
+    updateTaskCallback
+  }
 }
 
 export function useReviewApply() {

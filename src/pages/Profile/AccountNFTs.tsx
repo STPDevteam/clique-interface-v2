@@ -4,16 +4,17 @@ import {
   MenuItem,
   Stack,
   styled,
-  Typography,
-  Tabs,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  tableCellClasses
+  Typography
+  // Tabs,
+  // Tab,
+  // Table,
+  // TableBody,
+  // TableCell,
+  // TableContainer,
+  // TableHead,
+  // TableRow,
+  // tableCellClasses,
+  // useTheme
 } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Image from 'components/Image'
@@ -28,13 +29,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import placeholderImage from 'assets/images/placeholder.png'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import { getEtherscanLink } from 'utils'
 import LoopIcon from '@mui/icons-material/Loop'
 import { toast } from 'react-toastify'
-import { MyCreateNftListProp, useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
-import { ExternalLink } from 'theme/components'
-import Copy from 'components/essential/Copy'
-import { useProfilePaginationCallback } from 'state/pagination/hooks'
+// import { MyCreateNftListProp, useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
+// import { ExternalLink } from 'theme/components'
+// import Copy from 'components/essential/Copy'
+// // import { useProfilePaginationCallback } from 'state/pagination/hooks'
 
 // import { useActiveWeb3React } from 'hooks'
 
@@ -58,36 +59,36 @@ import { useProfilePaginationCallback } from 'state/pagination/hooks'
 //   }
 // }))
 
-const TabStyle = styled(Tabs)(({ theme }) => ({
-  '& .MuiButtonBase-root': {
-    fontWeight: 600,
-    fontSize: 16,
-    lineHeight: '22px',
-    color: '#3F5170',
-    textTransform: 'none',
-    padding: 0
-  },
-  '& .MuiTabs-indicator': {
-    height: 4,
-    background: '#0049C6',
-    borderRadius: '2px',
-    margin: 'auto'
-  },
-  '& .active': {
-    fontWeight: 600,
-    fontSize: 16,
-    lineHeight: '22px',
-    color: '#0049C6'
-  },
-  [theme.breakpoints.down('sm')]: {
-    '& .MuiButtonBase-root': {
-      fontSize: 16
-    },
-    '& .active': {
-      fontSize: 16
-    }
-  }
-}))
+// const TabStyle = styled(Tabs)(({ theme }) => ({
+//   '& .MuiButtonBase-root': {
+//     fontWeight: 600,
+//     fontSize: 16,
+//     lineHeight: '22px',
+//     color: '#3F5170',
+//     textTransform: 'none',
+//     padding: 0
+//   },
+//   '& .MuiTabs-indicator': {
+//     height: 4,
+//     background: '#0049C6',
+//     borderRadius: '2px',
+//     margin: 'auto'
+//   },
+//   '& .active': {
+//     fontWeight: 600,
+//     fontSize: 16,
+//     lineHeight: '22px',
+//     color: '#0049C6'
+//   },
+//   [theme.breakpoints.down('sm')]: {
+//     '& .MuiButtonBase-root': {
+//       fontSize: 16
+//     },
+//     '& .active': {
+//       fontSize: 16
+//     }
+//   }
+// }))
 
 const StyledItems = styled(Box)(({ theme }) => ({
   height: 298,
@@ -96,75 +97,76 @@ const StyledItems = styled(Box)(({ theme }) => ({
   borderRadius: '10px',
   position: 'relative',
   [theme.breakpoints.down('sm')]: {
-    height: 200
+    height: 180,
+    width: '44vw'
   }
 }))
 
-const StyledTableCell = styled(TableCell)(() => ({
-  [`&.${tableCellClasses.head}`]: {
-    minWidth: 110,
-    padding: '0px 20px',
-    height: '31px',
-    backgroundColor: '#F8FBFF',
-    fontFamily: 'Inter',
-    fontWeight: 400,
-    fontSize: '14px',
-    lineHeight: '20px',
-    color: '#3F5170',
-    border: 'none',
-    borderLeft: '1px solid #D4D7E2',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  [`&.${tableCellClasses.head}.firstColumn`]: {
-    borderLeft: 'none'
-  },
-  [`&.${tableCellClasses.body}`]: {
-    padding: '0px 20px',
-    height: '50px',
-    fontFamily: 'Inter',
-    fontWeight: 500,
-    fontSize: '14px',
-    lineHeight: '20px',
-    color: '#3F5170'
-  }
-}))
+// const StyledTableCell = styled(TableCell)(() => ({
+//   [`&.${tableCellClasses.head}`]: {
+//     minWidth: 110,
+//     padding: '0px 20px',
+//     height: '31px',
+//     backgroundColor: '#F8FBFF',
+//     fontFamily: 'Inter',
+//     fontWeight: 400,
+//     fontSize: '14px',
+//     lineHeight: '20px',
+//     color: '#3F5170',
+//     border: 'none',
+//     borderLeft: '1px solid #D4D7E2',
+//     overflow: 'hidden',
+//     textOverflow: 'ellipsis'
+//   },
+//   [`&.${tableCellClasses.head}.firstColumn`]: {
+//     borderLeft: 'none'
+//   },
+//   [`&.${tableCellClasses.body}`]: {
+//     padding: '0px 20px',
+//     height: '50px',
+//     fontFamily: 'Inter',
+//     fontWeight: 500,
+//     fontSize: '14px',
+//     lineHeight: '20px',
+//     color: '#3F5170'
+//   }
+// }))
 
-const StyledTableRow = styled(TableRow)(() => ({
-  '& td': {
-    borderTop: '1px solid #D4D7E2',
-    borderLeft: '1px solid #D4D7E2'
-  },
-  '& td:first-of-type': {
-    borderLeft: 'none'
-  },
-  '&:last-child td': {
-    borderBottom: 'none'
-  }
-}))
+// const StyledTableRow = styled(TableRow)(() => ({
+//   '& td': {
+//     borderTop: '1px solid #D4D7E2',
+//     borderLeft: '1px solid #D4D7E2'
+//   },
+//   '& td:first-of-type': {
+//     borderLeft: 'none'
+//   },
+//   '&:last-child td': {
+//     borderBottom: 'none'
+//   }
+// }))
 
 const nftSupportedChain = AllChainList.filter(i =>
   [ChainId.MAINNET, ChainId.BSC, ChainId.POLYGON, ChainId.ZKSYNC_ERA].includes(i.id)
 )
 
-const tabList = [
-  {
-    label: 'NFTs'
-  },
-  { label: 'My Created NFT Accounts' }
-]
+// const tabList = [
+//   {
+//     label: 'NFTs'
+//   },
+//   { label: 'My Created NFT Accounts' }
+// ]
 
 export default function AccountNFTs({ account }: { account: string }) {
   const isSmDown = useBreakpoint('sm')
   const [viewAll, setViewAll] = useState(false)
   const [currentChainId, setCurrentChainId] = useState<ChainId>(1)
   const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
-  const {
-    data: { nftTabIndex },
-    setNftTabIndex
-  } = useProfilePaginationCallback()
-  const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
-  const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
+  // const {
+  //   data: { nftTabIndex },
+  //   setNftTabIndex
+  // } = useProfilePaginationCallback()
+  // const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
+  // const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
     return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
@@ -179,13 +181,14 @@ export default function AccountNFTs({ account }: { account: string }) {
     }
   }, [accountNFTsList, isSmDown])
 
-  useEffect(() => {
-    return () => {
-      setNftTabIndex(0)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  // useEffect(() => {
+  //   return () => {
+  //     setNftTabIndex(0)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [])
 
+  const IsShow = false
   return (
     <ContainerWrapper
       maxWidth={isSmDown ? '100%' : 1150}
@@ -195,8 +198,8 @@ export default function AccountNFTs({ account }: { account: string }) {
       style={{ width: isSmDown ? '100%' : '100vw' }}
       margin={'0 auto'}
     >
-      <Box display={'flex'} justifyContent="space-between">
-        <TabStyle value={tabValue}>
+      <Box display={'flex'} justifyContent="space-between" gap={isSmDown ? 10 : 0}>
+        {/* <TabStyle value={tabValue}>
           {tabList.map((item, idx) => (
             <Tab
               key={item.label + idx}
@@ -208,49 +211,50 @@ export default function AccountNFTs({ account }: { account: string }) {
               className={tabValue === idx ? 'active' : ''}
             ></Tab>
           ))}
-        </TabStyle>
+        </TabStyle> */}
 
-        {tabValue === 0 && (
-          <Stack spacing={10} direction={'row'}>
-            <Select
-              noBold
-              defaultValue={ChainListMap[currentChainId]?.symbol}
-              value={currentChainId}
-              height={36}
-              onChange={e => setCurrentChainId(e.target.value)}
-            >
-              {nftSupportedChain.map(option => (
-                <MenuItem value={option.id} key={option.id} selected={currentChainId === option.id}>
-                  <LogoText logo={option.logo} text={option.symbol} />
-                </MenuItem>
-              ))}
-            </Select>
-            <Select noBold value={ercType} height={36} onChange={e => setErcType(e.target.value)}>
-              <MenuItem value={'erc721'} key={'erc721'} selected={ercType === 'erc721'}>
-                Erc721
+        <Typography variant="h6" fontSize={16} fontWeight={600}>
+          NFTs
+        </Typography>
+
+        <Stack spacing={10} direction={'row'}>
+          <Select
+            noBold
+            defaultValue={ChainListMap[currentChainId]?.symbol}
+            value={currentChainId}
+            height={36}
+            onChange={e => setCurrentChainId(e.target.value)}
+          >
+            {nftSupportedChain.map(option => (
+              <MenuItem value={option.id} key={option.id} selected={currentChainId === option.id}>
+                <LogoText logo={option.logo} text={option.symbol} />
               </MenuItem>
-              <MenuItem value={'erc1155'} key={'erc1155'} selected={ercType === 'erc1155'}>
-                Erc1155
-              </MenuItem>
-            </Select>
-          </Stack>
+            ))}
+          </Select>
+          <Select noBold value={ercType} height={36} onChange={e => setErcType(e.target.value)}>
+            <MenuItem value={'erc721'} key={'erc721'} selected={ercType === 'erc721'}>
+              Erc721
+            </MenuItem>
+            <MenuItem value={'erc1155'} key={'erc1155'} selected={ercType === 'erc1155'}>
+              Erc1155
+            </MenuItem>
+          </Select>
+        </Stack>
+      </Box>
+
+      <Box mt={20}>
+        {!accountNFTsList.length && !loading && <EmptyData />}
+        {loading && (
+          <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Loading />
+          </Box>
         )}
       </Box>
 
-      {tabValue === 0 && (
+      {IsShow && (
         <Box mt={20}>
-          {!accountNFTsList.length && !loading && <EmptyData />}
-          {loading && (
-            <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Loading />
-            </Box>
-          )}
-        </Box>
-      )}
-      {tabValue === 1 && (
-        <Box mt={20}>
-          {!myCreateNftList.length && <EmptyData />}
-          {loading_c && (
+          {IsShow && <EmptyData />}
+          {IsShow && (
             <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Loading />
             </Box>
@@ -258,141 +262,150 @@ export default function AccountNFTs({ account }: { account: string }) {
         </Box>
       )}
 
-      {tabValue === 0 && (
-        <>
-          <Box
-            mt={16}
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
-                xs: '1fr 1fr'
-              },
-              gap: '15px',
-              minWidth: isSmDown ? 'unset' : '800px',
-              overflowX: 'auto',
-              '&::-webkit-scrollbar': {
-                display: 'none'
-              }
-            }}
-          >
-            {showAccountNFTsList.map((item, index) => (
-              <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
-            ))}
-            {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
-              <StyledItems
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setViewAll(true)}
-              >
-                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
-                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
-                </svg>
-                <Typography color={'#9A9A9A'} fontWeight={500}>
-                  View all
-                </Typography>
-                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
-                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
-                </svg>
-              </StyledItems>
-            )}
+      <>
+        <Box
+          mt={16}
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              sm: viewAll ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+              xs: '1fr 1fr'
+            },
+            gap: '15px',
+            minWidth: isSmDown ? 'unset' : '800px',
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            }
+          }}
+        >
+          {showAccountNFTsList.map((item, index) => (
+            <NFTItem key={index} nft={item} idx={index} nftChainId={currentChainId}></NFTItem>
+          ))}
+          {!isSmDown && !viewAll && accountNFTsList.length > 4 && (
+            <StyledItems
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                cursor: 'pointer'
+              }}
+              onClick={() => setViewAll(true)}
+            >
+              <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+              </svg>
+              <Typography color={'#9A9A9A'} fontWeight={500}>
+                View all
+              </Typography>
+              <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+              </svg>
+            </StyledItems>
+          )}
+        </Box>
+
+        {viewAll && page.totalPage > 1 && (
+          <Box display={'flex'} mt={20} justifyContent="center">
+            <Pagination
+              count={page.totalPage}
+              page={page.currentPage}
+              onChange={(_, value) => page.setCurrentPage(value)}
+            />
           </Box>
+        )}
+      </>
 
-          {viewAll && page.totalPage > 1 && (
-            <Box display={'flex'} mt={20} justifyContent="center">
-              <Pagination
-                count={page.totalPage}
-                page={page.currentPage}
-                onChange={(_, value) => page.setCurrentPage(value)}
-              />
-            </Box>
-          )}
-        </>
-      )}
-      {tabValue === 1 && myCreateNftList.length ? <CreateNft6551 myCreateNftList={myCreateNftList} /> : null}
+      {/* {IsShow && myCreateNftList.length ? <CreateNft6551 myCreateNftList={myCreateNftList} /> : null} */}
     </ContainerWrapper>
   )
 }
 
-function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListProp[] }) {
-  // const { chainId } = useActiveWeb3React()
-  const isSmDown = useBreakpoint('sm')
-  console.log(isSmDown)
+// function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListProp[] }) {
+//   // const { chainId } = useActiveWeb3React()
+//   const theme = useTheme()
+//   return (
+//     <>
+//       <Box
+//         sx={{
+//           width: 'auto',
+//           [theme.breakpoints.down('sm')]: {
+//             width: 'calc(100vw - 32px)',
+//             overflowX: 'auto'
+//           }
+//         }}
+//       >
+//         <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
+//           <Table>
+//             <TableHead>
+//               <TableRow>
+//                 <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
+//                 <StyledTableCell>Token ID</StyledTableCell>
+//                 <StyledTableCell>Token Contract</StyledTableCell>
+//                 <StyledTableCell>Create Time</StyledTableCell>
+//                 <StyledTableCell>Hash</StyledTableCell>
+//               </TableRow>
+//             </TableHead>
+//             <TableBody>
+//               {myCreateNftList.map((row, index) => (
+//                 <StyledTableRow key={index}>
+//                   <StyledTableCell>
+//                     <Box display={'flex'} alignItems={'center'}>
+//                       {row.account ? shortenAddress(row.account, 4) : '--'}
+//                       <Copy margin="0 0 0 10px" toCopy={row.account} />
+//                     </Box>
+//                   </StyledTableCell>
 
-  return (
-    <>
-      <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
-              <StyledTableCell>Token ID</StyledTableCell>
-              <StyledTableCell>Token Contract</StyledTableCell>
-              <StyledTableCell>Create Time</StyledTableCell>
-              <StyledTableCell>Hash</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {myCreateNftList.map((row, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell>
-                  <Box display={'flex'} alignItems={'center'}>
-                    {row.account ? shortenAddress(row.account, 4) : '--'}
-                    <Copy margin="0 0 0 10px" toCopy={row.account} />
-                  </Box>
-                </StyledTableCell>
+//                   <StyledTableCell>
+//                     <Typography
+//                       sx={{
+//                         maxWidth: 50,
+//                         width: '100%'
+//                       }}
+//                       noWrap
+//                     >
+//                       {row.tokenId}
+//                     </Typography>
+//                   </StyledTableCell>
 
-                <StyledTableCell>
-                  <Typography
-                    sx={{
-                      maxWidth: 50,
-                      width: '100%'
-                    }}
-                    noWrap
-                  >
-                    {row.tokenId}
-                  </Typography>
-                </StyledTableCell>
-
-                <StyledTableCell>
-                  <Box display={'flex'} alignItems={'center'}>
-                    <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}>
-                      {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
-                    </ExternalLink>
-                    <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
-                  </Box>
-                </StyledTableCell>
-                <StyledTableCell>{row.createTime || '--'}</StyledTableCell>
-                <StyledTableCell>
-                  <Typography
-                    sx={{
-                      maxWidth: 200,
-                      width: '100%'
-                    }}
-                    noWrap
-                  >
-                    <ExternalLink
-                      href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}
-                    >
-                      {row.transactionHash || '--'}
-                    </ExternalLink>
-                  </Typography>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </>
-  )
-}
+//                   <StyledTableCell>
+//                     <Box display={'flex'} alignItems={'center'}>
+//                       <ExternalLink
+//                         href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}
+//                       >
+//                         {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
+//                       </ExternalLink>
+//                       <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
+//                     </Box>
+//                   </StyledTableCell>
+//                   <StyledTableCell>{row.createTime || '--'}</StyledTableCell>
+//                   <StyledTableCell>
+//                     <Typography
+//                       sx={{
+//                         maxWidth: 200,
+//                         width: '100%'
+//                       }}
+//                       noWrap
+//                     >
+//                       <ExternalLink
+//                         href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}
+//                       >
+//                         {row.transactionHash || '--'}
+//                       </ExternalLink>
+//                     </Typography>
+//                   </StyledTableCell>
+//                 </StyledTableRow>
+//               ))}
+//             </TableBody>
+//           </Table>
+//         </TableContainer>
+//       </Box>
+//     </>
+//   )
+// }
 
 function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftChainId: ChainId }) {
   const isSmDown = useBreakpoint('sm')

@@ -5,6 +5,7 @@ import { serverUploadImage } from '../../constants'
 import Image from '../Image'
 import Button from 'components/Button/Button'
 import { Axios } from 'utils/axios'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }) => ({
   gap: 42,
@@ -29,6 +30,9 @@ const StyledUpload = styled(Box)(({ theme, size }: { theme?: any; size: number }
       height: '100%',
       borderRadius: '50%'
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    gap: 30
   }
 }))
 
@@ -80,7 +84,7 @@ export default function Index({
 }) {
   const [openSnackbar, setOpenSnackbar] = useState(false)
   const [errorMsg, setErrorMsg] = useState('Upload failed')
-
+  const isSmDown = useBreakpoint('sm')
   const handleClick = useCallback(() => {
     const el = document.getElementById('upload')
     el && el.click()
@@ -142,11 +146,25 @@ export default function Index({
         <Typography variant="h6" sx={{ height: 24, fontSize: 18 }}>
           {logoTitle ? logoTitle : ' '}
         </Typography>
-        <Typography sx={{ mb: 25, width: '150px', lineHeight: '17px', fontWeight: 400, color: '#80829F' }}>
+        <Typography
+          sx={{
+            mb: isSmDown ? 15 : 25,
+            width: '150px',
+            lineHeight: '17px',
+            fontWeight: 400,
+            color: '#80829F',
+            fontSize: isSmDown ? 13 : 14
+          }}
+        >
           File types supported: JPG, PNG.
         </Typography>
 
-        <Button onClick={handleClick} width="125px" height="40px">
+        <Button
+          onClick={handleClick}
+          width={isSmDown ? '100px' : '125px'}
+          height={isSmDown ? '34px' : '40px'}
+          style={{ fontSize: isSmDown ? 13 : 14 }}
+        >
           + Upload
         </Button>
       </Box>

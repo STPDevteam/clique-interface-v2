@@ -1,5 +1,5 @@
 import Modal from 'components/Modal/index'
-import { Box, Stack, Typography, styled, Link } from '@mui/material'
+import { Box, Stack, Typography, styled, Link, useTheme } from '@mui/material'
 import Input from 'components/Input'
 // import Image from 'components/Image'
 // import { ChainList } from 'constants/chain'
@@ -25,16 +25,22 @@ import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
 import { useProfilePaginationCallback } from 'state/pagination/hooks'
 
-const BodyBoxStyle = styled(Box)(() => ({
-  padding: '30px 28px '
+const BodyBoxStyle = styled(Box)(({ theme }) => ({
+  padding: '30px 28px ',
+  [theme.breakpoints.down('sm')]: {
+    padding: '0 28px'
+  }
 }))
 
-const TitleStyle = styled(Typography)(() => ({
+const TitleStyle = styled(Typography)(({ theme }) => ({
   color: 'var(--word-color, #3F5170)',
   fontSize: '16px',
   fontWeight: '500',
   lineHeight: '24px',
-  textAlign: 'center'
+  textAlign: 'center',
+  [theme.breakpoints.down('sm')]: {
+    fontSize: 15
+  }
 }))
 
 const ContentTitleStyle = styled(Typography)(() => ({
@@ -321,6 +327,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
 }
 
 function MessageList() {
+  const theme = useTheme()
   const { result: RecentNftList, loading } = useRecentNftList()
   console.log(RecentNftList)
 
@@ -330,7 +337,10 @@ function MessageList() {
         padding: '8px 20px 20px 12px',
         width: '100%',
         borderRadius: '8px',
-        background: 'var(--light-bg, #F8FBFF)'
+        background: 'var(--light-bg, #F8FBFF)',
+        [theme.breakpoints.down('sm')]: {
+          padding: '8px 20px 5px 12px'
+        }
       }}
     >
       <Stack spacing={13}>

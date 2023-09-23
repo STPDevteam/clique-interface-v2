@@ -111,7 +111,11 @@ export default function Select(props: Props) {
             zIndex: 999,
             color: theme.palette.text.secondary,
             fontSize: 16,
-            fontWeight: '400!important'
+            fontWeight: '400!important',
+            [theme.breakpoints.down('sm')]: {
+              left: 15,
+              fontSize: 12
+            }
           },
           '& .MuiSelect-icon': {
             display: disabled ? 'none' : 'block',

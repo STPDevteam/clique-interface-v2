@@ -27,13 +27,17 @@ import { useBuildingDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { IS_TEST_NET } from 'constants/chain'
 import { useNavigate } from 'react-router-dom'
+import useBreakpoint from 'hooks/useBreakpoint'
 // import { ChainListMap } from 'constants/chain'
 // import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 const LabelText = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
   fontSize: 14,
-  marginBottom: 6
+  marginBottom: 6,
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: 0
+  }
 }))
 
 const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
@@ -52,10 +56,13 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.common.white
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%'
   }
 }))
 
-const DateSelectStyle = styled(Box)(() => ({
+const DateSelectStyle = styled(Box)(({ theme }) => ({
   width: 365,
   height: 40,
   display: 'grid',
@@ -76,6 +83,9 @@ const DateSelectStyle = styled(Box)(() => ({
     lineHeight: '20px',
     borderRight: '1px solid #D4D7E2',
     gap: 8
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: 'calc(100vw - 32px)'
   }
 }))
 
@@ -91,6 +101,7 @@ export default function CreateProposal() {
 
 function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataProp }) {
   const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
   const userSignature = useUserInfo()
   const { account } = useActiveWeb3React()
@@ -266,10 +277,11 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             Create Proposal
           </Typography>
         </Stack>
-        <Stack spacing={20} mt={40}>
+        <Stack spacing={isSmDown ? 10 : 20} mt={isSmDown ? 20 : 40}>
           <Input
             value={title}
             placeholder="Title"
+            height={isSmDown ? 36 : 40}
             onChange={val => {
               setTitle(val.target.value)
             }}
@@ -303,13 +315,18 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             )}
           </div>
         </Stack>
-        <Box mt={62}>
+        <Box mt={isSmDown ? 80 : 62}>
           {/* <Box sx={{ mb: 20 }}>
             <LabelText>Voting Token</LabelText>
             <CheckBoxs list={daoInfo.governance} />
           </Box> */}
-          <Stack spacing={'20px'}>
-            <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
+          <Stack spacing={isSmDown ? 10 : 20}>
+            <Stack
+              flexDirection={isSmDown ? 'column' : 'row'}
+              gridTemplateColumns={isSmDown ? 'auto' : '150px 1fr'}
+              alignItems={isSmDown ? 'start' : 'center'}
+              spacing={isSmDown ? 6 : 0}
+            >
               <LabelText mb={6} width={150} textAlign={'left'}>
                 Voting Mode
               </LabelText>
@@ -322,7 +339,12 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                 </MuiButton>
               </StyledButtonGroup>
             </Stack>
-            <Stack flexDirection={'row'} gridTemplateColumns={'150px 1fr'} alignItems={'center'}>
+            <Stack
+              flexDirection={isSmDown ? 'column' : 'row'}
+              gridTemplateColumns={isSmDown ? 'auto' : '150px 1fr'}
+              alignItems={isSmDown ? 'start' : 'center'}
+              spacing={isSmDown ? 6 : 0}
+            >
               <LabelText mb={6} textAlign={'left'} width={'150px'}>
                 Voting Type
               </LabelText>
@@ -349,11 +371,31 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
               )}
             </Stack>
             <VotingOptions option={voteOption} setOption={setVoteOption} />
-            <Box display={'grid'} gridTemplateColumns="150px 1fr" alignItems={'center'}>
+            <Box
+              display={'grid'}
+              gridTemplateColumns="150px 1fr"
+              alignItems={'center'}
+              sx={{
+                [theme.breakpoints.down('sm')]: {
+                  gridTemplateColumns: 'auto',
+                  gap: 10
+                }
+              }}
+            >
               <Typography variant="body1" lineHeight={'16px'} color={'#80829F'}>
                 Voting Period
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  [theme.breakpoints.down('sm')]: {
+                    display: 'grid',
+                    gap: 10
+                  }
+                }}
+              >
                 <DateSelectStyle>
                   <LabelText className="timelabel">
                     <TimeIcon />
@@ -379,14 +421,16 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                     }}
                   ></DateTimePicker>
                 </DateSelectStyle>
-                <Box
-                  sx={{
-                    width: 0,
-                    height: 10,
-                    border: '1px solid #D4D7E2',
-                    transform: 'rotate(90deg)'
-                  }}
-                />
+                {!isSmDown && (
+                  <Box
+                    sx={{
+                      width: 0,
+                      height: 10,
+                      border: '1px solid #D4D7E2',
+                      transform: 'rotate(90deg)'
+                    }}
+                  />
+                )}
                 <DateSelectStyle>
                   <LabelText className="timelabel">
                     <TimeIcon />
@@ -420,7 +464,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
           </Stack>
           {/* {errors.text && (errors.name === 'balance' || errors.name === 'time') && ( */}
           {errors.text && (
-            <Alert style={{ marginTop: 30 }} severity="error">
+            <Alert style={{ marginTop: isSmDown ? 20 : 30 }} severity="error">
               {errors.text}
             </Alert>
           )}
@@ -428,8 +472,8 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
             <OutlineButton
               noBold
               color="#0049C6"
-              width="200px"
-              height="40px"
+              width={isSmDown ? 150 : 200}
+              height={isSmDown ? 36 : 40}
               onClick={() => {
                 window.history.back()
               }}
@@ -437,7 +481,11 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
               Back
             </OutlineButton>
             {!account ? (
-              <Button width="200px" height="40px" onClick={toggleWalletModal}>
+              <Button
+                width={isSmDown ? '150px' : '200px'}
+                height={isSmDown ? '36px' : '40px'}
+                onClick={toggleWalletModal}
+              >
                 Connect wallet
               </Button>
             ) : (
@@ -447,7 +495,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
                 startIcon={<></>}
                 variant="contained"
                 color="primary"
-                sx={{ width: 200, height: 40, textAlign: 'center' }}
+                sx={{ width: isSmDown ? 150 : 200, height: isSmDown ? 36 : 40, textAlign: 'center' }}
                 onClick={handleSubmit}
               >
                 Publish
@@ -460,7 +508,7 @@ function CreateForm({ daoId, daoInfo }: { daoId: number; daoInfo: CreateDaoDataP
   )
 }
 
-const InputBoxstyle = styled(Box)(() => ({
+const InputBoxstyle = styled(Box)(({ theme }) => ({
   boxSizing: 'border-box',
   height: 40,
   background: ' #FFFFFF',
@@ -483,10 +531,18 @@ const InputBoxstyle = styled(Box)(() => ({
     height: 36,
     border: 'none',
     background: 'transparent !important'
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: '36px',
+    '& .headetitle': {
+      height: '36px'
+    }
   }
 }))
 
 function VotingOptions({ option, setOption }: { option: string[]; setOption: Dispatch<SetStateAction<string[]>> }) {
+  // const isSmDown = useBreakpoint('sm')
+  const theme = useTheme()
   const updateVoteOption = useCallback(
     (index: number, value: string) => {
       const options = [...option]
@@ -511,7 +567,15 @@ function VotingOptions({ option, setOption }: { option: string[]; setOption: Dis
 
   return (
     <div>
-      <Box sx={{ display: 'grid', gridTemplateColumns: '150px 1fr' }}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: '150px 1fr',
+          [theme.breakpoints.down('sm')]: {
+            gridTemplateColumns: 'auto'
+          }
+        }}
+      >
         <LabelText sx={{ margin: 0, height: 40, display: 'flex', alignItems: 'center' }}>Voting Options</LabelText>
         <Box sx={{ display: 'grid', gap: 14, flexDirection: 'column' }} component="form">
           <InputBoxstyle>

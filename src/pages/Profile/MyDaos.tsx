@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { UserProfileAdminProps } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
@@ -160,7 +160,7 @@ export function DaoItem({
 }
 
 export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[] | undefined }) {
-  // const theme = useTheme()
+  const theme = useTheme()
   const isSmDown = useBreakpoint()
   if (!adminDao || !adminDao.length) {
     return null
@@ -230,6 +230,10 @@ export default function MyDaos({ adminDao }: { adminDao: UserProfileAdminProps[]
           overflowX: 'scroll',
           '&::-webkit-scrollbar': {
             display: 'none'
+          },
+          [theme.breakpoints.down('sm')]: {
+            width: 'calc(100vw - 32px)',
+            overflowX: 'auto'
           }
         }}
       >

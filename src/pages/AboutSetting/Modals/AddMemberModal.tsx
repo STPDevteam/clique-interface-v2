@@ -11,6 +11,7 @@ import { useChangeAdminRole } from 'hooks/useBackedDaoServer'
 import { toast } from 'react-toastify'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { useActiveWeb3React } from 'hooks'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const guestList = [
   { value: 1, label: 'Owner' },
@@ -19,6 +20,7 @@ const guestList = [
 
 export default function AddMemberModal({ onClose, daoId }: { onClose: () => void; daoId: number }) {
   const { hideModal } = useModal()
+  const isSmDown = useBreakpoint('sm')
   const { account } = useActiveWeb3React()
   const [address, setAddress] = useState('')
   const [currentStatus, setCurrentStatus] = useState<number>(1)
@@ -57,7 +59,13 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon padding="13px 28px">
-      <Box display="flex" flexDirection={'column'} textAlign={'center'} width="100%" height="480px">
+      <Box
+        display="flex"
+        flexDirection={'column'}
+        textAlign={'center'}
+        width="100%"
+        height={isSmDown ? 'auto' : '480px'}
+      >
         <Box
           display="flex"
           justifyContent="space-between"
@@ -77,7 +85,7 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
         </Box>
         <Select
           placeholder=""
-          width={'422px'}
+          width={isSmDown ? '100%' : '422px'}
           height={40}
           noBold
           label="Guests"
@@ -109,7 +117,7 @@ export default function AddMemberModal({ onClose, daoId }: { onClose: () => void
           gridTemplateColumns={'1fr 1fr'}
           justifyContent={'space-between'}
           flexDirection={'row'}
-          mt={!isAddress(address) ? 176 : 224}
+          mt={isSmDown ? 40 : !isAddress(address) ? 176 : 224}
         >
           <OutlineButton onClick={onClose} noBold color="#0049C6" width={'125px'} height="40px">
             Close

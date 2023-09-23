@@ -4,7 +4,7 @@ import { useIsTransactionPending } from 'state/transactions/hooks'
 import IconDone from 'assets/svg/icon-launched.svg'
 import { Link } from 'react-router-dom'
 
-const Wrapper = styled(Box)(({}) => ({
+const Wrapper = styled(Box)(({ theme }) => ({
   width: 326,
   height: 326,
   position: 'relative',
@@ -30,6 +30,10 @@ const Wrapper = styled(Box)(({}) => ({
     display: 'grid',
     justifyItems: 'center',
     alignContent: 'center'
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '250px',
+    height: '250px'
   }
 }))
 

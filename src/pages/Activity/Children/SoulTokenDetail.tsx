@@ -1,4 +1,4 @@
-import { Box, styled, Typography } from '@mui/material'
+import { Box, styled, TooltipProps, tooltipClasses, Typography, Tooltip } from '@mui/material'
 import { DaoAvatars } from 'components/Avatars'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Button from 'components/Button/Button'
@@ -37,12 +37,12 @@ import Copy from 'components/essential/Copy'
 import { ExternalLink } from 'theme/components'
 import { toast } from 'react-toastify'
 import isZero from 'utils/isZero'
-import Tooltip from 'components/Tooltip'
+import TooltipBgStyle from 'components/Tooltip'
 import DelayLoading from 'components/DelayLoading'
 import Loading from 'components/Loading'
-import { TooltipStyle } from 'pages/DaoInfo/LeftSider'
 import JoinDaoClaimModal from './JoinDaoClaimModal'
 import { routes } from 'constants/routes'
+import useBreakpoint from 'hooks/useBreakpoint'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: 800,
   marginBottom: 40,
@@ -51,8 +51,9 @@ const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   border: '1px solid #D4D7E2',
   borderRadius: '10px'
 }))
-const ContentHeaderStyle = styled(Box)(() => ({
-  padding: '30px 40px'
+const ContentHeaderStyle = styled(Box)(({ theme }) => ({
+  padding: '30px 40px',
+  [theme.breakpoints.down('sm')]: { padding: 15 }
 }))
 const JoInButton = styled(Button)(() => ({
   height: 36,
@@ -63,13 +64,14 @@ const JoInButton = styled(Button)(() => ({
     color: '#97B7EF'
   }
 }))
-const DetailLayoutStyle = styled(Box)(() => ({
+const DetailLayoutStyle = styled(Box)(({ theme }) => ({
   background: '#F8FBFF',
   padding: '13px 40px',
   height: 215,
   display: 'grid',
   flexDirection: 'column',
-  gap: 20
+  gap: 20,
+  [theme.breakpoints.down('sm')]: { padding: 15, height: 'max-content' }
 }))
 
 const ColumnLayoutStyle = styled(Box)(() => ({
@@ -119,6 +121,26 @@ const OwnersStyle = styled(Box)(() => ({
   padding: '20px 25px'
 }))
 
+const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(() => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: '#F8FBFF !important',
+    color: '#97B7EF !important',
+    width: 300,
+    fontFamily: 'Inter',
+    fontWeight: 500,
+    fontSize: '12px',
+    lineHeight: '16px',
+    borderRadius: '6px',
+    border: ' 1px solid #97B7EF',
+    padding: '8px  8px 8px 12px',
+    '& .MuiTooltip-arrow': {
+      color: '#97B7EF !important'
+    }
+  }
+}))
+
 const ClaimWayMapText = {
   [ClaimWay.AnyOne]: 'Anyone',
   [ClaimWay.Joined]: 'DAO members',
@@ -153,6 +175,7 @@ export default function SoulTokenDetail() {
   const TextRef = useRef<HTMLSpanElement | null>(null)
   const [open, setOpen] = useState(false)
   const [isOverflowed, setIsOverflowed] = useState(false)
+  const isSm = useBreakpoint('sm')
   const handleTooltipClose = () => {
     setOpen(false)
   }
@@ -412,9 +435,14 @@ export default function SoulTokenDetail() {
           <Loading sx={{ marginTop: 30 }} />
         </DelayLoading>
       ) : (
-        <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30 }}>
-          <Back />
-          <Box sx={{ display: 'flex', gap: 20, marginTop: 30 }}>
+        <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 30, px: isSm ? 20 : 0 }}>
+          <Back sx={{ marginLeft: '0 !important' }} />
+          <Box
+            sx={[
+              { display: 'flex', gap: 20, marginTop: 30, flexDirection: 'row' },
+              isSm && { flexDirection: 'column' }
+            ]}
+          >
             <ContentBoxStyle>
               <ContentHeaderStyle>
                 <TooltipStyle
@@ -441,9 +469,9 @@ export default function SoulTokenDetail() {
                     {sbtDetail?.itemName || '--'}
                   </Typography>
                 </TooltipStyle>
-                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Box sx={{ mt: 20, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <DaoAvatars src={sbtDetail?.daoLogo} size={45} />
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
                     <Typography variant="body1" color={'#80829F'}>
                       Base on
                     </Typography>
@@ -471,7 +499,7 @@ export default function SoulTokenDetail() {
                 </Box>
               </ContentHeaderStyle>
               <DetailLayoutStyle>
-                <RowCenter>
+                <RowCenter sx={[isSm && { flexWrap: 'wrap', gap: 10 }]}>
                   <Box>
                     <DetailTitleStyle>Number of Items </DetailTitleStyle>
                     <DetailStyle>{sbtDetail?.totalSupply || '--'}</DetailStyle>
@@ -564,14 +592,30 @@ export default function SoulTokenDetail() {
               </ColumnLayoutStyle>
               <OwnersStyle>
                 <Typography variant="body1" color="#8D8EA5" lineHeight={'20px'} sx={{ display: 'flex', gap: 5 }}>
-                  Owners({sbtClaimList && sbtClaimList?.length > 0 ? sbtClaimList?.length : 0})
-                  <Tooltip value="The owners will appear here in a few minutes." />
+                  Owners({ClaimTotal || 0})
+                  <TooltipBgStyle value="The owners will appear here in a few minutes." />
                 </Typography>
                 <Box sx={{ marginTop: 20, display: 'flex', gap: 17, flexWrap: 'wrap' }}>
-                  {sbtClaimList &&
-                    sbtClaimList?.length > 0 &&
-                    sbtClaimList?.map((item: any, index: number) =>
-                      index < 32 ? (
+                  {sbtClaimList?.length && ClaimTotal > 32
+                    ? sbtClaimList?.map((item: any, index: number) =>
+                        index < 31 ? (
+                          <Image
+                            onClick={() => navigate(routes._Profile + `/${item.account}`)}
+                            key={item.account}
+                            src={item.accountLogo || avatar}
+                            style={{
+                              height: 50,
+                              width: 50,
+                              borderRadius: '50%',
+                              backgroundColor: '#bfbf',
+                              cursor: 'pointer'
+                            }}
+                          />
+                        ) : (
+                          <Image src={EllipsisIcon} key={item.account} width={50} />
+                        )
+                      )
+                    : sbtClaimList?.map((item: any) => (
                         <Image
                           onClick={() => navigate(routes._Profile + `/${item.account}`)}
                           key={item.account}
@@ -584,10 +628,7 @@ export default function SoulTokenDetail() {
                             cursor: 'pointer'
                           }}
                         />
-                      ) : (
-                        <Image src={EllipsisIcon} key={item.account} width={50} />
-                      )
-                    )}
+                      ))}
                 </Box>
               </OwnersStyle>
             </ContentBoxStyle>

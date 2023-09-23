@@ -60,8 +60,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
-import { NftAccount } from './Nft/NftAccount'
-import { NftSelect } from './Nft/NftSelect'
+// import { NftGenerator } from './Nft/NftGenerator'
+// import { NftSelect } from './Nft/NftSelect'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -89,7 +90,7 @@ const AppWrapper = styled('div')(({ theme }) => ({
   }
 }))
 
-const ContentWrapper = styled('div')({
+const ContentWrapper = styled('div')(({ theme }) => ({
   width: '100%',
   maxHeight: '100vh',
   overflow: 'auto',
@@ -99,7 +100,8 @@ const ContentWrapper = styled('div')({
     zIndex: 199999,
     '& .Toastify__toast': {
       borderRadius: '10px',
-      border: '1px solid #97B7EF'
+      border: '1px solid #97B7EF',
+      height: 50
     },
     '& .Toastify__toast-body': {
       justifyContent: 'center',
@@ -107,8 +109,16 @@ const ContentWrapper = styled('div')({
       fontWeight: 500,
       fontSize: 14
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .toast-container': {
+      width: '90vw',
+      margin: 'auto',
+      left: 0,
+      right: 0
+    }
   }
-})
+}))
 
 const BodyWrapper = styled('div')(({}) => ({
   // paddingTop: theme.height.header,
@@ -120,6 +130,7 @@ const BodyWrapper = styled('div')(({}) => ({
 
 export default function App() {
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
   const { pathname } = useLocation()
   const theme = useTheme()
   const dispatch = useDispatch()
@@ -137,7 +148,8 @@ export default function App() {
     if (!pathname.includes('/governance/daoInfo')) {
       dispatch(removeCreateDaoData())
     }
-  }, [dispatch, pathname])
+    setSidedStatusCallBack(false)
+  }, [dispatch, pathname, setSidedStatusCallBack])
 
   const makeDaoInfo = (route: string) => route.replace(routes.DaoInfo, '')
 
@@ -206,8 +218,8 @@ export default function App() {
                   }
                 />
                 <Route path={routes.Activity} element={<Activity />} />
-                <Route path={routes.NftAccount} element={<NftAccount />} />
-                <Route path={routes.NftSelect} element={<NftSelect />} />
+                {/* <Route path={routes.NftGenerator} element={<NftGenerator />} />
+                <Route path={routes.NftSelect} element={<NftSelect />} /> */}
                 <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />

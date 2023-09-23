@@ -1,4 +1,4 @@
-import { Box, Stack, Typography, MenuItem, Grid, Link } from '@mui/material'
+import { Box, Stack, Typography, MenuItem, Grid, Link, useTheme } from '@mui/material'
 import Button from 'components/Button/Button'
 import Select from 'components/Select/Select'
 import ProposalItem from './ProposalItem'
@@ -30,6 +30,7 @@ const itemList = [
 
 export default function Proposal() {
   const navigate = useNavigate()
+  const theme = useTheme()
   const { showModal, hideModal } = useModal()
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const { updateMyJoinedDaoListData, myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
@@ -55,7 +56,17 @@ export default function Proposal() {
   return (
     <DaoContainer>
       <Box>
-        <Box mb={20} display={'grid'} gridTemplateColumns={'1fr 158px'} gap={60}>
+        <Box
+          sx={{
+            mb: 20,
+            display: 'grid',
+            gridTemplateColumns: '1fr 158px',
+            gap: 60,
+            [theme.breakpoints.down('sm')]: {
+              display: 'block'
+            }
+          }}
+        >
           <Box>
             <Stack
               sx={{
@@ -89,9 +100,21 @@ export default function Proposal() {
               deemed passed.
             </Typography>
           </Box>
-          <Stack spacing={15} mt={5}>
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 15,
+              mt: 5,
+              [theme.breakpoints.down('sm')]: {
+                display: 'grid',
+                gap: 15,
+                mt: 20,
+                gridTemplateColumns: '1fr 1fr'
+              }
+            }}
+          >
             <Button
-              width={isSmDown ? '146px' : '158px'}
+              width={isSmDown ? 'auto' : '158px'}
               fontSize={isSmDown ? 10 : 14}
               height={isSmDown ? '30px' : '36px'}
               borderRadius={isSmDown ? '8px' : undefined}
@@ -150,7 +173,7 @@ export default function Proposal() {
                 </MenuItem>
               ))}
             </Select>
-          </Stack>
+          </Box>
         </Box>
         <Box minHeight={170}>
           {!loading && !proposalBaseList.length && <EmptyData sx={{ marginTop: 30 }}>No data</EmptyData>}
