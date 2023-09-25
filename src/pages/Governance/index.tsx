@@ -41,7 +41,7 @@ export default function Home() {
           >
             {!loading &&
               list.map(item => (
-                <Grid key={item.daoId} item lg={3} md={4} sm={6} xs={12}>
+                <Grid key={item.daoId} item lg={3} md={4} sm={6} xs={12} width={1}>
                   <DaoItem {...item} />
                 </Grid>
               ))}

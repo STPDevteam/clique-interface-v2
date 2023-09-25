@@ -106,7 +106,7 @@ export default function LeftSider() {
             position: 'absolute',
             bottom: 4,
             right: 10,
-            '& .css-z6e3j5-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab': {
+            '& .MuiSpeedDial-fab': {
               height: 46,
               width: 46
             }
@@ -121,7 +121,7 @@ export default function LeftSider() {
       <Wrapper
         sx={{
           [theme.breakpoints.down('sm')]: {
-            position: 'fixed',
+            position: 'absolute',
             right: 4,
             bottom: 55,
             backgroundColor: 'rgba(244,244,244,0.85)',
