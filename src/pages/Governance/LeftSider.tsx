@@ -33,6 +33,7 @@ const Wrapper = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
+    position: 'fixed',
     zIndex: 999,
     // display: 'grid',
     // gridTemplateColumns: '1fr 138px',
@@ -106,7 +107,7 @@ export default function LeftSider() {
             position: 'absolute',
             bottom: 4,
             right: 10,
-            '& .css-z6e3j5-MuiButtonBase-root-MuiFab-root-MuiSpeedDial-fab': {
+            '& .MuiSpeedDial-fab': {
               height: 46,
               width: 46
             }
@@ -121,15 +122,15 @@ export default function LeftSider() {
       <Wrapper
         sx={{
           [theme.breakpoints.down('sm')]: {
-            position: 'fixed',
+            zIndex: userSignature && open ? 1 : -1,
+            display: 'block',
             right: 4,
             bottom: 55,
             backgroundColor: 'rgba(244,244,244,0.85)',
             borderRadius: '16px',
-            height: !open ? 0 : 'unset',
+            height: 'unset',
             overflow: !open ? 'hidden' : 'unset',
-            display: userSignature ? 'block' : 'none',
-            padding: !open ? 0 : '10px 0 6px',
+            padding: '10px 0 6px',
             transition: 'all 0.3s '
           }
         }}
