@@ -122,7 +122,8 @@ export default function LeftSider() {
       <Wrapper
         sx={{
           [theme.breakpoints.down('sm')]: {
-            display: userSignature && open ? 'block' : 'none',
+            zIndex: userSignature && open ? 1 : -1,
+            display: 'block',
             right: 4,
             bottom: 55,
             backgroundColor: 'rgba(244,244,244,0.85)',
