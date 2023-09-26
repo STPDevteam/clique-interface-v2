@@ -9,7 +9,8 @@ import {
   TableHead,
   TableRow,
   tableCellClasses,
-  MenuItem
+  MenuItem,
+  useTheme
 } from '@mui/material'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import AddIcon from 'assets/images/add.png'
@@ -122,6 +123,7 @@ const editList = [
   { value: '2', label: 'Delete Workspace' }
 ]
 function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: SpacesListProp[]; onDimiss: () => void }) {
+  const theme = useTheme()
   const { account } = useActiveWeb3React()
   const { showModal } = useModal()
   const update = useUpdateTeamspace()
@@ -167,238 +169,248 @@ function Tablee({ daoId, dataList, onDimiss }: { daoId: number; dataList: Spaces
       {dataList.length === 0 ? (
         <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>
       ) : (
-        <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell className="firstColumn">Name</StyledTableCell>
-                <StyledTableCell>Created by</StyledTableCell>
-                <StyledTableCell>Member</StyledTableCell>
-                <StyledTableCell>Access (Owner)</StyledTableCell>
-                <StyledTableCell />
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell
-                    style={{
-                      width: 180,
-                      maxWidth: 180,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
-                    }}
-                  >
-                    {row.name}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Typography style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <Image
-                        width={18}
-                        height={18}
-                        src={row.creator.avatar || avatar}
-                        style={{ borderRadius: '50%' }}
-                      />
-                      <Typography
-                        noWrap
-                        sx={{
-                          width: 120,
-                          maxWidth: 120,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
-                        }}
-                      >
-                        {row.creator.nickname || 'unnamed'}
-                      </Typography>
-                    </Typography>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Typography
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        '& p': {
-                          fontFamily: 'Inter',
-                          color: '#0049C6',
-                          fontWeight: 500,
-                          fontSize: 14,
-                          lineHeight: '20px'
-                        },
-                        '& p:hover': {
-                          cursor: 'pointer',
-                          textDecoration: 'underline'
-                        }
+        <Box
+          sx={{
+            width: 'auto',
+            [theme.breakpoints.down('sm')]: {
+              width: 'calc(100vw - 32px)',
+              overflowX: 'auto'
+            }
+          }}
+        >
+          <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell className="firstColumn">Name</StyledTableCell>
+                  <StyledTableCell>Created by</StyledTableCell>
+                  <StyledTableCell>Member</StyledTableCell>
+                  <StyledTableCell>Access (Owner)</StyledTableCell>
+                  <StyledTableCell />
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell
+                      style={{
+                        width: 180,
+                        maxWidth: 180,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
                       }}
                     >
-                      {row.member}
+                      {row.name}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Typography style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Image
+                          width={18}
+                          height={18}
+                          src={row.creator.avatar || avatar}
+                          style={{ borderRadius: '50%' }}
+                        />
+                        <Typography
+                          noWrap
+                          sx={{
+                            width: 120,
+                            maxWidth: 120,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {row.creator.nickname || 'unnamed'}
+                        </Typography>
+                      </Typography>
+                    </StyledTableCell>
+                    <StyledTableCell>
                       <Typography
-                        onClick={() => {
-                          if (
-                            adminLevel.job === 'owner' ||
-                            (account && account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
-                          ) {
-                            handleManageClick(row.data.spacesId, row.data.creator.account)
-                          } else {
-                            toast.error("You don't have permissions")
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                          '& p': {
+                            fontFamily: 'Inter',
+                            color: '#0049C6',
+                            fontWeight: 500,
+                            fontSize: 14,
+                            lineHeight: '20px'
+                          },
+                          '& p:hover': {
+                            cursor: 'pointer',
+                            textDecoration: 'underline'
                           }
                         }}
                       >
-                        Manage
+                        {row.member}
+                        <Typography
+                          onClick={() => {
+                            if (
+                              adminLevel.job === 'owner' ||
+                              (account && account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
+                            ) {
+                              handleManageClick(row.data.spacesId, row.data.creator.account)
+                            } else {
+                              toast.error("You don't have permissions")
+                            }
+                          }}
+                        >
+                          Manage
+                        </Typography>
                       </Typography>
-                    </Typography>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <PopperCard
-                      sx={{
-                        maxHeight: '50vh',
-                        overflowY: 'auto',
-                        width: 150,
-                        '&::-webkit-scrollbar': {
-                          display: 'none'
-                        }
-                      }}
-                      placement="bottom"
-                      targetElement={
-                        <Box
-                          flexDirection={'row'}
-                          display={'flex'}
-                          gap={12}
-                          sx={{
-                            height: 36,
-                            padding: 0,
-                            cursor: 'pointer',
-                            '&:hover': {
-                              borderColor: '#005BC60F'
-                            },
-                            '& svg': {
-                              marginLeft: 'auto'
-                            }
-                          }}
-                          alignItems={'center'}
-                        >
-                          <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
-                            {row.access.replace(/^\S/, (s: any) => s.toUpperCase())}
-                          </Typography>
-                          <ArrowIcon />
-                        </Box>
-                      }
-                    >
-                      <>
-                        {itemList.map((item: any, index: number) => (
-                          <MenuItem
-                            key={item.value}
-                            sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                            value={item.value}
-                            onClick={() => {
-                              if (
-                                adminLevel.job === 'owner' ||
-                                (account &&
-                                  account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
-                              ) {
-                                handleChangeVisibility(itemList[index].value, row.data)
-                              } else {
-                                toast.error("You don't have permissions")
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <PopperCard
+                        sx={{
+                          maxHeight: '50vh',
+                          overflowY: 'auto',
+                          width: 150,
+                          '&::-webkit-scrollbar': {
+                            display: 'none'
+                          }
+                        }}
+                        placement="bottom"
+                        targetElement={
+                          <Box
+                            flexDirection={'row'}
+                            display={'flex'}
+                            gap={12}
+                            sx={{
+                              height: 36,
+                              padding: 0,
+                              cursor: 'pointer',
+                              '&:hover': {
+                                borderColor: '#005BC60F'
+                              },
+                              '& svg': {
+                                marginLeft: 'auto'
                               }
                             }}
+                            alignItems={'center'}
                           >
-                            {item.label}
-                          </MenuItem>
-                        ))}
-                      </>
-                    </PopperCard>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <PopperCard
-                      sx={{
-                        maxHeight: '50vh',
-                        overflowY: 'auto',
-                        '&::-webkit-scrollbar': {
-                          display: 'none'
+                            <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                              {row.access.replace(/^\S/, (s: any) => s.toUpperCase())}
+                            </Typography>
+                            <ArrowIcon />
+                          </Box>
                         }
-                      }}
-                      placement="bottom"
-                      targetElement={
-                        <Box
-                          flexDirection={'row'}
-                          display={'flex'}
-                          gap={12}
-                          sx={{
-                            height: 36,
-                            padding: 0,
-                            cursor: 'pointer',
-                            '&:hover': {
-                              borderColor: '#97B7EF'
-                            },
-                            '& svg': {
-                              marginLeft: 'auto'
-                            }
-                          }}
-                          alignItems={'center'}
-                        >
-                          <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
-                            Manage
-                          </Typography>
-                          <ArrowIcon />
-                        </Box>
-                      }
-                    >
-                      <>
-                        {editList.map((item: any, index: number) => (
-                          <MenuItem
-                            key={item.value}
-                            sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
-                            value={item.value}
-                            onClick={() => {
-                              if (
-                                adminLevel.job === 'owner' ||
-                                (account &&
-                                  account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
-                              ) {
-                                if (editList[index].value === '0') {
-                                  showModal(
-                                    <AddTeamspaceModal
-                                      isEdit={true}
-                                      daoId={daoId}
-                                      spacesId={row.data.spacesId}
-                                      onDimiss={() => {
-                                        updateDaoMyJoinData()
-                                        onDimiss()
-                                      }}
-                                      originContent={row.data.bio}
-                                      originTitle={row.data.title}
-                                      originAccess={row.data.access}
-                                    />
-                                  )
-                                } else if (editList[index].value === '1') {
-                                  showModal(
-                                    <TransferAdminModal
-                                      daoId={daoId}
-                                      spacesId={row.data.spacesId}
-                                      onDimiss={onDimiss}
-                                      operator={adminLevel.job}
-                                    />
-                                  )
+                      >
+                        <>
+                          {itemList.map((item: any, index: number) => (
+                            <MenuItem
+                              key={item.value}
+                              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                              value={item.value}
+                              onClick={() => {
+                                if (
+                                  adminLevel.job === 'owner' ||
+                                  (account &&
+                                    account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
+                                ) {
+                                  handleChangeVisibility(itemList[index].value, row.data)
                                 } else {
-                                  showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
+                                  toast.error("You don't have permissions")
                                 }
-                              } else {
-                                toast.error("You don't have permissions")
+                              }}
+                            >
+                              {item.label}
+                            </MenuItem>
+                          ))}
+                        </>
+                      </PopperCard>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <PopperCard
+                        sx={{
+                          maxHeight: '50vh',
+                          overflowY: 'auto',
+                          '&::-webkit-scrollbar': {
+                            display: 'none'
+                          }
+                        }}
+                        placement="bottom"
+                        targetElement={
+                          <Box
+                            flexDirection={'row'}
+                            display={'flex'}
+                            gap={12}
+                            sx={{
+                              height: 36,
+                              padding: 0,
+                              cursor: 'pointer',
+                              '&:hover': {
+                                borderColor: '#97B7EF'
+                              },
+                              '& svg': {
+                                marginLeft: 'auto'
                               }
                             }}
+                            alignItems={'center'}
                           >
-                            {item.label}
-                          </MenuItem>
-                        ))}
-                      </>
-                    </PopperCard>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                            <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+                              Manage
+                            </Typography>
+                            <ArrowIcon />
+                          </Box>
+                        }
+                      >
+                        <>
+                          {editList.map((item: any, index: number) => (
+                            <MenuItem
+                              key={item.value}
+                              sx={{ fontWeight: 500, fontSize: '14px !important', color: '#3F5170' }}
+                              value={item.value}
+                              onClick={() => {
+                                if (
+                                  adminLevel.job === 'owner' ||
+                                  (account &&
+                                    account.toLocaleLowerCase() === row.data.creator.account.toLocaleLowerCase())
+                                ) {
+                                  if (editList[index].value === '0') {
+                                    showModal(
+                                      <AddTeamspaceModal
+                                        isEdit={true}
+                                        daoId={daoId}
+                                        spacesId={row.data.spacesId}
+                                        onDimiss={() => {
+                                          updateDaoMyJoinData()
+                                          onDimiss()
+                                        }}
+                                        originContent={row.data.bio}
+                                        originTitle={row.data.title}
+                                        originAccess={row.data.access}
+                                      />
+                                    )
+                                  } else if (editList[index].value === '1') {
+                                    showModal(
+                                      <TransferAdminModal
+                                        daoId={daoId}
+                                        spacesId={row.data.spacesId}
+                                        onDimiss={onDimiss}
+                                        operator={adminLevel.job}
+                                      />
+                                    )
+                                  } else {
+                                    showModal(<DeleteSpaceModal spacesId={row.data.spacesId} onDimiss={onDimiss} />)
+                                  }
+                                } else {
+                                  toast.error("You don't have permissions")
+                                }
+                              }}
+                            >
+                              {item.label}
+                            </MenuItem>
+                          ))}
+                        </>
+                      </PopperCard>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       )}
     </>
   )

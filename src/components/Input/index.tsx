@@ -1,5 +1,5 @@
 import React, { ChangeEvent, InputHTMLAttributes, useCallback, useMemo, useRef, useState } from 'react'
-import { Box, InputBase, styled, Typography } from '@mui/material'
+import { Box, InputBase, styled, Typography, useTheme } from '@mui/material'
 import { inputBaseClasses } from '@mui/material/InputBase'
 import InputLabel from './InputLabel'
 import { isURL } from 'utils/dao'
@@ -128,6 +128,7 @@ export default function Input({
     },
     'color' | 'outline' | 'size'
   >) {
+  const theme = useTheme()
   const [hideFormatWrapper, setHideFormatWrapper] = useState(false)
   const showFormatWrapperValue = useMemo(() => showFormatWrapper && showFormatWrapper(), [showFormatWrapper])
   // const [showErrorMsg, setErrorMsg] = useState(false)
@@ -215,10 +216,13 @@ export default function Input({
               '&::placeholder': {
                 fontSize: placeholderSize ? placeholderSize : smallPlaceholder ? 14 : placeholderSize,
                 color: theme => (error ? theme.palette.error.main : ''),
-                fontWeight: 400
+                fontWeight: 400,
                 // textOverflow: 'ellipsis',
                 // whiteSpace: 'nowrap',
                 // overflow: 'hidden'
+                [theme.breakpoints.down('sm')]: {
+                  fontSize: 13
+                }
               }
             }
           }}

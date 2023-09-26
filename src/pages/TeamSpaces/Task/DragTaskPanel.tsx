@@ -1,5 +1,5 @@
 // import AddButton from 'components/Button/Button'
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography, useTheme } from '@mui/material'
 import { ITaskItem, useGetTaskList, useRemoveTask, useUpdateTask } from 'hooks/useBackedTaskServer'
 import useModal from 'hooks/useModal'
 import { timeStampToFormat } from 'utils/dao'
@@ -157,13 +157,14 @@ const taskTypeList = [
 ]
 
 export default function DragTaskPanel() {
+  const theme = useTheme()
   const { spacesId: spacesId } = useParams<{ spacesId: string }>()
   const [rand, setRand] = useState(Math.random())
   const { showModal, hideModal } = useModal()
   const type = useMemo(() => ['A_notStarted', 'B_inProgress', 'C_done', 'D_notStatus'], [])
   const { daoId: curDaoId } = useParams<{ daoId: string }>()
   const daoId = Number(curDaoId)
-  const update = useUpdateTask()
+  const { updateTaskCallback } = useUpdateTask()
   const remove = useRemoveTask()
   const { myJoinDaoData: isJoined } = useUpdateDaoDataCallback()
   const { result } = useProposalBaseList(daoId)
@@ -247,7 +248,7 @@ export default function DragTaskPanel() {
             taskList[dInd][destination.index].weight + taskList[dInd][destination.index].weight / 2
         }
         setTaskList(newState)
-        update(
+        updateTaskCallback(
           taskList[sInd][source.index].assignAccount,
           '',
           taskList[sInd][source.index].deadline,
@@ -292,7 +293,7 @@ export default function DragTaskPanel() {
           taskList[sInd][source.index].status = taskList[dInd][destination.index - 1].status
         }
         setTaskList(newState)
-        update(
+        updateTaskCallback(
           taskList[sInd][source.index].assignAccount,
           '',
           taskList[sInd][source.index].deadline,
@@ -318,7 +319,7 @@ export default function DragTaskPanel() {
           .catch(err => console.log(err))
       }
     },
-    [taskList, type, update]
+    [taskList, type, updateTaskCallback]
   )
 
   useCallback(
@@ -380,127 +381,158 @@ export default function DragTaskPanel() {
   return (
     <Box
       sx={{
-        minWidth: 800,
-        overflowX: 'auto',
-        width: '100%'
+        [theme.breakpoints.down('sm')]: {
+          minWidth: 'calc(100vw - 32px)',
+          overflowX: 'auto'
+        }
       }}
     >
       <Box
         sx={{
-          position: 'absolute',
-          right: 0,
-          top: '-50px'
+          minWidth: 800,
+          width: '100%'
         }}
       >
-        {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
-          <Tooltip title="Only administrators are allowed to create tasks" arrow>
+        <Box
+          sx={{
+            position: 'absolute',
+            right: 0,
+            top: '-50px',
+            [theme.breakpoints.down('sm')]: {
+              top: '-15px'
+            }
+          }}
+        >
+          {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
+            <Tooltip title="Only administrators are allowed to create tasks" arrow>
+              <Box
+                sx={{
+                  width: 84,
+                  height: 36,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#8D8EA5',
+                  gap: 8,
+                  cursor: 'pointer',
+                  '& svg circle': {
+                    fill: '#8D8EA5'
+                  }
+                }}
+              >
+                <AddIcon />
+                <Typography fontWeight={400}>Add New</Typography>
+              </Box>
+            </Tooltip>
+          ) : (
             <Box
+              width={'84px'}
+              height={'36px'}
               sx={{
-                width: 84,
-                height: 36,
+                color: '#97B7EF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#8D8EA5',
                 gap: 8,
-                cursor: 'pointer',
-                '& svg circle': {
-                  fill: '#8D8EA5'
-                }
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                showSidePanel(undefined, undefined)
               }}
             >
               <AddIcon />
-              <Typography fontWeight={400}>Add New</Typography>
+              <Typography fontWeight={400} width={'fit-content'}>
+                Add New
+              </Typography>
             </Box>
-          </Tooltip>
-        ) : (
-          <Box
-            width={'84px'}
-            height={'36px'}
-            sx={{
-              color: '#97B7EF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              showSidePanel(undefined, undefined)
-            }}
-          >
-            <AddIcon />
-            <Typography fontWeight={400} width={'fit-content'}>
-              Add New
-            </Typography>
-          </Box>
-        )}
-      </Box>
-      <Box display={'grid'} gridTemplateColumns={'1fr 1fr 1fr 1fr'} gap={grid} mt={4}>
-        <DragDropContext onDragEnd={onDragEnd}>
-          {taskList.map((el, ind) => (
-            <Droppable key={ind} droppableId={`${ind}`}>
-              {(provided, snapshot) => (
-                <div ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)} {...provided.droppableProps}>
-                  <TaskTypeBtn number={curTaskTypeList[ind].number} bgColor={curTaskTypeList[ind].color}>
-                    {curTaskTypeList[ind].title}
-                  </TaskTypeBtn>
-                  {el.map((item, index) => (
-                    <Box key={item.taskId} onContextMenu={e => handleContextMenu(e, el, index)}>
-                      <ContextMenu
-                        ind={ind}
-                        index={index}
-                        remove={remove}
-                        isJoined={isJoined?.job}
-                        taskList={taskList}
-                        isShow={item.taskId === showMenuId}
-                      >
-                        <Draggable
-                          draggableId={item.taskId.toString()}
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr 1fr',
+            gap: 'grid',
+            mt: 4,
+            [theme.breakpoints.down('sm')]: {
+              mt: 20
+            }
+          }}
+        >
+          <DragDropContext onDragEnd={onDragEnd}>
+            {taskList.map((el, ind) => (
+              <Droppable key={ind} droppableId={`${ind}`}>
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    style={getListStyle(snapshot.isDraggingOver)}
+                    {...provided.droppableProps}
+                  >
+                    <TaskTypeBtn number={curTaskTypeList[ind].number} bgColor={curTaskTypeList[ind].color}>
+                      {curTaskTypeList[ind].title}
+                    </TaskTypeBtn>
+                    {el.map((item, index) => (
+                      <Box key={item.taskId} onContextMenu={e => handleContextMenu(e, el, index)}>
+                        <ContextMenu
+                          ind={ind}
                           index={index}
-                          isDragDisabled={isJoined?.job === 'visitor' || isJoined?.job === 'noRole'}
+                          remove={remove}
+                          isJoined={isJoined?.job}
+                          taskList={taskList}
+                          isShow={item.taskId === showMenuId}
                         >
-                          {(provided, snapshot) => (
-                            <Box
-                              sx={{
-                                '&.B_Medium': {
-                                  borderTop: '5px solid #EFCC97!important'
-                                },
-                                '&.A_High': {
-                                  borderTop: '5px solid #E46767!important'
-                                },
-                                '&.C_Low': {
-                                  borderTop: '5px solid #CAE7ED!important'
-                                }
-                              }}
-                              onClick={() => {
-                                showSidePanel(item, undefined)
-                              }}
-                              onTouchEnd={() => {
-                                showSidePanel(item, undefined)
-                              }}
-                              className={item.priority}
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
-                            >
+                          <Draggable
+                            draggableId={item.taskId.toString()}
+                            index={index}
+                            isDragDisabled={isJoined?.job === 'visitor' || isJoined?.job === 'noRole'}
+                          >
+                            {(provided, snapshot) => (
                               <Box
                                 sx={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  alignItems: 'center',
-                                  '& p': {
-                                    width: 140,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
+                                  '&.B_Medium': {
+                                    borderTop: '5px solid #EFCC97!important'
+                                  },
+                                  '&.A_High': {
+                                    borderTop: '5px solid #E46767!important'
+                                  },
+                                  '&.C_Low': {
+                                    borderTop: '5px solid #CAE7ED!important'
                                   }
                                 }}
+                                onClick={() => {
+                                  showSidePanel(item, undefined)
+                                }}
+                                // onTouchEnd={() => {
+                                //   showSidePanel(item, undefined)
+                                // }}
+                                className={item.priority}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
                               >
-                                <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
-                                  {item.taskName}
-                                </Typography>
-                                {/* {isJoined === 'visitor' ? (
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    '& p': {
+                                      width: 140,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis'
+                                    }
+                                  }}
+                                >
+                                  <Typography
+                                    fontSize={12}
+                                    noWrap
+                                    color={'#3F5170'}
+                                    fontWeight={500}
+                                    textAlign={'left'}
+                                  >
+                                    {item.taskName}
+                                  </Typography>
+                                  {/* {isJoined === 'visitor' ? (
                                 ''
                               ) : (
                                 <PopperCard
@@ -551,93 +583,104 @@ export default function DragTaskPanel() {
                                   </>
                                 </PopperCard>
                               )} */}
-                              </Box>
-                              <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
-                                {timeStampToFormat(item.deadline)}
-                              </Typography>
-                              <Box
-                                sx={{
-                                  display: 'flex',
-                                  justifyContent: 'flex-start',
-                                  alignItems: 'center',
-                                  gap: 10,
-                                  '& img': {
-                                    width: 18,
-                                    height: 18,
-                                    border: '1px solid #D4DCE2',
-                                    borderRadius: '50%'
-                                  },
-                                  '& p': {
-                                    width: 140,
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis'
-                                  }
-                                }}
-                              >
-                                {item.assignAccount && <Image src={item.assignAvatar || owl}></Image>}
-                                <Typography fontSize={12} noWrap color={'#3F5170'} fontWeight={500} textAlign={'left'}>
-                                  {item.assignAccount ? (item.assignNickname ? item.assignNickname : 'unnamed') : '--'}
+                                </Box>
+                                <Typography fontSize={12} color={'#80829F'} textAlign={'left'}>
+                                  {timeStampToFormat(item.deadline)}
                                 </Typography>
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'center',
+                                    gap: 10,
+                                    '& img': {
+                                      width: 18,
+                                      height: 18,
+                                      border: '1px solid #D4DCE2',
+                                      borderRadius: '50%'
+                                    },
+                                    '& p': {
+                                      width: 140,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis'
+                                    }
+                                  }}
+                                >
+                                  {item.assignAccount && <Image src={item.assignAvatar || owl}></Image>}
+                                  <Typography
+                                    fontSize={12}
+                                    noWrap
+                                    color={'#3F5170'}
+                                    fontWeight={500}
+                                    textAlign={'left'}
+                                  >
+                                    {item.assignAccount
+                                      ? item.assignNickname
+                                        ? item.assignNickname
+                                        : 'unnamed'
+                                      : '--'}
+                                  </Typography>
+                                </Box>
                               </Box>
-                            </Box>
-                          )}
-                        </Draggable>
-                      </ContextMenu>
-                    </Box>
-                  ))}
-                  {provided.placeholder}
-                  {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
-                    <Tooltip title="Only administrators are allowed to create tasks" arrow>
+                            )}
+                          </Draggable>
+                        </ContextMenu>
+                      </Box>
+                    ))}
+                    {provided.placeholder}
+                    {isJoined?.job === 'visitor' || isJoined?.job === 'noRole' ? (
+                      <Tooltip title="Only administrators are allowed to create tasks" arrow>
+                        <Box
+                          sx={{
+                            width: 84,
+                            height: 36,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#8D8EA5',
+                            gap: 8,
+                            margin: '0 auto',
+                            cursor: 'pointer',
+                            '& svg circle': {
+                              fill: '#8D8EA5'
+                            }
+                          }}
+                        >
+                          <AddIcon />
+                          <Typography fontWeight={400}>Add New</Typography>
+                        </Box>
+                      </Tooltip>
+                    ) : (
                       <Box
+                        width={'100%'}
+                        height={'44px'}
                         sx={{
-                          width: 84,
-                          height: 36,
+                          color: '#97B7EF',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#8D8EA5',
                           gap: 8,
+                          borderRadius: '8px',
+                          backgroundColor: '#F1F7FF',
                           margin: '0 auto',
-                          cursor: 'pointer',
-                          '& svg circle': {
-                            fill: '#8D8EA5'
-                          }
+                          cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                          showSidePanel(undefined, curTaskTypeList[ind].title)
                         }}
                       >
                         <AddIcon />
-                        <Typography fontWeight={400}>Add New</Typography>
+                        <Typography fontWeight={400} width={'fit-content'}>
+                          Add New
+                        </Typography>
                       </Box>
-                    </Tooltip>
-                  ) : (
-                    <Box
-                      width={'100%'}
-                      height={'44px'}
-                      sx={{
-                        color: '#97B7EF',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 8,
-                        borderRadius: '8px',
-                        backgroundColor: '#F1F7FF',
-                        margin: '0 auto',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        showSidePanel(undefined, curTaskTypeList[ind].title)
-                      }}
-                    >
-                      <AddIcon />
-                      <Typography fontWeight={400} width={'fit-content'}>
-                        Add New
-                      </Typography>
-                    </Box>
-                  )}
-                </div>
-              )}
-            </Droppable>
-          ))}
-        </DragDropContext>
+                    )}
+                  </div>
+                )}
+              </Droppable>
+            ))}
+          </DragDropContext>
+        </Box>
       </Box>
     </Box>
   )

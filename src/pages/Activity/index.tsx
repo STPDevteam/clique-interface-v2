@@ -34,7 +34,7 @@ import { useSbtList } from 'hooks/useBackedSbtServer'
 //   }
 // }))
 
-const TabStyle = styled(Tabs)(({ theme }) => ({
+export const TabStyle = styled(Tabs)(({ theme }) => ({
   '& .MuiButtonBase-root': {
     fontWeight: 500,
     fontSize: 18,
@@ -57,10 +57,10 @@ const TabStyle = styled(Tabs)(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     '& .MuiButtonBase-root': {
-      fontSize: 16
+      fontSize: 15
     },
     '& .active': {
-      fontSize: 16
+      fontSize: 15
     }
   }
 }))
@@ -147,7 +147,7 @@ export default function Activity() {
                 <Select
                   placeholder=""
                   noBold
-                  width={isSmDown ? '175px' : '250px'}
+                  width={isSmDown ? '160px' : '250px'}
                   height={isSmDown ? '36px' : '40px'}
                   value={chainIdVal}
                   onChange={e => {
@@ -175,7 +175,7 @@ export default function Activity() {
               <Select
                 placeholder=""
                 noBold
-                width={isSmDown ? '175px' : '250px'}
+                width={isSmDown ? '160px' : '250px'}
                 height={isSmDown ? '36px' : '40px'}
                 value={statusVal}
                 onChange={e => {

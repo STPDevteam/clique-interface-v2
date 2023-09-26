@@ -1,66 +1,77 @@
 import React from 'react'
-import { Button, styled } from '@mui/material'
-import { ExternalLink } from 'theme/components'
+import { Box } from '@mui/material'
 import LogoText from 'components/LogoText'
+import { Connection } from 'connection/types'
+import { ActivationStatus, useActivationState } from 'connection/activate'
+import { LoadingButton } from '@mui/lab'
+import { ExternalLink } from 'theme/components'
 
-const GreenCircle = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexFlow: 'row nowrap',
-  justifyContent: 'center',
-  alignItems: 'center',
-  '& div ': {
-    height: 8,
-    width: 8,
-    marginRight: 8,
-    backgroundColor: theme.palette.success.main,
-    borderRadius: '50%'
-  }
-}))
+// const GreenCircle = styled('div')(({ theme }) => ({
+//   display: 'flex',
+//   flexFlow: 'row nowrap',
+//   justifyContent: 'center',
+//   alignItems: 'center',
+//   '& div ': {
+//     height: 8,
+//     width: 8,
+//     marginRight: 8,
+//     backgroundColor: theme.palette.success.main,
+//     borderRadius: '50%'
+//   }
+// }))
 
 export default function Option({
   link = null,
-  clickable = true,
-  onClick = null,
   header,
   icon,
+  connection,
   active = false,
   id
 }: {
   link?: string | null
-  clickable?: boolean
-  onClick?: (() => void) | null
   header: React.ReactNode
-  icon: string
   active?: boolean
+  icon: string
+  connection?: Connection
+  isModal?: boolean
   id: string
 }) {
+  const { activationState, tryActivation } = useActivationState()
+
+  const activate = () =>
+    active &&
+    connection &&
+    tryActivation(connection, () => {}).catch(err => {
+      console.error('error message:', err)
+    })
+
+  const isSomeOptionPending = activationState.status === ActivationStatus.PENDING
+  const isCurrentOptionPending = isSomeOptionPending && activationState.connection.type === connection?.type
+
   const content = (
     <>
-      <Button
-        key={id}
+      <LoadingButton
         variant="outlined"
+        loadingPosition="start"
+        key={id}
         fullWidth
-        onClick={onClick || undefined}
-        disabled={!clickable || active}
         sx={{
-          border: '1px solid #D4D7E2',
-          justifyContent: 'flex-start',
-          paddingLeft: '24px',
-          color: active ? '#fff' : '#3F5170',
-          '&:hover': {
-            borderColor: '#97B7EF',
-            color: '#0049C6',
-            boxShadow: '0px 2px 8px rgba(35, 38, 132, 0.15)'
+          borderColor: active ? 'var(--ps-yellow-1)' : 'var(--ps-border-1)',
+          ':disabled': {
+            opacity: 0.5,
+            backgroundColor: 'var(--ps-white)',
+            color: 'var(--ps-black)',
+            border: '1px solid rgba(18, 18, 18, 0.2)'
           }
         }}
+        loading={isCurrentOptionPending}
+        onClick={activate}
+        disabled={!active}
       >
-        {active ? (
-          <GreenCircle>
-            <div />
-          </GreenCircle>
-        ) : null}
-        <LogoText fontWeight={600} logo={icon} text={header} size="40px" />
-      </Button>
+        <Box width={166}>
+          <LogoText fontSize={14} logo={icon} text={header} />
+        </Box>
+      </LoadingButton>
     </>
   )
   if (link) {

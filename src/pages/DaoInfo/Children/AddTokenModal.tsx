@@ -16,6 +16,7 @@ import UploadImage from 'components/UploadImage'
 import { getTokenLogo } from 'utils/fetch/server'
 import Image from 'components/Image'
 import Tooltip from 'components/Tooltip'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -53,6 +54,7 @@ export default function AddTokenModal({
   daoId: number
   setRand: () => void
 }) {
+  const isSmDown = useBreakpoint('sm')
   const { hideModal } = useModal()
   const [tokenAddress, setTokenAddress] = useState('')
   const [baseChainId, setBaseChainId] = useState<any>('')
@@ -165,7 +167,7 @@ export default function AddTokenModal({
           Add Governance Token
         </Typography>
 
-        <Box sx={{ mt: 27, display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ mt: 27, display: 'flex', justifyContent: 'space-between', gap: isSmDown ? 10 : 0 }}>
           <Box>
             <ContentTitleStyle sx={{ mb: 5 }}>Token logo</ContentTitleStyle>
             <Box
@@ -173,16 +175,22 @@ export default function AddTokenModal({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                width: 124,
-                height: 124,
+                width: isSmDown ? 100 : 124,
+                height: isSmDown ? 100 : 124,
                 border: '1px solid #D4D7E2',
                 borderRadius: '50%'
               }}
             >
               {tokenLogo ? (
-                <Image src={tokenLogo} alt="" height={124} width={124} style={{ borderRadius: '50%' }} />
+                <Image
+                  src={tokenLogo}
+                  alt=""
+                  height={isSmDown ? 100 : 124}
+                  width={isSmDown ? 100 : 124}
+                  style={{ borderRadius: '50%' }}
+                />
               ) : (
-                <UploadImage value={avatar} size={124} onChange={val => setAvatar(val)} />
+                <UploadImage value={avatar} size={isSmDown ? 100 : 124} onChange={val => setAvatar(val)} />
               )}
             </Box>
             {voteBtn.text === 'avatar' && <RedText>{voteBtn.error}</RedText>}
@@ -260,7 +268,7 @@ export default function AddTokenModal({
             value={requirementAmount}
           />
           {voteBtn.text === 'requirement' && <RedText>{voteBtn.error}</RedText>}
-          <Box sx={{ mt: 32, mb: 20, display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ mt: isSmDown ? 10 : 32, mb: isSmDown ? 0 : 20, display: 'flex', justifyContent: 'space-between' }}>
             <OutlineButton
               style={{ border: '1px solid #0049C6', color: '#0049C6' }}
               width={125}

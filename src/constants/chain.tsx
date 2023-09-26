@@ -1,6 +1,7 @@
 import { Chain } from 'models/chain'
 import { ReactComponent as ETH } from 'assets/svg/eth_logo.svg'
-import EthUrl from 'assets/svg/eth_logo.svg'
+// import EthUrl from 'assets/svg/eth_logo.svg'
+import EthUrl from 'assets/images/chainLogo0.png'
 import BSCUrl from 'assets/svg/binance.svg'
 import { ReactComponent as BSC } from 'assets/svg/binance.svg'
 import MaticSvg from 'assets/svg/matic.svg'
@@ -12,6 +13,10 @@ import CoinbaseSvg from '../assets/svg/coinbase_logo.svg'
 import { ReactComponent as CoinbaseLogo } from '../assets/svg/coinbase_logo.svg'
 import ZetaSvg from '../assets/svg/zeta-chain.svg'
 import { ReactComponent as ZetaLogo } from '../assets/svg/zeta-chain.svg'
+
+export function isSupportedChain(chainId: ChainId | undefined) {
+  return !!(chainId && SUPPORT_NETWORK_CHAIN_IDS.includes(chainId))
+}
 
 export enum ChainId {
   MAINNET = 1,

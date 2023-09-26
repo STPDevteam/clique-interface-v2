@@ -6,6 +6,12 @@ import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+// import { useState } from 'react'
+// import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
+// import placeholderImage from 'assets/images/placeholder.png'
+// import { useActiveWeb3React } from 'hooks'
+// import EmptyData from 'components/EmptyData'
+// import { useNftAccountList } from 'hooks/useBackedNftCallback'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -23,18 +29,36 @@ const Item = styled(Box)(({}) => ({
   justifyItems: 'center',
   alignItems: 'center',
   cursor: 'pointer',
-  width: 250,
-  padding: '9px 20px',
+  width: 227,
+  padding: '10px 20px 10px 5px',
   gap: 10,
+  // '&:hover .right': {
+  //   height: 0,
+  //   width: 0,
+  //   border: '1px solid #999',
+  //   position: 'relative',
+  //   '::before': {
+  //     position: 'absolute',
+  //     right: 1,
+  //     top: '-6px',
+  //     content: '""',
+  //     display: 'block',
+  //     height: 7,
+  //     width: 0,
+  //     border: '1px solid #999',
+  //     transform: 'rotate(135deg)'
+  //   }
+  // },
   '&:hover': {
     backgroundColor: '#0049C60D'
   },
+
   '&:hover p': {
     color: '#0049C6'
   },
   '& img': {
-    width: 24,
-    height: 24,
+    width: 30,
+    height: 30,
     border: '1px solid #D4D7E2',
     borderRadius: '50%'
   },
@@ -47,34 +71,59 @@ const Item = styled(Box)(({}) => ({
 }))
 
 const EmptyWrapper = styled(Box)({
-  width: 329,
+  width: 236,
   height: 140,
   padding: '16px 9px 6px',
   textAlign: 'center'
 })
 
-const ButtonGroup = styled(Stack)({
+const ButtonStyledGroup = styled(Stack)({
   flexDirection: 'row',
   justifyContent: 'space-between',
-  marginTop: 14,
+  marginTop: 5,
   '& button': {
-    width: 140,
-    height: 32
+    width: 106,
+    height: 32,
+    padding: '5px !important'
   }
 })
 
-export default function MySpace() {
+// const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+//   display: 'grid',
+//   gridTemplateColumns: '1fr 1fr',
+//   width: 227,
+//   '& button': {
+//     height: 30,
+//     borderWidth: '1px',
+//     color: theme.palette.text.primary,
+//     fontWeight: 600,
+//     padding: '5px 8px !important',
+//     '&:hover': {
+//       borderWidth: '1px'
+//     },
+//     '&.active': {
+//       backgroundColor: theme.palette.primary.main,
+//       color: theme.palette.common.white
+//     }
+//   }
+// }))
+
+export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
+  // const { account, chainId } = useActiveWeb3React()
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
+  // const [isActive, setIsActive] = useState<boolean>(false)
+  // const { result: NftList } = useNftAccountList()
+  // const { result: accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
 
   return (
     <Box>
       <PopperCard
         sx={{
           marginTop: 13,
-          maxHeight: '50vh',
-          overflowY: 'auto',
-          '&::-webkit-scrollbar': {
+          maxWidth: 250,
+          padding: '12px',
+          '& ::-webkit-scrollbar': {
             display: 'none'
           }
         }}
@@ -87,11 +136,11 @@ export default function MySpace() {
             sx={{
               height: 36,
               padding: '0 14px',
-              border: '1px solid #D4D7E2',
+              border: `1px solid${IsNftPage ? '#fff' : '#D4D7E2'}`,
               borderRadius: '8px',
               cursor: 'pointer',
               '&:hover': {
-                borderColor: '#97B7EF'
+                borderColor: IsNftPage ? '#D4D7E2' : '#97B7EF'
               },
               '& svg': {
                 marginLeft: 'auto'
@@ -99,7 +148,12 @@ export default function MySpace() {
             }}
             alignItems={'center'}
           >
-            <Typography fontWeight={500} fontSize={14} textAlign={'left'} sx={{ color: '#3F5170' }}>
+            <Typography
+              fontWeight={500}
+              fontSize={14}
+              textAlign={'left'}
+              sx={{ color: IsNftPage ? '#fff' : '#3F5170' }}
+            >
               My Space
             </Typography>
             <ArrowIcon />
@@ -107,15 +161,100 @@ export default function MySpace() {
         }
       >
         <>
-          {myJoinedDaoList.length === 0 && <EmptyDaoItem />}
-          {myJoinedDaoList?.map(option => (
-            <Box
-              key={option.daoName + option.daoId}
-              onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+          <Box
+            mt={10}
+            sx={{
+              maxHeight: '45vh',
+              overflowY: 'auto',
+              marginBottom: '6px'
+            }}
+          >
+            {myJoinedDaoList?.map(option => (
+              <Box
+                key={option.daoName + option.daoId}
+                onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+              >
+                <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
+              </Box>
+            ))}
+          </Box>
+
+          {/* <StyledButtonGroup>
+            <MuiButton
+              className={!isActive ? 'active' : ''}
+              onClick={e => {
+                e.stopPropagation()
+                setIsActive(false)
+              }}
             >
-              <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
+              {'DAOs'}
+            </MuiButton>
+            <MuiButton
+              className={isActive ? 'active' : ''}
+              onClick={e => {
+                e.stopPropagation()
+                setIsActive(true)
+              }}
+            >
+              {'NFT Account'}
+            </MuiButton>
+          </StyledButtonGroup>
+          {myJoinedDaoList.length === 0 && !isActive && <EmptyDaoItem />}
+          {!isActive ? (
+            <Box
+              mt={10}
+              sx={{
+                maxHeight: '45vh',
+                overflowY: 'auto',
+                marginBottom: '6px'
+              }}
+            >
+              {myJoinedDaoList?.map(option => (
+                <Box
+                  key={option.daoName + option.daoId}
+                  onClick={() => navigate(`${routes._DaoInfo}/${option.daoId}/proposal`)}
+                >
+                  <DaoItem daoName={option.daoName} daoLogo={option.daoLogo} />
+                </Box>
+              ))}
             </Box>
-          ))}
+          ) : (
+            <>
+              {NftList.length ? (
+                <Box
+                  mt={10}
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr 1fr 1fr',
+                    gap: 4,
+                    maxHeight: '45vh',
+                    overflowY: 'auto',
+                    minHeight: '160px',
+                    marginBottom: '6px'
+                  }}
+                >
+                  {NftList?.map((option, index) => (
+                    <Box key={index} sx={{ maxHeight: '54px', mb: 6 }}>
+                      <Image
+                        src={option.image_uri || placeholderImage}
+                        alt={''}
+                        width={54}
+                        height={54}
+                        style={{ border: '1px solid #97B7EF', borderRadius: '6px' }}
+                        // onClick={() => {
+                        //   navigate(routes.NftSelect)
+                        // }}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              ) : (
+                <Box padding={'15px 0'}>
+                  <EmptyData>No data</EmptyData>
+                </Box>
+              )}
+            </>
+          )} */}
         </>
       </PopperCard>
     </Box>
@@ -127,18 +266,19 @@ export function EmptyDaoItem() {
   return (
     <EmptyWrapper>
       <Image src={HateIcon} width={36} />
-      <Typography noWrap width={'100%'} lineHeight={'20px'} color={'#3F5170'}>
+      <Typography noWrap width={'100%'} lineHeight={'20px'} color={'#3F5170'} fontSize={12}>
         <span style={{ fontWeight: 700 }}>Oops!</span>
+        <br />
         <span style={{ fontWeight: 400 }}> You haven&apos;t joined any DAOs yet.</span>
       </Typography>
-      <ButtonGroup>
+      <ButtonStyledGroup>
         <Button variant="contained" onClick={() => navigate(routes.CreateDao)}>
           Create DAO
         </Button>
         <Button variant="outlined" color="primary" onClick={() => navigate(routes.Governance)}>
           Explore DAOs
         </Button>
-      </ButtonGroup>
+      </ButtonStyledGroup>
     </EmptyWrapper>
   )
 }
@@ -148,6 +288,7 @@ function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
     <Item>
       <Image src={daoLogo || ''} alt={daoName} />
       <Text noWrap>{daoName || ''}</Text>
+      {/* <Typography className="right" maxWidth={14} width={'100%'} /> */}
     </Item>
   )
 }

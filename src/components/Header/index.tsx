@@ -10,7 +10,8 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
-  Alert
+  Alert,
+  useTheme
 } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
 import { ExternalLink } from 'theme/components'
@@ -19,6 +20,7 @@ import { HideOnMobile } from 'theme/index'
 // import PlainSelect from 'components/Select/PlainSelect'
 import Image from 'components/Image'
 import logo from '../../assets/svg/logo.svg'
+import logoWhite from '../../assets/svg/logo_white.svg'
 import { routes } from 'constants/routes'
 import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
@@ -26,20 +28,24 @@ import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
 import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 // import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
-// import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
+import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
 import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 // import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
+import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
+import NewTag from 'assets/svg/new_tag.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import gitBookIcon from 'assets/images/gitbook.png'
 import PopperCard from 'components/PopperCard'
 import { useBuildingDaoDataCallback, useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { getWorkspaceInfo } from 'utils/fetch/server'
-import { useActiveWeb3React } from 'hooks'
-import { useWalletModalToggle } from 'state/application/hooks'
-import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+// import { useActiveWeb3React } from 'hooks'
+// import { useWalletModalToggle } from 'state/application/hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
 import { useDispatch } from 'react-redux'
 import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
-
+import useBreakpoint from 'hooks/useBreakpoint'
+import MenuIcon from '@mui/icons-material/Menu'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 interface TabContent {
   title: string
   route?: string
@@ -51,8 +57,83 @@ interface Tab extends TabContent {
   subTab?: TabContent[]
 }
 
+// const NavText = styled(Typography)(({theme})=>({
+//   color:"#3F5170"
+//   ,[theme.breakpoints.down('sm')]:{
+//     color:"#fff"
+//   }
+// }))
+
 export const Tabs: Tab[] = [
-  // { title: 'HOME', route: routes.Home },
+  // {
+  //   title: 'AW Solutions',
+  //   route: '',
+  //   subTab: [
+  //     {
+  //       title: 'Account Generator',
+  //       route: routes.NftGenerator,
+  //       titleContent: (
+  //         <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
+  //           <Typography color={'#3F5170'}>Account Generator</Typography>
+  //           <Typography
+  //             sx={{
+  //               fontSize: '12px',
+  //               fontWeight: 700,
+  //               lineHeight: '20px',
+  //               fontStyle: 'italic',
+  //               background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
+  //               backgroundClip: 'text',
+  //               '-webkit-background-clip': 'text',
+  //               '-webkit-text-fill-color': 'transparent'
+  //             }}
+  //           >
+  //             NEW!
+  //           </Typography>
+  //         </Box>
+  //       )
+  //     }
+  //   ]
+  // },
+
+  // {
+  //   title: 'Workspace',
+  //   route: '',
+  //   subTab: [
+  //     {
+  //       title: 'Explore DAOs',
+  //       route: routes.Governance,
+  //       titleContent: (
+  //         <Box display={'flex'} flexDirection={'row'}>
+  //           <Typography color={'#3F5170'}>Explore DAOs</Typography>
+  //         </Box>
+  //       )
+  //     }
+  //   ]
+  // },
+  // {
+  //   title: 'Discovery',
+  //   route: '',
+  //   subTab: [
+  //     {
+  //       title: 'Clique Discovery',
+  //       route: routes.Activity,
+  //       titleContent: (
+  //         <Box display={'flex'} flexDirection={'row'}>
+  //           <Typography color={'#3F5170'}>Clique Discovery</Typography>
+  //         </Box>
+  //       )
+  //     },
+  //     {
+  //       title: 'Tools',
+  //       route: routes.DappStore,
+  //       titleContent: (
+  //         <Box display={'flex'} flexDirection={'row'}>
+  //           <Typography color={'#3F5170'}>Tools</Typography>
+  //         </Box>
+  //       )
+  //     }
+  //   ]
+  // }
   { title: 'Explore DAOs', route: routes.Governance },
   { title: 'Clique Discovery', route: routes.Activity },
   { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
@@ -60,16 +141,16 @@ export const Tabs: Tab[] = [
     title: 'Creator',
     route: '',
     subTab: [
-      // {
-      //   title: 'DAO Rewards',
-      //   route: routes.Activity,
-      //   titleContent: (
-      //     <Box display={'flex'} flexDirection={'row'}>
-      //       <RewardsIcon />
-      //       <Typography color={'#3F5170'}>DAO Rewards</Typography>
-      //     </Box>
-      //   )
-      // },
+      {
+        title: 'DAO Rewards',
+        route: routes.Activity,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <RewardsIcon />
+            <Typography color={'#3F5170'}>DAO Rewards</Typography>
+          </Box>
+        )
+      },
       {
         title: 'Create DAO',
         route: routes.CreateDao,
@@ -133,43 +214,49 @@ export const Tabs: Tab[] = [
     ]
   },
   // { title: 'Swap', route: routes.SaleList },
-  // { title: 'Tokens', route: routes.Tokens },
+  // { title: 'Tokens', route: routes.Tokens }
   { title: 'Tools', route: routes.DappStore }
   // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 
-// const navLinkSX = () => ({
-//   textDecoration: 'none',
-//   fontSize: 14,
-//   color: '#3F5170',
-//   '&:hover p': {
-//     color: '#0049C6'
-//   },
-//   '&:hover svg path': {
-//     fill: '#0049C6'
-//   }
-// })
-
-// const StyledNavLink = styled(NavLink)(navLinkSX)
+const ComingSoonList: TabContent[] = [
+  {
+    title: 'Asset Portal',
+    route: routes.Soon,
+    titleContent: (
+      <Box display={'flex'} flexDirection={'row'}>
+        <Typography color={'#3F5170'}>Asset Portal </Typography>
+      </Box>
+    )
+  },
+  {
+    title: 'Identity Engine',
+    route: routes.Soon,
+    titleContent: (
+      <Box display={'flex'} flexDirection={'row'}>
+        <Typography color={'#3F5170'}>Identity Engine </Typography>
+      </Box>
+    )
+  },
+  {
+    title: 'Data APIs',
+    route: routes.Soon,
+    titleContent: (
+      <Box display={'flex'} flexDirection={'row'}>
+        <Typography color={'#3F5170'}>Data APIs </Typography>
+      </Box>
+    )
+  }
+]
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'fixed',
   height: theme.height.header,
-  backgroundColor: theme.palette.background.paper,
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
-  boxShadow: 'inset 0px -1px 0px #E4E4E4',
   padding: '0 40px',
   zIndex: theme.zIndex.drawer,
-  // [theme.breakpoints.down('md')]: {
-  //   position: 'fixed',
-  //   bottom: 0,
-  //   left: 0,
-  //   top: 'unset',
-  //   borderTop: '1px solid ' + theme.bgColor.bg4,
-  //   justifyContent: 'center'
-  // },
   '& .link': {
     textDecoration: 'none',
     fontSize: 14,
@@ -188,7 +275,14 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       color: theme.palette.primary.main
     },
     [theme.breakpoints.down('sm')]: {
-      paddingBottom: '10px'
+      padding: 0,
+      margin: 0,
+      borderBottom: 'none',
+      color: '#fff',
+      '&.active': { color: '#fff' },
+      '&:hover': {
+        color: '#fff'
+      }
     }
   },
   '& .menuLink': {
@@ -219,21 +313,22 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'fixed'
   },
   [theme.breakpoints.down('sm')]: {
-    '& .link': { marginRight: 24 },
-    // justifyContent: 'space-around',
+    '&.active': {
+      color: '#fff'
+    },
+    '& .link': { marginRight: 15, color: '#fff' },
     height: theme.height.mobileHeader,
-    padding: '0 15px',
-    boxShadow: 'none'
+    color: '#fff',
+    padding: '0 0 0 15px'
   }
 }))
 
 const StyledMobileAppBar = styled(StyledAppBar)(({ theme }) => ({
   display: 'none',
   [theme.breakpoints.down('sm')]: {
-    display: 'flex',
+    display: 'block',
     position: 'unset',
-    marginTop: 10,
-    height: `calc(${theme.height.mobileHeader} - 10px)`
+    height: 40
   }
 }))
 
@@ -279,6 +374,7 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
     overflowY: 'hidden',
     whiteSpace: 'nowrap',
     height: 40,
+    alignItems: 'center',
     scrollbarWidth: 'none' /* firefox */,
     '-ms-overflow-style': 'none' /* IE 10+ */,
     '&::-webkit-scrollbar': {
@@ -287,31 +383,16 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
   }
 }))
 
-// const StyledBreadcrumb = styled(Chip)(({ theme }) => {
-//   const backgroundColor = theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]
-//   return {
-//     backgroundColor,
-//     // height: theme.spacing(3),
-//     color: theme.palette.text.primary,
-//     fontWeight: theme.typography.fontWeightRegular,
-//     '&:hover, &:focus': {
-//       backgroundColor: emphasize(backgroundColor, 0.06)
-//     },
-//     '&:active': {
-//       boxShadow: theme.shadows[1],
-//       backgroundColor: emphasize(backgroundColor, 0.12)
-//     }
-//   }
-// }) as typeof Chip
-
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
 export default function Header() {
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   const dispatch = useDispatch()
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
-
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const handleMobileMenueDismiss = useCallback(() => {
     setMobileMenuOpen(false)
@@ -324,14 +405,15 @@ export default function Header() {
   const { buildingDaoData: daoInfo } = useBuildingDaoDataCallback()
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [workspaceTitle, setWorkspaceTitle] = useState('')
-
+  const IsNftPage = useMemo(() => {
+    if (pathname.includes(makeRouteLink(routes._Nft))) {
+      return true
+    }
+    return false
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
-  // const isShow = useMemo(() => {
-  //   if (curPath === routes.CreateDao) {
-  //     return false
-  //   }
-  //   return true
-  // }, [curPath])
+
   useEffect(() => {
     if (curPath === routes.CreateDao || pathname.includes(makeRouteLink(routes.DaoInfo))) {
       dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: false }))
@@ -376,7 +458,15 @@ export default function Header() {
       <>
         <StyledAppBar
           sx={{
-            paddingLeft: '292px !important'
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: 'inset 0px -1px 0px #E4E4E4',
+            paddingLeft: '292px !important',
+            [theme.breakpoints.down('sm')]: {
+              paddingLeft: '0px !important',
+              paddingRight: '0px !important',
+              boxShadow: 'inset 0px -1px 0px #E4E4E4',
+              height: '65px !important'
+            }
           }}
         >
           <Box
@@ -397,26 +487,48 @@ export default function Header() {
               }
             }}
           >
-            <Breadcrumbs aria-label="breadcrumb">
-              <NavLink to="/">
-                <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
-                DAOs
-              </NavLink>
-              {makeBreadcrumbs.map((v, i) => (
-                <Typography
-                  key={v}
-                  color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
-                  fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
-                >
-                  {pathname.includes(makeRouteLink(routes.Proposal)) && i !== makeBreadcrumbs.length - 1 && i !== 0 ? (
-                    <NavLink to={makeRouteLink(routes.Proposal)}>{v}</NavLink>
-                  ) : (
-                    v
-                  )}
-                </Typography>
-              ))}
-            </Breadcrumbs>
-            <HeaderRight />
+            {isSmDown ? (
+              <Box
+                sx={{
+                  height: 36,
+                  width: 36,
+                  border: '1px solid #D4D7E2',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginLeft: '15px'
+                }}
+                onClick={() => {
+                  setSidedStatusCallBack(true)
+                }}
+              >
+                <MenuIcon sx={{ path: { fill: '#0049C6' } }} />
+              </Box>
+            ) : (
+              <Breadcrumbs aria-label="breadcrumb">
+                <NavLink to="/">
+                  <HomeIcon fontSize="small" style={{ marginRight: 10 }} />
+                  DAOs
+                </NavLink>
+                {makeBreadcrumbs.map((v, i) => (
+                  <Typography
+                    key={v}
+                    color={makeBreadcrumbs.length - 1 === i ? '#0049C6' : '#3F5170'}
+                    fontWeight={makeBreadcrumbs.length - 1 === i ? 600 : 500}
+                  >
+                    {pathname.includes(makeRouteLink(routes.Proposal)) &&
+                    i !== makeBreadcrumbs.length - 1 &&
+                    i !== 0 ? (
+                      <NavLink to={makeRouteLink(routes.Proposal)}>{v}</NavLink>
+                    ) : (
+                      v
+                    )}
+                  </Typography>
+                ))}
+              </Breadcrumbs>
+            )}
+            <HeaderRight IsNftPage={IsNftPage} />
           </Box>
         </StyledAppBar>
       </>
@@ -424,44 +536,65 @@ export default function Header() {
   }
   return (
     <>
-      {headerLinkIsShow && (
+      {(headerLinkIsShow || isSmDown) && (
         <>
-          <Box height={50} />
-          <Alert
-            icon={<></>}
-            sx={{
-              height: 50,
-              position: 'fixed',
-              top: 0,
-              width: '100%',
-              left: 0,
-              zIndex: 1000,
-              display: 'flex',
-              justifyContent: 'center',
-              borderRadius: '0'
-            }}
-          >
-            You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
-            <a href="https://v2.myclique.io/" target="_blank" rel="noreferrer">
-              https://v2.myclique.io/
-            </a>
-          </Alert>
+          {!IsNftPage && (
+            <>
+              <Box height={50} />
+              <Alert
+                icon={<></>}
+                sx={{
+                  height: 50,
+                  position: 'fixed',
+                  top: 0,
+                  width: '100%',
+                  left: 0,
+                  zIndex: 1000,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  borderRadius: '0',
+                  fontSize: isSmDown ? 12 : 14,
+                  [theme.breakpoints.down('sm')]: {
+                    '& .css-1pxa9xg-MuiAlert-message': {
+                      padding: 0
+                    }
+                  }
+                }}
+              >
+                You’re now on Clique V3, if you’d like to use the old site please navigate to{' '}
+                <a href="https://v2.myclique.io/" target="_blank" rel="noreferrer">
+                  https://v2.myclique.io/
+                </a>
+              </Alert>
+            </>
+          )}
           <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
           <Filler />
           <StyledMobileAppBar>
-            <TabsBox />
+            <TabsBox IsNftPage={IsNftPage} />
           </StyledMobileAppBar>
 
-          <StyledAppBar sx={{ top: isGovernance ? 0 : 50 }}>
-            <Box display="flex" alignItems="center">
+          <StyledAppBar
+            sx={{
+              top: isGovernance || IsNftPage ? 0 : 50,
+              backgroundColor: IsNftPage ? 'transparent' : theme.palette.background.paper,
+              boxShadow: IsNftPage ? 'none' : 'inset 0px -1px 0px #E4E4E4'
+            }}
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              // width={isSmDown ? 25 : 'auto'}
+              // overflow={isSmDown ? 'hidden' : 'unset'}
+            >
               <MainLogo to={routes.Governance}>
-                <Image src={logo} alt={'logo'} />
+                <Image src={IsNftPage ? logoWhite : logo} alt={'logo'} />
               </MainLogo>
               <HideOnMobile breakpoint="md">
-                <TabsBox />
+                <TabsBox IsNftPage={IsNftPage} />
               </HideOnMobile>
             </Box>
-            <HeaderRight />
+            <HeaderRight IsNftPage={IsNftPage} />
           </StyledAppBar>
         </>
       )}
@@ -469,107 +602,163 @@ export default function Header() {
   )
 }
 
-function TabsBox() {
+function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
+  const theme = useTheme()
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const toggleWalletModal = useWalletModalToggle()
-  const loginSignature = useLoginSignature()
-  const { account } = useActiveWeb3React()
-  const userSignature = useUserInfo()
+  // const toggleWalletModal = useWalletModalToggle()
+  // const loginSignature = useLoginSignature()
+  // const { account } = useActiveWeb3React()
+  // const userSignature = useUserInfo()
   return (
     <LinksWrapper>
-      {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
-        subTab ? (
-          <Box
-            sx={{
-              color: '#3F5170',
-              marginRight: {
-                xs: 15,
-                lg: 30
-              },
-              height: 'auto',
-              paddingBottom: '30px',
-              borderColor: theme =>
-                subTab.some(tab => tab.route && pathname.includes(tab.route))
-                  ? theme.palette.text.primary
-                  : 'transparnet',
-              display: 'flex'
-            }}
-            key={title + idx}
-          >
-            <PopperCard
+      {Tabs.map(({ title, route, subTab, link, titleContent }, idx) => (
+        <>
+          {subTab ? (
+            <Box
               sx={{
-                marginTop: 13,
-                maxHeight: '50vh',
-                overflowY: 'auto',
-                padding: '6px 20px',
-                '&::-webkit-scrollbar': {
-                  display: 'none'
+                color: '#3F5170',
+                marginRight: {
+                  xs: 15,
+                  lg: 30
+                },
+                height: 'auto',
+                paddingBottom: '30px',
+                borderColor: theme =>
+                  subTab.some(tab => tab.route && pathname.includes(tab.route))
+                    ? theme.palette.text.primary
+                    : 'transparnet',
+                display: 'flex',
+                [theme.breakpoints.down('sm')]: {
+                  paddingBottom: 0
                 }
               }}
-              placement="bottom-start"
-              targetElement={
-                <Box
-                  flexDirection={'row'}
-                  display={'flex'}
-                  sx={{
-                    paddingTop: 30,
-                    fontSize: 14,
-                    color: '#808189',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    gap: 10,
-                    '& svg:hover path': {
-                      fill: '#0049C6'
-                    },
-                    '& svg:hover rect': {
-                      stroke: '#97B7EF'
-                    }
-                  }}
-                  alignItems={'center'}
-                >
-                  {title}
-                  <ArrowIcon />
-                </Box>
-              }
+              key={title + idx}
             >
-              <>
-                {subTab.map(option => (
+              <PopperCard
+                sx={{
+                  marginTop: 13,
+                  maxHeight: '50vh',
+                  overflowY: 'auto',
+                  padding: '6px 20px',
+                  '&::-webkit-scrollbar': {
+                    display: 'none'
+                  }
+                }}
+                placement="bottom-start"
+                targetElement={
                   <Box
+                    flexDirection={'row'}
+                    display={'flex'}
                     sx={{
-                      width: 150,
-                      height: 40,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
+                      paddingTop: 30,
+                      fontSize: 14,
+                      color: IsNftPage ? '#fff' : '#808189',
+                      fontWeight: 600,
                       cursor: 'pointer',
-                      '&:hover': {
-                        backgroundColor: '#0049C60D',
-                        colorr: '#0049C6'
+                      gap: 10,
+                      [theme.breakpoints.down('sm')]: {
+                        paddingTop: 0,
+                        gap: 6,
+                        color: '#fff',
+                        lineHeight: '20px'
                       },
-                      '&:hover svg path': {
+                      '& svg:hover path': {
                         fill: '#0049C6'
                       },
-                      '& p': {
-                        marginLeft: 8
-                      },
-                      '&:hover p': {
-                        color: '#0049C6'
+                      '& svg:hover rect': {
+                        stroke: '#97B7EF'
                       }
                     }}
-                    key={option.title}
-                    onClick={() => {
-                      if (!account) return toggleWalletModal()
-                      if (!userSignature) return loginSignature()
-                      option.route ? navigate(option.route) : window.open(option.link, '_blank')
-                    }}
+                    alignItems={'center'}
                   >
-                    {option.titleContent ?? option.title}
+                    {title === 'AW Solutions' ? (
+                      <>
+                        <Box display={'flex'} alignItems={'center'} gap={4}>
+                          <img src={NewTag} alt="" />
+                          {title}
+                        </Box>
+
+                        <ArrowIcon />
+                      </>
+                    ) : (
+                      <>
+                        {title}
+                        <ArrowIcon />
+                      </>
+                    )}
                   </Box>
-                ))}
-              </>
-            </PopperCard>
-            {/* <PlainSelect
+                }
+              >
+                <>
+                  {title === 'AW Solutions' ? (
+                    <>
+                      {subTab.map(option => (
+                        <Box
+                          key={option.title}
+                          gap={30}
+                          sx={{
+                            minWidth: '150px',
+                            height: 40,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            borderRadius: '6px',
+                            '&:hover': {
+                              backgroundColor: '#E8F1FF',
+                              color: '#0049C6'
+                            },
+                            '& p': {
+                              marginLeft: 8
+                            }
+                          }}
+                          onClick={() => {
+                            option.route ? navigate(option.route) : window.open(option.link, '_blank')
+                          }}
+                        >
+                          {option.titleContent ?? option.title}
+                        </Box>
+                      ))}
+                      <ComingSoonListStyle options={ComingSoonList} />
+                    </>
+                  ) : (
+                    subTab.map(option => (
+                      <Box
+                        sx={{
+                          // width: 150,
+                          minWidth: '150px',
+                          height: 40,
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          cursor: 'pointer',
+                          '&:hover': {
+                            backgroundColor: '#0049C60D',
+                            color: '#0049C6'
+                          },
+                          '&:hover svg path': {
+                            fill: '#0049C6'
+                          },
+                          '& p': {
+                            marginLeft: 8
+                          },
+                          '&:hover p': {
+                            color: '#0049C6'
+                          }
+                        }}
+                        key={option.title}
+                        onClick={() => {
+                          option.route ? navigate(option.route) : window.open(option.link, '_blank')
+                        }}
+                      >
+                        {option.titleContent ?? option.title}
+                      </Box>
+                    ))
+                  )}
+                </>
+              </PopperCard>
+              {/* <PlainSelect
               key={title + idx}
               placeholder={title}
               autoFocus={false}
@@ -607,32 +796,33 @@ function TabsBox() {
                 )
               )}
             </PlainSelect> */}
-          </Box>
-        ) : link ? (
-          <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
-            {titleContent ?? title}
-          </ExternalLink>
-        ) : (
-          <NavLink
-            key={title + idx}
-            id={`${route}-nav-link`}
-            to={route ?? ''}
-            className={
-              (route
-                ? pathname.includes(route)
-                  ? 'active'
-                  : pathname.includes('account')
-                  ? route.includes('account')
+            </Box>
+          ) : link ? (
+            <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
+              {titleContent ?? title}
+            </ExternalLink>
+          ) : (
+            <NavLink
+              key={title + idx}
+              id={`${route}-nav-link`}
+              to={route ?? ''}
+              className={
+                (route
+                  ? pathname.includes(route)
                     ? 'active'
+                    : pathname.includes('account')
+                    ? route.includes('account')
+                      ? 'active'
+                      : ''
                     : ''
-                  : ''
-                : '') + ' link'
-            }
-          >
-            {titleContent ?? title}
-          </NavLink>
-        )
-      )}
+                  : '') + ' link'
+              }
+            >
+              {titleContent ?? title}
+            </NavLink>
+          )}
+        </>
+      ))}
     </LinksWrapper>
   )
 }
@@ -645,21 +835,30 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   }
 }))
 
-export function HeaderRight() {
+export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
   const { pathname } = useLocation()
   const userInfo = useUserInfo()
+  const theme = useTheme()
+  const isSmDown = useBreakpoint('sm')
   return (
     <Box
       display={{ sm: 'flex', xs: 'grid' }}
       gridTemplateColumns={{ sm: 'unset', xs: 'auto auto auto auto' }}
       alignItems="center"
-      gap={{ xs: '10px', sm: '10px' }}
+      gap={{ xs: '5px', sm: '10px' }}
     >
-      <NetworkSelect />
-      {userInfo?.loggedToken && <MySpace />}
-      <Web3Status />
+      <NetworkSelect IsNftPage={IsNftPage} />
+      {userInfo?.loggedToken && !isSmDown && <MySpace IsNftPage={IsNftPage} />}
+      <Web3Status IsNftPage={IsNftPage} />
       {pathname === routes.DappStore || pathname === routes.Governance ? (
-        <Box mr={20}>
+        <Box
+          mr={20}
+          sx={{
+            [theme.breakpoints.down('sm')]: {
+              display: 'none'
+            }
+          }}
+        >
           <LightTooltip
             title={
               <div
@@ -692,5 +891,76 @@ export function HeaderRight() {
         <PopperMenu />
       )}
     </Box>
+  )
+}
+
+function ComingSoonListStyle({ options }: { options: TabContent[] }) {
+  return (
+    <>
+      <Box
+        sx={{
+          background: '#F2F7FF',
+          padding: '5px 5px 15px',
+          marginBottom: 5,
+          borderRadius: '7px'
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            background: '#E8F1FF',
+            borderRadius: '6px',
+            height: 27,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 5,
+            paddingLeft: 12,
+            '& svg path': {
+              fill: '#97B7EF'
+            }
+          }}
+        >
+          <TimeIcon />
+          <Typography
+            sx={{
+              color: 'var(--button-line, #97B7EF)',
+              fontSize: '12px',
+              fontWeight: '500',
+              lineHeight: '20px'
+            }}
+          >
+            Coming soon
+          </Typography>
+        </Box>
+        {options.map(option => (
+          <Box
+            sx={{
+              // width: 150,
+              minWidth: '200px',
+              height: 40,
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              cursor: 'pointer',
+              borderRadius: '6px',
+              '&:hover': {
+                backgroundColor: '#E8F1FF',
+                color: '#0049C6',
+                cursor: 'no-drop'
+              },
+              '& p': {
+                marginLeft: 8
+              }
+            }}
+            key={option.title}
+            onClick={e => {
+              e.stopPropagation()
+            }}
+          >
+            {option.titleContent ?? option.title}
+          </Box>
+        ))}
+      </Box>
+    </>
   )
 }

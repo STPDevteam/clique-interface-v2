@@ -1,15 +1,4 @@
-import {
-  Box,
-  Drawer,
-  List,
-  ListItemText,
-  styled,
-  TooltipProps,
-  tooltipClasses,
-  Typography,
-  Tooltip,
-  Stack
-} from '@mui/material'
+import { Box, Drawer, List, ListItemText, styled, Typography, Stack } from '@mui/material'
 import { NavLink, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { ReactComponent as Proposal } from 'assets/svg/proposal.svg'
 import { ReactComponent as Workspace } from 'assets/svg/workspace.svg'
@@ -43,6 +32,11 @@ import useModal from 'hooks/useModal'
 import AddTeamspaceModal from 'pages/AboutSetting/Modals/AddTeamspaceModal'
 import AddIcon from 'assets/images/add.png'
 import { EmptyDaoItem } from 'components/Header/MySpace'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
+import useBreakpoint from 'hooks/useBreakpoint'
+import TooltipStyle from 'components/Tooltip'
 
 const StyledAppBar = styled(Box)(({ theme }) => ({
   position: 'fixed',
@@ -207,25 +201,25 @@ const ChildItem = styled(Box)({
   }
 })
 
-export const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(() => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: '#F8FBFF !important',
-    color: '#97B7EF !important',
-    width: 300,
-    fontFamily: 'Inter',
-    fontWeight: 500,
-    fontSize: '12px',
-    lineHeight: '16px',
-    borderRadius: '6px',
-    border: ' 1px solid #97B7EF',
-    padding: '8px  8px 8px 12px',
-    '& .MuiTooltip-arrow': {
-      color: '#97B7EF !important'
-    }
-  }
-}))
+// export const TooltipStyle = styled(({ className, ...props }: TooltipProps) => (
+//   <Tooltip {...props} classes={{ popper: className }} />
+// ))(() => ({
+//   [`& .${tooltipClasses.tooltip}`]: {
+//     backgroundColor: '#F8FBFF !important',
+//     color: '#97B7EF !important',
+//     width: 300,
+//     fontFamily: 'Inter',
+//     fontWeight: 500,
+//     fontSize: '12px',
+//     lineHeight: '16px',
+//     borderRadius: '6px',
+//     border: ' 1px solid #97B7EF',
+//     padding: '8px  8px 8px 12px',
+//     '& .MuiTooltip-arrow': {
+//       color: '#97B7EF !important'
+//     }
+//   }
+// }))
 
 export interface LeftSiderMenu {
   title: string
@@ -248,6 +242,9 @@ export function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string
 }
 
 export default function LeftSider() {
+  const isOpen = useSelector((state: AppState) => state.application.openDaoLeftSided)
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
+  const isSmDown = useBreakpoint('sm')
   const { pathname } = useLocation()
   const { account } = useActiveWeb3React()
   const navigate = useNavigate()
@@ -336,6 +333,13 @@ export default function LeftSider() {
     }
   }, [makeRouteLink, pathname, workspaceList])
 
+  const IsOpenSided = useMemo(() => {
+    if (!isSmDown) {
+      return true
+    }
+    return isOpen
+  }, [isOpen, isSmDown])
+
   return (
     <StyledAppBar>
       <Drawer
@@ -348,8 +352,9 @@ export default function LeftSider() {
             boxSizing: 'border-box'
           }
         }}
-        variant="permanent"
+        variant="persistent"
         anchor="left"
+        open={IsOpenSided}
       >
         <Box
           display={'flex'}
@@ -557,7 +562,11 @@ export default function LeftSider() {
                         </>
                       ) : (
                         <>
-                          <TooltipStyle title={'Private space, visible only to those invited.'} placement="left">
+                          <TooltipStyle
+                            isShowIcon
+                            value={'Private space, visible only to those invited.'}
+                            placement={isSmDown ? 'top' : 'left'}
+                          >
                             <Box
                               className={'LBox'}
                               sx={{ cursor: myJoinDaoData.job === 'owner' ? 'pointer' : 'not-allowed' }}
@@ -625,7 +634,7 @@ export default function LeftSider() {
                       backgroundColor: '#fff'
                     }}
                   >
-                    <TooltipStyle title={"This feature is only available to DAO's owner."} placement="right">
+                    <TooltipStyle isShowIcon value={"This feature is only available to DAO's owner."} placement="right">
                       <Stack flexDirection={'row'} alignItems={'center'} gap={10}>
                         <img src={AddIcon} width={14} height={14} />
                         <Typography
@@ -720,6 +729,14 @@ export default function LeftSider() {
             </Typography>
           </Box> */}
       </Drawer>
+      {isSmDown && isOpen && (
+        <Box
+          onClick={() => {
+            setSidedStatusCallBack(false)
+          }}
+          sx={{ height: '100vh', width: '100vw', background: 'rgba(0, 0, 0, 0.5)', position: 'fixed', top: 0, left: 0 }}
+        />
+      )}
     </StyledAppBar>
   )
 }

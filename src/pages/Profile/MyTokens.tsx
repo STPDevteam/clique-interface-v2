@@ -17,6 +17,7 @@ import { Dots } from 'theme/components'
 import { timeStampToFormat } from 'utils/dao'
 import CurrencyLogo from 'components/essential/CurrencyLogo'
 import { ChainId } from 'constants/chain'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 const claimBtnStyle = {
   width: '75px',
@@ -101,25 +102,36 @@ function CreateTokenReservedClaim({ item }: { item: { tokenAmount: TokenAmount; 
 
 function CreateTokenReservedList() {
   const createTokenReserved = useCreateTokenReserved()
+  const isSmDown = useBreakpoint('sm')
 
   return (
     <>
       {createTokenReserved && (
-        <Box display={'grid'} gap="10px" mt={25}>
+        <Box display={'grid'} gap="10px" mt={25} width={isSmDown ? 'calc(100vw - 32px)' : 'auto'}>
           {createTokenReserved?.map((item, index) => (
             <StyledClaimItem key={index}>
               <Stack direction={'row'} spacing={6} alignItems="center" flexWrap={'wrap'}>
                 <CurrencyLogo size="24px" currency={item.tokenAmount.token} />
+
                 <Link
                   target={'_blank'}
                   underline="none"
                   href={getEtherscanLink(item.tokenAmount.token.chainId, item.tokenAmount.token.address, 'address')}
                 >
-                  <b>
-                    {item.tokenAmount.toSignificant(6, { groupSeparator: ',' })} {item.tokenAmount.token.symbol}
-                  </b>
+                  {isSmDown ? (
+                    <Typography sx={{ wordWrap: isSmDown ? 'break-word' : 'normal', fontWeight: 700 }} width={200}>
+                      {item.tokenAmount.toSignificant(6, { groupSeparator: ',' })} {item.tokenAmount.token.symbol}
+                    </Typography>
+                  ) : (
+                    <b>
+                      {item.tokenAmount.toSignificant(6, { groupSeparator: ',' })} {item.tokenAmount.token.symbol}
+                    </b>
+                  )}
                 </Link>
-                <Typography>can be claimed on {timeStampToFormat(item.lockDate)}</Typography>
+
+                <Typography fontSize={isSmDown ? 13 : 14}>
+                  can be claimed on {timeStampToFormat(item.lockDate)}
+                </Typography>
               </Stack>
               <CreateTokenReservedClaim item={item} />
             </StyledClaimItem>

@@ -6,7 +6,6 @@ import { styled, useTheme } from '@mui/material'
 import Header from '../components/Header'
 import Polling from '../components/essential/Polling'
 import Popups from '../components/essential/Popups'
-import Web3ReactManager from '../components/essential/Web3ReactManager'
 // import WarningModal from '../components/Modal/WarningModal'
 // import ComingSoon from './ComingSoon'
 import { ModalProvider } from 'context/ModalContext'
@@ -61,6 +60,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
+// import { NftGenerator } from './Nft/NftGenerator'
+// import { NftSelect } from './Nft/NftSelect'
+import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -88,7 +90,7 @@ const AppWrapper = styled('div')(({ theme }) => ({
   }
 }))
 
-const ContentWrapper = styled('div')({
+const ContentWrapper = styled('div')(({ theme }) => ({
   width: '100%',
   maxHeight: '100vh',
   overflow: 'auto',
@@ -98,7 +100,8 @@ const ContentWrapper = styled('div')({
     zIndex: 199999,
     '& .Toastify__toast': {
       borderRadius: '10px',
-      border: '1px solid #97B7EF'
+      border: '1px solid #97B7EF',
+      height: 50
     },
     '& .Toastify__toast-body': {
       justifyContent: 'center',
@@ -106,8 +109,16 @@ const ContentWrapper = styled('div')({
       fontWeight: 500,
       fontSize: 14
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    '& .toast-container': {
+      width: '90vw',
+      margin: 'auto',
+      left: 0,
+      right: 0
+    }
   }
-})
+}))
 
 const BodyWrapper = styled('div')(({}) => ({
   // paddingTop: theme.height.header,
@@ -119,6 +130,7 @@ const BodyWrapper = styled('div')(({}) => ({
 
 export default function App() {
   const { headerLinkIsShow } = useUpdateDaoDataCallback()
+  const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
   const { pathname } = useLocation()
   const theme = useTheme()
   const dispatch = useDispatch()
@@ -136,7 +148,8 @@ export default function App() {
     if (!pathname.includes('/governance/daoInfo')) {
       dispatch(removeCreateDaoData())
     }
-  }, [dispatch, pathname])
+    setSidedStatusCallBack(false)
+  }, [dispatch, pathname, setSidedStatusCallBack])
 
   const makeDaoInfo = (route: string) => route.replace(routes.DaoInfo, '')
 
@@ -161,63 +174,65 @@ export default function App() {
                 minHeight: headerLinkIsShow ? 'calc(100vh - 50px)' : '100vh',
                 paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
                 [theme.breakpoints.down('md')]: {
+                  paddingTop: pathname === routes.CreateDao ? 0 : 20,
                   minHeight: `${theme.height.mobileHeader} - 50px`
                 }
               }}
             >
               <Popups />
               <Polling />
-              <Web3ReactManager>
-                <Routes>
-                  <Route
-                    path={routes.DaoInfo + '/*'}
-                    element={
-                      <DaoInfoLayout>
-                        <DaoInfoUpdater />
-                        <Routes>
-                          <Route path={makeDaoInfo(routes.DaoInfoAbout)} element={<About />} />
-                          <Route path={makeDaoInfo(routes.DaoMember)} element={<Member />} />
-                          <Route path={makeDaoInfo(routes.DaoTreasury)} element={<ComingSoon />} />
-                          <Route path={makeDaoInfo(routes.DaoIdea)} element={<ComingSoon />} />
-                          <Route path={makeDaoInfo(routes.DaoInfoActivity)} element={<DaoBounty />} />
-                          <Route path={makeDaoInfo(routes.DaoAboutSetting)} element={<AboutSetting />} />
-                          <Route path={makeDaoInfo(routes.DaoTeamMeetings)} element={<ComingSoon />} />
-                          <Route path={makeDaoInfo(routes.DaoTeamDocs)} element={<ComingSoon />} />
-                          <Route path={makeDaoInfo(routes._DaoTeamTask)} element={<Task />} />
-                          <Route path={makeDaoInfo(routes.DaoTeamCalendar)} element={<ComingSoon />} />
-                          <Route path={makeDaoInfo(routes.DaoTeamTrash)} element={<ComingSoon />} />
-                          <Route path={makeDaoInfo(routes.Proposal)} element={<ProposalList />} />
-                          <Route path={makeDaoInfo(routes.CreateProposal)} element={<CreateProposal />} />
-                          <Route path={makeDaoInfo(routes.ProposalDetail)} element={<ProposalDetail />} />
-                          <Route path={makeDaoInfo(routes.CreateAirdrop)} element={<CreateAirdrop />} />
-                          <Route path={'*'} element={<Navigate replace to={'proposal'} />} />
-                        </Routes>
-                      </DaoInfoLayout>
-                    }
-                  />
-                  <Route path={routes.DappStore} element={<DappStore />} />
-                  <Route
-                    path={routes.Governance}
-                    element={
-                      <Governance>
-                        <GovernanceHome />
-                      </Governance>
-                    }
-                  />
-                  <Route path={routes.Activity} element={<Activity />} />
-                  <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
-                  <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
-                  <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />
-                  <Route path={routes.ActivityAirdropDetail} element={<ActivityAirdropDetail />} />
-                  <Route path={routes.CreateDao} element={<CreateDao />} />
-                  <Route path={routes.CreatorToken} element={<CreatorToken />} />
-                  <Route path={routes.Notification} element={<Notification />} />
-                  <Route path={routes.Profile} element={<Profile />} />
-                  <Route path={routes._Profile} element={<Profile />} />
-                  <Route path="/governance" element={<Navigate replace to={routes.Governance} />} />
-                  <Route path="*" element={<Navigate replace to={routes.Governance} />} />
-                </Routes>
-              </Web3ReactManager>
+              <Routes>
+                <Route
+                  path={routes.DaoInfo + '/*'}
+                  element={
+                    <DaoInfoLayout>
+                      <DaoInfoUpdater />
+                      <Routes>
+                        <Route path={makeDaoInfo(routes.DaoInfoAbout)} element={<About />} />
+                        <Route path={makeDaoInfo(routes.DaoMember)} element={<Member />} />
+                        <Route path={makeDaoInfo(routes.DaoTreasury)} element={<ComingSoon />} />
+                        <Route path={makeDaoInfo(routes.DaoIdea)} element={<ComingSoon />} />
+                        <Route path={makeDaoInfo(routes.DaoInfoActivity)} element={<DaoBounty />} />
+                        <Route path={makeDaoInfo(routes.DaoAboutSetting)} element={<AboutSetting />} />
+                        <Route path={makeDaoInfo(routes.DaoTeamMeetings)} element={<ComingSoon />} />
+                        <Route path={makeDaoInfo(routes.DaoTeamDocs)} element={<ComingSoon />} />
+                        <Route path={makeDaoInfo(routes._DaoTeamTask)} element={<Task />} />
+                        <Route path={makeDaoInfo(routes.DaoTeamCalendar)} element={<ComingSoon />} />
+                        <Route path={makeDaoInfo(routes.DaoTeamTrash)} element={<ComingSoon />} />
+                        <Route path={makeDaoInfo(routes.Proposal)} element={<ProposalList />} />
+                        <Route path={makeDaoInfo(routes.CreateProposal)} element={<CreateProposal />} />
+                        <Route path={makeDaoInfo(routes.ProposalDetail)} element={<ProposalDetail />} />
+                        <Route path={makeDaoInfo(routes.CreateAirdrop)} element={<CreateAirdrop />} />
+                        <Route path={'*'} element={<Navigate replace to={'proposal'} />} />
+                      </Routes>
+                    </DaoInfoLayout>
+                  }
+                />
+                <Route path={routes.DappStore} element={<DappStore />} />
+                <Route
+                  path={routes.Governance}
+                  element={
+                    <Governance>
+                      <GovernanceHome />
+                    </Governance>
+                  }
+                />
+                <Route path={routes.Activity} element={<Activity />} />
+                {/* <Route path={routes.NftGenerator} element={<NftGenerator />} />
+                <Route path={routes.NftSelect} element={<NftSelect />} /> */}
+                <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
+                <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
+                <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />
+                <Route path={routes.ActivityAirdropDetail} element={<ActivityAirdropDetail />} />
+                <Route path={routes.CreateDao} element={<CreateDao />} />
+                <Route path={routes.CreatorToken} element={<CreatorToken />} />
+                <Route path={routes.Notification} element={<Notification />} />
+                <Route path={routes.Profile} element={<Profile />} />
+                <Route path={routes._Profile} element={<Profile />} />
+                <Route path={routes.Soon} element={<ComingSoon />} />
+                <Route path="/governance" element={<Navigate replace to={routes.Governance} />} />
+                <Route path="*" element={<Navigate replace to={routes.Governance} />} />
+              </Routes>
             </BodyWrapper>
           </ContentWrapper>
         </AppWrapper>

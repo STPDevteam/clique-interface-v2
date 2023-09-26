@@ -125,7 +125,20 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
             </div>
           ) : (
             <div style={{ borderTop: '1px solid #D4D7E2' }}>
-              <Box mb={12} mt={12} display={'grid'} gridTemplateColumns="246px 1fr" rowGap={10} alignItems={'center'}>
+              <Box
+                sx={{
+                  mb: 12,
+                  mt: 12,
+                  display: 'grid',
+                  gridTemplateColumns: '246px 1fr',
+                  rowGap: 10,
+                  alignItems: 'center',
+                  [theme.breakpoints.down('sm')]: {
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 10
+                  }
+                }}
+              >
                 <LeftText>Minimum votes needed to execute</LeftText>
                 <Typography>{formatNumberWithCommas(proposalInfo.proposalThreshold)}</Typography>
                 <LeftText>Voting mode</LeftText>
@@ -135,6 +148,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
                   <Typography
                     fontSize={13}
                     fontWeight={600}
+                    noWrap
                     color={theme.palette.primary.light}
                     sx={{
                       '& .link': {
@@ -154,7 +168,7 @@ export default function Info({ proposalInfo }: { proposalInfo: useProposalDetail
                 )}
                 <LeftText>Token contract address</LeftText>
                 <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap={10}>
-                  <Typography>{proposalInfo.useVoteBase[0]?.tokenAddress}</Typography>
+                  <Typography>{shortenAddress(proposalInfo.useVoteBase[0]?.tokenAddress, isSmDown ? 3 : 4)}</Typography>
                   <Copy toCopy={proposalInfo.useVoteBase[0]?.tokenAddress} />
                 </Box>
 

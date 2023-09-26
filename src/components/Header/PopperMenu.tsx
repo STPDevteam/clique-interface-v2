@@ -23,6 +23,11 @@ const menuList = [
     icon: <RewardsIcon />,
     route: routes.Activity
   },
+  {
+    title: 'Soulbound Token',
+    icon: <TokenIcon />,
+    route: routes.CreateSoulToken
+  },
   { title: 'Create Token', icon: <TokenIcon />, route: routes.CreatorToken },
   {
     title: 'Tools',

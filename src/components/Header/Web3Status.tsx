@@ -1,7 +1,5 @@
 import { useMemo } from 'react'
-import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { useTheme, Box, Typography } from '@mui/material'
-import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { isTransactionRecent, useAllTransactions } from '../../state/transactions/hooks'
@@ -18,6 +16,7 @@ import useModal from 'hooks/useModal'
 import { useNotificationListPaginationCallback } from 'state/pagination/hooks'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
+import { useActiveWeb3React } from 'hooks'
 
 // we want the latest one to come first, so return negative if a is after b
 function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
@@ -49,8 +48,8 @@ function newTransactionsFirst(a: TransactionDetails, b: TransactionDetails) {
 //   }
 // }))
 
-function Web3StatusInner() {
-  const { account, chainId, error } = useWeb3React()
+function Web3StatusInner({ IsNftPage }: { IsNftPage: boolean }) {
+  const { account, chainId, errorNetwork } = useActiveWeb3React()
   const { ENSName } = useENSName(account ?? undefined)
   const allTransactions = useAllTransactions()
   const sortedRecentTransactions = useMemo(() => {
@@ -83,23 +82,27 @@ function Web3StatusInner() {
             width: { xs: 'auto', sm: 180 },
             padding: '0 12px',
             borderRadius: `${theme.shape.borderRadius}px`,
-            display: { sm: 'flex', xs: 'grid' },
+            // display: { sm: 'flex', xs: 'grid' },
+            display: 'flex',
             gridTemplateColumns: 'auto auto',
             justifyContent: 'center',
             alignItems: 'center',
             gap: '5px',
-            border: `1px solid #D4D7E2`,
+            border: `1px solid ${IsNftPage ? '#fff' : '#D4D7E2'}`,
             '&:hover': {
-              borderColor: '#97B7EF'
+              borderColor: IsNftPage ? '#D4D7E2' : '#97B7EF'
             }
           }}
         >
           {/* <div /> */}
           {hasPendingTransactions ? (
             <Box sx={{ display: 'flex', alignItems: 'center', mr: { xs: 10, sm: 17 }, ml: { xs: 10, sm: 20 } }}>
-              <Spinner color={theme.palette.text.primary} size={isDownSm ? '10px' : '16px'} />
+              <Spinner color={IsNftPage ? '#fff' : theme.palette.text.primary} size={isDownSm ? '10px' : '16px'} />
               <Box component="span" sx={{ ml: 3 }}>
-                <Typography sx={{ fontSize: { xs: 9, sm: 14 }, ml: 8, color: theme.palette.text.primary }} noWrap>
+                <Typography
+                  sx={{ fontSize: { xs: 9, sm: 14 }, ml: 8, color: IsNftPage ? '#fff' : theme.palette.text.primary }}
+                  noWrap
+                >
                   {pending?.length} Pending
                 </Typography>
               </Box>
@@ -111,7 +114,7 @@ function Web3StatusInner() {
                 fontWeight={700}
                 sx={{
                   fontSize: { xs: 9, sm: 14 },
-                  color: theme.palette.text.primary
+                  color: IsNftPage ? '#fff' : theme.palette.text.primary
                 }}
               >
                 {ENSName || shortenAddress(account, isDownSm ? 3 : 4)}
@@ -128,14 +131,14 @@ function Web3StatusInner() {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <circle cx="12" cy="12" r="12" fill="#0049C6" fillOpacity="0.05" />
+                  <circle cx="12" cy="12" r="12" fill={IsNftPage ? '#fff' : '#0049C6'} fillOpacity="0.05" />
                   <path
                     fillRule="evenodd"
                     clipRule="evenodd"
                     d="M7.4817 12.5C7.84299 12.1087 7.91846 10.9985 7.95908 10.4616C7.99401 10 7.95908 9.6561 7.99401 9.25622C8.17447 7.33105 10.078 6 11.9583 6H12.0049C13.8851 6 15.7887 7.33105 15.975 9.25622C16.0099 9.6561 16.0041 10 16.0041 10.4616C16.0041 11.1348 16.2144 12.1057 16.5745 12.5C17.1066 13.2856 17.1871 13.7746 16.5745 14.5004C16.1258 14.9709 15.5169 15.2636 14.8631 15.3231C12.9459 15.5287 11.0115 15.5287 9.09423 15.3231C8.44114 15.261 7.83311 14.9687 7.38278 14.5004C6.77395 13.7672 6.95486 13.2906 7.4817 12.5Z"
-                    fill="#0049C6"
+                    fill={IsNftPage ? '#558EEF' : '#0049C6'}
                     fillOpacity="0.05"
-                    stroke="#1B1D21"
+                    stroke={IsNftPage ? '#fff' : '#1B1D21'}
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -144,17 +147,17 @@ function Web3StatusInner() {
                     fillRule="evenodd"
                     clipRule="evenodd"
                     d="M10.5146 17C10.8142 17.376 11.2541 17.6193 11.737 17.6762C12.2199 17.733 12.706 17.5986 13.0876 17.3028C13.205 17.2153 13.3107 17.1135 13.402 17"
-                    fill="#0049C6"
+                    fill={IsNftPage ? '#fff' : '#0049C6'}
                     fillOpacity="0.05"
                   />
                   <path
                     d="M10.5146 17C10.8142 17.376 11.2541 17.6193 11.737 17.6762C12.2199 17.733 12.706 17.5986 13.0876 17.3028C13.205 17.2153 13.3107 17.1135 13.402 17"
-                    stroke="#0049C6"
+                    stroke={IsNftPage ? '#fff' : '#0049C6'}
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  {notReadCount && <circle cx="18.5" cy="19.5" r="4" fill="#E46767" stroke="white" />}
+                  {notReadCount && <circle cx="18.5" cy="19.5" r="4" fill={'#E46767'} stroke="white" />}
                 </svg>
 
                 // <NoticeMsg to={routes.Notification}>
@@ -173,7 +176,7 @@ function Web3StatusInner() {
         </Box>
       </Box>
     )
-  } else if (error) {
+  } else if (errorNetwork) {
     return (
       <Button
         backgroundColor={theme.palette.error.main}
@@ -184,7 +187,7 @@ function Web3StatusInner() {
           toggleWalletModal()
         }}
       >
-        {error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error'}
+        {'Wrong Network'}
       </Button>
     )
   } else {
@@ -203,10 +206,7 @@ function Web3StatusInner() {
   }
 }
 
-export default function Web3Status() {
-  const { active } = useWeb3React()
-  const contextNetwork = useWeb3React(NetworkContextName)
-
+export default function Web3Status({ IsNftPage }: { IsNftPage: boolean }) {
   // const { ENSName } = useENSName(account ?? undefined)
 
   // const allTransactions = useAllTransactions()
@@ -219,13 +219,9 @@ export default function Web3Status() {
   // const pending = sortedRecentTransactions.filter(tx => !tx.receipt).map(tx => tx.hash)
   // const confirmed = sortedRecentTransactions.filter(tx => tx.receipt).map(tx => tx.hash)
 
-  if (!contextNetwork.active && !active) {
-    return null
-  }
-
   return (
     <>
-      <Web3StatusInner />
+      <Web3StatusInner IsNftPage={IsNftPage} />
       <WalletModal />
       {/* <WalletModal ENSName={ENSName ?? undefined} pendingTransactions={pending} confirmedTransactions={confirmed} /> */}
     </>

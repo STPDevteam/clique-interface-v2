@@ -74,7 +74,14 @@ export default function InviteUser() {
         <Box className="input">{link}</Box>
         <Button onClick={() => setCopied(link)}>
           <Invite />
-          <Typography maxWidth={'100%'}>{isCopied ? 'Copied Link' : 'Copy Link'}</Typography>
+          <Typography
+            sx={{
+              whiteSpace: 'nowrap'
+            }}
+            maxWidth={'100%'}
+          >
+            {isCopied ? 'Copied Link' : 'Copy Link'}
+          </Typography>
         </Button>
       </Box>
     </Box>

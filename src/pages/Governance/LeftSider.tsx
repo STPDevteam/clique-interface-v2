@@ -1,4 +1,4 @@
-import { Box, styled, Typography, useTheme } from '@mui/material'
+import { Box, styled, Typography, useTheme, SpeedDial, SpeedDialIcon } from '@mui/material'
 import { ReactComponent as AddIcon } from 'assets/svg/add_icon.svg'
 import { ReactComponent as SearchIcon } from 'assets/svg/search_icon.svg'
 import { routes } from 'constants/routes'
@@ -10,6 +10,8 @@ import { DaoAvatars } from 'components/Avatars'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import useBreakpoint from 'hooks/useBreakpoint'
+import { useState } from 'react'
 
 const Wrapper = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -17,6 +19,7 @@ const Wrapper = styled('div')(({ theme }) => ({
   height: `calc(100vh - ${theme.height.header})`,
   // overflowY: 'auto',
   padding: '16px 8px',
+  zIndex: 999,
   // '&::-webkit-scrollbar': {
   //   display: 'none'
   // },
@@ -30,16 +33,18 @@ const Wrapper = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 138px',
-    borderRight: 0,
-    padding: '10px 16px',
-    height: 84,
+    position: 'fixed',
+    zIndex: 999,
+    // display: 'grid',
+    // gridTemplateColumns: '1fr 138px',
+    // borderRight: 0,
     '& .dao-box': {
-      overflowY: 'hidden',
-      overflowX: 'auto',
-      height: '84px',
-      width: `calc(100vw - 32px - 138px)`,
+      overflowY: 'auto',
+      // overflowX: 'auto',
+      maxHeight: '150px',
+      display: 'block',
+      width: `64px`,
+      height: 'auto',
       '&::-webkit-scrollbar': {
         display: 'none'
       }
@@ -76,6 +81,9 @@ const Item = styled(Box)(({ theme }) => ({
         fill: '#fff'
       }
     }
+  },
+  [theme.breakpoints.down('sm')]: {
+    marginBottom: 6
   }
 }))
 
@@ -88,52 +96,103 @@ export default function LeftSider() {
   const userSignature = useUserInfo()
   const toggleWalletModal = useWalletModalToggle()
   const loginSignature = useLoginSignature()
+  const isSmDown = useBreakpoint('sm')
+  const [open, setOpen] = useState(false)
   return (
-    <Wrapper>
-      <Box
-        className="dao-box"
+    <>
+      {userSignature && isSmDown && (
+        <SpeedDial
+          ariaLabel="SpeedDial controlled open example"
+          sx={{
+            position: 'absolute',
+            bottom: 4,
+            right: 10,
+            '& .MuiSpeedDial-fab': {
+              height: 46,
+              width: 46
+            }
+          }}
+          icon={<SpeedDialIcon />}
+          onClose={() => setOpen(false)}
+          onOpen={() => setOpen(true)}
+          open={open}
+        />
+      )}
+
+      <Wrapper
         sx={{
-          display: { sm: 'block', xs: 'inline-flex' }
+          [theme.breakpoints.down('sm')]: {
+            zIndex: userSignature && open ? 1 : -1,
+            display: 'block',
+            right: 4,
+            bottom: 55,
+            backgroundColor: 'rgba(244,244,244,0.85)',
+            borderRadius: '16px',
+            height: 'unset',
+            overflow: !open ? 'hidden' : 'unset',
+            padding: '10px 0 6px',
+            transition: 'all 0.3s '
+          }
         }}
       >
-        {myJoinedDaoList.map(({ daoLogo, daoId, daoName }) => (
-          <DaoItem key={daoName + daoId} daoId={daoId} daoName={daoName} daoLogo={daoLogo} />
-        ))}
-      </Box>
-      <Box
-        sx={{
-          display: { sm: 'block', xs: 'inline-flex' },
-          justifyContent: { xs: 'flex-end', sm: undefined }
-        }}
-      >
-        <Box mt={10} sx={{ background: theme.bgColor.bg2, marginBottom: 16, height: '1px' }} />
-        <Item
-          sx={{ borderLeft: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
-          onClick={() => navigate(routes.Governance)}
-        >
-          <div className="action">
-            <SearchIcon></SearchIcon>
-          </div>
-          <Text mt={'0 !important'} noWrap>
-            Search
-          </Text>
-        </Item>
-        <Item
-          onClick={() => {
-            if (!account) return toggleWalletModal()
-            if (!userSignature) return loginSignature()
-            navigate(routes.CreateDao)
+        <Box
+          className="dao-box"
+          sx={{
+            display: { sm: 'block', xs: 'inline-flex' }
           }}
         >
-          <div className="action">
-            <AddIcon width={16}></AddIcon>
-          </div>
-          <Text mt={'0 !important'} noWrap>
-            Add DAO
-          </Text>
-        </Item>
-      </Box>
-    </Wrapper>
+          {myJoinedDaoList.map(({ daoLogo, daoId, daoName }) => (
+            <DaoItem key={daoName + daoId} daoId={daoId} daoName={daoName} daoLogo={daoLogo} />
+          ))}
+        </Box>
+        <Box
+        // sx={{
+        //   display: { sm: 'block', xs: 'inline-flex' },
+        //   justifyContent: { xs: 'flex-end', sm: undefined }
+        // }}
+        >
+          {((!!myJoinedDaoList.length && isSmDown) || !isSmDown) && (
+            <Box
+              sx={{
+                background: theme.bgColor.bg2,
+                marginTop: 10,
+                marginBottom: 16,
+                height: '1px',
+                [theme.breakpoints.down('sm')]: {
+                  marginTop: 6,
+                  marginBottom: 6
+                }
+              }}
+            />
+          )}
+          <Item
+            // sx={{ borderTop: { sm: 'none', xs: `1px solid ${theme.bgColor.bg2}` } }}
+            onClick={() => navigate(routes.Governance)}
+          >
+            <div className="action">
+              <SearchIcon></SearchIcon>
+            </div>
+            <Text mt={'0 !important'} noWrap>
+              Search
+            </Text>
+          </Item>
+          <Item
+            onClick={() => {
+              if (!account) return toggleWalletModal()
+              if (!userSignature) return loginSignature()
+              navigate(routes.CreateDao)
+            }}
+          >
+            <div className="action">
+              <AddIcon width={16}></AddIcon>
+            </div>
+            <Text mt={'0 !important'} noWrap>
+              Add DAO
+            </Text>
+          </Item>
+        </Box>
+      </Wrapper>
+    </>
   )
 }
 

@@ -14,6 +14,7 @@ import { CreateDaoDataProp } from 'state/buildingGovDao/actions'
 import { toast } from 'react-toastify'
 import { useUpdateDaoGeneral } from 'hooks/useBackedDaoServer'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export const sxInputStyle = {
   '& .MuiInputBase-root': {
@@ -29,7 +30,7 @@ const Wrapper = styled(Box)(({ theme }) => ({
   gap: 16,
   [theme.breakpoints.down('sm')]: {
     gridTemplateColumns: 'unset',
-    padding: '20px'
+    padding: '0'
   }
 }))
 
@@ -38,6 +39,7 @@ const Wrapper = styled(Box)(({ theme }) => ({
 // }))
 
 export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDataProp; daoChainId: number }) {
+  const isSmDown = useBreakpoint('sm')
   const [loading, setLoading] = useState(false)
   // const [ToggleValue, setToggleValue] = useState('Anyone')
   const schema = yup.object().shape({
@@ -153,7 +155,11 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
               >
                 <FormItem name="daoLogo" required>
                   <Box sx={{ display: 'flex', gap: 42, mt: 20, mb: 10 }}>
-                    <UpImgButton onChange={val => setFieldValue('daoLogo', val)} size={124} value={values.daoLogo} />
+                    <UpImgButton
+                      onChange={val => setFieldValue('daoLogo', val)}
+                      size={isSmDown ? 100 : 124}
+                      value={values.daoLogo}
+                    />
                   </Box>
                 </FormItem>
                 <FormItem name="category" required fieldType="custom">
@@ -250,7 +256,7 @@ export default function General({ daoInfo, daoChainId }: { daoInfo: CreateDaoDat
                     >
                       Organize Username
                       <Tooltip
-                        placement="top-start"
+                        placement={isSmDown ? 'top' : 'top-start'}
                         value="Organize username must be between 4-20 characters and contain letters, numbers and underscores only."
                       />
                     </Typography>

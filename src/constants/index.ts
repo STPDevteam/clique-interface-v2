@@ -1,8 +1,7 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
 import { Token } from './token'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../connectors'
 import JSBI from 'jsbi'
 import { ChainId } from './chain'
+import { ConnectionType } from 'connection/types'
 
 // used to ensure the user doesn't send so much ETH so they end up with <.01
 export const MIN_ETH: JSBI = JSBI.exponentiate(JSBI.BigInt(10), JSBI.BigInt(16)) // .01 ETH
@@ -11,85 +10,17 @@ export const BAST_TOKEN: { [chainId in ChainId]?: Token } = {
   [ChainId.MAINNET]: new Token(ChainId.MAINNET, '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', 18, 'USDT', 'USDT')
 }
 
+export const SELECTABLE_ENABLE_WALLETS: ConnectionType[] = [
+  ConnectionType.INJECTED,
+  ConnectionType.WALLET_CONNECT_V2,
+  // ConnectionType.UNISWAP_WALLET_V2,
+  ConnectionType.OKX_WALLET,
+  ConnectionType.GNOSIS_SAFE,
+  ConnectionType.BINANCE_WALLET,
+  ConnectionType.COINBASE_WALLET
+]
+
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-export interface WalletInfo {
-  connector?: AbstractConnector
-  name: string
-  iconName: string
-  description: string
-  href: string | null
-  color: string
-  primary?: true
-  mobile?: true
-  mobileOnly?: true
-}
-
-export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
-  INJECTED: {
-    connector: injected,
-    name: 'Injected',
-    iconName: 'arrow-right.svg',
-    description: 'Injected web3 provider.',
-    href: null,
-    color: '#010101',
-    primary: true
-  },
-  METAMASK: {
-    connector: injected,
-    name: 'MetaMask',
-    iconName: 'metamask.png',
-    description: 'Easy-to-use browser extension.',
-    href: null,
-    color: '#E8831D'
-  },
-  WALLET_CONNECT: {
-    connector: walletconnect,
-    name: 'WalletConnect',
-    iconName: 'walletConnectIcon.svg',
-    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-    href: null,
-    color: '#4196FC',
-    mobile: true
-  },
-  WALLET_LINK: {
-    connector: walletlink,
-    name: 'Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Use Coinbase Wallet app on mobile device',
-    href: null,
-    color: '#315CF5'
-  },
-  COINBASE_LINK: {
-    name: 'Open in Coinbase Wallet',
-    iconName: 'coinbaseWalletIcon.svg',
-    description: 'Open in Coinbase Wallet app.',
-    href: 'https://go.cb-w.com/mtUDhEZPy1',
-    color: '#315CF5',
-    mobile: true,
-    mobileOnly: true
-  },
-  FORTMATIC: {
-    connector: fortmatic,
-    name: 'Fortmatic',
-    iconName: 'fortmaticIcon.png',
-    description: 'Login using Fortmatic hosted wallet',
-    href: null,
-    color: '#6748FF',
-    mobile: true
-  },
-  Portis: {
-    connector: portis,
-    name: 'Portis',
-    iconName: 'portisIcon.png',
-    description: 'Login using Portis hosted wallet',
-    href: null,
-    color: '#4A6C9B',
-    mobile: true
-  }
-}
-
-export const NetworkContextName = 'NETWORK'
 
 // default allowed slippage, in bips
 export const INITIAL_ALLOWED_SLIPPAGE = 50
@@ -155,10 +86,10 @@ export const PUBLICSALE_ADDRESS: { [chainId in ChainId]?: string } = {
 }
 
 export const SBT_FACTORY: { [chainId in ChainId]?: string } = {
-  [ChainId.MAINNET]: '0x6053856cfCcB9fcB43d57b05Cd7a3709bae3fc95',
+  [ChainId.MAINNET]: process.env.REACT_APP_ETH_SBT_FACTORY_ADDRESS || '',
   [ChainId.POLYGON]: '0x0856B272Cd587B4eC88265980c5a69Cc6d870a4A',
   [ChainId.KLAYTN]: '0x74beAD96e35985F84f917514beD07EB7ab9211e8',
-  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_BSC_SBT_FACTORY_ADDRESS || '',
   [ChainId.GOERLI]: '0xE7D3553e20fE2f41569456EE8980b49C6Da3A27b',
   [ChainId.ZKSYNC_ERA]: '0x644Ea01E10c10364A2dF36cE414D9FAb526DE0fe',
   [ChainId.BASE]: '0x6cF10870886fc3aE34CA6219979eeCDD8020C935',

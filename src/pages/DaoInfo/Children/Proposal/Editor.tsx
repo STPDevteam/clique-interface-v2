@@ -4,6 +4,7 @@ import 'react-quill/dist/quill.snow.css'
 import ImageUploader from 'quill-image-uploader'
 import { serverUploadImage } from '../../../../constants'
 import { Axios } from 'utils/axios'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 Quill.register('modules/imageUploader', ImageUploader)
 
@@ -40,5 +41,14 @@ export default function Editor({
   content: string
   setContent: Dispatch<SetStateAction<string>>
 }) {
-  return <ReactQuill style={{ height: 320 }} modules={modules} theme="snow" value={content} onChange={setContent} />
+  const isSmDown = useBreakpoint('sm')
+  return (
+    <ReactQuill
+      style={{ height: isSmDown ? 250 : 320 }}
+      modules={modules}
+      theme="snow"
+      value={content}
+      onChange={setContent}
+    />
+  )
 }

@@ -149,7 +149,7 @@ export const theme = {
   },
   height: {
     header: '80px',
-    mobileHeader: '80px'
+    mobileHeader: '50px'
   },
   width: {
     sidebar: '250px',

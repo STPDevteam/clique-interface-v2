@@ -16,6 +16,8 @@ export const StyledChip = styled(Chip, {
     padding: '1px 9px'
   },
   [theme.breakpoints.down('sm')]: {
+    width: 65,
+    fontSize: 12,
     '& span': {
       padding: '1px 6px'
     }

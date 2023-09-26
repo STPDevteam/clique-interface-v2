@@ -7,6 +7,7 @@ import rewardsIcon from 'assets/images/rewardsIcon.png'
 import sbtIcon from 'assets/images/soulboundIcon.png'
 import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
+// import nftCardIcon from 'assets/images/nftcard_icon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
 import accountIcon from 'assets/images/accountCard_icon.png'
 import assetPortalIcon from 'assets/images/assetPortalCard_icon.png'
@@ -21,6 +22,10 @@ import chainLogo5 from 'assets/images/chainLogo5.png'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
+import CreateNftModal from 'pages/Nft/CreateNftModal'
+import useModal from 'hooks/useModal'
+import { useState } from 'react'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export enum ToolsCardsTitle {
   DAORewards = 'Clique Rewards',
@@ -28,6 +33,7 @@ export enum ToolsCardsTitle {
   CreateToken = 'Create Token',
   SDK = 'SDK',
   CreateSBT = 'Create Soulbound Token of DAO',
+  Nft = 'Create an account as NFT',
   AccountGenerator = 'Account Generator',
   AssetPortal = 'Asset Portal'
 }
@@ -60,7 +66,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.CreateDAO,
     icon: createDaoIcon,
-    des: 'Add a DAO on Clique',
+    des: 'Add a DAO on Clique.',
     supportChainsIcon: [chainLogo0, chainLogo1, chainLogo2, chainLogo3, chainLogo4, chainLogo5],
     bgColor: 'linear-gradient(270.19deg, #F5F1FF 27.66%, #FEFEFF 99.85%)',
     route: routes.CreateDao
@@ -76,7 +82,7 @@ const cardsData = [
   {
     title: ToolsCardsTitle.SDK,
     icon: sdkIcon,
-    des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
+    des: 'Provides easy access to the high level interactions to be governance with an Clique DAO.',
     supportChainsIcon: '',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     link: 'https://www.npmjs.com/package/@myclique/governance-sdk'
@@ -84,22 +90,32 @@ const cardsData = [
   {
     title: ToolsCardsTitle.CreateSBT,
     icon: sbtIcon,
-    des: 'provides easy access to the high level interactions to be governance with an Clique DAO.',
+    des: 'Create Soulbound Token for your DAOs.',
     supportChainsIcon: 'all',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
     route: routes.CreateSoulToken
   },
+  // {
+  //   title: ToolsCardsTitle.Nft,
+  //   icon: nftCardIcon,
+  //   des: 'ERC-6551 turns every NFT into a smart wallet that can own tokens and interact with dApps across the Ethereum ecosystem.',
+  //   supportChainsIcon: [chainLogo0],
+  //   bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
+  //   route: routes.NftAccount
+  // },
   {
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
-    des: 'One-click on-chainactivity using accountabstraction.',
+    des: 'One-click on-chain transaction using account abstraction.',
+    // supportChainsIcon: [chainLogo0],
     supportChainsIcon: 'soon',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
+    // route: routes.NftGenerator
   },
   {
     title: ToolsCardsTitle.AssetPortal,
     icon: assetPortalIcon,
-    des: 'Buy, sell and hold any onchain asset throughcustom marketplace.',
+    des: 'Buy, sell and hold any onchain asset through custom marketplace.',
     supportChainsIcon: 'soon',
     bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)'
   }
@@ -111,10 +127,16 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const { showModal } = useModal()
+  const [isClick, setIsClick] = useState<boolean>(false)
+  const isSmDown = useBreakpoint('sm')
+
   return (
     <Box
       sx={{
-        height: 264,
+        height: !isSmDown ? 264 : isClick ? 264 : 97,
+        transition: 'all 0.5s',
+        overflow: 'hidden',
         border: '1px solid #d4d7e2',
         borderRadius: '10px',
         cursor: !link && !route ? 'no-drop' : 'pointer',
@@ -145,15 +167,28 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
         if (
           title === ToolsCardsTitle.CreateSBT ||
           title === ToolsCardsTitle.CreateDAO ||
-          title === ToolsCardsTitle.CreateToken
+          title === ToolsCardsTitle.CreateToken ||
+          title === ToolsCardsTitle.AccountGenerator
         ) {
           if (!account) return toggleWalletModal()
           if (!userSignature) return loginSignature()
         }
-        route ? navigate(route) : window.open(link, '_blank')
+        if (title === ToolsCardsTitle.AccountGenerator) {
+          showModal(<CreateNftModal />)
+        } else {
+          route ? navigate(route) : window.open(link, '_blank')
+        }
       }}
     >
-      <Box className="headerCon">
+      <Box
+        className="headerCon"
+        onClick={(e: any) => {
+          if (isSmDown) {
+            setIsClick(!isClick)
+            e.stopPropagation()
+          }
+        }}
+      >
         <Typography fontSize={18} lineHeight={'20px'} color={'#3F5170'} fontWeight={700}>
           {title}
         </Typography>
@@ -178,7 +213,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
             textAlign={'left'}
             width={'100%'}
           >
-            All Chain
+            All Chains
           </Typography>
         ) : supportChainsIcon === '' ? (
           <Typography mt={10} fontSize={14} lineHeight={'20px'} color={'#3F5170'} textAlign={'left'} width={'100%'}>
@@ -209,22 +244,58 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
 }
 
 export default function Index() {
+  const isSmDown = useBreakpoint('sm')
+
   return (
     <Box
       sx={{
         maxWidth: 1440,
         margin: 'auto',
-        padding: '44px 120px',
-        '& .top_banner': {
-          marginLeft: 18,
-          width: 'calc(100% - 18px)'
-        }
+        padding: isSmDown ? '25px 25px' : '44px 120px'
+        // '& .top_banner': {
+        //   width: 'calc(100% - 18px)',
+        //   height: '100%',
+        //   objectFit: 'cover'
+        // }
       }}
     >
-      <Image className="top_banner" src={banner} />
+      <Box
+        sx={{
+          height: 197,
+          padding: isSmDown ? '10px 10px 0' : '34px 0 0 70px',
+          marginLeft: isSmDown ? 0 : 18,
+          borderRadius: '8px',
+          backgroundImage: `url(${banner})`,
+          backgroundSize: 'cover',
+          backgroundPosition: isSmDown ? '-600px center' : 'center center'
+        }}
+      >
+        {/* <Image className="top_banner" src={banner} style={{ position: 'absolute', zIndex: 0, borderRadius: '8px' }} /> */}
+        <Typography
+          sx={{
+            color: '#fff',
+            fontSize: '50px',
+            fontWeight: 700,
+            lineHeight: '77px'
+          }}
+        >
+          Tools
+        </Typography>
+        <Typography
+          sx={{
+            color: '#fff',
+            fontSize: '16px',
+            fontWeight: 500,
+            lineHeight: '20px',
+            marginTop: 9
+          }}
+        >
+          The most powerful set of web3 development tools to build
+        </Typography>
+      </Box>
       <Grid mt={12} container>
         {cardsData.map((item, index) => (
-          <Grid padding={'18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
+          <Grid padding={isSmDown ? '18px 0 0' : '18px 0 0 18px'} key={index} item lg={3} md={4} sm={6} xs={12}>
             <CardItem {...item} />
           </Grid>
         ))}

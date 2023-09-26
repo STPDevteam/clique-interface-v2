@@ -1,4 +1,4 @@
-import { Box, Link, Stack, styled, Typography, Tooltip } from '@mui/material'
+import { Box, Link, Stack, styled, Typography, Tooltip, useTheme } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Modal from 'components/Modal'
 import Pagination from 'components/Pagination'
@@ -69,6 +69,7 @@ export default function VoteProgress({
   const voteModalOpen = useModalOpen(ApplicationModal.VOTE)
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
+  const theme = useTheme()
   const isSmDown = useBreakpoint('sm')
   const [optionId, setOptionId] = useState(0)
   const voteModalToggle = useVoteModalToggle()
@@ -128,7 +129,7 @@ export default function VoteProgress({
   }, [account, proposalInfo.status, voteList])
 
   return (
-    <VoteWrapper style={{ padding: isSmDown ? '20px 16px' : '' }}>
+    <VoteWrapper>
       {/* <RowCenter flexWrap={'wrap'}>
         <Typography fontSize={14} color={'#80829F'} fontWeight={500}>
           {proposalInfo.votingType === VotingTypes.SINGLE ? 'single-vote' : 'multi-vote'}
@@ -155,12 +156,20 @@ export default function VoteProgress({
               columnGap="24px"
               rowGap={'5px'}
             >
-              <Box display={'grid'} maxWidth={600}>
+              <Box
+                sx={{
+                  maxWidth: 600,
+                  display: 'grid',
+                  [theme.breakpoints.down('sm')]: {
+                    maxWidth: '100%'
+                  }
+                }}
+              >
                 <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 0.3fr', gap: 10 }}>
                   <Typography
                     mb={5}
                     sx={{
-                      maxWidth: '450px',
+                      maxWidth: isSmDown ? '220px' : '450px',
                       wordWrap: 'break-word'
                     }}
                   >

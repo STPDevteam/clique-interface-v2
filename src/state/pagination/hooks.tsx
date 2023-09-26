@@ -11,7 +11,9 @@ import {
   NotificationListPaginationProp,
   updateNotificationListPagination,
   SbtListPaginationProp,
-  updateSbtListPagination
+  updateSbtListPagination,
+  updateProfilePagination,
+  ProfilePaginationProp
 } from './actions'
 import { ChainId } from 'constants/chain'
 
@@ -179,6 +181,30 @@ export function useSbtListPaginationCallback() {
     setStatus,
     setChainId,
     setCategory,
+    data
+  }
+}
+
+export function useProfilePaginationCallback() {
+  const data = useSelector((state: AppState) => state.pagination.profilePagination)
+
+  const dispatch = useDispatch<AppDispatch>()
+  const updateProfilePaginationCallback = useCallback(
+    (profilePagination: ProfilePaginationProp) => {
+      dispatch(updateProfilePagination({ profilePagination }))
+    },
+    [dispatch]
+  )
+  const setNftTabIndex = useCallback(
+    (nftTabIndex: number) => {
+      updateProfilePaginationCallback({ ...data, nftTabIndex })
+    },
+    [data, updateProfilePaginationCallback]
+  )
+
+  return {
+    updateProfilePaginationCallback,
+    setNftTabIndex,
     data
   }
 }

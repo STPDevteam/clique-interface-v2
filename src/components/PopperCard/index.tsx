@@ -23,6 +23,7 @@ export default function PopperCard({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = !!anchorEl
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (event.type === 'touchend') return
     setAnchorEl(anchorEl ? null : event.currentTarget)
     event.nativeEvent.stopImmediatePropagation()
     event.stopPropagation()

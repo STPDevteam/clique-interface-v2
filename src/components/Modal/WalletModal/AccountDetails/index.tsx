@@ -7,14 +7,14 @@ import { clearAllTransactions } from 'state/transactions/actions'
 import { shortenAddress } from 'utils/'
 import Copy from 'components/essential/Copy'
 import Transaction from './Transaction'
-import { SUPPORTED_WALLETS } from 'constants/index'
-import { injected, walletlink } from 'connectors/'
 import OutlineButton from 'components/Button/OutlineButton'
 import Button from 'components/Button/Button'
 
 import SecondaryButton from 'components/Button/SecondaryButton'
 import TextButton from 'components/Button/TextButton'
 import { OutlinedCard } from 'components/Card'
+import { useAppSelector } from 'state/hooks'
+import { getConnection } from 'connection'
 
 const Dot = styled('span')({
   width: 24,
@@ -49,22 +49,17 @@ export default function AccountDetails({
   ENSName,
   openOptions
 }: AccountDetailsProps) {
-  const { chainId, account, connector } = useActiveWeb3React()
+  const { chainId, account, connector, deactivate } = useActiveWeb3React()
   const dispatch = useDispatch<AppDispatch>()
+  const selectedWallet = useAppSelector(state => state.userWallet.selectedWallet)
+  const curConnection = selectedWallet ? getConnection(selectedWallet) : undefined
+
   const theme = useTheme()
 
   function formatConnectorName() {
-    const { ethereum } = window
-    const isMetaMask = !!(ethereum && ethereum.isMetaMask)
-    const name = Object.keys(SUPPORTED_WALLETS)
-      .filter(
-        k =>
-          SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'METAMASK'))
-      )
-      .map(k => SUPPORTED_WALLETS[k].name)[0]
     return (
       <Typography fontSize="0.825rem" fontWeight={500}>
-        Connected with {name}
+        Connected with {curConnection?.getName()}
       </Typography>
     )
   }
@@ -84,17 +79,9 @@ export default function AccountDetails({
           color={theme.textColor.text3}
         >
           {formatConnectorName()}
-          {connector !== injected && connector !== walletlink && (
-            <SecondaryButton
-              style={{ marginRight: '8px' }}
-              onClick={() => {
-                console.log(connector?.deactivate.toString())
-                connector?.deactivate()
-              }}
-            >
-              Disconnect
-            </SecondaryButton>
-          )}
+          <SecondaryButton style={{ marginRight: '8px' }} onClick={deactivate}>
+            Disconnect
+          </SecondaryButton>
         </Box>
 
         <Box
