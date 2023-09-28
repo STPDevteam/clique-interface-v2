@@ -217,6 +217,7 @@ export interface ScanNFTInfo {
   token_id: string
   token_uri: string
   latest_trade_price: number
+  mint_transaction_hash: string
 }
 
 export function useAccountNFTsList(

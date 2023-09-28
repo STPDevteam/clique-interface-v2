@@ -1,9 +1,10 @@
 import { Box, styled } from '@mui/material'
-import { ReactComponent as ETHIcon } from 'assets/tokens/ETH.svg'
-import { ReactComponent as STPTIcon } from 'assets/tokens/STPT.svg'
-import { ReactComponent as USDCIcon } from 'assets/tokens/USDC.svg'
-import { ReactComponent as USDTIcon } from 'assets/tokens/USDT.svg'
-import { ReactComponent as WETHIcon } from 'assets/tokens/WETH.svg'
+import ETHIcon from 'assets/tokens/ETH.svg'
+import STPTIcon from 'assets/tokens/STPT.svg'
+import USDCIcon from 'assets/tokens/USDC.svg'
+import USDTIcon from 'assets/tokens/USDT.svg'
+import WETHIcon from 'assets/tokens/WETH.svg'
+import Image from 'components/Image'
 
 const TokenContentStyle = styled(Box)(() => ({
   color: 'var(--word-color, #3f5170)',
@@ -22,33 +23,33 @@ const TokenContentStyle = styled(Box)(() => ({
 const TokenList = {
   ETH: (
     <>
-      <ETHIcon />
+      <Image src={ETHIcon} />
       ETH
     </>
   ),
   WETH: (
     <>
-      <WETHIcon />
+      <Image src={STPTIcon} />
       WETH
     </>
   ),
   USDT: (
     <>
-      <USDTIcon />
+      <Image src={USDCIcon} />
       USDT
     </>
   ),
 
   USDC: (
     <>
-      <USDCIcon />
+      <Image src={USDTIcon} />
       USDC
     </>
   ),
 
   STPT: (
     <>
-      <STPTIcon />
+      <Image src={WETHIcon} />
       STPT
     </>
   )

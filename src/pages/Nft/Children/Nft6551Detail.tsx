@@ -446,18 +446,25 @@ function SendButton({ chainId }: { chainId: number | undefined }) {
           >
             <Box
               sx={{
-                width: '150px',
-                borderRadius: '8px',
-                border: '1px solid var(--line, #D4D7E2)',
-                background: '#FFF',
-                marginTop: '8px',
-                padding: '9px 0'
+                paddingTop: 48,
+                cursor: 'pointer',
+                transform: 'translateY(-40px)'
               }}
-              ref={childRef}
-              onClick={() => setAnchorEl(null)}
             >
-              <SelectOptionStyle onClick={() => showModal(<SendTokenModal />)}>Fungible Token</SelectOptionStyle>
-              <SelectOptionStyle onClick={() => showModal(<SendNftModal chainId={chainId} />)}>NFT</SelectOptionStyle>
+              <Box
+                sx={{
+                  width: '150px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--line, #D4D7E2)',
+                  background: '#FFF',
+                  padding: '9px 0'
+                }}
+                ref={childRef}
+                onClick={() => setAnchorEl(null)}
+              >
+                <SelectOptionStyle onClick={() => showModal(<SendTokenModal />)}>Fungible Token</SelectOptionStyle>
+                <SelectOptionStyle onClick={() => showModal(<SendNftModal chainId={chainId} />)}>NFT</SelectOptionStyle>
+              </Box>
             </Box>
           </Popper>
         </>

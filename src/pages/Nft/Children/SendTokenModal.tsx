@@ -3,7 +3,7 @@ import { Box, MenuItem, Typography, styled } from '@mui/material'
 import Input from 'components/Input/index'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Select from 'components/Select/Select'
 import Image from 'components/Image'
 import { isAddress } from 'ethers/lib/utils'
@@ -12,6 +12,10 @@ import { ChainList } from 'constants/chain'
 import { useActiveWeb3React } from 'hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { ChainId } from 'constants/chain'
+import { useSendAssetsCallback } from 'hooks/useBackedNftCallback'
+import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
+import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
+import MessageBox from 'components/Modal/TransactionModals/MessageBox'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -25,11 +29,12 @@ const RedText = styled(Typography)({
 })
 
 export default function SendTokenModal() {
-  const { hideModal } = useModal()
+  const { hideModal, showModal } = useModal()
   const { account } = useActiveWeb3React()
   const [toAccount, setToAccount] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
   const [checkChainId, setCheckChainId] = useState<number>()
+  const { SendAssetsCallback } = useSendAssetsCallback()
   const network = useMemo(() => {
     if (checkChainId) {
       return Currency.get_ETH_TOKEN(checkChainId as ChainId)
@@ -43,6 +48,31 @@ export default function SendTokenModal() {
     network || undefined,
     checkChainId || undefined
   )
+
+  const Send = useCallback(async () => {
+    if (!toAccount || !amount || !checkChainId || !account) return
+    try {
+      hideModal()
+      showModal(<TransacitonPendingModal />)
+      const res = await SendAssetsCallback(account, toAccount, Number(amount))
+      hideModal()
+      showModal(
+        <TransactionSubmittedModal
+          hideFunc={() => {
+            console.log('next=>')
+          }}
+          hash={res}
+        />
+      )
+      console.log(res)
+    } catch (err: any) {
+      showModal(
+        <MessageBox type="error">
+          {err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'}
+        </MessageBox>
+      )
+    }
+  }, [SendAssetsCallback, account, amount, checkChainId, hideModal, showModal, toAccount])
 
   const nextHandler = useMemo(() => {
     if (!isAddress(toAccount))
@@ -169,11 +199,7 @@ export default function SendTokenModal() {
             width="100%"
             height="40px"
             disabled={nextHandler.disabled}
-            onClick={() => {
-              console.log('123')
-
-              hideModal()
-            }}
+            onClick={() => Send()}
             style={{
               ':disabled': {
                 color: '#fff',

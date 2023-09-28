@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import {
   getRecentNftList,
@@ -11,6 +11,8 @@ import { ScanNFTInfo } from './useBackedProfileServer'
 import { TokenboundClient } from '@tokenbound/sdk'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
+import { useTokenContract } from './useContract'
+// import { useTransactionAdder } from 'state/transactions/hooks'
 
 export interface RecentNftListProp {
   account: string
@@ -207,6 +209,104 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId_route: 
   return {
     result,
     tokenId,
+    loading
+  }
+}
+
+export function useTransferNFT() {
+  const [loading, setLoading] = useState<boolean>()
+  const { chainId, library } = useActiveWeb3React()
+  // const addTransaction = useTransactionAdder()
+
+  // const navigate = useNavigate()
+
+  const tokenboundClient = useMemo(
+    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
+    [chainId, library]
+  )
+  const transferNftCallback = useCallback(
+    async (account: string, tokenContract: string, tokenId: string, recipientAddress: string) => {
+      if (!library) return
+      setLoading(true)
+      const params = {
+        account: account as `0x${string}`,
+        tokenContract: tokenContract as `0x${string}`,
+        tokenId,
+        recipientAddress: recipientAddress as `0x${string}`
+      }
+      try {
+        const res = await tokenboundClient?.transferNFT({
+          ...params,
+          tokenType: 'ERC721'
+        })
+
+        // addTransaction(res, {
+        //   summary: 'NFT Account Transfer',
+        //   claim: { recipient: `${res}_transfer_Nft_Account` }
+        // })
+
+        return res
+      } catch (error) {
+        throw error
+      }
+    },
+    [library, tokenboundClient]
+  )
+
+  return {
+    transferNftCallback,
+    loading
+  }
+}
+
+export function useSendAssetsCallback() {
+  const [loading, setLoading] = useState<boolean>()
+  const { chainId, library } = useActiveWeb3React()
+  const erc20Contract = useTokenContract('0x21C3ac8c6E5079936A59fF01639c37F36CE5ed9E')
+
+  // const addTransaction = useTransactionAdder()
+  // const navigate = useNavigate()
+
+  const tokenboundClient = useMemo(
+    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
+    [chainId, library]
+  )
+
+  const transfer = useCallback(
+    (to: string, value: string) => {
+      return erc20Contract?.interface.encodeFunctionData('transfer', [to, value])
+    },
+    [erc20Contract?.interface]
+  )
+
+  const SendAssetsCallback = useCallback(
+    async (account: string, receiveAccount: string, value: number) => {
+      console.log('library=>', library)
+
+      if (!library) return
+      const data = transfer(account, '10000')
+      if (!data) return
+      console.log('data=>', value, BigInt(value))
+
+      setLoading(true)
+      const params = {
+        account: account as `0x${string}`,
+        to: receiveAccount as `0x${string}`,
+        value: BigInt(value),
+        data
+      }
+
+      const res = await tokenboundClient?.executeCall({
+        ...params
+      })
+
+      return res
+    },
+    [library, tokenboundClient, transfer]
+  )
+
+  return {
+    SendAssetsCallback,
     loading
   }
 }
