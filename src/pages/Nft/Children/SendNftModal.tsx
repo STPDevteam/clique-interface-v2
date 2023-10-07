@@ -38,7 +38,13 @@ const SelectItem = styled(MenuItem)(() => ({
 //   marginTop: '3px'
 // }))
 
-export default function SendNftModal({ chainId }: { chainId: number | undefined }) {
+export default function SendNftModal({
+  chainId,
+  nftAddress
+}: {
+  chainId: number | undefined
+  nftAddress: string | undefined
+}) {
   const { hideModal, showModal } = useModal()
   const { account } = useActiveWeb3React()
   const theme = useTheme()
@@ -46,7 +52,6 @@ export default function SendNftModal({ chainId }: { chainId: number | undefined 
   const [nft6551Hash, setNft6551Hash] = useState<string>('')
   const { transferNftCallback } = useTransferNFT()
   const { result: _accountNFTsList } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-  // '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3'
 
   const checkNftDetail = useMemo(() => {
     if (nft6551Hash) {
@@ -71,12 +76,12 @@ export default function SendNftModal({ chainId }: { chainId: number | undefined 
   console.log(accountNFTsList)
 
   const SendCallback = useCallback(async () => {
-    if (!account || !checkNftDetail) return
+    if (!nftAddress || !checkNftDetail) return
     try {
       hideModal()
       showModal(<TransacitonPendingModal />)
       const res = await transferNftCallback(
-        account,
+        nftAddress,
         checkNftDetail?.contract_address,
         checkNftDetail?.token_id,
         transferAccount
@@ -97,7 +102,7 @@ export default function SendNftModal({ chainId }: { chainId: number | undefined 
         </MessageBox>
       )
     }
-  }, [account, checkNftDetail, hideModal, showModal, transferNftCallback, transferAccount])
+  }, [nftAddress, checkNftDetail, hideModal, showModal, transferNftCallback, transferAccount])
 
   const nextHandler = useMemo(() => {
     if (!isAddress(transferAccount))
@@ -199,32 +204,36 @@ export default function SendNftModal({ chainId }: { chainId: number | undefined 
                 }
               }}
             >
-              {accountNFTsList?.map((item, index) => (
-                <SelectItem
-                  key={item.name + index}
-                  value={item.mint_transaction_hash}
-                  selected={nft6551Hash === item?.mint_transaction_hash}
-                >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: 20,
-                      width: '100%',
-                      fontSize: '14px',
-                      lineHeight: '20px',
-                      alignItems: 'center'
-                    }}
+              {accountNFTsList?.length ? (
+                accountNFTsList?.map((item, index) => (
+                  <SelectItem
+                    key={item.name + index}
+                    value={item.mint_transaction_hash}
+                    selected={nft6551Hash === item?.mint_transaction_hash}
                   >
-                    <Image
-                      style={{ height: 50, width: 50, background: '#F8FBFF', borderRadius: '7px' }}
-                      src={item.image_uri || placeholderImage}
-                    />
-                    <Typography width={'100%'} maxWidth={'250px'} noWrap>
-                      {item?.name || item?.contract_name || '-'}#{item?.token_id}
-                    </Typography>
-                  </Box>
-                </SelectItem>
-              ))}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: 20,
+                        width: '100%',
+                        fontSize: '14px',
+                        lineHeight: '20px',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Image
+                        style={{ height: 50, width: 50, background: '#F8FBFF', borderRadius: '7px' }}
+                        src={item.image_uri || placeholderImage}
+                      />
+                      <Typography width={'100%'} maxWidth={'250px'} noWrap>
+                        {item?.name || item?.contract_name || '-'}#{item?.token_id}
+                      </Typography>
+                    </Box>
+                  </SelectItem>
+                ))
+              ) : (
+                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>No Data</MenuItem>
+              )}
             </Select>
             {/* <ErrorText>{nextHandler.error}</ErrorText> */}
           </Box>

@@ -119,7 +119,6 @@ export function NftAccounts() {
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
   const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-  // '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3'
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),

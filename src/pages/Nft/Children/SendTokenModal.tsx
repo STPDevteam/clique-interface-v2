@@ -1,21 +1,22 @@
 import Modal from 'components/Modal/index'
-import { Box, MenuItem, Typography, styled } from '@mui/material'
+import { Box, Typography, styled } from '@mui/material'
 import Input from 'components/Input/index'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
 import { useCallback, useMemo, useState } from 'react'
-import Select from 'components/Select/Select'
+// import Select from 'components/Select/Select'
 import Image from 'components/Image'
 import { isAddress } from 'ethers/lib/utils'
 import { Currency } from 'constants/token'
-import { ChainList } from 'constants/chain'
-import { useActiveWeb3React } from 'hooks'
+import { ChainListMap } from 'constants/chain'
+// import { useActiveWeb3React } from 'hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { ChainId } from 'constants/chain'
 import { useSendAssetsCallback } from 'hooks/useBackedNftCallback'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+// import BigNumber from 'bignumber.js'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -28,42 +29,49 @@ const RedText = styled(Typography)({
   color: '#E46767'
 })
 
-export default function SendTokenModal() {
+export default function SendTokenModal({
+  nftAddress,
+  chainId
+}: {
+  nftAddress: string | undefined
+  chainId: number | undefined
+}) {
   const { hideModal, showModal } = useModal()
-  const { account } = useActiveWeb3React()
   const [toAccount, setToAccount] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
-  const [checkChainId, setCheckChainId] = useState<number>()
-  const { SendAssetsCallback } = useSendAssetsCallback()
+  // const [checkChainId, setCheckChainId] = useState<number>()
+  const { SendAssetsCallback } = useSendAssetsCallback(chainId)
   const network = useMemo(() => {
-    if (checkChainId) {
-      return Currency.get_ETH_TOKEN(checkChainId as ChainId)
+    if (chainId) {
+      return Currency.get_ETH_TOKEN(chainId as ChainId)
     }
 
     return
-  }, [checkChainId])
+  }, [chainId])
 
-  const airdropCurrencyBalance = useCurrencyBalance(
-    account || undefined,
-    network || undefined,
-    checkChainId || undefined
-  )
-
+  const airdropCurrencyBalance = useCurrencyBalance(nftAddress || undefined, network || undefined, chainId || undefined)
+  console.log('network=>', network)
   const Send = useCallback(async () => {
-    if (!toAccount || !amount || !checkChainId || !account) return
+    if (!toAccount || !amount || !chainId || !nftAddress || !network) return
+
     try {
       hideModal()
       showModal(<TransacitonPendingModal />)
-      const res = await SendAssetsCallback(account, toAccount, Number(amount))
-      hideModal()
-      showModal(
-        <TransactionSubmittedModal
-          hideFunc={() => {
-            console.log('next=>')
-          }}
-          hash={res}
-        />
-      )
+      const res = await SendAssetsCallback(nftAddress, toAccount, Number(amount), network)
+      if (res) {
+        hideModal()
+        showModal(
+          <TransactionSubmittedModal
+            hideFunc={() => {
+              console.log('next=>')
+            }}
+            hash={res}
+          />
+        )
+      } else {
+        showModal(<MessageBox type="error">{'unknown error'}</MessageBox>)
+      }
+
       console.log(res)
     } catch (err: any) {
       showModal(
@@ -72,7 +80,7 @@ export default function SendTokenModal() {
         </MessageBox>
       )
     }
-  }, [SendAssetsCallback, account, amount, checkChainId, hideModal, showModal, toAccount])
+  }, [SendAssetsCallback, nftAddress, amount, chainId, hideModal, network, showModal, toAccount])
 
   const nextHandler = useMemo(() => {
     if (!isAddress(toAccount))
@@ -91,7 +99,7 @@ export default function SendTokenModal() {
     }
   }, [toAccount, amount])
 
-  console.log(nextHandler, airdropCurrencyBalance)
+  console.log(nextHandler)
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
@@ -116,7 +124,7 @@ export default function SendTokenModal() {
             }}
             value={toAccount}
           />
-          <Select
+          {/* <Select
             label="Assets"
             noBold
             placeholder="Select a Token"
@@ -139,22 +147,47 @@ export default function SendTokenModal() {
             }}
           >
             {ChainList.map((v, index) => (
-              <MenuItem
-                key={v.id + index}
-                sx={{
-                  fontWeight: 500,
-                  fontSize: '14px !important'
-                }}
-                value={v.id}
-                selected={checkChainId === v.id}
-              >
-                <Box sx={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <MenuItem key={v.id + index} value={v.id} selected={checkChainId === v.id}>
+                <Box
+                  sx={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: 500, fontSize: '14px !important' }}
+                >
                   <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={v.logo} />
                   {v.symbol}
                 </Box>
               </MenuItem>
             ))}
-          </Select>
+          </Select> */}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '0 16px',
+              height: '40px',
+              borderRadius: ' 8px',
+              border: ' 1px solid var(--line, #D4D7E2)'
+            }}
+          >
+            <Typography
+              sx={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: 500, fontSize: '14px !important' }}
+            >
+              <Image
+                style={{ height: 18, width: 18, borderRadius: '50%' }}
+                src={ChainListMap[chainId || 1]?.logo || ''}
+              />
+              {network?.symbol}
+            </Typography>
+
+            <Typography
+              sx={{
+                color: 'var(--word-color, #3F5170)',
+                fontSize: '14px',
+                lineHeight: '40px'
+              }}
+            >
+              Balance: {airdropCurrencyBalance?.toSignificant(6) || '--'}
+              {airdropCurrencyBalance?.currency.symbol || '--'}
+            </Typography>
+          </Box>
           <InputStyle
             placeholderSize="14px"
             placeholder={'0.00'}
@@ -176,7 +209,7 @@ export default function SendTokenModal() {
                 }}
                 variant="body1"
                 onClick={() => {
-                  if (airdropCurrencyBalance && checkChainId) {
+                  if (airdropCurrencyBalance && chainId) {
                     setAmount(airdropCurrencyBalance?.toSignificant(6))
                   }
                 }}

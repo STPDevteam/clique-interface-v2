@@ -3155,12 +3155,12 @@
   dependencies:
     defer-to-connect "^2.0.1"
 
-"@tokenbound/sdk@^0.3.7":
-  version "0.3.7"
-  resolved "https://registry.npmmirror.com/@tokenbound/sdk/-/sdk-0.3.7.tgz#65f581e809f4d08f8e2c0d3e12dc89bb217f3551"
-  integrity sha512-nBP0cfNzNrqCRUTuNNOUaqPEca2tTpDip9NSi5sngCycpvI83C2DQEY810+x4tvTInlLBWwu+9M8FRgogmiRSA==
+"@tokenbound/sdk@^0.3.9":
+  version "0.3.9"
+  resolved "https://registry.npmmirror.com/@tokenbound/sdk/-/sdk-0.3.9.tgz#2177be5a83fae39222e416c7a32bd924dcf51760"
+  integrity sha512-Mldj/pmJDBtExJ88uhAPyetrZ1P4JZbmU10A4ZITt0yBRZKeTCUu2jOzVNWJErPDL3/kZGUlKYMkRqMhmOUibA==
   dependencies:
-    viem "^1.10.14"
+    viem "^1.14.0"
 
 "@tokenizer/token@^0.3.0":
   version "0.3.0"
@@ -14791,10 +14791,10 @@ viem@^1.0.0:
     isomorphic-ws "5.0.0"
     ws "8.12.0"
 
-viem@^1.10.14:
-  version "1.11.1"
-  resolved "https://registry.npmmirror.com/viem/-/viem-1.11.1.tgz#30531740eb52e5d1ff1167d8df462d1a8d45afb8"
-  integrity sha512-PPNsPacRS7nryakQQJ9PjYGjUa0QgV8lbERhRuJm8X4kGUzSAsTQaQmy4hvV0cRAEHg8tG0TMD+GTCfwzZM3Yw==
+viem@^1.14.0:
+  version "1.15.4"
+  resolved "https://registry.npmmirror.com/viem/-/viem-1.15.4.tgz#422b2a23bc2c9e240d91758ae29a464ca6faed5b"
+  integrity sha512-kQtJiYbZ86rzGdAXkvAxf6ovsabzyn41loNiSjQNFXwvn24cGP3IbQhQcK5OYorQY9Pz7Dm54EBV5XhFxo+15g==
   dependencies:
     "@adraffy/ens-normalize" "1.9.4"
     "@noble/curves" "1.2.0"

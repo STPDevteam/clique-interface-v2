@@ -30,7 +30,7 @@ import { useNft6551Detail } from 'hooks/useBackedNftCallback'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useIsDelayTime } from 'hooks/useBackedProfileServer'
 import { routes } from 'constants/routes'
-import { ChainId } from 'constants/chain'
+import { ChainId, ChainListMap } from 'constants/chain'
 // import { ReactComponent as WETHIcon } from 'assets/tokens/WETH.svg'
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: '780px',
@@ -213,7 +213,7 @@ export function Nft6551Detail() {
   const navigate = useNavigate()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
-  const { account } = useActiveWeb3React()
+  const { chainId: walletChainId, account } = useActiveWeb3React()
   const theme = useTheme()
   const { showModal, hideModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
@@ -225,8 +225,13 @@ export function Nft6551Detail() {
     if (!account || !userSignature) {
       navigate(routes.NftGenerator)
       hideModal()
+      return
     }
-  }, [account, userSignature, hideModal, isDelayTime, navigate])
+    if (Number(walletChainId) !== Number(chainId)) {
+      navigate(routes.NftAssets)
+      return
+    }
+  }, [account, userSignature, walletChainId, hideModal, isDelayTime, navigate, chainId])
 
   return (
     <>
@@ -253,15 +258,19 @@ export function Nft6551Detail() {
                 <ButtonsStyle>
                   <AccountButton>
                     <ETHIcon />
-                    <Typography>{account ? shortenAddress(account) : '--'}</Typography>
-                    <Copy toCopy={'value'} />
+                    <Image
+                      style={{ height: 18, width: 18, borderRadius: '50%' }}
+                      src={ChainListMap[Number(chainId) || 1]?.logo || ''}
+                    />
+                    <Typography>{nftAddress ? shortenAddress(nftAddress) : '--'}</Typography>
+                    <Copy toCopy={nftAddress || '--'} />
                   </AccountButton>
 
                   <OutlineButton onClick={() => showModal(<RecieveAssetsModal />)}>
                     <ReceiveIcon />
                     Receive
                   </OutlineButton>
-                  <SendButton chainId={Number(chainId)} />
+                  <SendButton chainId={Number(chainId)} nftAddress={nftAddress} />
                   <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
                 </ButtonsStyle>
 
@@ -382,7 +391,7 @@ export function Nft6551Detail() {
   )
 }
 
-function SendButton({ chainId }: { chainId: number | undefined }) {
+function SendButton({ chainId, nftAddress }: { chainId: number | undefined; nftAddress: string | undefined }) {
   const { showModal } = useModal()
   // const popperRef = useRef<any>(null)
   const childRef = useRef<any>(null)
@@ -462,8 +471,16 @@ function SendButton({ chainId }: { chainId: number | undefined }) {
                 ref={childRef}
                 onClick={() => setAnchorEl(null)}
               >
-                <SelectOptionStyle onClick={() => showModal(<SendTokenModal />)}>Fungible Token</SelectOptionStyle>
-                <SelectOptionStyle onClick={() => showModal(<SendNftModal chainId={chainId} />)}>NFT</SelectOptionStyle>
+                <SelectOptionStyle
+                  onClick={() => showModal(<SendTokenModal nftAddress={nftAddress} chainId={chainId} />)}
+                >
+                  Fungible Token
+                </SelectOptionStyle>
+                <SelectOptionStyle
+                  onClick={() => showModal(<SendNftModal chainId={chainId} nftAddress={nftAddress} />)}
+                >
+                  NFT
+                </SelectOptionStyle>
               </Box>
             </Box>
           </Popper>

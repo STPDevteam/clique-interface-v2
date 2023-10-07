@@ -9,9 +9,9 @@ import {
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo } from './useBackedProfileServer'
 import { TokenboundClient } from '@tokenbound/sdk'
-import { useNavigate } from 'react-router-dom'
-import { routes } from 'constants/routes'
-import { useTokenContract } from './useContract'
+import { Currency } from 'constants/token/currency'
+import isZero from 'utils/isZero'
+
 // import { useTransactionAdder } from 'state/transactions/hooks'
 
 export interface RecentNftListProp {
@@ -171,7 +171,6 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId_route: 
   const { chainId, library } = useActiveWeb3React()
   const [tokenId, setTokenId] = useState<string>()
   const [result, setResult] = useState<NftInfoProp>()
-  const navigate = useNavigate()
 
   const tokenboundClient = useMemo(
     () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
@@ -181,10 +180,7 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId_route: 
   useEffect(() => {
     ;(async () => {
       if (!chainId || !nftAccount || !chainId_route) return
-      if (Number(chainId_route) !== Number(chainId)) {
-        navigate(routes.NftAssets)
-        return
-      }
+
       setLoading(true)
       const Nft = await tokenboundClient?.getNFT({
         accountAddress: nftAccount as `0x${string}`
@@ -230,14 +226,20 @@ export function useTransferNFT() {
       setLoading(true)
       const params = {
         account: account as `0x${string}`,
+        tokenType: 'ERC721',
         tokenContract: tokenContract as `0x${string}`,
         tokenId,
         recipientAddress: recipientAddress as `0x${string}`
       }
+      console.log('params=>', params)
+
       try {
         const res = await tokenboundClient?.transferNFT({
-          ...params,
-          tokenType: 'ERC721'
+          account: account as `0x${string}`,
+          tokenType: 'ERC721',
+          tokenContract: tokenContract as `0x${string}`,
+          tokenId,
+          recipientAddress: recipientAddress as `0x${string}`
         })
 
         // addTransaction(res, {
@@ -259,10 +261,9 @@ export function useTransferNFT() {
   }
 }
 
-export function useSendAssetsCallback() {
-  const [loading, setLoading] = useState<boolean>()
-  const { chainId, library } = useActiveWeb3React()
-  const erc20Contract = useTokenContract('0x21C3ac8c6E5079936A59fF01639c37F36CE5ed9E')
+export function useSendAssetsCallback(chainId: number | undefined) {
+  // const [loading, setLoading] = useState<boolean>()
+  const { library } = useActiveWeb3React()
 
   // const addTransaction = useTransactionAdder()
   // const navigate = useNavigate()
@@ -272,41 +273,38 @@ export function useSendAssetsCallback() {
     [chainId, library]
   )
 
-  const transfer = useCallback(
-    (to: string, value: string) => {
-      return erc20Contract?.interface.encodeFunctionData('transfer', [to, value])
-    },
-    [erc20Contract?.interface]
-  )
-
   const SendAssetsCallback = useCallback(
-    async (account: string, receiveAccount: string, value: number) => {
-      console.log('library=>', library)
-
-      if (!library) return
-      const data = transfer(account, '10000')
-      if (!data) return
-      console.log('data=>', value, BigInt(value))
-
-      setLoading(true)
+    async (account: string, receiveAccount: string, amount: number, network: Currency) => {
       const params = {
-        account: account as `0x${string}`,
-        to: receiveAccount as `0x${string}`,
-        value: BigInt(value),
-        data
+        account,
+        amount,
+        recipientAddress: receiveAccount,
+        erc20tokenAddress: network.address,
+        erc20tokenDecimals: network.decimals
       }
-
-      const res = await tokenboundClient?.executeCall({
-        ...params
-      })
-
-      return res
+      console.log('params=>', params)
+      if (isZero(network.address)) {
+        const res = await tokenboundClient?.transferETH({
+          account: account as `0x${string}`,
+          amount,
+          recipientAddress: receiveAccount as `0x${string}`
+        })
+        return res
+      } else {
+        const res = await tokenboundClient?.transferERC20({
+          account: account as `0x${string}`,
+          amount,
+          recipientAddress: receiveAccount as `0x${string}`,
+          erc20tokenAddress: network.address as `0x${string}`,
+          erc20tokenDecimals: network.decimals
+        })
+        return res
+      }
     },
-    [library, tokenboundClient, transfer]
+    [tokenboundClient]
   )
 
   return {
-    SendAssetsCallback,
-    loading
+    SendAssetsCallback
   }
 }

@@ -17,7 +17,6 @@ export function Nfts({ chainId }: { chainId: number }) {
   const { account } = useActiveWeb3React()
 
   const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-  // '0x5aEFAA34EaDaC483ea542077D30505eF2472cfe3'
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
@@ -30,7 +29,6 @@ export function Nfts({ chainId }: { chainId: number }) {
 
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
-  console.log(accountNFTsList)
 
   return (
     <>
