@@ -11,12 +11,12 @@ import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import { getEtherscanLink } from 'utils'
 import Loading from 'components/Loading'
 import EmptyData from 'components/EmptyData'
-import { useActiveWeb3React } from 'hooks'
+// import { useActiveWeb3React } from 'hooks'
 
-export function Nfts({ chainId }: { chainId: number }) {
-  const { account } = useActiveWeb3React()
+export function Nfts({ chainId, nftAddress }: { chainId: number; nftAddress: string | undefined }) {
+  // const { account } = useActiveWeb3React()
 
-  const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  const { result: _accountNFTsList, loading } = useAccountNFTsList(nftAddress || undefined, chainId, 'erc721')
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),

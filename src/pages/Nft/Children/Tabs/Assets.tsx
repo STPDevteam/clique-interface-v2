@@ -1,63 +1,43 @@
 import { Box, styled, Typography } from '@mui/material'
 import SwitchBtn from 'components/Switch'
 import Table from 'components/Table'
-import { Tokens } from 'pages/Nft/Tokens'
+import { TokenListMap } from 'pages/Nft/Tokens'
+import Image from 'components/Image'
 import { useMemo, useState } from 'react'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 
 const TableContentStyle = styled(Box)(({ theme }) => ({
   height: '50px',
   display: 'flex',
   alignItems: 'center',
+  color: 'var(--word-color, #3F5170)',
+  fontSize: '14px',
   svg: {
     width: '18px',
-    height: '18px'
+    height: '18px',
+    borderRadius: '50%'
   },
   [theme.breakpoints.down('sm')]: {
     height: 36
   }
 }))
-const AssetsTokenList = [
-  {
-    Token: <Tokens Symbol="ETH" />,
-    Balance: 0,
-    USDValue: 0
-  },
-  {
-    Token: <Tokens Symbol="WETH" />,
-    Balance: 0,
-    USDValue: 0
-  },
-  {
-    Token: <Tokens Symbol="USDT" />,
-    Balance: 0,
-    USDValue: 0
-  },
-  {
-    Token: <Tokens Symbol="USDC" />,
-    Balance: 0,
-    USDValue: 0
-  },
-  {
-    Token: <Tokens Symbol="STPT" />,
-    Balance: 0,
-    USDValue: 0
-  }
-]
 
-export function Assets() {
+export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: string | undefined }) {
   const [isCheck, setCheck] = useState<boolean>(false)
+  const TokenList = TokenListMap(chainId)
 
   const AssetsTableList = useMemo(() => {
-    return AssetsTokenList.map(({ Token, Balance, USDValue }, index) => [
-      <TableContentStyle key={index}>{Token}</TableContentStyle>,
-      <TableContentStyle key={index} style={{ justifyContent: 'center' }}>
-        {Balance}
+    return TokenList.map((v, index) => [
+      <TableContentStyle key={index} sx={{ gap: 8 }}>
+        <Image src={v?.logo || ''} height={18} width={18} />
+        {v.symbol}
       </TableContentStyle>,
+      <ItemBalance key={index} network={v} nftAddress={nftAddress} chainId={chainId} />,
       <TableContentStyle key={index} style={{ justifyContent: 'end' }}>
-        ${USDValue}
+        ${0}
       </TableContentStyle>
     ])
-  }, [])
+  }, [TokenList, chainId, nftAddress])
 
   return (
     <Box display={'grid'} gap={'16px'}>
@@ -126,5 +106,25 @@ export function Assets() {
         />
       </Typography>
     </Box>
+  )
+}
+
+function ItemBalance({
+  network,
+  nftAddress,
+  chainId
+}: {
+  network: any
+  nftAddress: string | undefined
+  chainId: number
+}) {
+  const airdropCurrencyBalance = useCurrencyBalance(nftAddress || undefined, network || undefined, chainId || undefined)
+
+  return (
+    <>
+      <TableContentStyle style={{ justifyContent: 'center' }}>
+        {airdropCurrencyBalance?.toSignificant(6) || '--'}
+      </TableContentStyle>
+    </>
   )
 }

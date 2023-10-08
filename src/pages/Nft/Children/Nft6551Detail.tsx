@@ -213,7 +213,7 @@ export function Nft6551Detail() {
   const navigate = useNavigate()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
-  const { chainId: walletChainId, account } = useActiveWeb3React()
+  const { account } = useActiveWeb3React()
   const theme = useTheme()
   const { showModal, hideModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
@@ -227,11 +227,11 @@ export function Nft6551Detail() {
       hideModal()
       return
     }
-    if (Number(walletChainId) !== Number(chainId)) {
-      navigate(routes.NftAssets)
-      return
-    }
-  }, [account, userSignature, walletChainId, hideModal, isDelayTime, navigate, chainId])
+    // if (Number(walletChainId) !== Number(chainId)) {
+    //   navigate(routes.NftAssets)
+    //   return
+    // }
+  }, [account, userSignature, hideModal, isDelayTime, navigate])
 
   return (
     <>
@@ -266,7 +266,9 @@ export function Nft6551Detail() {
                     <Copy toCopy={nftAddress || '--'} />
                   </AccountButton>
 
-                  <OutlineButton onClick={() => showModal(<RecieveAssetsModal />)}>
+                  <OutlineButton
+                    onClick={() => showModal(<RecieveAssetsModal chainId={Number(chainId)} nftAddress={nftAddress} />)}
+                  >
                     <ReceiveIcon />
                     Receive
                   </OutlineButton>
@@ -306,8 +308,8 @@ export function Nft6551Detail() {
                     ))}
                   </Tabs>
                 </StyledTabs>
-                {TabsList[tabValue] === TAB.Assets && <Assets />}
-                {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} />}
+                {TabsList[tabValue] === TAB.Assets && <Assets chainId={Number(chainId)} nftAddress={nftAddress} />}
+                {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} nftAddress={nftAddress} />}
                 {TabsList[tabValue] === TAB.History && <History />}
               </LeftDetailStyle>
             </ContentBoxStyle>

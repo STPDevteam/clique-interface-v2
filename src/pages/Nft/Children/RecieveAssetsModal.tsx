@@ -4,7 +4,10 @@ import Image from 'components/Image'
 import placeholderImage from 'assets/images/placeholder.png'
 import { ReactComponent as CodeYellowIcon } from 'assets/svg/code_yellow.svg'
 import Copy from 'components/essential/Copy'
-import { useState } from 'react'
+import { useMemo } from 'react'
+import { Currency } from 'constants/token'
+import { ChainId } from 'constants/chain'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px',
@@ -78,8 +81,26 @@ const AddressStyle = styled(Typography)(() => ({
   }
 }))
 
-export default function RecieveAssetsModal() {
-  const [isCheck, setIsCheck] = useState<boolean>(false)
+export default function RecieveAssetsModal({
+  chainId,
+  nftAddress
+}: {
+  chainId: number | undefined
+  nftAddress: string | undefined
+}) {
+  // const [isCheck, setIsCheck] = useState<boolean>(false)
+
+  const network = useMemo(() => {
+    if (chainId) {
+      return Currency.get_ETH_TOKEN(chainId as ChainId)
+    }
+
+    return
+  }, [chainId])
+
+  const airdropCurrencyBalance = useCurrencyBalance(nftAddress || undefined, network || undefined, chainId || undefined)
+  console.log('airdropCurrencyBalance=>', airdropCurrencyBalance)
+
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
       <BodyBoxStyle>
@@ -94,23 +115,24 @@ export default function RecieveAssetsModal() {
           Recieve Assets
         </Typography>
         <TokensStyle>
-          <TokensItem onClick={() => setIsCheck(!isCheck)}>
+          <TokensItem>
             <Box display={'flex'} gap={'15px'}>
               <Image
                 style={{ height: 40, width: 40, background: '#F8FBFF', borderRadius: '50%' }}
-                src={placeholderImage}
+                src={airdropCurrencyBalance?.currency?.logo || placeholderImage}
               />
               <Box>
-                <TextStyle>ETH</TextStyle>
-                <TextStyle fontSize={'12px !important'}>Ethereum</TextStyle>
+                <TextStyle>{airdropCurrencyBalance?.currency?.symbol || '--'}</TextStyle>
+                <TextStyle fontSize={'12px !important'}>{airdropCurrencyBalance?.currency?.name || '--'}</TextStyle>
               </Box>
             </Box>
-            <TextStyle>0</TextStyle>
+            <TextStyle>{airdropCurrencyBalance?.toSignificant(6) || 0}</TextStyle>
           </TokensItem>
         </TokensStyle>
         <QRcodeStyle
           sx={{
-            height: isCheck ? 220 : 55,
+            // height: isCheck ? 220 : 55,
+            height: 220,
             transition: 'all 0.5s'
           }}
         >
@@ -131,8 +153,8 @@ export default function RecieveAssetsModal() {
                   overflowWrap: 'break-word'
                 }}
               >
-                0x5ef8651589B8F672C4D2bC1543840725D61Eb846
-                <Copy toCopy="111" />
+                {nftAddress || '--'}
+                <Copy toCopy={nftAddress || '--'} />
               </AddressStyle>
               <Box
                 sx={{

@@ -166,20 +166,20 @@ export function useNftAccountInfo(contract_address: string | undefined, chainId:
   }
 }
 
-export function useNft6551Detail(nftAccount: string | undefined, chainId_route: string | undefined) {
+export function useNft6551Detail(nftAccount: string | undefined, chainId: string | undefined) {
   const [loading, setLoading] = useState<boolean>()
-  const { chainId, library } = useActiveWeb3React()
+  const { library } = useActiveWeb3React()
   const [tokenId, setTokenId] = useState<string>()
   const [result, setResult] = useState<NftInfoProp>()
-
   const tokenboundClient = useMemo(
-    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
+    () =>
+      library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId: Number(chainId) }) : undefined,
     [chainId, library]
   )
 
   useEffect(() => {
     ;(async () => {
-      if (!chainId || !nftAccount || !chainId_route) return
+      if (!chainId || !nftAccount) return
 
       setLoading(true)
       const Nft = await tokenboundClient?.getNFT({
@@ -187,7 +187,7 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId_route: 
       })
       setTokenId(Nft?.tokenId)
       try {
-        const res = await getNftAccountInfo(Nft?.tokenContract as string, chainId)
+        const res = await getNftAccountInfo(Nft?.tokenContract as string, Number(chainId))
         if (res.data.code === 200) {
           setResult(res.data.data)
           setLoading(false)
@@ -200,8 +200,7 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId_route: 
         console.log(error)
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId, nftAccount])
+  }, [chainId, nftAccount, tokenboundClient])
   return {
     result,
     tokenId,

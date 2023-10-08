@@ -1,21 +1,22 @@
 import Modal from 'components/Modal/index'
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled, MenuItem } from '@mui/material'
 import Input from 'components/Input/index'
 import Button from 'components/Button/Button'
 import useModal from 'hooks/useModal'
 import { useCallback, useMemo, useState } from 'react'
-// import Select from 'components/Select/Select'
+import Select from 'components/Select/Select'
 import Image from 'components/Image'
 import { isAddress } from 'ethers/lib/utils'
-import { Currency } from 'constants/token'
-import { ChainListMap } from 'constants/chain'
+// import { Currency } from 'constants/token'
+// import { ChainList } from 'constants/chain'
 // import { useActiveWeb3React } from 'hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { ChainId } from 'constants/chain'
+// import { ChainId } from 'constants/chain'
 import { useSendAssetsCallback } from 'hooks/useBackedNftCallback'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import { TokenListMap } from '../Tokens'
 // import BigNumber from 'bignumber.js'
 
 const BodyBoxStyle = styled(Box)(() => ({
@@ -39,20 +40,20 @@ export default function SendTokenModal({
   const { hideModal, showModal } = useModal()
   const [toAccount, setToAccount] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
-  // const [checkChainId, setCheckChainId] = useState<number>()
+  const [checkAddress, setCheckAddress] = useState<string>('')
   const { SendAssetsCallback } = useSendAssetsCallback(chainId)
+  const TokenList = TokenListMap(chainId)
   const network = useMemo(() => {
-    if (chainId) {
-      return Currency.get_ETH_TOKEN(chainId as ChainId)
+    if (checkAddress) {
+      return TokenList.find(v => v.address === checkAddress)
     }
-
     return
-  }, [chainId])
+  }, [checkAddress, TokenList])
 
   const airdropCurrencyBalance = useCurrencyBalance(nftAddress || undefined, network || undefined, chainId || undefined)
   console.log('network=>', network)
   const Send = useCallback(async () => {
-    if (!toAccount || !amount || !chainId || !nftAddress || !network) return
+    if (!toAccount || !amount || !nftAddress || !network) return
 
     try {
       hideModal()
@@ -80,7 +81,7 @@ export default function SendTokenModal({
         </MessageBox>
       )
     }
-  }, [SendAssetsCallback, nftAddress, amount, chainId, hideModal, network, showModal, toAccount])
+  }, [SendAssetsCallback, amount, hideModal, network, nftAddress, showModal, toAccount])
 
   const nextHandler = useMemo(() => {
     if (!isAddress(toAccount))
@@ -124,13 +125,13 @@ export default function SendTokenModal({
             }}
             value={toAccount}
           />
-          {/* <Select
+          <Select
             label="Assets"
             noBold
             placeholder="Select a Token"
-            value={checkChainId}
+            value={checkAddress}
             onChange={e => {
-              setCheckChainId(e.target.value)
+              setCheckAddress(e.target.value)
             }}
             style={{
               '&:after': {
@@ -142,22 +143,22 @@ export default function SendTokenModal({
                 color: '#3F5170',
                 fontSize: 14,
                 fontWeight: '500!important',
-                display: checkChainId ? 'block' : 'none'
+                display: checkAddress ? 'block' : 'none'
               }
             }}
           >
-            {ChainList.map((v, index) => (
-              <MenuItem key={v.id + index} value={v.id} selected={checkChainId === v.id}>
+            {TokenList.map((v, index) => (
+              <MenuItem key={v.address + index} value={v.address} selected={checkAddress === v.address}>
                 <Box
                   sx={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: 500, fontSize: '14px !important' }}
                 >
-                  <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={v.logo} />
+                  <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={v?.logo || ''} />
                   {v.symbol}
                 </Box>
               </MenuItem>
             ))}
-          </Select> */}
-          <Box
+          </Select>
+          {/* <Box
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -187,7 +188,7 @@ export default function SendTokenModal({
               Balance: {airdropCurrencyBalance?.toSignificant(6) || '--'}
               {airdropCurrencyBalance?.currency.symbol || '--'}
             </Typography>
-          </Box>
+          </Box> */}
           <InputStyle
             placeholderSize="14px"
             placeholder={'0.00'}

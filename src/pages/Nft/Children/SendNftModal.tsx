@@ -11,7 +11,7 @@ import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import { isAddress } from 'ethers/lib/utils'
 import { useTransferNFT } from 'hooks/useBackedNftCallback'
-import { useActiveWeb3React } from 'hooks'
+// import { useActiveWeb3React } from 'hooks'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
@@ -46,12 +46,11 @@ export default function SendNftModal({
   nftAddress: string | undefined
 }) {
   const { hideModal, showModal } = useModal()
-  const { account } = useActiveWeb3React()
   const theme = useTheme()
   const [transferAccount, setTransferAccount] = useState('')
   const [nft6551Hash, setNft6551Hash] = useState<string>('')
   const { transferNftCallback } = useTransferNFT()
-  const { result: _accountNFTsList } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  const { result: _accountNFTsList } = useAccountNFTsList(nftAddress || undefined, chainId, 'erc721')
 
   const checkNftDetail = useMemo(() => {
     if (nft6551Hash) {
