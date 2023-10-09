@@ -1,7 +1,7 @@
 import Modal from 'components/Modal/index'
 import { Box, Typography, styled } from '@mui/material'
-import Image from 'components/Image'
-import placeholderImage from 'assets/images/placeholder.png'
+// import Image from 'components/Image'
+// import placeholderImage from 'assets/images/placeholder.png'
 import { ReactComponent as CodeYellowIcon } from 'assets/svg/code_yellow.svg'
 import Copy from 'components/essential/Copy'
 import { useMemo } from 'react'
@@ -15,31 +15,31 @@ const BodyBoxStyle = styled(Box)(() => ({
   gap: 20
 }))
 
-const TokensStyle = styled(Box)(() => ({
-  padding: '10px 0',
-  display: 'grid',
-  flexDirection: 'column',
-  gap: 17
-}))
+// const TokensStyle = styled(Box)(() => ({
+//   padding: '10px 0',
+//   display: 'grid',
+//   flexDirection: 'column',
+//   gap: 17
+// }))
 
-const TokensItem = styled(Box)(() => ({
-  display: 'flex',
-  width: '100%',
-  justifyContent: 'space-between',
-  paddingRight: '6px',
-  alignItems: 'center',
-  cursor: 'pointer',
-  borderRadius: '8px',
-  ':hover': {
-    background: '#F8FBFF'
-  }
-}))
+// const TokensItem = styled(Box)(() => ({
+//   display: 'flex',
+//   width: '100%',
+//   justifyContent: 'space-between',
+//   paddingRight: '6px',
+//   alignItems: 'center',
+//   cursor: 'pointer',
+//   borderRadius: '8px',
+//   ':hover': {
+//     background: '#F8FBFF'
+//   }
+// }))
 
-const TextStyle = styled(Typography)(() => ({
-  fontSize: '16px',
-  color: '#80829F',
-  lineHeight: '20px'
-}))
+// const TextStyle = styled(Typography)(() => ({
+//   fontSize: '16px',
+//   color: '#80829F',
+//   lineHeight: '20px'
+// }))
 
 const QRcodeStyle = styled(Box)(() => ({
   width: '100%',
@@ -67,7 +67,7 @@ const QRcodeWhite = styled(Box)(() => ({
   marginTop: '15px'
 }))
 
-const AddressStyle = styled(Typography)(() => ({
+const AddressStyle = styled(Box)(() => ({
   maxWidth: '194px',
   height: 'auto',
   fontSize: '16px',
@@ -88,8 +88,6 @@ export default function RecieveAssetsModal({
   chainId: number | undefined
   nftAddress: string | undefined
 }) {
-  // const [isCheck, setIsCheck] = useState<boolean>(false)
-
   const network = useMemo(() => {
     if (chainId) {
       return Currency.get_ETH_TOKEN(chainId as ChainId)
@@ -114,7 +112,7 @@ export default function RecieveAssetsModal({
         >
           Recieve Assets
         </Typography>
-        <TokensStyle>
+        {/* <TokensStyle>
           <TokensItem>
             <Box display={'flex'} gap={'15px'}>
               <Image
@@ -128,7 +126,7 @@ export default function RecieveAssetsModal({
             </Box>
             <TextStyle>{airdropCurrencyBalance?.toSignificant(6) || 0}</TextStyle>
           </TokensItem>
-        </TokensStyle>
+        </TokensStyle> */}
         <QRcodeStyle
           sx={{
             // height: isCheck ? 220 : 55,

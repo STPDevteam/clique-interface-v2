@@ -10,13 +10,12 @@ import { isAddress } from 'ethers/lib/utils'
 // import { Currency } from 'constants/token'
 // import { ChainList } from 'constants/chain'
 // import { useActiveWeb3React } from 'hooks'
-import { useCurrencyBalance } from 'state/wallet/hooks'
 // import { ChainId } from 'constants/chain'
-import { useSendAssetsCallback } from 'hooks/useBackedNftCallback'
+import { useAssetsTokenCallback, useSendAssetsCallback } from 'hooks/useBackedNftCallback'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import { TokenListMap } from '../Tokens'
+// import { useActiveWeb3React } from 'hooks'
 // import BigNumber from 'bignumber.js'
 
 const BodyBoxStyle = styled(Box)(() => ({
@@ -42,16 +41,16 @@ export default function SendTokenModal({
   const [amount, setAmount] = useState<string>('')
   const [checkAddress, setCheckAddress] = useState<string>('')
   const { SendAssetsCallback } = useSendAssetsCallback(chainId)
-  const TokenList = TokenListMap(chainId)
+  const { result: TokenList } = useAssetsTokenCallback(chainId, nftAddress)
+
   const network = useMemo(() => {
     if (checkAddress) {
-      return TokenList.find(v => v.address === checkAddress)
+      return TokenList.find(v => v.id === checkAddress)
     }
     return
   }, [checkAddress, TokenList])
 
-  const airdropCurrencyBalance = useCurrencyBalance(nftAddress || undefined, network || undefined, chainId || undefined)
-  console.log('network=>', network)
+  console.log('List=>', TokenList, chainId)
   const Send = useCallback(async () => {
     if (!toAccount || !amount || !nftAddress || !network) return
 
@@ -89,7 +88,7 @@ export default function SendTokenModal({
         error: 'address error',
         disabled: true
       }
-    if (!amount) {
+    if (!amount || !Number(amount)) {
       return {
         error: ' enter',
         disabled: true
@@ -132,12 +131,11 @@ export default function SendTokenModal({
             value={checkAddress}
             onChange={e => {
               setCheckAddress(e.target.value)
+              setAmount('')
             }}
             style={{
               '&:after': {
-                content: `"Balance:${airdropCurrencyBalance?.toSignificant(6) || '--'} ${
-                  airdropCurrencyBalance?.currency.symbol || '--'
-                }"`,
+                content: `"Balance:${network?.amount || '--'} ${network?.symbol || '--'}"`,
                 position: 'absolute',
                 right: 40,
                 color: '#3F5170',
@@ -147,48 +145,22 @@ export default function SendTokenModal({
               }
             }}
           >
-            {TokenList.map((v, index) => (
-              <MenuItem key={v.address + index} value={v.address} selected={checkAddress === v.address}>
-                <Box
-                  sx={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: 500, fontSize: '14px !important' }}
-                >
-                  <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={v?.logo || ''} />
-                  {v.symbol}
-                </Box>
-              </MenuItem>
-            ))}
+            {TokenList.length ? (
+              TokenList.map((v, index) => (
+                <MenuItem key={v.id + index} value={v.id} selected={checkAddress === v.id}>
+                  <Box
+                    sx={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: 500, fontSize: '14px !important' }}
+                  >
+                    <Image style={{ height: 18, width: 18, borderRadius: '50%' }} src={v?.logo_url || ''} />
+                    {v.symbol}
+                  </Box>
+                </MenuItem>
+              ))
+            ) : (
+              <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>No Data</MenuItem>
+            )}
           </Select>
-          {/* <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '0 16px',
-              height: '40px',
-              borderRadius: ' 8px',
-              border: ' 1px solid var(--line, #D4D7E2)'
-            }}
-          >
-            <Typography
-              sx={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: 500, fontSize: '14px !important' }}
-            >
-              <Image
-                style={{ height: 18, width: 18, borderRadius: '50%' }}
-                src={ChainListMap[chainId || 1]?.logo || ''}
-              />
-              {network?.symbol}
-            </Typography>
 
-            <Typography
-              sx={{
-                color: 'var(--word-color, #3F5170)',
-                fontSize: '14px',
-                lineHeight: '40px'
-              }}
-            >
-              Balance: {airdropCurrencyBalance?.toSignificant(6) || '--'}
-              {airdropCurrencyBalance?.currency.symbol || '--'}
-            </Typography>
-          </Box> */}
           <InputStyle
             placeholderSize="14px"
             placeholder={'0.00'}
@@ -210,8 +182,8 @@ export default function SendTokenModal({
                 }}
                 variant="body1"
                 onClick={() => {
-                  if (airdropCurrencyBalance && chainId) {
-                    setAmount(airdropCurrencyBalance?.toSignificant(6))
+                  if (network && checkAddress) {
+                    setAmount(network?.amount.toString())
                   }
                 }}
               >
@@ -220,8 +192,13 @@ export default function SendTokenModal({
             }
             onChange={e => {
               const value = e.target.value
+              const balance = network?.amount
               if (!isNaN(Number(value)) || !value) {
-                setAmount(value)
+                if (balance && Number(value) >= Number(balance)) {
+                  setAmount(network?.amount.toString())
+                } else {
+                  setAmount(value)
+                }
               }
             }}
             value={amount}

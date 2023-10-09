@@ -6,6 +6,7 @@ import USDTIcon from 'assets/tokens/USDT.svg'
 import WETHIcon from 'assets/tokens/WETH.svg'
 import Image from 'components/Image'
 import MaticSvg from 'assets/svg/matic.svg'
+import BSCUrl from 'assets/svg/binance.svg'
 
 const TokenContentStyle = styled(Box)(() => ({
   color: 'var(--word-color, #3f5170)',
@@ -137,6 +138,16 @@ export const TestTokens: {
     logo: STPTIcon,
     name: 'Ruae',
     symbol: 'RXX',
+    urlCoingecko: undefined,
+    urlCoinmarketcap: undefined
+  },
+  {
+    address: '0x0000000000000000000000000000000000000000',
+    chainId: 56,
+    decimals: 18,
+    logo: BSCUrl,
+    symbol: 'BNB Chain',
+    name: 'BNB Chain',
     urlCoingecko: undefined,
     urlCoinmarketcap: undefined
   }

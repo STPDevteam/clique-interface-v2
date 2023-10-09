@@ -1,13 +1,11 @@
 import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme, Link } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
-// import { RowCenter } from 'pages/DaoInfo/Children/Proposal/ProposalItem'
 import Back from 'components/Back'
 import { useNavigate, useParams } from 'react-router-dom'
-
 import Copy from 'components/essential/Copy'
 import Loading from 'components/Loading'
 // import { routes } from 'constants/routes'
-import { ReactComponent as ETHIcon } from 'assets/tokens/ETH.svg'
+// import { ReactComponent as ETHIcon } from 'assets/tokens/ETH.svg'
 import { ReactComponent as SendIcon } from 'assets/svg/sendIcon.svg'
 import { ReactComponent as ReceiveIcon } from 'assets/svg/receiveIcon.svg'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
@@ -26,12 +24,13 @@ import SendTokenModal from './SendTokenModal'
 import useModal from 'hooks/useModal'
 import SendNftModal from './SendNftModal'
 import RecieveAssetsModal from './RecieveAssetsModal'
+import TransFerNftModal from './TransFerNftModal'
 import { useNft6551Detail } from 'hooks/useBackedNftCallback'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useIsDelayTime } from 'hooks/useBackedProfileServer'
 import { routes } from 'constants/routes'
 import { ChainId, ChainListMap } from 'constants/chain'
-// import { ReactComponent as WETHIcon } from 'assets/tokens/WETH.svg'
+
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
   minHeight: '780px',
   maxWidth: maxWidth ? maxWidth : 600,
@@ -213,7 +212,7 @@ export function Nft6551Detail() {
   const navigate = useNavigate()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
-  const { account } = useActiveWeb3React()
+  const { chainId: walletChainId, account } = useActiveWeb3React()
   const theme = useTheme()
   const { showModal, hideModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
@@ -227,11 +226,11 @@ export function Nft6551Detail() {
       hideModal()
       return
     }
-    // if (Number(walletChainId) !== Number(chainId)) {
-    //   navigate(routes.NftAssets)
-    //   return
-    // }
-  }, [account, userSignature, hideModal, isDelayTime, navigate])
+    if (Number(walletChainId) !== Number(chainId)) {
+      navigate(routes.NftAssets)
+      return
+    }
+  }, [account, userSignature, hideModal, isDelayTime, navigate, walletChainId, chainId])
 
   return (
     <>
@@ -257,7 +256,6 @@ export function Nft6551Detail() {
                 </Box>
                 <ButtonsStyle>
                   <AccountButton>
-                    <ETHIcon />
                     <Image
                       style={{ height: 18, width: 18, borderRadius: '50%' }}
                       src={ChainListMap[Number(chainId) || 1]?.logo || ''}
@@ -379,7 +377,14 @@ export function Nft6551Detail() {
                       View on Opensea
                     </OutlineButton>
                   </Link>
-                  <OutlineButton sx={{ padding: '11px', gap: 5 }}>
+                  <OutlineButton
+                    sx={{ padding: '11px', gap: 5 }}
+                    onClick={() =>
+                      showModal(
+                        <TransFerNftModal chainId={Number(chainId)} NftInfoData={NftInfoData} tokenId={tokenId} />
+                      )
+                    }
+                  >
                     <TransferIcon />
                     Transfer
                   </OutlineButton>
