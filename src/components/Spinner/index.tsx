@@ -42,7 +42,7 @@ export default function Spinner({
           animationDuration: '850ms',
           position: 'absolute',
           left: 0,
-          top: 0
+          top: 2
         }}
         thickness={thickness}
         size={size}

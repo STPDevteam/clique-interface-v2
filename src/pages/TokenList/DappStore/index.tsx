@@ -26,6 +26,7 @@ import CreateNftModal from 'pages/Nft/CreateNftModal'
 import useModal from 'hooks/useModal'
 import { useState } from 'react'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { NftProp } from 'pages/Nft/NftSelect'
 
 export enum ToolsCardsTitle {
   DAORewards = 'Clique Rewards',
@@ -107,17 +108,17 @@ const cardsData = [
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
     des: 'One-click on-chain transaction using account abstraction.',
-    // supportChainsIcon: [chainLogo0],
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
-    // route: routes.NftGenerator
+    supportChainsIcon: [chainLogo0],
+    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
+    route: routes.NftGenerator
   },
   {
     title: ToolsCardsTitle.AssetPortal,
     icon: assetPortalIcon,
     des: 'Buy, sell and hold any onchain asset through custom marketplace.',
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)'
+    supportChainsIcon: [chainLogo0],
+    bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)',
+    route: routes.NftAssets
   }
 ]
 
@@ -130,6 +131,9 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const { showModal } = useModal()
   const [isClick, setIsClick] = useState<boolean>(false)
   const isSmDown = useBreakpoint('sm')
+  const [nftData, setNftData] = useState<NftProp>()
+
+  console.log(nftData)
 
   return (
     <Box
@@ -174,7 +178,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           if (!userSignature) return loginSignature()
         }
         if (title === ToolsCardsTitle.AccountGenerator) {
-          showModal(<CreateNftModal />)
+          showModal(<CreateNftModal setNftData={setNftData} />)
         } else {
           route ? navigate(route) : window.open(link, '_blank')
         }
