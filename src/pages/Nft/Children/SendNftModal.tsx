@@ -1,9 +1,9 @@
 import Modal from 'components/Modal/index'
 import { Box, MenuItem, Typography, styled, useTheme } from '@mui/material'
 import Input from 'components/Input/index'
-import Button from 'components/Button/Button'
+import { LoadingButton } from '@mui/lab'
 import useModal from 'hooks/useModal'
-import { useCallback, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import Select from 'components/Select/Select'
 import Image from 'components/Image'
 import placeholderImage from 'assets/images/placeholder.png'
@@ -11,10 +11,12 @@ import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import { isAddress } from 'ethers/lib/utils'
 import { useTransferNFT6551 } from 'hooks/useBackedNftCallback'
-// import { useActiveWeb3React } from 'hooks'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
+import FormItem from 'components/FormItem'
+import { Form, Formik } from 'formik'
+import * as yup from 'yup'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px'
@@ -23,20 +25,11 @@ const BodyBoxStyle = styled(Box)(() => ({
 const InputStyle = styled(Input)(() => ({
   height: 40
 }))
-const RedText = styled(Typography)({
-  color: '#E46767'
-})
 
 const SelectItem = styled(MenuItem)(() => ({
   fontWeight: 500,
   fontSize: '14px !important'
 }))
-
-// const ErrorText = styled(Typography)(() => ({
-//   color: '#E46767',
-//   font: '400 12px/20px "Inter"',
-//   marginTop: '3px'
-// }))
 
 export default function SendNftModal({
   chainId,
@@ -47,19 +40,8 @@ export default function SendNftModal({
 }) {
   const { hideModal, showModal } = useModal()
   const theme = useTheme()
-  const [transferAccount, setTransferAccount] = useState('')
-  const [nft6551Hash, setNft6551Hash] = useState<string>('')
   const { transferNftCallback } = useTransferNFT6551()
   const { result: _accountNFTsList } = useAccountNFTsList(nftAddress || undefined, chainId, 'erc721')
-
-  const checkNftDetail = useMemo(() => {
-    if (nft6551Hash) {
-      return _accountNFTsList.find(item => item.mint_transaction_hash === nft6551Hash)
-    }
-    return
-  }, [nft6551Hash, _accountNFTsList])
-
-  console.log('checkNftDetail=>', checkNftDetail)
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
@@ -72,9 +54,30 @@ export default function SendNftModal({
 
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
-  console.log(accountNFTsList)
 
-  const SendCallback = useCallback(async () => {
+  const initialValues = {
+    transferAccount: '',
+    nft6551Hash: ''
+  }
+
+  const validationSchema = yup.object().shape({
+    transferAccount: yup
+      .string()
+      .trim()
+      .required('Please enter receive account address')
+      .test('validate', 'Address format error', value => {
+        if (value && !isAddress(value)) {
+          return false
+        }
+        return true
+      }),
+    nft6551Hash: yup.string().required('Please select nft')
+  })
+
+  const SendCallback = async (val: any) => {
+    const checkNftDetail = _accountNFTsList.find(item => item.mint_transaction_hash === val.nft6551Hash)
+    console.log('checkNftDetail=>', checkNftDetail)
+
     if (!nftAddress || !checkNftDetail) return
     try {
       hideModal()
@@ -83,7 +86,7 @@ export default function SendNftModal({
         nftAddress,
         checkNftDetail?.contract_address,
         checkNftDetail?.token_id,
-        transferAccount
+        val.transferAccount
       )
       hideModal()
       showModal(
@@ -101,159 +104,171 @@ export default function SendNftModal({
         </MessageBox>
       )
     }
-  }, [nftAddress, checkNftDetail, hideModal, showModal, transferNftCallback, transferAccount])
-
-  const nextHandler = useMemo(() => {
-    if (!isAddress(transferAccount))
-      return {
-        error: 'address format error',
-        disabled: true
-      }
-
-    if (!nft6551Hash)
-      return {
-        error: 'Nft required',
-        disabled: true
-      }
-
-    return {
-      disabled: false
-    }
-  }, [transferAccount, nft6551Hash])
-
-  console.log(nextHandler)
+  }
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
-      <BodyBoxStyle>
-        <Typography
-          sx={{
-            fontWeight: 500,
-            fontSize: 14,
-            lineHeight: '24px',
-            color: '#3F5170'
-          }}
-        >
-          Send Assets
-        </Typography>
-        <Box sx={{ mt: 27, display: 'grid', flexDirection: 'column', gap: 20 }}>
-          <Box>
-            <InputStyle
-              placeholderSize="14px"
-              placeholder={'Ethereum address(0x) or ENS'}
-              label="To Account"
-              onChange={e => {
-                setTransferAccount(e.target.value)
-              }}
-              value={transferAccount}
-            />
-            {/* <ErrorText>{nextHandler.error}</ErrorText> */}
-          </Box>
-          <Box>
-            <Select
-              label="Assets"
-              placeholder={'Select DAO'}
-              noBold
-              value={nft6551Hash}
-              onChange={e => {
-                setNft6551Hash(e.target.value)
-              }}
-              style={{
-                height: '121px',
-                '&:before': {
-                  content: "''",
-                  position: 'absolute',
-                  left: 24,
-                  // top: 10,
-                  zIndex: 999,
-                  height: '80px',
-                  width: '80px',
-                  borderRadius: '8px',
-                  background: '#F8FBFF',
-                  border: '1px solid var(--button-line, #97B7EF)',
-                  display: nft6551Hash ? 'none' : 'block'
-                },
-                '&:after': {
-                  content: `"Select DAO"`,
-                  position: 'absolute',
-                  left: 130,
-                  // top: 10,
-                  zIndex: 999,
-                  color: theme.palette.text.secondary,
-                  fontSize: 16,
-                  fontWeight: '400!important',
-                  display: nft6551Hash ? 'none' : 'block'
-                },
-                '& .hover': {
-                  color: '#fff !important'
-                },
-                img: {
-                  height: '80px !important',
-                  width: '80px !important'
-                }
-              }}
-              MenuStyle={{
-                '& li': {
-                  color: ' #80829F',
-                  padding: '7px 23px !important'
-                },
-                '& li:hover': {
-                  fontWeight: '600 !important',
-                  color: ' #0049C6'
-                }
-              }}
-            >
-              {accountNFTsList?.length ? (
-                accountNFTsList?.map((item, index) => (
-                  <SelectItem
-                    key={item.name + index}
-                    value={item.mint_transaction_hash}
-                    selected={nft6551Hash === item?.mint_transaction_hash}
+      <Formik
+        enableReinitialize
+        validationSchema={validationSchema}
+        initialValues={initialValues}
+        onSubmit={SendCallback}
+      >
+        {({ values, setFieldValue, errors, touched }) => {
+          return (
+            <BodyBoxStyle component={Form}>
+              <Typography
+                sx={{
+                  fontWeight: 500,
+                  fontSize: 14,
+                  lineHeight: '24px',
+                  color: '#3F5170'
+                }}
+              >
+                Send Assets
+              </Typography>
+              <Box sx={{ mt: 27, display: 'grid', flexDirection: 'column', gap: 20 }}>
+                <FormItem name="transferAccount" required>
+                  <InputStyle
+                    placeholderSize="14px"
+                    placeholder={'Ethereum address(0x) or ENS'}
+                    label="To Account"
+                    onChange={e => {
+                      setFieldValue('transferAccount', e.target.value)
+                    }}
+                    style={{ borderColor: errors.transferAccount && touched.transferAccount ? '#E46767' : '#D4D7E2' }}
+                    value={values.transferAccount}
+                  />
+                </FormItem>
+                <FormItem name="nft6551Hash" fieldType="custom">
+                  <Select
+                    label="Assets"
+                    placeholder={'Select DAO'}
+                    noBold
+                    value={values.nft6551Hash}
+                    onChange={e => {
+                      setFieldValue('nft6551Hash', e.target.value)
+                    }}
+                    style={{
+                      height: '121px',
+                      borderColor: errors.nft6551Hash && touched.nft6551Hash ? '#E46767' : '#D4D7E2',
+                      '&:before': {
+                        content: "''",
+                        position: 'absolute',
+                        left: 24,
+                        // top: 10,
+                        zIndex: 999,
+                        height: '80px',
+                        width: '80px',
+                        borderRadius: '8px',
+                        background: '#F8FBFF',
+                        border: '1px solid var(--button-line, #97B7EF)',
+                        display: values.nft6551Hash ? 'none' : 'block'
+                      },
+                      '&:after': {
+                        content: `"Select DAO"`,
+                        position: 'absolute',
+                        left: 130,
+                        // top: 10,
+                        zIndex: 999,
+                        color: theme.palette.text.secondary,
+                        fontSize: 16,
+                        fontWeight: '400!important',
+                        display: values.nft6551Hash ? 'none' : 'block'
+                      },
+                      '& .hover': {
+                        color: '#fff !important'
+                      },
+                      img: {
+                        height: '80px !important',
+                        width: '80px !important'
+                      }
+                    }}
+                    MenuStyle={{
+                      '& li': {
+                        color: ' #80829F',
+                        padding: '7px 23px !important'
+                      },
+                      '& li:hover': {
+                        fontWeight: '600 !important',
+                        color: ' #0049C6'
+                      }
+                    }}
                   >
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: 20,
-                        width: '100%',
-                        fontSize: '14px',
-                        lineHeight: '20px',
-                        alignItems: 'center'
-                      }}
-                    >
-                      <Image
-                        style={{ height: 50, width: 50, background: '#F8FBFF', borderRadius: '7px' }}
-                        src={item.image_uri || placeholderImage}
-                      />
-                      <Typography width={'100%'} maxWidth={'250px'} noWrap>
-                        {item?.name || item?.contract_name || '-'}#{item?.token_id}
-                      </Typography>
-                    </Box>
-                  </SelectItem>
-                ))
-              ) : (
-                <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>No Data</MenuItem>
-              )}
-            </Select>
-            {/* <ErrorText>{nextHandler.error}</ErrorText> */}
-          </Box>
-        </Box>
-        {false && <RedText>{123}</RedText>}
-        <Box sx={{ mt: 30, mb: 30 }}>
-          <Button
-            style={{
-              height: '40px',
-              ':disabled': {
-                color: '#fff',
-                background: '#DAE4F0'
-              }
-            }}
-            disabled={nextHandler?.disabled}
-            onClick={() => SendCallback()}
-          >
-            Send
-          </Button>
-        </Box>
-      </BodyBoxStyle>
+                    {accountNFTsList?.length ? (
+                      accountNFTsList?.map((item, index) => (
+                        <SelectItem
+                          key={item.name + index}
+                          value={item.mint_transaction_hash}
+                          selected={values.nft6551Hash === item?.mint_transaction_hash}
+                        >
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              gap: 20,
+                              width: '100%',
+                              fontSize: '14px',
+                              lineHeight: '20px',
+                              alignItems: 'center'
+                            }}
+                          >
+                            <Image
+                              style={{ height: 50, width: 50, background: '#F8FBFF', borderRadius: '7px' }}
+                              src={item.image_uri || placeholderImage}
+                            />
+                            <Typography width={'100%'} maxWidth={'250px'} noWrap>
+                              {item?.name || item?.contract_name || '-'}#{item?.token_id}
+                            </Typography>
+                          </Box>
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <MenuItem sx={{ fontWeight: 500, fontSize: '14px !important', color: '#808191' }}>
+                        No Data
+                      </MenuItem>
+                    )}
+                  </Select>
+                </FormItem>
+              </Box>
+              <Box sx={{ mt: 30, mb: 30 }}>
+                <LoadingButton
+                  // loading={isSaving}
+                  loadingPosition="start"
+                  startIcon={<></>}
+                  variant="contained"
+                  color="primary"
+                  sx={{
+                    width: '100%',
+                    height: 40,
+                    textAlign: 'center',
+                    [theme.breakpoints.down('sm')]: {
+                      width: 160,
+                      height: 36
+                    }
+                  }}
+                  type="submit"
+                >
+                  Send
+                </LoadingButton>
+                {/* <Button
+                  style={{
+                    height: '40px',
+                    ':disabled': {
+                      color: '#fff',
+                      background: '#DAE4F0'
+                    }
+                  }}
+                  disabled={nextHandler?.disabled}
+                  onClick={() => SendCallback()}
+                  
+                >
+                  Send
+                </Button> */}
+              </Box>
+            </BodyBoxStyle>
+          )
+        }}
+      </Formik>
     </Modal>
   )
 }

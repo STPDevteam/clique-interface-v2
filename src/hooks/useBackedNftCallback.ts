@@ -21,6 +21,7 @@ import { useGasPriceInfo } from './useGasPrice'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import ReactGA from 'react-ga4'
+import { useSingleCallResult } from 'state/multicall/hooks'
 
 // import { useTransactionAdder } from 'state/transactions/hooks'
 
@@ -368,7 +369,6 @@ export function useTransferNFT(address: string | undefined, queryChainId: number
   const gasPriceInfoCallback = useGasPriceInfo()
   const addTransaction = useTransactionAdder()
 
-  // from to tokenId
   const TransFerCallback = useCallback(
     async (fromAddress: string, toAddress: string, tokenId: string) => {
       if (!contract) throw new Error('none contract')
@@ -416,4 +416,17 @@ export function useTransferNFT(address: string | undefined, queryChainId: number
   return {
     TransFerCallback
   }
+}
+
+export function useIsOwnerCallback(
+  contractAddress: string | undefined,
+  chainId: number | undefined,
+  tokenId: string | undefined
+) {
+  const contract = useERC721Contract(contractAddress, chainId)
+
+  const isOwnerRes = useSingleCallResult(contract, 'ownerOf', [tokenId], undefined, chainId)
+  const OwnerAccount = useMemo(() => (isOwnerRes.result?.[0] ? isOwnerRes.result?.[0] : undefined), [isOwnerRes.result])
+
+  return { OwnerAccount }
 }

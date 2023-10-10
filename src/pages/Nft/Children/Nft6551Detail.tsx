@@ -1,7 +1,7 @@
 import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme, Link } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Back from 'components/Back'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import Copy from 'components/essential/Copy'
 import Loading from 'components/Loading'
 // import { routes } from 'constants/routes'
@@ -14,7 +14,7 @@ import { ReactComponent as TransferIcon } from 'assets/svg/transferIcon.svg'
 import { useActiveWeb3React } from 'hooks'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import Button, { BlackButton } from 'components/Button/Button'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Assets } from './Tabs/Assets'
 import { Nfts } from './Tabs/Nfts'
 import { History } from './Tabs/History'
@@ -25,10 +25,10 @@ import useModal from 'hooks/useModal'
 import SendNftModal from './SendNftModal'
 import RecieveAssetsModal from './RecieveAssetsModal'
 import TransFerNftModal from './TransFerNftModal'
-import { useNft6551Detail } from 'hooks/useBackedNftCallback'
-import { useUserInfo } from 'state/userInfo/hooks'
-import { useIsDelayTime } from 'hooks/useBackedProfileServer'
-import { routes } from 'constants/routes'
+import { useIsOwnerCallback, useNft6551Detail } from 'hooks/useBackedNftCallback'
+// import { useUserInfo } from 'state/userInfo/hooks'
+// import { useIsDelayTime } from 'hooks/useBackedProfileServer'
+// import { routes } from 'constants/routes'
 import { ChainId, ChainListMap } from 'constants/chain'
 
 const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
@@ -209,28 +209,35 @@ enum TAB {
 const TabsList = [TAB.Assets, TAB.NFTs, TAB.History]
 
 export function Nft6551Detail() {
-  const navigate = useNavigate()
-  const userSignature = useUserInfo()
-  const { isDelayTime } = useIsDelayTime()
-  const { chainId: walletChainId, account } = useActiveWeb3React()
+  // const navigate = useNavigate()
+  // const userSignature = useUserInfo()
+  // const { isDelayTime } = useIsDelayTime()
+  const { account } = useActiveWeb3React()
   const theme = useTheme()
-  const { showModal, hideModal } = useModal()
+  const { showModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
   const [tabValue, setTabValue] = useState<number>(0)
   const { result: NftInfoData, loading, tokenId } = useNft6551Detail(nftAddress, chainId)
+  const { OwnerAccount } = useIsOwnerCallback(NftInfoData?.contract_address, Number(chainId), tokenId)
   console.log('NftInfoData=>', NftInfoData)
-  useEffect(() => {
-    if (isDelayTime) return
-    if (!account || !userSignature) {
-      navigate(routes.NftGenerator)
-      hideModal()
-      return
-    }
-    if (Number(walletChainId) !== Number(chainId)) {
-      navigate(routes.NftAssets)
-      return
-    }
-  }, [account, userSignature, hideModal, isDelayTime, navigate, walletChainId, chainId])
+  const isOwner = useMemo(() => {
+    if (!account || !OwnerAccount) return false
+    return account === OwnerAccount
+  }, [OwnerAccount, account])
+  console.log('isOwner=>', isOwner)
+
+  // useEffect(() => {
+  //   if (isDelayTime) return
+  //   if (!account || !userSignature) {
+  //     navigate(routes.NftGenerator)
+  //     hideModal()
+  //     return
+  //   }
+  //   if (Number(walletChainId) !== Number(chainId)) {
+  //     navigate(routes.NftAssets)
+  //     return
+  //   }
+  // }, [account, userSignature, hideModal, isDelayTime, navigate, walletChainId, chainId])
 
   return (
     <>
@@ -270,8 +277,13 @@ export function Nft6551Detail() {
                     <ReceiveIcon />
                     Receive
                   </OutlineButton>
-                  <SendButton chainId={Number(chainId)} nftAddress={nftAddress} />
-                  <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
+
+                  {isOwner && (
+                    <>
+                      <SendButton chainId={Number(chainId)} nftAddress={nftAddress} />
+                      <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
+                    </>
+                  )}
                 </ButtonsStyle>
 
                 <WarningStyle>
@@ -377,17 +389,19 @@ export function Nft6551Detail() {
                       View on Opensea
                     </OutlineButton>
                   </Link>
-                  <OutlineButton
-                    sx={{ padding: '11px', gap: 5 }}
-                    onClick={() =>
-                      showModal(
-                        <TransFerNftModal chainId={Number(chainId)} NftInfoData={NftInfoData} tokenId={tokenId} />
-                      )
-                    }
-                  >
-                    <TransferIcon />
-                    Transfer
-                  </OutlineButton>
+                  {isOwner && (
+                    <OutlineButton
+                      sx={{ padding: '11px', gap: 5 }}
+                      onClick={() =>
+                        showModal(
+                          <TransFerNftModal chainId={Number(chainId)} NftInfoData={NftInfoData} tokenId={tokenId} />
+                        )
+                      }
+                    >
+                      <TransferIcon />
+                      Transfer
+                    </OutlineButton>
+                  )}
                 </ButtonsStyle>
               </RightDetailStyle>
             </ContentBoxStyle>
