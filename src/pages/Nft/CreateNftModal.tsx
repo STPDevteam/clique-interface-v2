@@ -3,7 +3,7 @@ import { Box, Stack, Typography, styled, Link, useTheme } from '@mui/material'
 import Input from 'components/Input'
 // import Image from 'components/Image'
 // import { ChainList } from 'constants/chain'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import Button from 'components/Button/Button'
 import { ReactComponent as ShareIconComponent } from 'assets/svg/share.svg'
@@ -24,6 +24,7 @@ import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
 import { useProfilePaginationCallback } from 'state/pagination/hooks'
+import { NftProp } from './NftSelect'
 
 const BodyBoxStyle = styled(Box)(({ theme }) => ({
   padding: '30px 28px ',
@@ -71,7 +72,13 @@ const ErrorText = styled(Typography)(() => ({
   marginTop: '3px'
 }))
 
-export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
+export default function CreateNftModal({
+  nft,
+  setNftData
+}: {
+  nft?: ScanNFTInfo
+  setNftData: Dispatch<SetStateAction<NftProp | undefined>>
+}) {
   const { setNftTabIndex } = useProfilePaginationCallback()
   const { chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
@@ -126,7 +133,11 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
 
   const createAccount = useCallback(async () => {
     showModal(<TransacitonPendingModal />)
-
+    setNftData({
+      nftAccount: getAccount,
+      contractAddress: contractAddress,
+      nftTokenId: tokenId_f
+    })
     try {
       await createAccountCallback()
       hideModal()
@@ -158,44 +169,17 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
         </MessageBox>
       )
     }
-  }, [createAccountCallback, hideModal, navigate, setNftTabIndex, showModal])
-
-  // const createBtn: {
-  //   disabled: boolean
-  //   handler?: () => void
-  //   error?: undefined | string | JSX.Element
-  // } = useMemo(() => {
-  //   if (!contractAddress) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Please enter your address</ErrorText>
-  //     }
-  //   }
-
-  //   if (!isAddress(contractAddress)) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Address format error</ErrorText>
-  //     }
-  //   }
-
-  //   if (!tokenId) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Token ID required</ErrorText>
-  //     }
-  //   }
-  //   if (isDeploy) {
-  //     return {
-  //       disabled: true,
-  //       error: <ErrorText>Address is already deployed</ErrorText>
-  //     }
-  //   }
-  //   return {
-  //     disabled: false,
-  //     handler: createAccount
-  //   }
-  // }, [contractAddress, isDeploy, tokenId, createAccount])
+  }, [
+    contractAddress,
+    createAccountCallback,
+    getAccount,
+    hideModal,
+    navigate,
+    setNftData,
+    setNftTabIndex,
+    showModal,
+    tokenId_f
+  ])
 
   return (
     <Modal maxWidth="480px" width="100%" closeIcon>
@@ -297,8 +281,7 @@ export default function CreateNftModal({ nft }: { nft?: ScanNFTInfo }) {
                     isDeploy ||
                     !tokenId ||
                     !contractAddress ||
-                    !isAddress(contractAddress) ||
-                    !IsEthChain
+                    !isAddress(contractAddress)
                   }
                   onClick={() => {
                     createAccount()

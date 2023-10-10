@@ -155,7 +155,8 @@ export function useCurrencyBalance(
 ): CurrencyAmount | undefined {
   const isEth = useMemo(() => {
     if (currency === ETHER) return true
-    if (currency instanceof Token && currency.address !== ZERO_ADDRESS) {
+    // if (currency instanceof Token && currency.address !== ZERO_ADDRESS) {
+    if (currency?.address !== ZERO_ADDRESS) {
       return false
     }
     return true

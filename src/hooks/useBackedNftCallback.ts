@@ -1,13 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 // import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import {
   getRecentNftList,
   getNftAccountList,
   getMyCreateNftAccountList,
-  getNftAccountInfo
+  getNftAccountInfo,
+  commitErrorMsg
 } from '../utils/fetch/server'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo } from './useBackedProfileServer'
+import { TokenboundClient } from '@tokenbound/sdk'
+// import { Currency } from 'constants/token/currency'
+import isZero from 'utils/isZero'
+import { Axios } from 'utils/axios'
+import { serverTokenAssets } from '../constants'
+import { ChainId, SUPPORTED_NETWORKS } from 'constants/chain'
+import { isAddress } from 'utils'
+import { useERC721Contract } from 'hooks/useContract'
+import { useGasPriceInfo } from './useGasPrice'
+import { TransactionResponse } from '@ethersproject/providers'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import ReactGA from 'react-ga4'
+import { useSingleCallResult } from 'state/multicall/hooks'
+
+// import { useTransactionAdder } from 'state/transactions/hooks'
 
 export interface RecentNftListProp {
   account: string
@@ -45,6 +61,18 @@ export interface NftInfoProp {
   price_symbol: string
   name: string
   owner: string
+  opensea_floor_price: number
+  large_image_url: string
+}
+export interface AssetsTokenProp {
+  amount: number
+  chain: string
+  decimals: number
+  id: string
+  logo_url: string
+  name: string
+  symbol: string
+  price: number
 }
 
 export function useRecentNftList() {
@@ -136,7 +164,7 @@ export function useNftAccountList() {
   }
 }
 
-export function useNftAccountInfo(contract_address: string, chainId: number | undefined) {
+export function useNftAccountInfo(contract_address: string | undefined, chainId: number | undefined) {
   const [result, setResult] = useState<NftInfoProp>()
   useEffect(() => {
     ;(async () => {
@@ -157,4 +185,248 @@ export function useNftAccountInfo(contract_address: string, chainId: number | un
   return {
     result
   }
+}
+
+export function useNft6551Detail(nftAccount: string | undefined, chainId: string | undefined) {
+  const [loading, setLoading] = useState<boolean>()
+  const { library } = useActiveWeb3React()
+  const [tokenId, setTokenId] = useState<string>()
+  const [result, setResult] = useState<NftInfoProp>()
+  const tokenboundClient = useMemo(
+    () =>
+      library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId: Number(chainId) }) : undefined,
+    [chainId, library]
+  )
+
+  useEffect(() => {
+    ;(async () => {
+      if (!chainId || !nftAccount) return
+
+      setLoading(true)
+      const Nft = await tokenboundClient?.getNFT({
+        accountAddress: nftAccount as `0x${string}`
+      })
+      setTokenId(Nft?.tokenId)
+      try {
+        const res = await getNftAccountInfo(Nft?.tokenContract as string, Number(chainId))
+        if (res.data.code === 200) {
+          setResult(res.data.data)
+          setLoading(false)
+        } else {
+          setResult(undefined)
+          setLoading(false)
+        }
+      } catch (error) {
+        setResult(undefined)
+        console.log(error)
+      }
+    })()
+  }, [chainId, nftAccount, tokenboundClient])
+  return {
+    result,
+    tokenId,
+    loading
+  }
+}
+
+export function useTransferNFT6551() {
+  const [loading, setLoading] = useState<boolean>()
+  const { chainId, library } = useActiveWeb3React()
+  // const addTransaction = useTransactionAdder()
+
+  // const navigate = useNavigate()
+
+  const tokenboundClient = useMemo(
+    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
+    [chainId, library]
+  )
+  const transferNftCallback = useCallback(
+    async (account: string, tokenContract: string, tokenId: string, recipientAddress: string) => {
+      if (!library) return
+      setLoading(true)
+      const params = {
+        account: account as `0x${string}`,
+        tokenType: 'ERC721',
+        tokenContract: tokenContract as `0x${string}`,
+        tokenId,
+        recipientAddress: recipientAddress as `0x${string}`
+      }
+      console.log('params=>', params)
+
+      try {
+        const res = await tokenboundClient?.transferNFT({
+          account: account as `0x${string}`,
+          tokenType: 'ERC721',
+          tokenContract: tokenContract as `0x${string}`,
+          tokenId,
+          recipientAddress: recipientAddress as `0x${string}`
+        })
+
+        // addTransaction(res, {
+        //   summary: 'NFT Account Transfer',
+        //   claim: { recipient: `${res}_transfer_Nft_Account` }
+        // })
+
+        return res
+      } catch (error) {
+        throw error
+      }
+    },
+    [library, tokenboundClient]
+  )
+
+  return {
+    transferNftCallback,
+    loading
+  }
+}
+
+export function useSendAssetsCallback(chainId: number | undefined) {
+  // const [loading, setLoading] = useState<boolean>()
+  const { library } = useActiveWeb3React()
+
+  // const addTransaction = useTransactionAdder()
+  // const navigate = useNavigate()
+
+  const tokenboundClient = useMemo(
+    () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
+    [chainId, library]
+  )
+
+  const SendAssetsCallback = useCallback(
+    async (account: string, receiveAccount: string, amount: number, network: AssetsTokenProp) => {
+      const params = {
+        account,
+        amount,
+        recipientAddress: receiveAccount,
+        erc20tokenAddress: network.id,
+        erc20tokenDecimals: network.decimals
+      }
+      console.log('params=>', params)
+      if (isZero(network.id) || !isAddress(network.id)) {
+        const res = await tokenboundClient?.transferETH({
+          account: account as `0x${string}`,
+          amount,
+          recipientAddress: receiveAccount as `0x${string}`
+        })
+        return res
+      } else {
+        const res = await tokenboundClient?.transferERC20({
+          account: account as `0x${string}`,
+          amount,
+          recipientAddress: receiveAccount as `0x${string}`,
+          erc20tokenAddress: network.id as `0x${string}`,
+          erc20tokenDecimals: network.decimals
+        })
+        return res
+      }
+    },
+    [tokenboundClient]
+  )
+
+  return {
+    SendAssetsCallback
+  }
+}
+
+export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: string | undefined) {
+  const [result, setResult] = useState<AssetsTokenProp[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
+  const chain = useMemo(() => {
+    if (!chainId) return
+    console.log('ChainId=>', SUPPORTED_NETWORKS[chainId as ChainId]?.nativeCurrency.symbol)
+
+    return SUPPORTED_NETWORKS[chainId as ChainId]?.nativeCurrency.symbol.toLocaleLowerCase()
+  }, [chainId])
+  useEffect(() => {
+    ;(async () => {
+      if (!chain || !nftAccount) return
+      setLoading(true)
+      try {
+        const res = await Axios.get(serverTokenAssets, { chain, account: nftAccount })
+        if (!res.data.data) {
+          throw res
+        }
+        const data = res.data.data
+        setResult(data)
+        setLoading(false)
+        console.log('data=>', data)
+      } catch (error) {
+        setLoading(false)
+        console.log(error)
+      }
+    })()
+  }, [nftAccount, chain])
+
+  return {
+    result,
+    loading
+  }
+}
+
+export function useTransferNFT(address: string | undefined, queryChainId: number) {
+  const contract = useERC721Contract(address, queryChainId as ChainId)
+  const gasPriceInfoCallback = useGasPriceInfo()
+  const addTransaction = useTransactionAdder()
+
+  const TransFerCallback = useCallback(
+    async (fromAddress: string, toAddress: string, tokenId: string) => {
+      if (!contract) throw new Error('none contract')
+      console.log('contract=>', address, fromAddress, toAddress, tokenId)
+      const args = [fromAddress, toAddress, tokenId]
+      const method = 'transferFrom'
+      const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
+      return contract[method](...args, {
+        gasPrice,
+        gasLimit,
+        from: fromAddress
+      })
+        .then((response: TransactionResponse) => {
+          console.log('response=>', response)
+          addTransaction(response, {
+            summary: `NFT transfer`,
+            claim: { recipient: `${fromAddress}_transfer_nft` }
+          })
+          return {
+            hash: response.hash
+          }
+        })
+        .catch((err: any) => {
+          if (err.code !== 4001 && err.code !== 'ACTION_REJECTED') {
+            commitErrorMsg(
+              'useTransferNFTCallback',
+              JSON.stringify(
+                err?.reason || err?.data?.message || err?.error?.message || err?.message || 'unknown error'
+              ),
+              method,
+              JSON.stringify(args)
+            )
+            ReactGA.event({
+              category: `catch-${method}`,
+              action: `${err?.error.message || ''} ${err?.message || ''} ${err?.data?.message || ''}`,
+              label: JSON.stringify(args)
+            })
+          }
+          throw err
+        })
+    },
+    [addTransaction, address, contract, gasPriceInfoCallback]
+  )
+
+  return {
+    TransFerCallback
+  }
+}
+
+export function useIsOwnerCallback(
+  contractAddress: string | undefined,
+  chainId: number | undefined,
+  tokenId: string | undefined
+) {
+  const contract = useERC721Contract(contractAddress, chainId)
+
+  const isOwnerRes = useSingleCallResult(contract, 'ownerOf', [tokenId], undefined, chainId)
+  const OwnerAccount = useMemo(() => (isOwnerRes.result?.[0] ? isOwnerRes.result?.[0] : undefined), [isOwnerRes.result])
+
+  return { OwnerAccount }
 }

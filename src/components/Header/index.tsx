@@ -26,10 +26,10 @@ import MobileMenu from './MobileMenu'
 import NetworkSelect from './NetworkSelect'
 import MySpace from './MySpace'
 import PopperMenu from './PopperMenu'
-import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
+// import { ReactComponent as DaosIcon } from 'assets/svg/daosIcon.svg'
 // import { ReactComponent as HomeSvg } from 'assets/svg/homeIcon.svg'
-import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
-import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
+// import { ReactComponent as RewardsIcon } from 'assets/svg/rewardsIcon.svg'
+// import { ReactComponent as TokenIcon } from 'assets/svg/tokenIcon.svg'
 // import { ReactComponent as SdkIcon } from 'assets/svg/sdkIcon.svg'
 import { ReactComponent as TimeIcon } from 'assets/svg/time_icon.svg'
 import NewTag from 'assets/svg/new_tag.svg'
@@ -57,168 +57,169 @@ interface Tab extends TabContent {
   subTab?: TabContent[]
 }
 
-// const NavText = styled(Typography)(({theme})=>({
-//   color:"#3F5170"
-//   ,[theme.breakpoints.down('sm')]:{
-//     color:"#fff"
-//   }
-// }))
+const NewTagText = styled(Typography)(() => ({
+  fontSize: '12px',
+  fontWeight: 700,
+  lineHeight: '20px',
+  fontStyle: 'italic',
+  background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
+  backgroundClip: 'text',
+  '-webkit-background-clip': 'text',
+  '-webkit-text-fill-color': 'transparent'
+}))
 
 export const Tabs: Tab[] = [
-  // {
-  //   title: 'AW Solutions',
-  //   route: '',
-  //   subTab: [
-  //     {
-  //       title: 'Account Generator',
-  //       route: routes.NftGenerator,
-  //       titleContent: (
-  //         <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
-  //           <Typography color={'#3F5170'}>Account Generator</Typography>
-  //           <Typography
-  //             sx={{
-  //               fontSize: '12px',
-  //               fontWeight: 700,
-  //               lineHeight: '20px',
-  //               fontStyle: 'italic',
-  //               background: 'linear-gradient(132deg, #01C092 0%, #15C030 57.81%, #015BC6 100%)',
-  //               backgroundClip: 'text',
-  //               '-webkit-background-clip': 'text',
-  //               '-webkit-text-fill-color': 'transparent'
-  //             }}
-  //           >
-  //             NEW!
-  //           </Typography>
-  //         </Box>
-  //       )
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   title: 'Workspace',
-  //   route: '',
-  //   subTab: [
-  //     {
-  //       title: 'Explore DAOs',
-  //       route: routes.Governance,
-  //       titleContent: (
-  //         <Box display={'flex'} flexDirection={'row'}>
-  //           <Typography color={'#3F5170'}>Explore DAOs</Typography>
-  //         </Box>
-  //       )
-  //     }
-  //   ]
-  // },
-  // {
-  //   title: 'Discovery',
-  //   route: '',
-  //   subTab: [
-  //     {
-  //       title: 'Clique Discovery',
-  //       route: routes.Activity,
-  //       titleContent: (
-  //         <Box display={'flex'} flexDirection={'row'}>
-  //           <Typography color={'#3F5170'}>Clique Discovery</Typography>
-  //         </Box>
-  //       )
-  //     },
-  //     {
-  //       title: 'Tools',
-  //       route: routes.DappStore,
-  //       titleContent: (
-  //         <Box display={'flex'} flexDirection={'row'}>
-  //           <Typography color={'#3F5170'}>Tools</Typography>
-  //         </Box>
-  //       )
-  //     }
-  //   ]
-  // }
-  { title: 'Explore DAOs', route: routes.Governance },
-  { title: 'Clique Discovery', route: routes.Activity },
-  { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
+  // { title: 'HOME', route: routes.Home },
   {
-    title: 'Creator',
+    title: 'AW Solutions',
     route: '',
     subTab: [
       {
-        title: 'DAO Rewards',
-        route: routes.Activity,
+        title: 'Account Generator',
+        route: routes.NftGenerator,
         titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <RewardsIcon />
-            <Typography color={'#3F5170'}>DAO Rewards</Typography>
+          <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
+            <Typography color={'#3F5170'}>Account Generator</Typography>
+            <NewTagText>NEW!</NewTagText>
           </Box>
         )
       },
       {
-        title: 'Create DAO',
-        route: routes.CreateDao,
+        title: 'Asset Portal',
+        route: routes.NftAssets,
         titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <DaosIcon />
-            <Typography color={'#3F5170'}>Create DAO</Typography>
-          </Box>
-        )
-      },
-      {
-        title: 'Create Token',
-        route: routes.CreatorToken,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <TokenIcon />
-            <Typography color={'#3F5170'}>Create Token</Typography>
-          </Box>
-        )
-      },
-      {
-        title: 'Create SBT',
-        route: routes.CreateSoulToken,
-        titleContent: (
-          <Box display={'flex'} flexDirection={'row'}>
-            <TokenIcon />
-            <Typography color={'#3F5170'}>Create SBT</Typography>
+          <Box display={'flex'} flexDirection={'row'} gap={30} alignItems={'center'}>
+            <Typography color={'#3F5170'}>Asset Portal</Typography>
+            <NewTagText>NEW!</NewTagText>
           </Box>
         )
       }
-      // {
-      //   title: 'SDK',
-      //   link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
-      //   titleContent: (
-      //     <Box
-      //       display={'flex'}
-      //       flexDirection={'row'}
-      //       sx={{
-      //         '&:hover svg path': {
-      //           fill: '#0049C6'
-      //         }
-      //       }}
-      //     >
-      //       <SdkIcon />
-      //       <Typography color={'#3F5170'} flex={1}>
-      //         SDK
-      //       </Typography>
-      //     </Box>
-      //   )
-      // },
-      // {
-      //   title: 'Tools',
-      //   route: routes.DappStore,
-      //   titleContent: (
-      //     <Box display={'flex'} flexDirection={'row'}>
-      //       <HomeSvg />
-      //       <Typography color={'#3F5170'}>Tools</Typography>
-      //     </Box>
-      //   )
-      // }
     ]
   },
+
+  {
+    title: 'Workspace',
+    route: '',
+    subTab: [
+      {
+        title: 'Explore DAOs',
+        route: routes.Governance,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Explore DAOs</Typography>
+          </Box>
+        )
+      }
+    ]
+  },
+  {
+    title: 'Discovery',
+    route: '',
+    subTab: [
+      {
+        title: 'Clique Discovery',
+        route: routes.Activity,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Clique Discovery</Typography>
+          </Box>
+        )
+      },
+      {
+        title: 'Tools',
+        route: routes.DappStore,
+        titleContent: (
+          <Box display={'flex'} flexDirection={'row'}>
+            <Typography color={'#3F5170'}>Tools</Typography>
+          </Box>
+        )
+      }
+    ]
+  }
+  // { title: 'Explore DAOs', route: routes.Governance },
+  // { title: 'Clique Discovery', route: routes.Activity },
+  // { title: 'SDK', link: 'https://www.npmjs.com/package/@myclique/governance-sdk' },
+  // {
+  //   title: 'Creator',
+  //   route: '',
+  //   subTab: [
+  // {
+  //   title: 'DAO Rewards',
+  //   route: routes.Activity,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <RewardsIcon />
+  //       <Typography color={'#3F5170'}>DAO Rewards</Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Create DAO',
+  //   route: routes.CreateDao,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <DaosIcon />
+  //       <Typography color={'#3F5170'}>Create DAO</Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Create Token',
+  //   route: routes.CreatorToken,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <TokenIcon />
+  //       <Typography color={'#3F5170'}>Create Token</Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Create SBT',
+  //   route: routes.CreateSoulToken,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <TokenIcon />
+  //       <Typography color={'#3F5170'}>Create SBT</Typography>
+  //     </Box>
+  //   )
+  // }
+  // {
+  //   title: 'SDK',
+  //   link: 'https://www.npmjs.com/package/@myclique/governance-sdk',
+  //   titleContent: (
+  //     <Box
+  //       display={'flex'}
+  //       flexDirection={'row'}
+  //       sx={{
+  //         '&:hover svg path': {
+  //           fill: '#0049C6'
+  //         }
+  //       }}
+  //     >
+  //       <SdkIcon />
+  //       <Typography color={'#3F5170'} flex={1}>
+  //         SDK
+  //       </Typography>
+  //     </Box>
+  //   )
+  // },
+  // {
+  //   title: 'Tools',
+  //   route: routes.DappStore,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <HomeSvg />
+  //       <Typography color={'#3F5170'}>Tools</Typography>
+  //     </Box>
+  //   )
+  // }
+  //   ]
+  // },
   // { title: 'Swap', route: routes.SaleList },
-  // { title: 'Tokens', route: routes.Tokens }
-  { title: 'Tools', route: routes.DappStore }
+  // { title: 'Tokens', route: routes.Tokens },
+  // { title: 'Tools', route: routes.DappStore }
   // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
-
 const ComingSoonList: TabContent[] = [
   {
     title: 'Asset Portal',
@@ -249,6 +250,20 @@ const ComingSoonList: TabContent[] = [
   }
 ]
 
+// const navLinkSX = () => ({
+//   textDecoration: 'none',
+//   fontSize: 14,
+//   color: '#3F5170',
+//   '&:hover p': {
+//     color: '#0049C6'
+//   },
+//   '&:hover svg path': {
+//     fill: '#0049C6'
+//   }
+// })
+
+// const StyledNavLink = styled(NavLink)(navLinkSX)
+
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   position: 'fixed',
   height: theme.height.header,
@@ -257,6 +272,14 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   justifyContent: 'space-between',
   padding: '0 40px',
   zIndex: theme.zIndex.drawer,
+  // [theme.breakpoints.down('md')]: {
+  //   position: 'fixed',
+  //   bottom: 0,
+  //   left: 0,
+  //   top: 'unset',
+  //   borderTop: '1px solid ' + theme.bgColor.bg4,
+  //   justifyContent: 'center'
+  // },
   '& .link': {
     textDecoration: 'none',
     fontSize: 14,
@@ -275,14 +298,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       color: theme.palette.primary.main
     },
     [theme.breakpoints.down('sm')]: {
-      padding: 0,
-      margin: 0,
-      borderBottom: 'none',
-      color: '#fff',
-      '&.active': { color: '#fff' },
-      '&:hover': {
-        color: '#fff'
-      }
+      paddingBottom: '10px'
     }
   },
   '& .menuLink': {
@@ -313,13 +329,11 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'fixed'
   },
   [theme.breakpoints.down('sm')]: {
-    '&.active': {
-      color: '#fff'
-    },
-    '& .link': { marginRight: 15, color: '#fff' },
+    '& .link': { marginRight: 24 },
+    // justifyContent: 'space-around',
     height: theme.height.mobileHeader,
-    color: '#fff',
-    padding: '0 0 0 15px'
+    padding: '0 0 0 10px'
+    // boxShadow: 'none'
   }
 }))
 
@@ -383,6 +397,23 @@ const LinksWrapper = muiStyled('div')(({ theme }) => ({
   }
 }))
 
+// const StyledBreadcrumb = styled(Chip)(({ theme }) => {
+//   const backgroundColor = theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[800]
+//   return {
+//     backgroundColor,
+//     // height: theme.spacing(3),
+//     color: theme.palette.text.primary,
+//     fontWeight: theme.typography.fontWeightRegular,
+//     '&:hover, &:focus': {
+//       backgroundColor: emphasize(backgroundColor, 0.06)
+//     },
+//     '&:active': {
+//       boxShadow: theme.shadows[1],
+//       backgroundColor: emphasize(backgroundColor, 0.12)
+//     }
+//   }
+// }) as typeof Chip
+
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
@@ -406,14 +437,19 @@ export default function Header() {
   const makeRouteLink = useCallback((route: string) => route.replace(':daoId', daoId), [daoId])
   const [workspaceTitle, setWorkspaceTitle] = useState('')
   const IsNftPage = useMemo(() => {
-    if (pathname.includes(makeRouteLink(routes._Nft))) {
+    if (pathname.includes(makeRouteLink(routes._Nft)) && !pathname.includes(routes._NftDetail)) {
       return true
     }
     return false
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname])
   const curPath = useMemo(() => pathname.replace(/^\/governance\/daoInfo\/[\d]+\//, ''), [pathname])
-
+  // const isShow = useMemo(() => {
+  //   if (curPath === routes.CreateDao) {
+  //     return false
+  //   }
+  //   return true
+  // }, [curPath])
   useEffect(() => {
     if (curPath === routes.CreateDao || pathname.includes(makeRouteLink(routes.DaoInfo))) {
       dispatch(updateIsShowHeaderModalStatus({ isShowHeaderModal: false }))
@@ -536,7 +572,7 @@ export default function Header() {
   }
   return (
     <>
-      {(headerLinkIsShow || isSmDown) && (
+      {headerLinkIsShow && (
         <>
           {!IsNftPage && (
             <>
@@ -612,153 +648,151 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
   // const userSignature = useUserInfo()
   return (
     <LinksWrapper>
-      {Tabs.map(({ title, route, subTab, link, titleContent }, idx) => (
-        <>
-          {subTab ? (
-            <Box
+      {Tabs.map(({ title, route, subTab, link, titleContent }, idx) =>
+        subTab ? (
+          <Box
+            sx={{
+              color: '#3F5170',
+              marginRight: {
+                xs: 15,
+                lg: 30
+              },
+              height: 'auto',
+              paddingBottom: '30px',
+              borderColor: theme =>
+                subTab.some(tab => tab.route && pathname.includes(tab.route))
+                  ? theme.palette.text.primary
+                  : 'transparnet',
+              display: 'flex',
+              [theme.breakpoints.down('sm')]: {
+                paddingBottom: 0
+              }
+            }}
+            key={title + idx}
+          >
+            <PopperCard
               sx={{
-                color: '#3F5170',
-                marginRight: {
-                  xs: 15,
-                  lg: 30
-                },
-                height: 'auto',
-                paddingBottom: '30px',
-                borderColor: theme =>
-                  subTab.some(tab => tab.route && pathname.includes(tab.route))
-                    ? theme.palette.text.primary
-                    : 'transparnet',
-                display: 'flex',
-                [theme.breakpoints.down('sm')]: {
-                  paddingBottom: 0
+                marginTop: 13,
+                maxHeight: '50vh',
+                overflowY: 'auto',
+                padding: '6px 20px',
+                '&::-webkit-scrollbar': {
+                  display: 'none'
                 }
               }}
-              key={title + idx}
-            >
-              <PopperCard
-                sx={{
-                  marginTop: 13,
-                  maxHeight: '50vh',
-                  overflowY: 'auto',
-                  padding: '6px 20px',
-                  '&::-webkit-scrollbar': {
-                    display: 'none'
-                  }
-                }}
-                placement="bottom-start"
-                targetElement={
-                  <Box
-                    flexDirection={'row'}
-                    display={'flex'}
-                    sx={{
-                      paddingTop: 30,
-                      fontSize: 14,
-                      color: IsNftPage ? '#fff' : '#808189',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      gap: 10,
-                      [theme.breakpoints.down('sm')]: {
-                        paddingTop: 0,
-                        gap: 6,
-                        color: '#fff',
-                        lineHeight: '20px'
-                      },
-                      '& svg:hover path': {
-                        fill: '#0049C6'
-                      },
-                      '& svg:hover rect': {
-                        stroke: '#97B7EF'
-                      }
-                    }}
-                    alignItems={'center'}
-                  >
-                    {title === 'AW Solutions' ? (
-                      <>
-                        <Box display={'flex'} alignItems={'center'} gap={4}>
-                          <img src={NewTag} alt="" />
-                          {title}
-                        </Box>
-
-                        <ArrowIcon />
-                      </>
-                    ) : (
-                      <>
-                        {title}
-                        <ArrowIcon />
-                      </>
-                    )}
-                  </Box>
-                }
-              >
-                <>
+              placement="bottom-start"
+              targetElement={
+                <Box
+                  flexDirection={'row'}
+                  display={'flex'}
+                  sx={{
+                    paddingTop: 30,
+                    fontSize: 14,
+                    color: IsNftPage ? '#fff' : '#808189',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    gap: 10,
+                    [theme.breakpoints.down('sm')]: {
+                      paddingTop: 0,
+                      gap: 6,
+                      color: '#fff'
+                    },
+                    '& svg:hover path': {
+                      fill: '#0049C6'
+                    },
+                    '& svg:hover rect': {
+                      stroke: '#97B7EF'
+                    }
+                  }}
+                  alignItems={'center'}
+                >
                   {title === 'AW Solutions' ? (
                     <>
-                      {subTab.map(option => (
-                        <Box
-                          key={option.title}
-                          gap={30}
-                          sx={{
-                            minWidth: '150px',
-                            height: 40,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            borderRadius: '6px',
-                            '&:hover': {
-                              backgroundColor: '#E8F1FF',
-                              color: '#0049C6'
-                            },
-                            '& p': {
-                              marginLeft: 8
-                            }
-                          }}
-                          onClick={() => {
-                            option.route ? navigate(option.route) : window.open(option.link, '_blank')
-                          }}
-                        >
-                          {option.titleContent ?? option.title}
-                        </Box>
-                      ))}
-                      <ComingSoonListStyle options={ComingSoonList} />
+                      <Box display={'flex'} alignItems={'center'} gap={4}>
+                        <img src={NewTag} alt="" />
+                        {title}
+                      </Box>
+
+                      <ArrowIcon />
                     </>
                   ) : (
-                    subTab.map(option => (
+                    <>
+                      {title}
+                      <ArrowIcon />
+                    </>
+                  )}
+                </Box>
+              }
+            >
+              <>
+                {title === 'AW Solutions' ? (
+                  <>
+                    {subTab.map(option => (
                       <Box
+                        key={option.title}
+                        gap={30}
                         sx={{
-                          // width: 150,
                           minWidth: '150px',
                           height: 40,
                           display: 'flex',
                           flexDirection: 'row',
                           alignItems: 'center',
                           cursor: 'pointer',
+                          borderRadius: '6px',
                           '&:hover': {
-                            backgroundColor: '#0049C60D',
+                            backgroundColor: '#E8F1FF',
                             color: '#0049C6'
-                          },
-                          '&:hover svg path': {
-                            fill: '#0049C6'
                           },
                           '& p': {
                             marginLeft: 8
-                          },
-                          '&:hover p': {
-                            color: '#0049C6'
                           }
                         }}
-                        key={option.title}
                         onClick={() => {
                           option.route ? navigate(option.route) : window.open(option.link, '_blank')
                         }}
                       >
                         {option.titleContent ?? option.title}
                       </Box>
-                    ))
-                  )}
-                </>
-              </PopperCard>
-              {/* <PlainSelect
+                    ))}
+                    <ComingSoonListStyle options={ComingSoonList} />
+                  </>
+                ) : (
+                  subTab.map(option => (
+                    <Box
+                      sx={{
+                        // width: 150,
+                        minWidth: '150px',
+                        height: 40,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#0049C60D',
+                          color: '#0049C6'
+                        },
+                        '&:hover svg path': {
+                          fill: '#0049C6'
+                        },
+                        '& p': {
+                          marginLeft: 8
+                        },
+                        '&:hover p': {
+                          color: '#0049C6'
+                        }
+                      }}
+                      key={option.title}
+                      onClick={() => {
+                        option.route ? navigate(option.route) : window.open(option.link, '_blank')
+                      }}
+                    >
+                      {option.titleContent ?? option.title}
+                    </Box>
+                  ))
+                )}
+              </>
+            </PopperCard>
+            {/* <PlainSelect
               key={title + idx}
               placeholder={title}
               autoFocus={false}
@@ -796,33 +830,32 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
                 )
               )}
             </PlainSelect> */}
-            </Box>
-          ) : link ? (
-            <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
-              {titleContent ?? title}
-            </ExternalLink>
-          ) : (
-            <NavLink
-              key={title + idx}
-              id={`${route}-nav-link`}
-              to={route ?? ''}
-              className={
-                (route
-                  ? pathname.includes(route)
+          </Box>
+        ) : link ? (
+          <ExternalLink href={link} className={'link'} key={link + idx} style={{ fontSize: 14 }}>
+            {titleContent ?? title}
+          </ExternalLink>
+        ) : (
+          <NavLink
+            key={title + idx}
+            id={`${route}-nav-link`}
+            to={route ?? ''}
+            className={
+              (route
+                ? pathname.includes(route)
+                  ? 'active'
+                  : pathname.includes('account')
+                  ? route.includes('account')
                     ? 'active'
-                    : pathname.includes('account')
-                    ? route.includes('account')
-                      ? 'active'
-                      : ''
                     : ''
-                  : '') + ' link'
-              }
-            >
-              {titleContent ?? title}
-            </NavLink>
-          )}
-        </>
-      ))}
+                  : ''
+                : '') + ' link'
+            }
+          >
+            {titleContent ?? title}
+          </NavLink>
+        )
+      )}
     </LinksWrapper>
   )
 }
