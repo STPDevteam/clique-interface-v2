@@ -562,7 +562,7 @@ export function getRecentNftList(chainId: number) {
   })
 }
 
-export function getNftAccountList(chainId: number, salt: string, implementation: string, account: string) {
+export function getNftAccountList(chainId: number, salt: string, implementation: string | undefined, account: string) {
   return Axios.get(`stpdao/v3/nft6551/${chainId}/${salt}/${implementation}/${account}`)
 }
 

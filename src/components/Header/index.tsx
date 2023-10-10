@@ -221,15 +221,15 @@ export const Tabs: Tab[] = [
   // { title: 'Bug Bounty', link: 'https://immunefi.com/bounty/stp/' }
 ]
 const ComingSoonList: TabContent[] = [
-  {
-    title: 'Asset Portal',
-    route: routes.Soon,
-    titleContent: (
-      <Box display={'flex'} flexDirection={'row'}>
-        <Typography color={'#3F5170'}>Asset Portal </Typography>
-      </Box>
-    )
-  },
+  // {
+  //   title: 'Asset Portal',
+  //   route: routes.Soon,
+  //   titleContent: (
+  //     <Box display={'flex'} flexDirection={'row'}>
+  //       <Typography color={'#3F5170'}>Asset Portal </Typography>
+  //     </Box>
+  //   )
+  // },
   {
     title: 'Identity Engine',
     route: routes.Soon,

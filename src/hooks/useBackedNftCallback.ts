@@ -13,7 +13,7 @@ import { TokenboundClient } from '@tokenbound/sdk'
 // import { Currency } from 'constants/token/currency'
 import isZero from 'utils/isZero'
 import { Axios } from 'utils/axios'
-import { serverTokenAssets } from '../constants'
+import { NFT_TOKENBOUND, serverTokenAssets } from '../constants'
 import { ChainId, SUPPORTED_NETWORKS } from 'constants/chain'
 import { isAddress } from 'utils'
 import { useERC721Contract } from 'hooks/useContract'
@@ -22,8 +22,6 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import ReactGA from 'react-ga4'
 import { useSingleCallResult } from 'state/multicall/hooks'
-
-// import { useTransactionAdder } from 'state/transactions/hooks'
 
 export interface RecentNftListProp {
   account: string
@@ -145,7 +143,7 @@ export function useNftAccountList() {
       const res = await getNftAccountList(
         chainId as number,
         '0x0000000000000000000000000000000000000000000000000000000000000000',
-        '0x2d25602551487c3f3354dd80d76d54383a243358',
+        NFT_TOKENBOUND[chainId as ChainId],
         account
       )
 
@@ -232,9 +230,7 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId: string
 export function useTransferNFT6551() {
   const [loading, setLoading] = useState<boolean>()
   const { chainId, library } = useActiveWeb3React()
-  // const addTransaction = useTransactionAdder()
-
-  // const navigate = useNavigate()
+  const addTransaction = useTransactionAdder()
 
   const tokenboundClient = useMemo(
     () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
@@ -262,17 +258,17 @@ export function useTransferNFT6551() {
           recipientAddress: recipientAddress as `0x${string}`
         })
 
-        // addTransaction(res, {
-        //   summary: 'NFT Account Transfer',
-        //   claim: { recipient: `${res}_transfer_Nft_Account` }
-        // })
+        addTransaction({ hash: res } as unknown as TransactionResponse, {
+          summary: 'Send Nft Assets',
+          claim: { recipient: `${res}_send_nft_assets` }
+        })
 
         return res
       } catch (error) {
         throw error
       }
     },
-    [library, tokenboundClient]
+    [library, addTransaction, tokenboundClient]
   )
 
   return {
@@ -282,11 +278,9 @@ export function useTransferNFT6551() {
 }
 
 export function useSendAssetsCallback(chainId: number | undefined) {
-  // const [loading, setLoading] = useState<boolean>()
   const { library } = useActiveWeb3React()
 
-  // const addTransaction = useTransactionAdder()
-  // const navigate = useNavigate()
+  const addTransaction = useTransactionAdder()
 
   const tokenboundClient = useMemo(
     () => (library && chainId ? new TokenboundClient({ signer: library.getSigner(), chainId }) : undefined),
@@ -309,6 +303,10 @@ export function useSendAssetsCallback(chainId: number | undefined) {
           amount,
           recipientAddress: receiveAccount as `0x${string}`
         })
+        addTransaction({ hash: res } as unknown as TransactionResponse, {
+          summary: 'Send Token Assets',
+          claim: { recipient: `${res}_send_token_assets` }
+        })
         return res
       } else {
         const res = await tokenboundClient?.transferERC20({
@@ -318,10 +316,14 @@ export function useSendAssetsCallback(chainId: number | undefined) {
           erc20tokenAddress: network.id as `0x${string}`,
           erc20tokenDecimals: network.decimals
         })
+        addTransaction({ hash: res } as unknown as TransactionResponse, {
+          summary: 'Send Token Assets',
+          claim: { recipient: `${res}_send_token_assets` }
+        })
         return res
       }
     },
-    [tokenboundClient]
+    [addTransaction, tokenboundClient]
   )
 
   return {
@@ -334,7 +336,6 @@ export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: 
   const [loading, setLoading] = useState<boolean>(false)
   const chain = useMemo(() => {
     if (!chainId) return
-    console.log('ChainId=>', SUPPORTED_NETWORKS[chainId as ChainId]?.nativeCurrency.symbol)
 
     return SUPPORTED_NETWORKS[chainId as ChainId]?.nativeCurrency.symbol.toLocaleLowerCase()
   }, [chainId])
@@ -382,7 +383,6 @@ export function useTransferNFT(address: string | undefined, queryChainId: number
         from: fromAddress
       })
         .then((response: TransactionResponse) => {
-          console.log('response=>', response)
           addTransaction(response, {
             summary: `NFT transfer`,
             claim: { recipient: `${fromAddress}_transfer_nft` }

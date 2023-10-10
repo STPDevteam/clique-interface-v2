@@ -80,7 +80,7 @@ export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: s
   // const { chainId: walletChainId } = useActiveWeb3React()
 
   const { result: List, loading } = useAssetsTokenCallback(chainId, nftAddress)
-  console.log(chainId, List)
+  console.log('AssetsList=>', List)
 
   const AssetsTableList = useMemo(() => {
     return List.map((v, index) => [

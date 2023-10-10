@@ -108,17 +108,17 @@ const cardsData = [
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
     des: 'One-click on-chain transaction using account abstraction.',
-    // supportChainsIcon: [chainLogo0],
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
-    // route: routes.NftGenerator
+    supportChainsIcon: [chainLogo0],
+    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)',
+    route: routes.NftGenerator
   },
   {
     title: ToolsCardsTitle.AssetPortal,
     icon: assetPortalIcon,
     des: 'Buy, sell and hold any onchain asset through custom marketplace.',
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)'
+    supportChainsIcon: [chainLogo0],
+    bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)',
+    route: routes.NftAssets
   }
 ]
 
