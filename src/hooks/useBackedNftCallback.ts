@@ -16,7 +16,7 @@ import { Axios } from 'utils/axios'
 import { NFT_TOKENBOUND, serverTokenAssets } from '../constants'
 import { ChainId, SUPPORTED_NETWORKS } from 'constants/chain'
 import { isAddress } from 'utils'
-import { useERC721Contract } from 'hooks/useContract'
+import { useERC721Contract, useNft6551Contract } from 'hooks/useContract'
 import { useGasPriceInfo } from './useGasPrice'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -186,9 +186,11 @@ export function useNftAccountInfo(contract_address: string | undefined, chainId:
 }
 
 export function useNft6551Detail(nftAccount: string | undefined, chainId: string | undefined) {
+  const contract = useNft6551Contract(nftAccount, Number(chainId))
+  const nft6551Res = useSingleCallResult(contract, 'token', [], undefined, Number(chainId))
+
   const [loading, setLoading] = useState<boolean>()
   const { library } = useActiveWeb3React()
-  const [tokenId, setTokenId] = useState<string>()
   const [result, setResult] = useState<NftInfoProp>()
   const tokenboundClient = useMemo(
     () =>
@@ -196,17 +198,20 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId: string
     [chainId, library]
   )
 
+  const tokenId = useMemo(() => {
+    if (nft6551Res) {
+      return nft6551Res?.result?.tokenId.toString()
+    }
+    return
+  }, [nft6551Res])
+  console.log('nftTokenId=>', tokenId)
+
   useEffect(() => {
     ;(async () => {
       if (!chainId || !nftAccount) return
-
       setLoading(true)
-      const Nft = await tokenboundClient?.getNFT({
-        accountAddress: nftAccount as `0x${string}`
-      })
-      setTokenId(Nft?.tokenId)
       try {
-        const res = await getNftAccountInfo(Nft?.tokenContract as string, Number(chainId))
+        const res = await getNftAccountInfo(nft6551Res?.result?.tokenContract, Number(chainId))
         if (res.data.code === 200) {
           setResult(res.data.data)
           setLoading(false)
@@ -219,7 +224,7 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId: string
         console.log(error)
       }
     })()
-  }, [chainId, nftAccount, tokenboundClient])
+  }, [chainId, nft6551Res?.result?.tokenContract, nftAccount, tokenboundClient])
   return {
     result,
     tokenId,
@@ -426,6 +431,7 @@ export function useIsOwnerCallback(
   const contract = useERC721Contract(contractAddress, chainId)
 
   const isOwnerRes = useSingleCallResult(contract, 'ownerOf', [tokenId], undefined, chainId)
+  console.log('isOwnerRes=>', isOwnerRes, tokenId)
   const OwnerAccount = useMemo(() => (isOwnerRes.result?.[0] ? isOwnerRes.result?.[0] : undefined), [isOwnerRes.result])
 
   return { OwnerAccount }

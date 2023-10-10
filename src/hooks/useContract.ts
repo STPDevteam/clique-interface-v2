@@ -11,6 +11,7 @@ import PROPOSAL_ABI from '../constants/abis/proposal.json'
 import AIRDROP_ABI from '../constants/abis/airdrop.json'
 import ERC721_ABI from '../constants/abis/ERC721.json'
 import ERC1155_ABI from '../constants/abis/ERC1155.json'
+import Nft6551_ABI from '../constants/abis/nft6551.json'
 import PUBLICSALE_ABI from '../constants/abis/publicsale.json'
 import GOVERNANCE_DAO_ABI from '../constants/abis/governanceDao.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
@@ -188,4 +189,8 @@ export function useERC721Contract(address: string | undefined, queryChainId?: Ch
 
 export function useERC1155Contract(address: string | undefined, queryChainId?: ChainId): Contract | null {
   return useContract(address, ERC1155_ABI, true, queryChainId)
+}
+
+export function useNft6551Contract(address: string | undefined, queryChainId?: ChainId): Contract | null {
+  return useContract(address, Nft6551_ABI, true, queryChainId)
 }
