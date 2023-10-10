@@ -1,5 +1,5 @@
 import { Box, styled, Typography, Link } from '@mui/material'
-import { ChainId, ChainList } from 'constants/chain'
+import { ChainId, ChainListMap } from 'constants/chain'
 import { useCallback, useMemo } from 'react'
 import LoopIcon from '@mui/icons-material/Loop'
 import placeholderImage from 'assets/images/placeholder.png'
@@ -78,11 +78,6 @@ const CardStyled = styled(Box)(({ theme }) => ({
 function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
   const refreshCb = useRefreshNft()
 
-  const curChainLogo = useMemo(() => {
-    const res = ChainList.filter(item => item.id === chainId)
-    return res[0]?.logo
-  }, [chainId])
-
   const refresh = useCallback(() => {
     refreshCb(nftInfo.contract_address, nftInfo.token_id).then((res: any) => {
       if (res.data.code !== 200) {
@@ -112,7 +107,7 @@ function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
       <CardStyled className="card">
         <img
           className="chainIcon"
-          src={curChainLogo}
+          src={ChainListMap[Number(chainId)].logo || ''}
           alt=""
           height={'24px'}
           width={'24px'}

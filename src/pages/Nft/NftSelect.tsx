@@ -46,7 +46,7 @@ const CardStyled = styled(Box)(({ theme }) => ({
   // background: '#0F1F39',
   position: 'relative',
   [theme.breakpoints.down('sm')]: {
-    width: '44vw',
+    width: '42vw',
     height: 180
   }
 }))
@@ -99,6 +99,7 @@ export function NftSelect() {
   const { claimSubmitted } = useUserHasSubmittedClaim(`${nftData?.nftAccount}_create_Nft_Account`)
   const [isDeployIng, setIsDeployIng] = useState<boolean | undefined>()
   const [isDeploySuccess, setIsDeploySuccess] = useState<boolean>(false)
+
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
     _accountNFTsList.map(i => i.token_id)

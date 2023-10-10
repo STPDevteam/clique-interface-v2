@@ -25,6 +25,56 @@ const TableContentStyle = styled(Box)(({ theme }) => ({
   }
 }))
 
+const StyleTable = styled(Box)(({ theme }) => ({
+  marginTop: '16px',
+  '& table': {
+    border: '1px solid #D4D7E2',
+    borderColor: '#D4D7E2',
+    borderRadius: '8px!important',
+    borderSpacing: '0!important',
+    '& .MuiTableHead-root': {
+      height: 30,
+      backgroundColor: '#F8FBFF',
+      '& .MuiTableRow-root': {
+        borderRadius: 0
+      },
+      '& .MuiTableCell-root': {
+        padding: 0
+      },
+      '& .MuiTableCell-root:nth-of-type(1)': {
+        borderRadius: '8px 0 0 0',
+        borderColor: '#D4D7E2',
+        paddingLeft: '30px',
+        textAlign: 'left'
+      },
+      '& .MuiTableCell-root:nth-of-type(3)': {
+        borderRadius: '0 8px 0 0',
+        borderColor: '#D4D7E2',
+        paddingRight: '30px',
+        textAlign: 'right'
+      }
+    },
+    '& .MuiTableBody-root': {
+      '& .MuiTableRow-root .MuiTableCell-root': {
+        padding: '0'
+      },
+      '& .MuiTableRow-root:last-child td': {
+        borderBottom: 0
+      },
+      '& .MuiTableCell-root:nth-of-type(3)': {
+        paddingRight: '30px'
+      },
+      '& .MuiTableCell-root:nth-of-type(1)': {
+        paddingLeft: '30px'
+      }
+    }
+  },
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    gap: '10px'
+  }
+}))
+
 export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: string | undefined }) {
   const [isCheck, setCheck] = useState<boolean>(false)
   // const { chainId: walletChainId } = useActiveWeb3React()
@@ -57,53 +107,7 @@ export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: s
         <>
           {AssetsTableList.length ? (
             <>
-              <Box
-                sx={{
-                  '& table': {
-                    marginTop: '16px',
-                    border: '1px solid #D4D7E2',
-                    borderColor: '#D4D7E2',
-                    borderRadius: '8px!important',
-                    borderSpacing: '0!important',
-                    '& .MuiTableHead-root': {
-                      height: 30,
-                      backgroundColor: '#F8FBFF',
-                      '& .MuiTableRow-root': {
-                        borderRadius: 0
-                      },
-                      '& .MuiTableCell-root': {
-                        padding: 0
-                      },
-                      '& .MuiTableCell-root:nth-of-type(1)': {
-                        borderRadius: '8px 0 0 0',
-                        borderColor: '#D4D7E2',
-                        paddingLeft: '30px',
-                        textAlign: 'left'
-                      },
-                      '& .MuiTableCell-root:nth-of-type(3)': {
-                        borderRadius: '0 8px 0 0',
-                        borderColor: '#D4D7E2',
-                        paddingRight: '30px',
-                        textAlign: 'right'
-                      }
-                    },
-                    '& .MuiTableBody-root': {
-                      '& .MuiTableRow-root .MuiTableCell-root': {
-                        padding: '0'
-                      },
-                      '& .MuiTableRow-root:last-child td': {
-                        borderBottom: 0
-                      },
-                      '& .MuiTableCell-root:nth-of-type(3)': {
-                        paddingRight: '30px'
-                      },
-                      '& .MuiTableCell-root:nth-of-type(1)': {
-                        paddingLeft: '30px'
-                      }
-                    }
-                  }
-                }}
-              >
+              <StyleTable>
                 <Table
                   collapsible={false}
                   firstAlign="center"
@@ -111,7 +115,7 @@ export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: s
                   header={['Token', 'Balance', 'USD Value']}
                   rows={AssetsTableList}
                 />
-              </Box>
+              </StyleTable>
               <Typography color={'#3F5170'} display={'flex'} gap={'12px'} alignItems={'center'}>
                 Hide assets with 0 balance{' '}
                 <SwitchBtn

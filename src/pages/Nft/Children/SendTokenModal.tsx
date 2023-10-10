@@ -266,7 +266,7 @@ export default function SendTokenModal({
                   }}
                   type="submit"
                 >
-                  {errors ? 'Insufficient balance' : 'Send'}
+                  Send
                 </LoadingButton>
                 {/* <Button
                   width="100%"

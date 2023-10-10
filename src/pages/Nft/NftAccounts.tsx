@@ -128,7 +128,6 @@ export function NftAccounts() {
   const accountNFTsList = useMemo(() => {
     if (!_accountNFTsList.length) return []
     if (!SBTIsDeployList) return
-
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
 

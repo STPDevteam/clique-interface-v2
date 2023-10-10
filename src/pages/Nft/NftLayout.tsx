@@ -22,7 +22,10 @@ const NftCard = styled(Box)(({ theme }) => ({
   },
   [theme.breakpoints.down('sm')]: {
     width: '44vw',
-    height: '56vw'
+    height: '56vw',
+    '& .item': {
+      padding: '0 16px 0'
+    }
   }
 }))
 

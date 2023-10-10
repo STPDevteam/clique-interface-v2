@@ -26,18 +26,22 @@ import SendNftModal from './SendNftModal'
 import RecieveAssetsModal from './RecieveAssetsModal'
 import TransFerNftModal from './TransFerNftModal'
 import { useIsOwnerCallback, useNft6551Detail } from 'hooks/useBackedNftCallback'
-// import { useUserInfo } from 'state/userInfo/hooks'
+import { useUserInfo } from 'state/userInfo/hooks'
 // import { useIsDelayTime } from 'hooks/useBackedProfileServer'
 // import { routes } from 'constants/routes'
 import { ChainId, ChainListMap } from 'constants/chain'
+import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
-const ContentBoxStyle = styled(Box)(({ maxWidth }: { maxWidth?: number }) => ({
+const ContentBoxStyle = styled(Box)(({ theme }) => ({
   minHeight: '780px',
-  maxWidth: maxWidth ? maxWidth : 600,
   width: '100%',
   border: '1px solid #D4D7E2',
   borderRadius: '10px',
-  padding: '30px 40px'
+  padding: '30px 40px',
+  [theme.breakpoints.down('sm')]: {
+    padding: '16px',
+    minHeight: 'auto'
+  }
 }))
 
 const LeftDetailStyle = styled(Box)(() => ({
@@ -61,7 +65,8 @@ const ButtonsStyle = styled(Box)(() => ({
   display: 'flex',
   width: '100%',
   gap: 10,
-  marginTop: '20px'
+  marginTop: '20px',
+  flexWrap: 'wrap'
 }))
 
 const AccountButton = styled(Box)(() => ({
@@ -80,7 +85,7 @@ const AccountButton = styled(Box)(() => ({
   }
 }))
 
-const OutlineButton = styled(Button)(() => ({
+const OutlineButton = styled(Button)(({ theme }) => ({
   height: '40px',
   display: 'flex',
   gap: 4,
@@ -94,6 +99,9 @@ const OutlineButton = styled(Button)(() => ({
   ':hover': {
     background: '#fff',
     color: '#000'
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: '36px'
   }
 }))
 
@@ -177,7 +185,7 @@ const StyledTabs = styled('div')(({ theme }) => ({
       },
       '& .css-heg063-MuiTabs-flexContainer': {
         justifyContent: 'space-between',
-        width: 'calc(100vw - 32px)'
+        width: 'calc(100vw - 72px)'
       },
       '& button': {
         padding: 0
@@ -210,9 +218,10 @@ const TabsList = [TAB.Assets, TAB.NFTs, TAB.History]
 
 export function Nft6551Detail() {
   // const navigate = useNavigate()
-  // const userSignature = useUserInfo()
   // const { isDelayTime } = useIsDelayTime()
-  const { account } = useActiveWeb3React()
+
+  const userSignature = useUserInfo()
+  const { chainId: walletChainId, account, library } = useActiveWeb3React()
   const theme = useTheme()
   const { showModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
@@ -225,6 +234,12 @@ export function Nft6551Detail() {
     return account === OwnerAccount
   }, [OwnerAccount, account])
   console.log('isOwner=>', isOwner)
+
+  const isTrueChain = useMemo(() => {
+    if (userSignature && walletChainId && chainId && Number(walletChainId) !== Number(chainId)) return false
+    return true
+  }, [chainId, walletChainId, userSignature])
+  console.log('isTrueChain=>', isTrueChain)
 
   // useEffect(() => {
   //   if (isDelayTime) return
@@ -247,8 +262,18 @@ export function Nft6551Detail() {
             <Loading sx={{ marginTop: 30 }} />
           </Box>
         ) : (
-          <Box sx={[{ display: 'flex', gap: 20, flexDirection: 'row' }]}>
-            <ContentBoxStyle>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 20,
+              flexDirection: 'row',
+              [theme.breakpoints.down('md')]: {
+                flexDirection: 'column',
+                padding: '0 16px 30px'
+              }
+            }}
+          >
+            <ContentBoxStyle maxWidth={600}>
               <LeftDetailStyle>
                 <Box display="grid" gap="15px">
                   <Back
@@ -278,7 +303,7 @@ export function Nft6551Detail() {
                     Receive
                   </OutlineButton>
 
-                  {isOwner && (
+                  {isOwner && isTrueChain && (
                     <>
                       <SendButton chainId={Number(chainId)} nftAddress={nftAddress} />
                       <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
@@ -287,18 +312,41 @@ export function Nft6551Detail() {
                 </ButtonsStyle>
 
                 <WarningStyle>
-                  <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
-                    {`Apply for .aw domain name now ->`}
-                  </Typography>
-
-                  <BlackButton
-                    className="class_apply_button"
-                    onClick={() => {
-                      console.log('status=>', 1)
-                    }}
-                  >
-                    Apply
-                  </BlackButton>
+                  {!isTrueChain ? (
+                    <>
+                      <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+                        You need switch to{` `}
+                        <Link
+                          sx={{ cursor: 'pointer' }}
+                          onClick={() => chainId && triggerSwitchChain(library, Number(chainId), account || '')}
+                        >
+                          switch
+                        </Link>
+                        {` `}
+                        {chainId ? ChainListMap[Number(chainId)].name : '--'}
+                      </Typography>
+                      <BlackButton
+                        className="class_apply_button"
+                        onClick={() => chainId && triggerSwitchChain(library, Number(chainId), account || '')}
+                      >
+                        Switch
+                      </BlackButton>
+                    </>
+                  ) : (
+                    <>
+                      <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+                        {`Apply for .aw domain name now ->`}
+                      </Typography>
+                      <BlackButton
+                        className="class_apply_button"
+                        onClick={() => {
+                          console.log('status=>', 1)
+                        }}
+                      >
+                        Apply
+                      </BlackButton>
+                    </>
+                  )}
                 </WarningStyle>
                 <StyledTabs>
                   <Tabs value={tabValue}>
@@ -348,13 +396,17 @@ export function Nft6551Detail() {
                     height: 500,
                     width: 500,
                     borderRadius: '10px',
-                    background: 'rgb(236 236 236)'
+                    background: 'rgb(236 236 236)',
+                    [theme.breakpoints.down('md')]: {
+                      height: '100%',
+                      width: '100%'
+                    }
                   }}
                 >
                   <Image
                     style={{
-                      height: 500,
-                      width: 500,
+                      height: '100%',
+                      width: '100%',
                       borderRadius: '10px',
                       objectFit: 'cover',
                       zIndex: 0
@@ -389,7 +441,7 @@ export function Nft6551Detail() {
                       View on Opensea
                     </OutlineButton>
                   </Link>
-                  {isOwner && (
+                  {isOwner && isTrueChain && (
                     <OutlineButton
                       sx={{ padding: '11px', gap: 5 }}
                       onClick={() =>

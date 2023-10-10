@@ -29,10 +29,14 @@ export function useContractIsDeploy(tokenContract?: string) {
 }
 
 export function useContractIsDeployList(tokenContracts?: string[]) {
-  const { library } = useActiveWeb3React()
-  const [isDeploys, setIsDeploys] = useState<boolean[]>()
+  const { chainId, library } = useActiveWeb3React()
+  const [isDeploys, setIsDeploys] = useState<boolean[] | undefined>()
 
   const tokenContractsLength = useMemo(() => tokenContracts?.length, [tokenContracts?.length])
+
+  useEffect(() => {
+    setIsDeploys(undefined)
+  }, [chainId])
 
   useEffect(() => {
     if (!tokenContracts?.length || !library) return
