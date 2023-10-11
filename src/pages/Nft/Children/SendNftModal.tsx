@@ -10,7 +10,7 @@ import placeholderImage from 'assets/images/placeholder.png'
 import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import { isAddress } from 'ethers/lib/utils'
-import { useTransferNFT6551 } from 'hooks/useBackedNftCallback'
+import { useSendNFT6551Callback } from 'hooks/useBackedNftCallback'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
@@ -40,7 +40,7 @@ export default function SendNftModal({
 }) {
   const { hideModal, showModal } = useModal()
   const theme = useTheme()
-  const { transferNftCallback } = useTransferNFT6551()
+  const { sendNftCallback } = useSendNFT6551Callback()
   const { result: _accountNFTsList } = useAccountNFTsList(nftAddress || undefined, chainId, 'erc721')
 
   const SBTIsDeployList = useSBTIsDeployList(
@@ -82,7 +82,7 @@ export default function SendNftModal({
     try {
       hideModal()
       showModal(<TransacitonPendingModal />)
-      const res = await transferNftCallback(
+      const res = await sendNftCallback(
         nftAddress,
         checkNftDetail?.contract_address,
         checkNftDetail?.token_id,

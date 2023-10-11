@@ -48,7 +48,9 @@ export function Nfts({ chainId, nftAddress }: { chainId: number; nftAddress: str
         {accountNFTsList !== undefined && !loading ? (
           <>
             {accountNFTsList?.map((item, index) => (
-              <Card nftInfo={item} chainId={chainId} key={item.name + index} />
+              <>
+                <Card nftInfo={item} chainId={chainId} key={item.name + index} />
+              </>
             ))}
           </>
         ) : (
@@ -61,18 +63,14 @@ export function Nfts({ chainId, nftAddress }: { chainId: number; nftAddress: str
   )
 }
 
-const CardStyled = styled(Box)(({ theme }) => ({
+const CardStyled = styled(Box)(({}) => ({
   height: 190,
   width: 164,
   borderRadius: '8px',
   border: '1px solid var(--line, #D4D7E2)',
   background: 'rgb(236 236 236)',
   // background: '#0F1F39',
-  position: 'relative',
-  [theme.breakpoints.down('sm')]: {
-    width: '44vw',
-    height: 180
-  }
+  position: 'relative'
 }))
 
 function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
@@ -171,8 +169,7 @@ function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
               color: ' var(--button-line, #97B7EF)',
               fontSize: '14px',
               fontWeight: 400,
-              lineHeight: '20px',
-              maxWidth: 180
+              lineHeight: '20px'
             }}
           >
             {nftInfo?.name || nftInfo?.contract_name || '-'}#{nftInfo?.token_id}

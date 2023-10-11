@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/material'
+import { Box, styled, useTheme } from '@mui/material'
 import Table from 'components/Table'
 import Copy from 'components/essential/Copy'
 import { Tokens } from 'pages/Nft/Tokens'
@@ -57,6 +57,7 @@ const AssetsTokenList = [
 ]
 
 export function History() {
+  const theme = useTheme()
   const AssetsTableList = useMemo(() => {
     return AssetsTokenList.map(({ Type, Token, Amount, TxID }, index) => [
       <TableContentStyle key={index}>{Type}</TableContentStyle>,
@@ -75,8 +76,8 @@ export function History() {
     <Box display={'grid'} gap={'16px'}>
       <Box
         sx={{
+          marginTop: '16px',
           '& table': {
-            marginTop: '16px',
             border: '1px solid #D4D7E2',
             borderColor: '#D4D7E2',
             borderRadius: '8px!important',
@@ -120,6 +121,10 @@ export function History() {
                 paddingLeft: '30px'
               }
             }
+          },
+          [theme.breakpoints.down('sm')]: {
+            display: 'grid',
+            gap: 10
           }
         }}
       >

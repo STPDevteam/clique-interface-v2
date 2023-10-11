@@ -327,8 +327,7 @@ function Card({
               color: ' var(--button-line, #97B7EF)',
               fontSize: '14px',
               fontWeight: 400,
-              lineHeight: '20px',
-              maxWidth: 180
+              lineHeight: '20px'
             }}
           >
             {nft.name || nft.contract_name || '-'}#{nft.token_id}

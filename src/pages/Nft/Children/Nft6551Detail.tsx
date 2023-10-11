@@ -233,7 +233,6 @@ export function Nft6551Detail() {
     if (!account || !OwnerAccount) return false
     return account === OwnerAccount
   }, [OwnerAccount, account])
-  console.log('isOwner=>', isOwner)
 
   const isTrueChain = useMemo(() => {
     if (userSignature && walletChainId && chainId && Number(walletChainId) !== Number(chainId)) return false
