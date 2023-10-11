@@ -81,13 +81,14 @@ export function useRecentNftList() {
     ;(async () => {
       setLoading(true)
       if (!chainId) return
-      const res = await getRecentNftList(chainId as number)
-      if (res.data.code === 200) {
+      try {
+        const res = await getRecentNftList(chainId as number)
         setResult(res.data.data)
         setLoading(false)
-      } else {
+      } catch (error) {
         setResult([])
         setLoading(false)
+        console.log('error=>', error)
       }
     })()
   }, [chainId])
@@ -107,15 +108,15 @@ export function useMyCreateNftAccountList(account: string) {
     ;(async () => {
       setLoading(true)
       if (!account) return
-      const res = await getMyCreateNftAccountList(account, (currentPage - 1) * pageSize, pageSize)
-
-      if (res.data.code === 200) {
+      try {
+        const res = await getMyCreateNftAccountList(account, (currentPage - 1) * pageSize, pageSize)
         setResult(res.data.data)
         setTotal(res.data.total)
         setLoading(false)
-      } else {
+      } catch (error) {
         setResult([])
         setLoading(false)
+        console.log('error=>', error)
       }
     })()
   }, [account, currentPage])
@@ -140,16 +141,16 @@ export function useNftAccountList() {
     ;(async () => {
       setLoading(true)
       if (!chainId || !account) return
-      const res = await getNftAccountList(
-        chainId as number,
-        '0x0000000000000000000000000000000000000000000000000000000000000000',
-        NFT_IMPLEMENTATION_ADDRESS[chainId as ChainId],
-        account
-      )
-      if (res.data.code === 200) {
+      try {
+        const res = await getNftAccountList(
+          chainId as number,
+          '0x0000000000000000000000000000000000000000000000000000000000000000',
+          NFT_IMPLEMENTATION_ADDRESS[chainId as ChainId],
+          account
+        )
         setResult(res.data.data)
         setLoading(false)
-      } else {
+      } catch (error) {
         setResult([])
         setLoading(false)
       }
@@ -371,7 +372,7 @@ export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: 
         const data = res.data.data
         setResult(data)
         setLoading(false)
-        console.log('data=>', data)
+        console.log('AssetsToken=>', data)
       } catch (error) {
         setLoading(false)
         console.log(error)

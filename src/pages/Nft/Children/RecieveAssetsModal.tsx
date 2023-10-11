@@ -8,6 +8,7 @@ import { useMemo } from 'react'
 import { Currency } from 'constants/token'
 import { ChainId } from 'constants/chain'
 import { useCurrencyBalance } from 'state/wallet/hooks'
+import QRCode from 'react-qr-code'
 
 const BodyBoxStyle = styled(Box)(() => ({
   padding: '13px 28px',
@@ -162,7 +163,8 @@ export default function RecieveAssetsModal({
                   }
                 }}
               >
-                <CodeYellowIcon />
+                {/* <CodeYellowIcon /> */}
+                <QRCode value={nftAddress?.toString() || ''} />
               </Box>
             </Box>
           </QRcodeWhite>

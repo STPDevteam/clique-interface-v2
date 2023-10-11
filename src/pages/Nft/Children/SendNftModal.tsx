@@ -240,11 +240,7 @@ export default function SendNftModal({
                   sx={{
                     width: '100%',
                     height: 40,
-                    textAlign: 'center',
-                    [theme.breakpoints.down('sm')]: {
-                      width: 160,
-                      height: 36
-                    }
+                    textAlign: 'center'
                   }}
                   type="submit"
                 >

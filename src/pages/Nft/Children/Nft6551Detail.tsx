@@ -31,6 +31,7 @@ import { useUserInfo } from 'state/userInfo/hooks'
 // import { routes } from 'constants/routes'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
+import ConnectAccountModal from './ConnectAccountModal'
 
 const ContentBoxStyle = styled(Box)(({ theme }) => ({
   minHeight: '780px',
@@ -67,6 +68,16 @@ const ButtonsStyle = styled(Box)(() => ({
   gap: 10,
   marginTop: '20px',
   flexWrap: 'wrap'
+}))
+
+const ConnectButtons = styled(Button)(({ theme }) => ({
+  height: 40,
+  width: '120px',
+  color: '#FFF',
+  fontWeight: '500',
+  [theme.breakpoints.down('sm')]: {
+    height: '36px'
+  }
 }))
 
 const AccountButton = styled(Box)(() => ({
@@ -305,7 +316,7 @@ export function Nft6551Detail() {
                   {isOwner && isTrueChain && (
                     <>
                       <SendButton chainId={Number(chainId)} nftAddress={nftAddress} />
-                      <Button style={{ width: '120px', color: '#FFF', fontWeight: '500' }}>Connect Dapp</Button>
+                      <ConnectButtons onClick={() => showModal(<ConnectAccountModal />)}>Connect Dapp</ConnectButtons>
                     </>
                   )}
                 </ButtonsStyle>
@@ -373,21 +384,19 @@ export function Nft6551Detail() {
             <ContentBoxStyle maxWidth={580}>
               <RightDetailStyle>
                 <Box display={'grid'} gap={'8px'} minHeight={57}>
-                  {TabsList[tabValue] !== TAB.History && (
-                    <>
-                      <Typography
-                        sx={{
-                          color: 'var(--tile-grey, #80829F)',
-                          lineHeight: '20px'
-                        }}
-                      >
-                        Collection name asdo
-                      </Typography>
-                      <TitleStyle fontSize={'24px !important'} noWrap>
-                        {NftInfoData?.name || '--'} #{tokenId}
-                      </TitleStyle>
-                    </>
-                  )}
+                  <>
+                    <Typography
+                      sx={{
+                        color: 'var(--tile-grey, #80829F)',
+                        lineHeight: '20px'
+                      }}
+                    >
+                      Collection name
+                    </Typography>
+                    <TitleStyle fontSize={'24px !important'} noWrap>
+                      {NftInfoData?.name || '--'} #{tokenId}
+                    </TitleStyle>
+                  </>
                 </Box>
 
                 <Box
@@ -410,7 +419,7 @@ export function Nft6551Detail() {
                       objectFit: 'cover',
                       zIndex: 0
                     }}
-                    src={NftInfoData?.large_image_url || placeholderImage}
+                    src={NftInfoData?.logo_url || NftInfoData?.large_image_url || placeholderImage}
                   />
                 </Box>
                 <Typography
