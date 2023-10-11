@@ -263,7 +263,7 @@ export function Nft6551Detail() {
   //     return
   //   }
   // }, [account, userSignature, hideModal, isDelayTime, navigate, walletChainId, chainId])
-
+  const IsShow = false
   return (
     <>
       <ContainerWrapper maxWidth={1200} sx={{ paddingTop: 40 }}>
@@ -316,7 +316,9 @@ export function Nft6551Detail() {
                   {isOwner && isTrueChain && (
                     <>
                       <SendButton chainId={Number(chainId)} nftAddress={nftAddress} />
-                      <ConnectButtons onClick={() => showModal(<ConnectAccountModal />)}>Connect Dapp</ConnectButtons>
+                      {IsShow && (
+                        <ConnectButtons onClick={() => showModal(<ConnectAccountModal />)}>Connect Dapp</ConnectButtons>
+                      )}
                     </>
                   )}
                 </ButtonsStyle>
