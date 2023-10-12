@@ -10,7 +10,7 @@ import { isAddress } from 'ethers/lib/utils'
 import TransacitonPendingModal from 'components/Modal/TransactionModals/TransactionPendingModal'
 import TransactionSubmittedModal from 'components/Modal/TransactionModals/TransactiontionSubmittedModal'
 import MessageBox from 'components/Modal/TransactionModals/MessageBox'
-import { useTransferNFT, NftInfoProp } from 'hooks/useBackedNftCallback'
+import { useTransferNFTCallback, NftInfoProp } from 'hooks/useBackedNftCallback'
 import { useActiveWeb3React } from 'hooks'
 import FormItem from 'components/FormItem'
 import { Form, Formik } from 'formik'
@@ -34,7 +34,7 @@ export default function TransFerNftModal({
   tokenId: string | undefined
 }) {
   const { account } = useActiveWeb3React()
-  const { TransFerCallback } = useTransferNFT(NftInfoData?.contract_address, Number(chainId))
+  const { TransFerCallback } = useTransferNFTCallback(NftInfoData?.contract_address, Number(chainId))
   const { hideModal, showModal } = useModal()
 
   const initialValues = {

@@ -13,6 +13,7 @@ import { useCreateTBACallback } from 'hooks/useTBA'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
+import { useAssetsTokenCallback, useNftAccountAssetsBalanceCallback } from 'hooks/useBackedNftCallback'
 
 const TitleLayout = styled(Box)(() => ({
   height: 'auto',
@@ -175,6 +176,8 @@ export function NftAccounts() {
 function NftCard({ nft, chainId }: { nft: ScanNFTInfo; chainId: number | undefined }) {
   const navigate = useNavigate()
   const { getAccount } = useCreateTBACallback(nft.contract_address as `0x${string}`, nft.token_id)
+  const { result: AssetsList } = useAssetsTokenCallback(chainId, getAccount)
+  const { assetsTotal } = useNftAccountAssetsBalanceCallback(AssetsList)
 
   return (
     <Box
@@ -194,7 +197,7 @@ function NftCard({ nft, chainId }: { nft: ScanNFTInfo; chainId: number | undefin
       <NftIsDelayCard className="nft_card">
         <>
           <Box sx={{ display: 'grid', gap: 10 }}>
-            <CardHeadStyle>$ {nft?.latest_trade_price || 0}</CardHeadStyle>
+            <CardHeadStyle>$ {assetsTotal || 0}</CardHeadStyle>
             <NftImgStyle>
               <Image
                 altSrc={placeholderImage}

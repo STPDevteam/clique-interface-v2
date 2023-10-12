@@ -2,9 +2,9 @@ import { Box, styled, Typography } from '@mui/material'
 import SwitchBtn from 'components/Switch'
 import Table from 'components/Table'
 import Image from 'components/Image'
-import { useMemo, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 // import { useActiveWeb3React } from 'hooks'
-import { useAssetsTokenCallback } from 'hooks/useBackedNftCallback'
+import { useAssetsTokenCallback, useNftAccountAssetsBalanceCallback } from 'hooks/useBackedNftCallback'
 import BigNumber from 'bignumber.js'
 import Loading from 'components/Loading'
 import EmptyData from 'components/EmptyData'
@@ -75,12 +75,18 @@ const StyleTable = styled(Box)(({ theme }) => ({
   }
 }))
 
-export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: string | undefined }) {
+export function Assets({
+  chainId,
+  nftAddress,
+  setAssetsTotal
+}: {
+  chainId: number
+  nftAddress: string | undefined
+  setAssetsTotal: Dispatch<SetStateAction<string>>
+}) {
   const [isCheck, setCheck] = useState<boolean>(false)
-  // const { chainId: walletChainId } = useActiveWeb3React()
-
   const { result: List, loading } = useAssetsTokenCallback(chainId, nftAddress)
-  console.log('AssetsList=>', List)
+  const { assetsTotal } = useNftAccountAssetsBalanceCallback(List)
 
   const AssetsTableList = useMemo(() => {
     return List.map((v, index) => [
@@ -97,6 +103,9 @@ export function Assets({ chainId, nftAddress }: { chainId: number; nftAddress: s
     ])
   }, [List])
 
+  useEffect(() => {
+    setAssetsTotal(assetsTotal)
+  }, [assetsTotal, setAssetsTotal])
   return (
     <Box display={'grid'} gap={'16px'}>
       {loading ? (

@@ -237,6 +237,7 @@ export function Nft6551Detail() {
   const theme = useTheme()
   const { showModal } = useModal()
   const { nftAddress, chainId } = useParams<{ nftAddress: string; chainId: string }>()
+  const [assetsTotal, setAssetsTotal] = useState<string>('')
   const [tabValue, setTabValue] = useState<number>(0)
   const { result: NftInfoData, loading, tokenId } = useNft6551Detail(nftAddress, chainId)
   const { OwnerAccount } = useIsOwnerCallback(NftInfoData?.contract_address, Number(chainId), tokenId)
@@ -298,7 +299,7 @@ export function Nft6551Detail() {
                       navigate(routes.NftAssets)
                     }}
                   />
-                  <TitleStyle>${NftInfoData?.opensea_floor_price || '--'}</TitleStyle>
+                  <TitleStyle>${assetsTotal || '--'}</TitleStyle>
                 </Box>
                 <ButtonsStyle>
                   <AccountButton>
@@ -382,7 +383,9 @@ export function Nft6551Detail() {
                     ))}
                   </Tabs>
                 </StyledTabs>
-                {TabsList[tabValue] === TAB.Assets && <Assets chainId={Number(chainId)} nftAddress={nftAddress} />}
+                {TabsList[tabValue] === TAB.Assets && (
+                  <Assets chainId={Number(chainId)} nftAddress={nftAddress} setAssetsTotal={setAssetsTotal} />
+                )}
                 {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} nftAddress={nftAddress} />}
                 {TabsList[tabValue] === TAB.History && <History />}
               </LeftDetailStyle>

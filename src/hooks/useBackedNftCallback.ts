@@ -22,6 +22,7 @@ import { TransactionResponse } from '@ethersproject/providers'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import ReactGA from 'react-ga4'
 import { useSingleCallResult } from 'state/multicall/hooks'
+import BigNumber from 'bignumber.js'
 
 export interface RecentNftListProp {
   account: string
@@ -371,7 +372,6 @@ export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: 
         const data = res.data.data
         setResult(data)
         setLoading(false)
-        console.log('AssetsToken=>', data)
       } catch (error) {
         setLoading(false)
         console.log(error)
@@ -385,7 +385,7 @@ export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: 
   }
 }
 
-export function useTransferNFT(address: string | undefined, queryChainId: number) {
+export function useTransferNFTCallback(address: string | undefined, queryChainId: number) {
   const contract = useERC721Contract(address, queryChainId as ChainId)
   const gasPriceInfoCallback = useGasPriceInfo()
   const addTransaction = useTransactionAdder()
@@ -393,7 +393,6 @@ export function useTransferNFT(address: string | undefined, queryChainId: number
   const TransFerCallback = useCallback(
     async (fromAddress: string, toAddress: string, tokenId: string) => {
       if (!contract) throw new Error('none contract')
-      console.log('contract=>', address, fromAddress, toAddress, tokenId)
       const args = [fromAddress, toAddress, tokenId]
       const method = 'transferFrom'
       const { gasLimit, gasPrice } = await gasPriceInfoCallback(contract, method, args)
@@ -430,7 +429,7 @@ export function useTransferNFT(address: string | undefined, queryChainId: number
           throw err
         })
     },
-    [addTransaction, address, contract, gasPriceInfoCallback]
+    [addTransaction, contract, gasPriceInfoCallback]
   )
 
   return {
@@ -449,4 +448,22 @@ export function useIsOwnerCallback(
   const OwnerAccount = useMemo(() => (isOwnerRes.result?.[0] ? isOwnerRes.result?.[0] : undefined), [isOwnerRes.result])
 
   return { OwnerAccount }
+}
+
+export function useNftAccountAssetsBalanceCallback(AssetsList: AssetsTokenProp[]) {
+  const bigNumberTotal = AssetsList.reduce((sum, item) => {
+    const amountBN = new BigNumber(item.amount)
+    const priceBN = new BigNumber(item.price)
+    return sum.plus(amountBN.multipliedBy(priceBN))
+  }, new BigNumber(0))
+
+  const assetsTotal = useMemo(() => {
+    const bool = bigNumberTotal.decimalPlaces()
+    if (bool) {
+      return bigNumberTotal.decimalPlaces(2).toString()
+    }
+    return bigNumberTotal.toString()
+  }, [bigNumberTotal])
+
+  return { assetsTotal: assetsTotal }
 }
