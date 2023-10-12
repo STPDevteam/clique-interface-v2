@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useAssetsTokenCallback, useNftAccountAssetsBalanceCallback } from 'hooks/useBackedNftCallback'
+import Loading from 'components/Loading'
 
 const TitleLayout = styled(Box)(() => ({
   height: 'auto',
@@ -143,32 +144,38 @@ export function NftAccounts() {
 
   return (
     <NftLayout>
-      <Box sx={{ display: 'grid', gap: '20px' }}>
-        <TitleLayout>
-          <TitleStyle>NFT Accounts</TitleStyle>
-          <TitleButton
-            onClick={() => {
-              navigate(routes.NftSelect)
-            }}
-          >
-            <AddIcon />
-            Create NFT Account
-          </TitleButton>
-        </TitleLayout>
-        {accountNFTsList !== undefined && !loading ? (
-          accountNFTsList.length ? (
-            <NftCards justifyContent={accountNFTsList && accountNFTsList?.length > 4 ? 'start' : 'center'}>
-              {accountNFTsList?.map(item => (
-                <NftCard key={item.contract_name} nft={item} chainId={chainId} />
-              ))}
-            </NftCards>
+      {account && userSignature ? (
+        <Box sx={{ display: 'grid', gap: '20px' }}>
+          <TitleLayout>
+            <TitleStyle>NFT Accounts</TitleStyle>
+            <TitleButton
+              onClick={() => {
+                navigate(routes.NftSelect)
+              }}
+            >
+              <AddIcon />
+              Create NFT Account
+            </TitleButton>
+          </TitleLayout>
+          {accountNFTsList !== undefined && !loading ? (
+            accountNFTsList.length ? (
+              <NftCards justifyContent={accountNFTsList && accountNFTsList?.length > 4 ? 'start' : 'center'}>
+                {accountNFTsList?.map(item => (
+                  <NftCard key={item.contract_name} nft={item} chainId={chainId} />
+                ))}
+              </NftCards>
+            ) : (
+              <NotHaveNft />
+            )
           ) : (
-            <NotHaveNft />
-          )
-        ) : (
-          <Searching />
-        )}
-      </Box>
+            <Searching />
+          )}
+        </Box>
+      ) : (
+        <Box>
+          <Loading />
+        </Box>
+      )}
     </NftLayout>
   )
 }
