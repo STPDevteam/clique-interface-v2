@@ -143,7 +143,7 @@ export default function SendNftModal({
                 <FormItem name="nft6551Hash" fieldType="custom">
                   <Select
                     label="Assets"
-                    placeholder={'Select DAO'}
+                    placeholder={'Select Nft'}
                     noBold
                     value={values.nft6551Hash}
                     onChange={e => {

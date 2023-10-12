@@ -76,8 +76,6 @@ const tabList = [
 
 export default function AccountNFTs({ account }: { account: string }) {
   const isSmDown = useBreakpoint('sm')
-  const [viewAll, setViewAll] = useState(false)
-  const [viewAllNft6551, setViewAllNft6551] = useState(false)
   const [currentChainId, setCurrentChainId] = useState<ChainId>(1)
   const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
   const {
@@ -85,33 +83,6 @@ export default function AccountNFTs({ account }: { account: string }) {
     setNftTabIndex
   } = useProfilePaginationCallback()
   const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
-  const { result: myCreateNftList, loading: loading_c, page: page_c } = useMyCreateNftAccountList(account)
-  const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
-  const showAccountNFTsList = useMemo(() => {
-    return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
-  }, [accountNFTsList, viewAll])
-
-  const showCreateNftList = useMemo(() => {
-    return viewAllNft6551 ? myCreateNftList : myCreateNftList.slice(0, 4)
-  }, [myCreateNftList, viewAllNft6551])
-
-  useEffect(() => {
-    if (accountNFTsList.length === 4) {
-      setViewAll(true)
-    }
-    if (isSmDown) {
-      setViewAll(true)
-    }
-  }, [accountNFTsList, isSmDown])
-
-  useEffect(() => {
-    if (myCreateNftList.length === 4) {
-      setViewAllNft6551(true)
-    }
-    if (isSmDown) {
-      setViewAllNft6551(true)
-    }
-  }, [myCreateNftList, isSmDown])
 
   useEffect(() => {
     return () => {
@@ -173,26 +144,53 @@ export default function AccountNFTs({ account }: { account: string }) {
 
       {tabValue === 0 && (
         <Box mt={20}>
-          {!accountNFTsList.length && !loading && <EmptyData />}
-          {loading && (
-            <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Loading />
-            </Box>
-          )}
+          <Nfts account={account} currentChainId={currentChainId} ercType={ercType} />
         </Box>
       )}
       {tabValue === 1 && (
         <Box mt={20}>
-          {!myCreateNftList.length && <EmptyData />}
-          {loading_c && (
-            <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Loading />
-            </Box>
-          )}
+          <MyCreateNftList account={account} />
         </Box>
       )}
+    </ContainerWrapper>
+  )
+}
 
-      {tabValue === 0 && (
+function Nfts({
+  account,
+  currentChainId,
+  ercType
+}: {
+  account: string
+  currentChainId: number
+  ercType: 'erc721' | 'erc1155'
+}) {
+  const isSmDown = useBreakpoint('sm')
+  const [viewAll, setViewAll] = useState(false)
+
+  const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
+  const showAccountNFTsList = useMemo(() => {
+    return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
+  }, [accountNFTsList, viewAll])
+
+  useEffect(() => {
+    if (accountNFTsList.length === 4) {
+      setViewAll(true)
+    }
+    if (isSmDown) {
+      setViewAll(true)
+    }
+  }, [accountNFTsList, isSmDown])
+
+  return (
+    <>
+      {loading ? (
+        <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Loading />
+        </Box>
+      ) : !accountNFTsList.length && !loading ? (
+        <EmptyData />
+      ) : (
         <>
           <Box
             mt={16}
@@ -250,7 +248,38 @@ export default function AccountNFTs({ account }: { account: string }) {
           )}
         </>
       )}
-      {tabValue === 1 && !!myCreateNftList.length && (
+    </>
+  )
+}
+
+function MyCreateNftList({ account }: { account: string }) {
+  const isSmDown = useBreakpoint('sm')
+  const [viewAllNft6551, setViewAllNft6551] = useState(false)
+
+  const { result: myCreateNftList, loading, page: page_c } = useMyCreateNftAccountList(account)
+
+  const showCreateNftList = useMemo(() => {
+    return viewAllNft6551 ? myCreateNftList : myCreateNftList.slice(0, 4)
+  }, [myCreateNftList, viewAllNft6551])
+
+  useEffect(() => {
+    if (myCreateNftList.length === 4) {
+      setViewAllNft6551(true)
+    }
+    if (isSmDown) {
+      setViewAllNft6551(true)
+    }
+  }, [myCreateNftList, isSmDown])
+
+  return (
+    <>
+      {loading ? (
+        <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Loading />
+        </Box>
+      ) : !showCreateNftList.length && !loading ? (
+        <EmptyData />
+      ) : (
         <>
           <Box
             mt={16}
@@ -308,7 +337,7 @@ export default function AccountNFTs({ account }: { account: string }) {
           )}
         </>
       )}
-    </ContainerWrapper>
+    </>
   )
 }
 
