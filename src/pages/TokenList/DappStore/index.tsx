@@ -172,7 +172,8 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           title === ToolsCardsTitle.CreateSBT ||
           title === ToolsCardsTitle.CreateDAO ||
           title === ToolsCardsTitle.CreateToken ||
-          title === ToolsCardsTitle.AccountGenerator
+          title === ToolsCardsTitle.AccountGenerator ||
+          title === ToolsCardsTitle.AssetPortal
         ) {
           if (!account) return toggleWalletModal()
           if (!userSignature) return loginSignature()
