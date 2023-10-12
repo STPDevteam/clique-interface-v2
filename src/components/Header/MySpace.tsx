@@ -112,8 +112,8 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState<boolean>(false)
-  const { result: NftList } = useNftAccountList()
-  console.log('NftList=>', NftList)
+  const { result: NftAccountList } = useNftAccountList()
+  console.log('NftAccountList=>', NftAccountList)
 
   return (
     <Box>
@@ -201,7 +201,7 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
             </Box>
           ) : (
             <>
-              {NftList.length ? (
+              {NftAccountList.length ? (
                 <Box
                   mt={10}
                   sx={{
@@ -214,7 +214,7 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
                     marginBottom: '6px'
                   }}
                 >
-                  {NftList?.map((option, index) => (
+                  {NftAccountList?.map((option, index) => (
                     <Box key={index} sx={{ maxHeight: '54px', mb: 6 }}>
                       <Image
                         src={option.image_uri || placeholderImage}

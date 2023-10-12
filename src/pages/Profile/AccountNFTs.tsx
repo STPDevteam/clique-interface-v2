@@ -12,14 +12,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import placeholderImage from 'assets/images/placeholder.png'
 import Select from 'components/Select/Select'
 import LogoText from 'components/LogoText'
-import { getEtherscanLink, shortenAddress } from 'utils'
+import { getEtherscanLink } from 'utils'
 import LoopIcon from '@mui/icons-material/Loop'
 import { toast } from 'react-toastify'
-import { useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
-import { ExternalLink } from 'theme/components'
-import Copy from 'components/essential/Copy'
+import { MyCreateNftListProp, useMyCreateNftAccountList, useNft6551Detail } from 'hooks/useBackedNftCallback'
 import { useProfilePaginationCallback } from 'state/pagination/hooks'
-import Table from 'components/Table'
+import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
 
 const TabStyle = styled(Tabs)(({ theme }) => ({
@@ -53,23 +51,6 @@ const TabStyle = styled(Tabs)(({ theme }) => ({
   }
 }))
 
-const TableContentStyle = styled(Box)(({ theme }) => ({
-  height: '50px',
-  display: 'flex',
-  alignItems: 'center',
-  color: 'var(--word-color, #3F5170)',
-  fontSize: '14px',
-  justifyContent: 'center',
-  svg: {
-    width: '18px',
-    height: '18px',
-    borderRadius: '50%'
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: 36
-  }
-}))
-
 const StyledItems = styled(Box)(({ theme }) => ({
   height: 298,
   background: '#F9F9F9',
@@ -79,50 +60,6 @@ const StyledItems = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     height: 180,
     width: '44vw'
-  }
-}))
-
-const StyleTable = styled(Box)(({ theme }) => ({
-  marginTop: '16px',
-  '& table': {
-    border: '1px solid #D4D7E2',
-    borderColor: '#D4D7E2',
-    borderRadius: '8px!important',
-    borderSpacing: '0!important',
-    '& .MuiTableHead-root': {
-      height: 30,
-      backgroundColor: '#F8FBFF',
-      '& .MuiTableRow-root': {
-        borderRadius: 0
-      },
-      '& .MuiTableCell-root': {
-        padding: 0,
-        borderLeft: '1px solid #D4D7E2'
-      },
-      '& .MuiTableCell-root:nth-of-type(1)': {
-        borderRadius: '8px 0 0 0',
-        borderColor: '#D4D7E2',
-        paddingLeft: '30px',
-        textAlign: 'left'
-      }
-    },
-    '& .MuiTableBody-root': {
-      '& .MuiTableRow-root .MuiTableCell-root': {
-        padding: '0',
-        borderLeft: '1px solid #D4D7E2'
-      },
-      '& .MuiTableRow-root:last-child td': {
-        borderBottom: 0
-      },
-      '& .MuiTableCell-root:nth-of-type(1)': {
-        paddingLeft: '30px',
-        borderLeft: 'none'
-      }
-    }
-  },
-  [theme.breakpoints.down('sm')]: {
-    display: 'grid',
-    gap: '10px'
   }
 }))
 
@@ -140,6 +77,7 @@ const tabList = [
 export default function AccountNFTs({ account }: { account: string }) {
   const isSmDown = useBreakpoint('sm')
   const [viewAll, setViewAll] = useState(false)
+  const [viewAllNft6551, setViewAllNft6551] = useState(false)
   const [currentChainId, setCurrentChainId] = useState<ChainId>(1)
   const [ercType, setErcType] = useState<'erc721' | 'erc1155'>('erc721')
   const {
@@ -147,11 +85,15 @@ export default function AccountNFTs({ account }: { account: string }) {
     setNftTabIndex
   } = useProfilePaginationCallback()
   const [tabValue, setTabValue] = useState<number>(nftTabIndex || 0)
-  const { result: myCreateNftList, loading: loading_c } = useMyCreateNftAccountList(account)
+  const { result: myCreateNftList, loading: loading_c, page: page_c } = useMyCreateNftAccountList(account)
   const { result: accountNFTsList, loading, page } = useAccountNFTsList(account, currentChainId, ercType)
   const showAccountNFTsList = useMemo(() => {
     return viewAll ? accountNFTsList : accountNFTsList.slice(0, 4)
   }, [accountNFTsList, viewAll])
+
+  const showCreateNftList = useMemo(() => {
+    return viewAllNft6551 ? myCreateNftList : myCreateNftList.slice(0, 4)
+  }, [myCreateNftList, viewAllNft6551])
 
   useEffect(() => {
     if (accountNFTsList.length === 4) {
@@ -163,41 +105,20 @@ export default function AccountNFTs({ account }: { account: string }) {
   }, [accountNFTsList, isSmDown])
 
   useEffect(() => {
+    if (myCreateNftList.length === 4) {
+      setViewAllNft6551(true)
+    }
+    if (isSmDown) {
+      setViewAllNft6551(true)
+    }
+  }, [myCreateNftList, isSmDown])
+
+  useEffect(() => {
     return () => {
       setNftTabIndex(0)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const Nft6551List = useMemo(() => {
-    return myCreateNftList.map((row, index) => [
-      <TableContentStyle key={index} justifyContent={'start !important'}>
-        <Link style={{ textDecoration: 'none' }} href={routes._NftDetail + '/' + row.account + '/' + row.chainId}>
-          {row.account ? shortenAddress(row.account, 4) : '--'}
-        </Link>
-        <Copy margin="0 0 0 10px" toCopy={row.account} />
-      </TableContentStyle>,
-      <TableContentStyle key={index}>
-        <Typography maxWidth={'100px'} noWrap>
-          {row.tokenId}
-        </Typography>
-      </TableContentStyle>,
-      <TableContentStyle key={index}>
-        <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}>
-          {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
-        </ExternalLink>
-        <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
-      </TableContentStyle>,
-      <TableContentStyle key={index}>{row.createTime || '--'}</TableContentStyle>,
-      <TableContentStyle key={index}>
-        <Typography maxWidth={200} noWrap>
-          <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}>
-            {row.transactionHash || '--'}
-          </ExternalLink>
-        </Typography>
-      </TableContentStyle>
-    ])
-  }, [myCreateNftList])
 
   return (
     <ContainerWrapper
@@ -330,15 +251,62 @@ export default function AccountNFTs({ account }: { account: string }) {
         </>
       )}
       {tabValue === 1 && !!myCreateNftList.length && (
-        <StyleTable>
-          <Table
-            collapsible={false}
-            firstAlign="center"
-            variant="outlined"
-            header={['ERC-6551 Account ', 'Token ID', 'Token Contract', 'Create Time', 'Hash']}
-            rows={Nft6551List}
-          />
-        </StyleTable>
+        <>
+          <Box
+            mt={16}
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                sm: viewAllNft6551 ? '250fr 250fr 250fr 250fr' : '250fr 250fr 250fr 250fr 80fr',
+                xs: '1fr 1fr'
+              },
+              gap: '15px',
+              minWidth: isSmDown ? 'unset' : '800px',
+              overflowX: 'auto',
+              '&::-webkit-scrollbar': {
+                display: 'none'
+              }
+            }}
+          >
+            {showCreateNftList.map(item => (
+              <NFT6551Item key={item.account} nft={item} />
+            ))}
+            {!isSmDown && !viewAllNft6551 && myCreateNftList.length > 4 && (
+              <StyledItems
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-around',
+                  alignItems: 'center',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setViewAllNft6551(true)}
+              >
+                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+                </svg>
+                <Typography color={'#9A9A9A'} fontWeight={500}>
+                  View all
+                </Typography>
+                <svg width="23" height="21" viewBox="0 0 23 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 2L11 10.5L2 19" stroke="#E6E6E6" strokeWidth="4" />
+                  <path d="M11 2L20 10.5L11 19" stroke="#E6E6E6" strokeWidth="4" />
+                </svg>
+              </StyledItems>
+            )}
+          </Box>
+
+          {viewAllNft6551 && page_c.totalPage > 1 && (
+            <Box display={'flex'} mt={20} justifyContent="center">
+              <Pagination
+                count={page_c.totalPage}
+                page={page_c.currentPage}
+                onChange={(_, value) => page_c.setCurrentPage(value)}
+              />
+            </Box>
+          )}
+        </>
       )}
     </ContainerWrapper>
   )
@@ -401,17 +369,24 @@ function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftC
         altSrc={placeholderImage}
         style={{
           width: '100%',
-          height: isSmDown ? 124 : 248,
+          height: isSmDown ? `calc(100% - 34px)` : `calc(100% - 45px)`,
           borderRadius: '10px 10px 0 0',
           objectFit: 'cover'
         }}
         src={nft.image_uri || placeholderImage}
       />
-      <RowCenter padding="5px 16px">
+      <RowCenter
+        padding="5px 16px"
+        sx={{
+          position: 'absolute',
+          bottom: '0',
+          zIndex: 99,
+          width: '100%'
+        }}
+      >
         <Typography noWrap maxWidth={160}>
           {nft.name || nft.contract_name || '-'}#{nft.token_id}
         </Typography>
-        {/* {nftChainId === ChainId.MAINNET && ( */}
         <Link
           target={'_blank'}
           underline="none"
@@ -428,7 +403,77 @@ function NFTItem({ nft, idx, nftChainId }: { nft: ScanNFTInfo; idx: number; nftC
             />
           </svg>
         </Link>
-        {/* )} */}
+      </RowCenter>
+    </StyledItems>
+  )
+}
+
+function NFT6551Item({ nft }: { nft: MyCreateNftListProp }) {
+  const isSmDown = useBreakpoint('sm')
+  const { result: NftInfoData } = useNft6551Detail(nft.account, nft.chainId.toString())
+  const navigate = useNavigate()
+  const handleLinkClick = (e: any) => {
+    e.stopPropagation()
+  }
+  return (
+    <StyledItems
+      sx={{
+        cursor: 'pointer',
+        '&:hover': {
+          '.chainIcon': {
+            display: 'block !important'
+          }
+        }
+      }}
+      onClick={() => navigate(routes._NftDetail + '/' + nft.account + '/' + nft.chainId)}
+    >
+      <img
+        className="chainIcon"
+        src={ChainListMap[(nft.chainId as ChainId) || 1].logo}
+        alt=""
+        height={'30'}
+        width={'30'}
+        style={{ borderRadius: '50%', position: 'absolute', top: 10, left: 10, display: 'none', zIndex: 10 }}
+      />
+
+      <Image
+        style={{
+          width: '100%',
+          borderRadius: '10px 10px 0 0',
+          objectFit: 'cover',
+          height: isSmDown ? `calc(100% - 34px)` : `calc(100% - 45px)`
+        }}
+        src={NftInfoData?.logo_url || NftInfoData?.large_image_url || placeholderImage}
+      />
+      <RowCenter
+        padding="5px 16px"
+        sx={{
+          position: 'absolute',
+          bottom: '0',
+          zIndex: 99,
+          width: '100%'
+        }}
+      >
+        <Typography noWrap maxWidth={160}>
+          {NftInfoData?.name || '--'}#{nft?.tokenId}
+        </Typography>
+        <Link
+          onClick={handleLinkClick}
+          target={'_blank'}
+          underline="none"
+          href={
+            nft.chainId === ChainId.MAINNET
+              ? `https://opensea.io/assets/ethereum/${nft.tokenContract}/${nft.tokenId}`
+              : getEtherscanLink(nft.chainId, nft.tokenContract, 'token') + `?a=${nft.tokenId}`
+          }
+        >
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12.1875 3.66727L6.85862 8.97003C6.62922 9.19828 6.25824 9.19737 6.02997 8.96798C5.80172 8.7386 5.80263 8.36761 6.03202 8.13935L11.3851 2.8125H9.16992C8.84632 2.8125 8.58398 2.55016 8.58398 2.22656C8.58398 1.90296 8.84632 1.64062 9.16992 1.64062H11.7188C12.6248 1.64062 13.3594 2.37516 13.3594 3.28125V5.83008C13.3594 6.15368 13.097 6.41602 12.7734 6.41602C12.4498 6.41602 12.1875 6.15368 12.1875 5.83008V3.66727ZM12.1875 8.6464C12.1875 8.32279 12.4498 8.06046 12.7734 8.06046C13.097 8.06046 13.3594 8.32279 13.3594 8.6464V11.7188C13.3594 12.6248 12.6248 13.3594 11.7188 13.3594H3.28125C2.37516 13.3594 1.64062 12.6248 1.64062 11.7188V3.28125C1.64062 2.37516 2.37516 1.64062 3.28125 1.64062H6.35361C6.6772 1.64062 6.93955 1.90296 6.93955 2.22656C6.93955 2.55016 6.6772 2.8125 6.35361 2.8125H3.28125C3.02237 2.8125 2.8125 3.02237 2.8125 3.28125V11.7188C2.8125 11.9776 3.02237 12.1875 3.28125 12.1875H11.7188C11.9776 12.1875 12.1875 11.9776 12.1875 11.7188V8.64639V8.6464Z"
+              fill="#9A9A9A"
+            />
+          </svg>
+        </Link>
       </RowCenter>
     </StyledItems>
   )

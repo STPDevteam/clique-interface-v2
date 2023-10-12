@@ -9,7 +9,7 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ScanNFTInfo, useAccountNFTsList, useIsDelayTime, useRefreshNft } from 'hooks/useBackedProfileServer'
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
-import { ChainId } from 'constants/chain'
+import { ChainId, ChainListMap } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import { toast } from 'react-toastify'
 import { getEtherscanLink } from 'utils'
@@ -17,7 +17,6 @@ import placeholderImage from 'assets/images/placeholder.png'
 import Image from 'components/Image'
 import { useNavigate } from 'react-router-dom'
 import { routes } from 'constants/routes'
-import { ChainList } from 'constants/chain'
 import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
 import Loading from 'components/Loading'
 import { NftLayout } from './NftLayout'
@@ -191,11 +190,6 @@ function Card({
   const isSmDown = useBreakpoint('sm')
   const refreshCb = useRefreshNft()
 
-  const curChainLogo = useMemo(() => {
-    const res = ChainList.filter(item => item.id === nftChainId)
-    return res[0]?.logo
-  }, [nftChainId])
-
   const refresh = useCallback(() => {
     refreshCb(nft.contract_address, nft.token_id).then((res: any) => {
       if (res.data.code !== 200) {
@@ -235,7 +229,7 @@ function Card({
       <CardStyled className="card">
         <img
           className="chainIcon"
-          src={curChainLogo}
+          src={ChainListMap[(nftChainId as ChainId) || 1].logo}
           alt=""
           height={'30'}
           width={'30'}

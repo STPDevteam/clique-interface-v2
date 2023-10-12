@@ -204,7 +204,6 @@ export function useNft6551Detail(nftAccount: string | undefined, chainId: string
     }
     return
   }, [nft6551Res])
-  console.log('tokenId=>', tokenId)
 
   useEffect(() => {
     ;(async () => {

@@ -1,20 +1,17 @@
 import { MenuItem, Box } from '@mui/material'
 import LogoText from 'components/LogoText'
 import { useActiveWeb3React } from 'hooks'
-import { ChainList } from 'constants/chain'
+import { ChainList, ChainListMap } from 'constants/chain'
 import useBreakpoint from 'hooks/useBreakpoint'
 import Image from 'components/Image'
 import PopperCard from 'components/PopperCard'
-import { useMemo } from 'react'
+
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 
 export default function NetworkSelect({ IsNftPage }: { IsNftPage: boolean }) {
   const { chainId, account, library } = useActiveWeb3React()
   const isDownSm = useBreakpoint('sm')
-  const curChainLogo = useMemo(() => {
-    const res = ChainList.filter(item => item.id === chainId)
-    return res[0]?.logo
-  }, [chainId])
+
   if (!chainId || !account) return null
 
   return (
@@ -69,7 +66,7 @@ export default function NetworkSelect({ IsNftPage }: { IsNftPage: boolean }) {
               />
             </svg>
 
-            <Image src={curChainLogo} style={{ height: 24, width: 24 }} />
+            <Image src={ChainListMap[chainId || 1].logo} style={{ height: 24, width: 24 }} />
           </Box>
         }
       >
