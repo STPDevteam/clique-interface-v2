@@ -1,7 +1,7 @@
 import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme, Link } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Back from 'components/Back'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Copy from 'components/essential/Copy'
 import Loading from 'components/Loading'
 // import { routes } from 'constants/routes'
@@ -32,6 +32,7 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import { ChainId, ChainListMap } from 'constants/chain'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ConnectAccountModal from './ConnectAccountModal'
+import { routes } from 'constants/routes'
 
 const ContentBoxStyle = styled(Box)(({ theme }) => ({
   minHeight: '780px',
@@ -228,7 +229,7 @@ enum TAB {
 const TabsList = [TAB.Assets, TAB.NFTs, TAB.History]
 
 export function Nft6551Detail() {
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
   // const { isDelayTime } = useIsDelayTime()
 
   const userSignature = useUserInfo()
@@ -292,6 +293,9 @@ export function Nft6551Detail() {
                       margin: '0 !important',
                       fontWeight: 500,
                       lineHeight: '20px'
+                    }}
+                    event={() => {
+                      navigate(routes.NftAssets)
                     }}
                   />
                   <TitleStyle>${NftInfoData?.opensea_floor_price || '--'}</TitleStyle>
@@ -435,22 +439,24 @@ export function Nft6551Detail() {
                   top 1%. Join the movement that is community owned, building the future from the bottom up.`}
                 </Typography>
                 <ButtonsStyle justifyContent={'end'}>
-                  <Link
-                    target={'_blank'}
-                    underline="none"
-                    href={
-                      Number(chainId) === ChainId.MAINNET
-                        ? `https://opensea.io/assets/ethereum/${NftInfoData?.contract_address}/${tokenId}`
-                        : chainId &&
-                          NftInfoData?.contract_address &&
-                          getEtherscanLink(Number(chainId), NftInfoData?.contract_address, 'token') + `?a=${tokenId}`
-                    }
-                  >
-                    <OutlineButton sx={{ padding: '10px 20px', gap: 5 }}>
-                      <OpenSeaIcon />
-                      View on Opensea
-                    </OutlineButton>
-                  </Link>
+                  {Number(chainId) === ChainId.MAINNET && (
+                    <Link
+                      target={'_blank'}
+                      underline="none"
+                      href={
+                        Number(chainId) === ChainId.MAINNET
+                          ? `https://opensea.io/assets/ethereum/${NftInfoData?.contract_address}/${tokenId}`
+                          : chainId &&
+                            NftInfoData?.contract_address &&
+                            getEtherscanLink(Number(chainId), NftInfoData?.contract_address, 'token') + `?a=${tokenId}`
+                      }
+                    >
+                      <OutlineButton sx={{ padding: '10px 20px', gap: 5 }}>
+                        <OpenSeaIcon />
+                        View on Opensea
+                      </OutlineButton>
+                    </Link>
+                  )}
                   {isOwner && isTrueChain && (
                     <OutlineButton
                       sx={{ padding: '11px', gap: 5 }}

@@ -1,21 +1,4 @@
-import {
-  Box,
-  Link,
-  MenuItem,
-  Stack,
-  styled,
-  Typography,
-  Tabs,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  tableCellClasses,
-  useTheme
-} from '@mui/material'
+import { Box, Link, MenuItem, Stack, styled, Typography, Tabs, Tab } from '@mui/material'
 import EmptyData from 'components/EmptyData'
 import Image from 'components/Image'
 import Loading from 'components/Loading'
@@ -32,32 +15,12 @@ import LogoText from 'components/LogoText'
 import { getEtherscanLink, shortenAddress } from 'utils'
 import LoopIcon from '@mui/icons-material/Loop'
 import { toast } from 'react-toastify'
-import { MyCreateNftListProp, useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
+import { useMyCreateNftAccountList } from 'hooks/useBackedNftCallback'
 import { ExternalLink } from 'theme/components'
 import Copy from 'components/essential/Copy'
 import { useProfilePaginationCallback } from 'state/pagination/hooks'
-
-// import { useActiveWeb3React } from 'hooks'
-
-// const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
-//   borderRadius: '16px',
-//   height: 24,
-//   opacity: 0.6,
-//   fontSize: 12,
-//   '& button': {
-//     height: 24,
-//     color: '#9A9A9A',
-//     minWidth: '82px!important',
-//     fontWeight: 400,
-//     borderColor: theme.palette.text.primary
-//   },
-//   '& .active': {
-//     opacity: 1,
-//     backgroundColor: '#fff',
-//     fontWeight: 500,
-//     color: theme.palette.text.primary
-//   }
-// }))
+import Table from 'components/Table'
+import { routes } from 'constants/routes'
 
 const TabStyle = styled(Tabs)(({ theme }) => ({
   '& .MuiButtonBase-root': {
@@ -90,6 +53,23 @@ const TabStyle = styled(Tabs)(({ theme }) => ({
   }
 }))
 
+const TableContentStyle = styled(Box)(({ theme }) => ({
+  height: '50px',
+  display: 'flex',
+  alignItems: 'center',
+  color: 'var(--word-color, #3F5170)',
+  fontSize: '14px',
+  justifyContent: 'center',
+  svg: {
+    width: '18px',
+    height: '18px',
+    borderRadius: '50%'
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: 36
+  }
+}))
+
 const StyledItems = styled(Box)(({ theme }) => ({
   height: 298,
   background: '#F9F9F9',
@@ -102,46 +82,47 @@ const StyledItems = styled(Box)(({ theme }) => ({
   }
 }))
 
-const StyledTableCell = styled(TableCell)(() => ({
-  [`&.${tableCellClasses.head}`]: {
-    minWidth: 110,
-    padding: '0px 20px',
-    height: '31px',
-    backgroundColor: '#F8FBFF',
-    fontFamily: 'Inter',
-    fontWeight: 400,
-    fontSize: '14px',
-    lineHeight: '20px',
-    color: '#3F5170',
-    border: 'none',
-    borderLeft: '1px solid #D4D7E2',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis'
+const StyleTable = styled(Box)(({ theme }) => ({
+  marginTop: '16px',
+  '& table': {
+    border: '1px solid #D4D7E2',
+    borderColor: '#D4D7E2',
+    borderRadius: '8px!important',
+    borderSpacing: '0!important',
+    '& .MuiTableHead-root': {
+      height: 30,
+      backgroundColor: '#F8FBFF',
+      '& .MuiTableRow-root': {
+        borderRadius: 0
+      },
+      '& .MuiTableCell-root': {
+        padding: 0,
+        borderLeft: '1px solid #D4D7E2'
+      },
+      '& .MuiTableCell-root:nth-of-type(1)': {
+        borderRadius: '8px 0 0 0',
+        borderColor: '#D4D7E2',
+        paddingLeft: '30px',
+        textAlign: 'left'
+      }
+    },
+    '& .MuiTableBody-root': {
+      '& .MuiTableRow-root .MuiTableCell-root': {
+        padding: '0',
+        borderLeft: '1px solid #D4D7E2'
+      },
+      '& .MuiTableRow-root:last-child td': {
+        borderBottom: 0
+      },
+      '& .MuiTableCell-root:nth-of-type(1)': {
+        paddingLeft: '30px',
+        borderLeft: 'none'
+      }
+    }
   },
-  [`&.${tableCellClasses.head}.firstColumn`]: {
-    borderLeft: 'none'
-  },
-  [`&.${tableCellClasses.body}`]: {
-    padding: '0px 20px',
-    height: '50px',
-    fontFamily: 'Inter',
-    fontWeight: 500,
-    fontSize: '14px',
-    lineHeight: '20px',
-    color: '#3F5170'
-  }
-}))
-
-const StyledTableRow = styled(TableRow)(() => ({
-  '& td': {
-    borderTop: '1px solid #D4D7E2',
-    borderLeft: '1px solid #D4D7E2'
-  },
-  '& td:first-of-type': {
-    borderLeft: 'none'
-  },
-  '&:last-child td': {
-    borderBottom: 'none'
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    gap: '10px'
   }
 }))
 
@@ -187,6 +168,36 @@ export default function AccountNFTs({ account }: { account: string }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const Nft6551List = useMemo(() => {
+    return myCreateNftList.map((row, index) => [
+      <TableContentStyle key={index} justifyContent={'start !important'}>
+        <Link style={{ textDecoration: 'none' }} href={routes._NftDetail + '/' + row.account + '/' + row.chainId}>
+          {row.account ? shortenAddress(row.account, 4) : '--'}
+        </Link>
+        <Copy margin="0 0 0 10px" toCopy={row.account} />
+      </TableContentStyle>,
+      <TableContentStyle key={index}>
+        <Typography maxWidth={'100px'} noWrap>
+          {row.tokenId}
+        </Typography>
+      </TableContentStyle>,
+      <TableContentStyle key={index}>
+        <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}>
+          {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
+        </ExternalLink>
+        <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
+      </TableContentStyle>,
+      <TableContentStyle key={index}>{row.createTime || '--'}</TableContentStyle>,
+      <TableContentStyle key={index}>
+        <Typography maxWidth={200} noWrap>
+          <ExternalLink href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}>
+            {row.transactionHash || '--'}
+          </ExternalLink>
+        </Typography>
+      </TableContentStyle>
+    ])
+  }, [myCreateNftList])
 
   return (
     <ContainerWrapper
@@ -318,91 +329,18 @@ export default function AccountNFTs({ account }: { account: string }) {
           )}
         </>
       )}
-      {tabValue === 1 && myCreateNftList.length ? <CreateNft6551 myCreateNftList={myCreateNftList} /> : null}
+      {tabValue === 1 && !!myCreateNftList.length && (
+        <StyleTable>
+          <Table
+            collapsible={false}
+            firstAlign="center"
+            variant="outlined"
+            header={['ERC-6551 Account ', 'Token ID', 'Token Contract', 'Create Time', 'Hash']}
+            rows={Nft6551List}
+          />
+        </StyleTable>
+      )}
     </ContainerWrapper>
-  )
-}
-
-function CreateNft6551({ myCreateNftList }: { myCreateNftList: MyCreateNftListProp[] }) {
-  // const { chainId } = useActiveWeb3React()
-  const theme = useTheme()
-  return (
-    <>
-      <Box
-        sx={{
-          width: 'auto',
-          [theme.breakpoints.down('sm')]: {
-            width: 'calc(100vw - 32px)',
-            overflowX: 'auto'
-          }
-        }}
-      >
-        <TableContainer sx={{ border: '1px solid #D4D7E2', borderRadius: '8px', minWidth: 942 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <StyledTableCell className="firstColumn">ERC-6551 Account </StyledTableCell>
-                <StyledTableCell>Token ID</StyledTableCell>
-                <StyledTableCell>Token Contract</StyledTableCell>
-                <StyledTableCell>Create Time</StyledTableCell>
-                <StyledTableCell>Hash</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {myCreateNftList.map((row, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell>
-                    <Box display={'flex'} alignItems={'center'}>
-                      {row.account ? shortenAddress(row.account, 4) : '--'}
-                      <Copy margin="0 0 0 10px" toCopy={row.account} />
-                    </Box>
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <Typography
-                      sx={{
-                        maxWidth: 50,
-                        width: '100%'
-                      }}
-                      noWrap
-                    >
-                      {row.tokenId}
-                    </Typography>
-                  </StyledTableCell>
-
-                  <StyledTableCell>
-                    <Box display={'flex'} alignItems={'center'}>
-                      <ExternalLink
-                        href={getEtherscanLink(row.chainId ? row.chainId : 1, row.tokenContract, 'address')}
-                      >
-                        {row.tokenContract ? shortenAddress(row.tokenContract, 4) : '--'}
-                      </ExternalLink>
-                      <Copy margin="0 0 0 10px" toCopy={row.tokenContract} />
-                    </Box>
-                  </StyledTableCell>
-                  <StyledTableCell>{row.createTime || '--'}</StyledTableCell>
-                  <StyledTableCell>
-                    <Typography
-                      sx={{
-                        maxWidth: 200,
-                        width: '100%'
-                      }}
-                      noWrap
-                    >
-                      <ExternalLink
-                        href={getEtherscanLink(row.chainId ? row.chainId : 1, row.transactionHash, 'transaction')}
-                      >
-                        {row.transactionHash || '--'}
-                      </ExternalLink>
-                    </Typography>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    </>
   )
 }
 
