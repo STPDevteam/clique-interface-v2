@@ -24,6 +24,7 @@ import { Searching } from './Children/Card/Searching'
 import { NotHaveNft } from './Children/Card/NotHaveNft'
 import { NftDelaySuccess } from './Children/Card/SuccessCard'
 import { useUserHasSubmittedClaim } from 'state/transactions/hooks'
+import { useSbtListPaginationCallback } from 'state/pagination/hooks'
 
 const TitleStyle = styled(Typography)(({ theme }) => ({
   color: '#FFF',
@@ -89,6 +90,7 @@ export interface NftProp {
 export function NftSelect() {
   const isSmDown = useBreakpoint('sm')
   const navigate = useNavigate()
+  const { setCategory } = useSbtListPaginationCallback()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
   const { account, chainId } = useActiveWeb3React()
@@ -157,7 +159,33 @@ export function NftSelect() {
                       ))}
                     </NftCards>
                   ) : (
-                    <NotHaveNft />
+                    <NotHaveNft>
+                      <ContentTextStyle
+                        sx={{
+                          maxWidth: 340,
+                          textAlign: 'center',
+                          fontSize: isSmDown ? 13 : 14
+                        }}
+                      >
+                        {"Whoops, you don't have any available NFTs."}
+                        <br />
+                        {" It's okay, go into "}
+                        <Link
+                          style={{
+                            cursor: 'pointer',
+                            color: '#F9F9F9',
+                            textDecoration: 'underline'
+                          }}
+                          onClick={() => {
+                            setCategory(1)
+                            navigate(routes.Activity)
+                          }}
+                        >
+                          Clique Discovery
+                        </Link>
+                        {' to claim a NFT !'}
+                      </ContentTextStyle>
+                    </NotHaveNft>
                   )
                 ) : (
                   <Searching />

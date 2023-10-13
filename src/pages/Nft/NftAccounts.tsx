@@ -1,4 +1,4 @@
-import { Box, Typography, styled } from '@mui/material'
+import { Box, Typography, styled, Link } from '@mui/material'
 import { NftIsDelayCard, NftLayout } from './NftLayout'
 import { ReactComponent as AddSvg } from 'assets/svg/add.svg'
 import Image from 'components/Image'
@@ -15,6 +15,8 @@ import { routes } from 'constants/routes'
 import { useUserInfo } from 'state/userInfo/hooks'
 import { useAssetsTokenCallback, useNftAccountAssetsBalanceCallback } from 'hooks/useBackedNftCallback'
 import Loading from 'components/Loading'
+import useBreakpoint from 'hooks/useBreakpoint'
+import { ContentTextStyle } from './NftSelect'
 
 const TitleLayout = styled(Box)(() => ({
   height: 'auto',
@@ -117,6 +119,7 @@ const NftCards = styled(Box)(({ theme }) => ({
 
 export function NftAccounts() {
   const navigate = useNavigate()
+  const isSmDown = useBreakpoint('sm')
   const { account, chainId } = useActiveWeb3React()
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
@@ -165,7 +168,32 @@ export function NftAccounts() {
                 ))}
               </NftCards>
             ) : (
-              <NotHaveNft />
+              <NotHaveNft>
+                <ContentTextStyle
+                  sx={{
+                    maxWidth: 340,
+                    textAlign: 'center',
+                    fontSize: isSmDown ? 13 : 14
+                  }}
+                >
+                  {"Whoops, You don't have any available NFT wallets."}
+                  <br />
+                  {" It's okay, go into "}
+                  <Link
+                    style={{
+                      cursor: 'pointer',
+                      color: '#F9F9F9',
+                      textDecoration: 'underline'
+                    }}
+                    onClick={() => {
+                      navigate(routes.NftSelect)
+                    }}
+                  >
+                    NFT Account Generator
+                  </Link>
+                  {' create one first.'}
+                </ContentTextStyle>
+              </NotHaveNft>
             )
           ) : (
             <Searching />
