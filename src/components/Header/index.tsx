@@ -381,8 +381,9 @@ export default function Header() {
       >
         <a href="https://myclique.io/" target="_blank" style={{ textDecoration: 'none' }} rel="noreferrer">
           <Alert severity="warning" sx={{ height: 54, backgroundColor: '#e6f7ff' }}>
-            The V2 version is only for view during the transition period. All the changes to the V2 version will be not
-            recorded on V3 and will be lost when V2 is closed. Please move to V3 for any changes or operations.
+            {`V2 will close in 30 days, which is on November 16th. The V2 version is only for view during this period. All
+            the changes to the V2 version will be not recorded on V3 and will be lost when V2 is closed. Please move to
+            V3 for any changes to operations.`}
           </Alert>
         </a>
       </Box>
