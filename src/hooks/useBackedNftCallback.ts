@@ -13,7 +13,7 @@ import { TokenboundClient } from '@tokenbound/sdk'
 // import { Currency } from 'constants/token/currency'
 import isZero from 'utils/isZero'
 import { Axios } from 'utils/axios'
-import { NFT_REGISTRY_ADDRESS, NFT_IMPLEMENTATION_ADDRESS, serverTokenAssets } from '../constants'
+import { NFT_REGISTRY_ADDRESS, NFT_IMPLEMENTATION_ADDRESS, serverAwnsUrl } from '../constants'
 import { ChainId, SUPPORTED_NETWORKS } from 'constants/chain'
 import { isAddress } from 'utils'
 import { useERC721Contract, useNft6551Contract } from 'hooks/useContract'
@@ -72,6 +72,49 @@ export interface AssetsTokenProp {
   name: string
   symbol: string
   price: number
+}
+
+interface TokenHistoryTypeProp {
+  amount: number
+  to_addr: string
+  token_id: string
+}
+
+interface TokenHistoryTxProp {
+  from_addr: string
+  message: string | number
+  name: string
+  params: []
+  selector: string
+  status: number
+  to_addr: string
+  value: number
+}
+
+export interface TokenHistoryListProp {
+  cate_id: string
+  cex_id: string | number
+  chain: string
+  id: string
+  is_scam: boolean
+  other_addr: string
+  project_id: string | number
+  time_at: number
+  token_approve: string | number
+  receives: TokenHistoryTypeProp[] | undefined
+  sends: TokenHistoryTypeProp[] | undefined
+  tx: TokenHistoryTxProp | undefined
+}
+
+export interface TokenHistoryProp {
+  history_list: TokenHistoryListProp[]
+  token_dict: {
+    [key: string]: {
+      logo_url: string
+      id: string
+      name: string
+    }
+  }
 }
 
 export function useRecentNftList() {
@@ -354,6 +397,7 @@ export function useSendAssetsCallback(chainId: number | undefined) {
 
 export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: string | undefined) {
   const [result, setResult] = useState<AssetsTokenProp[]>([])
+
   const [loading, setLoading] = useState<boolean>(false)
   const chain = useMemo(() => {
     if (!chainId) return
@@ -365,7 +409,42 @@ export function useAssetsTokenCallback(chainId: number | undefined, nftAccount: 
       setLoading(true)
       if (!chain || !nftAccount) return
       try {
-        const res = await Axios.get(serverTokenAssets, { chain, account: nftAccount })
+        const res = await Axios.get(serverAwnsUrl + '/rpc/token/list', { chain, account: nftAccount })
+        if (!res.data.data) {
+          throw res
+        }
+        const data = res.data.data
+
+        setResult(data)
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+        console.log(error)
+      }
+    })()
+  }, [nftAccount, chain])
+
+  return {
+    result,
+    loading
+  }
+}
+
+export function useTokenHistoryCallback(chainId: number | undefined, nftAccount: string | undefined) {
+  const [result, setResult] = useState<TokenHistoryProp>()
+
+  const [loading, setLoading] = useState<boolean>(false)
+  const chain = useMemo(() => {
+    if (!chainId) return
+
+    return SUPPORTED_NETWORKS[chainId as ChainId]?.nativeCurrency.symbol.toLocaleLowerCase()
+  }, [chainId])
+  useEffect(() => {
+    ;(async () => {
+      setLoading(true)
+      if (!chain || !nftAccount) return
+      try {
+        const res = await Axios.get(serverAwnsUrl + '/rpc/history/list', { chain, account: nftAccount })
         if (!res.data.data) {
           throw res
         }

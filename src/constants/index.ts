@@ -126,7 +126,7 @@ export const NFT_REGISTRY_ADDRESS: { [chainId in ChainId]?: string } = {
 
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v3/img/upload'
-export const serverTokenAssets = 'https://awns-devapi.myclique.io/awns/rpc/token/list'
+export const serverAwnsUrl = 'https://awns-devapi.myclique.io/awns'
 export const signMessage = 'Welcome to Clique'
 export const myCliqueV1Domain = 'https://v1.myclique.io/'
 

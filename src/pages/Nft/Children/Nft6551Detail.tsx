@@ -35,11 +35,16 @@ import ConnectAccountModal from './ConnectAccountModal'
 import { routes } from 'constants/routes'
 
 const ContentBoxStyle = styled(Box)(({ theme }) => ({
-  minHeight: '780px',
+  // minHeight: '780px',
+  maxHeight: '800px',
   width: '100%',
   border: '1px solid #D4D7E2',
   borderRadius: '10px',
   padding: '30px 40px',
+  overflowY: 'auto',
+  '&::-webkit-scrollbar': {
+    display: 'none'
+  },
   [theme.breakpoints.down('sm')]: {
     padding: '16px',
     minHeight: 'auto'
@@ -387,7 +392,7 @@ export function Nft6551Detail() {
                   <Assets chainId={Number(chainId)} nftAddress={nftAddress} setAssetsTotal={setAssetsTotal} />
                 )}
                 {TabsList[tabValue] === TAB.NFTs && <Nfts chainId={Number(chainId)} nftAddress={nftAddress} />}
-                {TabsList[tabValue] === TAB.History && <History />}
+                {TabsList[tabValue] === TAB.History && <History chainId={Number(chainId)} nftAddress={nftAddress} />}
               </LeftDetailStyle>
             </ContentBoxStyle>
             <ContentBoxStyle maxWidth={580}>
