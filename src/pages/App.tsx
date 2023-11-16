@@ -58,7 +58,7 @@ import LoginModal from 'components/Header/LoginModal'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
-import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
+// import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
 // import { NftGenerator } from './Nft/NftGenerator'
 // import { NftSelect } from './Nft/NftSelect'
@@ -129,7 +129,7 @@ const BodyWrapper = styled('div')(({}) => ({
 }))
 
 export default function App() {
-  const { headerLinkIsShow } = useUpdateDaoDataCallback()
+  // const { headerLinkIsShow } = useUpdateDaoDataCallback()
   const setSidedStatusCallBack = useDaoInfoLeftSidedOpenStatus()
   const { pathname } = useLocation()
   const theme = useTheme()
@@ -171,7 +171,7 @@ export default function App() {
             <BodyWrapper
               id="body"
               sx={{
-                minHeight: headerLinkIsShow ? 'calc(100vh - 50px)' : '100vh',
+                minHeight: '100vh',
                 paddingTop: pathname === routes.CreateDao ? 0 : theme.height.header,
                 [theme.breakpoints.down('md')]: {
                   paddingTop: pathname === routes.CreateDao ? 0 : 20,
