@@ -40,7 +40,7 @@ export function shortenHashAddress(hash: string, chars = 4): string {
 }
 
 export function isURL(url: string) {
-  const strRegex = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/
+  const strRegex = /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/
   const re = new RegExp(strRegex)
   if (re.test(url)) {
     return true
