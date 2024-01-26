@@ -60,7 +60,7 @@ export function getVotingNumberByTimestamp(timestamp: number) {
   return { day, hour, minute }
 }
 
-export function isSocialUrl(name: 'discord' | 'twitter' | string, url: string) {
+export function isSocialUrl(name: 'discord' | 'twitter' | 'github' | 'opensea' | 'youtube' | string, url: string) {
   switch (name) {
     case 'discord':
       return new RegExp(/^https:\/\/(www\.)?discord.com/).test(url)

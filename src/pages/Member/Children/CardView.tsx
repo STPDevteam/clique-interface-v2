@@ -18,6 +18,7 @@ import { ReactComponent as TwitterGray } from 'assets/svg/twitter_gray.svg'
 import { ReactComponent as DiscordGray } from 'assets/svg/discord_gray.svg'
 import { ReactComponent as YoutobeGray } from 'assets/svg/youtobe_gray.svg'
 import { ReactComponent as OpenseaGray } from 'assets/svg/opensea_gray.svg'
+import { isSocialUrl } from 'utils/dao'
 
 export enum DaoLevel {
   CREATOR,
@@ -186,22 +187,22 @@ export default function CardView({ result, role }: { result: JobsListProps[]; ro
                   gap: 10
                 }}
               >
-                {item.twitter ? (
+                {item.twitter && isSocialUrl('twitter', item.twitter) ? (
                   <Twitter onClick={() => window.open(item.twitter, '_blank')}></Twitter>
                 ) : (
                   <TwitterGray />
                 )}
-                {item.youtobe ? (
+                {item.youtobe && isSocialUrl('youtobe', item.youtobe) ? (
                   <Youtobe onClick={() => window.open(item.youtobe, '_blank')}></Youtobe>
                 ) : (
                   <YoutobeGray />
                 )}
-                {item.discord ? (
+                {item.discord && isSocialUrl('discord', item.discord) ? (
                   <Discord onClick={() => window.open(item.discord, '_blank')}></Discord>
                 ) : (
                   <DiscordGray />
                 )}
-                {item.opensea ? (
+                {item.opensea && isSocialUrl('opensea', item.opensea) ? (
                   <Opensea onClick={() => window.open(item.opensea, '_blank')}></Opensea>
                 ) : (
                   <OpenseaGray />
