@@ -10,7 +10,6 @@ import {
   Tooltip,
   TooltipProps,
   tooltipClasses,
-  Alert,
   useTheme
 } from '@mui/material'
 import HomeIcon from '@mui/icons-material/Home'
@@ -574,7 +573,7 @@ export default function Header() {
     <>
       {headerLinkIsShow && (
         <>
-          {!IsNftPage && (
+          {/* {!IsNftPage && (
             <>
               <Box height={50} />
               <Alert
@@ -603,7 +602,7 @@ export default function Header() {
                 </a>
               </Alert>
             </>
-          )}
+          )} */}
           <MobileMenu isOpen={mobileMenuOpen} onDismiss={handleMobileMenueDismiss} />
           <Filler />
           <StyledMobileAppBar>
@@ -612,7 +611,7 @@ export default function Header() {
 
           <StyledAppBar
             sx={{
-              top: isGovernance || IsNftPage ? 0 : 50,
+              // top: isGovernance || IsNftPage ? 0 : 50,
               backgroundColor: IsNftPage ? 'transparent' : theme.palette.background.paper,
               boxShadow: IsNftPage ? 'none' : 'inset 0px -1px 0px #E4E4E4'
             }}
