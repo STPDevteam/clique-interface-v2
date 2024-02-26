@@ -333,29 +333,29 @@ export function Nft6551Detail() {
                   )}
                 </ButtonsStyle>
 
-                <WarningStyle>
-                  {!isTrueChain && (
-                    <>
-                      <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
-                        You need switch to{` `}
-                        <Link
-                          sx={{ cursor: 'pointer' }}
-                          onClick={() => chainId && triggerSwitchChain(library, Number(chainId), account || '')}
-                        >
-                          switch
-                        </Link>
-                        {` `}
-                        {chainId ? ChainListMap[Number(chainId)].name : '--'}
-                      </Typography>
-                      <BlackButton
-                        className="class_apply_button"
+                {/* <WarningStyle> */}
+                {!isTrueChain && (
+                  <WarningStyle>
+                    <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+                      You need switch to{` `}
+                      <Link
+                        sx={{ cursor: 'pointer' }}
                         onClick={() => chainId && triggerSwitchChain(library, Number(chainId), account || '')}
                       >
-                        Switch
-                      </BlackButton>
-                    </>
-                  )}
-                  {/* <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+                        switch
+                      </Link>
+                      {` `}
+                      {chainId ? ChainListMap[Number(chainId)].name : '--'}
+                    </Typography>
+                    <BlackButton
+                      className="class_apply_button"
+                      onClick={() => chainId && triggerSwitchChain(library, Number(chainId), account || '')}
+                    >
+                      Switch
+                    </BlackButton>
+                  </WarningStyle>
+                )}
+                {/* <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
                         {`Apply for .aw domain name now ->`}
                       </Typography>
                       <BlackButton
@@ -366,7 +366,7 @@ export function Nft6551Detail() {
                       >
                         Apply
                       </BlackButton> */}
-                </WarningStyle>
+                {/* </WarningStyle> */}
                 <StyledTabs>
                   <Tabs value={tabValue}>
                     {TabsList.map((item, idx) => (
