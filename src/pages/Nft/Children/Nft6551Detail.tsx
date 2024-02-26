@@ -334,7 +334,7 @@ export function Nft6551Detail() {
                 </ButtonsStyle>
 
                 <WarningStyle>
-                  {!isTrueChain ? (
+                  {!isTrueChain && (
                     <>
                       <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
                         You need switch to{` `}
@@ -354,9 +354,8 @@ export function Nft6551Detail() {
                         Switch
                       </BlackButton>
                     </>
-                  ) : (
-                    <>
-                      <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
+                  )}
+                  {/* <Typography variant="body1" lineHeight={'16px'} color={'#9F8644'}>
                         {`Apply for .aw domain name now ->`}
                       </Typography>
                       <BlackButton
@@ -366,9 +365,7 @@ export function Nft6551Detail() {
                         }}
                       >
                         Apply
-                      </BlackButton>
-                    </>
-                  )}
+                      </BlackButton> */}
                 </WarningStyle>
                 <StyledTabs>
                   <Tabs value={tabValue}>
