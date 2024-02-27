@@ -13,7 +13,7 @@ import { TokenboundClient } from '@tokenbound/sdk'
 // import { Currency } from 'constants/token/currency'
 import isZero from 'utils/isZero'
 import { Axios } from 'utils/axios'
-import { NFT_REGISTRY_ADDRESS, NFT_IMPLEMENTATION_ADDRESS, serverAwnsUrl } from '../constants'
+import { NFT_IMPLEMENTATION_ADDRESS, serverAwnsUrl } from '../constants'
 import { ChainId, SUPPORTED_NETWORKS } from 'constants/chain'
 import { isAddress } from 'utils'
 import { useERC721Contract, useNft6551Contract } from 'hooks/useContract'
@@ -285,9 +285,9 @@ export function useSendNFT6551Callback() {
       library && chainId
         ? new TokenboundClient({
             signer: library.getSigner(),
-            chainId,
-            implementationAddress: NFT_IMPLEMENTATION_ADDRESS[chainId as ChainId] as `0x${string}`,
-            registryAddress: NFT_REGISTRY_ADDRESS[chainId as ChainId] as `0x${string}`
+            chainId
+            // implementationAddress: NFT_IMPLEMENTATION_ADDRESS[chainId as ChainId] as `0x${string}`,
+            // registryAddress: NFT_REGISTRY_ADDRESS[chainId as ChainId] as `0x${string}`
           })
         : undefined,
     [chainId, library]
@@ -343,9 +343,9 @@ export function useSendAssetsCallback(chainId: number | undefined) {
       library && chainId
         ? new TokenboundClient({
             signer: library.getSigner(),
-            chainId,
-            implementationAddress: NFT_IMPLEMENTATION_ADDRESS[chainId as ChainId] as `0x${string}`,
-            registryAddress: NFT_REGISTRY_ADDRESS[chainId as ChainId] as `0x${string}`
+            chainId
+            // implementationAddress: NFT_IMPLEMENTATION_ADDRESS[chainId as ChainId] as `0x${string}`,
+            // registryAddress: NFT_REGISTRY_ADDRESS[chainId as ChainId] as `0x${string}`
           })
         : undefined,
     [chainId, library]
