@@ -158,6 +158,7 @@ export default function AiChat() {
                   disabled={waiting}
                   multiline
                   rows={5}
+                  height={120}
                   value={inputText}
                   onChange={e => setInputText(e.target.value)}
                 />

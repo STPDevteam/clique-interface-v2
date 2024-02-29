@@ -19,7 +19,7 @@ import ProposalList from 'pages/DaoInfo/Children/Proposal'
 import CreateDao from 'pages/Creator/CreateDao'
 import { useDispatch } from 'react-redux'
 import CreatorToken from 'pages/Creator/CreatorToken'
-// import AiChat from 'pages/AiChat'
+import AiChat from 'pages/AiChat'
 
 // swap
 // import CreateSales from 'pages/CreateSales'
@@ -163,7 +163,7 @@ export default function App() {
           <GoogleAnalyticsReporter />
           <ContentWrapper>
             <Header />
-            {/* <AiChat /> */}
+            {Number(process.env.REACT_APP_CHAIN_ID) === 5 && <AiChat />}
             <ToastContainer
               className={'toast-container'}
               hideProgressBar
