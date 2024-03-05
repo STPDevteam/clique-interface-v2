@@ -445,9 +445,6 @@ export function useTokenHistoryCallback(chainId: number | undefined, nftAccount:
       if (!chain || !nftAccount) return
       try {
         const res = await Axios.get(serverAwnsUrl + '/rpc/history/list', { chain, account: nftAccount })
-        if (!res.data.data) {
-          throw res
-        }
         const data = res.data.data
         setResult(data)
         setLoading(false)

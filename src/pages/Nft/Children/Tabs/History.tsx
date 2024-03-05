@@ -34,7 +34,7 @@ export function History({ chainId, nftAddress }: { chainId: number | undefined; 
   console.log(' HistoryList=>', HistoryList, loading)
 
   const AssetsTableList = useMemo(() => {
-    return HistoryList?.history_list.map((item, index) => [
+    return HistoryList?.history_list?.slice(0, -1)?.map((item, index) => [
       <TableContentStyle key={index}>{item?.cate_id || 'unknown'}</TableContentStyle>,
       <TableContentStyle key={index} gap={5}>
         <Image
@@ -80,7 +80,7 @@ export function History({ chainId, nftAddress }: { chainId: number | undefined; 
         </Box>
       ) : (
         <>
-          {AssetsTableList ? (
+          {!!AssetsTableList?.length ? (
             <Box
               sx={{
                 marginTop: '16px',
