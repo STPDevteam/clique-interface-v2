@@ -3,7 +3,7 @@ import MuiCloseIcon from '@mui/icons-material/Close'
 import { Link, IconButton, keyframes, styled, Theme } from '@mui/material'
 import { SxProps } from '@mui/system'
 
-export function CloseIcon({ onClick }: { onClick?: () => void }) {
+export function CloseIcon({ onClick, top }: { onClick?: () => void; top?: string | undefined }) {
   return (
     <IconButton
       onClick={onClick}
@@ -12,7 +12,7 @@ export function CloseIcon({ onClick }: { onClick?: () => void }) {
         width: { sm: 40, xs: 30 },
         height: { sm: 40, xs: 30 },
         position: 'absolute',
-        top: { xs: -10, sm: '13px' },
+        top: { xs: top ?? '-10px', sm: top ?? '13px' },
         right: { xs: 6, sm: '10px' },
         boxShadow: theme => theme.boxShadow.bs2,
         '&:hover $closeIcon': {

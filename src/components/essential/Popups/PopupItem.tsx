@@ -5,6 +5,7 @@ import { animated } from 'react-spring'
 import { useRemovePopup } from 'state/application/hooks'
 import TransactionPopup from './TransactionPopup'
 import { CloseIcon } from 'theme/components'
+import useBreakpoint from 'hooks/useBreakpoint'
 
 export const Popup = styled('div')(({ theme }) => ({
   display: 'inlineBlock',
@@ -44,6 +45,7 @@ export default function PopupItem({
   content: any
   popKey: string
 }) {
+  const isSm = useBreakpoint('sm')
   const removePopup = useRemovePopup()
   const removeThisPopup = useCallback(() => removePopup(popKey), [popKey, removePopup])
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function PopupItem({
 
   return (
     <Popup>
-      <CloseIcon onClick={removeThisPopup} />
+      <CloseIcon onClick={removeThisPopup} top={isSm ? '10px' : undefined} />
       {popupContent}
       {removeAfterMs !== null ? <AnimatedFader style={faderStyle} /> : null}
     </Popup>
