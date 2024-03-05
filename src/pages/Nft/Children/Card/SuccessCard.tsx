@@ -33,7 +33,7 @@ const NftImgStyle = styled(Box)(({ theme }) => ({
   height: '244px',
   borderRadius: '7px',
   background: 'rgb(249, 249, 249)',
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('md')]: {
     height: '100%'
   }
 }))
@@ -56,9 +56,13 @@ export function NftDelaySuccess({ nftData }: { nftData: NftProp | undefined }) {
             display: 'flex',
             justifyContent: 'center',
             marginTop: '28px',
-            '& .class_nft_card .item': {
-              display: 'grid',
-              gap: '20px'
+            '& .class_nft_card': {
+              width: { xs: '220px', md: '278px' },
+              height: { xs: '300px', md: '375px' },
+              '& .item': {
+                display: 'grid',
+                gap: '20px'
+              }
             }
           }}
         >

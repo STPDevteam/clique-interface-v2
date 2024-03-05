@@ -68,9 +68,9 @@ const NftCards = styled(Box)(({ theme }) => ({
     padding: '0',
     gridTemplateColumns: '42vw 42vw',
     paddingTop: '35px',
-    gap: 10,
+    gap: 16,
     mt: 0,
-    justifyContent: 'space-evenly'
+    justifyContent: 'center'
   }
 }))
 
@@ -245,7 +245,7 @@ function Card({
           },
           '.card': {
             transition: 'all 0.5s',
-            transform: 'translateY(-15px)',
+            transform: { xs: 'translateY(-8px)', md: 'translateY(-15px)' },
             boxShadow: '0px 4px 20px 3px #0094FF',
             border: '1px solid var(--button-line, #97B7EF)',
             // background: ' #0F1F39'
