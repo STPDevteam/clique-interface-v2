@@ -33,6 +33,7 @@ import { ChainId, ChainListMap } from 'constants/chain'
 import { triggerSwitchChain } from 'utils/triggerSwitchChain'
 import ConnectAccountModal from './ConnectAccountModal'
 import { routes } from 'constants/routes'
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 
 const ContentBoxStyle = styled(Box)(({ theme }) => ({
   // minHeight: '780px',
@@ -306,10 +307,11 @@ export function Nft6551Detail() {
                 </Box>
                 <ButtonsStyle>
                   <AccountButton>
-                    <Image
+                    {/* <Image
                       style={{ height: 18, width: 18, borderRadius: '50%' }}
                       src={ChainListMap[Number(chainId) || 1]?.logo || ''}
-                    />
+                    /> */}
+                    <AccountBalanceWalletIcon fontSize="small" color="inherit" />
                     <Typography>{nftAddress ? shortenAddress(nftAddress) : '--'}</Typography>
                     <Copy toCopy={nftAddress || '--'} />
                   </AccountButton>
