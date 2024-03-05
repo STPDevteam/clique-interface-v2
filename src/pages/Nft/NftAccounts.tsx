@@ -124,7 +124,7 @@ export function NftAccounts() {
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
   const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
-  console.log('🚀 ~ NftAccounts ~ _accountNFTsList:', _accountNFTsList)
+  console.log('🚀 ~ NftAccounts:', _accountNFTsList)
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
@@ -136,7 +136,7 @@ export function NftAccounts() {
     if (!SBTIsDeployList) return
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
-  console.log('🚀 ~ accountNFTsList ~ accountNFTsList:', accountNFTsList)
+  console.log('🚀 ~ accountNFTsList:', accountNFTsList)
 
   useEffect(() => {
     if (isDelayTime) return
@@ -164,7 +164,7 @@ export function NftAccounts() {
           </TitleLayout>
           {accountNFTsList !== undefined && !loading ? (
             accountNFTsList.length ? (
-              <NftCards justifyContent={accountNFTsList && accountNFTsList?.length > 4 ? 'start' : 'center'}>
+              <NftCards justifyContent={accountNFTsList && accountNFTsList?.length >= 4 ? 'start' : 'center'}>
                 {accountNFTsList?.map(item => (
                   <NftCard key={item.contract_name} nft={item} chainId={chainId} />
                 ))}
