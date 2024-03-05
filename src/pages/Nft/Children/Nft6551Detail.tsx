@@ -86,7 +86,7 @@ const ConnectButtons = styled(Button)(({ theme }) => ({
   }
 }))
 
-const AccountButton = styled(Box)(() => ({
+const AccountButton = styled(Box)(({ theme }) => ({
   width: '160px',
   height: '40px',
   borderRadius: '8px',
@@ -99,6 +99,9 @@ const AccountButton = styled(Box)(() => ({
   gap: 6,
   svg: {
     margin: '0 !important'
+  },
+  [theme.breakpoints.down('md')]: {
+    height: '36px'
   }
 }))
 

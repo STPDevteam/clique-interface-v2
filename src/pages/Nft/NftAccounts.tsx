@@ -105,15 +105,14 @@ const NftCards = styled(Box)(({ theme }) => ({
   padding: '20px 125px',
   maxHeight: '60vh',
   overflowX: 'auto',
-
   '::-webkit-scrollbar': {
     display: 'none'
   },
   [theme.breakpoints.down('sm')]: {
-    padding: '20px',
-    justifyContent: 'space-between',
-    gap: 0,
-    rowGap: '10px'
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '10px',
+    padding: '20px'
   }
 }))
 
@@ -223,7 +222,7 @@ function NftCard({ nft, chainId }: { nft: ScanNFTInfo; chainId: number | undefin
         '&:hover': {
           '.nft_card': {
             transition: 'all 0.5s',
-            transform: 'translateY(-15px)'
+            transform: { xs: 'translateY(-8px)', md: 'translateY(-15px)' }
           }
         }
       }}
