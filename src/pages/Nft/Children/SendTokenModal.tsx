@@ -230,7 +230,9 @@ export default function SendTokenModal({
                         variant="body1"
                         onClick={() => {
                           // setAmount(network?.amount.toString())
-                          setFieldValue('amount', network?.amount.toString())
+                          if (network?.amount && Number(network?.amount) > 0) {
+                            setFieldValue('amount', network?.amount.toString())
+                          }
                         }}
                       >
                         Max

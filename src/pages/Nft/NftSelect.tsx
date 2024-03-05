@@ -47,7 +47,7 @@ const CardStyled = styled(Box)(({ theme }) => ({
   position: 'relative',
   [theme.breakpoints.down('sm')]: {
     width: '42vw',
-    height: 180
+    height: '56vw'
   }
 }))
 
@@ -215,7 +215,7 @@ function Card({
   setNftData: Dispatch<SetStateAction<NftProp | undefined>>
 }) {
   const { showModal } = useModal()
-  const isSmDown = useBreakpoint('sm')
+  const isSmDown = useBreakpoint('md')
   const refreshCb = useRefreshNft()
 
   const refresh = useCallback(() => {
@@ -259,8 +259,8 @@ function Card({
           className="chainIcon"
           src={ChainListMap[(nftChainId as ChainId) || 1].logo}
           alt=""
-          height={'30'}
-          width={'30'}
+          height={isSmDown ? 18 : 30}
+          width={isSmDown ? 18 : 30}
           style={{ borderRadius: '50%', position: 'absolute', top: 10, left: 10, display: 'none', zIndex: 10 }}
         />
         <LoopIcon

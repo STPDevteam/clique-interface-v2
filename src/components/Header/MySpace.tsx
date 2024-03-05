@@ -6,12 +6,15 @@ import PopperCard from 'components/PopperCard'
 import { ReactComponent as ArrowIcon } from 'assets/svg/arrow_down.svg'
 import HateIcon from 'assets/svg/hate.svg'
 import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 // import { useAccountNFTsList } from 'hooks/useBackedProfileServer'
 import placeholderImage from 'assets/images/placeholder.png'
 // import { useActiveWeb3React } from 'hooks'
 import EmptyData from 'components/EmptyData'
-import { useNftAccountList } from 'hooks/useBackedNftCallback'
+import { useAccountNFTsList, ScanNFTInfo } from 'hooks/useBackedProfileServer'
+import { useActiveWeb3React } from 'hooks'
+import { useSBTIsDeployList } from 'hooks/useContractIsDeploy'
+import { useCreateTBACallback } from 'hooks/useTBA'
 
 const Text = styled(Typography)(({ theme }) => ({
   width: 64,
@@ -109,11 +112,22 @@ const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
 }))
 
 export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
+  const { chainId, account } = useActiveWeb3React()
   const { createDaoListData: myJoinedDaoList } = useUpdateDaoDataCallback()
   const navigate = useNavigate()
   const [isActive, setIsActive] = useState<boolean>(false)
-  const { result: NftAccountList } = useNftAccountList()
-  console.log('NftAccountList=>', NftAccountList)
+  const { result: _accountNFTsList } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+
+  const SBTIsDeployList = useSBTIsDeployList(
+    _accountNFTsList.map(item => item.contract_address),
+    _accountNFTsList.map(i => i.token_id)
+  )
+
+  const accountNFTsList = useMemo(() => {
+    if (!_accountNFTsList.length) return []
+    if (!SBTIsDeployList) return
+    return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
+  }, [SBTIsDeployList, _accountNFTsList])
 
   return (
     <Box>
@@ -201,7 +215,7 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
             </Box>
           ) : (
             <>
-              {NftAccountList.length ? (
+              {!!accountNFTsList?.length ? (
                 <Box
                   mt={10}
                   sx={{
@@ -214,19 +228,8 @@ export default function MySpace({ IsNftPage }: { IsNftPage: boolean }) {
                     marginBottom: '6px'
                   }}
                 >
-                  {NftAccountList?.map((option, index) => (
-                    <Box key={index} sx={{ maxHeight: '54px', mb: 6 }}>
-                      <Image
-                        src={option.image_uri || placeholderImage}
-                        alt={''}
-                        width={54}
-                        height={54}
-                        style={{ border: '1px solid #97B7EF', borderRadius: '6px' }}
-                        // onClick={() => {
-                        //   navigate(routes.NftSelect)
-                        // }}
-                      />
-                    </Box>
+                  {accountNFTsList?.map((option, index) => (
+                    <AccountNftCard key={index} option={option} chainId={chainId} />
                   ))}
                 </Box>
               ) : (
@@ -271,5 +274,28 @@ function DaoItem({ daoLogo, daoName }: { daoLogo: string; daoName: string }) {
       <Text noWrap>{daoName || ''}</Text>
       {/* <Typography className="right" maxWidth={14} width={'100%'} /> */}
     </Item>
+  )
+}
+
+function AccountNftCard({ option, chainId }: { option: ScanNFTInfo; chainId: number | undefined }) {
+  const navigate = useNavigate()
+  const { getAccount } = useCreateTBACallback(option.contract_address as `0x${string}`, option.token_id)
+
+  return (
+    <Box
+      onClick={() => {
+        navigate(routes._NftDetail + `/${getAccount}/${chainId}`)
+      }}
+      sx={{ maxHeight: '54px', mb: 6, cursor: 'pointer' }}
+    >
+      <Image
+        src={option.image_uri || placeholderImage}
+        altSrc={placeholderImage}
+        alt={''}
+        width={54}
+        height={54}
+        style={{ border: '1px solid #97B7EF', borderRadius: '6px' }}
+      />
+    </Box>
   )
 }
