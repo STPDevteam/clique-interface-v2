@@ -1,4 +1,4 @@
-import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme, Link } from '@mui/material'
+import { Box, ClickAwayListener, Popper, Tab, Tabs, Typography, styled, useTheme, Link, Stack } from '@mui/material'
 import { ContainerWrapper } from 'pages/Creator/StyledCreate'
 import Back from 'components/Back'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -69,12 +69,11 @@ const TitleStyle = styled(Typography)(() => ({
   lineHeight: 'normal'
 }))
 
-const ButtonsStyle = styled(Box)(() => ({
-  display: 'flex',
+const ButtonsStyle = styled(Stack)(() => ({
   width: '100%',
-  gap: 10,
   marginTop: '20px',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
+  gap: '6px'
 }))
 
 const ConnectButtons = styled(Button)(({ theme }) => ({
@@ -305,7 +304,7 @@ export function Nft6551Detail() {
                   />
                   <TitleStyle>${assetsTotal || '--'}</TitleStyle>
                 </Box>
-                <ButtonsStyle>
+                <ButtonsStyle direction={'row'} spacing={10}>
                   <AccountButton>
                     {/* <Image
                       style={{ height: 18, width: 18, borderRadius: '50%' }}
@@ -442,7 +441,7 @@ export function Nft6551Detail() {
                     ` Developers around the world are tired of working and contributing their time and effort to enrich the
                   top 1%. Join the movement that is community owned, building the future from the bottom up.`}
                 </Typography>
-                <ButtonsStyle justifyContent={'end'}>
+                <ButtonsStyle direction={{ xs: 'column', md: 'row' }} justifyContent={'end'}>
                   {Number(chainId) === ChainId.MAINNET && (
                     <Link
                       target={'_blank'}
@@ -455,7 +454,7 @@ export function Nft6551Detail() {
                             getEtherscanLink(Number(chainId), NftInfoData?.contract_address, 'token') + `?a=${tokenId}`
                       }
                     >
-                      <OutlineButton sx={{ padding: '10px 20px', gap: 5 }}>
+                      <OutlineButton sx={{ padding: '10px 20px', gap: 5, width: '100%' }}>
                         <OpenSeaIcon />
                         View on Opensea
                       </OutlineButton>
@@ -463,7 +462,7 @@ export function Nft6551Detail() {
                   )}
                   {isOwner && isTrueChain && (
                     <OutlineButton
-                      sx={{ padding: '11px', gap: 5 }}
+                      sx={{ padding: '11px', gap: 5, width: { xs: '100%', md: '100px' } }}
                       onClick={() =>
                         showModal(
                           <TransFerNftModal chainId={Number(chainId)} NftInfoData={NftInfoData} tokenId={tokenId} />
