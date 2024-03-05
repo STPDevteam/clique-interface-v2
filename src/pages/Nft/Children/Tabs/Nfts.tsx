@@ -135,7 +135,7 @@ function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
           onClick={() => {
             refresh()
           }}
-        ></LoopIcon>
+        />
         <Image
           style={{
             width: '100%',
@@ -146,6 +146,7 @@ function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
             zIndex: 0
           }}
           src={nftInfo?.image_uri || placeholderImage}
+          altSrc={placeholderImage}
         />
 
         <Box
@@ -172,7 +173,7 @@ function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
               lineHeight: '20px'
             }}
           >
-            {nftInfo?.name || nftInfo?.contract_name || '-'}#{nftInfo?.token_id}
+            12312312 {nftInfo?.name || nftInfo?.contract_name || '-'}#{nftInfo?.token_id}
           </Typography>
           <Box className="shareButton" sx={{ display: 'none' }}>
             <Link

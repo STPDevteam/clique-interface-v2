@@ -35,12 +35,12 @@ export function History({ chainId, nftAddress }: { chainId: number | undefined; 
 
   const AssetsTableList = useMemo(() => {
     return HistoryList?.history_list.map((item, index) => [
-      <TableContentStyle key={index}>{item.cate_id || 'unknown'}</TableContentStyle>,
+      <TableContentStyle key={index}>{item?.cate_id || 'unknown'}</TableContentStyle>,
       <TableContentStyle key={index} gap={5}>
         <Image
           src={
-            (item.sends?.length && HistoryList.token_dict[item.sends[0].token_id].logo_url) ||
-            (item.receives?.length && HistoryList.token_dict[item.receives[0].token_id].logo_url) ||
+            (item.sends?.length && HistoryList.token_dict[item.sends[0].token_id]?.logo_url) ||
+            (item.receives?.length && HistoryList.token_dict[item.receives[0].token_id]?.logo_url) ||
             placeholderImage
           }
           height={'18px'}
@@ -48,8 +48,8 @@ export function History({ chainId, nftAddress }: { chainId: number | undefined; 
           style={{ borderRadius: '50%' }}
         />
 
-        {(item.sends?.length && HistoryList.token_dict[item.sends[0].token_id].name) ||
-          (item.receives?.length && HistoryList.token_dict[item.receives[0].token_id].name) ||
+        {(item.sends?.length && HistoryList.token_dict[item.sends[0].token_id]?.name) ||
+          (item.receives?.length && HistoryList.token_dict[item.receives[0].token_id]?.name) ||
           'unknown'}
       </TableContentStyle>,
       <TableContentStyle key={index} sx={{ justifyContent: 'center' }}>
