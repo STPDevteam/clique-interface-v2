@@ -20,7 +20,7 @@ import { useRecentNftList, useNftAccountInfo, RecentNftListProp } from 'hooks/us
 import { getEtherscanLink } from 'utils'
 import EmptyData from 'components/EmptyData'
 import Loading from 'components/Loading'
-import { ChainId } from 'constants/chain'
+// import { ChainId } from 'constants/chain'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
 import { useProfilePaginationCallback } from 'state/pagination/hooks'
@@ -96,12 +96,12 @@ export default function CreateNftModal({
   )
   const { result: nftInfo } = useNftAccountInfo(contractAddress, chainId)
 
-  const IsEthChain = useMemo(() => {
-    if (chainId === ChainId.MAINNET) {
-      return true
-    }
-    return false
-  }, [chainId])
+  // const IsEthChain = useMemo(() => {
+  //   if (chainId === ChainId.MAINNET) {
+  //     return true
+  //   }
+  //   return false
+  // }, [chainId])
 
   console.log(isDeploy, getAccount)
 
@@ -297,9 +297,9 @@ export default function CreateNftModal({
                   )}
                 </Button>
               )}
-              {!IsEthChain && (
+              {/* {!IsEthChain && (
                 <ErrorText marginBottom={'3px'}>{'Currently, only the Ethereum network is supported.'}</ErrorText>
-              )}
+              )} */}
             </Box>
           </Box>
           <MessageList />
