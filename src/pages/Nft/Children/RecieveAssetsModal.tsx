@@ -57,7 +57,7 @@ const QRcodeText = styled(Typography)(() => ({
   color: '#9F8644'
 }))
 
-const QRcodeWhite = styled(Box)(() => ({
+const QRcodeWhite = styled(Box)(({ theme }) => ({
   height: '139px',
   width: '100%',
   background: '#fff',
@@ -65,10 +65,13 @@ const QRcodeWhite = styled(Box)(() => ({
   padding: '14px 17px',
   display: 'grid',
   gap: '10px',
-  marginTop: '15px'
+  marginTop: '15px',
+  [theme.breakpoints.down('sm')]: {
+    height: 'auto'
+  }
 }))
 
-const AddressStyle = styled(Box)(() => ({
+const AddressStyle = styled(Box)(({ theme }) => ({
   maxWidth: '194px',
   height: 'auto',
   fontSize: '16px',
@@ -79,6 +82,10 @@ const AddressStyle = styled(Box)(() => ({
     svg: {
       marginLeft: '6px'
     }
+  },
+
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '155px'
   }
 }))
 
@@ -131,7 +138,7 @@ export default function RecieveAssetsModal({
         <QRcodeStyle
           sx={{
             // height: isCheck ? 220 : 55,
-            height: 220,
+            height: { xs: 'auto', md: 220 },
             transition: 'all 0.5s'
           }}
         >

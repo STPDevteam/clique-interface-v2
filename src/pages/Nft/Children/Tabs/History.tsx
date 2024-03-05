@@ -131,7 +131,10 @@ export function History({ chainId, nftAddress }: { chainId: number | undefined; 
                 },
                 [theme.breakpoints.down('sm')]: {
                   display: 'grid',
-                  gap: 10
+                  gap: 10,
+                  '.mobile_row': {
+                    gap: '0 !important'
+                  }
                 }
               }}
             >

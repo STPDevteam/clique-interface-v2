@@ -205,7 +205,7 @@ export default function Table({
         <>
           {rows.map((data, index) => (
             <Card key={index}>
-              <Box display="grid" gap="16px">
+              <Box display="grid" gap="16px" className="mobile_row">
                 {header.map((headerString, index) => (
                   <CardRow key={index}>
                     <Typography variant="inherit" component="div" fontSize={12} color="#000000" sx={{ opacity: 0.5 }}>

@@ -254,6 +254,7 @@ export default function SendTokenModal({
               {false && <RedText>{123}</RedText>}
               <Box sx={{ mt: 30, mb: 30 }}>
                 <LoadingButton
+                  disabled={Number(values.amount) <= 0}
                   // loading={isSaving}
                   loadingPosition="start"
                   startIcon={<></>}

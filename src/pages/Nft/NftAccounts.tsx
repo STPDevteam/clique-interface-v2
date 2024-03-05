@@ -72,7 +72,7 @@ const NftImgStyle = styled(Box)(({ theme }) => ({
   borderRadius: '7px',
   background: 'rgb(249, 249, 249)',
   [theme.breakpoints.down('sm')]: {
-    height: '100%'
+    height: '30vw'
   }
 }))
 
@@ -124,6 +124,7 @@ export function NftAccounts() {
   const userSignature = useUserInfo()
   const { isDelayTime } = useIsDelayTime()
   const { result: _accountNFTsList, loading } = useAccountNFTsList(account || undefined, chainId, 'erc721')
+  console.log('🚀 ~ NftAccounts ~ _accountNFTsList:', _accountNFTsList)
 
   const SBTIsDeployList = useSBTIsDeployList(
     _accountNFTsList.map(item => item.contract_address),
@@ -135,6 +136,7 @@ export function NftAccounts() {
     if (!SBTIsDeployList) return
     return _accountNFTsList.filter((_, idx) => SBTIsDeployList[idx] === true)
   }, [SBTIsDeployList, _accountNFTsList])
+  console.log('🚀 ~ accountNFTsList ~ accountNFTsList:', accountNFTsList)
 
   useEffect(() => {
     if (isDelayTime) return

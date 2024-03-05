@@ -189,21 +189,16 @@ const StyledTabs = styled('div')(({ theme }) => ({
     }
   },
   [theme.breakpoints.down('sm')]: {
-    justifyContent: 'space-evenly',
     '&>*': {
       marginRight: 0,
-
+      '& .MuiTabs-flexContainer': {
+        width: 'calc(100vw - 72px)',
+        justifyContent: 'space-between'
+      },
       '&:last-child': {
         marginRight: 0
       },
-      '& .css-1q9gtu-MuiButtonBase-root-MuiTab-root': {
-        fontSize: '12px !important',
-        gap: 5
-      },
-      '& .css-heg063-MuiTabs-flexContainer': {
-        justifyContent: 'space-between',
-        width: 'calc(100vw - 72px)'
-      },
+
       '& button': {
         padding: 0
       }
@@ -332,7 +327,6 @@ export function Nft6551Detail() {
                     </>
                   )}
                 </ButtonsStyle>
-
                 {/* <WarningStyle> */}
                 {!isTrueChain && (
                   <WarningStyle>

@@ -221,7 +221,7 @@ export const override: any = {
           backgroundColor: theme.palette.primary.dark
         },
         '&:disabled': {
-          backgroundColor: theme.palette.primary.light,
+          backgroundColor: '#0000001f',
           color: '#464647'
         }
       },
