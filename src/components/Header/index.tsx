@@ -931,6 +931,7 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
 }
 
 function ComingSoonListStyle({ options }: { options: TabContent[] }) {
+  return null
   return (
     <>
       <Box
