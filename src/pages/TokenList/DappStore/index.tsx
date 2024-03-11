@@ -9,7 +9,7 @@ import createDaoIcon from 'assets/images/createDaoIcon.png'
 import createTokenIcon from 'assets/images/createTokenIcon.png'
 // import nftCardIcon from 'assets/images/nftcard_icon.png'
 import sdkIcon from 'assets/images/sdkIcon.png'
-import accountIcon from 'assets/images/accountCard_icon.png'
+// import accountIcon from 'assets/images/accountCard_icon.png'
 import assetPortalIcon from 'assets/images/assetPortalCard_icon.png'
 import { routes } from 'constants/routes'
 import { useNavigate } from 'react-router-dom'
@@ -103,14 +103,14 @@ const cardsData = [
   //   bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
   //   route: routes.NftAccount
   // },
-  {
-    title: ToolsCardsTitle.AccountGenerator,
-    icon: accountIcon,
-    des: 'One-click on-chain transaction using account abstraction.',
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
-    // route: routes.NftGenerator
-  },
+  // {
+  //   title: ToolsCardsTitle.AccountGenerator,
+  //   icon: accountIcon,
+  //   des: 'One-click on-chain transaction using account abstraction.',
+  //   supportChainsIcon: 'soon',
+  //   bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
+  //   // route: routes.NftGenerator
+  // },
   {
     title: ToolsCardsTitle.AssetPortal,
     icon: assetPortalIcon,
