@@ -24,6 +24,7 @@ import { useUserInfo } from 'state/userInfo/hooks'
 import { useEffect } from 'react'
 import { useIsDelayTime } from 'hooks/useBackedProfileServer'
 import useBreakpoint from 'hooks/useBreakpoint'
+import Loading from 'components/Loading'
 
 const TitleStyle = styled(Typography)(() => ({
   fontWeight: 500,
@@ -114,7 +115,7 @@ export default function Index() {
     toast.success('Create success')
     navigate(routes._DaoInfo + `/${res.data.data}/proposal`)
   }
-  return (
+  return account && userSignature ? (
     <Formik
       enableReinitialize
       validationSchema={validationSchema}
@@ -286,5 +287,9 @@ export default function Index() {
         )
       }}
     </Formik>
+  ) : (
+    <Box>
+      <Loading sx={{ marginTop: 50 }} />
+    </Box>
   )
 }

@@ -9,6 +9,9 @@ import SBT_FACTORY_ABI from '../constants/abis/sbt_factory.json'
 import SBT_ABI from '../constants/abis/sbt.json'
 import PROPOSAL_ABI from '../constants/abis/proposal.json'
 import AIRDROP_ABI from '../constants/abis/airdrop.json'
+import ERC721_ABI from '../constants/abis/ERC721.json'
+import ERC1155_ABI from '../constants/abis/ERC1155.json'
+import Nft6551_ABI from '../constants/abis/nft6551.json'
 import PUBLICSALE_ABI from '../constants/abis/publicsale.json'
 import GOVERNANCE_DAO_ABI from '../constants/abis/governanceDao.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
@@ -168,4 +171,26 @@ export function useProposalContract(queryChainId?: ChainId): Contract | null {
     true,
     queryChainId
   )
+}
+
+// export function useErcContract(
+//   address?: string,
+//   queryChainId?: ChainId,
+//   ErcType?: 'ERC721' | 'ERC1155'
+// ): Contract | null {
+//   console.log('contract=>', address, ErcType, queryChainId)
+//   // return useContract(address, ErcType === 'ERC1155' ? ERC1155_ABI : ERC721_ABI, true, queryChainId)
+//   return useContract('0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85', ERC721_ABI, true, 1)
+// }
+
+export function useERC721Contract(address: string | undefined, queryChainId?: ChainId): Contract | null {
+  return useContract(address, ERC721_ABI, true, queryChainId)
+}
+
+export function useERC1155Contract(address: string | undefined, queryChainId?: ChainId): Contract | null {
+  return useContract(address, ERC1155_ABI, true, queryChainId)
+}
+
+export function useNft6551Contract(address: string | undefined, queryChainId?: ChainId): Contract | null {
+  return useContract(address, Nft6551_ABI, true, queryChainId)
 }

@@ -4,7 +4,7 @@ import { CategoriesTypeProp } from 'state/buildingGovDao/actions'
 import { VoteParamsProp } from 'hooks/useBackedProposalServer'
 
 export function getHomeContributorsList(offset: number, count: number) {
-  return Axios.get('stpdao/v2/account/top/list', {
+  return Axios.get('stpdao/v3/account/top/list', {
     offset,
     count
   })
@@ -106,7 +106,7 @@ export function switchJoinDao(
   signature: string,
   expireTimestamp: number
 ) {
-  return Axios.post('stpdao/v2/dao/member', {
+  return Axios.post('stpdao/v3/dao/member', {
     params: {
       timestamp: expireTimestamp,
       chainId,
@@ -121,7 +121,7 @@ export function switchJoinDao(
 }
 
 export function getSpaceId(chainId: number, daoAddress: string) {
-  return Axios.get('stpdao/v2/spaces/list', {
+  return Axios.get('stpdao/v3/spaces/list', {
     chainId,
     daoAddress
   })
@@ -251,14 +251,14 @@ export function getTaskDetail(taskId: number) {
 }
 
 export function getMembersCount(daoAddress: string, chainId: number) {
-  return Axios.get('stpdao/v2/dao/one', {
+  return Axios.get('stpdao/v3/dao/one', {
     daoAddress,
     chainId
   })
 }
 
 // export function getDaoInfo(account: string | undefined, daoAddress: string, chainId: number) {
-//   return Axios.get('stpdao/v2/dao/info', {
+//   return Axios.get('stpdao/v3/dao/info', {
 //     account: account || '',
 //     daoAddress,
 //     chainId
@@ -270,7 +270,7 @@ export function getDaoInfo(daoId: number) {
 }
 
 export function getDaoAdmins(daoAddress: string, chainId: number) {
-  return Axios.get('stpdao/v2/dao/admins', {
+  return Axios.get('stpdao/v3/dao/admins', {
     daoAddress,
     chainId
   })
@@ -286,7 +286,7 @@ export function getTokenList(chainId: number | string, creator: string, offset: 
 }
 
 export function sign(chainId: number, account: string, daoAddress: string, signType: number, proposalId: number) {
-  return Axios.post('stpdao/v2/sign/create', {
+  return Axios.post('stpdao/v3/sign/create', {
     chainId,
     account,
     daoAddress,
@@ -296,13 +296,13 @@ export function sign(chainId: number, account: string, daoAddress: string, signT
 }
 
 export function saveProposalContent(content: string) {
-  return Axios.post('stpdao/v2/proposal/save', {
+  return Axios.post('stpdao/v3/proposal/save', {
     content
   })
 }
 
 export function getProposalContent(uuid: string) {
-  return Axios.get('stpdao/v2/proposal/query', {
+  return Axios.get('stpdao/v3/proposal/query', {
     uuid
   })
 }
@@ -316,7 +316,7 @@ export function getProposalList(daoId: number | string, status: string | undefin
 }
 
 export function getProposalSnapshot(chainId: number, daoAddress: string, proposalId: number) {
-  return Axios.get('stpdao/v2/proposal/snapshot', {
+  return Axios.get('stpdao/v3/proposal/snapshot', {
     chainId,
     daoAddress,
     proposalId
@@ -345,7 +345,7 @@ export function getPublicSaleList(
   offset: number,
   limit: number
 ) {
-  return Axios.get('stpdao/v2/swap/list', {
+  return Axios.get('stpdao/v3/swap/list', {
     status: status || '',
     saleId: saleId || '',
     offset,
@@ -354,7 +354,7 @@ export function getPublicSaleList(
 }
 
 export function getTransactionList(saleId: string, offset: number, limit: number) {
-  return Axios.get('stpdao/v2/swap/transactions', {
+  return Axios.get('stpdao/v3/swap/transactions', {
     saleId,
     offset,
     limit
@@ -362,14 +362,14 @@ export function getTransactionList(saleId: string, offset: number, limit: number
 }
 
 export function getTokenPrices(chainId: number, tokens?: string) {
-  return Axios.get('stpdao/v2/swap/prices', {
+  return Axios.get('stpdao/v3/swap/prices', {
     chainId,
     tokens
   })
 }
 
 export function toPurchase(account: string, buyAmount: string, saleId: number) {
-  return Axios.post('stpdao/v2/swap/purchased', {
+  return Axios.post('stpdao/v3/swap/purchased', {
     account,
     buyAmount,
     saleId
@@ -377,14 +377,14 @@ export function toPurchase(account: string, buyAmount: string, saleId: number) {
 }
 
 export function getIsWhiteList(account: string, saleId: number) {
-  return Axios.get('stpdao/v2/swap/isWhite', {
+  return Axios.get('stpdao/v3/swap/isWhite', {
     account,
     saleId
   })
 }
 
 export function getIsCreatorWhite(account: string) {
-  return Axios.get('stpdao/v2/swap/isCreatorWhite', {
+  return Axios.get('stpdao/v3/swap/isCreatorWhite', {
     account
   })
 }
@@ -405,7 +405,7 @@ export function toCreatePublicSale(
   title: string,
   whiteList: string[]
 ) {
-  return Axios.post('stpdao/v2/swap/create', {
+  return Axios.post('stpdao/v3/swap/create', {
     about,
     chainId,
     creator,
@@ -527,7 +527,7 @@ export function userFollowAccount(isFollow: boolean, targetAccount: string) {
 }
 
 export function userFollowStatus(myself: string, others: string) {
-  return Axios.get('stpdao/v2/account/relation', {
+  return Axios.get('stpdao/v3/account/relation', {
     myself,
     others
   })
@@ -562,7 +562,7 @@ export function getRecentNftList(chainId: number) {
   })
 }
 
-export function getNftAccountList(chainId: number, salt: string, implementation: string, account: string) {
+export function getNftAccountList(chainId: number, salt: string, implementation: string | undefined, account: string) {
   return Axios.get(`stpdao/v3/nft6551/${chainId}/${salt}/${implementation}/${account}`)
 }
 
@@ -570,7 +570,7 @@ export function getMyCreateNftAccountList(account: string, offset: number, limit
   return Axios.get(`stpdao/v3/nft6551/list`, { account, offset, limit })
 }
 
-export function getNftAccountInfo(contract_address: string, chainId: number) {
+export function getNftAccountInfo(contract_address: string, chainId: number | undefined) {
   return Axios.get(`stpdao/v3/user/nfts/collections/${chainId}/${contract_address}`)
 }
 
@@ -604,7 +604,7 @@ export function daoHandleQuery(handle: string) {
 }
 
 export function daoHandleMakeSign(handle: string, account: string, chainId: number) {
-  return Axios.post('stpdao/v2/sign/lock/handle', {
+  return Axios.post('stpdao/v3/sign/lock/handle', {
     handle,
     account,
     chainId
@@ -676,7 +676,7 @@ export function getHomeOverview() {
 }
 
 export function getJoinDaoMembersLogs(chainId: number, daoAddress: string, offset: number, count: number) {
-  return Axios.get('stpdao/v2/account/sign/list', {
+  return Axios.get('stpdao/v3/account/sign/list', {
     chainId,
     daoAddress,
     offset,
@@ -685,7 +685,7 @@ export function getJoinDaoMembersLogs(chainId: number, daoAddress: string, offse
 }
 
 export function sendAiChat(content: string[]) {
-  return Axios.post('stpdao/v2/ai', {
+  return Axios.post('stpdao/v3/ai', {
     content
   })
 }

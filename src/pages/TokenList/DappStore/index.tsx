@@ -22,8 +22,8 @@ import chainLogo5 from 'assets/images/chainLogo5.png'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
-import CreateNftModal from 'pages/Nft/CreateNftModal'
-import useModal from 'hooks/useModal'
+// import CreateNftModal from 'pages/Nft/CreateNftModal'
+// import useModal from 'hooks/useModal'
 import { useState } from 'react'
 import useBreakpoint from 'hooks/useBreakpoint'
 
@@ -107,7 +107,6 @@ const cardsData = [
     title: ToolsCardsTitle.AccountGenerator,
     icon: accountIcon,
     des: 'One-click on-chain transaction using account abstraction.',
-    // supportChainsIcon: [chainLogo0],
     supportChainsIcon: 'soon',
     bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
     // route: routes.NftGenerator
@@ -118,6 +117,7 @@ const cardsData = [
     des: 'Buy, sell and hold any onchain asset through custom marketplace.',
     supportChainsIcon: 'soon',
     bgColor: 'linear-gradient(270deg, #F8EEFC 0%, #F9FFFF 100%)'
+    // route: routes.NftAssets
   }
 ]
 
@@ -127,7 +127,7 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
   const loginSignature = useLoginSignature()
   const { account } = useActiveWeb3React()
   const userSignature = useUserInfo()
-  const { showModal } = useModal()
+  // const { showModal } = useModal()
   const [isClick, setIsClick] = useState<boolean>(false)
   const isSmDown = useBreakpoint('sm')
 
@@ -168,16 +168,17 @@ function CardItem({ title, icon, des, supportChainsIcon, bgColor, link, route }:
           title === ToolsCardsTitle.CreateSBT ||
           title === ToolsCardsTitle.CreateDAO ||
           title === ToolsCardsTitle.CreateToken ||
-          title === ToolsCardsTitle.AccountGenerator
+          title === ToolsCardsTitle.AccountGenerator ||
+          title === ToolsCardsTitle.AssetPortal
         ) {
           if (!account) return toggleWalletModal()
           if (!userSignature) return loginSignature()
         }
-        if (title === ToolsCardsTitle.AccountGenerator) {
-          showModal(<CreateNftModal />)
-        } else {
-          route ? navigate(route) : window.open(link, '_blank')
-        }
+        // if (title === ToolsCardsTitle.AccountGenerator) {
+        //   showModal(<CreateNftModal />)
+        // } else {
+        route ? navigate(route) : window.open(link, '_blank')
+        // }
       }}
     >
       <Box

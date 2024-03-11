@@ -107,8 +107,26 @@ export const PROPOSAL_VOTING: { [chainId in ChainId]?: string } = {
   [ChainId.SEPOLIA]: '0x21AD787Fb35d30293F6F9F83Ebf61Ab50f800275'
 }
 
+export const NFT_IMPLEMENTATION_ADDRESS: { [chainId in ChainId]?: string } = {
+  [ChainId.GOERLI]: '0x2d25602551487c3f3354dd80d76d54383a243358',
+  [ChainId.SEPOLIA]: '0x2d25602551487c3f3354dd80d76d54383a243358',
+  [ChainId.POLYGON_MUMBAI]: '0x2d25602551487c3f3354dd80d76d54383a243358',
+  [ChainId.MAINNET]: '0x2d25602551487c3f3354dd80d76d54383a243358',
+  [ChainId.POLYGON]: '0x2d25602551487c3f3354dd80d76d54383a243358'
+}
+
+export const NFT_REGISTRY_ADDRESS: { [chainId in ChainId]?: string } = {
+  [ChainId.GOERLI]: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
+  [ChainId.SEPOLIA]: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
+  [ChainId.POLYGON_MUMBAI]: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
+  [ChainId.MAINNET]: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
+  [ChainId.POLYGON]: '0x02101dfB77FDE026414827Fdc604ddAF224F0921',
+  [ChainId.BASE]: '0x02101dfB77FDE026414827Fdc604ddAF224F0921'
+}
+
 export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL
 export const serverUploadImage = serverBaseUrl + 'stpdao/v3/img/upload'
+export const serverAwnsUrl = 'https://awns-devapi.myclique.io/awns'
 export const signMessage = 'Welcome to Clique'
 export const myCliqueV1Domain = 'https://v1.myclique.io/'
 

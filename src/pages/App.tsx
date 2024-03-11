@@ -19,7 +19,7 @@ import ProposalList from 'pages/DaoInfo/Children/Proposal'
 import CreateDao from 'pages/Creator/CreateDao'
 import { useDispatch } from 'react-redux'
 import CreatorToken from 'pages/Creator/CreatorToken'
-// import AiChat from 'pages/AiChat'
+import AiChat from 'pages/AiChat'
 
 // swap
 // import CreateSales from 'pages/CreateSales'
@@ -60,9 +60,11 @@ import 'react-toastify/dist/ReactToastify.css'
 import DaoInfoUpdater from '../state/buildingGovDao/updater'
 // import { useUpdateDaoDataCallback } from 'state/buildingGovDao/hooks'
 import { removeCreateDaoData } from 'state/buildingGovDao/actions'
-// import { NftGenerator } from './Nft/NftGenerator'
-// import { NftSelect } from './Nft/NftSelect'
+import { NftGenerator } from './Nft/NftGenerator'
+import { NftSelect } from './Nft/NftSelect'
 import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
+import { NftAccounts } from './Nft/NftAccounts'
+import { Nft6551Detail } from './Nft/Children/Nft6551Detail'
 
 const AppWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -161,7 +163,7 @@ export default function App() {
           <GoogleAnalyticsReporter />
           <ContentWrapper>
             <Header />
-            {/* <AiChat /> */}
+            {Number(process.env.REACT_APP_CHAIN_ID) === 5 && <AiChat />}
             <ToastContainer
               className={'toast-container'}
               hideProgressBar
@@ -218,8 +220,10 @@ export default function App() {
                   }
                 />
                 <Route path={routes.Activity} element={<Activity />} />
-                {/* <Route path={routes.NftGenerator} element={<NftGenerator />} />
-                <Route path={routes.NftSelect} element={<NftSelect />} /> */}
+                <Route path={routes.NftGenerator} element={<NftGenerator />} />
+                <Route path={routes.NftSelect} element={<NftSelect />} />
+                <Route path={routes.NftAssets} element={<NftAccounts />} />
+                <Route path={routes.NftDetail} element={<Nft6551Detail />} />
                 <Route path={routes._CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.CreateSoulToken} element={<CreateSoulToken />} />
                 <Route path={routes.SoulTokenDetail} element={<SoulTokenDetail />} />
