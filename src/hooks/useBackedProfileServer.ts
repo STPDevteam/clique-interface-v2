@@ -12,6 +12,7 @@ import {
   userProfile
 } from '../utils/fetch/server'
 import { DaoAdminLevelProp } from './useDaoInfo'
+import { useActiveWeb3React } from 'hooks'
 
 export interface UserProfileDaoProp {
   accountLevel: typeof DaoAdminLevelProp
@@ -156,7 +157,6 @@ export function useAccountSendRecordList(account: string) {
         const res = await getAccountSendRecordList((currentPage - 1) * pageSize, pageSize)
         setLoading(false)
         const data = res.data as any
-        console.log(data)
         if (!data) {
           setResult([])
           setTotal(0)
@@ -216,6 +216,8 @@ export interface ScanNFTInfo {
   owner: string
   token_id: string
   token_uri: string
+  latest_trade_price: number
+  mint_transaction_hash: string
 }
 
 export function useAccountNFTsList(
@@ -228,6 +230,11 @@ export function useAccountNFTsList(
   const [total, setTotal] = useState<number>(0)
   const pageSize = 100
   const [result, setResult] = useState<ScanNFTInfo[]>([])
+  const { chainId } = useActiveWeb3React()
+
+  useEffect(() => {
+    setResult([])
+  }, [chainId])
 
   useEffect(() => {
     setCurrentPage(1)

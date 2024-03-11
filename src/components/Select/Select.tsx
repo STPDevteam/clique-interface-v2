@@ -26,6 +26,7 @@ interface Props {
   style?: React.CSSProperties | SxProps<Theme>
   noBold?: boolean
   padding?: string
+  MenuStyle?: React.CSSProperties | SxProps<Theme>
 }
 
 const StyledSelect = styled(MuiSelect)(() => ({
@@ -59,7 +60,8 @@ export default function Select(props: Props) {
     style,
     color,
     noBold,
-    padding
+    padding,
+    MenuStyle
   } = props
   const theme = useTheme()
   const hasValue = useMemo(() => {
@@ -184,7 +186,8 @@ export default function Select(props: Props) {
                   content: `url(${multiple ? SelectedMulIcon : SelectedIcon})`
                 }
               }
-            }
+            },
+            ...MenuStyle
           },
           anchorOrigin: {
             vertical: 'bottom',

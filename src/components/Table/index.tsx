@@ -15,7 +15,7 @@ import { useState } from 'react'
 import useBreakpoint from '../../hooks/useBreakpoint'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-import EmptyData from 'components/EmptyData'
+// import EmptyData from 'components/EmptyData'
 // import { visuallyHidden } from '@mui/utils'
 
 const Profile = styled('div')(`
@@ -293,7 +293,7 @@ export default function Table({
               ))}
             </TableBody>
           </table>
-          {rows.length === 0 && <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>}
+          {/* {rows.length === 0 && <EmptyData sx={{ margin: '30px auto', width: '100%' }}>No data</EmptyData>} */}
         </StyledTableContainer>
       )}
     </>

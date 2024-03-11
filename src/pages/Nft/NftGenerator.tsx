@@ -1,5 +1,4 @@
 import { Box, Typography, keyframes, styled, useTheme } from '@mui/material'
-import Nft_bgImage from 'assets/images/nft_bg.png'
 import NftImage from 'assets/images/nft_r.png'
 import Coin_1 from 'assets/images/coin_1.png'
 import Coin_2 from 'assets/images/coin_2.png'
@@ -12,6 +11,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useLoginSignature, useUserInfo } from 'state/userInfo/hooks'
 import { useActiveWeb3React } from 'hooks'
 import useBreakpoint from 'hooks/useBreakpoint'
+import { NftLayout } from './NftLayout'
 
 const conin1_key = keyframes`
 0% { transform: translateY(0); }
@@ -68,7 +68,7 @@ export function NftGenerator() {
     <NftLayout>
       <Box
         sx={{
-          height: '100vh',
+          height: 'calc(100vh - 80px)',
           display: 'flex',
           marginTop: 0,
           gap: 10,
@@ -77,7 +77,7 @@ export function NftGenerator() {
           [theme.breakpoints.down('sm')]: {
             height: 'auto',
             display: 'grid',
-            marginTop: 120
+            marginTop: 40
           }
         }}
       >
@@ -219,40 +219,5 @@ export function NftGenerator() {
         </Box>
       </Box>
     </NftLayout>
-  )
-}
-
-export function NftLayout({ children }: { children: JSX.Element }) {
-  const theme = useTheme()
-  return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        height: '100vh',
-        width: '100%',
-        backgroundImage: `url(${Nft_bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center center',
-        padding: '0  35px 0 20px',
-        [theme.breakpoints.down('sm')]: {
-          padding: '0'
-        }
-      }}
-    >
-      {/* <img
-        src={Nft_bgImage}
-        alt=""
-        style={{
-          height: '100%',
-          width: '100%',
-          objectFit: 'cover',
-          position: 'fixed',
-          zIndex: 0
-        }}
-      /> */}
-      <Box sx={{ maxWidth: 1440, margin: 'auto', position: 'relative', zIndex: 10 }}>{children}</Box>
-    </Box>
   )
 }
