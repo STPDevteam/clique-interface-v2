@@ -103,15 +103,15 @@ const cardsData = [
   //   bgColor: 'linear-gradient(270deg, #EEF4FC 0%, #F9FCFF 100%)',
   //   route: routes.NftAccount
   // },
-  {
-    title: ToolsCardsTitle.AccountGenerator,
-    icon: accountIcon,
-    des: 'One-click on-chain transaction using account abstraction.',
-    // supportChainsIcon: [chainLogo0],
-    supportChainsIcon: 'soon',
-    bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
-    // route: routes.NftGenerator
-  },
+  // {
+  //   title: ToolsCardsTitle.AccountGenerator,
+  //   icon: accountIcon,
+  //   des: 'One-click on-chain transaction using account abstraction.',
+  //   // supportChainsIcon: [chainLogo0],
+  //   supportChainsIcon: 'soon',
+  //   bgColor: 'linear-gradient(270deg, #EEFCFB 0%, #F9FFFF 100%)'
+  //   // route: routes.NftGenerator
+  // },
   {
     title: ToolsCardsTitle.AssetPortal,
     icon: assetPortalIcon,
