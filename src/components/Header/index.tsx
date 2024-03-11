@@ -286,7 +286,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     fontSize: 14,
     lineHeight: '20px',
     color: theme.palette.text.secondary,
-    marginRight: 30,
+    marginRight: 45,
     fontWeight: 600,
     paddingBottom: '30px',
     paddingTop: '30px',
@@ -299,7 +299,13 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
       color: theme.palette.primary.main
     },
     [theme.breakpoints.down('sm')]: {
-      paddingBottom: '10px'
+      paddingBottom: '0',
+      paddingTop: 0,
+      color: '#fff',
+      borderBottom: 'unset',
+      '&.active': {
+        color: '#fff'
+      }
     }
   },
   '& .menuLink': {
@@ -656,7 +662,7 @@ function TabsBox({ IsNftPage }: { IsNftPage: boolean }) {
               color: '#3F5170',
               marginRight: {
                 xs: 15,
-                lg: 30
+                lg: 45
               },
               height: 'auto',
               paddingBottom: '30px',
@@ -920,7 +926,7 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
               </div>
             }
           >
-            <div>
+            <div style={{ display: 'flex' }}>
               <Image width={17} src={gitBookIcon} />
             </div>
           </LightTooltip>
