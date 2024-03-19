@@ -173,7 +173,7 @@ function Card({ nftInfo, chainId }: { nftInfo: ScanNFTInfo; chainId: number }) {
               lineHeight: '20px'
             }}
           >
-            12312312 {nftInfo?.name || nftInfo?.contract_name || '-'}#{nftInfo?.token_id}
+            {nftInfo?.name || nftInfo?.contract_name || '-'}#{nftInfo?.token_id}
           </Typography>
           <Box className="shareButton" sx={{ display: 'none' }}>
             <Link
