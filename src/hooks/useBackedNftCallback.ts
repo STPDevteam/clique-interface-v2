@@ -146,7 +146,7 @@ export function useMyCreateNftAccountList(account: string) {
   const [currentPage, setCurrentPage] = useState(1)
   const [total, setTotal] = useState<number>(0)
   const pageSize = 100
-  const [result, setResult] = useState<MyCreateNftListProp[]>([])
+  const [result, setResult] = useState<MyCreateNftListProp[]>()
   const [loading, setLoading] = useState<boolean>(false)
   useEffect(() => {
     ;(async () => {

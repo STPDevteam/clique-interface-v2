@@ -259,11 +259,11 @@ function MyCreateNftList({ account }: { account: string }) {
   const { result: myCreateNftList, loading, page: page_c } = useMyCreateNftAccountList(account)
 
   const showCreateNftList = useMemo(() => {
-    return viewAllNft6551 ? myCreateNftList : myCreateNftList.slice(0, 4)
+    return viewAllNft6551 ? myCreateNftList : myCreateNftList?.slice(0, 4)
   }, [myCreateNftList, viewAllNft6551])
 
   useEffect(() => {
-    if (myCreateNftList.length === 4) {
+    if (myCreateNftList?.length === 4) {
       setViewAllNft6551(true)
     }
     if (isSmDown) {
@@ -277,7 +277,7 @@ function MyCreateNftList({ account }: { account: string }) {
         <Box sx={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Loading />
         </Box>
-      ) : !showCreateNftList.length && !loading ? (
+      ) : !showCreateNftList?.length && !loading ? (
         <EmptyData />
       ) : (
         <>
@@ -297,10 +297,10 @@ function MyCreateNftList({ account }: { account: string }) {
               }
             }}
           >
-            {showCreateNftList.map(item => (
+            {showCreateNftList?.map(item => (
               <NFT6551Item key={item.account} nft={item} />
             ))}
-            {!isSmDown && !viewAllNft6551 && myCreateNftList.length > 4 && (
+            {!isSmDown && !viewAllNft6551 && myCreateNftList && myCreateNftList?.length > 4 && (
               <StyledItems
                 sx={{
                   display: 'flex',
