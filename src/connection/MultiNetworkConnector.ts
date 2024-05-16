@@ -1,6 +1,6 @@
 import { NetworkConnector } from './NetworkConnector'
 import { StaticJsonRpcProvider, Web3Provider } from '@ethersproject/providers'
-import { ChainId, SUPPORTED_NETWORKS, SUPPORT_NETWORK_CHAIN_IDS } from '../constants/chain'
+import { ChainId, SUPPORT_NETWORK_CHAIN_IDS, SUPPORTED_NETWORKS } from '../constants/chain'
 import { AppJsonRpcProvider } from 'connection/providers'
 
 export function getRpcUrl(chainId: ChainId) {
@@ -14,6 +14,8 @@ export function getRpcUrl(chainId: ChainId) {
       return 'https://goerli.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
     case ChainId.SEPOLIA:
       return 'https://sepolia.infura.io/v3/169a2f10743f4afdaa0a17e148552867'
+    case ChainId.BASE:
+      return 'https://mainnet.base.org'
     default:
       return SUPPORTED_NETWORKS[chainId]?.rpcUrls[0] || ''
   }
