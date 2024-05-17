@@ -127,9 +127,8 @@ const [web3CoinbaseWallet, web3CoinbaseWalletHooks] = initializeConnector<Coinba
     new CoinbaseWallet({
       actions,
       options: {
-        url: getRpcUrl(ChainId.MAINNET),
-        appName: 'Bounce',
-        reloadOnDisconnect: false
+        url: getRpcUrl(ChainId.BASE),
+        appName: 'Clique'
       },
       onError
     })
