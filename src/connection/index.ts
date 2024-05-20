@@ -14,8 +14,8 @@ import { isMobile, isNonIOSPhone } from 'utils/userAgent'
 import { Connection, ConnectionType } from './types'
 import { getInjection, getIsCoinbaseWallet, getIsInjected, getIsMetaMaskWallet, getIsOkxWallet } from './utils'
 import { UniwalletConnect as UniwalletWCV2Connect, WalletConnectV2 } from './WalletConnectV2'
-import { ChainId } from 'constants/chain'
-import { RPC_PROVIDERS, getRpcUrl } from 'connection/MultiNetworkConnector'
+import { ChainId, SUPPORT_NETWORK_CHAIN_IDS } from 'constants/chain'
+import { RPC_PROVIDERS } from 'connection/MultiNetworkConnector'
 import { OKXWallet } from '@okwallet/web3-react-okxwallet'
 import { BinanceWallet } from 'web3-react-binance-wallet'
 import { SELECTABLE_ENABLE_WALLETS } from '../constants'
@@ -127,8 +127,8 @@ const [web3CoinbaseWallet, web3CoinbaseWalletHooks] = initializeConnector<Coinba
     new CoinbaseWallet({
       actions,
       options: {
-        url: getRpcUrl(ChainId.BASE),
-        appName: 'Clique'
+        appName: 'Clique',
+        appChainIds: SUPPORT_NETWORK_CHAIN_IDS
       },
       onError
     })
@@ -211,10 +211,11 @@ export function getConnections() {
   ].filter(v => SELECTABLE_ENABLE_WALLETS.includes(v.type))
 }
 
-export function getConnection(c: Connector | ConnectionType) {
+export function getConnection(c: Connector | ConnectionType | any) {
   if (c instanceof Connector) {
     const connection = getConnections().find(connection => connection.connector === c)
     if (!connection) {
+      console.error(c)
       throw Error('unsupported connector')
     }
     return connection
@@ -236,6 +237,9 @@ export function getConnection(c: Connector | ConnectionType) {
         return binanceWalletConnection
       case ConnectionType.OKX_WALLET:
         return OKXWalletConnection
+      default:
+        console.error(c)
+        throw Error('unsupported connector')
     }
   }
 }

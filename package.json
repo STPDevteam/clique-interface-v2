@@ -100,7 +100,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@binance-chain/bsc-connector": "^1.0.0",
-    "@coinbase/wallet-sdk": "4.0.0-beta.12",
+    "@coinbase/wallet-sdk": "4.0.0",
     "@date-io/date-fns": "^2.14.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -116,7 +116,7 @@
     "@types/ms.macro": "^2.0.0",
     "@types/react-beautiful-dnd": "^13.1.4",
     "@types/ua-parser-js": "^0.7.36",
-    "@web3-react/coinbase-wallet": "8.2.0",
+    "@web3-react/coinbase-wallet": "github:STPDevteam/web3-react-coinbase-wallet",
     "@web3-react/gnosis-safe": "8.2.1",
     "@web3-react/metamask": "8.2.1",
     "@web3-react/network": "8.2.0",
@@ -154,5 +154,8 @@
     "web3-react-binance-wallet": "^1.0.1",
     "xss": "^1.0.14",
     "yup": "0.32.11"
+  },
+  "resolutions": {
+    "@coinbase/wallet-sdk": "4.0.0"
   }
 }
