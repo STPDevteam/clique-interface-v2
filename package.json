@@ -100,7 +100,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@binance-chain/bsc-connector": "^1.0.0",
-    "@coinbase/wallet-sdk": "4.0.0",
+    "@coinbase/wallet-sdk": "4.0.0-beta.14",
     "@date-io/date-fns": "^2.14.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -156,6 +156,6 @@
     "yup": "0.32.11"
   },
   "resolutions": {
-    "@coinbase/wallet-sdk": "4.0.0"
+    "@coinbase/wallet-sdk": "4.0.0-beta.14"
   }
 }
