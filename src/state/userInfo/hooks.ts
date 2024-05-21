@@ -53,5 +53,5 @@ export function useLoginSignature() {
         return -1
       }
     })
-  }, [account, web3, login, dispatch])
+  }, [account, web3, chainId, login, dispatch])
 }
