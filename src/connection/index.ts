@@ -134,7 +134,7 @@ const [web3CoinbaseWallet, web3CoinbaseWalletHooks] = initializeConnector<Coinba
     })
 )
 const coinbaseWalletConnection: Connection = {
-  getName: () => 'Coinbase Wallet',
+  getName: () => 'Smart Wallet',
   connector: web3CoinbaseWallet,
   hooks: web3CoinbaseWalletHooks,
   type: ConnectionType.COINBASE_WALLET,
@@ -201,9 +201,9 @@ const binanceWalletConnection: Connection = {
 export function getConnections() {
   return [
     injectedConnection,
+    coinbaseWalletConnection,
     walletConnectV2Connection,
     OKXWalletConnection,
-    coinbaseWalletConnection,
     binanceWalletConnection,
     uniwalletWCV2ConnectConnection,
     gnosisSafeConnection,
