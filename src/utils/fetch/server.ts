@@ -86,11 +86,12 @@ export function getDaoList(
   })
 }
 
-export function Login(account: string, message: string, signature: string) {
+export function Login(account: string, message: string, signature: string, chainId: number) {
   return Axios.post('stpdao/v3/user/signIn', {
     account,
     message,
-    signature
+    signature,
+    chainId
   })
 }
 

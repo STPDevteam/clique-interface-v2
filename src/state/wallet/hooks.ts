@@ -189,7 +189,7 @@ export function useToken(tokenAddress: string, chainId?: ChainId): Token | undef
 
   const address = isAddress(tokenAddress)
 
-  const tokenContract = useTokenContract(address ? address : undefined, false)
+  const tokenContract = useTokenContract(address ? address : undefined, false, curChainId)
   const tokenContractBytes32 = useBytes32TokenContract(address ? address : undefined, false)
 
   const tokenName = useSingleCallResult(tokenContract, 'name', undefined, undefined, curChainId)

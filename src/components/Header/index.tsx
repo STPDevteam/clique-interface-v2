@@ -45,6 +45,7 @@ import { updateIsShowHeaderModalStatus } from 'state/buildingGovDao/actions'
 import useBreakpoint from 'hooks/useBreakpoint'
 import MenuIcon from '@mui/icons-material/Menu'
 import { useDaoInfoLeftSidedOpenStatus } from 'state/application/hooks'
+// import CreateSmartWallet from './CreateSmartWallet'
 interface TabContent {
   title: string
   route?: string
@@ -893,6 +894,7 @@ export function HeaderRight({ IsNftPage }: { IsNftPage: boolean }) {
     >
       <NetworkSelect IsNftPage={IsNftPage} />
       {userInfo?.loggedToken && !isSmDown && <MySpace IsNftPage={IsNftPage} />}
+      {/* <CreateSmartWallet /> */}
       <Web3Status IsNftPage={IsNftPage} />
       {pathname === routes.DappStore || pathname === routes.Governance ? (
         <Box
