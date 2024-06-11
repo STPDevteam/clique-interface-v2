@@ -443,13 +443,13 @@ export function useLogin() {
   // const [loading, setLoading] = useState(false)
   const [loginToken, setLoginToken] = useState('')
   const [firstSignIn, setFirstSignIn] = useState(-1)
-  const login = useCallback(async (account: string, message: string, signature: string) => {
+  const login = useCallback(async (account: string, message: string, signature: string, chainId: number) => {
     if (!account) {
       return
     }
     // setLoading(true)
     try {
-      const res = await Login(account, message, signature)
+      const res = await Login(account, message, signature, chainId)
       if (res.data.data) {
         setLoginToken(res.data.data.jwtToken)
         setFirstSignIn(res.data.data.openNonce)
